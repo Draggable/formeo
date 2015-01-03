@@ -1,0 +1,152 @@
+.field-edit {
+  margin-top: 1.5rem;
+
+  &.slide-toggle {
+    // height:
+
+  }
+
+  .panel-nav {
+    position: relative;
+    margin-bottom: 1px;
+    padding: 0;
+    overflow: hidden;
+    height: 38px;
+  }
+
+  &.field-edit-options {
+    list-style: decimal;
+  }
+
+  .prop-controls {
+    display: inline-block;
+    width: 31px;
+    text-align: right;
+    position: absolute;
+    right: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    bottom: 0;
+    height: 31px;
+
+    .svg-icon {
+      width: 12px;
+      height: 12px;
+    }
+
+    &:hover,
+    :not(.control-count-1) & {
+      .prop-control {
+        &:first-child {
+          border-radius: 0 $border-radius $border-radius 0;
+        }
+
+        &:last-child {
+          border-radius: $border-radius 0 0 $border-radius;
+        }
+      }
+    }
+  }
+
+  .prop-control {
+    display: inline-block;
+    padding: 0;
+    width: $prop-btn-width;
+    height: $prop-btn-width;
+    line-height: 29px;
+    text-align: center;
+    position: absolute;
+    right: 0;
+    border-radius: $border-radius;
+
+    // position: absolute;
+    // bottom: 0;
+
+    // &.prop-order {
+    //   left: 0;
+    // }
+
+    // &.prop-remove {
+    //   right: 0;
+    // }
+
+    @for $i from 1 through 4 {
+      &:nth-of-type(#{$i}) {
+        right: $i * $prop-btn-width - $prop-btn-width - 1;
+      }
+    }
+
+    &:first-child {
+      right: 0;
+    }
+  }
+
+  .prop-wrap {
+    position: relative;
+    padding-right: 34px;
+  }
+
+  .field-edit-group {
+    padding: 10px;
+  }
+
+  .prop-inputs,
+  .prop-controls {
+    transition: width 150ms;
+  }
+
+  .prop-inputs {
+    width: 100%;
+  }
+
+  .control-count-2 {
+    .prop-controls {
+      &:hover {
+        width: 62px;
+
+        & + .prop-inputs {
+          width: calc(100% - 31px);
+        }
+      }
+    }
+  }
+
+  &.panel-count-1 {
+    .panel-nav {
+      border-bottom: 1px solid $grey-light;
+
+      .btn {
+        display: none;
+      }
+    }
+
+    .panel-labels {
+      background-color: transparent;
+    }
+  }
+}
+
+.field-edit-group {
+  @extend %no-list-style;
+}
+
+.options-panel {
+  .prop-wrap {
+    margin-bottom: 10px;
+  }
+
+  .input-group {
+    .form-control {
+      width: 50%;
+    }
+  }
+
+  .input-group-addon {
+    line-height: 0;
+  }
+}
+
+.add-remove-attrs {
+  padding: 10px;
+  float: right;
+}

@@ -1,0 +1,83 @@
+.stage-field {
+  position: relative;
+  padding: 5px;
+  transition: background-color 125ms ease-in-out;
+
+  &:hover {
+    box-shadow: 0 0 1px 1px $field-outline-color inset;
+
+    .group-actions {
+      display: block;
+    }
+  }
+
+  &.first-field {
+    border-top-right-radius: $border-radius;
+    border-top-left-radius: $border-radius;
+  }
+
+  &.last-field {
+    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+  }
+
+  [contenteditable] {
+    transition: padding-right 150ms, padding-top 150ms, padding-bottom 150ms;
+
+    &:focus {
+      @extend .form-control-sm;
+
+      border: 1px solid $input-focus;
+      outline: none;
+    }
+  }
+
+  &:before {
+    display: none;
+
+    // remove to animate field title
+    position: absolute;
+    top: 0;
+    padding: 0 10px;
+    right: 0;
+    transform: translateX(-(3 * $field-btn-width));
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: $border-radius;
+  }
+
+  &.editing-field,
+  &.hovering-field {
+    box-shadow: 0 0 1px 1px $field-outline-color inset;
+
+    &:before {
+      line-height: 23px !important;
+      width: 68px !important;
+      border-left: 1px solid $field-outline-color;
+      border-bottom: 1px solid $field-outline-color;
+    }
+  }
+}
+
+.field-edit {
+  display: none;
+  background-color: $grey-lightest;
+  border: 1px solid $grey-light;
+  border-radius: 5px;
+}
+
+.radio,
+.checkbox {
+  label {
+    &[contenteditable] {
+      &:focus {
+        margin-left: 1rem;
+        padding: .125rem .5rem;
+
+        input {
+          transform: translateX(-0.31rem);
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}

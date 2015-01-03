@@ -1,0 +1,168 @@
+.form-builder-controls {
+  float: right;
+  width: 26%;
+  overflow: hidden;
+
+  &.pull-left {
+    .form-actions {
+      float: left;
+    }
+  }
+
+  nav {
+    position: relative;
+    margin-bottom: 1px;
+    padding: 0 24px;
+    overflow: hidden;
+    height: 38px;
+
+    .btn {
+      position: absolute;
+      width: 24px;
+      color: $black;
+      height: 100%;
+      padding: 0;
+      line-height: 0;
+
+      .svg-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      &.next-group {
+        right: 0;
+        top: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &.prev-group {
+        left: 0;
+        top: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+  }
+
+  .panel-count-1 {
+    .panel-nav {
+      display: none;
+    }
+
+    border-bottom-left-radius: 0;
+
+    .control-group {
+      > li {
+        &:first-child {
+          border-radius: 5px 5px 0 0;
+        }
+      }
+    }
+  }
+
+  ul {
+    @extend %no-list-style;
+  }
+
+  .control-group {
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+
+    h5 {
+      margin: 0;
+      color: $gray;
+      line-height: 2.25em;
+      padding: 0 10px;
+      display: inline-block;
+      width: 100%;
+      font-size: 1.1em;
+      letter-spacing: 1px;
+    }
+
+    > li {
+      &:first-child {
+        border-top-right-radius: 0;
+      }
+
+      &:last-child {
+        border-radius: 0 0 0 5px;
+      }
+    }
+
+    .field-control {
+      @extend %field-control;
+    }
+  }
+
+  .control-groups {
+    white-space: nowrap;
+    transition: transform 150ms ease-in-out;
+  }
+
+  .control-group-labels {
+    height: 100%;
+    background: $white;
+    overflow: hidden;
+
+    div {
+      transition: transform 150ms ease-in-out;
+      white-space: nowrap;
+    }
+
+    h4 {
+      display: inline-block;
+      width: 100%;
+    }
+  }
+
+  .form-actions {
+    float: right;
+    margin-top: 1px;
+
+    .svg-icon {
+      fill: $grey;
+
+      &:hover {
+        fill: $black;
+      }
+    }
+
+    button {
+      &:first-child {
+        border-top-left-radius: 0;
+      }
+
+      &:last-child {
+        border-top-right-radius: 0;
+      }
+
+      &.edit-settings {
+        padding: .375rem .5rem;
+        line-height: 0;
+      }
+    }
+
+    .save-form,
+    .clear-form {
+      &:hover {
+        color: $white;
+      }
+    }
+
+    .save-form {
+      &:hover {
+        background-color: $brand-primary;
+      }
+    }
+
+    .clear-form {
+      &:hover {
+        background-color: $brand-danger;
+      }
+    }
+  }
+}

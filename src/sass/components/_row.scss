@@ -1,0 +1,73 @@
+.stage-row,
+.field-control {
+  position: relative;
+  clear: both;
+  margin-left: 0;
+  margin-bottom: 6px;
+  background-color: $white;
+  padding: 5px;
+
+  @include clearfix;
+
+  &.hidden-field {
+    background-color: rgba(255, 255, 255, 0.6);
+  }
+
+  &.control-ghost {
+    padding: 10px;
+  }
+
+  &:first-child {
+    border-top-right-radius: 5px;
+    border-top-left-radius: 0;
+  }
+
+  &:last-child {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+
+  &.hovering-row {
+    // padding: 10px;
+
+    &:first-child {
+      border-top-left-radius: 0;
+    }
+
+    .stage-row {
+      &:before {
+        width: 100px;
+      }
+    }
+  }
+
+  &.editing-row {
+    .row-edit {
+      display: block;
+    }
+  }
+
+  &.resizing-columns {
+    .stage-column {
+      transition: none;
+    }
+  }
+}
+
+.stage-row {
+  transition: background-color 125ms ease-in-out;
+
+  &:before {
+    left: 0;
+  }
+
+  &.editing-row,
+  &.hovering-row {
+    box-shadow: 0 0 1px 1px $row-outline-color inset;
+
+    &:before {
+      box-shadow: 0 0 1px 1px $row-outline-color;
+      width: 80px !important;
+    }
+  }
+}

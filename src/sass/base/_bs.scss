@@ -1,0 +1,35 @@
+// Minimal Bootstrap
+
+.form-control {
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  background-image: none;
+  border: 1px solid $grey-light;
+  border-radius: .25rem;
+
+  &-sm {
+    @extend .form-control;
+
+    padding: .275rem .75rem;
+    font-size: .85rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+
+    &:focus {
+      border: 1px solid $input-focus;
+      outline: none;
+    }
+
+    &label {
+      width: auto;
+      display: inline-block;
+    }
+  }
+
+  &:focus {
+    border-color: $input-focus;
+  }
+}

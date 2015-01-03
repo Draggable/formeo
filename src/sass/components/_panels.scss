@@ -1,0 +1,96 @@
+.panels-wrap {
+  h5 {
+    margin: 0;
+    padding: .55em 0;
+    color: $gray;
+    font-size: 1.1em;
+    display: inline-block;
+    width: 100%;
+  }
+
+  nav {
+    position: relative;
+    margin-bottom: 1px;
+    padding: 0 24px;
+    overflow: hidden;
+    height: 38px;
+
+    .btn {
+      position: absolute;
+      width: 24px;
+      color: $black;
+      height: 100%;
+      padding: 0;
+      line-height: 0;
+
+      .svg-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      &.next-group {
+        right: 0;
+        top: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &.prev-group {
+        left: 0;
+        top: 0;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+  }
+
+  ul {
+    @extend %no-list-style;
+  }
+
+  .panel {
+    vertical-align: top;
+    display: inline-block;
+    width: 100%;
+
+    > li {
+      &:last-child {
+        border-radius: 0 0 5px 5px;
+      }
+    }
+
+    .field-control {
+      @extend %field-control;
+    }
+  }
+
+  .panels {
+    white-space: nowrap;
+    transition-property: transform, height;
+    transition-duration: 150ms;
+    transition-timing-function: ease-in-out;
+  }
+
+  .panel-labels {
+    height: 100%;
+    background: $white;
+    overflow: hidden;
+    text-align: center;
+
+    div {
+      transition: transform 150ms ease-in-out;
+      white-space: nowrap;
+    }
+  }
+}
+
+.options-panel {
+  .prop-inputs {
+    .form-group {
+      width: 33%;
+      display: inline-block;
+    }
+  }
+}
