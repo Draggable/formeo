@@ -291,16 +291,16 @@ export class Controls {
         tag: 'button'
       },
       clearBtn = Object.assign({}, btnTemplate, {
-        content: i18n.actions.clear,
+        content: [dom.icon('bin'), i18n.actions.clear],
         className: ['clear-form']
       }),
       settingsBtn = Object.assign({}, btnTemplate, {
-        content: dom.icon('settings'),
+        content: [dom.icon('settings'), i18n.actions.settings],
         attrs: { title: i18n.settings },
         className: ['edit-settings']
       }),
       saveBtn = Object.assign({}, btnTemplate, {
-        content: i18n.actions.save,
+        content: [dom.icon('floppy-disk'), i18n.actions.save],
         className: ['save-form']
       }),
       formActions = {

@@ -96,6 +96,7 @@
     "sass-loader": "^3.2.0",
     "sortablejs": "git@github.com:kevinchappell/Sortable.git",
     "style-loader": "^0.13.1",
+    "uuid-v4": "^0.1.0",
     "webpack": "^1.13.0",
     "webpack-dev-server": "^1.14.1",
     "webpack-svgstore-plugin": "^2.1.5"

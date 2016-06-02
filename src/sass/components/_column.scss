@@ -2,15 +2,11 @@
   transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
   position: relative;
   background-color: $white;
-  width: 100%;
 
   @extend %no-list-style;
 
   &:first-of-type {
     border-top-right-radius: 5px;
-
-    // border-top-left-radius: 5px;
-
   }
 
   &:last-of-type {
@@ -52,7 +48,9 @@
 
   &.editing-column,
   &.hovering-column {
-    box-shadow: 0 0 1px 1px $column-outline-color inset;
+    box-shadow: 0 0 0 1px $column-outline-color inset;
+
+    // border: 1px solid $column-outline-color;
 
     &:before {
       line-height: 23px !important;
@@ -68,18 +66,6 @@
     .column-edit {
       display: block;
     }
-  }
-
-  &.col-md-6 {
-    width: 50%;
-  }
-
-  &.col-md-4 {
-    width: 33.33333%;
-  }
-
-  &.col-md-3 {
-    width: 25%;
   }
 
   .editing-row & {

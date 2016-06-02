@@ -1,5 +1,11 @@
 .field-edit {
   margin-top: 1.5rem;
+  display: none;
+
+  // background-color: $grey-lightest;
+  // border: 1px solid $grey-light;
+
+  // border-radius: 5px;
 
   &.slide-toggle {
     // height:
@@ -30,19 +36,19 @@
     height: 31px;
 
     .svg-icon {
-      width: 12px;
-      height: 12px;
+      width: 15px;
+      height: 15px;
     }
 
     &:hover,
     :not(.control-count-1) & {
       .prop-control {
-        &:first-child {
-          border-radius: 0 $border-radius $border-radius 0;
-        }
-
         &:last-child {
           border-radius: $border-radius 0 0 $border-radius;
+        }
+
+        &:first-child {
+          border-radius: 0 $border-radius $border-radius 0;
         }
       }
     }
@@ -53,7 +59,7 @@
     padding: 0;
     width: $prop-btn-width;
     height: $prop-btn-width;
-    line-height: 29px;
+    line-height: $prop-btn-width;
     text-align: center;
     position: absolute;
     right: 0;

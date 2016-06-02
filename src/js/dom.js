@@ -86,7 +86,7 @@ export default class DOM {
     }
 
     if (elem.config) {
-      if (elem.config.label) {
+      if (elem.config.label && tag !== 'button') {
         wrap = {
           tag: 'div',
           className: helpers.get(elem, 'config.inputWrap') || 'form-group',
@@ -165,7 +165,7 @@ export default class DOM {
   }
 
   icon(name) {
-    return '<svg class="svg-icon"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-' + name + '"></use></svg>';
+    return '<svg class="svg-icon icon-' + name + '"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-' + name + '"></use></svg>';
   }
 
   processAttrs(elem, element) {
@@ -306,7 +306,7 @@ export default class DOM {
       },
       menuHandle = {
         tag: 'button',
-        content: _this.icon('menu'),
+        content: [_this.icon('menu'), _this.icon('handle')],
         className: item + '-handle btn-secondary btn'
       },
       editToggle = {

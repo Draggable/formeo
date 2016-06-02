@@ -4,7 +4,7 @@
   transition: background-color 125ms ease-in-out;
 
   &:hover {
-    box-shadow: 0 0 1px 1px $field-outline-color inset;
+    // box-shadow: 0 0 0 1px $field-outline-color inset;
 
     .group-actions {
       display: block;
@@ -22,13 +22,14 @@
   }
 
   [contenteditable] {
-    transition: padding-right 150ms, padding-top 150ms, padding-bottom 150ms;
-
     &:focus {
-      @extend .form-control-sm;
+      @extend .form-control-sm !optional;
 
       border: 1px solid $input-focus;
       outline: none;
+      margin-bottom: .2rem;
+      margin-top: -.15rem;
+      padding: .15rem .75rem;
     }
   }
 
@@ -47,7 +48,9 @@
 
   &.editing-field,
   &.hovering-field {
-    box-shadow: 0 0 1px 1px $field-outline-color inset;
+    box-shadow: 0 0 0 1px $field-outline-color inset;
+
+    // border: 1px solid $field-outline-color;
 
     &:before {
       line-height: 23px !important;
@@ -56,13 +59,10 @@
       border-bottom: 1px solid $field-outline-color;
     }
   }
-}
 
-.field-edit {
-  display: none;
-  background-color: $grey-lightest;
-  border: 1px solid $grey-light;
-  border-radius: 5px;
+  &.editing-field {
+    background-color: $grey-lightest;
+  }
 }
 
 .radio,

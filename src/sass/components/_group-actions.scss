@@ -33,6 +33,10 @@
       }
     }
   }
+
+  .icon-menu {
+    display: none;
+  }
 }
 
 .field-actions {
@@ -40,14 +44,14 @@
   right: 0;
   text-align: right;
   transition: width .15s;
-  border-color: $field-outline-color;
-  border-width: 0 0 1px 1px;
-  border-style: solid;
 
   .hovering-field &,
   .editing-field & {
     display: block;
     width: 3 * $field-btn-width;
+    border-color: $field-outline-color;
+    border-width: 0 0 1px 1px;
+    border-style: solid;
   }
 
   border-bottom-left-radius: $border-radius;
@@ -165,6 +169,12 @@
     height: 24px;
   }
 
+  .row-handle {
+    .icon-handle {
+      transform: rotate(90deg);
+    }
+  }
+
   // .column-actions {
   button {
     margin-bottom: 1px;
@@ -203,4 +213,18 @@
   // right: auto;
   // z-index: 90;
   // top: -12px;
+}
+
+[class*='hovering-'] {
+  .group-actions {
+    .svg-icon {
+      &.icon-menu {
+        display: inline-block;
+      }
+
+      &.icon-handle {
+        display: none;
+      }
+    }
+  }
 }

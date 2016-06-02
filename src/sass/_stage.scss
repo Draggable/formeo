@@ -11,6 +11,12 @@
   float: left;
   width: 74%;
   box-sizing: border-box;
+  transition: width 250ms;
+
+  @include breakpoint('phone-lrg') {
+    width: calc(100% - 45px);
+  }
+
 
   .stage {
     @extend %no-list-style;

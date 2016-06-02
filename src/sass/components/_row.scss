@@ -63,7 +63,7 @@
 
   &.editing-row,
   &.hovering-row {
-    box-shadow: 0 0 1px 1px $row-outline-color inset;
+    box-shadow: 0 0 0 1px $row-outline-color inset;
 
     &:before {
       box-shadow: 0 0 1px 1px $row-outline-color;

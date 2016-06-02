@@ -193,12 +193,12 @@ export default class Field {
             controls = {
               tag: 'div',
               className: 'prop-controls',
-              content: [order]
+              content: [remove]
             };
 
           if (propType === 'array') {
             inputs.className.push('input-group-sm', 'input-group');
-            controls.content.push(remove);
+            controls.content.unshift(order);
           }
 
           property.content.push(controls, inputs);

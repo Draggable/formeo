@@ -2,6 +2,7 @@
   float: right;
   width: 26%;
   overflow: hidden;
+  transition: width 250ms;
 
   &.pull-left {
     .form-actions {
@@ -125,6 +126,7 @@
 
     .svg-icon {
       fill: $grey;
+      display: none;
 
       &:hover {
         fill: $black;
@@ -138,11 +140,6 @@
 
       &:last-child {
         border-top-right-radius: 0;
-      }
-
-      &.edit-settings {
-        padding: .375rem .5rem;
-        line-height: 0;
       }
     }
 
@@ -162,6 +159,22 @@
     .clear-form {
       &:hover {
         background-color: $brand-danger;
+      }
+    }
+  }
+
+  @include breakpoint('phone-lrg') {
+    width: 45px;
+
+    .control-group {
+      text-indent: -9999px;
+    }
+
+    .form-actions {
+      text-indent: -9999px;
+
+      .svg-icon {
+        display: inline-block;
       }
     }
   }
