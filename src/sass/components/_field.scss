@@ -22,14 +22,15 @@
   }
 
   [contenteditable] {
-    &:focus {
-      @extend .form-control-sm !optional;
+    transition: border-color 250ms;
+    border-bottom: 1px dashed $gray-lighter;
+    padding: 0 10px 0 0;
 
-      border: 1px solid $input-focus;
+    &:focus {
+      border-style: solid;
+      border-color: $input-focus;
+      border-width: 0 0 1px 0;
       outline: none;
-      margin-bottom: .2rem;
-      margin-top: -.15rem;
-      padding: .15rem .75rem;
     }
   }
 
@@ -61,23 +62,6 @@
   }
 
   &.editing-field {
-    background-color: $grey-lightest;
-  }
-}
-
-.radio,
-.checkbox {
-  label {
-    &[contenteditable] {
-      &:focus {
-        margin-left: 1rem;
-        padding: .125rem .5rem;
-
-        input {
-          transform: translateX(-0.31rem);
-          font-size: 1rem;
-        }
-      }
-    }
+    background-color: $gray-lightest;
   }
 }

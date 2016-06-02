@@ -94,7 +94,13 @@ export class Controls {
             group: 'common',
             icon: 'button',
             id: 'button'
-          }
+          },
+          options: [{
+            label: 'Button',
+            value: 'button',
+            selected: true,
+            disabled: false
+          }]
         }
 
         , {

@@ -18,6 +18,17 @@ body > .site-wrap {
   background-position: 50% 0,50% 0,50% 100%;
   background-repeat: no-repeat;
   background-attachment: fixed;
+  text-align: center;
+  height: 100%;
+  white-space: nowrap;
+
+  &:before {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em;
+  }
 
   &:after {
     content: '';
@@ -112,6 +123,10 @@ legend {
 }
 
 #main_content {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: left;
+
   hr {
     clear: both;
   }

@@ -3,3 +3,17 @@
   width: 24px;
   height: 24px;
 }
+
+.icon-remove {
+  &:hover {
+    fill: $brand-danger;
+  }
+}
+
+button[class*='-remove'] {
+  &:hover {
+    .svg-icon {
+      fill: $brand-danger;
+    }
+  }
+}

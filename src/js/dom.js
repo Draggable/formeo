@@ -50,7 +50,7 @@ export default class DOM {
     // Append Element Content
     if (elem.options) {
       let options = this.processOptions(elem);
-      if (holdsContent) {
+      if (holdsContent && tag !== 'button' ) {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
         delete elem.content;
@@ -101,11 +101,10 @@ export default class DOM {
           label = _this.label(elem);
         }
 
-        wrap.content.push(label, element);
-
         if (labelAfter(elem)) {
-          label.content.unshift(element, ' ');
-          wrap.content = label;
+          wrap.content.push(element, ' ', label);
+        } else {
+          wrap.content.push(label, element);
         }
 
       }
@@ -210,6 +209,7 @@ export default class DOM {
           attrs: option,
           content: option.label
         },
+        button: Object.assign({}, elem, {options: undefined}),
         checkbox: defaultInput,
         radio: defaultInput
       };
@@ -300,13 +300,14 @@ export default class DOM {
   actionButtons(id, item = 'column') {
     let _this = this,
       tag = (item === 'column' ? 'li' : 'div'),
+      moveIcon = (item === 'row') ? _this.icon('move-vertical') : _this.icon('move'),
       btnWrap = {
         tag: 'div',
         className: 'action-btn-wrap'
       },
       menuHandle = {
         tag: 'button',
-        content: [_this.icon('menu'), _this.icon('handle')],
+        content: [moveIcon, _this.icon('handle')],
         className: item + '-handle btn-secondary btn'
       },
       editToggle = {

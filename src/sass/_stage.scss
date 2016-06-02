@@ -9,9 +9,10 @@
 .stage-wrap {
   position: relative;
   float: left;
-  width: 74%;
+  width: calc(74% - 5px);
   box-sizing: border-box;
   transition: width 250ms;
+  margin-right: 5px;
 
   @include breakpoint('phone-lrg') {
     width: calc(100% - 45px);
@@ -21,7 +22,6 @@
   .stage {
     @extend %no-list-style;
 
-    margin-right: 5px;
     min-height: 450px;
     transition-property: background-color, border-color;
     transition-duration: 500ms, 333ms;

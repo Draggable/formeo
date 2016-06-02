@@ -23,3 +23,13 @@
     box-shadow: 0 3px 8px 0 $black;
   }
 }
+
+@keyframes EDIT_PULSE {
+  from, to {
+    border-color: $input-focus;
+  }
+
+  50% {
+    border-color: lighten($input-focus, 20%);
+  }
+}

@@ -147,7 +147,8 @@ var animate = {
       } else {
         elem.style.display = 'none';
         // reset height to be used by slideDown
-        elem.style.height = height + 'px';
+        // elem.style.height = height + 'px';
+        elem.style.height = 'auto';
         if (cb) {
           cb(elem);
         }

@@ -134,14 +134,14 @@ export default class Column {
         dom.remove(row);
       }
     }
+    dom.fieldOrder(column);
     dom.columnWidths(row);
   }
 
   onEnd(evt) {
-    if (evt.from.fType !== 'controlGroup') {
-      dom.fieldOrder(evt.target);
+    if (evt.target) {
+      evt.target.classList.remove('hovering-column');
     }
-    evt.target.classList.remove('hovering-column');
   }
 
   resize(evt) {
