@@ -19,6 +19,7 @@ export default class DOM {
       isInput = (['input', 'textarea', 'select'].indexOf(tag) !== -1),
       element = document.createElement(tag),
       holdsContent = (element.outerHTML.indexOf('/') !== -1),
+      isBlockElement = (!isInput && holdsContent),
       /**
        * Object for mapping contentType to its function
        * @type {Object}
@@ -50,7 +51,7 @@ export default class DOM {
     // Append Element Content
     if (elem.options) {
       let options = this.processOptions(elem);
-      if (holdsContent && tag !== 'button' ) {
+      if (holdsContent && tag !== 'button') {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
         delete elem.content;
@@ -86,11 +87,11 @@ export default class DOM {
     }
 
     if (elem.config) {
-      if (elem.config.label && tag !== 'button') {
+      if (elem.config.label && tag !== 'button' && !isBlockElement && !elem.config.noWrap) {
         wrap = {
           tag: 'div',
           className: helpers.get(elem, 'config.inputWrap') || 'form-group',
-          content: []
+          content: [element]
         };
 
         let label;
@@ -101,10 +102,12 @@ export default class DOM {
           label = _this.label(elem);
         }
 
-        if (labelAfter(elem)) {
-          wrap.content.push(element, ' ', label);
-        } else {
-          wrap.content.push(label, element);
+        if (!elem.config.hideLabel) {
+          if (labelAfter(elem)) {
+            wrap.content.push(' ', label);
+          } else {
+            wrap.content.unshift(label);
+          }
         }
 
       }
@@ -209,7 +212,7 @@ export default class DOM {
           attrs: option,
           content: option.label
         },
-        button: Object.assign({}, elem, {options: undefined}),
+        button: Object.assign({}, elem, { options: undefined }),
         checkbox: defaultInput,
         radio: defaultInput
       };

@@ -33,21 +33,21 @@ export class Controls {
         'html'
       ],
       controlGroups: [{
-          id: 'common',
-          label: i18n.controlGroups.common,
-          order: [
-            'text-input',
-            'checkbox'
-          ]
-        }
-        // , {
-        //   id: 'html',
-        //   label: i18n.controlGroups.html,
-        //   order: [
-        //     'header',
-        //     'block-text'
-        //   ]
-        // }
+        id: 'common',
+        label: i18n.controlGroups.common,
+        order: [
+          'text-input',
+          'checkbox'
+        ]
+      }
+      // , {
+      //   id: 'html',
+      //   label: i18n.controlGroups.html,
+      //   order: [
+      //     'header',
+      //     'block-text'
+      //   ]
+      // }
       ],
       elements: [{
           tag: 'input',
@@ -194,27 +194,32 @@ export class Controls {
         }, {
           tag: 'h1',
           config: {
-            label: 'Header'
+            label: 'Header',
+            hideLabel: true
           },
           meta: {
             group: 'html',
             icon: 'header',
             id: 'header'
-          }
+          },
+          content: 'Header'
         }, {
           tag: 'p',
           config: {
-            label: 'Paragraph'
+            label: 'Paragraph',
+            hideLabel: true
           },
           meta: {
             group: 'html',
             icon: 'paragraph',
             id: 'paragraph'
-          }
+          },
+          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non nibh massa. Curabitur quis dictum lorem. Quisque ac lacus dignissim, malesuada turpis eget, venenatis nunc. '
         }, {
           tag: 'hr',
           config: {
-            label: 'Divider'
+            label: 'Divider',
+            noWrap: true
           },
           meta: {
             group: 'html',
