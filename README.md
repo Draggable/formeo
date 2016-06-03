@@ -17,6 +17,6 @@ new Formeo({ container: '.build-form' });
 ```
 
 ## [Demo](https://kevinchappell.github.io/formeo) ##
-[![form-builder](https://cloud.githubusercontent.com/assets/1457540/13762292/d7fa75ba-ea35-11e5-96d8-14d813885288.gif)](https://kevinchappell.github.io/formeo)
+[![formeo](https://cloud.githubusercontent.com/assets/1457540/15781593/c054681e-299e-11e6-823c-d5ec4b2c03dd.png)](https://kevinchappell.github.io/formeo)
 
-## [Changelog](https://github.com/kevinchappell/formBuilder/blob/master/CHANGELOG.md) ##
+## [Changelog](https://github.com/kevinchappell/formeo/blob/master/CHANGELOG.md) ##
