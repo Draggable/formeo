@@ -8,7 +8,12 @@ var defaults = {
   },
   onAdd: () => {},
   onUpdate: (evt) => {
-    console.log('onUpdate', evt);
+    // console.log('onUpdate', evt);
+  },
+  confirmClearAll: (evt) => {
+    if (window.confirm(evt.confirmationMessage)) {
+      evt.clearAllAction(evt.rows);
+    }
   }
 };
 
@@ -33,9 +38,23 @@ document.addEventListener('formeoUpdate', function(evt) {
   // console.log(events.opts, evt.detail);
 });
 
+document.addEventListener('confirmClearAll', function(evt) {
+  evt = {
+    timeStamp: evt.timeStamp,
+    type: evt.type,
+    rows: evt.detail.rows,
+    rowCount: evt.detail.rows.length,
+    confirmationMessage: evt.detail.confirmationMessage,
+    clearAllAction: evt.detail.clearAllAction,
+    clearBtnCoords: evt.detail.clearBtnCoords
+  };
+
+  events.opts.confirmClearAll(evt);
+});
+
 document.addEventListener('formeoLoaded', function(evt) {
   events.opts.formeoLoaded(evt.detail.formeo);
-  window.controlNav = evt.detail.formeo.controls.controlNav;
+  // window.controlNav = evt.detail.formeo.controls.controlNav;
   // console.log(events.opts, evt.detail);
 });
 

@@ -1,7 +1,8 @@
-import DOM from './dom';
-import helpers from './helpers';
-import { registeredFields } from './data';
 import Sortable from 'sortablejs';
+import { data, dataMap, registeredFields } from '../common/data';
+import helpers from '../common/helpers';
+import events from '../common/events';
+import DOM from '../common/dom';
 import Panels from './panels';
 var dom = new DOM();
 
@@ -21,6 +22,9 @@ var i18n = {
     select: 'Select',
     textarea: 'Textarea',
     checkbox: 'Checkbox'
+  },
+  confirmations: {
+    clearAll: 'Are you sure you want to remove all fields?'
   }
 };
 
@@ -33,21 +37,21 @@ export class Controls {
         'html'
       ],
       controlGroups: [{
-        id: 'common',
-        label: i18n.controlGroups.common,
-        order: [
-          'text-input',
-          'checkbox'
-        ]
-      }
-      // , {
-      //   id: 'html',
-      //   label: i18n.controlGroups.html,
-      //   order: [
-      //     'header',
-      //     'block-text'
-      //   ]
-      // }
+          id: 'common',
+          label: i18n.controlGroups.common,
+          order: [
+            'text-input',
+            'checkbox'
+          ]
+        }
+        , {
+          id: 'html',
+          label: i18n.controlGroups.html,
+          order: [
+            'header',
+            'block-text'
+          ]
+        }
       ],
       elements: [{
           tag: 'input',
@@ -297,13 +301,76 @@ export class Controls {
     return allGroups;
   }
 
+  clearAll(rows) {
+    let stage = rows[0].parentElement;
+    stage.classList.add('removing-all-fields');
+    // var markEmptyArray = [];
+
+    // if (this.opts.prepend) {
+    //   markEmptyArray.push(true);
+    // }
+
+    // if (this.opts.append) {
+    //   markEmptyArray.push(true);
+    // }
+
+    // if (!markEmptyArray.some(elem => elem === true)) {
+    // stage.classList.add('stage-empty');
+    // }
+
+    var outerHeight = 0;
+    helpers.forEach(rows, (i) => {
+      outerHeight += rows[i].offsetHeight + 5;
+    });
+
+    rows[0].style.marginTop = (-outerHeight) + 'px';
+    stage.classList.add('stage-empty');
+
+    setTimeout(function() {
+      while (stage.firstChild) {
+        stage.removeChild(stage.firstChild);
+      }
+      stage.classList.remove('removing-all-fields');
+      dataMap.stage.rows = [];
+      data.save();
+    }, 300);
+  }
+
   formActions() {
-    let btnTemplate = {
+    let _this = this,
+      btnTemplate = {
         tag: 'button'
       },
       clearBtn = Object.assign({}, btnTemplate, {
         content: [dom.icon('bin'), i18n.actions.clear],
-        className: ['clear-form']
+        className: ['clear-form'],
+        action: {
+          click: (evt) => {
+            let stage = document.getElementById(_this.opts.formID + '-stage'),
+              rows = stage.getElementsByClassName('stage-row'),
+              buttonPosition = evt.target.getBoundingClientRect(),
+              bodyRect = document.body.getBoundingClientRect(),
+              coords = {
+                pageX: buttonPosition.left + (buttonPosition.width / 2),
+                pageY: (buttonPosition.top - bodyRect.top) - 12
+              };
+
+            if (rows.length) {
+              events.confirmClearAll = new CustomEvent('confirmClearAll', {
+                detail: {
+                  confirmationMessage: i18n.confirmations.clearAll,
+                  clearAllAction: _this.clearAll,
+                  clearBtnCoords: coords,
+                  rows: rows
+                }
+              });
+              document.dispatchEvent(events.confirmClearAll);
+
+            } else {
+              alert('There are no fields to clear');
+            }
+          }
+        }
       }),
       settingsBtn = Object.assign({}, btnTemplate, {
         content: [dom.icon('settings'), i18n.actions.settings],

@@ -1,9 +1,8 @@
-import DOM from './dom';
-import { registeredFields } from './data';
-import animate from './animation';
-import helpers from './helpers';
+import { data, dataMap, registeredFields } from '../common/data';
+import animate from '../common/animation';
+import helpers from '../common/helpers';
+import DOM from '../common/dom';
 import Panels from './panels';
-import { data, dataMap } from './data';
 
 var dom = new DOM();
 

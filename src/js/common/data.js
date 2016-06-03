@@ -18,14 +18,26 @@ var registeredFields = {};
 var data = {
   init: (opts, formData) => {
     _data.opts = Object.assign({}, opts);
-
-    if (formData) {
-      _data.formData = (typeof formData === 'string') ? JSON.parse(formData) : formData;
+    let processFormData = (formData) => {
+      _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
       _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
       data.loadMap();
+    };
+
+    if (formData) {
+      processFormData(formData);
+    } else if (window.sessionStorage) {
+      formData = window.sessionStorage.getItem('formData');
+      console.log(formData);
+      if (formData) {
+        processFormData(formData);
+      } else {
+        _data.formData = {};
+      }
     } else {
       _data.formData = {};
     }
+
     _data.formData.id = _data.opts.formID || helpers.uuid();
     _data.opts.formID = _data.formData.id;
 
@@ -60,12 +72,12 @@ var data = {
   //   return allColumnData;
   // },
 
-  jsonSave: (stage) => {
-    stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
-    _data.formData.rows = data.saveMap();
-    return _data.formData;
-  },
 
+
+  /**
+   * Converts dataMap into formData Object
+   * @return {Object} formData JS Object
+   */
   saveMap: () => {
     let map = {
       rows: (stage) => {
@@ -137,19 +149,29 @@ var data = {
     map.rows();
   },
 
-  save: () => {
-    var stage = document.getElementById(_data.formData.id + '-stage');
-    let doSave = {
-      // xml: _this.xmlSave,
-      json: data.jsonSave
-    };
+  jsonSave: (stage) => {
+    _data.formData.rows = data.saveMap();
+    stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
+    return _data.formData;
+  },
 
-    // console.log(JSON.stringify(_data.formData));
+  save: () => {
+    console.log('formSaved');
+    var stage = document.getElementById(_data.formData.id + '-stage'),
+      doSave = {
+        // xml: _this.xmlSave,
+        json: data.jsonSave
+      },
+      formData = doSave[_data.opts.dataType](stage);
 
     //trigger formSaved event
     document.dispatchEvent(events.formeoUpdate);
-    // document.dispatchEvent(formBuilder.events.formSaved);
-    return doSave[_data.opts.dataType](stage);
+
+    if (window.sessionStorage) {
+      window.sessionStorage.setItem('formData', window.JSON.stringify(formData));
+    }
+
+    return formData;
   },
 
   get: () => {

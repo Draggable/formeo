@@ -1,6 +1,6 @@
-import DOM from './dom';
-import helpers from './helpers';
 import Sortable from 'sortablejs';
+import helpers from '../common/helpers';
+import DOM from '../common/dom';
 var dom = new DOM();
 
 var defaults = {

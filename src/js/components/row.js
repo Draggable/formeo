@@ -1,8 +1,8 @@
-import DOM from './dom';
-import animate from './animation';
-import helpers from './helpers';
 import Sortable from 'sortablejs';
-import { data, dataMap } from './data';
+import DOM from '../common/dom';
+import animate from '../common/animation';
+import helpers from '../common/helpers';
+import { data, dataMap } from '../common/data';
 
 var dom = new DOM();
 
@@ -12,7 +12,7 @@ var i18n = {
   panelLabels: {
     attrs: 'Attrs',
     meta: 'Meta',
-    options: 'Options',
+    options: 'Options'
   },
   attrs: {
     type: 'Type',

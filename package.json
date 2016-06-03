@@ -1,34 +1,27 @@
 {
-  "name": "formBuilder",
-  "version": "1.9.27",
-  "main": "dist/form-builder.js",
+  "name": "formeo",
+  "version": "0.1.0",
+  "main": "dist/formeo.min.js",
   "files": [
-    "dist/form-builder.js",
-    "dist/form-builder.min.js",
-    "dist/form-builder.css",
-    "dist/form-builder.min.css",
-    "dist/form-render.css",
-    "dist/form-render.js",
-    "dist/form-render.min.css",
-    "dist/form-render.min.js"
+    "dist/formeo.min.js",
+    "dist/formeo.min.css"
   ],
-  "homepage": "http://kevinchappell.github.io/formBuilder/",
+  "homepage": "http://kevinchappell.github.io/formeo/",
   "repository": {
     "type": "git",
-    "url": "http://github.com/kevinchappell/formBuilder"
+    "url": "http://github.com/kevinchappell/formeo"
   },
   "author": "Kevin Chappell <kevin.b.chappell@gmail.com>",
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/kevinchappell/formBuilder/issues"
+    "url": "https://github.com/kevinchappell/formeo/issues"
   },
-  "description": "A jQuery plugin for drag and drop form building",
+  "description": "A zero dependency JavaScript module for drag and drop form creation.",
   "keywords": [
-    "jquery-plugin",
-    "forms",
     "drag and drop",
     "form builder",
-    "form create"
+    "form maker",
+    "forms"
   ],
   "license": "MIT",
   "ignore": [
@@ -41,21 +34,12 @@
       "test": [
         "test/**/*.spec.js"
       ],
-      "formBuilder": {
-        "js": "src/js/form-builder.js",
+      "formeo": {
+        "js": "src/js/formeo.js",
         "icons": "src/icons/**/*.svg",
         "fonts": "src/fonts/fontello",
         "sass": [
-          "src/sass/form-builder.scss"
-        ]
-      },
-      "formRender": {
-        "js": [
-          "src/js/kc-toggle.js",
-          "src/js/form-render.js"
-        ],
-        "sass": [
-          "src/sass/form-render.scss"
+          "src/sass/formeo.scss"
         ]
       },
       "site": [
@@ -71,7 +55,7 @@
   },
   "scripts": {
     "prestart": "npm update",
-    "icons": "webpack --icons && cp -b dist/form-builder-sprite.svg public/assets/img",
+    "icons": "webpack --icons && cp -b dist/formeo-sprite.svg public/assets/img",
     "build": "webpack --progress -p --colors",
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",

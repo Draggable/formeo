@@ -1,8 +1,9 @@
-.form-builder-controls {
+.formeo-controls {
   float: right;
   width: 26%;
   overflow: hidden;
-  transition: width 250ms;
+
+  // transition: width 250ms;
 
   &.pull-left {
     .form-actions {
@@ -101,7 +102,6 @@
 
   .control-groups {
     white-space: nowrap;
-    transition: transform 150ms ease-in-out;
   }
 
   .control-group-labels {
@@ -110,7 +110,6 @@
     overflow: hidden;
 
     div {
-      transition: transform 150ms ease-in-out;
       white-space: nowrap;
     }
 

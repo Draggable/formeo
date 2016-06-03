@@ -350,6 +350,8 @@ export default class DOM {
                 }
               }
 
+              // add item save function
+
               console.log(`${item} removed`);
             });
           }

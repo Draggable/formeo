@@ -1,11 +1,11 @@
-import DOM from './dom';
+import Sortable from 'sortablejs';
+import { data, dataMap } from '../common/data';
+import animate from '../common/animation';
+import helpers from '../common/helpers';
+import DOM from '../common/dom';
 import Row from './row';
 import Column from './column';
 import Field from './field';
-import Sortable from 'sortablejs';
-import helpers from './helpers';
-import animate from './animation';
-import { data, dataMap } from './data';
 var dom = new DOM();
 
 var stageOpts;

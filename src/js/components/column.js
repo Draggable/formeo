@@ -1,8 +1,8 @@
-import DOM from './dom';
-import helpers from './helpers';
 import Sortable from 'sortablejs';
+import { dataMap } from '../common/data';
+import helpers from '../common/helpers';
+import DOM from '../common/dom';
 import Field from './field';
-import { dataMap } from './data';
 
 
 var dom = new DOM();

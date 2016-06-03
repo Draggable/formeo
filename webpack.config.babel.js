@@ -22,10 +22,10 @@ var makeIcons = (process.argv.indexOf('--icons') !== -1);
 var production = (process.argv.indexOf('-p') !== -1);
 
 var icons = new SvgStore(
-  path.join(__dirname, pkg.config.files.formBuilder.icons),
+  path.join(__dirname, pkg.config.files.formeo.icons),
   '.', {
-    name: 'form-builder-sprite.svg',
-    chunk: 'form-builder',
+    name: 'formeo-sprite.svg',
+    chunk: 'formeo',
     svgoOptions: {
       plugins: [
         { cleanupAttrs: true },
@@ -49,7 +49,7 @@ var clean = new CleanWebpackPlugin(['dist/*']);
 
 var webpackConfig = {
   entry: {
-    'form-builder': path.join(__dirname, pkg.config.files.formBuilder.js)
+    'formeo': path.join(__dirname, pkg.config.files.formeo.js)
   },
   output: {
     path: path.join(__dirname, 'dist'),

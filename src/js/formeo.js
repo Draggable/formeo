@@ -1,12 +1,12 @@
 'use strict';
-import '../sass/form-builder.scss';
+import '../sass/formeo.scss';
 import polyfills from './polyfills';
-import helpers from './helpers';
-import DOM from './dom';
-import { Controls } from './controls';
-import Stage from './stage';
-import { data } from './data';
-import events from './events';
+import helpers from './common/helpers';
+import { data } from './common/data';
+import events from './common/events';
+import DOM from './common/dom';
+import { Controls } from './components/controls';
+import Stage from './components/stage';
 
 var dom = new DOM();
 
@@ -14,10 +14,10 @@ var dom = new DOM();
 var defaults = {
   dataType: 'json',
   debug: false,
-  className: 'form-builder',
-  container: '.form-builder',
-  prefix: 'form-builder-',
-  svgSprite: 'assets/img/form-builder-sprite.svg',
+  className: 'formeo',
+  container: '.formeo',
+  prefix: 'formeo-',
+  svgSprite: 'assets/img/formeo-sprite.svg',
   events: {}
 };
 
@@ -28,7 +28,6 @@ var _formeo = {
     formeo.opts = Object.assign({}, defaults, options);
     data.init(formeo.opts, formData);
     formeo.formData = data.get();
-    // console.log(formeo.formData);
     formeo.opts.formID = formeo.formData.id;
     _formeo.stage = new Stage(formeo.opts);
     formeo.controls = new Controls(formeo.opts);
