@@ -24,7 +24,7 @@ export default class Stage {
     let stageWrap = this.dom,
       stage = stageWrap.firstChild;
 
-    if (dataMap.stage.rows) {
+    if (dataMap.stage.rows && dataMap.stage.rows.length) {
       this.loadRows(stage);
       stage.classList.remove('stage-empty');
     }
