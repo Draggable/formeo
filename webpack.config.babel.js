@@ -101,7 +101,7 @@ var webpackConfig = {
   },
   devServer: {
     hot: true,
-    contentBase: 'public/',
+    contentBase: 'demo/',
     progress: true,
     colors: true,
     noInfo: true
