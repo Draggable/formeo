@@ -20,6 +20,7 @@ var data = {
     _data.opts = Object.assign({}, opts);
     let processFormData = (formData) => {
       _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
+      console.log(_data.formData);
       _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
       data.loadMap();
     };
@@ -28,7 +29,6 @@ var data = {
       processFormData(formData);
     } else if (window.sessionStorage) {
       formData = window.sessionStorage.getItem('formData');
-      console.log(formData);
       if (formData) {
         processFormData(formData);
       } else {
@@ -78,17 +78,22 @@ var data = {
    * Converts dataMap into formData Object
    * @return {Object} formData JS Object
    */
-  saveMap: () => {
+  saveMap: (group, id) => {
     let map = {
-      rows: (stage) => {
-        return helpers.map(stage.rows, (i) => {
-          let rowID = stage.rows[i],
-            row = dataMap.rows[rowID];
-          row.id = rowID;
-          return Object.assign({}, row, {
-            columns: map.columns(rowID)
+      rows: () => {
+        let rows = dataMap.stage.rows,
+          formDataRows = helpers.map(rows, (i) => {
+            let rowID = rows[i],
+              row = dataMap.rows[rowID];
+            row.id = rowID;
+            return Object.assign({}, row, {
+              columns: map.columns(rowID)
+            });
           });
-        });
+
+        _data.formData.rows = formDataRows;
+
+        return formDataRows;
       },
       columns: (rowID) => {
         let columns = dataMap.rows[rowID].columns;
@@ -109,17 +114,40 @@ var data = {
           field.id = fieldID;
           return field;
         });
+      },
+      attrs: (fieldID) => {
+        let fieldLink = data.formDataLink(fieldID);
+        fieldLink.attrs = dataMap.fields[fieldID].attrs;
+
+        return fieldLink.attrs;
       }
     };
-    return map.rows(dataMap.stage);
+
+    return map[group](id);
+  },
+
+  // Provides a map to a field in formData
+  formDataLink: (fieldID) => {
+    let field = dataMap.fields[fieldID],
+      column = dataMap.columns[field.parent],
+      row = dataMap.rows[column.parent],
+      fieldIndex = column.fields.indexOf(field.id),
+      columnIndex = row.columns.indexOf(column.id),
+      rowIndex = dataMap.stage.rows.indexOf(row.id);
+    row = _data.formData.rows[rowIndex];
+    column = row.columns[columnIndex];
+    field = column.fields[fieldIndex];
+
+    return field;
   },
 
   loadMap: () => {
     let map = {
       rows: () => {
+        let formData = helpers.copyObj(_data.formData);
         // map column ids to rows
-        dataMap.stage.rows = helpers.map(_data.formData.rows, (i) => {
-          let formDataRow = _data.formData.rows[i],
+        dataMap.stage.rows = helpers.map(formData.rows, (i) => {
+          let formDataRow = formData.rows[i],
             rowID = formDataRow.id;
           dataMap.rows[rowID] = formDataRow;
           map.columns(formDataRow);
@@ -149,29 +177,31 @@ var data = {
     map.rows();
   },
 
-  jsonSave: (stage) => {
-    _data.formData.rows = data.saveMap();
+  jsonSave: (group, id) => {
+
+    let stage = document.getElementById(_data.formData.id + '-stage');
+    data.saveMap(group, id);
     stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
     return _data.formData;
   },
 
-  save: () => {
-    console.log('formSaved');
-    var stage = document.getElementById(_data.formData.id + '-stage'),
-      doSave = {
-        // xml: _this.xmlSave,
-        json: data.jsonSave
-      },
-      formData = doSave[_data.opts.dataType](stage);
+  save: (group = 'rows', id) => {
+    console.log('Saved: ' + group);
+    var doSave = {
+      // xml: _this.xmlSave,
+      json: data.jsonSave
+    };
+
+    doSave[_data.opts.dataType](group, id);
 
     //trigger formSaved event
     document.dispatchEvent(events.formeoUpdate);
 
     if (window.sessionStorage) {
-      window.sessionStorage.setItem('formData', window.JSON.stringify(formData));
+      window.sessionStorage.setItem('formData', window.JSON.stringify(_data.formData));
     }
 
-    return formData;
+    return _data.formData;
   },
 
   get: () => {

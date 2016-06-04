@@ -125,7 +125,8 @@ var animate = {
         requestAnimationFrame(slideDown);
       } else {
         // reset height to be used by slideUp
-        elem.style.height = height + 'px';
+        // elem.style.height = height + 'px';
+        elem.style.height = 'auto';
         if (cb) {
           cb(elem);
         }

@@ -46,7 +46,7 @@ document.addEventListener('confirmClearAll', function(evt) {
     rowCount: evt.detail.rows.length,
     confirmationMessage: evt.detail.confirmationMessage,
     clearAllAction: evt.detail.clearAllAction,
-    clearBtnCoords: evt.detail.clearBtnCoords
+    btnCoords: evt.detail.btnCoords
   };
 
   events.opts.confirmClearAll(evt);

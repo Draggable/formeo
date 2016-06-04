@@ -226,17 +226,17 @@ export default class DOM {
   }
 
   label(elem, fMap) {
-    let type = helpers.get(elem, 'attrs.type'),
-      fieldLabel = {
-        tag: 'label',
-        attrs: {},
-        content: [elem.config.label],
-        action: {}
-      };
+    let type = helpers.get(elem, 'attrs.type');
+    let fieldLabel = {
+      tag: 'label',
+      attrs: {},
+      content: [elem.config.label],
+      action: {}
+    };
 
-    if (type !== 'radio' && type !== 'checkbox') {
-      fieldLabel.attrs.for = elem.id || '';
-    }
+    // if (type !== 'radio' && type !== 'checkbox') {
+    //   fieldLabel.attrs.for = elem.id || '';
+    // }
 
     if (fMap) {
       fieldLabel.attrs.contenteditable = true;
@@ -297,6 +297,13 @@ export default class DOM {
       type = this.contentType(elem),
       element = getElement[type]();
 
+    return element;
+  }
+
+  empty(element) {
+    while (element.firstChild) {
+      element.removeChild(element.firstChild);
+    }
     return element;
   }
 

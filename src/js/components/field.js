@@ -1,6 +1,8 @@
 import { data, dataMap, registeredFields } from '../common/data';
 import animate from '../common/animation';
 import helpers from '../common/helpers';
+import events from '../common/events';
+import actions from '../common/actions';
 import DOM from '../common/dom';
 import Panels from './panels';
 
@@ -28,6 +30,11 @@ var i18n = {
     group: 'Group',
     icon: 'Icon'
   },
+  action: {
+    add: {
+      attrs: 'What attribute would you like to add?'
+    }
+  },
   field: 'Field',
   options: 'Options',
   placeholders: {}
@@ -40,7 +47,9 @@ export default class Field {
 
     _this.fieldData = dataMap.fields[dataID] || Object.assign({}, registeredFields[dataID]);
     _this.fieldID = _this.fieldData.id || helpers.uuid();
+    dataMap.fields[_this.fieldID] = _this.fieldData;
     _this.fieldData.id = _this.fieldID;
+    _this.preview = dom.create(_this.fieldPreview());
 
     let field = {
       tag: 'li',
@@ -49,11 +58,10 @@ export default class Field {
       },
       id: _this.fieldID,
       content: [
-
         dom.actionButtons(_this.fieldID, 'field'), // fieldEdit window
         // _this.actionButtons(), // fieldEdit window
         _this.fieldEdit(), // fieldEdit window
-        _this.fieldPreview() // fieldPreview
+        _this.preview // fieldPreview
       ],
       dataID: dataID,
       dataset: {
@@ -65,10 +73,18 @@ export default class Field {
         input: (evt) => {
           if (evt.target.fMap) {
             if (evt.target.contentEditable === 'true') {
-              helpers.set(_this.fieldData, evt.target.fMap, evt.target.innerHTML);
+              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
             } else {
-              helpers.set(_this.fieldData, evt.target.fMap, evt.target.value);
+              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.value);
             }
+            data.save('attrs', _this.fieldID);
+            // throttle this for sure
+            _this.updatePreview();
+          }
+        },
+        change: (evt) => {
+          if (evt.target.fMap) {
+            console.log('change');
           }
         }
       }
@@ -76,53 +92,16 @@ export default class Field {
 
     _this.elem = field = dom.create(field);
 
-    dataMap.fields[field.id] = _this.fieldData;
-
     return field;
   }
 
-  actionButtons() {
+  updatePreview() {
     let _this = this,
-      fieldEditToggle = {
-        tag: 'button',
-        content: dom.icon('menu'),
-        attrs: {
-          className: 'field-edit-toggle btn btn-secondary'
-        },
-        action: {
-          click: (evt) => {
-            let field = document.getElementById(_this.fieldID),
-              editWindow = field.querySelector('.field-edit');
-            animate.slideToggle(editWindow, 333);
-            animate.slideToggle(editWindow.nextSibling, 333);
-            field.classList.toggle('editing');
-          }
-        }
-      },
-      fieldRemove = {
-        tag: 'button',
-        content: dom.icon('remove'),
-        attrs: {
-          className: 'field-remove btn btn-secondary'
-        },
-        action: {
-          click: () => {
-            let element = document.getElementById(this.fieldID);
-            animate.slideUp(element, 333, (elem) => {
-              _this.onRemove(elem);
-            });
-          }
-        }
-      },
-      fieldActions = {
-        tag: 'div',
-        attrs: {
-          className: 'group-actions field-actions'
-        },
-        content: [fieldEditToggle, fieldRemove]
-      };
+      newPreview = dom.create(dataMap.fields[_this.fieldID], true);
+    dom.empty(_this.preview);
+    _this.preview.appendChild(newPreview);
 
-    return fieldActions;
+    return newPreview;
   }
 
   /**
@@ -134,7 +113,6 @@ export default class Field {
   editPanel(panelType, dataObj) {
     let _this = this,
       propType,
-      makePanel,
       panel;
 
     if (dataObj[panelType]) {
@@ -146,66 +124,19 @@ export default class Field {
               'field-edit-' + panelType
             ]
           },
-          action: {
-            input: (evt) => {
-              if (evt.target.fMap) {
-                helpers.set(_this.fieldData, evt.target.fMap, evt.target.value);
-                console.log(_this.fieldData);
-              }
-            }
-          },
+          // action: {
+          //   input: (evt) => {
+          //     if (evt.target.fMap) {
+          //       helpers.set(_this.fieldData, evt.target.fMap, evt.target.value);
+          //       console.log(_this.fieldData);
+          //     }
+          //   }
+          // },
           editGroup: panelType,
           isSortable: (panelType === 'options'),
           content: []
         },
-        propType = dom.contentType(dataObj[panelType]),
-        makePanel = (i, dataProp) => {
-          dataProp = (typeof dataProp === 'string') ? dataProp : i;
-          let inputs = {
-              tag: 'div',
-              className: ['prop-inputs'],
-              content: _this.editPanelInputs(dataProp, dataObj[panelType][dataProp], panelType)
-            },
-            property = {
-              tag: 'li',
-              className: [`${panelType}-${dataProp}-wrap`, 'prop-wrap'],
-              id: helpers.uuid(),
-              content: []
-            },
-            order = {
-              tag: 'span',
-              className: 'btn btn-secondary prop-order prop-control',
-              content: dom.icon('move-vertical')
-            },
-            remove = {
-              tag: 'span',
-              className: 'btn btn-secondary prop-remove prop-control',
-              action: {
-                click: (evt) => {
-                  animate.slideUp(document.getElementById(property.id), 250, (elem) => {
-                    dom.remove(elem);
-                  });
-                }
-              },
-              content: dom.icon('remove')
-            },
-            controls = {
-              tag: 'div',
-              className: 'prop-controls',
-              content: [remove]
-            };
-
-          if (propType === 'array') {
-            inputs.className.push('input-group-sm', 'input-group');
-            controls.content.unshift(order);
-          }
-
-          property.content.push(controls, inputs);
-
-          property.className.push('control-count-' + controls.content.length);
-
-          panel.content.push(property);
-        };
+        propType = dom.contentType(dataObj[panelType]);
 
       let panelArray;
       if (propType === 'array') {
@@ -214,18 +145,87 @@ export default class Field {
         panelArray = Object.keys(dataObj[panelType]);
       }
 
-      helpers.forEach(panelArray, makePanel);
+      panel.content = helpers.map(panelArray, (i) => {
+        let args = {
+          i,
+          dataProp: panelArray[i],
+          dataObj,
+          panelType,
+          propType
+        };
+        return _this.panelContent(args);
+      });
 
     }
     return panel;
   }
 
-  editPanelInputs(prop, propVal, panelType) {
+  panelContent(args) {
+    let _this = this,
+      dataProp = (typeof args.dataProp === 'string') ? args.dataProp : args.i,
+      id = helpers.uuid(),
+      inputs = {
+        tag: 'div',
+        className: ['prop-inputs'],
+        content: _this.editPanelInputs(dataProp, args.dataObj[args.panelType][dataProp], args.panelType, id)
+      },
+      property = {
+        tag: 'li',
+        className: [`${args.panelType}-${dataProp}-wrap`, 'prop-wrap'],
+        id: id,
+        content: []
+      },
+      order = {
+        tag: 'span',
+        className: 'btn btn-secondary prop-order prop-control',
+        content: dom.icon('move-vertical')
+      },
+      remove = {
+        tag: 'span',
+        className: 'btn btn-secondary prop-remove prop-control',
+        action: {
+          click: (evt) => {
+            animate.slideUp(document.getElementById(property.id), 250, (elem) => {
+              let field = document.getElementById(_this.fieldID),
+                editGroup = field.querySelector('.field-edit-group'),
+                panel = editGroup.parentElement;
+              dom.remove(elem);
+              panel.parentElement.style.height = dom.getStyle(panel, 'height');
+              delete dataMap.fields[_this.fieldID][args.panelType][dataProp];
+              data.save('attrs', _this.fieldID);
+              dom.empty(_this.preview);
+              let newPreview = dom.create(dataMap.fields[_this.fieldID], true);
+              _this.preview.appendChild(newPreview);
+            });
+          }
+        },
+        content: dom.icon('remove')
+      },
+      controls = {
+        tag: 'div',
+        className: 'prop-controls',
+        content: [remove]
+      };
+
+    if (args.propType === 'array') {
+      inputs.className.push('input-group-sm', 'input-group');
+      controls.content.unshift(order);
+    }
+
+    property.content.push(controls, inputs);
+
+    property.className.push('control-count-' + controls.content.length);
+
+    return property;
+  }
+
+  editPanelInputs(prop, propVal, panelType, id) {
     let _this = this,
       inputs = [],
       processProperty = (key, val) => {
         let propType = dom.contentType(val),
           propIsNum = (typeof prop === 'number'),
+          fMap = propIsNum ? `${panelType}[${prop}].${key}` : panelType + '.' + key,
           typeAttrs = (key, val, type) => {
             let attrs = {
               string: {
@@ -234,9 +234,9 @@ export default class Field {
                 value: val,
                 placeholder: i18n.placeholders[key] || helpers.capitalize(key)
               },
-              boolean: {
+              'boolean': {
                 type: 'checkbox',
-                value: val
+                value: val.toString()
               },
               number: {
                 type: 'number',
@@ -247,15 +247,15 @@ export default class Field {
           },
           propertyInputs = {
             string: (key, val) => {
-              let fMap = panelType + '.' + key;
 
               let input = {
                 tag: 'input',
                 attrs: typeAttrs(key, val, 'string'),
-                fMap: propIsNum ? `${panelType}[${prop}].${key}` : fMap
+                fMap: fMap,
+                id: prop + '-' + id
               };
 
-              if (i18n[panelType] && !propIsNum) {
+              if (!propIsNum) {
                 input.config = {
                   label: i18n[panelType][key] || helpers.capitalize(key)
                 };
@@ -263,13 +263,19 @@ export default class Field {
 
               return input;
             },
-            boolean: (key, val) => {
+            'boolean': (key, val) => {
               let input = {
                 tag: 'input',
-                attrs: typeAttrs(key, val, 'boolean')
+                attrs: typeAttrs(key, val, 'boolean'),
+                fMap: fMap,
+                id: prop + '-' + id
               };
 
-              if (i18n[panelType] && !propIsNum) {
+              if (val) {
+                input.attrs.checked = val;
+              }
+
+              if (!propIsNum) {
                 input.config = {
                   label: i18n[panelType][key] || helpers.capitalize(key)
                 };
@@ -295,15 +301,12 @@ export default class Field {
                 }
               }
 
-              // console.log(inputs);
-
               return inputs;
             }
           };
 
         propertyInputs.number = propertyInputs.string;
 
-        // console.log(propType, key, val);
 
         return propertyInputs[propType](key, val);
       };
@@ -314,12 +317,66 @@ export default class Field {
   }
 
   panelEditButtons(type) {
-    let addAttr = {
+    let _this = this,
+      addBtn = {
         tag: 'button',
         content: i18n.panelEditButtons[type],
-        actions: {
-          click: () => {
+        action: {
+          click: (evt) => {
+            let buttonPosition = evt.target.getBoundingClientRect(),
+              bodyRect = document.body.getBoundingClientRect(),
+              coords = {
+                pageX: buttonPosition.left + (buttonPosition.width / 2),
+                pageY: (buttonPosition.top - bodyRect.top) - 12
+              };
 
+            let addAttrEvt = {
+              addAttributeMessage: i18n.action.add[type],
+              addAttributeValMessage: i18n.action.add[type],
+              addAttributeAction: (attr, val) => {
+                let field = document.getElementById(_this.fieldID),
+                  editGroup = field.querySelector('.field-edit-group'),
+                  panel = editGroup.parentElement,
+                  safeAttr = helpers.hyphenCase(attr);
+
+                i18n[type][safeAttr] = helpers.capitalize(attr);
+
+                try {
+                  dataMap.fields[_this.fieldID][type][safeAttr] = window.JSON.parse(val);
+                } catch (e) {
+                  dataMap.fields[_this.fieldID][type][safeAttr] = val;
+                }
+
+                let args = {
+                  dataObj: dataMap.fields[_this.fieldID],
+                  dataProp: safeAttr,
+                  i: Object.keys(dataMap.fields[_this.fieldID][type]).length,
+                  panelType: type,
+                  propType: dom.contentType(val)
+                };
+
+                editGroup.appendChild(dom.create(_this.panelContent(args)));
+                panel.parentElement.style.height = dom.getStyle(panel, 'height');
+
+              },
+              btnCoords: coords
+            };
+
+            let customEvt = new CustomEvent('onAdd' + helpers.capitalize(type), {
+              detail: addAttrEvt
+            });
+
+            // Run Action Hook
+            actions.add[type](addAttrEvt);
+
+            // Fire Event
+            document.dispatchEvent(customEvt);
+
+            // Save Fields Attrs
+            data.save('attrs', _this.fieldID);
+            dom.empty(_this.preview);
+            let newPreview = dom.create(dataMap.fields[_this.fieldID], true);
+            _this.preview.appendChild(newPreview);
           }
         }
       },
@@ -328,7 +385,7 @@ export default class Field {
         attrs: {
           className: 'add-remove-attrs'
         },
-        content: addAttr
+        content: addBtn
       };
 
     return panelEditButtons;
@@ -384,7 +441,8 @@ export default class Field {
 
   fieldPreview() {
     let _this = this,
-      fieldData = helpers.extend({}, _this.fieldData);
+      fieldData = helpers.extend({}, dataMap.fields[_this.fieldID]);
+    // fieldData = helpers.extend({}, _this.fieldData);
 
     fieldData.id = 'prev-' + _this.fieldID;
 

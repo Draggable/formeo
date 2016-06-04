@@ -4,6 +4,7 @@ import polyfills from './polyfills';
 import helpers from './common/helpers';
 import { data } from './common/data';
 import events from './common/events';
+import actions from './common/actions';
 import DOM from './common/dom';
 import { Controls } from './components/controls';
 import Stage from './components/stage';
@@ -33,6 +34,7 @@ var _formeo = {
     formeo.controls = new Controls(formeo.opts);
     helpers.loadIcons(formeo.opts.svgSprite);
     events.init(formeo.opts.events);
+    actions.init(formeo.opts.actions);
     this.render();
     return formeo;
   },

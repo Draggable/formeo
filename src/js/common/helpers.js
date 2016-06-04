@@ -100,7 +100,11 @@ const helpers = {
       callback.call(scope, i, array[i]);
     }
   },
-
+  // Added because Object.assign is mutating objects.
+  // Maybe a babel polyfill issue?
+  copyObj: (obj) => {
+    return (window.JSON.parse(window.JSON.stringify(obj)));
+  },
   // basic map that can be used on nodeList
   map: (array, callback, scope) => {
     let newArray = [],

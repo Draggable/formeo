@@ -90,6 +90,9 @@ export default class Stage {
   createColumn(evt) {
     let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id),
       column = new Column();
+
+    dataMap.fields[field.id].parent = column.id;
+
     field.classList.add('first-field');
     column.appendChild(field);
     dataMap.columns[column.id].fields.push(field.id);
@@ -101,6 +104,9 @@ export default class Stage {
       column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt),
       row = new Row();
 
+    dataMap.columns[column.id].parent = row.id;
+
+    dataMap.rows[row.id].parent = stageOpts.formID;
     row.appendChild(column);
 
     return row;

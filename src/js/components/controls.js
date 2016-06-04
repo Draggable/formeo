@@ -113,6 +113,10 @@ export class Controls {
           config: {
             label: 'Select'
           },
+          attrs: {
+            className: 'form-control',
+            disabled: true
+          },
           meta: {
             group: 'common',
             icon: 'select',
@@ -360,7 +364,7 @@ export class Controls {
                 detail: {
                   confirmationMessage: i18n.confirmations.clearAll,
                   clearAllAction: _this.clearAll,
-                  clearBtnCoords: coords,
+                  btnCoords: coords,
                   rows: rows
                 }
               });
