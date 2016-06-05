@@ -1,6 +1,6 @@
 'use strict';
 import '../sass/formeo.scss';
-import polyfills from './polyfills';
+// import polyfills from './polyfills';
 import helpers from './common/helpers';
 import { data } from './common/data';
 import events from './common/events';

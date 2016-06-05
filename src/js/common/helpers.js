@@ -106,15 +106,20 @@ const helpers = {
     return (window.JSON.parse(window.JSON.stringify(obj)));
   },
   // basic map that can be used on nodeList
-  map: (array, callback, scope) => {
+  map: (arr, callback, scope) => {
     let newArray = [],
       mapCallback = (i) => {
         newArray.push(callback(i));
       };
 
-    helpers.forEach(array, mapCallback);
+    helpers.forEach(arr, mapCallback);
 
     return newArray;
+  },
+  subtract: (arr, from) => {
+    return from.filter(function(a) {
+      return !~this.indexOf(a);
+    }, arr);
   },
   // find the index of one node in another
   indexOfNode: (node, parent) => {
@@ -145,7 +150,6 @@ const helpers = {
 
     while (object != null && index < length) {
       object = object[path[index++]];
-      // console.log(object);
     }
 
     return (index && index === length) ? object : undefined;

@@ -67,6 +67,7 @@ export default class Column {
       sort: true,
       onEnd: _this.onEnd.bind(_this),
       onAdd: _this.onAdd.bind(_this),
+      onSort: _this.onSort.bind(_this),
       onRemove: (evt) => {
         _this.onRemove(evt.target);
       },
@@ -90,9 +91,14 @@ export default class Column {
     return column;
   }
 
+  onSort(evt) {
+    data.saveFieldOrder(evt.target);
+    data.save('fields', evt.target.id);
+  }
+
   processConfig(column) {
     let _this = this,
-    columnData = dataMap.columns[_this.columnID];
+      columnData = dataMap.columns[_this.columnID];
     if (columnData.config.width) {
       let width = columnData.config.width,
         widthType = dom.contentType(width);
@@ -116,9 +122,9 @@ export default class Column {
 
 
       // calculate field position, subtracting indexes for column-config and column-actions
-      dom.fieldOrder(column);
+      dom.fieldOrderClass(column);
       dom.remove(evt.item);
-      data.saveFieldOrder(field);
+      data.saveFieldOrder(column);
       data.save('fields', column.id);
     }
 
@@ -136,7 +142,7 @@ export default class Column {
         dom.remove(row);
       }
     }
-    dom.fieldOrder(column);
+    dom.fieldOrderClass(column);
     dom.columnWidths(row);
   }
 

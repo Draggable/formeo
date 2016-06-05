@@ -1,6 +1,6 @@
 import helpers from './helpers';
 import animate from './animation';
-import { dataMap } from './data';
+import { dataMap, data } from './data';
 
 export default class DOM {
   constructor() {}
@@ -155,7 +155,7 @@ export default class DOM {
     }
 
     // Subtract processed and ignored and attach the rest
-    let remaining = Object.keys(elem).subtract(processed);
+    let remaining = helpers.subtract(processed, Object.keys(elem));
     for (i = remaining.length - 1; i >= 0; i--) {
       element[remaining[i]] = elem[remaining[i]];
     }
@@ -194,7 +194,6 @@ export default class DOM {
     let fieldType = helpers.get(elem, 'attrs.type') || 'select';
 
     let optionMap = (option, i) => {
-      // console.log(option, i);
       let defaultInput = {
         tag: 'input',
         attrs: {
@@ -348,22 +347,7 @@ export default class DOM {
           click: () => {
             let element = document.getElementById(id);
             animate.slideUp(element, 250, (elem) => {
-              let parent = elem.parentElement,
-                children;
-              _this.remove(elem);
-
-              children = parent.querySelectorAll('.stage-' + item);
-              if (!children.length) {
-                if (parent.fType !== 'stage') {
-                  _this.remove(parent);
-                } else {
-                  parent.classList.add('stage-empty');
-                }
-              }
-
-              // add item save function
-
-              console.log(`${item} removed`);
+              _this.removeEmpty(elem);
             });
           }
         }
@@ -395,6 +379,24 @@ export default class DOM {
     actions.content = btnWrap;
 
     return actions;
+  }
+
+  removeEmpty(element) {
+    let _this = this,
+      parent = element.parentElement,
+      type = element.fType,
+      children;
+    _this.remove(element);
+    data.saveOrder(type, parent);
+    data.save(type + 's', parent.id);
+    children = parent.querySelectorAll('.stage-' + type);
+    if (!children.length) {
+      if (parent.fType !== 'stage') {
+        _this.removeEmpty(parent);
+      } else {
+        parent.classList.add('stage-empty');
+      }
+    }
   }
 
   /**
@@ -454,7 +456,7 @@ export default class DOM {
     });
   }
 
-  fieldOrder(column) {
+  fieldOrderClass(column) {
     let fields = column.querySelectorAll('.stage-field');
 
     if (fields.length) {

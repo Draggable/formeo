@@ -49,7 +49,7 @@ export default class Stage {
     let columns = dataMap.rows[row.id].columns;
     helpers.forEach(columns, (i) => {
       let column = new Column(columns[i]);
-      dom.fieldOrder(column);
+      dom.fieldOrderClass(column);
       this.loadFields(column);
       row.appendChild(column);
     });
@@ -88,6 +88,7 @@ export default class Stage {
   }
 
   createColumn(evt) {
+    // console.log(evt);
     let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id),
       column = new Column();
 
@@ -104,7 +105,7 @@ export default class Stage {
       column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt),
       row = new Row();
 
-// Set parent IDs
+    // Set parent IDs
     dataMap.columns[column.id].parent = row.id;
     dataMap.rows[row.id].parent = stageOpts.formID;
 
@@ -115,7 +116,8 @@ export default class Stage {
   }
 
   onSort(evt) {
-    data.saveRowOrder(evt.item);
+    data.saveRowOrder();
+    data.save();
   }
 
   onAdd(evt) {
@@ -138,10 +140,10 @@ export default class Stage {
 
   /**
    * Does some cleanup after an element is removed from the stage
-   * @return {[type]} [description]
+   * @return {Object} onRemove event
    */
-  onRemove(type) {
-
+  onRemove(evt) {
+    data.save();
   }
 
   /**
@@ -172,11 +174,14 @@ export default class Stage {
       group: { name: 'stage', pull: false, put: ['controls', 'rows', 'columns'] },
       // Element is dropped into the list from another list
       onAdd: _this.onAdd.bind(_this),
+      onRemove: _this.onRemove.bind(_this),
       // onDrop: _this.onAdd.bind(_this),
       sort: true,
-      // onUpdate: (evt) => {
-      //   console.log(dataMap, evt);
-      // },
+      onUpdate: (evt) => {
+        // saveRowOrder();
+        console.log('Stage onUpdate');
+        console.log(dataMap, evt);
+      },
       onSort: _this.onSort.bind(_this),
       onDrop: (evt) => { console.log(evt); },
       draggable: '.stage-row',

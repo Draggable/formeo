@@ -240,15 +240,6 @@ export class Controls {
     this.opts = Object.assign({}, defaults, controlOptions);
   }
 
-  appendField(dataID) {
-    // let _this = this;
-    // console.log(this);
-    // let stage = document.getElementById(_this.opts.formID + '-stage'),
-    // row =
-    // field = new Field(dataID);
-    // stage.appendChild(dom.create(row));
-  }
-
   mergeGroups() {
     let _this = this,
       opts = this.opts,

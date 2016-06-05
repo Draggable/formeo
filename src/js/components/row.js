@@ -85,20 +85,8 @@ export default class Row {
       onRemove: _this.onRemove,
       onAdd: _this.onAdd,
       onMove: _this.onMove,
-      // onFilter: function(evt) {
-      //   console.log(evt);
-
-      // return false;
-      // },
-      // filter: '.stage-field'
+      onSort: _this.onSort
     });
-
-    // row.rowData = {
-    //   save: _this.saveData.bind(_this),
-    //   get: _this.data.bind(_this)
-    // };
-
-    // row.rowData = _this.data;
 
     return row;
   }
@@ -155,19 +143,33 @@ export default class Row {
 
   }
 
+  onSort(evt) {
+    // console.log('onSort', evt);
+    data.saveColumnOrder(evt.target);
+    data.save('columns', evt.target.id);
+  }
+
   onRemove(evt) {
+    // console.log('onRemove', evt);
     let row = evt.from,
       columns = row.querySelectorAll('.stage-column');
     if (!columns.length) {
       dom.remove(row);
+      data.saveRowOrder();
+      data.save();
     } else if (columns.length === 1) {
       columns[0].style.float = 'none';
+      data.save('columns', row.id);
     }
     dom.columnWidths(row);
   }
 
   onAdd(evt) {
+    let column = dataMap.columns[evt.item.id];
+    column.parent = evt.target.id;
+    // console.log('onAdd', evt);
     dom.columnWidths(evt.target);
+    data.saveRowOrder(evt.target);
     data.saveColumnOrder(evt.target);
     dom.updateColumnPreset(evt.target);
     data.save('columns', evt.target.id);

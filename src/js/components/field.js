@@ -43,12 +43,14 @@ var i18n = {
 export default class Field {
 
   constructor(dataID) {
-    let _this = this;
+    let _this = this,
+      fieldData = dataMap.fields[dataID] || Object.assign({}, registeredFields[dataID]);
 
-    _this.fieldData = dataMap.fields[dataID] || Object.assign({}, registeredFields[dataID]);
-    _this.fieldID = _this.fieldData.id || helpers.uuid();
-    dataMap.fields[_this.fieldID] = _this.fieldData;
-    _this.fieldData.id = _this.fieldID;
+    _this.fieldID = fieldData.id || helpers.uuid();
+    fieldData.id = _this.fieldID;
+
+    dataMap.fields[_this.fieldID] = fieldData;
+
     _this.preview = dom.create(_this.fieldPreview());
 
     let field = {
@@ -71,7 +73,7 @@ export default class Field {
       action: {
         // capture changes to the preview
         input: (evt) => {
-          console.log(evt);
+          // console.log(evt);
           if (evt.target.fMap) {
             if (evt.target.contentEditable === 'true') {
               helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
@@ -84,7 +86,7 @@ export default class Field {
           }
         },
         change: (evt) => {
-          console.log(evt);
+          // console.log(evt);
           if (evt.target.fMap) {
             console.log('change');
           }
@@ -126,14 +128,6 @@ export default class Field {
               'field-edit-' + panelType
             ]
           },
-          // action: {
-          //   input: (evt) => {
-          //     if (evt.target.fMap) {
-          //       helpers.set(_this.fieldData, evt.target.fMap, evt.target.value);
-          //       console.log(_this.fieldData);
-          //     }
-          //   }
-          // },
           editGroup: panelType,
           isSortable: (panelType === 'options'),
           content: []
@@ -398,7 +392,8 @@ export default class Field {
       panels = [],
       editable = ['object', 'array'],
       noPanels = ['config', 'meta'],
-      allowedPanels = Object.keys(_this.fieldData).filter((elem) => {
+      fieldData = dataMap.fields[_this.fieldID],
+      allowedPanels = Object.keys(fieldData).filter((elem) => {
         return !helpers.inArray(elem, noPanels);
       });
 
@@ -408,7 +403,7 @@ export default class Field {
     };
 
     helpers.forEach(allowedPanels, function(i, prop) {
-      let propType = dom.contentType(_this.fieldData[prop]);
+      let propType = dom.contentType(fieldData[prop]);
       if (helpers.inArray(propType, editable)) {
         let panel = {
           tag: 'div',
@@ -419,7 +414,7 @@ export default class Field {
             label: i18n.panelLabels[prop] || ''
           },
           content: [
-            _this.editPanel(prop, _this.fieldData),
+            _this.editPanel(prop, fieldData),
             _this.panelEditButtons(prop)
           ]
         };
@@ -443,8 +438,7 @@ export default class Field {
 
   fieldPreview() {
     let _this = this,
-      fieldData = helpers.extend({}, dataMap.fields[_this.fieldID]);
-    // fieldData = helpers.extend({}, _this.fieldData);
+      fieldData = Object.assign({}, dataMap.fields[_this.fieldID]);
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -473,7 +467,7 @@ export default class Field {
       }
     }
 
-    dom.fieldOrder(column);
+    dom.fieldOrderClass(column);
   }
 
 }
