@@ -64,10 +64,12 @@ const helpers = {
     var ajax = new XMLHttpRequest();
     ajax.open('GET', file, true);
     ajax.send();
-    ajax.onload = function(e) {
-      var iconSpriteWrap = dom.create({ tag: 'div', attrs: { className: 'hidden' } });
-      iconSpriteWrap.innerHTML = ajax.responseText;
-      document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+    ajax.onload = function() {
+      if (ajax.status) {
+        var iconSpriteWrap = dom.create({ tag: 'div', content: ajax.responseText });
+        iconSpriteWrap.style.display = 'none';
+        document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+      }
     };
   },
   uuid: function(elem) {

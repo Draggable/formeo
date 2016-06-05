@@ -3,7 +3,7 @@ import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
-import SvgStore from 'webpack-svgstore-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { optimize, BannerPlugin } from 'webpack';
 
 const sassLoaders = [
@@ -18,33 +18,7 @@ const bannerTemplate = [
   `Author: ${pkg.author}`
 ].join('\n');
 
-var makeIcons = (process.argv.indexOf('--icons') !== -1);
 var production = (process.argv.indexOf('-p') !== -1);
-
-var icons = new SvgStore(
-  path.join(__dirname, pkg.config.files.formeo.icons),
-  '.', {
-    name: 'formeo-sprite.svg',
-    chunk: 'formeo',
-    svgoOptions: {
-      plugins: [
-        { cleanupAttrs: true },
-        { removeDimensions: true },
-        { removeTitle: true },
-        { removeUselessDefs: true },
-        { mergePaths: true },
-        { removeStyleElement: true },
-        // { removeViewBox: true },
-        { removeNonInheritableGroupAttrs: true }, {
-          removeAttrs: {
-            attrs: ['fill', 'style']
-          }
-        }
-      ]
-    }
-  }
-);
-
 var clean = new CleanWebpackPlugin(['dist/*']);
 
 var webpackConfig = {
@@ -83,7 +57,12 @@ var webpackConfig = {
     new BannerPlugin(bannerTemplate),
     new optimize.UglifyJsPlugin({
       compress: { warnings: false }
-    })
+    }),
+    new CopyWebpackPlugin([
+      { from: 'dist/formeo.min.js', to: '../demo/assets/js' },
+      { from: 'dist/formeo-sprite.svg', to: '../demo/assets/img' },
+      { from: 'dist/formeo.min.css', to: '../demo/assets/css' }
+    ])
   ],
   sassLoader: {
     includePaths: [path.resolve(__dirname, './src/sass')]
@@ -110,12 +89,7 @@ var webpackConfig = {
 
 if (production) {
   // clean and process icons if for production
-  webpackConfig.plugins.push(icons, clean);
-} else if (makeIcons) {
-  // process icons
-  webpackConfig.entry = undefined;
-  webpackConfig.module = undefined;
-  webpackConfig.plugins = [icons];
+  webpackConfig.plugins.push(clean);
 }
 
 module.exports = webpackConfig;

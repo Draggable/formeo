@@ -3,13 +3,9 @@ import helpers from './helpers';
 
 // Default options
 var defaults = {
-  formeoLoaded: (evt) => {
-    // console.log(evt);
-  },
+  formeoLoaded: (evt) => {},
   onAdd: () => {},
-  onUpdate: (evt) => {
-    // console.log('onUpdate', evt);
-  },
+  onUpdate: (evt) => {},
   confirmClearAll: (evt) => {
     if (window.confirm(evt.confirmationMessage)) {
       evt.clearAllAction(evt.rows);
@@ -35,7 +31,6 @@ document.addEventListener('formeoUpdate', function(evt) {
   };
   events.opts.onUpdate(evt);
   // window.controlNav = evt.detail.formeo.controls.controlNav;
-  // console.log(events.opts, evt.detail);
 });
 
 document.addEventListener('confirmClearAll', function(evt) {
@@ -55,7 +50,6 @@ document.addEventListener('confirmClearAll', function(evt) {
 document.addEventListener('formeoLoaded', function(evt) {
   events.opts.formeoLoaded(evt.detail.formeo);
   // window.controlNav = evt.detail.formeo.controls.controlNav;
-  // console.log(events.opts, evt.detail);
 });
 
 export default events;
