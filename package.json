@@ -59,7 +59,8 @@
     "build": "webpack --progress -p --colors",
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
-    "dev": "webpack -d | webpack-dev-server -d --hot --inline"
+    "dev": "webpack -d | webpack-dev-server -d --hot --inline",
+    "deploy": "git subtree push --prefix demo origin gh-pages"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
