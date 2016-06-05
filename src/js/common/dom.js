@@ -54,6 +54,7 @@ export default class DOM {
       if (holdsContent && tag !== 'button') {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
+        elem.fMap = `options[${i}].selected`;
         delete elem.content;
       } else {
 
@@ -192,18 +193,21 @@ export default class DOM {
   processOptions(elem) {
     let fieldType = helpers.get(elem, 'attrs.type') || 'select';
 
-    let optionMap = (option) => {
+    let optionMap = (option, i) => {
+      // console.log(option, i);
       let defaultInput = {
         tag: 'input',
         attrs: {
           name: elem.id,
           id: null,
-          type: fieldType
+          type: fieldType,
+          value: option.value || ''
         },
         config: {
           inputWrap: fieldType,
           label: option.label
-        }
+        },
+        fMap: `options[${i}].selected`
       };
 
       let optionMarkup = {

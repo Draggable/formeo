@@ -46,7 +46,6 @@ var data = {
 
   saveColumnOrder: (row) => {
     let columns = row.getElementsByClassName('stage-column');
-
     return dataMap.rows[row.id].columns = helpers.map(columns, (i) => {
       return columns[i].id;
     });
@@ -81,42 +80,42 @@ var data = {
   saveMap: (group, id) => {
     let map = {
       rows: () => {
-        let rows = dataMap.stage.rows,
-          formDataRows = helpers.map(rows, (i) => {
-            let rowID = rows[i],
-              row = dataMap.rows[rowID];
-            row.id = rowID;
-            return Object.assign({}, row, {
-              columns: map.columns(rowID)
-            });
-          });
+        let rows = dataMap.stage.rows;
+        _data.formData.rows = [];
 
-        _data.formData.rows = formDataRows;
+        helpers.forEach(rows, (i, rowID) => {
+          console.log(dataMap.rows[rowID].columns);
+          _data.formData.rows[i] = Object.assign({}, dataMap.rows[rowID]);
+          _data.formData.rows[i].columns = map.columns(rowID);
+          console.log(dataMap.rows[rowID].columns);
+        });
 
-        return formDataRows;
+        return _data.formData.rows;
       },
       columns: (rowID) => {
-        let columns = dataMap.rows[rowID].columns;
-        return helpers.map(columns, (i) => {
-          let columnID = columns[i],
-            column = dataMap.columns[columnID];
-          column.id = columnID;
-          return Object.assign({}, column, {
-            fields: map.fields(columnID)
-          });
+        let columns = dataMap.rows[rowID].columns,
+          rowLink = data.rowLink(rowID);
+
+        helpers.forEach(columns, (i, columnID) => {
+          rowLink.columns[i] = Object.assign({}, dataMap.columns[columnID]);
+          rowLink.columns[i].fields = map.fields(columnID);
         });
+
+        return rowLink.columns;
       },
       fields: (columnID) => {
         let fields = dataMap.columns[columnID].fields;
-        return helpers.map(fields, (i) => {
-          let fieldID = fields[i],
-            field = dataMap.fields[fieldID];
-          field.id = fieldID;
-          return field;
+        console.log(fields);
+        let columnLink = data.columnLink(columnID);
+
+        helpers.forEach(fields, (i, fieldID) => {
+          columnLink.fields[i] = Object.assign({}, dataMap.fields[fieldID]);
         });
+
+        return columnLink.fields;
       },
       attrs: (fieldID) => {
-        let fieldLink = data.formDataLink(fieldID);
+        let fieldLink = data.fieldLink(fieldID);
         fieldLink.attrs = dataMap.fields[fieldID].attrs;
 
         return fieldLink.attrs;
@@ -127,7 +126,7 @@ var data = {
   },
 
   // Provides a map to a field in formData
-  formDataLink: (fieldID) => {
+  fieldLink: (fieldID) => {
     let field = dataMap.fields[fieldID],
       column = dataMap.columns[field.parent],
       row = dataMap.rows[column.parent],
@@ -139,6 +138,29 @@ var data = {
     field = column.fields[fieldIndex];
 
     return field;
+  },
+
+  // Provides a map to a column in formData
+  columnLink: (columnID) => {
+
+    let column = dataMap.columns[columnID];
+    let row = dataMap.rows[column.parent];
+    let columnIndex = row.columns.indexOf(column.id);
+    console.log(columnID);
+    console.log(column.id);
+    console.log(row.columns);
+    console.log(columnIndex);
+    let rowIndex = dataMap.stage.rows.indexOf(row.id);
+    row = _data.formData.rows[rowIndex];
+    column = row.columns[columnIndex];
+
+    return column;
+  },
+
+  // Provides a map to a row in formData
+  rowLink: (rowID) => {
+    let rowIndex = dataMap.stage.rows.indexOf(rowID);
+    return _data.formData.rows[rowIndex];
   },
 
   loadMap: () => {
@@ -193,7 +215,7 @@ var data = {
     };
 
     doSave[_data.opts.dataType](group, id);
-
+    console.log(_data.formData);
     //trigger formSaved event
     document.dispatchEvent(events.formeoUpdate);
 

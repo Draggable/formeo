@@ -114,8 +114,7 @@ export class Controls {
             label: 'Select'
           },
           attrs: {
-            className: 'form-control',
-            disabled: true
+            className: 'form-control'
           },
           meta: {
             group: 'common',

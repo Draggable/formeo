@@ -71,6 +71,7 @@ export default class Field {
       action: {
         // capture changes to the preview
         input: (evt) => {
+          console.log(evt);
           if (evt.target.fMap) {
             if (evt.target.contentEditable === 'true') {
               helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
@@ -83,6 +84,7 @@ export default class Field {
           }
         },
         change: (evt) => {
+          console.log(evt);
           if (evt.target.fMap) {
             console.log('change');
           }

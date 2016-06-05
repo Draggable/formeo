@@ -47,7 +47,8 @@ export default class Row {
       },
       editWindow = _this.editWindow();
 
-    _this.rowData = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
+    // _this.rowData = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
+    dataMap.rows[_this.rowID] = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
 
     row = {
       tag: 'li',
@@ -97,8 +98,7 @@ export default class Row {
     //   get: _this.data.bind(_this)
     // };
 
-    row.rowData = _this.data;
-    dataMap.rows[_this.rowID] = _this.rowData;
+    // row.rowData = _this.data;
 
     return row;
   }
@@ -151,10 +151,6 @@ export default class Row {
     return editWindow;
   }
 
-  get data() {
-    return this.rowID;
-  }
-
   onMove(evt) {
 
   }
@@ -174,7 +170,7 @@ export default class Row {
     dom.columnWidths(evt.target);
     data.saveColumnOrder(evt.target);
     dom.updateColumnPreset(evt.target);
-
+    data.save('columns', evt.target.id);
   }
 
   columnWidth() {

@@ -104,24 +104,18 @@ export default class Stage {
       column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt),
       row = new Row();
 
+// Set parent IDs
     dataMap.columns[column.id].parent = row.id;
-
     dataMap.rows[row.id].parent = stageOpts.formID;
+
     row.appendChild(column);
+    data.saveColumnOrder(row);
 
     return row;
   }
 
-  addColumn(evt) {
-    let _this = this,
-      row = evt.target,
-      column = _this.createColumn(evt).bind(_this);
-    return row.insertBefore(column, row.children[evt.newIndex]);
-  }
-
   onSort(evt) {
-    let row = evt.item;
-    data.saveRowOrder(row);
+    data.saveRowOrder(evt.item);
   }
 
   onAdd(evt) {
@@ -135,7 +129,6 @@ export default class Stage {
 
     stage.insertBefore(row, stage.children[newIndex]);
     data.saveRowOrder(row);
-    data.saveColumnOrder(row);
     data.save();
 
     if (evt.from.fType === 'controlGroup') {

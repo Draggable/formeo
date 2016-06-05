@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs';
-import { dataMap } from '../common/data';
+import { data, dataMap } from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Field from './field';
@@ -21,7 +21,7 @@ export default class Column {
       config: {}
     };
 
-    _this.columnData = helpers.extend(columnDataDefault, dataMap.columns[_this.columnID]);
+    dataMap.columns[_this.columnID] = helpers.extend(columnDataDefault, dataMap.columns[_this.columnID]);
 
     let resizeHandle = {
         tag: 'li',
@@ -87,15 +87,14 @@ export default class Column {
       handle: '.field-handle'
     });
 
-    dataMap.columns[_this.columnID] = _this.columnData;
-
     return column;
   }
 
   processConfig(column) {
-    let _this = this;
-    if (_this.columnData.config.width) {
-      let width = _this.columnData.config.width,
+    let _this = this,
+    columnData = dataMap.columns[_this.columnID];
+    if (columnData.config.width) {
+      let width = columnData.config.width,
         widthType = dom.contentType(width);
 
       if (widthType === 'string') {
@@ -115,9 +114,12 @@ export default class Column {
 
       column.insertBefore(field, column.childNodes[evt.newIndex]);
 
+
       // calculate field position, subtracting indexes for column-config and column-actions
       dom.fieldOrder(column);
       dom.remove(evt.item);
+      data.saveFieldOrder(field);
+      data.save('fields', column.id);
     }
 
     evt.target.classList.remove('hovering-column');
