@@ -2,9 +2,7 @@ import pkg from './package.json';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
-import { optimize, BannerPlugin } from 'webpack';
+import { optimize, BannerPlugin, DefinePlugin } from 'webpack';
 
 const sassLoaders = [
   'css?sourceMap',
@@ -18,8 +16,31 @@ const bannerTemplate = [
   `Author: ${pkg.author}`
 ].join('\n');
 
-var production = (process.argv.indexOf('-p') !== -1);
-var clean = new CleanWebpackPlugin(['dist/*']);
+var development = (process.argv.indexOf('-d') !== -1);
+var plugins;
+
+if (development) {
+  plugins = [
+    new ExtractTextPlugin('[name].min.css'),
+    new optimize.DedupePlugin(),
+    new BannerPlugin(bannerTemplate)
+  ];
+} else {
+  plugins = [
+    new ExtractTextPlugin('[name].min.css'),
+    new DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }),
+    new optimize.DedupePlugin(),
+    new optimize.OccurenceOrderPlugin(),
+    new optimize.UglifyJsPlugin({
+      compress: { warnings: false }
+    }),
+    new BannerPlugin(bannerTemplate)
+  ];
+}
 
 var webpackConfig = {
   entry: {
@@ -51,19 +72,7 @@ var webpackConfig = {
     }]
   },
   // devtool: 'source-map',
-  plugins: [
-    new ExtractTextPlugin('[name].min.css'),
-    new optimize.DedupePlugin(),
-    new BannerPlugin(bannerTemplate),
-    new optimize.UglifyJsPlugin({
-      compress: { warnings: false }
-    }),
-    new CopyWebpackPlugin([
-      { from: 'dist/formeo.min.js', to: '../demo/assets/js' },
-      { from: 'dist/formeo-sprite.svg', to: '../demo/assets/img' },
-      { from: 'dist/formeo.min.css', to: '../demo/assets/css' }
-    ])
-  ],
+  plugins: plugins,
   sassLoader: {
     includePaths: [path.resolve(__dirname, './src/sass')]
   },
@@ -86,10 +95,5 @@ var webpackConfig = {
     noInfo: true
   }
 };
-
-if (production) {
-  // clean and process icons if for production
-  webpackConfig.plugins.push(clean);
-}
 
 module.exports = webpackConfig;

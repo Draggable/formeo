@@ -4,6 +4,9 @@ import helpers from '../common/helpers';
 import events from '../common/events';
 import DOM from '../common/dom';
 import Panels from './panels';
+import Row from './row';
+import Column from './column';
+import Field from './field';
 var dom = new DOM();
 
 var i18n = {
@@ -37,22 +40,20 @@ export class Controls {
         'html'
       ],
       controlGroups: [{
-          id: 'common',
-          label: i18n.controlGroups.common,
-          order: [
-            'text-input',
-            'checkbox'
-          ]
-        }
-        , {
-          id: 'html',
-          label: i18n.controlGroups.html,
-          order: [
-            'header',
-            'block-text'
-          ]
-        }
-      ],
+        id: 'common',
+        label: i18n.controlGroups.common,
+        order: [
+          'text-input',
+          'checkbox'
+        ]
+      }, {
+        id: 'html',
+        label: i18n.controlGroups.html,
+        order: [
+          'header',
+          'block-text'
+        ]
+      }],
       elements: [{
           tag: 'input',
           attrs: {
@@ -254,7 +255,7 @@ export class Controls {
           id: dataID,
           action: {
             click: (evt) => {
-              _this.appendField(evt.target.id);
+              _this.addRow(evt.target.id);
               // fire fieldAdded event
             }
           },
@@ -432,4 +433,36 @@ export class Controls {
 
     return controls;
   }
+
+
+  createColumn(id) {
+    let field = new Field(id),
+      column = new Column();
+
+    dataMap.fields[field.id].parent = column.id;
+
+    field.classList.add('first-field');
+    column.appendChild(field);
+    dataMap.columns[column.id].fields.push(field.id);
+    return column;
+  }
+
+  addRow(id) {
+    let _this = this,
+      stageID = _this.opts.formID + '-stage',
+      stage = document.getElementById(stageID),
+      column = _this.createColumn(id),
+      row = new Row();
+
+    // Set parent IDs
+    dataMap.columns[column.id].parent = row.id;
+    dataMap.rows[row.id].parent = stageID;
+    row.appendChild(column);
+    data.saveColumnOrder(row);
+    stage.appendChild(row);
+    data.saveRowOrder(row);
+    data.save();
+  }
+
+
 }
