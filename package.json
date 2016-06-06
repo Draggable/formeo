@@ -60,7 +60,7 @@
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
     "dev": "webpack -d | webpack-dev-server -d --hot --inline",
-    "deploy": "git subtree push --prefix demo origin gh-pages"
+    "deploy": "OVERCOMMIT_DISABLE=1 git push origin $(git subtree split --prefix demo master):gh-pages --force"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
