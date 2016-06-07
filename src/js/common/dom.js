@@ -209,6 +209,10 @@ export default class DOM {
         fMap: `options[${i}].selected`
       };
 
+      if (option.selected) {
+        defaultInput.attrs.checked = true;
+      }
+
       let optionMarkup = {
         select: {
           tag: 'option',
@@ -220,7 +224,7 @@ export default class DOM {
         radio: defaultInput
       };
 
-      delete optionMarkup[fieldType].attrs.label;
+      // delete optionMarkup[fieldType].attrs.label;
 
       return optionMarkup[fieldType];
     };

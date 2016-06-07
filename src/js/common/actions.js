@@ -5,11 +5,18 @@ import helpers from './helpers';
 var defaultActions = {
   add: {
     attr: (evt) => {
-      let attr = window.prompt(evt.addAttributeMessage),
-        val = String(window.prompt('Value', ''));
+      let attr = window.prompt(evt.message.attr),
+        val;
       if (attr) {
-        evt.addAttributeAction(attr, val);
+        val = String(window.prompt(evt.message.value, ''));
       }
+      if (attr) {
+        evt.addAction(attr, val);
+      }
+    },
+    option: (evt) => {
+      console.log(evt);
+      evt.addAction();
     }
   }
 };
@@ -25,6 +32,9 @@ var actions = {
   add: {
     attrs: (evt) => {
       actions.opts.add.attr(evt);
+    },
+    options: (evt) => {
+      actions.opts.add.option(evt);
     }
   }
 };

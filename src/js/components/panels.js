@@ -1,6 +1,7 @@
 import Sortable from 'sortablejs';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
+import { data } from '../common/data';
 var dom = new DOM();
 
 var defaults = {
@@ -69,20 +70,29 @@ export default class Panels {
 
     helpers.forEach(groups, function(index, group) {
       if (group.isSortable) {
+        group.fieldID = _this.opts.id;
         Sortable.create(group, {
           animation: 150,
           group: { name: 'edit-' + group.editGroup, pull: true, put: ['properties'] },
           sort: true,
           handle: '.prop-order',
-          onAdd: _this.propertyOnAdd.bind(_this)
+          onAdd: (evt) => {
+            _this.propertySave(group);
+            _this.panelsWrap.style.height = dom.getStyle(_this.currentPanel, 'height');
+          },
+          onUpdate: (evt) => {
+            _this.propertySave(group);
+            _this.panelsWrap.style.height = dom.getStyle(_this.currentPanel, 'height');
+          }
         });
       }
     });
   }
 
-  propertyOnAdd() {
-    let _this = this;
-    _this.panelsWrap.style.height = dom.getStyle(_this.currentPanel, 'height');
+  propertySave(group) {
+    data.saveOrder(group.editGroup, group);
+    data.save(group.editGroup, group.fieldID);
+    this.opts.updatePreview();
   }
 
   panelNav() {

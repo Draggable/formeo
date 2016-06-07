@@ -103,7 +103,6 @@ export class Controls {
           options: [{
             label: 'Button',
             value: 'button',
-            selected: true,
             disabled: false
           }]
         }
@@ -125,7 +124,7 @@ export class Controls {
           options: [{
             label: 'Option 1',
             value: 'option-1',
-            selected: true
+            selected: false
           }, {
             label: 'Option 2',
             value: 'option-2',
@@ -161,10 +160,11 @@ export class Controls {
           tag: 'input',
           attrs: {
             type: 'checkbox',
-            checked: true
+            class: 'form-control'
           },
           config: {
-            label: 'Checkbox/Group'
+            label: 'Checkbox/Group',
+            required: true
           },
           meta: {
             group: 'common',
@@ -193,7 +193,7 @@ export class Controls {
           options: [{
             label: 'Radio 1',
             value: 'radio-1',
-            selected: true
+            selected: false
           }, {
             label: 'Radio 2',
             value: 'radio-2',

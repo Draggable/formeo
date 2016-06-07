@@ -153,6 +153,27 @@
 
   .input-group-addon {
     line-height: 0;
+    min-width: 88px;
+  }
+
+  .prop-labels {
+    padding-right: 34px;
+
+    label {
+      width: 50%;
+      position: relative;
+      display: table-cell;
+      float: left;
+    }
+  }
+
+  .prop-label-selected,
+  .prop-label-disabled {
+    width: 1% !important;
+    white-space: nowrap;
+    vertical-align: middle;
+    border: 0 none;
+    background-color: transparent;
   }
 }
 

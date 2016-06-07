@@ -73,11 +73,19 @@ var data = {
     });
   },
 
+  savePropOrder: (parent) => {
+    let props = parent.getElementsByClassName('prop-wrap');
+    dataMap.fields[parent.fieldID][parent.editGroup] = helpers.map(props, (i) => {
+      return props[i].propData;
+    });
+  },
+
   saveOrder: (group, parent) => {
     let saveOrder = {
-      field: data.saveFieldOrder,
+      row: data.saveRowOrder,
       column: data.saveColumnOrder,
-      row: data.saveRowOrder
+      field: data.saveFieldOrder,
+      options: data.savePropOrder
     };
 
     return saveOrder[group](parent);
@@ -119,7 +127,7 @@ var data = {
       columns: (rowID) => {
         let columns = dataMap.rows[rowID].columns,
           rowLink = data.rowLink(rowID);
-          rowLink.columns = [];
+        rowLink.columns = [];
 
         helpers.forEach(columns, (i, columnID) => {
           rowLink.columns[i] = helpers.copyObj(dataMap.columns[columnID]);
@@ -145,9 +153,15 @@ var data = {
       },
       attrs: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
-        fieldLink.attrs = dataMap.fields[fieldID].attrs;
+        fieldLink.attrs = helpers.copyObj(dataMap.fields[fieldID].attrs);
 
         return fieldLink.attrs;
+      },
+      options: (fieldID) => {
+        let fieldLink = data.fieldLink(fieldID);
+        fieldLink.options = dataMap.fields[fieldID].options.slice();
+
+        return fieldLink.options;
       }
     };
 
