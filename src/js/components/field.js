@@ -51,7 +51,7 @@ export default class Field {
 
   constructor(dataID) {
     let _this = this,
-      fieldData = dataMap.fields[dataID] || Object.assign({}, registeredFields[dataID]);
+      fieldData = dataMap.fields[dataID] || helpers.copyObj(registeredFields[dataID]);
 
     _this.fieldID = fieldData.id || helpers.uuid();
     fieldData.id = _this.fieldID;

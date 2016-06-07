@@ -121,6 +121,7 @@
 
   .form-actions {
     float: right;
+    margin-top: 10px;
 
     .svg-icon {
       fill: $gray;
@@ -131,13 +132,27 @@
       }
     }
 
+    > .btn + .btn {
+      margin-left: -$input-btn-border-width;
+    }
+
     button {
-      &:first-child {
-        border-top-left-radius: 0;
+      &:not(:first-child):not(:last-child) {
+        border-radius: 0;
       }
 
-      &:last-child {
+      &:first-child:not(:last-child) {
+        border-bottom-left-radius: $btn-border-radius;
+        border-top-left-radius: $btn-border-radius;
         border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      &:last-child:not(:first-child) {
+        border-bottom-right-radius: $btn-border-radius;
+        border-top-right-radius: $btn-border-radius;
+        border-bottom-left-radius: 0;
+        border-top-left-radius: 0;
       }
     }
 
@@ -169,10 +184,52 @@
     }
 
     .form-actions {
-      text-indent: -9999px;
+      display: inline-block;
+      width: 100%;
+      position: relative;
+      vertical-align: middle;
+      float: none;
+      margin-top: 10px;
+
+      > .btn + .btn {
+        margin-top: -$input-btn-border-width;
+        margin-left: 0;
+      }
+
+      > button {
+        width: 100%;
+        max-width: 100%;
+        padding: 10px;
+        border-radius: 0;
+        line-height: 0;
+        width: 100%;
+        max-width: 100%;
+        float: none;
+        position: relative;
+        display: block;
+
+        &:not(:first-child):not(:last-child) {
+          border-radius: 0;
+        }
+
+        &:first-child:not(:last-child) {
+          border-top-right-radius: $btn-border-radius;
+          border-top-left-radius: $btn-border-radius;
+          border-bottom-right-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+
+        &:last-child:not(:first-child) {
+          border-bottom-left-radius: $btn-border-radius;
+          border-bottom-right-radius: $btn-border-radius;
+          border-top-right-radius: 0;
+          border-top-left-radius: 0;
+        }
+      }
 
       .svg-icon {
         display: inline-block;
+        margin-right: 10px;
       }
     }
   }

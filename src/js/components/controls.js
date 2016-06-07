@@ -378,7 +378,7 @@ export class Controls {
       }),
       formActions = {
         tag: 'div',
-        className: 'form-actions btn-group',
+        className: 'form-actions',
         content: [clearBtn, settingsBtn, saveBtn]
       };
 
