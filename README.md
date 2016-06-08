@@ -19,4 +19,4 @@ new Formeo({ container: '.build-form' });
 ## [Demo](https://kevinchappell.github.io/formeo) ##
 [![formeo](https://cloud.githubusercontent.com/assets/1457540/15781593/c054681e-299e-11e6-823c-d5ec4b2c03dd.png)](https://kevinchappell.github.io/formeo)
 
-## [Changelog](https://github.com/kevinchappell/formeo/blob/master/CHANGELOG.md) ##
+## [Changelog](https://github.com/Draggable/formeo/blob/master/CHANGELOG.md) ##
