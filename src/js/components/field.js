@@ -536,17 +536,32 @@ export default class Field {
 
   fieldPreview() {
     let _this = this,
-      fieldData = Object.assign({}, dataMap.fields[_this.fieldID]);
+      // fieldData = Object.assign({}, dataMap.fields[_this.fieldID]);
+      fieldData = dataMap.fields[_this.fieldID];
 
     fieldData.id = 'prev-' + _this.fieldID;
 
-    return {
+    let fieldPreview = {
       tag: 'div',
       attrs: {
         className: 'field-preview'
       },
-      content: dom.create(fieldData, true) // get the config for this field's preview
+      content: dom.create(fieldData, true), // get the config for this field's preview
+      action: {
+        input: (evt) => {
+          if (evt.target.fMap) {
+            if (evt.target.contentEditable === 'true') {
+              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
+            } else {
+              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.value);
+            }
+          }
+          // data.save('field', _this.fieldID);
+        }
+      }
     };
+
+    return fieldPreview;
   }
 
   onRemove(field) {

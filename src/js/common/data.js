@@ -151,6 +151,12 @@ var data = {
 
         return columnLink.fields;
       },
+      field: (fieldID) => {
+        let fieldLink = data.fieldLink(fieldID);
+        fieldLink = helpers.copyObj(dataMap.fields[fieldID]);
+
+        return fieldLink;
+      },
       attrs: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
         fieldLink.attrs = helpers.copyObj(dataMap.fields[fieldID].attrs);
