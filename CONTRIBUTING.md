@@ -26,9 +26,6 @@ npm install && npm run dev
 
 The above code will clone the repo, install the required `node_modules` and run the npm `dev` task. You should now have a locally running version of the demo accessible at [http://localhost:8080/](http://localhost:8080/).
 
-## Documentation
-For more information on build processes, editing icons or adding custom fields please see the documentation [here](http://formbuilder.readthedocs.org/en/latest/).
-
 ## Notes
 Windows users, remember to configure your line endings with `core.autocrlf`. More info [here](https://help.github.com/articles/dealing-with-line-endings/#platform-windows)
 ```
