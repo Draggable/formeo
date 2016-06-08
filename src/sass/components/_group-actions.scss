@@ -26,6 +26,10 @@
     height: 12px;
   }
 
+  .icon-handle {
+    opacity: .5;
+  }
+
   .last-field & {
     button {
       &:last-child {
@@ -42,18 +46,21 @@
 }
 
 .field-actions {
-  display: none;
   right: 0;
   text-align: right;
   transition: width .15s;
 
   .hovering-field &,
   .editing-field & {
-    display: block;
     width: 3 * $field-btn-width;
     border-color: $field-outline-color;
     border-width: 0 0 1px 1px;
     border-style: solid;
+  }
+
+  .hovering-column &,
+  .hovering-row & {
+    display: none;
   }
 
   border-bottom-left-radius: $border-radius;
@@ -164,7 +171,8 @@
   transition: height 150ms ease-in-out;
   white-space: normal;
 
-  .hovering-row & {
+  .hovering-row &,
+  .editing-row & {
     height: 80px;
   }
 
@@ -187,7 +195,8 @@
       border-top-left-radius: 5px;
       border-bottom-left-radius: 5px;
 
-      .hovering-row & {
+      .hovering-row &,
+      .editing-row & {
         border-bottom-left-radius: 0;
       }
     }

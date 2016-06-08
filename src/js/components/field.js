@@ -76,29 +76,7 @@ export default class Field {
       dataset: {
         hoverTag: i18n.field
       },
-      fType: 'field',
-      action: {
-        // capture changes to the preview
-        // input: (evt) => {
-        //   if (evt.target.fMap) {
-        //     if (evt.target.contentEditable === 'true') {
-        //       helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
-        //     } else {
-        //       helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.value);
-        //     }
-        //     console.log(evt.target.fMap);
-        //     data.save('attrs', _this.fieldID);
-        //     // throttle this for sure
-        //     _this.updatePreview();
-        //   }
-        // },
-        // change: (evt) => {
-        //   // console.log(evt);
-        //   if (evt.target.fMap) {
-        //     console.log('change');
-        //   }
-        // }
-      }
+      fType: 'field'
     };
 
     _this.elem = field = dom.create(field);
@@ -536,17 +514,37 @@ export default class Field {
 
   fieldPreview() {
     let _this = this,
-      fieldData = Object.assign({}, dataMap.fields[_this.fieldID]);
+      fieldData = helpers.clone(dataMap.fields[_this.fieldID])
+    // fieldData = dataMap.fields[_this.fieldID];
 
     fieldData.id = 'prev-' + _this.fieldID;
 
-    return {
+    let fieldPreview = {
       tag: 'div',
       attrs: {
         className: 'field-preview'
       },
-      content: dom.create(fieldData, true) // get the config for this field's preview
+      content: dom.create(fieldData, true), // get the config for this field's preview
+      action: {
+        input: (evt) => {
+          if (evt.target.fMap) {
+            if (evt.target.contentEditable === 'true') {
+              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
+            } else {
+              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.value);
+            }
+            data.save('field', _this.fieldID);
+          }
+        },
+        change: (evt) => {
+          if (evt.target.fMap) {
+            console.log(evt.target.fMap);
+          }
+        }
+      }
     };
+
+    return fieldPreview;
   }
 
   onRemove(field) {

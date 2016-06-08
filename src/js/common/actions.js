@@ -15,7 +15,6 @@ var defaultActions = {
       }
     },
     option: (evt) => {
-      console.log(evt);
       evt.addAction();
     }
   }

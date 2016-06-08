@@ -67,7 +67,8 @@ export class Controls {
             group: 'common',
             icon: 'text-input',
             id: 'text-input'
-          }
+          },
+          fMap: 'attrs.value'
         }, {
           tag: 'input',
           attrs: {
