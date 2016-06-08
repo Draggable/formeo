@@ -28,8 +28,6 @@
   }
 
   &.hovering-row {
-    // padding: 10px;
-
     &:first-child {
       border-top-left-radius: 0;
     }
@@ -38,6 +36,10 @@
       &:before {
         width: 100px;
       }
+    }
+
+    .stage-column {
+      opacity: .5;
     }
   }
 

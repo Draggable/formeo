@@ -119,7 +119,7 @@ export default class Column {
         field = new Field(evt.item.id);
 
       column.insertBefore(field, column.childNodes[evt.newIndex]);
-
+      dataMap.fields[field.id].parent = column.id;
 
       // calculate field position, subtracting indexes for column-config and column-actions
       dom.fieldOrderClass(column);

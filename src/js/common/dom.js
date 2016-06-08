@@ -54,7 +54,6 @@ export default class DOM {
       if (holdsContent && tag !== 'button') {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
-        elem.fMap = `options[${i}].selected`;
         delete elem.content;
       } else {
 
@@ -153,7 +152,6 @@ export default class DOM {
       element.fieldData = elem;
       processed.push('fieldData');
     }
-
     // Subtract processed and ignored and attach the rest
     let remaining = helpers.subtract(processed, Object.keys(elem));
     for (i = remaining.length - 1; i >= 0; i--) {

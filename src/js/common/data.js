@@ -117,7 +117,7 @@ var data = {
         _data.formData.rows = [];
 
         helpers.forEach(rows, (i, rowID) => {
-          _data.formData.rows[i] = helpers.copyObj(dataMap.rows[rowID]);
+          _data.formData.rows[i] = helpers.clone(dataMap.rows[rowID]);
           // _data.formData.rows[i] = Object.assign({}, dataMap.rows[rowID]);
           _data.formData.rows[i].columns = map.columns(rowID);
         });
@@ -130,7 +130,7 @@ var data = {
         rowLink.columns = [];
 
         helpers.forEach(columns, (i, columnID) => {
-          rowLink.columns[i] = helpers.copyObj(dataMap.columns[columnID]);
+          rowLink.columns[i] = helpers.clone(dataMap.columns[columnID]);
           // rowLink.columns[i] = Object.assign({}, dataMap.columns[columnID]);
           rowLink.columns[i].fields = map.fields(columnID);
         });
@@ -141,25 +141,21 @@ var data = {
         let fields = dataMap.columns[columnID].fields,
           columnLink = data.columnLink(columnID);
         columnLink.fields = helpers.map(fields, (i) => {
-          return helpers.copyObj(dataMap.fields[fields[i]]);
+          return helpers.clone(dataMap.fields[fields[i]]);
         });
-
-        // helpers.forEach(fields, (i, fieldID) => {
-        //   columnLink.fields[i] = helpers.copyObj(dataMap.fields[fieldID]);
-        //   // columnLink.fields[i] = Object.assign({}, dataMap.fields[fieldID]);
-        // });
 
         return columnLink.fields;
       },
       field: (fieldID) => {
-        let fieldLink = data.fieldLink(fieldID);
-        fieldLink = helpers.copyObj(dataMap.fields[fieldID]);
+        let fieldLink = data.fieldLink(fieldID),
+          setString = data.fieldSetString(fieldID);
+        helpers.set(_data.formData, setString, helpers.clone(dataMap.fields[fieldID]));
 
         return fieldLink;
       },
       attrs: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
-        fieldLink.attrs = helpers.copyObj(dataMap.fields[fieldID].attrs);
+        fieldLink.attrs = helpers.clone(dataMap.fields[fieldID].attrs);
 
         return fieldLink.attrs;
       },
@@ -174,24 +170,75 @@ var data = {
     return map[group](id);
   },
 
-  // Provides a map to a field in formData
+  // returns index of row in formData
+  rowIndex: (rowID) => {
+    return dataMap.stage.rows.indexOf(rowID);
+  },
+
+  // returns index of column in formData
+  columnIndex: (columnID) => {
+    let column = dataMap.columns[columnID];
+    return dataMap.rows[column.parent].columns.indexOf(columnID);
+  },
+
+  // returns index of field in formData
+  fieldIndex: (fieldID) => {
+    let field = dataMap.fields[fieldID];
+    return dataMap.columns[field.parent].fields.indexOf(fieldID);
+  },
+
+  /**
+   * Return a map to fieldData in formData
+   * @param  {String} fieldID
+   * @return {Object}         fieldData
+   */
+  fieldIndexMap: (fieldID) => {
+    let field = dataMap.fields[fieldID],
+      column = dataMap.columns[field.parent],
+      row = dataMap.rows[column.parent],
+      rowIndex = data.rowIndex(row.id),
+      columnIndex = data.columnIndex(column.id),
+      fieldIndex = data.fieldIndex(fieldID);
+
+    return {
+      rows: rowIndex,
+      columns: columnIndex,
+      fields: fieldIndex
+    };
+  },
+
+  /**
+   * Returns a setString
+   * @param  {String} fieldID
+   * @return {String}
+   */
+  fieldSetString: (fieldID) => {
+    let indexMap = data.fieldIndexMap(fieldID),
+      setString = '';
+
+    for (var prop in indexMap) {
+      if (indexMap.hasOwnProperty(prop)) {
+        setString += `${prop}[${indexMap[prop]}].`;
+      }
+    }
+
+    return setString.substring(0, setString.length - 1);
+  },
+
+  // Provides a reference to a field in formData
   fieldLink: (fieldID) => {
     let field = dataMap.fields[fieldID],
       column = dataMap.columns[field.parent],
       row = dataMap.rows[column.parent],
-      fieldIndex = column.fields.indexOf(field.id),
-      columnIndex = row.columns.indexOf(column.id),
-      rowIndex = dataMap.stage.rows.indexOf(row.id);
-    row = _data.formData.rows[rowIndex];
-    column = row.columns[columnIndex];
-    field = column.fields[fieldIndex];
+      rowIndex = data.rowIndex(row.id),
+      columnIndex = data.columnIndex(column.id),
+      fieldIndex = data.fieldIndex(fieldID);
 
-    return field;
+    return _data.formData.rows[rowIndex].columns[columnIndex].fields[fieldIndex];
   },
 
   // Provides a map to a column in formData
   columnLink: (columnID) => {
-
     let row = dataMap.rows[dataMap.columns[columnID].parent],
       columnIndex = row.columns.indexOf(columnID),
       rowIndex = dataMap.stage.rows.indexOf(row.id);
