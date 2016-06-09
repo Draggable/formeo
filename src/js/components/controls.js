@@ -248,6 +248,15 @@ export class Controls {
       groups = this.opts.controlGroups.slice(),
       elements = this.opts.elements.slice(),
       allGroups = [],
+      position = {},
+      clicked = (x, y) => {
+        let xMin = position.x - 5,
+          xMax = position.x + 5,
+          yMin = position.y - 5,
+          yMax = position.y + 5;
+
+        return (helpers.numberBetween(x, xMin, xMax) && helpers.numberBetween(y, yMin, yMax));
+      },
       groupControlMap = function(elem) {
         let dataID = helpers.uuid();
         let elementControl = {
@@ -255,9 +264,14 @@ export class Controls {
           className: 'field-control',
           id: dataID,
           action: {
-            click: (evt) => {
-              _this.addRow(evt.target.id);
-              // fire fieldAdded event
+            mousedown: (evt) => {
+              position.x = evt.clientX;
+              position.y = evt.clientY;
+            },
+            mouseup: (evt) => {
+              if (clicked(evt.clientX, evt.clientY)) {
+                _this.addRow(evt.target.id);
+              }
             }
           },
           content: [elem.config.label]
@@ -434,7 +448,6 @@ export class Controls {
 
     return controls;
   }
-
 
   createColumn(id) {
     let field = new Field(id),

@@ -252,7 +252,11 @@ const helpers = {
       orderedElements = newOrder.concat(elements);
 
     return helpers.unique(orderedElements);
+  },
+  numberBetween: (num, min, max) => {
+    return num > min && num < max;
   }
+
 };
 
 export default helpers;

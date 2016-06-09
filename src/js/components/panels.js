@@ -30,7 +30,6 @@ export default class Panels {
   setPanelsHeight() {
     let field = document.getElementById(this.opts.id);
     this.slideToggle = field.querySelector('.field-edit');
-    let style = Object.assign({}, this.slideToggle.style);
 
     //temp styles
     this.slideToggle.style.display = 'block';
@@ -40,9 +39,9 @@ export default class Panels {
     this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
 
     //reset styles
-    this.slideToggle.style.display = style.display;
-    this.slideToggle.style.position = style.position;
-    this.slideToggle.style.opacity = style.opacity;
+    this.slideToggle.style.display = 'none';
+    this.slideToggle.style.position = 'relative';
+    this.slideToggle.style.opacity = 1;
     this.slideToggle.style.height = 'auto';
   }
 
