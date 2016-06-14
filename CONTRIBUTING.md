@@ -2,20 +2,25 @@
 
 Formeo is open source to the core and contributions are always welcome. In this document we'll cover some dependencies and installation process to get your local development environment up and running.
 
-## Dependencies
+## Submitting Issues
+If you're having trouble please don't hesitate to open Issue [here](https://github.com/Draggable/formeo/issues)
+
+
+
+### Dependencies
 To develop for Formeo you'll need:
 
 - [NodeJS](https://nodejs.org)
 - [Webpack](https://webpack.github.io/)
 
-## Recommended Tooling
+### Recommended Tooling
 While not required, the following tools are recommended to maintain code quality and consistency in style.
 
 - [JSCS](http://jscs.info/)
 - [ESLint](http://jshint.com/)
 - [SASS-lint](https://www.npmjs.com/package/sass-lint)
 
-## Installation
+### Installation
 
 Navigate to the directory you'll be working from and run:
 ```

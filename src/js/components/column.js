@@ -160,12 +160,6 @@ export default class Column {
       rowStyle = dom.getStyle(row),
       rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight);
 
-    function getOffset(resizeHandle, evt) {
-      let halfWidth = resizeHandle.offsetWidth / 2;
-
-      return (evt.clientX - resizeHandle.offsetLeft + halfWidth) - halfWidth;
-    }
-
     /**
      * Set the width before resizing so the column
      * does not resize near window edges
