@@ -1,51 +1,12 @@
+import i18n from 'mi18n';
 import { data, dataMap, registeredFields } from '../common/data';
 import animate from '../common/animation';
 import helpers from '../common/helpers';
-import events from '../common/events';
 import actions from '../common/actions';
 import DOM from '../common/dom';
 import Panels from './panels';
 
 var dom = new DOM();
-
-var i18n = {
-  attributes: 'Attributes',
-  attribute: 'Attribute',
-  panelLabels: {
-    attrs: 'Attrs',
-    meta: 'Meta',
-    config: 'Config',
-    options: 'Options',
-  },
-  panelEditButtons: {
-    attrs: '+ Attribute',
-    options: '+ Option'
-  },
-  attrs: {
-    type: 'Type',
-    className: 'Class'
-  },
-  meta: {
-    label: 'Label',
-    group: 'Group',
-    icon: 'Icon'
-  },
-  action: {
-    add: {
-      attrs: {
-        attr: 'What attribute would you like to add?',
-        value: 'Default Value?'
-      },
-      options: {
-        attr: 'What attribute would you like to add?',
-        value: 'Default Value?'
-      }
-    }
-  },
-  field: 'Field',
-  options: 'Options',
-  placeholders: {}
-};
 
 export default class Field {
 
@@ -74,7 +35,7 @@ export default class Field {
       ],
       dataID: dataID,
       dataset: {
-        hoverTag: i18n.field
+        hoverTag: i18n.get('field')
       },
       fType: 'field'
     };
@@ -243,7 +204,7 @@ export default class Field {
                 className: 'form-control form-control-sm',
                 type: 'text',
                 value: val,
-                placeholder: i18n.placeholders[key] || helpers.capitalize(key)
+                placeholder: i18n.get('placeholder.' + key) || helpers.capitalize(key)
               },
               'boolean': {
                 type: boolType,
@@ -257,6 +218,9 @@ export default class Field {
             };
             return attrs[type];
           },
+          inputLabel = (key) => {
+            return i18n.get(panelType + '.' + key) || helpers.capitalize(key);
+          },
           propertyInputs = {
             string: (key, val) => {
 
@@ -269,7 +233,7 @@ export default class Field {
 
               if (!propIsNum) {
                 input.config = {
-                  label: i18n[panelType][key] || helpers.capitalize(key)
+                  label: inputLabel(key)
                 };
               }
 
@@ -290,7 +254,7 @@ export default class Field {
 
               if (!propIsNum) {
                 input.config = {
-                  label: i18n[panelType][key] || helpers.capitalize(key)
+                  label: inputLabel(key)
                 };
               }
 
@@ -334,7 +298,7 @@ export default class Field {
       panel = editGroup.parentElement,
       safeAttr = helpers.hyphenCase(attr);
 
-    i18n.attrs[safeAttr] = helpers.capitalize(attr);
+    i18n.put('attrs' + safeAttr, helpers.capitalize(attr));
 
     try {
       dataMap.fields[_this.fieldID].attrs[safeAttr] = window.JSON.parse(val);
@@ -387,7 +351,7 @@ export default class Field {
     let _this = this,
       addBtn = {
         tag: 'button',
-        content: i18n.panelEditButtons[type],
+        content: i18n.get('panelEditButtons.' + type),
         action: {
           click: (evt) => {
             let buttonPosition = evt.target.getBoundingClientRect(),
@@ -404,8 +368,8 @@ export default class Field {
             if (type === 'attrs') {
               addEvt.addAction = _this.addAttribute.bind(_this);
               addEvt.message = {
-                attr: i18n.action.add[type].attr,
-                value: i18n.action.add[type].value
+                attr: i18n.get('action.add.attrs.attr'),
+                value: i18n.get('action.add.attrs.value')
               };
             } else if (type === 'options') {
               addEvt.addAction = _this.addOption.bind(_this);
@@ -464,7 +428,7 @@ export default class Field {
             className: `panel ${prop}-panel`
           },
           config: {
-            label: i18n.panelLabels[prop] || ''
+            label: i18n.get('panelLabels.' + prop) || ''
           },
           content: [
             _this.editPanel(prop, fieldData),
@@ -515,7 +479,7 @@ export default class Field {
   fieldPreview() {
     let _this = this,
       fieldData = helpers.clone(dataMap.fields[_this.fieldID])
-    // fieldData = dataMap.fields[_this.fieldID];
+      // fieldData = dataMap.fields[_this.fieldID];
 
     fieldData.id = 'prev-' + _this.fieldID;
 

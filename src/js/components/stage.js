@@ -1,6 +1,5 @@
 import Sortable from 'sortablejs';
 import { data, dataMap } from '../common/data';
-import animate from '../common/animation';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Row from './row';
