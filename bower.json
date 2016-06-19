@@ -1,26 +1,26 @@
 {
-	"name": "formeo",
-	"version": "0.1.0",
-	"main": [
-		"dist/*"
-	],
-	"description": "A zero dependency JavaScript module for drag and drop form creation.",
-	"authors": [
-		"Kevin Chappell <kevin.b.chappell@gmail.com>"
-	],
-	"keywords": [
-		"drag and drop",
-		"form builder",
-		"form maker",
-		"forms"
-	],
-	"license": "MIT",
-	"moduleType": [
-		"javascript"
-	],
-	"ignore": [
-		"*",
-		"!dist",
-		"!dist/**/*"
-	]
+  "name": "formeo",
+  "version": "0.2.0",
+  "main": [
+    "dist/*"
+  ],
+  "description": "A zero dependency JavaScript module for drag and drop form creation.",
+  "authors": [
+    "Kevin Chappell <kevin.b.chappell@gmail.com>"
+  ],
+  "keywords": [
+    "drag and drop",
+    "form builder",
+    "form maker",
+    "forms"
+  ],
+  "license": "MIT",
+  "moduleType": [
+    "javascript"
+  ],
+  "ignore": [
+    "*",
+    "!dist",
+    "!dist/**/*"
+  ]
 }
