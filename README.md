@@ -1,4 +1,4 @@
-Formeo v0.1.0
+Formeo v0.2.1
 ===========
 
 A zero dependency JavaScript module for drag and drop form creation.
@@ -9,6 +9,7 @@ A zero dependency JavaScript module for drag and drop form creation.
 - Column layouts
 - Custom fields
 - Preview mode
+- i18n support
 
 ## Usage
 To start building forms with this module include formeo.min.js and formeo.min.css in your project and call:
