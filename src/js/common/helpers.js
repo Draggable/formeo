@@ -78,8 +78,6 @@ const helpers = {
         if (elem.attrs && elem.attrs.id) {
           elem.id = elem.attrs.id;
         } else {
-          let tag = elem.tag || elem.localName;
-
           elem.id = uuid();
         }
       }
@@ -253,6 +251,7 @@ const helpers = {
 
     return helpers.unique(orderedElements);
   },
+
   numberBetween: (num, min, max) => {
     return num > min && num < max;
   }

@@ -1,3 +1,4 @@
+import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import { data, dataMap } from '../common/data';
 import helpers from '../common/helpers';
@@ -39,7 +40,7 @@ export default class Column {
       tag: 'ul',
       className: ['stage-column'],
       dataset: {
-        hoverTag: 'Column'
+        hoverTag: i18n.get('column')
       },
       action: {
         mouseup: (evt) => {

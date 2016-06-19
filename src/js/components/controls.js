@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs';
+import i18n from 'mi18n';
 import { data, dataMap, registeredFields } from '../common/data';
 import helpers from '../common/helpers';
 import events from '../common/events';
@@ -8,28 +9,6 @@ import Row from './row';
 import Column from './column';
 import Field from './field';
 var dom = new DOM();
-
-var i18n = {
-  actions: {
-    clear: 'Clear',
-    settings: 'Settings',
-    save: 'Save',
-    saved: 'Saved'
-  },
-  controlGroups: {
-    common: 'Common Fields',
-    html: 'HTML Elements'
-  },
-  elements: {
-    text: 'Text',
-    select: 'Select',
-    textarea: 'Textarea',
-    checkbox: 'Checkbox'
-  },
-  confirmations: {
-    clearAll: 'Are you sure you want to remove all fields?'
-  }
-};
 
 export class Controls {
   constructor(controlOptions) {
@@ -41,14 +20,14 @@ export class Controls {
       ],
       controlGroups: [{
         id: 'common',
-        label: i18n.controlGroups.common,
+        label: i18n.get('commonFields'),
         order: [
           'text-input',
           'checkbox'
         ]
       }, {
         id: 'html',
-        label: i18n.controlGroups.html,
+        label: i18n.get('htmlElements'),
         order: [
           'header',
           'block-text'
@@ -61,7 +40,7 @@ export class Controls {
             className: 'form-control'
           },
           config: {
-            label: 'Text'
+            label: i18n.get('input.text')
           },
           meta: {
             group: 'common',
@@ -76,7 +55,7 @@ export class Controls {
             className: 'form-control'
           },
           config: {
-            label: 'Date'
+            label: i18n.get('input.date')
           },
           meta: {
             group: 'common',
@@ -91,9 +70,9 @@ export class Controls {
             type: 'button',
             className: 'btn-secondary btn'
           },
-          content: 'Button',
+          content: i18n.get('button'),
           config: {
-            label: 'Button',
+            label: i18n.get('button'),
             hideLabel: true
           },
           meta: {
@@ -102,17 +81,15 @@ export class Controls {
             id: 'button'
           },
           options: [{
-            label: 'Button',
+            label: i18n.get('button'),
             value: 'button',
             disabled: false
           }]
-        }
-
-        , {
+        }, {
           tag: 'select',
           className: 'form-control',
           config: {
-            label: 'Select'
+            label: i18n.get('select')
           },
           attrs: {
             className: 'form-control'
@@ -123,11 +100,11 @@ export class Controls {
             id: 'select'
           },
           options: [{
-            label: 'Option 1',
+            label: i18n.get('labelCount', { label: i18n.get('option'), count: 1 }),
             value: 'option-1',
             selected: false
           }, {
-            label: 'Option 2',
+            label: i18n.get('labelCount', { label: i18n.get('option'), count: 1 }),
             value: 'option-2',
             selected: false
           }]
@@ -135,7 +112,7 @@ export class Controls {
           tag: 'textarea',
           className: 'form-control',
           config: {
-            label: 'Textarea'
+            label: i18n.get('textarea')
           },
           meta: {
             group: 'common',
@@ -161,10 +138,10 @@ export class Controls {
           tag: 'input',
           attrs: {
             type: 'checkbox',
-            class: 'form-control'
+            className: 'form-control'
           },
           config: {
-            label: 'Checkbox/Group',
+            label: i18n.get('checkbox') + '/' + i18n.get('group'),
             required: true
           },
           meta: {
@@ -173,7 +150,7 @@ export class Controls {
             id: 'checkbox'
           },
           options: [{
-            label: 'Checkbox 1',
+            label: i18n.get('labelCount', { label: i18n.get('checkbox'), count: 1 }),
             value: 'checkbox-1',
             selected: true
           }]
@@ -184,7 +161,7 @@ export class Controls {
             required: false
           },
           config: {
-            label: 'Radio Group'
+            label: i18n.get('radioGroup')
           },
           meta: {
             group: 'common',
@@ -192,18 +169,18 @@ export class Controls {
             id: 'radio'
           },
           options: [{
-            label: 'Radio 1',
+            label: i18n.get('labelCount', { label: i18n.get('checkbox'), count: 1 }),
             value: 'radio-1',
             selected: false
           }, {
-            label: 'Radio 2',
+            label: i18n.get('labelCount', { label: i18n.get('radio'), count: 2 }),
             value: 'radio-2',
             selected: false
           }]
         }, {
           tag: 'h1',
           config: {
-            label: 'Header',
+            label: i18n.get('header'),
             hideLabel: true
           },
           meta: {
@@ -211,11 +188,11 @@ export class Controls {
             icon: 'header',
             id: 'header'
           },
-          content: 'Header'
+          content: i18n.get('header')
         }, {
           tag: 'p',
           config: {
-            label: 'Paragraph',
+            label: i18n.get('paragraph'),
             hideLabel: true
           },
           meta: {
@@ -227,7 +204,7 @@ export class Controls {
         }, {
           tag: 'hr',
           config: {
-            label: 'Divider',
+            label: i18n.get('paragraph'),
             noWrap: true
           },
           meta: {
@@ -284,6 +261,9 @@ export class Controls {
         registeredFields[dataID] = elem;
         return elementControl;
       };
+
+    // Apply order
+    groups = helpers.orderObjectsBy(groups, opts.controlGroupOrder, 'id');
 
     allGroups = helpers.map(groups, (i) => {
       let group = {
@@ -352,7 +332,7 @@ export class Controls {
         tag: 'button'
       },
       clearBtn = Object.assign({}, btnTemplate, {
-        content: [dom.icon('bin'), i18n.actions.clear],
+        content: [dom.icon('bin'), i18n.get('clear')],
         className: ['clear-form'],
         action: {
           click: (evt) => {
@@ -368,7 +348,7 @@ export class Controls {
             if (rows.length) {
               events.confirmClearAll = new CustomEvent('confirmClearAll', {
                 detail: {
-                  confirmationMessage: i18n.confirmations.clearAll,
+                  confirmationMessage: i18n.get('confirmClearAll'),
                   clearAllAction: _this.clearAll,
                   btnCoords: coords,
                   rows: rows
@@ -383,12 +363,12 @@ export class Controls {
         }
       }),
       settingsBtn = Object.assign({}, btnTemplate, {
-        content: [dom.icon('settings'), i18n.actions.settings],
-        attrs: { title: i18n.settings },
+        content: [dom.icon('settings'), i18n.get('settings')],
+        attrs: { title: i18n.get('settings') },
         className: ['edit-settings']
       }),
       saveBtn = Object.assign({}, btnTemplate, {
-        content: [dom.icon('floppy-disk'), i18n.actions.save],
+        content: [dom.icon('floppy-disk'), i18n.get('save')],
         className: ['save-form']
       }),
       formActions = {
@@ -403,7 +383,6 @@ export class Controls {
 
     return formActions;
   }
-
 
   /**
    * Returns the markup for the form controls/fields
@@ -477,6 +456,5 @@ export class Controls {
     data.saveRowOrder(row);
     data.save();
   }
-
 
 }

@@ -1,3 +1,4 @@
+import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
@@ -133,7 +134,7 @@ export default class Panels {
         tag: 'button',
         attrs: {
           className: 'btn next-group',
-          title: 'Next Element Group'
+          title: i18n.get('controlGroups.nextGroup')
         },
         dataset: {
           toggle: 'tooltip',
@@ -148,7 +149,7 @@ export default class Panels {
         tag: 'button',
         attrs: {
           className: 'btn prev-group',
-          title: 'Previous Element Group'
+          title: i18n.get('controlGroups.prevGroup')
         },
         dataset: {
           toggle: 'tooltip',

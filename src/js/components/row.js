@@ -1,31 +1,10 @@
+import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import DOM from '../common/dom';
-import animate from '../common/animation';
 import helpers from '../common/helpers';
 import { data, dataMap } from '../common/data';
 
 var dom = new DOM();
-
-var i18n = {
-  attributes: 'Attributes',
-  attribute: 'Attribute',
-  panelLabels: {
-    attrs: 'Attrs',
-    meta: 'Meta',
-    options: 'Options'
-  },
-  attrs: {
-    type: 'Type',
-    className: 'Class'
-  },
-  meta: {
-    label: 'Label',
-    group: 'Group',
-    icon: 'Icon'
-  },
-  options: 'Options',
-  placeholders: {}
-};
 
 export default class Row {
 
@@ -56,7 +35,7 @@ export default class Row {
         className: 'stage-row'
       },
       dataset: {
-        hoverTag: 'Row'
+        hoverTag: i18n.get('row')
       },
       action: {
         mouseover: (evt) => {
@@ -103,13 +82,13 @@ export default class Row {
       },
       fieldsetLabel = {
         tag: 'label',
-        content: 'Wrap row in a &lt;fieldset&gt; tag',
+        content: i18n.get('row.settings.fieldsetWrap'),
       },
       fieldsetInput = {
         tag: 'input',
         attrs: {
           type: 'checkbox',
-          ariaLabel: 'Wrap Row in Fieldset'
+          ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
         }
       },
       fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),

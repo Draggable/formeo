@@ -2,6 +2,7 @@ import pkg from './package.json';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { optimize, BannerPlugin, DefinePlugin } from 'webpack';
 
 const sassLoaders = [
@@ -23,7 +24,10 @@ if (development) {
   plugins = [
     new ExtractTextPlugin('[name].min.css'),
     new optimize.DedupePlugin(),
-    new BannerPlugin(bannerTemplate)
+    new BannerPlugin(bannerTemplate),
+    new CopyWebpackPlugin([
+      { from: 'src/lang', to: 'lang' },
+    ])
   ];
 } else {
   plugins = [
@@ -65,6 +69,9 @@ var webpackConfig = {
         presets: ['es2015'],
         plugins: ['transform-runtime']
       }
+    }, {
+      test: /\.lang$/,
+      loader: 'file?name=[path][name].[ext]&context=./dist/lang'
     }, {
       test: /\.scss$/,
       loaders: ['style', 'css?sourceMap', 'sass?sourceMap'],

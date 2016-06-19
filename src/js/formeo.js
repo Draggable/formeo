@@ -5,6 +5,7 @@ import { data } from './common/data';
 import events from './common/events';
 import actions from './common/actions';
 import DOM from './common/dom';
+import i18n from 'mi18n';
 import { Controls } from './components/controls';
 import Stage from './components/stage';
 
@@ -18,29 +19,42 @@ var defaults = {
   container: '.formeo',
   prefix: 'formeo-',
   svgSprite: 'assets/img/formeo-sprite.svg',
-  events: {}
+  events: {},
+  i18n: {
+    langsDir: 'assets/lang/',
+    langs: [
+      'en-US'
+    ]
+  }
 };
 
 // Simple object config for the main part of formeo
 var formeo = {};
 var _formeo = {
   init: function(options, formData) {
-    formeo.opts = Object.assign({}, defaults, options);
+    formeo.opts = helpers.extend(defaults, options);
     data.init(formeo.opts, formData);
-    formeo.formData = data.get();
-    formeo.opts.formID = formeo.formData.id;
-    _formeo.stage = new Stage(formeo.opts);
-    formeo.controls = new Controls(formeo.opts);
-    helpers.loadIcons(formeo.opts.svgSprite);
-    events.init(formeo.opts.events);
-    actions.init(formeo.opts.actions);
-    this.render();
+    i18n.init(formeo.opts.i18n)
+      .then(function() {
+          formeo.formData = data.get();
+          formeo.opts.formID = formeo.formData.id;
+          _formeo.stage = new Stage(formeo.opts);
+          formeo.controls = new Controls(formeo.opts);
+          helpers.loadIcons(formeo.opts.svgSprite);
+          events.init(formeo.opts.events);
+          actions.init(formeo.opts.actions);
+          _formeo.render();
+        },
+        function(err) {
+          console.error('There was an error retrieving the language files', err);
+        });
+
     return formeo;
   },
   render: function() {
     let controls = formeo.controls.dom,
       container = formeo.opts.container;
-      // formeo.stage = _formeo.stage;
+    // formeo.stage = _formeo.stage;
 
     if (typeof formeo.opts.container === 'string') {
       container = document.querySelector(formeo.opts.container);
