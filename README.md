@@ -1,6 +1,8 @@
 Formeo v0.2.1
 ===========
 
+[![Join the chat at https://gitter.im/Draggable/formeo](https://badges.gitter.im/Draggable/formeo.svg)](https://gitter.im/Draggable/formeo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A zero dependency JavaScript module for drag and drop form creation.
 
 ## Features
