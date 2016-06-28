@@ -11,50 +11,55 @@ import Stage from './components/stage';
 
 var dom = new DOM();
 
-// Default options
-var defaults = {
-  dataType: 'json',
-  debug: false,
-  className: 'formeo',
-  container: '.formeo',
-  prefix: 'formeo-',
-  svgSprite: 'assets/img/formeo-sprite.svg',
-  events: {},
-  i18n: {
-    langsDir: 'assets/lang/',
-    langs: [
-      'en-US'
-    ]
-  }
-};
-
 // Simple object config for the main part of formeo
 var formeo = {};
-var _formeo = {
-  init: function(options, formData) {
+class Formeo {
+  constructor(options, formData) {
+    // Default options
+    const defaults = {
+      dataType: 'json',
+      debug: false,
+      className: 'formeo',
+      container: '.formeo',
+      prefix: 'formeo-',
+      svgSprite: '/assets/img/formeo-sprite.svg',
+      events: {},
+      i18n: {
+        langsDir: '/assets/lang/',
+        langs: [
+          'en-US'
+        ]
+      }
+    };
+
+    let _this = this;
+
+    this.version = '0.2.2';
+
     formeo.opts = helpers.extend(defaults, options);
     data.init(formeo.opts, formData);
     i18n.init(formeo.opts.i18n)
       .then(function() {
           formeo.formData = data.get();
           formeo.opts.formID = formeo.formData.id;
-          _formeo.stage = new Stage(formeo.opts);
+          _this.stage = new Stage(formeo.opts);
           formeo.controls = new Controls(formeo.opts);
           helpers.loadIcons(formeo.opts.svgSprite);
           events.init(formeo.opts.events);
           actions.init(formeo.opts.actions);
-          _formeo.render();
+          _this.render();
         },
         function(err) {
           console.error('There was an error retrieving the language files', err);
         });
 
     return formeo;
-  },
-  render: function() {
+  }
+
+  render() {
     let controls = formeo.controls.dom,
       container = formeo.opts.container;
-    // formeo.stage = _formeo.stage;
+    // formeo.stage = this.stage;
 
     if (typeof formeo.opts.container === 'string') {
       container = document.querySelector(formeo.opts.container);
@@ -66,7 +71,7 @@ var _formeo = {
           className: formeo.opts.className,
           id: formeo.opts.formID
         },
-        content: [_formeo.stage, controls]
+        content: [this.stage, controls]
       },
       formeoElem = dom.create(fbElem);
 
@@ -80,9 +85,10 @@ var _formeo = {
 
     document.dispatchEvent(events.formeoLoaded);
   }
-};
+}
 
-// add Formeo to window so we can new it from anywhere;
-window.Formeo = (options, formData) => {
-  return _formeo.init(options, formData);
-};
+if (window !== undefined) {
+  window.Formeo = Formeo;
+}
+
+export default Formeo;

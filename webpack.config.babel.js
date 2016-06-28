@@ -47,6 +47,7 @@ if (development) {
 }
 
 var webpackConfig = {
+  context: path.join(__dirname, pkg.config.files.formeo.js),
   entry: {
     'formeo': path.join(__dirname, pkg.config.files.formeo.js)
   },

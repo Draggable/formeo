@@ -6,7 +6,6 @@ Formeo is open source to the core and contributions are always welcome. In this 
 If you're having trouble please don't hesitate to open Issue [here](https://github.com/Draggable/formeo/issues)
 
 
-
 ### Dependencies
 To develop for Formeo you'll need:
 

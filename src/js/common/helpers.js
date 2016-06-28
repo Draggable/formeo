@@ -223,8 +223,8 @@ const helpers = {
   },
   /**
    * Remove duplicates from an array of elements
-   * @param  {array} arrArg array with possible duplicates
-   * @return {array}        array with only unique values
+   * @param  {Array} array with possible duplicates
+   * @return {Array} array with only unique values
    */
   unique: (array) => {
     return array.filter((elem, pos, arr) => {

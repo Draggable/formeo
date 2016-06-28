@@ -5,7 +5,6 @@ import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Field from './field';
 
-
 var dom = new DOM();
 
 export default class Column {
