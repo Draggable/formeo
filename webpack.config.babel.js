@@ -24,7 +24,6 @@ if (development) {
   plugins = [
     new ExtractTextPlugin('[name].min.css'),
     new optimize.DedupePlugin(),
-    new BannerPlugin(bannerTemplate),
     new CopyWebpackPlugin([
       { from: 'src/lang', to: 'lang' },
     ])

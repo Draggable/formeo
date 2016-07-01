@@ -3,6 +3,10 @@
   position: relative;
   background-color: $white;
 
+  &[class*='col-'] {
+    padding: 0;
+  }
+
   @extend %no-list-style;
 
   &:first-of-type {
@@ -67,8 +71,10 @@
       display: block;
     }
   }
+}
 
-  .editing-row & {
+.editing-row {
+  .stage-column {
     border-radius: 5px;
     height: 60px;
     background-color: $gray-light;

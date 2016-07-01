@@ -1,7 +1,6 @@
 //
 // Textual form controls
 //
-
 .form-control {
   display: block;
   width: 100%;
@@ -177,6 +176,12 @@
   margin-bottom: $form-group-margin-bottom;
 }
 
+.radio input[type='radio'],
+.checkbox input[type='checkbox'] {
+  position: relative;
+  margin-left: 0;
+}
+
 // Checkboxes and radios
 //
 // Indent the labels to position radios/checkboxes as hanging controls.
@@ -272,84 +277,6 @@ input[type='checkbox'] {
     background-image: url($form-icon-danger);
   }
 }
-
-// .form-control-success {
-//   background-image: url('#{$form-icon-success}');
-//   border-color: $brand-success;
-// }
-//
-// .form-control-warning {
-//   background-image: url('#{$form-icon-warning}');
-//   border-color: $brand-warning;
-// }
-//
-// .form-control-error {
-//   background-image: url('#{$form-icon-danger}');
-//   border-color: $brand-danger;
-// }
-
-// .has-feedback {
-//   // Enable absolute positioning
-//   position: relative;
-//
-//   // Ensure icons don't overlap text
-//   .form-control {
-//     padding-right: ($input-height * 1.25);
-//   }
-// }
-// // Feedback icon
-// .form-control-feedback {
-//   position: absolute;
-//   top: 0;
-//   right: 0;
-//   z-index: 2; // Ensure icon is above input groups
-//   display: block;
-//   width: $input-height;
-//   height: $input-height;
-//   line-height: $input-height;
-//   text-align: center;
-//   pointer-events: none;
-// }
-
-// .input-lg + .form-control-feedback,
-// .input-group-lg + .form-control-feedback {
-//   width: $input-height-lg;
-//   height: $input-height-lg;
-//   line-height: $input-height-lg;
-// }
-
-// .input-sm + .form-control-feedback,
-// .input-group-sm + .form-control-feedback {
-//   width: $input-height-sm;
-//   height: $input-height-sm;
-//   line-height: $input-height-sm;
-// }
-//
-// // Form validation states
-// .has-success {
-//   @include form-control-validation($state-success-text, $state-success-text, $state-success-bg);
-// }
-
-// .has-warning {
-//   @include form-control-validation($state-warning-text, $state-warning-text, $state-warning-bg);
-// }
-
-// .has-danger {
-//   @include form-control-validation($state-danger-text, $state-danger-text, $state-danger-bg);
-// }
-//
-// // Reposition feedback icon if input has visible label above
-// .has-feedback label {
-//
-//   ~ .form-control-feedback {
-//     // TODO: redo this since we nuked the `$line-height-computed`
-//     top: 0; // Height of the `label` and its margin
-//   }
-//
-//   &.sr-only ~ .form-control-feedback {
-//     top: 0;
-//   }
-// }
 
 // Inline forms
 //
