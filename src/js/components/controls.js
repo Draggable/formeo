@@ -169,7 +169,7 @@ export class Controls {
             id: 'radio'
           },
           options: [{
-            label: i18n.get('labelCount', { label: i18n.get('checkbox'), count: 1 }),
+            label: i18n.get('labelCount', { label: i18n.get('radio'), count: 1 }),
             value: 'radio-1',
             selected: false
           }, {
@@ -405,7 +405,7 @@ export class Controls {
     });
     let controls = dom.create({
         tag: 'div',
-        className: this.opts.className + '-controls',
+        className: this.opts.className + '-controls formeo-controls',
         content: [this.controlGroupsWrap, formActions]
       }),
       controlGroups = controls.getElementsByClassName('control-group');

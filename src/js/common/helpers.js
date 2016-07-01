@@ -60,17 +60,38 @@ const helpers = {
 
     return safeAttr[name] || helpers.hyphenCase(name);
   },
-  loadIcons: function(file) {
-    var ajax = new XMLHttpRequest();
-    ajax.open('GET', file, true);
-    ajax.send();
-    ajax.onload = function() {
-      if (ajax.status) {
-        var iconSpriteWrap = dom.create({ tag: 'div', content: ajax.responseText });
-        iconSpriteWrap.style.display = 'none';
-        document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
-      }
-    };
+  ajax: (file, callback) => {
+    return new Promise(function(resolve, reject) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', file, true);
+      xhr.onload = function() {
+        if (this.status >= 200 && this.status < 300) {
+          callback(xhr);
+          resolve(xhr.response);
+        } else {
+          reject({
+            status: this.status,
+            statusText: xhr.statusText
+          });
+        }
+      };
+      xhr.onerror = function() {
+        reject({
+          status: this.status,
+          statusText: xhr.statusText
+        });
+      };
+      xhr.send();
+    });
+  },
+  insertIcons: function(response) {
+    let iconSpriteWrap = dom.create({ tag: 'div', content: response.responseText });
+    iconSpriteWrap.style.display = 'none';
+    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+  },
+  insertStyle: function(response) {
+    let formeoStyle = dom.create({ tag: 'style', content: response.responseText });
+    document.head.appendChild(formeoStyle);
   },
   uuid: function(elem) {
     if (elem) {

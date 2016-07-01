@@ -1,9 +1,25 @@
-@import 'base/variables';
+.formeo {
+  @import 'base/variables';
+  @import 'base/bootstrap/bootstrap';
+  @import 'base/icons';
+  @import 'base/mixins';
+  @import 'base/animation';
+  @import 'controls';
+  @import 'stage';
 
-@import 'base/bootstrap/bootstrap';
+  // Sets a specific default `font-size` for user with `rem` type scales.
+  font-size: $font-size-root;
 
-@import 'base/icons';
-@import 'base/mixins';
-@import 'base/animation';
-@import 'controls';
-@import 'stage';
+  // Changes the default tap highlight to be completely transparent in iOS.
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+
+  // Make the `body` use the `font-size-root`
+  font-family: $font-family-base;
+  line-height: $line-height;
+
+  // Go easy on the eyes and use something other than `#000` for text
+  color: $body-color;
+
+  // By default, `<body>` has no `background-color` so we set one as a best practice.
+  background-color: $body-bg;
+}

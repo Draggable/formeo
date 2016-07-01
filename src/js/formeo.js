@@ -15,6 +15,7 @@ var dom = new DOM();
 var formeo = {};
 class Formeo {
   constructor(options, formData) {
+    this.version = '0.2.2';
     // Default options
     const defaults = {
       dataType: 'json',
@@ -34,22 +35,29 @@ class Formeo {
 
     let _this = this;
 
-    this.version = '0.2.2';
+    this.container = options.container || defaults.container;
+    // Remove `container` property before extending because container may be Element
+    delete options.container;
 
     formeo.opts = helpers.extend(defaults, options);
     data.init(formeo.opts, formData);
+
+    if (formeo.opts.style) {
+      helpers.ajax(formeo.opts.style, helpers.insertStyle);
+    }
+
     i18n.init(formeo.opts.i18n)
       .then(function() {
           formeo.formData = data.get();
           formeo.opts.formID = formeo.formData.id;
           _this.stage = new Stage(formeo.opts);
           formeo.controls = new Controls(formeo.opts);
-          helpers.loadIcons(formeo.opts.svgSprite);
+          helpers.ajax(formeo.opts.svgSprite, helpers.insertIcons);
           events.init(formeo.opts.events);
           actions.init(formeo.opts.actions);
           _this.render();
         },
-        function(err) {
+        err => {
           console.error('There was an error retrieving the language files', err);
         });
 
@@ -58,10 +66,10 @@ class Formeo {
 
   render() {
     let controls = formeo.controls.dom,
-      container = formeo.opts.container;
+      container = this.container;
     // formeo.stage = this.stage;
 
-    if (typeof formeo.opts.container === 'string') {
+    if (typeof container === 'string') {
       container = document.querySelector(formeo.opts.container);
     }
 
