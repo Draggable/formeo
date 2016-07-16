@@ -549,6 +549,22 @@ export default class DOM {
     rowEdit.replaceChild(newColumnPreset, oldColumnPreset);
   }
 
+  /**
+   * Returns the {x, y} coordinates for the
+   * center of a given element
+   * @param  {DOM} element
+   * @return {Object}      {x,y} coordinates
+   */
+  coords(element) {
+    let buttonPosition = element.getBoundingClientRect(),
+      bodyRect = document.body.getBoundingClientRect();
+
+    return {
+      pageX: buttonPosition.left + (buttonPosition.width / 2),
+      pageY: (buttonPosition.top - bodyRect.top) - (buttonPosition.height / 2)
+    };
+  }
+
   // manualColumnWidth(column, width) {
   //   let _this = this;
 

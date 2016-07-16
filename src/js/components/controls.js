@@ -3,6 +3,7 @@ import i18n from 'mi18n';
 import { data, dataMap, registeredFields } from '../common/data';
 import helpers from '../common/helpers';
 import events from '../common/events';
+import actions from '../common/actions';
 import DOM from '../common/dom';
 import Panels from './panels';
 import Row from './row';
@@ -62,9 +63,7 @@ export class Controls {
             icon: 'calendar',
             id: 'date-input'
           }
-        }
-
-        , {
+        }, {
           tag: 'button',
           attrs: {
             type: 'button',
@@ -354,6 +353,7 @@ export class Controls {
                   rows: rows
                 }
               });
+
               document.dispatchEvent(events.confirmClearAll);
 
             } else {
@@ -369,7 +369,24 @@ export class Controls {
       }),
       saveBtn = Object.assign({}, btnTemplate, {
         content: [dom.icon('floppy-disk'), i18n.get('save')],
-        className: ['save-form']
+        className: ['save-form'],
+        actions: {
+          click: (evt) => {
+            let saveEvt = {
+              action: () => {},
+              coords: helpers.coords(evt.target),
+              message: ''
+            };
+
+            actions.click.btn(saveEvt);
+
+            events.formeoSaved = new CustomEvent('formeoSaved', {
+              detail: {
+                formData: data.get()
+              }
+            });
+          }
+        }
       }),
       formActions = {
         tag: 'div',
@@ -393,8 +410,6 @@ export class Controls {
       return this.controls;
     }
 
-    // let controlNavElements = this.controlNavElements(), // Navigation for all the form elements
-    //   groupedFields = dom.create(this.mergeGroups()), // grouped form and html elements
     let groupedFields = this.mergeGroups();
     let formActions = this.formActions();
     let controlPanels = new Panels({ panels: groupedFields, type: 'controls' });
