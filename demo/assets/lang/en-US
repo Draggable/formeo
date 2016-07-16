@@ -51,6 +51,7 @@ hide = Edit
 htmlElements = HTML Elements
 input.date = Date
 input.text = Text
+input.phone = Phone
 label = Label
 labelCount = {label} {count}
 labelEmpty = Field Label cannot be empty

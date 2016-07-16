@@ -6,6 +6,7 @@ var defaults = {
   formeoLoaded: (evt) => {},
   onAdd: () => {},
   onUpdate: (evt) => {},
+  onSave: (evt) => {},
   confirmClearAll: (evt) => {
     if (window.confirm(evt.confirmationMessage)) {
       evt.clearAllAction(evt.rows);
@@ -30,7 +31,6 @@ document.addEventListener('formeoUpdate', function(evt) {
     formData: evt.detail.formData
   };
   events.opts.onUpdate(evt);
-  // window.controlNav = evt.detail.formeo.controls.controlNav;
 });
 
 document.addEventListener('confirmClearAll', function(evt) {
@@ -45,6 +45,15 @@ document.addEventListener('confirmClearAll', function(evt) {
   };
 
   events.opts.confirmClearAll(evt);
+});
+
+document.addEventListener('formeoSaved', function(evt) {
+  evt = {
+    timeStamp: evt.timeStamp,
+    type: evt.type,
+    formData: evt.detail.formData
+  };
+  events.opts.onSave(evt);
 });
 
 document.addEventListener('formeoLoaded', function(evt) {

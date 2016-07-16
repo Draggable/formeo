@@ -17,7 +17,13 @@ var defaultActions = {
     option: (evt) => {
       evt.addAction();
     }
-  }
+  },
+  click: {
+    btn: (evt) => {
+      evt.action();
+    }
+  },
+  save: (evt) => {}
 };
 
 /**
@@ -35,7 +41,13 @@ var actions = {
     options: (evt) => {
       actions.opts.add.option(evt);
     }
-  }
+  },
+  click: {
+    btn: (evt) => {
+      actions.opts.click.btn(evt);
+    }
+  },
+  save: () => {}
 };
 
 export default actions;

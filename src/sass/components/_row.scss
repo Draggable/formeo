@@ -7,6 +7,10 @@
   background-color: $white;
   padding: 5px;
 
+  &:after {
+    clear: both;
+  }
+
   @include clearfix;
 
   &.hidden-field {

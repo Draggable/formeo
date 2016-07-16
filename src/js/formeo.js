@@ -15,7 +15,6 @@ var dom = new DOM();
 var formeo = {};
 class Formeo {
   constructor(options, formData) {
-    this.version = '0.2.2';
     // Default options
     const defaults = {
       dataType: 'json',
@@ -25,6 +24,7 @@ class Formeo {
       prefix: 'formeo-',
       svgSprite: 'assets/img/formeo-sprite.svg',
       events: {},
+      actions: {},
       i18n: {
         langsDir: 'assets/lang/',
         langs: [
@@ -40,10 +40,19 @@ class Formeo {
     delete options.container;
 
     formeo.opts = helpers.extend(defaults, options);
+
+    if (formeo.opts.debug) {
+      formeo.opts.actions.debug = formeo.opts.events.debug = true;
+    }
+
     data.init(formeo.opts, formData);
 
     if (formeo.opts.style) {
       helpers.ajax(formeo.opts.style, helpers.insertStyle);
+    }
+
+    if (formeo.opts.svgSprite) {
+      helpers.ajax(formeo.opts.svgSprite, helpers.insertIcons);
     }
 
     i18n.init(formeo.opts.i18n)
@@ -52,7 +61,6 @@ class Formeo {
           formeo.opts.formID = formeo.formData.id;
           _this.stage = new Stage(formeo.opts);
           formeo.controls = new Controls(formeo.opts);
-          helpers.ajax(formeo.opts.svgSprite, helpers.insertIcons);
           events.init(formeo.opts.events);
           actions.init(formeo.opts.actions);
           _this.render();

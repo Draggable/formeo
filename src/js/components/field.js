@@ -354,15 +354,8 @@ export default class Field {
         content: i18n.get('panelEditButtons.' + type),
         action: {
           click: (evt) => {
-            let buttonPosition = evt.target.getBoundingClientRect(),
-              bodyRect = document.body.getBoundingClientRect(),
-              coords = {
-                pageX: buttonPosition.left + (buttonPosition.width / 2),
-                pageY: (buttonPosition.top - bodyRect.top) - 12
-              };
-
             let addEvt = {
-              btnCoords: coords
+              btnCoords: dom.coords(evt.target)
             };
 
             if (type === 'attrs') {
