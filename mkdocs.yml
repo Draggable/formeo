@@ -14,5 +14,8 @@ pages:
   - License: license.md
 extra_css:
   - 'css/site.css'
+  - '//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.2.0/styles/monokai-sublime.min.css'
 extra_javascript:
-- 'js/scripts.js'
+  - 'js/scripts.js'
+  - '//assets.codepen.io/assets/embed/ei.js'
+  - '//sidecar.gitter.im/dist/sidecar.v1.js'
