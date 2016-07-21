@@ -49,6 +49,10 @@
     }
   }
 
+  .panel-labels {
+    border-top: 1px solid $gray-lighter;
+  }
+
   .panel-count-1 {
     .panel-nav {
       display: none;
