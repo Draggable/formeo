@@ -1,0 +1,19 @@
+{
+  "name": "formeo",
+  "type": "library",
+  "description": "Drag and Drop Javascript form builder",
+  "keywords": [
+    "form",
+    "builder",
+    "formbuilder",
+    "form builder"
+  ],
+  "homepage": "http://draggable.github.io/formeo/",
+  "license": "MIT",
+  "authors": [{
+    "name": "Kevin Chappell",
+    "email": "kevin.b.chappell@gmail.com",
+    "homepage": "https://kevin-chappell.com",
+    "role": "Developer"
+  }]
+}
