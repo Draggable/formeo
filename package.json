@@ -1,20 +1,20 @@
 {
   "name": "formeo",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "main": "dist/formeo.min.js",
   "files": [
     "dist/formeo.min.js",
     "dist/formeo.min.css"
   ],
-  "homepage": "http://kevinchappell.github.io/formeo/",
+  "homepage": "http://draggable.github.io/formeo/",
   "repository": {
     "type": "git",
-    "url": "http://github.com/kevinchappell/formeo"
+    "url": "http://github.com/draggable/formeo"
   },
   "author": "Kevin Chappell <kevin.b.chappell@gmail.com>",
   "contributors": [],
   "bugs": {
-    "url": "https://github.com/kevinchappell/formeo/issues"
+    "url": "https://github.com/draggable/formeo/issues"
   },
   "description": "A zero dependency JavaScript module for drag and drop form creation.",
   "keywords": [
