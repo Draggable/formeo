@@ -83,7 +83,7 @@
     "postcss-loader": "^0.8.2",
     "purifycss-webpack-plugin": "^2.0.3",
     "sass-loader": "^3.2.0",
-    "sortablejs": "git@github.com:kevinchappell/Sortable.git",
+    "sortablejs": "https://github.com/kevinchappell/Sortable.git",
     "style-loader": "^0.13.1",
     "svg-sprite": "^1.3.1",
     "uuid-v4": "^0.1.0",
