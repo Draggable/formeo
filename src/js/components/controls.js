@@ -416,7 +416,7 @@ export class Controls {
     this.controlGroupsWrap = dom.create({
       tag: 'div',
       className: 'control-groups panels-wrap panel-count-' + groupedFields.length,
-      content: controlPanels
+      content: controlPanels.content
     });
     let controls = dom.create({
         tag: 'div',

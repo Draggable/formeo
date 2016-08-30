@@ -45,13 +45,21 @@
   }
 }
 
-.hovering-field,
-.editing-field {
-  .field-actions {
-    width: (3 * $field-btn-width) !important;
-    border-color: $field-outline-color;
-    border-width: 0 0 1px 1px;
-    border-style: solid;
+.column-editing-field {
+  .column-actions {
+    display: none;
+  }
+}
+
+.stage-field {
+  &.hovering-field,
+  &.editing-field {
+    .field-actions {
+      width: (3 * $field-btn-width) !important;
+      border-color: $field-outline-color;
+      border-width: 0 0 1px 1px;
+      border-style: solid;
+    }
   }
 }
 
