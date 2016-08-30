@@ -33,6 +33,7 @@ export default class Field {
         _this.fieldEdit(), // fieldEdit window
         _this.preview // fieldPreview
       ],
+      panelNav: _this.panelNav,
       dataID: dataID,
       dataset: {
         hoverTag: i18n.get('field')
@@ -462,8 +463,10 @@ export default class Field {
     };
 
     if (panels.length) {
+      let editPanels = new Panels(panelsConfig);
       fieldEdit.className.push('panel-count-' + panels.length);
-      fieldEdit.content = new Panels(panelsConfig);
+      fieldEdit.content = editPanels.content;
+      _this.panelNav = editPanels.nav;
     }
 
     return fieldEdit;

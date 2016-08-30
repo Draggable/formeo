@@ -19,13 +19,16 @@ export default class Panels {
     this.panels = panels.childNodes;
     this.currentPanel = this.panels[0];
     this.labels = labels;
-    this.nav = this.navActions;
+    this.nav = this.navActions();
 
     if (this.opts.type === 'field') {
       setTimeout(this.setPanelsHeight.bind(this), 10);
     }
 
-    return [labels, panels];
+    return {
+      content: [labels, panels],
+      nav: this.nav
+    };
   }
 
   setPanelsHeight() {
@@ -170,20 +173,25 @@ export default class Panels {
     });
   }
 
-  get navActions() {
+  navActions() {
     let direction = {},
-      currentPanel = this.currentPanel,
-      groupParent = currentPanel.parentElement,
+      groupParent = this.currentPanel.parentElement,
       firstControlNav = this.labels.querySelector('.panel-labels').firstChild,
-      siblingGroups = currentPanel.parentElement.children,
-      index = Array.prototype.indexOf.call(siblingGroups, currentPanel),
-      groupChange = (index) => {
-        this.currentPanel = siblingGroups[index];
+      siblingGroups = this.currentPanel.parentElement.children,
+      index = Array.prototype.indexOf.call(siblingGroups, this.currentPanel),
+      groupChange = (newIndex) => {
+        this.currentPanel = siblingGroups[newIndex];
         this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
         if (this.opts.type === 'field') {
           this.slideToggle.style.height = 'auto';
         }
       };
+
+    direction.refresh = () => {
+      firstControlNav.style.transform = `translateX(-${(firstControlNav.offsetWidth * index)}px)`;
+      groupParent.style.transform = `translateX(-${(groupParent.offsetWidth * index)}px)`;
+    };
+
     direction.nextGroup = () => {
       let newIndex = (index + 1);
       if (newIndex !== siblingGroups.length) {

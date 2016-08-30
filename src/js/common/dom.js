@@ -149,9 +149,14 @@ export default class DOM {
     ];
 
     if (helpers.inArray(elem.fType, fieldDataBindings)) {
-      element.fieldData = elem;
-      processed.push('fieldData');
+      let dataType = elem.fType + 'Data';
+      element[dataType] = elem;
+      if (dataType === 'fieldData') {
+        element.panelNav = elem.panelNav;
+      }
+      processed.push(dataType);
     }
+
     // Subtract processed and ignored and attach the rest
     let remaining = helpers.subtract(processed, Object.keys(elem));
     for (i = remaining.length - 1; i >= 0; i--) {
@@ -332,12 +337,16 @@ export default class DOM {
         action: {
           click: (evt) => {
             let element = document.getElementById(id),
+              editClass = 'editing-' + item,
               editWindow = element.querySelector(`.${item}-edit`);
             animate.slideToggle(editWindow, 333);
             if (item === 'field') {
               animate.slideToggle(editWindow.nextSibling, 333);
             }
-            element.classList.toggle('editing-' + item);
+            if (item === 'field') {
+              element.parentElement.classList.toggle('column-' + editClass);
+            }
+            element.classList.toggle(editClass);
           }
         }
       },
@@ -494,6 +503,14 @@ export default class DOM {
         dataMap.columns[columns[i].id].config.width = width;
       }
     });
+
+    // Fix the editWindow for any fields that were being edited
+    let editingFields = row.getElementsByClassName('editing-field');
+    if (editingFields.length) {
+      for (var i = editingFields.length - 1; i >= 0; i--) {
+        editingFields[i].panelNav.refresh();
+      }
+    }
 
     // This is temporary until column resizing happens on hover
     // setTimeout(() => {

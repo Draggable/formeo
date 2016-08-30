@@ -63,6 +63,7 @@
 
   &.editing-field {
     background-color: $gray-lightest;
+    z-index: 1;
   }
 }
 
