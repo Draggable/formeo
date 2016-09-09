@@ -4,6 +4,7 @@ import { data, dataMap } from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Field from './field';
+import events from '../common/events';
 
 var dom = new DOM();
 
