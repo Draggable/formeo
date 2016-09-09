@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.2.7 - Bugfix: events are undefined [#19](https://github.com/Draggable/formeo/pull/19)
 - v0.2.6 - Bugfix: formData events and options [#17](https://github.com/Draggable/formeo/pull/17)
 - v0.2.5 - Feature/Bugfix: CSS Updates and editWindow fix [#16](https://github.com/Draggable/formeo/pull/16)
 - v0.2.3 - Bugfix: scope style, enable xhr style loading [#8](https://github.com/Draggable/formeo/pull/8)
