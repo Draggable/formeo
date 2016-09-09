@@ -1,0 +1,95 @@
+'use strict';
+var isSite = (window.location.href.indexOf('draggable.github.io') !== -1);
+
+function readyState() {
+  var script = this;
+  if (!script.readyState || script.readyState === 'loaded' || script.readyState === 'complete') {
+    script.onload = script.onreadystatechange = null;
+
+    var container = document.querySelector('.build-form');
+    new window.Formeo({
+      container: container,
+      style: isSite ? '/formeo/assets/css/formeo.min.css' : '../dist/formeo.min.css'
+    });
+  }
+}
+
+(function getScript() {
+  var formeoScript = isSite ? '/formeo/assets/js/formeo.min.js' : '../dist/formeo.min.js',
+    script = document.createElement('script');
+  script.appendChild(document.createTextNode(''));
+  script.setAttribute('src', formeoScript);
+  script.setAttribute('type', 'text/javascript');
+  script.async = true;
+  // Attach handlers for all browsers
+  script.onload = script.onreadystatechange = readyState;
+  document.body.appendChild(script);
+})();
+
+if (isSite) {
+
+  ((window.gitter = {}).chat = {}).options = {
+    room: 'draggable/formeo'
+  };
+
+  // Gitter
+  (function(d) {
+    var js;
+    js = d.createElement('script');
+    js.src = '//sidecar.gitter.im/dist/sidecar.v1.js';
+    d.body.appendChild(js);
+  }(document));
+
+  // Facepoop
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) {
+      return;
+    }
+    js = d.createElement(s);
+    js.id = id;
+    js.src = '//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.5&appId=940846562669162';
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+
+  // Flattr
+  (function(i) {
+    var f, s = document.getElementById(i);
+    f = document.createElement('iframe');
+    f.src = '//button.flattr.com/view/?fid=nw095w&button=compact&url=https%3A%2F%2Fformeo.js.org';
+    f.title = 'Flattr';
+    f.height = 20;
+    f.width = 110;
+    f.style.borderWidth = 0;
+    s.parentNode.insertBefore(f, s);
+    s.parentNode.removeChild(s);
+  })('fb92641');
+
+  // Twitter
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      p = /^http:/.test(d.location) ? 'http' : 'https';
+    if (!d.getElementById(id)) {
+      js = d.createElement(s);
+      js.id = id;
+      js.src = p + '://platform.twitter.com/widgets.js';
+      fjs.parentNode.insertBefore(js, fjs);
+    }
+  })(document, 'script', 'twitter-wjs');
+
+  // Google analytics
+  (function(i, s, o, g, r, a, m) {
+    i.GoogleAnalyticsObject = r;
+    i[r] = i[r] || function() {
+      (i[r].q = i[r].q || []).push(arguments);
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m);
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+  ga('create', 'UA-79014176-2', 'auto');
+  ga('send', 'pageview');
+}

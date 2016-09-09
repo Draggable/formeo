@@ -408,6 +408,7 @@ export default class DOM {
         parent.classList.add('stage-empty');
       }
     }
+    document.dispatchEvent(events.formeoUpdated);
   }
 
   /**

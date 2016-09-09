@@ -322,6 +322,7 @@ export class Controls {
       stage.classList.remove('removing-all-fields');
       dataMap.stage.rows = [];
       data.save();
+      document.dispatchEvent(events.formeoUpdated);
     }, 300);
   }
 
@@ -329,8 +330,14 @@ export class Controls {
     let _this = this,
       btnTemplate = {
         tag: 'button'
-      },
-      clearBtn = Object.assign({}, btnTemplate, {
+      };
+    events.formeoSaved = new CustomEvent('formeoSaved', {
+      detail: {
+        formData: data.get()
+      }
+    });
+
+    let clearBtn = Object.assign({}, btnTemplate, {
         content: [dom.icon('bin'), i18n.get('clear')],
         className: ['clear-form'],
         action: {
@@ -370,21 +377,19 @@ export class Controls {
       saveBtn = Object.assign({}, btnTemplate, {
         content: [dom.icon('floppy-disk'), i18n.get('save')],
         className: ['save-form'],
-        actions: {
+        action: {
           click: (evt) => {
-            let saveEvt = {
-              action: () => {},
-              coords: helpers.coords(evt.target),
-              message: ''
-            };
 
-            actions.click.btn(saveEvt);
+            // @todo: complete actions connection
+            // let saveEvt = {
+            //   action: () => {},
+            //   coords: dom.coords(evt.target),
+            //   message: ''
+            // };
 
-            events.formeoSaved = new CustomEvent('formeoSaved', {
-              detail: {
-                formData: data.get()
-              }
-            });
+            // actions.click.btn(saveEvt);
+            data.save();
+            document.dispatchEvent(events.formeoSaved);
           }
         }
       }),
@@ -470,6 +475,8 @@ export class Controls {
     stage.appendChild(row);
     data.saveRowOrder(row);
     data.save();
+    //trigger formSaved event
+    document.dispatchEvent(events.formeoUpdated);
   }
 
 }

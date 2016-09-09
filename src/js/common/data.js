@@ -21,6 +21,12 @@ var data = {
     let processFormData = (formData) => {
       _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
       _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
+
+      events.formeoUpdated = new CustomEvent('formeoUpdated', {
+        detail: {
+          formData: _data.formData
+        }
+      });
       data.loadMap();
     };
 
@@ -288,7 +294,6 @@ var data = {
   },
 
   jsonSave: (group, id) => {
-
     let stage = document.getElementById(_data.formData.id + '-stage');
     data.saveMap(group, id);
     stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
@@ -296,18 +301,19 @@ var data = {
   },
 
   save: (group = 'rows', id) => {
-    console.log('Saved: ' + group);
     var doSave = {
       // xml: _this.xmlSave,
       json: data.jsonSave
     };
 
     doSave[_data.opts.dataType](group, id);
-    //trigger formSaved event
-    document.dispatchEvent(events.formeoUpdate);
 
     if (window.sessionStorage) {
       window.sessionStorage.setItem('formData', window.JSON.stringify(_data.formData));
+    }
+
+    if (_data.opts.debug) {
+      console.log('Saved: ' + group);
     }
 
     return _data.formData;
@@ -317,12 +323,6 @@ var data = {
     return _data.formData;
   }
 };
-
-events.formeoUpdate = new CustomEvent('formeoUpdate', {
-  detail: {
-    formData: _data.formData
-  }
-});
 
 export {
   data,
