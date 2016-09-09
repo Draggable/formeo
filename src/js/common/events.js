@@ -24,7 +24,7 @@ var events = {
   }
 };
 
-document.addEventListener('formeoUpdate', function(evt) {
+document.addEventListener('formeoUpdated', function(evt) {
   evt = {
     timeStamp: evt.timeStamp,
     type: evt.type,

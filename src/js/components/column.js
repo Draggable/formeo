@@ -94,6 +94,7 @@ export default class Column {
   onSort(evt) {
     data.saveFieldOrder(evt.target);
     data.save('fields', evt.target.id);
+    document.dispatchEvent(events.formeoUpdated);
   }
 
   processConfig(column) {
@@ -126,6 +127,7 @@ export default class Column {
       dom.remove(evt.item);
       data.saveFieldOrder(column);
       data.save('fields', column.id);
+      document.dispatchEvent(events.formeoUpdated);
     }
 
     evt.target.classList.remove('hovering-column');
