@@ -52,19 +52,6 @@ if (isSite) {
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 
-  // Flattr
-  (function(i) {
-    var f, s = document.getElementById(i);
-    f = document.createElement('iframe');
-    f.src = '//button.flattr.com/view/?fid=nw095w&button=compact&url=https%3A%2F%2Fformeo.js.org';
-    f.title = 'Flattr';
-    f.height = 20;
-    f.width = 110;
-    f.style.borderWidth = 0;
-    s.parentNode.insertBefore(f, s);
-    s.parentNode.removeChild(s);
-  })('fb92641');
-
   // Twitter
   (function(d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0],
