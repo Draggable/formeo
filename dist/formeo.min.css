@@ -1871,6 +1871,14 @@
     /* smartphones, Android phones, landscape iPhone */ }
     .formeo .formeo-controls.pull-left .form-actions {
       float: left; }
+    .formeo .formeo-controls .filtered-term {
+      background-color: #fff;
+      text-align: center;
+      border-radius: 0.25rem 0.25rem 0 0;
+      border: 1px solid #d6d8da;
+      border-bottom: 0 none;
+      height: 21px;
+      width: calc( 100% - 2px); }
     .formeo .formeo-controls nav {
       position: relative;
       margin-bottom: 1px;
@@ -1924,12 +1932,14 @@
         border-top-right-radius: 0; }
       .formeo .formeo-controls .control-group > li:last-child {
         border-radius: 0 0 0 5px; }
+    .formeo .formeo-controls.filtered .panel-nav {
+      display: none; }
     .formeo .formeo-controls.filtered .control-group {
       display: block; }
       .formeo .formeo-controls.filtered .control-group > li {
         border-radius: 0; }
       .formeo .formeo-controls.filtered .control-group:last-child > li:last-child {
-        border-radius: 0 0 0 5px; }
+        border-radius: 0 0 0 0.25rem; }
     .formeo .formeo-controls .control-groups {
       white-space: nowrap; }
     .formeo .formeo-controls .control-group-labels {

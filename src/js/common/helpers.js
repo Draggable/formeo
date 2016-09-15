@@ -299,15 +299,26 @@ const helpers = {
     return num > min && num < max;
   },
 
+  /**
+   * Hide or show an Array or HTMLCollection of elements
+   * @param  {Array} elems
+   * @param  {String} term  match textContent to this term
+   * @return {Array}        filtered elements
+   */
   toggleElementsByStr: (elems, term) => {
+    let filteredElems = [];
     helpers.forEach(elems, (i) => {
-      let txt = elems[i].textContent.toLowerCase();
+      let txt = elems[i].textContent.toLowerCase(),
+        origDisplay = elems[i].style.display || 'block';
       if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elems[i].style.display = 'block';
+        elems[i].style.display = origDisplay;
+        filteredElems.push(elems[i]);
       } else {
         elems[i].style.display = 'none';
       }
     });
+
+    return filteredElems;
   }
 
 };

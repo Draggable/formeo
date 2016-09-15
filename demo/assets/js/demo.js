@@ -16,11 +16,14 @@ function readyState() {
     };
     formeo = new window.Formeo(formeoOpts);
     postInit();
+    console.log(formeo);
   }
 }
 
 function postInit() {
-  console.log(formeo);
+  document.getElementById('control-filter').addEventListener('input', (e) => {
+    formeo.controls.actions.filter(e.target.value);
+  });
 }
 
 (function getScript() {
