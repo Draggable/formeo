@@ -243,6 +243,28 @@ const helpers = {
     return object;
   },
   /**
+   * Merge one object with another.
+   * This is expensive, use as little as possible.
+   * @param  {Object} obj1 [description]
+   * @param  {Object} obj2 [description]
+   * @return {Object}      merged object
+   */
+  merge: (obj1, obj2) => {
+    let mergedObj = Object.assign({}, obj1, obj2);
+    for (let prop in obj2) {
+      if (mergedObj.hasOwnProperty(prop)) {
+        if (Array.isArray(obj2[prop])) {
+          mergedObj[prop] = obj1[prop].concat(obj2[prop]);
+        } else if (typeof obj2[prop] === Object) {
+          mergedObj[prop] = helpers.extend(obj1[prop], obj2[prop]);
+        } else {
+          mergedObj[prop] = obj2[prop];
+        }
+      }
+    }
+    return mergedObj;
+  },
+  /**
    * Remove duplicates from an array of elements
    * @param  {Array} array with possible duplicates
    * @return {Array} array with only unique values
@@ -275,6 +297,17 @@ const helpers = {
 
   numberBetween: (num, min, max) => {
     return num > min && num < max;
+  },
+
+  toggleElementsByStr: (elems, term) => {
+    helpers.forEach(elems, (i) => {
+      let txt = elems[i].textContent.toLowerCase();
+      if (txt.indexOf(term.toLowerCase()) !== -1) {
+        elems[i].style.display = 'block';
+      } else {
+        elems[i].style.display = 'none';
+      }
+    });
   }
 
 };

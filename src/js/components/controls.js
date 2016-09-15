@@ -11,15 +11,19 @@ import Column from './column';
 import Field from './field';
 var dom = new DOM();
 
+var opts = {};
+
 export class Controls {
-  constructor(controlOptions) {
+  constructor(controlOptions, formID) {
+    this.formID = formID;
+
     let defaults = {
       sortable: true,
       controlGroupOrder: [
         'common',
         'html'
       ],
-      controlGroups: [{
+      groups: [{
         id: 'common',
         label: i18n.get('commonFields'),
         order: [
@@ -34,195 +38,181 @@ export class Controls {
           'block-text'
         ]
       }],
+      disable: {
+        groups: [],
+        elements: []
+      },
       elements: [{
-          tag: 'input',
-          attrs: {
-            type: 'text',
-            className: 'form-control'
-          },
-          config: {
-            label: i18n.get('input.text')
-          },
-          meta: {
-            group: 'common',
-            icon: 'text-input',
-            id: 'text-input'
-          },
-          fMap: 'attrs.value'
-        }, {
-          tag: 'input',
-          attrs: {
-            type: 'date',
-            className: 'form-control'
-          },
-          config: {
-            label: i18n.get('input.date')
-          },
-          meta: {
-            group: 'common',
-            icon: 'calendar',
-            id: 'date-input'
-          }
-        }, {
-          tag: 'button',
-          attrs: {
-            type: 'button',
-            className: 'btn-secondary btn'
-          },
-          content: i18n.get('button'),
-          config: {
-            label: i18n.get('button'),
-            hideLabel: true
-          },
-          meta: {
-            group: 'common',
-            icon: 'button',
-            id: 'button'
-          },
-          options: [{
-            label: i18n.get('button'),
-            value: 'button',
-            disabled: false
-          }]
-        }, {
-          tag: 'select',
-          className: 'form-control',
-          config: {
-            label: i18n.get('select')
-          },
-          attrs: {
-            className: 'form-control'
-          },
-          meta: {
-            group: 'common',
-            icon: 'select',
-            id: 'select'
-          },
-          options: [{
-            label: i18n.get('labelCount', { label: i18n.get('option'), count: 1 }),
-            value: 'option-1',
-            selected: false
-          }, {
-            label: i18n.get('labelCount', { label: i18n.get('option'), count: 1 }),
-            value: 'option-2',
-            selected: false
-          }]
-        }, {
-          tag: 'textarea',
-          className: 'form-control',
-          config: {
-            label: i18n.get('textarea')
-          },
-          meta: {
-            group: 'common',
-            icon: 'textarea',
-            id: 'textarea'
-          },
-          attrs: {
-            maxlength: 10
-          }
+        tag: 'input',
+        attrs: {
+          type: 'text',
+          className: 'form-control'
         },
-        // {
-        //   tag: 'canvas',
-        //   config: {
-        //     label: 'Signature'
-        //   },
-        //   meta: {
-        //     group: 'common',
-        //     icon: 'signature',
-        //     id: 'signature'
-        //   }
-        // },
-        {
-          tag: 'input',
-          attrs: {
-            type: 'checkbox',
-            className: 'form-control'
-          },
-          config: {
-            label: i18n.get('checkbox') + '/' + i18n.get('group'),
-            required: true
-          },
-          meta: {
-            group: 'common',
-            icon: 'checkbox',
-            id: 'checkbox'
-          },
-          options: [{
-            label: i18n.get('labelCount', { label: i18n.get('checkbox'), count: 1 }),
-            value: 'checkbox-1',
-            selected: true
-          }]
-        }, {
-          tag: 'input',
-          attrs: {
-            type: 'radio',
-            required: false
-          },
-          config: {
-            label: i18n.get('radioGroup')
-          },
-          meta: {
-            group: 'common',
-            icon: 'radio-group',
-            id: 'radio'
-          },
-          options: [{
-            label: i18n.get('labelCount', { label: i18n.get('radio'), count: 1 }),
-            value: 'radio-1',
-            selected: false
-          }, {
-            label: i18n.get('labelCount', { label: i18n.get('radio'), count: 2 }),
-            value: 'radio-2',
-            selected: false
-          }]
-        }, {
-          tag: 'h1',
-          config: {
-            label: i18n.get('header'),
-            hideLabel: true
-          },
-          meta: {
-            group: 'html',
-            icon: 'header',
-            id: 'header'
-          },
-          content: i18n.get('header')
-        }, {
-          tag: 'p',
-          config: {
-            label: i18n.get('paragraph'),
-            hideLabel: true
-          },
-          meta: {
-            group: 'html',
-            icon: 'paragraph',
-            id: 'paragraph'
-          },
-          content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non nibh massa. Curabitur quis dictum lorem. Quisque ac lacus dignissim, malesuada turpis eget, venenatis nunc. '
-        }, {
-          tag: 'hr',
-          config: {
-            label: i18n.get('paragraph'),
-            noWrap: true
-          },
-          meta: {
-            group: 'html',
-            icon: 'divider',
-            id: 'divider'
-          }
+        config: {
+          label: i18n.get('input.text')
+        },
+        meta: {
+          group: 'common',
+          icon: 'text-input',
+          id: 'text-input'
+        },
+        fMap: 'attrs.value'
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'date',
+          className: 'form-control'
+        },
+        config: {
+          label: i18n.get('input.date')
+        },
+        meta: {
+          group: 'common',
+          icon: 'calendar',
+          id: 'date-input'
         }
-      ]
+      }, {
+        tag: 'button',
+        attrs: {
+          type: 'button',
+          className: 'btn-secondary btn'
+        },
+        content: i18n.get('button'),
+        config: {
+          label: i18n.get('button'),
+          hideLabel: true
+        },
+        meta: {
+          group: 'common',
+          icon: 'button',
+          id: 'button'
+        },
+        options: [{
+          label: i18n.get('button'),
+          value: 'button',
+          disabled: false
+        }]
+      }, {
+        tag: 'select',
+        className: 'form-control',
+        config: {
+          label: i18n.get('select')
+        },
+        attrs: {
+          className: 'form-control'
+        },
+        meta: {
+          group: 'common',
+          icon: 'select',
+          id: 'select'
+        },
+        options: [1, 2, 3, 4].map(i => {
+          return {
+            label: i18n.get('labelCount', { label: i18n.get('option'), count: i }),
+            value: 'option-' + i,
+            selected: false
+          };
+        })
+      }, {
+        tag: 'textarea',
+        className: 'form-control',
+        config: {
+          label: i18n.get('textarea')
+        },
+        meta: {
+          group: 'common',
+          icon: 'textarea',
+          id: 'textarea'
+        },
+        attrs: {
+          maxlength: 10
+        }
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'checkbox',
+          className: 'form-control'
+        },
+        config: {
+          label: i18n.get('checkbox') + '/' + i18n.get('group'),
+          required: true
+        },
+        meta: {
+          group: 'common',
+          icon: 'checkbox',
+          id: 'checkbox'
+        },
+        options: [{
+          label: i18n.get('labelCount', { label: i18n.get('checkbox'), count: 1 }),
+          value: 'checkbox-1',
+          selected: true
+        }]
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'radio',
+          required: false
+        },
+        config: {
+          label: i18n.get('radioGroup')
+        },
+        meta: {
+          group: 'common',
+          icon: 'radio-group',
+          id: 'radio'
+        },
+        options: [1, 2, 3].map(i => {
+          return {
+            label: i18n.get('labelCount', { label: i18n.get('radio'), count: i }),
+            value: 'radio-' + i,
+            selected: false
+          };
+        })
+      }, {
+        tag: 'h1',
+        config: {
+          label: i18n.get('header'),
+          hideLabel: true
+        },
+        meta: {
+          group: 'html',
+          icon: 'header',
+          id: 'header'
+        },
+        content: i18n.get('header')
+      }, {
+        tag: 'p',
+        config: {
+          label: i18n.get('paragraph'),
+          hideLabel: true
+        },
+        meta: {
+          group: 'html',
+          icon: 'paragraph',
+          id: 'paragraph'
+        },
+        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non nibh massa. Curabitur quis dictum lorem. Quisque ac lacus dignissim, malesuada turpis eget, venenatis nunc. '
+      }, {
+        tag: 'hr',
+        config: {
+          label: i18n.get('paragraph'),
+          noWrap: true
+        },
+        meta: {
+          group: 'html',
+          icon: 'divider',
+          id: 'divider'
+        }
+      }]
     };
 
-    this.opts = Object.assign({}, defaults, controlOptions);
+    opts = helpers.merge(defaults, controlOptions);
   }
 
   mergeGroups() {
     let _this = this,
-      opts = this.opts,
-      groups = this.opts.controlGroups.slice(),
-      elements = this.opts.elements.slice(),
+      groups = opts.groups.slice(),
+      elements = opts.elements.slice(),
       allGroups = [],
       position = {},
       clicked = (x, y) => {
@@ -269,7 +259,7 @@ export class Controls {
         tag: 'ul',
         attrs: {
           className: 'control-group',
-          id: opts.formID + '-' + groups[i].id + '-control-group'
+          id: _this.formID + '-' + groups[i].id + '-control-group'
         },
         fType: 'controlGroup',
         config: {
@@ -295,11 +285,11 @@ export class Controls {
     stage.classList.add('removing-all-fields');
     // var markEmptyArray = [];
 
-    // if (this.opts.prepend) {
+    // if (opts.prepend) {
     //   markEmptyArray.push(true);
     // }
 
-    // if (this.opts.append) {
+    // if (opts.append) {
     //   markEmptyArray.push(true);
     // }
 
@@ -329,7 +319,10 @@ export class Controls {
   formActions() {
     let _this = this,
       btnTemplate = {
-        tag: 'button'
+        tag: 'button',
+        attrs: {
+          type: 'button'
+        }
       };
     events.formeoSaved = new CustomEvent('formeoSaved', {
       detail: {
@@ -342,7 +335,7 @@ export class Controls {
         className: ['clear-form'],
         action: {
           click: (evt) => {
-            let stage = document.getElementById(_this.opts.formID + '-stage'),
+            let stage = document.getElementById(_this.formID + '-stage'),
               rows = stage.getElementsByClassName('stage-row'),
               buttonPosition = evt.target.getBoundingClientRect(),
               bodyRect = document.body.getBoundingClientRect(),
@@ -411,41 +404,71 @@ export class Controls {
    * @return {DOM}
    */
   get dom() {
-    if (this.controls) {
-      return this.controls;
+    if (this.element) {
+      return this.element;
     }
 
     let groupedFields = this.mergeGroups();
     let formActions = this.formActions();
     let controlPanels = new Panels({ panels: groupedFields, type: 'controls' });
-    this.controlGroupsWrap = dom.create({
+    let groupsWrap = dom.create({
       tag: 'div',
       className: 'control-groups panels-wrap panel-count-' + groupedFields.length,
       content: controlPanels.content
     });
-    let controls = dom.create({
+    let element = dom.create({
         tag: 'div',
-        className: this.opts.className + '-controls formeo-controls',
-        content: [this.controlGroupsWrap, formActions]
+        className: this.formID + '-controls formeo-controls',
+        content: [groupsWrap, formActions]
       }),
-      controlGroups = controls.getElementsByClassName('control-group');
+      groups = element.getElementsByClassName('control-group');
 
-    this.controls = controls;
-    this.controlGroups = controlGroups;
-    this.currentGroup = controlGroups[0];
+    this.element = element;
+    this.groups = groups;
+    this.currentGroup = groups[0];
+
+    this.actions = {
+      filter: (term) => {
+        let filtering = (term !== ''),
+          filteredTerm = groupsWrap.querySelector('.filtered-term'),
+          fields = controlPanels.content[1].querySelectorAll('.field-control');
+
+        helpers.toggleElementsByStr(fields, term);
+
+        if (filtering) {
+          let filteredStr = `Filtering '${term}'`;
+
+          element.classList.add('filtered');
+
+          if (filteredTerm) {
+            filteredTerm.textContent = filteredStr;
+          } else {
+            filteredTerm = dom.create({
+              tag: 'h5',
+              className: 'filtered-term',
+              content: filteredStr
+            });
+            groupsWrap.insertBefore(filteredTerm, groupsWrap.firstChild);
+          }
+        } else if (filteredTerm) {
+          element.classList.remove('filtered');
+          filteredTerm.remove();
+        }
+      }
+    };
 
     // Make controls sortable
-    for (var i = controlGroups.length - 1; i >= 0; i--) {
-      Sortable.create(controlGroups[i], {
+    for (var i = groups.length - 1; i >= 0; i--) {
+      Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
         ghostClass: 'control-ghost',
         group: { name: 'controls', pull: 'clone', put: false },
-        sort: this.opts.sortable
+        sort: opts.sortable
       });
     }
 
-    return controls;
+    return element;
   }
 
   createColumn(id) {
@@ -461,8 +484,8 @@ export class Controls {
   }
 
   addRow(id) {
-    let _this = this,
-      stageID = _this.opts.formID + '-stage',
+    let _this = this;
+    let stageID = _this.formID + '-stage',
       stage = document.getElementById(stageID),
       column = _this.createColumn(id),
       row = new Row();

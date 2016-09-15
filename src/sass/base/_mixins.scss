@@ -109,9 +109,19 @@
     background-color: darken($white, 5%);
   }
 
-  svg {
+  svg,
+  .glyphicon {
     float: left;
     margin-right: 10px;
+  }
+
+  .glyphicon {
+    display: inline-block;
+    text-align: center;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    line-height: 20px;
   }
 
   &.control-ghost {

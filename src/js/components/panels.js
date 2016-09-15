@@ -137,7 +137,8 @@ export default class Panels {
         tag: 'button',
         attrs: {
           className: 'btn next-group',
-          title: i18n.get('controlGroups.nextGroup')
+          title: i18n.get('controlGroups.nextGroup'),
+          type: 'button'
         },
         dataset: {
           toggle: 'tooltip',
@@ -152,7 +153,8 @@ export default class Panels {
         tag: 'button',
         attrs: {
           className: 'btn prev-group',
-          title: i18n.get('controlGroups.prevGroup')
+          title: i18n.get('controlGroups.prevGroup'),
+          type: 'button'
         },
         dataset: {
           toggle: 'tooltip',

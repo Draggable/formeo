@@ -1,4 +1,5 @@
 import helpers from './helpers';
+import events from './events';
 import animate from './animation';
 import { dataMap, data } from './data';
 
@@ -171,7 +172,16 @@ export default class DOM {
   }
 
   icon(name) {
-    return '<svg class="svg-icon icon-' + name + '"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-' + name + '"></use></svg>';
+    let iconLink = document.getElementById('icon-' + name);
+    let icon;
+
+    if (iconLink) {
+      icon = `<svg class="svg-icon icon-${name}"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-${name}"></use></svg>`;
+    } else {
+      icon = `<span class="glyphicon glyphicon-${name}" aria-hidden="true"></span>`;
+    }
+    // console.log(iconLink);
+    return icon;
   }
 
   processAttrs(elem, element) {
@@ -236,7 +246,6 @@ export default class DOM {
   }
 
   label(elem, fMap) {
-    let type = helpers.get(elem, 'attrs.type');
     let fieldLabel = {
       tag: 'label',
       attrs: {},
@@ -244,9 +253,9 @@ export default class DOM {
       action: {}
     };
 
-    // if (type !== 'radio' && type !== 'checkbox') {
-    //   fieldLabel.attrs.for = elem.id || '';
-    // }
+    if (elem.id) {
+      fieldLabel.attrs.for = elem.id;
+    }
 
     if (fMap) {
       fieldLabel.attrs.contenteditable = true;

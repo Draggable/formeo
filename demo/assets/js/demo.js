@@ -1,5 +1,6 @@
 'use strict';
-var isSite = (window.location.href.indexOf('draggable.github.io') !== -1);
+var isSite = (window.location.href.indexOf('draggable.github.io') !== -1),
+  formeo;
 
 function readyState() {
   var script = this;
@@ -7,11 +8,19 @@ function readyState() {
     script.onload = script.onreadystatechange = null;
 
     var container = document.querySelector('.build-form');
-    new window.Formeo({
+    var formeoOpts = {
       container: container,
+      debug: true,
+      editPanelOrder: ['attrs', 'options'],
       style: isSite ? '/formeo/assets/css/formeo.min.css' : '../dist/formeo.min.css'
-    });
+    };
+    formeo = new window.Formeo(formeoOpts);
+    postInit();
   }
+}
+
+function postInit() {
+  console.log(formeo);
 }
 
 (function getScript() {

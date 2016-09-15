@@ -154,6 +154,7 @@
   padding: $input-padding-y-sm $input-padding-x-sm;
   font-size: $font-size-sm;
   line-height: $line-height-sm;
+  height: 31px;
 
   @include border-radius($input-border-radius-sm);
 }

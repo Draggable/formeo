@@ -10,7 +10,8 @@ var dom = new DOM();
 var stageOpts;
 
 export default class Stage {
-  constructor(formeoOptions) {
+  constructor(formeoOptions, formID) {
+    this.formID = formID;
     let defaults = {};
     stageOpts = Object.assign({}, defaults, formeoOptions);
 
@@ -66,7 +67,7 @@ export default class Stage {
   }
 
   stageElements() {
-    let opts = stageOpts,
+    let _this = this,
       stage = {
         tag: 'ul',
         attrs: {
@@ -74,13 +75,9 @@ export default class Stage {
             'stage',
             'stage-empty'
           ],
-          id: opts.formID + '-stage'
+          id: _this.formID + '-stage'
         },
         fType: 'stage'
-      },
-      formEdit = {
-        tag: 'div',
-        className: 'form-edit'
       };
 
     return stage;

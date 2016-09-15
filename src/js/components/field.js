@@ -64,7 +64,12 @@ export default class Field {
   editPanel(panelType, dataObj) {
     let _this = this,
       propType,
-      panel;
+      panel,
+      panelWrap = {
+        tag: 'div',
+        className: 'f-panel-wrap',
+        content: []
+      };
 
     if (dataObj[panelType]) {
       panel = {
@@ -80,6 +85,8 @@ export default class Field {
           content: []
         },
         propType = dom.contentType(dataObj[panelType]);
+
+      panelWrap.content.push(panel);
 
       let panelArray;
       if (propType === 'array') {
@@ -103,11 +110,12 @@ export default class Field {
             })
           },
           labelWrap = {
-            tag: 'li',
+            tag: 'header',
             content: panelLabels,
             className: 'prop-labels'
           };
-        panel.content.push(labelWrap);
+        //removing labels until find a better way to handle them.
+        // panelWrap.content.unshift(labelWrap);
         panelArray = dataObj[panelType];
       } else {
         panelArray = Object.keys(dataObj[panelType]);
@@ -125,7 +133,8 @@ export default class Field {
       });
 
     }
-    return panel;
+
+    return panelWrap;
   }
 
   panelContent(args) {
@@ -209,7 +218,6 @@ export default class Field {
               },
               'boolean': {
                 type: boolType,
-                // value: val.toString()
                 value: val
               },
               number: {
@@ -220,7 +228,14 @@ export default class Field {
             return attrs[type];
           },
           inputLabel = (key) => {
-            return i18n.get(panelType + '.' + key) || helpers.capitalize(key);
+            let label,
+              labelKey = panelType + '.' + key;
+            if (i18n.langs[i18n.current][labelKey]) {
+              label = i18n.get(labelKey);
+            } else {
+              label = helpers.capitalize(key);
+            }
+            return label;
           },
           propertyInputs = {
             string: (key, val) => {
@@ -419,7 +434,7 @@ export default class Field {
         let panel = {
           tag: 'div',
           attrs: {
-            className: `panel ${prop}-panel`
+            className: `f-panel ${prop}-panel`
           },
           config: {
             label: i18n.get('panelLabels.' + prop) || ''
