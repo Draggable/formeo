@@ -11,6 +11,16 @@
     }
   }
 
+  .filtered-term {
+    background-color: $white;
+    text-align: center;
+    border-radius: $btn-border-radius $btn-border-radius 0 0;
+    border: 1px solid #d6d8da;
+    border-bottom: 0 none;
+    height: 21px;
+    width: calc( 100% - 2px );
+  }
+
   nav {
     position: relative;
     margin-bottom: 1px;
@@ -101,6 +111,28 @@
 
     .field-control {
       @extend %field-control;
+    }
+  }
+
+  &.filtered {
+    .panel-nav {
+      display: none;
+    }
+
+    .control-group {
+      display: block;
+
+      > li {
+        border-radius: 0;
+      }
+
+      &:last-child {
+        > li {
+          &:last-child {
+            border-radius: 0 0 0 $btn-border-radius;
+          }
+        }
+      }
     }
   }
 
@@ -231,7 +263,8 @@
         }
       }
 
-      .svg-icon {
+      .svg-icon,
+      .glyphicon {
         display: inline-block;
         margin-right: 10px;
       }

@@ -13,6 +13,7 @@ var dom = new DOM();
 
 // Simple object config for the main part of formeo
 var formeo = {};
+var opts = {};
 class Formeo {
   constructor(options, formData) {
     // Default options
@@ -25,6 +26,7 @@ class Formeo {
       svgSprite: 'assets/img/formeo-sprite.svg',
       events: {},
       actions: {},
+      controls: {},
       i18n: {
         langsDir: 'assets/lang/',
         langs: [
@@ -39,30 +41,30 @@ class Formeo {
     // Remove `container` property before extending because container may be Element
     delete options.container;
 
-    formeo.opts = helpers.extend(defaults, options);
+    opts = helpers.extend(defaults, options);
 
-    if (formeo.opts.debug) {
-      formeo.opts.actions.debug = formeo.opts.events.debug = true;
+    if (opts.debug) {
+      opts.actions.debug = opts.events.debug = true;
     }
 
-    data.init(formeo.opts, formData);
+    data.init(opts, formData);
 
-    if (formeo.opts.style) {
-      helpers.ajax(formeo.opts.style, helpers.insertStyle);
+    if (opts.style) {
+      helpers.ajax(opts.style, helpers.insertStyle);
     }
 
-    if (formeo.opts.svgSprite) {
-      helpers.ajax(formeo.opts.svgSprite, helpers.insertIcons);
+    if (opts.svgSprite) {
+      helpers.ajax(opts.svgSprite, helpers.insertIcons);
     }
 
-    i18n.init(formeo.opts.i18n)
+    i18n.init(opts.i18n)
       .then(function() {
           formeo.formData = data.get();
-          formeo.opts.formID = formeo.formData.id;
-          _this.stage = new Stage(formeo.opts);
-          formeo.controls = new Controls(formeo.opts);
-          events.init(formeo.opts.events);
-          actions.init(formeo.opts.actions);
+          _this.formID = opts.formID = formeo.formData.id;
+          _this.stage = new Stage(opts, _this.formID);
+          formeo.controls = new Controls(opts.controls, _this.formID);
+          events.init(opts.events);
+          actions.init(opts.actions);
           _this.render();
         },
         err => {
@@ -75,21 +77,21 @@ class Formeo {
   render() {
     let controls = formeo.controls.dom,
       container = this.container;
-    // formeo.stage = this.stage;
+    formeo.stage = this.stage;
 
     if (typeof container === 'string') {
-      container = document.querySelector(formeo.opts.container);
+      container = document.querySelector(opts.container);
     }
 
-    let fbElem = {
+    let formeoElemConfig = {
         tag: 'div',
         attrs: {
-          className: formeo.opts.className,
-          id: formeo.opts.formID
+          className: opts.className,
+          id: opts.formID
         },
         content: [this.stage, controls]
       },
-      formeoElem = dom.create(fbElem);
+      formeoElem = dom.create(formeoElemConfig);
 
     container.appendChild(formeoElem);
 
