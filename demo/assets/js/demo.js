@@ -20,11 +20,7 @@ function readyState() {
   }
 }
 
-function postInit() {
-  document.getElementById('control-filter').addEventListener('input', (e) => {
-    formeo.controls.actions.filter(e.target.value);
-  });
-}
+function postInit() {}
 
 (function getScript() {
   var formeoScript = isSite ? '/formeo/assets/js/formeo.min.js' : '../dist/formeo.min.js',
