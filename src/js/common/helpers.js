@@ -308,10 +308,9 @@ const helpers = {
   toggleElementsByStr: (elems, term) => {
     let filteredElems = [];
     helpers.forEach(elems, (i) => {
-      let txt = elems[i].textContent.toLowerCase(),
-        origDisplay = elems[i].style.display || 'block';
+      let txt = elems[i].textContent.toLowerCase();
       if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elems[i].style.display = origDisplay;
+        elems[i].style.display = 'block';
         filteredElems.push(elems[i]);
       } else {
         elems[i].style.display = 'none';
