@@ -23,10 +23,11 @@ class Formeo {
       className: 'formeo',
       container: '.formeo',
       prefix: 'formeo-',
-      svgSprite: 'assets/img/formeo-sprite.svg',
+      svgSprite: 'assets/img/formeo-sprite.svg', // change to null
       events: {},
       actions: {},
       controls: {},
+      iconFontFallback: null,
       i18n: {
         langsDir: 'assets/lang/',
         langs: [

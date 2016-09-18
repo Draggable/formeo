@@ -436,7 +436,7 @@ export class Controls {
         helpers.toggleElementsByStr(fields, term);
 
         if (filtering) {
-          let filteredStr = `Filtering '${term}'`;
+          let filteredStr = `Filtering '${term}'`; // @todo change to use language file
 
           element.classList.add('filtered');
 
@@ -463,7 +463,11 @@ export class Controls {
         animation: 150,
         forceFallback: true,
         ghostClass: 'control-ghost',
-        group: { name: 'controls', pull: 'clone', put: false },
+        group: {
+          name: 'controls',
+          pull: 'clone',
+          put: false
+        },
         sort: opts.sortable
       });
     }
