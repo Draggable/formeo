@@ -167,12 +167,17 @@ export default class Field {
                 editGroup = field.querySelector('.field-edit-group'),
                 panel = editGroup.parentElement;
               dom.remove(elem);
+              if (Array.isArray(dataMap.fields[_this.fieldID][args.panelType])) {
+                dataMap.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
+              } else {
+                dataMap.fields[_this.fieldID][args.panelType][dataProp] = undefined;
+              }
+              data.save(args.panelType, _this.fieldID);
               panel.parentElement.style.height = dom.getStyle(panel, 'height');
-              delete dataMap.fields[_this.fieldID][args.panelType][dataProp];
-              data.save('attrs', _this.fieldID);
               dom.empty(_this.preview);
               let newPreview = dom.create(dataMap.fields[_this.fieldID], true);
               _this.preview.appendChild(newPreview);
+              _this.resizePanelWrap();
             });
           }
         },
@@ -311,7 +316,6 @@ export default class Field {
     let _this = this,
       field = document.getElementById(_this.fieldID),
       editGroup = field.querySelector('.field-edit-attrs'),
-      panel = editGroup.parentElement,
       safeAttr = helpers.hyphenCase(attr);
 
     i18n.put('attrs' + safeAttr, helpers.capitalize(attr));
@@ -331,7 +335,7 @@ export default class Field {
     };
 
     editGroup.appendChild(dom.create(_this.panelContent(args)));
-    panel.parentElement.style.height = dom.getStyle(panel, 'height');
+    _this.resizePanelWrap();
   }
 
   addOption() {
@@ -339,28 +343,19 @@ export default class Field {
       field = document.getElementById(_this.fieldID),
       dataObj = dataMap.fields[_this.fieldID],
       editGroup = field.querySelector('.field-edit-options'),
-      panel = editGroup.parentElement,
-      propData = helpers.copyObj(dataObj.options[0]);
-
-    // Clean propData Object
-    for (let prop in propData) {
-      if ({}.hasOwnProperty.call(propData, prop)) {
-        propData[prop] = typeof propData[prop] === 'boolean' ? false : '';
-      }
-    }
+      propData = { label: '', value: '', selected: false };
+    dataObj.options.push(propData);
 
     let args = {
-      i: editGroup.childNodes.length - 1,
+      i: editGroup.childNodes.length,
       dataProp: propData,
       dataObj,
       panelType: 'options',
       propType: 'array'
     };
 
-    dataObj.options.push(propData);
-
     editGroup.appendChild(dom.create(_this.panelContent(args)));
-    panel.parentElement.style.height = dom.getStyle(panel, 'height');
+    _this.resizePanelWrap();
   }
 
   panelEditButtons(type) {
@@ -482,6 +477,7 @@ export default class Field {
       fieldEdit.className.push('panel-count-' + panels.length);
       fieldEdit.content = editPanels.content;
       _this.panelNav = editPanels.nav;
+      _this.resizePanelWrap = editPanels.actions.resize;
     }
 
     return fieldEdit;
@@ -489,8 +485,7 @@ export default class Field {
 
   fieldPreview() {
     let _this = this,
-      fieldData = helpers.clone(dataMap.fields[_this.fieldID])
-      // fieldData = dataMap.fields[_this.fieldID];
+      fieldData = helpers.clone(dataMap.fields[_this.fieldID]);
 
     fieldData.id = 'prev-' + _this.fieldID;
 
