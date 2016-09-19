@@ -11,24 +11,32 @@ var defaults = {
 
 export default class Panels {
   constructor(options) {
-    this.opts = Object.assign({}, defaults, options);
+    let _this = this;
+    _this.opts = Object.assign({}, defaults, options);
 
-    let labels = this.panelNav(),
-      panels = this.panelsWrap();
+    let labels = _this.panelNav(),
+      panels = _this.panelsWrap();
 
-    this.panels = panels.childNodes;
-    this.currentPanel = this.panels[0];
-    this.labels = labels;
-    this.nav = this.navActions();
+    _this.panels = panels.childNodes;
+    _this.currentPanel = _this.panels[0];
+    _this.labels = labels;
+    _this.nav = _this.navActions();
 
-    if (this.opts.type === 'field') {
-      setTimeout(this.setPanelsHeight.bind(this), 10);
+    if (_this.opts.type === 'field') {
+      setTimeout(_this.setPanelsHeight.bind(_this), 10);
     }
 
     return {
       content: [labels, panels],
-      nav: this.nav
+      nav: _this.nav,
+      actions: {
+        resize: _this.resizePanels.bind(_this)
+      }
     };
+  }
+
+  resizePanels() {
+    this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
   }
 
   setPanelsHeight() {

@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.3.6 - Feature/Bugfix: I18N updates and various bugfixes [#27](https://github.com/Draggable/formeo/pull/27)
 - v0.3.1 - Bugfix: toggleElementsByStr not toggling correctly [#26](https://github.com/Draggable/formeo/pull/26)
 - v0.3.0 - Features/Bugfixes: [#25](https://github.com/Draggable/formeo/pull/25)
 - v0.2.7 - Bugfix: events are undefined [#19](https://github.com/Draggable/formeo/pull/19)

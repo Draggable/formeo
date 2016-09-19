@@ -2,7 +2,6 @@ import pkg from './package.json';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { optimize, BannerPlugin, DefinePlugin } from 'webpack';
 
 const sassLoaders = [
@@ -23,10 +22,7 @@ var plugins;
 if (development) {
   plugins = [
     new ExtractTextPlugin('[name].min.css'),
-    new optimize.DedupePlugin(),
-    new CopyWebpackPlugin([
-      { from: 'src/lang', to: 'lang' },
-    ])
+    new optimize.DedupePlugin()
   ];
 } else {
   plugins = [
@@ -46,9 +42,9 @@ if (development) {
 }
 
 var webpackConfig = {
-  context: path.join(__dirname, pkg.config.files.formeo.js),
+  context: path.join(__dirname, 'dist'),
   entry: {
-    'formeo': path.join(__dirname, pkg.config.files.formeo.js)
+    formeo: path.join(__dirname, pkg.config.files.formeo.js)
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -71,7 +67,7 @@ var webpackConfig = {
       }
     }, {
       test: /\.lang$/,
-      loader: 'file?name=[path][name].[ext]&context=./dist/lang'
+      loader: 'file?name=[path][name].[ext]&context=./src'
     }, {
       test: /\.scss$/,
       loaders: ['style', 'css?sourceMap', 'sass?sourceMap'],
@@ -99,7 +95,8 @@ var webpackConfig = {
     contentBase: 'demo/',
     progress: true,
     colors: true,
-    noInfo: true
+    noInfo: true,
+    outputPath: path.join(__dirname, './dist')
   }
 };
 
