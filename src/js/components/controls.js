@@ -209,11 +209,9 @@ export class Controls {
     opts = helpers.merge(defaults, controlOptions);
   }
 
-  mergeGroups() {
+  prepElement(elem) {
     let _this = this,
-      groups = opts.groups.slice(),
-      elements = opts.elements.slice(),
-      allGroups = [],
+      dataID = helpers.uuid(),
       position = {},
       clicked = (x, y) => {
         let xMin = position.x - 5,
@@ -222,34 +220,38 @@ export class Controls {
           yMax = position.y + 5;
 
         return (helpers.numberBetween(x, xMin, xMax) && helpers.numberBetween(y, yMin, yMax));
-      },
-      groupControlMap = function(elem) {
-        let dataID = helpers.uuid();
-        let elementControl = {
-          tag: 'li',
-          className: 'field-control',
-          id: dataID,
-          action: {
-            mousedown: (evt) => {
-              position.x = evt.clientX;
-              position.y = evt.clientY;
-            },
-            mouseup: (evt) => {
-              if (clicked(evt.clientX, evt.clientY)) {
-                _this.addRow(evt.target.id);
-              }
-            }
-          },
-          content: [elem.config.label]
-        };
-
-        if (elem.meta.icon) {
-          elementControl.content.unshift(dom.icon(elem.meta.icon));
-        }
-
-        registeredFields[dataID] = elem;
-        return elementControl;
       };
+    let elementControl = {
+      tag: 'li',
+      className: 'field-control',
+      id: dataID,
+      action: {
+        mousedown: (evt) => {
+          position.x = evt.clientX;
+          position.y = evt.clientY;
+        },
+        mouseup: (evt) => {
+          if (clicked(evt.clientX, evt.clientY)) {
+            _this.addRow(evt.target.id);
+          }
+        }
+      },
+      content: [elem.config.label]
+    };
+
+    if (elem.meta.icon) {
+      elementControl.content.unshift(dom.icon(elem.meta.icon));
+    }
+
+    registeredFields[dataID] = elem;
+    return elementControl;
+  }
+
+  mergeGroups() {
+    let _this = this,
+      groups = opts.groups.slice(),
+      elements = opts.elements.slice(),
+      allGroups = [];
 
     // Apply order
     groups = helpers.orderObjectsBy(groups, opts.controlGroupOrder, 'id');
@@ -270,9 +272,10 @@ export class Controls {
       if (groups[i].order) {
         elements = helpers.orderObjectsBy(elements, groups[i].order, 'meta.id');
       }
-      group.content = elements.filter((field) => {
+
+      group.content = elements.filter(field => {
         return field.meta.group === groups[i].id;
-      }).map(groupControlMap);
+      }).map(field => _this.prepElement.call(this, field));
 
       return group;
     });
@@ -416,6 +419,7 @@ export class Controls {
       className: 'control-groups panels-wrap panel-count-' + groupedFields.length,
       content: controlPanels.content
     });
+
     let element = dom.create({
         tag: 'div',
         className: this.formID + '-controls formeo-controls',
@@ -454,7 +458,9 @@ export class Controls {
           element.classList.remove('filtered');
           filteredTerm.remove();
         }
-      }
+      },
+      addElement: (elem) => console.log(elem),
+      addGroup: (group) => console.log(group)
     };
 
     // Make controls sortable

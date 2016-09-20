@@ -12,7 +12,6 @@ function readyState() {
       container: container,
       debug: true,
       editPanelOrder: ['attrs', 'options'],
-      style: isSite ? '/formeo/assets/css/formeo.min.css' : '../dist/formeo.min.css',
       i18n: {
         preloaded: {
           'en-US': {
@@ -145,6 +144,13 @@ function readyState() {
         }
       }
     };
+
+    if (!isSite) {
+      let style = document.getElementById('formeo-style');
+      style.parentElement.removeChild(style);
+      formeoOpts.style = '../dist/formeo.min.css';
+    }
+
     formeo = new window.Formeo(formeoOpts);
     postInit(formeo);
   }
