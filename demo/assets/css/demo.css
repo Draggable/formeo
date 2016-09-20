@@ -71,6 +71,7 @@ body {
 
 #debug-wrap.open {
   display: block;
+  background: rgba(75, 75, 75, 0.75);
 }
 
 .debug-window {

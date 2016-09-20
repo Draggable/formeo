@@ -1,6 +1,6 @@
 {
   "name": "formeo",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "main": "dist/formeo.min.js",
   "files": [
     "dist/formeo.min.js",
@@ -57,7 +57,7 @@
   "scripts": {
     "prestart": "npm update",
     "icons": ". ./build-icons.sh",
-    "build": "rm -rf ./dist/* && npm run icons && webpack --progress -p --colors && cp -a dist/*.js demo/assets/js && cp -a dist/*.css demo/assets/css && cp -a dist/*.svg demo/assets/img",
+    "build": "rm -rf ./dist/* && npm run icons && webpack --progress -p --colors && npm run copy",
     "lang": "cp -a src/lang demo/assets && cp -a src/lang dist",
     "copy": "npm run lang && cp -a dist/*.js demo/assets/js && cp -a dist/*.css demo/assets/css && cp -a dist/*.svg demo/assets/img",
     "lint": "eslint ./src/js --ext .js || true",

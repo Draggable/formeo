@@ -21,7 +21,7 @@ class Formeo {
       dataType: 'json',
       debug: false,
       className: 'formeo',
-      container: '.formeo',
+      container: '.formeo-wrap',
       prefix: 'formeo-',
       // svgSprite: null, // change to null
       iconFontFallback: null, // accepts 'glyphicons' || 'font-awesome' || 'fontello'
@@ -33,7 +33,11 @@ class Formeo {
 
     let _this = this;
 
-    this.container = options.container || defaults.container;
+    _this.container = options.container || defaults.container;
+    if (typeof _this.container === 'string') {
+      _this.container = document.querySelector(_this.container);
+    }
+
     // Remove `container` property before extending because container may be Element
     delete options.container;
 
@@ -44,6 +48,8 @@ class Formeo {
     }
 
     data.init(opts, formData);
+    events.init(opts.events);
+    actions.init(opts.actions);
 
     if (opts.style) {
       helpers.ajax(opts.style, helpers.insertStyle);
@@ -74,8 +80,6 @@ class Formeo {
                 });
             }
           };
-          events.init(opts.events);
-          actions.init(opts.actions);
           _this.render();
         },
         err => {
@@ -89,10 +93,6 @@ class Formeo {
     let _this = this,
       controls = formeo.controls.dom;
     formeo.stage = _this.stage;
-
-    if (typeof _this.container === 'string') {
-      _this.container = document.querySelector(_this.container);
-    }
 
     let formeoElemConfig = {
         tag: 'div',

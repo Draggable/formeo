@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.3.7 - Bugfix: Demo update, init bug [#28](https://github.com/Draggable/formeo/pull/28)
 - v0.3.6 - Feature/Bugfix: I18N updates and various bugfixes [#27](https://github.com/Draggable/formeo/pull/27)
 - v0.3.1 - Bugfix: toggleElementsByStr not toggling correctly [#26](https://github.com/Draggable/formeo/pull/26)
 - v0.3.0 - Features/Bugfixes: [#25](https://github.com/Draggable/formeo/pull/25)
