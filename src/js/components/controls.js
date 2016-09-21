@@ -247,7 +247,7 @@ export class Controls {
     return elementControl;
   }
 
-  mergeGroups() {
+  groupFields() {
     let _this = this,
       groups = opts.groups.slice(),
       elements = opts.elements.slice(),
@@ -274,7 +274,9 @@ export class Controls {
       }
 
       group.content = elements.filter(field => {
-        return field.meta.group === groups[i].id;
+        let filter = false;
+
+        return (field.meta.group === groups[i].id && !helpers.inArray(field.meta.id, opts.disable.elements));
       }).map(field => _this.prepElement.call(this, field));
 
       return group;
@@ -411,7 +413,7 @@ export class Controls {
       return this.element;
     }
 
-    let groupedFields = this.mergeGroups();
+    let groupedFields = this.groupFields();
     let formActions = this.formActions();
     let controlPanels = new Panels({ panels: groupedFields, type: 'controls' });
     let groupsWrap = dom.create({
@@ -508,7 +510,6 @@ export class Controls {
     stage.appendChild(row);
     data.saveRowOrder(row);
     data.save();
-    console.log(typeof events.formeoUpdated, events.formeoUpdated, events);
     //trigger formSaved event
     document.dispatchEvent(events.formeoUpdated);
   }

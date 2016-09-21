@@ -13,6 +13,9 @@ function readyState() {
       debug: true,
       editPanelOrder: ['attrs', 'options'],
       controls: {
+        disable: {
+          elements: ['textarea']
+        },
         elements: [{
           tag: 'textarea',
           className: 'form-control',
