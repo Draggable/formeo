@@ -258,7 +258,6 @@ const helpers = {
         } else if (typeof obj2[prop] === 'object') {
           mergedObj[prop] = helpers.extend(obj1[prop], obj2[prop]);
         } else {
-        console.log(typeof obj2[prop]);
           mergedObj[prop] = obj2[prop];
         }
       }
