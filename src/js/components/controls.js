@@ -256,6 +256,12 @@ export class Controls {
     // Apply order to Groups
     groups = helpers.orderObjectsBy(groups, opts.groupOrder, 'id');
 
+    // remove disabled groups
+    groups = groups.filter(group => {
+      return !helpers.inArray(group.id, opts.disable.groups);
+    });
+
+    // create group config
     allGroups = helpers.map(groups, (i) => {
       let group = {
         tag: 'ul',
@@ -269,7 +275,7 @@ export class Controls {
         }
       };
 
-      // Apply order to Groups
+      // Apply order to elements
       if (groups[i].elementOrder) {
         elements = helpers.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id');
       }
