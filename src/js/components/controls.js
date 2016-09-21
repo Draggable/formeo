@@ -508,6 +508,7 @@ export class Controls {
     stage.appendChild(row);
     data.saveRowOrder(row);
     data.save();
+    console.log(typeof events.formeoUpdated, events.formeoUpdated, events);
     //trigger formSaved event
     document.dispatchEvent(events.formeoUpdated);
   }

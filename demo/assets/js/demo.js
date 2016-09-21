@@ -12,6 +12,23 @@ function readyState() {
       container: container,
       debug: true,
       editPanelOrder: ['attrs', 'options'],
+      controls: {
+        elements: [{
+          tag: 'textarea',
+          className: 'form-control',
+          config: {
+            label: 'textarea'
+          },
+          meta: {
+            group: 'common',
+            icon: 'textarea',
+            id: 'textarea'
+          },
+          attrs: {
+            maxlength: 10
+          }
+        }]
+      },
       i18n: {
         preloaded: {
           'en-US': {

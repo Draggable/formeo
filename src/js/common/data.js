@@ -22,18 +22,12 @@ var data = {
       _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
       _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
 
-      events.formeoUpdated = new CustomEvent('formeoUpdated', {
-        detail: {
-          formData: _data.formData
-        }
-      });
-
       data.loadMap();
     };
 
     if (formData) {
       processFormData(formData);
-    } else if (window.sessionStorage) {
+    } else if (window.sessionStorage && _data.opts.sessionStorage) {
       formData = window.sessionStorage.getItem('formData');
       if (formData) {
         processFormData(formData);
@@ -43,6 +37,12 @@ var data = {
     } else {
       _data.formData = {};
     }
+
+    events.formeoUpdated = new CustomEvent('formeoUpdated', {
+      detail: {
+        formData: _data.formData
+      }
+    });
 
     _data.formData.id = _data.opts.formID || helpers.uuid();
     _data.opts.formID = _data.formData.id;
@@ -309,7 +309,7 @@ var data = {
 
     doSave[_data.opts.dataType](group, id);
 
-    if (window.sessionStorage) {
+    if (window.sessionStorage && _data.opts.sessionStorage) {
       window.sessionStorage.setItem('formData', window.JSON.stringify(_data.formData));
     }
 
