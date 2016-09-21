@@ -20,6 +20,7 @@ class Formeo {
     const defaults = {
       dataType: 'json',
       debug: false,
+      sessionStorage: false,
       className: 'formeo',
       container: '.formeo-wrap',
       prefix: 'formeo-',

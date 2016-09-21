@@ -19,21 +19,21 @@ export class Controls {
 
     let defaults = {
       sortable: true,
-      controlGroupOrder: [
+      groupOrder: [
         'common',
         'html'
       ],
       groups: [{
         id: 'common',
         label: i18n.get('commonFields'),
-        order: [
+        elementOrder: [
           'text-input',
           'checkbox'
         ]
       }, {
         id: 'html',
         label: i18n.get('htmlElements'),
-        order: [
+        elementOrder: [
           'header',
           'block-text'
         ]
@@ -247,14 +247,14 @@ export class Controls {
     return elementControl;
   }
 
-  mergeGroups() {
+  groupElements() {
     let _this = this,
       groups = opts.groups.slice(),
       elements = opts.elements.slice(),
       allGroups = [];
 
-    // Apply order
-    groups = helpers.orderObjectsBy(groups, opts.controlGroupOrder, 'id');
+    // Apply order to Groups
+    groups = helpers.orderObjectsBy(groups, opts.groupOrder, 'id');
 
     allGroups = helpers.map(groups, (i) => {
       let group = {
@@ -269,12 +269,13 @@ export class Controls {
         }
       };
 
-      if (groups[i].order) {
-        elements = helpers.orderObjectsBy(elements, groups[i].order, 'meta.id');
+      // Apply order to Groups
+      if (groups[i].elementOrder) {
+        elements = helpers.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id');
       }
 
       group.content = elements.filter(field => {
-        return field.meta.group === groups[i].id;
+        return (field.meta.group === groups[i].id && !helpers.inArray(field.meta.id, opts.disable.elements));
       }).map(field => _this.prepElement.call(this, field));
 
       return group;
@@ -411,7 +412,7 @@ export class Controls {
       return this.element;
     }
 
-    let groupedFields = this.mergeGroups();
+    let groupedFields = this.groupElements();
     let formActions = this.formActions();
     let controlPanels = new Panels({ panels: groupedFields, type: 'controls' });
     let groupsWrap = dom.create({
