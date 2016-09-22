@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.3.12 - Bugfix: race condition with remote assets [#31](https://github.com/Draggable/formeo/pull/31)
 - v0.3.11 - Bugfix: control groups not disable with option [#30](https://github.com/Draggable/formeo/pull/30)
 - v0.3.10 - Bugfixes and Features: sessionStorage option, disable groups and elements, fixed option merge bug, fixed Event undefined bug [#29](https://github.com/Draggable/formeo/pull/29)
 - v0.3.7 - Bugfix: Demo update, init bug [#28](https://github.com/Draggable/formeo/pull/28)
