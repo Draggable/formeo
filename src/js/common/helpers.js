@@ -61,7 +61,7 @@ const helpers = {
     return safeAttr[name] || helpers.hyphenCase(name);
   },
   ajax: (file, callback) => {
-    return new Promise(function(resolve, reject) {
+    return new window.Promise(function(resolve, reject) {
       var xhr = new XMLHttpRequest();
       xhr.open('GET', file, true);
       xhr.onload = function() {
