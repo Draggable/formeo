@@ -337,12 +337,18 @@ export default class DOM {
       menuHandle = {
         tag: 'button',
         content: [moveIcon, _this.icon('handle')],
-        className: item + '-handle btn-secondary btn'
+        attrs: {
+          className: item + '-handle btn-secondary btn',
+          'type': 'button'
+        }
       },
       editToggle = {
         tag: 'button',
         content: _this.icon('edit'),
-        className: item + '-edit-toggle btn-secondary btn',
+        attrs: {
+          className: item + '-edit-toggle btn-secondary btn',
+          'type': 'button'
+        },
         action: {
           click: (evt) => {
             let element = document.getElementById(id),
@@ -362,7 +368,10 @@ export default class DOM {
       remove = {
         tag: 'button',
         content: _this.icon('remove'),
-        className: item + '-remove btn-secondary btn',
+        attrs: {
+          className: item + '-remove btn-secondary btn',
+          'type': 'button'
+        },
         action: {
           click: () => {
             let element = document.getElementById(id);

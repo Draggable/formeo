@@ -332,7 +332,8 @@ export class Controls {
         tag: 'button',
         attrs: {
           type: 'button'
-        }
+        },
+        className: ['btn', 'btn-secondary']
       };
     events.formeoSaved = new CustomEvent('formeoSaved', {
       detail: {
@@ -340,7 +341,7 @@ export class Controls {
       }
     });
 
-    let clearBtn = Object.assign({}, btnTemplate, {
+    let clearBtn = helpers.merge(btnTemplate, {
         content: [dom.icon('bin'), i18n.get('clear')],
         className: ['clear-form'],
         action: {
@@ -372,13 +373,18 @@ export class Controls {
           }
         }
       }),
-      settingsBtn = Object.assign({}, btnTemplate, {
+      settingsBtn = helpers.merge(btnTemplate, {
         content: [dom.icon('settings'), i18n.get('settings')],
-        attrs: { title: i18n.get('settings') },
+        attrs: {
+          title: i18n.get('settings')
+        },
         className: ['edit-settings']
       }),
-      saveBtn = Object.assign({}, btnTemplate, {
+      saveBtn = helpers.merge(btnTemplate, {
         content: [dom.icon('floppy-disk'), i18n.get('save')],
+        attrs: {
+          title: i18n.get('save')
+        },
         className: ['save-form'],
         action: {
           click: (evt) => {
@@ -401,10 +407,6 @@ export class Controls {
         className: 'form-actions',
         content: [clearBtn, settingsBtn, saveBtn]
       };
-
-    for (var i = formActions.content.length - 1; i >= 0; i--) {
-      formActions.content[i].className.push('btn', 'btn-secondary');
-    }
 
     return formActions;
   }

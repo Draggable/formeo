@@ -254,7 +254,7 @@ const helpers = {
     for (let prop in obj2) {
       if (mergedObj.hasOwnProperty(prop)) {
         if (Array.isArray(obj2[prop])) {
-          mergedObj[prop] = obj1[prop].concat(obj2[prop]);
+          mergedObj[prop] = Array.isArray(obj1[prop]) ? obj1[prop].concat(obj2[prop]) : obj2[prop];
         } else if (typeof obj2[prop] === 'object') {
           mergedObj[prop] = helpers.extend(obj1[prop], obj2[prop]);
         } else {
