@@ -48,7 +48,6 @@ export default class DOM {
 
     processed.push('tag');
 
-
     // Append Element Content
     if (elem.options) {
       let options = this.processOptions(elem);
@@ -88,12 +87,7 @@ export default class DOM {
     }
 
     if (elem.config) {
-      if (elem.config.label && tag !== 'button' && !isBlockElement && !elem.config.noWrap) {
-        wrap = {
-          tag: 'div',
-          className: helpers.get(elem, 'config.inputWrap') || 'form-group',
-          content: [element]
-        };
+      if (elem.config.label && tag !== 'button' && !isBlockElement) {
 
         let label;
 
@@ -103,14 +97,23 @@ export default class DOM {
           label = _this.label(elem);
         }
 
-        if (!elem.config.hideLabel) {
-          if (labelAfter(elem)) {
-            wrap.content.push(' ', label);
+        if (!elem.config.noWrap) {
+          wrap = {
+            tag: 'div',
+            className: helpers.get(elem, 'config.inputWrap') || 'form-group',
+            content: [element]
+          };
+
+          if (!elem.config.hideLabel) {
+            if (labelAfter(elem)) {
+              wrap.content.push(' ', label);
+            } else {
+              wrap.content.unshift(label);
+            }
           } else {
-            wrap.content.unshift(label);
+            element = label;
           }
         }
-
       }
 
       processed.push('config');
@@ -542,10 +545,10 @@ export default class DOM {
     return colWidth;
   }
 
-  formGroup(content, className) {
+  formGroup(content, className = '') {
     return {
       tag: 'div',
-      className: 'form-group ' + className,
+      className: ['form-group', className],
       content: content
     };
   }

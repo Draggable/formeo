@@ -4,8 +4,8 @@
   @import 'base/icons';
   @import 'base/mixins';
   @import 'base/animation';
-  @import 'controls';
-  @import 'stage';
+  @import 'components/controls';
+  @import 'components/stage';
 
   // Sets a specific default `font-size` for user with `rem` type scales.
   font-size: $font-size-root;

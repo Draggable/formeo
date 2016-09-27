@@ -74,4 +74,18 @@
       background-color: $white;
     }
   }
+
+  &.editing-stage {
+    .formeo-settings {
+      display: block;
+    }
+
+    .stage {
+      display: none;
+    }
+  }
+}
+
+.formeo-settings {
+  display: none;
 }

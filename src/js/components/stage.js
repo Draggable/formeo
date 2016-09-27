@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs';
+import i18n from 'mi18n';
 import { data, dataMap } from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
@@ -7,13 +8,39 @@ import Column from './column';
 import Field from './field';
 var dom = new DOM();
 
-var stageOpts;
+var stageOpts = {};
 
 export default class Stage {
   constructor(formeoOptions, formID) {
     this.formID = formID;
-    let defaults = {};
-    stageOpts = Object.assign({}, defaults, formeoOptions);
+    let defaultOptions = {
+      formSettings: [{
+        tag: 'input',
+        id: 'form-title',
+        attrs: {
+          className: 'form-title',
+          placeholder: i18n.get('Untitled Form'),
+          value: i18n.get('Untitled Form'),
+          type: 'text'
+        },
+        config: {
+          label: i18n.get('Form Title')
+        }
+      },{
+        tag: 'input',
+        id: 'form-novalidate',
+        attrs: {
+          className: 'form-novalidate',
+          value: false,
+          type: 'checkbox'
+        },
+        config: {
+          label: i18n.get('Form novalidate')
+        }
+      }]
+    };
+
+    stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions);
 
     this.stage = this.loadStage();
 
@@ -66,21 +93,33 @@ export default class Stage {
     // }
   }
 
-  stageElements() {
+  elementConfigs() {
     let _this = this,
-      stage = {
-        tag: 'ul',
-        attrs: {
-          className: [
-            'stage',
-            'stage-empty'
-          ],
-          id: _this.formID + '-stage'
+      config = {
+        stage: {
+          tag: 'ul',
+          attrs: {
+            className: [
+              'stage',
+              'stage-empty'
+            ],
+            id: _this.formID + '-stage'
+          },
+          fType: 'stage'
         },
-        fType: 'stage'
+        settings: {
+          tag: 'div',
+          attrs: {
+            className: 'formeo-settings',
+            id: _this.formID + '-settings'
+          },
+          fType: 'settings'
+        }
       };
 
-    return stage;
+      config.settings.content = stageOpts.formSettings.slice();
+
+    return config;
   }
 
   createColumn(evt) {
@@ -103,7 +142,7 @@ export default class Stage {
 
     // Set parent IDs
     dataMap.columns[column.id].parent = row.id;
-    dataMap.rows[row.id].parent = stageOpts.formID;
+    dataMap.rows[row.id].parent = _this.formID;
 
     row.appendChild(column);
     data.saveColumnOrder(row);
@@ -152,14 +191,17 @@ export default class Stage {
       return this.stage;
     }
     let _this = this,
-      stageElements = this.stageElements(); // stage items
+      config = this.elementConfigs();
 
     let stageWrap = dom.create({
       tag: 'div',
       attrs: {
         className: 'stage-wrap'
       },
-      content: stageElements
+      content: [
+        config.stage, // stage items
+        config.settings
+      ]
     });
 
     Sortable.create(stageWrap.firstChild, {

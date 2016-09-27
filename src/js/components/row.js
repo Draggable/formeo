@@ -77,27 +77,39 @@ export default class Row {
         tag: 'div',
         className: 'row-edit group-config'
       },
-      divider = {
-        tag: 'hr'
-      },
       fieldsetLabel = {
         tag: 'label',
-        content: i18n.get('row.settings.fieldsetWrap'),
+        content: i18n.get('row.settings.fieldsetWrap')
       },
       fieldsetInput = {
         tag: 'input',
+        id: _this.rowID + '-fieldset',
         attrs: {
           type: 'checkbox',
           ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
+        },
+        action: {
+          change: (e) => {
+            console.log(e);
+          }
+        },
+        config: {
+          label: ' Fieldset',
+          noWrap: true
         }
       },
-      fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
+      // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
+      // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
       inputAddon = {
         tag: 'span',
         className: 'input-group-addon',
-        content: fieldsetAddon
+        content: fieldsetInput
       },
-      legendInput = Object.assign({}, fieldsetInput, { attrs: { type: 'text', ariaLabel: 'Legend for fieldset', placeholder: 'Legend' }, className: 'form-control' }),
+      legendInput = {
+        tag: 'input',
+        attrs: { type: 'text', ariaLabel: 'Legend for fieldset', placeholder: 'Legend' },
+        className: 'form-control'
+      },
       fieldsetInputGroup = {
         tag: 'div',
         className: 'input-group',
@@ -113,7 +125,7 @@ export default class Row {
       },
       columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row');
 
-    editWindow.content = [fieldSetControls, divider, columnSettingsLabel, columnSettingsPreset];
+    editWindow.content = [fieldSetControls, '<hr>', columnSettingsLabel, columnSettingsPreset];
 
     return editWindow;
   }

@@ -29,6 +29,7 @@ class Formeo {
       events: {},
       actions: {},
       controls: {},
+      settings: {},
       i18n: {
         langs: [
           'en-US'
@@ -244,7 +245,7 @@ class Formeo {
       controls = formeo.controls.dom;
     formeo.stage = _this.stage;
 
-    let formeoElemConfig = {
+    let elemConfig = {
         tag: 'div',
         attrs: {
           className: opts.className,
@@ -252,10 +253,12 @@ class Formeo {
         },
         content: [_this.stage, controls]
       },
-      formeoElem = dom.create(formeoElemConfig);
+      formeoElem = dom.create(elemConfig);
 
     _this.container.innerHTML = '';
     _this.container.appendChild(formeoElem);
+
+    formeo.stage.childNodes[0].style.minHeight = dom.getStyle(controls ,'height');
 
     events.formeoLoaded = new CustomEvent('formeoLoaded', {
       detail: {
