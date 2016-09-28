@@ -340,12 +340,11 @@ export class Controls {
       }
     });
 
-    let clearBtn = Object.assign({}, btnTemplate, {
+    let clearBtn = helpers.merge(btnTemplate, {
         content: [dom.icon('bin'), i18n.get('clear')],
         className: ['btn', 'btn-secondary', 'clear-form'],
         attrs: {
-          title: i18n.get('clearAll'),
-          type: 'button'
+          title: i18n.get('clearAll')
         },
         action: {
           click: (evt) => {
@@ -376,7 +375,7 @@ export class Controls {
           }
         }
       }),
-      settingsBtn = Object.assign({}, btnTemplate, {
+      settingsBtn = helpers.merge(btnTemplate, {
         content: [dom.icon('settings'), i18n.get('settings')],
         attrs: {
           title: i18n.get('settings')
@@ -390,7 +389,7 @@ export class Controls {
           }
         }
       }),
-      saveBtn = Object.assign({}, btnTemplate, {
+      saveBtn = helpers.merge(btnTemplate, {
         content: [dom.icon('floppy-disk'), i18n.get('save')],
         attrs: {
           title: i18n.get('save')
