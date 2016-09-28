@@ -11,6 +11,7 @@ function readyState() {
     var formeoOpts = {
       container: container,
       debug: true,
+      sessionStorage: true,
       editPanelOrder: ['attrs', 'options']
     };
 
@@ -29,6 +30,7 @@ function postInit(formeo) {
   let debugWrap = document.getElementById('debug-wrap'),
     debugBtn = document.getElementById('debug-demo'),
     locale = document.getElementById('locale');
+
   debugBtn.onclick = function() {
     debugWrap.classList.toggle('open');
   };

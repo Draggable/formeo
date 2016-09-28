@@ -22,20 +22,21 @@ new Formeo({ container: '.build-form' });
 | Option  | Type | Value(s) | Default |
 | ------------- | ------------- |------------- |------------- |
 | [debug](#) | {Bool} | `true` \| `false` | `false` |
-| [svgSprite](#) | {String} | svg sprite location | 'assets/img/formeo-sprite.svg' |
+| [svgSprite](#) | {String} | svg sprite location | `null` |
 | [style](#) | {String} | formeo stylesheet location | `null` |
 
 ### Events
 | Option  | Type | Value(s) | Default |
 | ------------- | ------------- |------------- |------------- |
-| [onSave](#) | {Function} | `Event` | () => {} |
-| [onUpdate](#) | {Function} | `Event` | () => {} |
+| [onSave](#) | {Function} | `Event` | (formData) => {} |
+| [onUpdate](#) | {Function} | `Event` | (formData) => {} |
 
 ### i18N
 | Option  | Type | Value(s) | Default |
 | ------------- | ------------- |------------- |------------- |
-| [langsDir](#) | {String} | location of language files | 'assets/lang/' |
+| [location](#) | {String} | location of language files | 'assets/lang/' |
 | [langs](#) | {Array} | array of available locales | ['en-US'] |
+| [preloaded](#) | {Object} | key/value pairs of strings | {en-US: {...}} |
 
 
 ## [Demo](https://Draggable.github.io/formeo) ##

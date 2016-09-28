@@ -5,6 +5,7 @@ import helpers from './helpers';
 // Object map of fields on the stage
 var _data = {},
   dataMap = {
+    settings: {},
     stage: {},
     rows: {},
     columns: {},
@@ -119,6 +120,18 @@ var data = {
    */
   saveMap: (group, id) => {
     let map = {
+      settings: () => {
+        let stage = dataMap.stage.settings;
+        _data.formData.settings = [];
+
+        helpers.forEach(stage, (i, rowID) => {
+          _data.formData.rows[i] = helpers.clone(dataMap.rows[rowID]);
+          // _data.formData.rows[i] = Object.assign({}, dataMap.rows[rowID]);
+          _data.formData.rows[i].columns = map.columns(rowID);
+        });
+
+        return _data.formData.settings;
+      },
       rows: () => {
         let rows = dataMap.stage.rows;
         _data.formData.rows = [];
