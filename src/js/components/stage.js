@@ -84,7 +84,7 @@ export default class Stage {
       let row = new Row(rows[i]);
       this.loadColumns(row);
       stage.appendChild(row);
-      dom.updateColumnPreset(row);
+      // dom.updateColumnPreset(row);
     });
     // }
   }
@@ -140,7 +140,7 @@ export default class Stage {
         }
       };
 
-      config.settings.content = stageOpts.formSettings.slice();
+    config.settings.content = stageOpts.formSettings.slice();
 
     return config;
   }
@@ -194,11 +194,12 @@ export default class Stage {
 
     stage.insertBefore(row, stage.children[newIndex]);
     data.saveRowOrder(row);
-    data.save();
 
     if (evt.from.fType === 'controlGroup') {
       dom.remove(evt.item);
     }
+
+    data.save();
   }
 
   /**
@@ -206,6 +207,8 @@ export default class Stage {
    * @return {Object} onRemove event
    */
   onRemove(evt) {
+
+    console.log('stage.js onRemove', evt);
     data.save();
   }
 

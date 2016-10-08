@@ -10,6 +10,10 @@
   padding: 5px;
   flex-direction: row;
   display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  align-content: stretch;
+  align-items: stretch;
 
   &::after {
     clear: both;
@@ -50,6 +54,8 @@
   }
 
   &.editing-row {
+    display: block;
+
     .row-edit {
       display: block;
     }
@@ -67,6 +73,14 @@
 
   &::before {
     left: 0;
+  }
+
+  &.editing-row {
+    &.hovering-row {
+      .stage-column {
+        opacity: 1;
+      }
+    }
   }
 
   &.editing-row,

@@ -18,7 +18,8 @@ export default class Column {
     columnDataDefault = {
       fields: [],
       id: _this.columnID,
-      config: {}
+      config: {},
+      classList: []
     };
 
     dataMap.columns[_this.columnID] = helpers.extend(columnDataDefault, dataMap.columns[_this.columnID]);
@@ -55,9 +56,9 @@ export default class Column {
       fType: 'column'
     };
 
-    this.processConfig(column);
-
     column = dom.create(column);
+
+    this.processConfig(column);
 
     Sortable.create(column, {
       animation: 150,
@@ -101,16 +102,10 @@ export default class Column {
     let _this = this,
       columnData = dataMap.columns[_this.columnID];
     if (columnData.config.width) {
-      let width = columnData.config.width,
-        widthType = dom.contentType(width);
-
-      if (widthType === 'string') {
-        column.className.push(width);
-      } else if (widthType === 'array') {
-        column.className.push(...width);
-      } else {
-        column.style.width = width.toString() + '%';
-      }
+      let percentWidth = Math.round(columnData.config.width).toString() + '%';
+      column.dataset.colWidth = percentWidth;
+      column.style.width = percentWidth;
+      column.style.float = 'left';
     }
   }
 

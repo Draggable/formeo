@@ -118,7 +118,7 @@ var data = {
    * Converts dataMap into formData Object
    * @return {Object} formData JS Object
    */
-  saveType: (group, id) => {
+  saveMap: (group, id) => {
     let map = {
       settings: () => {
         let stage = dataMap.stage.settings;
@@ -133,13 +133,38 @@ var data = {
         return _data.formData.settings;
       },
       rows: () => {
-        return helpers.clone(dataMap.stage.rows);
+        let rows = dataMap.stage.rows;
+        _data.formData.rows = [];
+
+        helpers.forEach(rows, (i, rowID) => {
+          _data.formData.rows[i] = helpers.clone(dataMap.rows[rowID]);
+          // _data.formData.rows[i] = Object.assign({}, dataMap.rows[rowID]);
+          _data.formData.rows[i].columns = map.columns(rowID);
+        });
+
+        return _data.formData.rows;
       },
       columns: (rowID) => {
-        return helpers.clone(dataMap.rows[rowID].columns);
+        let columns = dataMap.rows[rowID].columns,
+          rowLink = data.rowLink(rowID);
+        rowLink.columns = [];
+
+        helpers.forEach(columns, (i, columnID) => {
+          rowLink.columns[i] = helpers.clone(dataMap.columns[columnID]);
+          // rowLink.columns[i] = Object.assign({}, dataMap.columns[columnID]);
+          rowLink.columns[i].fields = map.fields(columnID);
+        });
+
+        return rowLink.columns;
       },
       fields: (columnID) => {
-        return helpers.clone(dataMap.columns[columnID].fields);
+        let fields = dataMap.columns[columnID].fields,
+          columnLink = data.columnLink(columnID);
+        columnLink.fields = helpers.map(fields, (i) => {
+          return helpers.clone(dataMap.fields[fields[i]]);
+        });
+
+        return columnLink.fields;
       },
       field: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID),
@@ -287,7 +312,7 @@ var data = {
 
   jsonSave: (group, id) => {
     let stage = document.getElementById(_data.formData.id + '-stage');
-    data.saveType(group, id);
+    data.saveMap(group, id);
     stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
     return _data.formData;
   },
@@ -308,8 +333,6 @@ var data = {
       console.log('Saved: ' + group);
     }
 
-    // Shouldn't be the case? because everytime save is called there should be some formData update, right?
-    document.dispatchEvent(events.formeoUpdated);
     return _data.formData;
   },
 

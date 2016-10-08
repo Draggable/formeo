@@ -540,10 +540,14 @@ export default class DOM {
     }
   }
 
-  columnWidths(row) {
+  columnWidths(row, widths = false) {
     let _this = this,
-      columns = row.getElementsByClassName('stage-column'),
-      colWidth = (12 / columns.length),
+      columns = row.getElementsByClassName('stage-column');
+    if (!columns.length) {
+      return false;
+    }
+    let colWidth = (12 / columns.length);
+    let width = widths ? widths : new Array(columns.length).fill(100 / columns.length),
       rowStyle = _this.getStyle(row),
       bsGridRegEx = /\bcol-\w+-\d+/g,
       rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight),
@@ -552,19 +556,20 @@ export default class DOM {
     _this.removeClasses(columns, bsGridRegEx);
 
     helpers.forEach(columns, (i) => {
-      let width;
+      let column = columns[i];
       if (helpers.isInt(colWidth)) {
-        width = 'col-md-' + colWidth;
-        columns[i].removeAttribute('style');
-        columns[i].className.replace(bsGridRegEx, ''); // removes bootstrap column classes
-        columns[i].classList.add(width);
-        dataMap.columns[columns[i].id].config.width = width;
-      } else {
-        width = (100 / columns.length);
-        columns[i].style.width = width + '%';
-        columns[i].style.float = 'left';
-        dataMap.columns[columns[i].id].config.width = width;
+        let widthClass = 'col-md-' + colWidth;
+        column.removeAttribute('style');
+        column.className.replace(bsGridRegEx, ''); // removes bootstrap column classes
+        column.classList.add(widthClass);
+        dataMap.columns[column.id].config.width = width;
+        dataMap.columns[column.id].classList.push(widthClass);
+        helpers.unique(dataMap.columns[column.id].classList);
       }
+
+      column.style.width = width + '%';
+      column.style.float = 'left';
+      dataMap.columns[column.id].config.width = width;
     });
 
     // Fix the editWindow for any fields that were being edited
@@ -594,16 +599,18 @@ export default class DOM {
     };
   }
 
-  columnPresetControl(row) {
-    let _this = this,
-      columnSettingsPresetSelect = {
+  columnPresetControl(rowID) {
+    let row = dataMap.rows[rowID];
+    console.log(rowID);
+    let columnSettingsPresetSelect = {
         tag: 'select',
         attrs: {
           ariaLabel: 'Define a column layout',
           className: 'form-control column-preset'
         }
-      },
-      presetMap = new Map();
+      };
+    let presetMap = new Map();
+
     presetMap.set(1, [{value: '', label: '100%'}]);
     presetMap.set(2, [{value: '50,50', label: '50 | 50'}, {value: '33,66', label: '33 | 66'}]);
     presetMap.set(3, [{value: '33,33,33', label: '33 | 33 | 33'}, {value: '25,50,25', label: '25 | 50 | 25'}]);
@@ -611,7 +618,8 @@ export default class DOM {
     presetMap.set('custom', [{value: 'custom', label: 'Custom'}]);
 
     if (row) {
-      let columns = row.getElementsByClassName('stage-column');
+      // let columns = row.getElementsByClassName('stage-column');
+      let columns = row.columns;
       columnSettingsPresetSelect.options = presetMap.get(columns.length) || presetMap.get('custom');
     } else {
       columnSettingsPresetSelect.options = presetMap.get(1);
@@ -621,10 +629,11 @@ export default class DOM {
   }
 
   updateColumnPreset(row) {
+    console.log('updateColumnPreset');
     let _this = this,
       oldColumnPreset = row.querySelector('.column-preset'),
       rowEdit = oldColumnPreset.parentElement,
-      newColumnPreset = _this.create(_this.columnPresetControl(row));
+      newColumnPreset = _this.create(_this.columnPresetControl(row.id));
 
     rowEdit.replaceChild(newColumnPreset, oldColumnPreset);
   }

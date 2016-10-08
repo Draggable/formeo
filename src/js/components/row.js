@@ -11,7 +11,6 @@ export default class Row {
   constructor(dataID) {
     let _this = this,
       rowDataDefault,
-      editWindow,
       row;
 
     _this.rowID = dataID || helpers.uuid();
@@ -23,11 +22,12 @@ export default class Row {
           fieldset: false, // wrap contents of row in fieldset
           legend: '' // Legend for fieldset
         }
-      },
-      editWindow = _this.editWindow();
+      };
 
     // _this.rowData = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
     dataMap.rows[_this.rowID] = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
+
+console.log(_this.rowID);
 
     row = {
       tag: 'li',
@@ -46,7 +46,7 @@ export default class Row {
         }
       },
       id: _this.rowID,
-      content: [dom.actionButtons(_this.rowID, 'row'), editWindow],
+      content: [dom.actionButtons(_this.rowID, 'row'), _this.editWindow()],
       fType: 'row'
     };
 
@@ -121,7 +121,7 @@ export default class Row {
     let columnSettingsPresetSelect = {
         tag: 'div',
         className: 'col-sm-10',
-        content: dom.columnPresetControl()
+        content: dom.columnPresetControl(_this.rowID)
       },
       columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row');
 
@@ -136,29 +136,30 @@ export default class Row {
 
   onSort(evt) {
     // console.log('onSort', evt);
-    data.saveColumnOrder(evt.target);
     data.save('columns', evt.target.id);
   }
 
   onRemove(evt) {
-    // console.log('onRemove', evt);
+    console.log('onRemove', evt);
     let row = evt.from,
       columns = row.querySelectorAll('.stage-column');
     if (!columns.length) {
       dom.remove(row);
       data.saveRowOrder();
-      data.save();
+      data.save('rows');
     } else if (columns.length === 1) {
       columns[0].style.float = 'none';
-      data.save('columns', row.id);
     }
+
     dom.columnWidths(row);
+    dom.updateColumnPreset(evt.target);
+    data.save('columns', row.id);
   }
 
   onAdd(evt) {
+    console.log('onAdd', evt);
     let column = dataMap.columns[evt.item.id];
     column.parent = evt.target.id;
-    // console.log('onAdd', evt);
     dom.columnWidths(evt.target);
     data.saveRowOrder(evt.target);
     data.saveColumnOrder(evt.target);

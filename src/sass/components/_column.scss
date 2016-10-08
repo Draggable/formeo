@@ -34,7 +34,7 @@
     width: 6px;
     border: 4px dotted $white;
     z-index: 1;
-    cursor: w-resize;
+    cursor: ew-resize;
   }
 
   &:before {
@@ -78,6 +78,7 @@
 
 .editing-row {
   .stage-column {
+    display: table-cell;
     border-radius: 5px;
     height: 60px;
     background-color: $gray-light;
