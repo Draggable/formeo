@@ -3,7 +3,7 @@ import i18n from 'mi18n';
 import { data, dataMap, registeredFields } from '../common/data';
 import helpers from '../common/helpers';
 import events from '../common/events';
-import actions from '../common/actions';
+import utils from '../common/utils';
 import DOM from '../common/dom';
 import Panels from './panels';
 import Row from './row';
@@ -108,7 +108,7 @@ export class Controls {
         },
         options: [1, 2, 3, 4].map(i => {
           return {
-            label: i18n.get('labelCount', { label: i18n.get('option'), count: i }),
+            label: i18n.get('labelCount', {label: i18n.get('option'), count: i}),
             value: 'option-' + i,
             selected: false
           };
@@ -143,7 +143,7 @@ export class Controls {
           id: 'checkbox'
         },
         options: [{
-          label: i18n.get('labelCount', { label: i18n.get('checkbox'), count: 1 }),
+          label: i18n.get('labelCount', {label: i18n.get('checkbox'), count: 1}),
           value: 'checkbox-1',
           selected: true
         }]
@@ -163,7 +163,7 @@ export class Controls {
         },
         options: [1, 2, 3].map(i => {
           return {
-            label: i18n.get('labelCount', { label: i18n.get('radio'), count: i }),
+            label: i18n.get('labelCount', {label: i18n.get('radio'), count: i}),
             value: 'radio-' + i,
             selected: false
           };
@@ -281,7 +281,9 @@ export class Controls {
       }
 
       group.content = elements.filter(field => {
-        return (field.meta.group === groups[i].id && !helpers.inArray(field.meta.id, opts.disable.elements));
+        let match = utils.match(field.meta.id, opts.disable.elements);
+
+        return (field.meta.group === groups[i].id && match);
       }).map(field => _this.prepElement.call(this, field));
 
       return group;
@@ -431,7 +433,7 @@ export class Controls {
 
     let groupedFields = this.groupElements();
     let formActions = this.formActions();
-    let controlPanels = new Panels({ panels: groupedFields, type: 'controls' });
+    let controlPanels = new Panels({panels: groupedFields, type: 'controls'});
     let groupsWrap = dom.create({
       tag: 'div',
       className: 'control-groups panels-wrap panel-count-' + groupedFields.length,
