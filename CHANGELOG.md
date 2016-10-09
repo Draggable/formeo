@@ -1,6 +1,7 @@
 # Changelog
 
-- v0.3.14 - Chore/Bugfix: Improve control disabling [#34](https://github.com/Draggable/formeo/pull/34)
+- v0.3.15 - Bugfix: No visible controls without disable setting [#37](https://github.com/Draggable/formeo/pull/37 )
+- v0.3.14 - Chore/Bugfix: Improve control disabling [#36](https://github.com/Draggable/formeo/pull/36)
 - v0.3.13 - Bugfix: all buttons need type attribute [#33](https://github.com/Draggable/formeo/pull/33)
 - v0.3.12 - Bugfix: race condition with remote assets [#31](https://github.com/Draggable/formeo/pull/31)
 - v0.3.11 - Bugfix: control groups not disable with option [#30](https://github.com/Draggable/formeo/pull/30)
