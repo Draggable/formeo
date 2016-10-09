@@ -1,19 +1,14 @@
 const utils = {};
 
-
 utils.match = (str, filter) => {
-  let match = false,
-  matchOperatorsRe = /[|\\{}()[\]^$+?.]/g,
+  let matchOperatorsRe = /[|\\{}()[\]^$+?.]/g,
   filterArray = (typeof filter === 'string') ? [filter] : filter;
+  console.log(filterArray);
   filterArray = filterArray.map((filterStr) => {
     return filterStr === '*' ? '' : filterStr.replace(matchOperatorsRe, '\\$&');
   });
 
-  if (filterArray.length) {
-    match = !str.match(new RegExp(filterArray.join('|'), 'i'));
-  }
-
-  return match;
+  return filterArray.length ? !str.match(new RegExp(filterArray.join('|'), 'i')) : true;
 };
 
 export default utils;
