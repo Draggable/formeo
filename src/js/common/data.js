@@ -330,6 +330,8 @@ var data = {
       console.log('Saved: ' + group);
     }
 
+    // Shouldn't be the case? because everytime save is called there should be some formData update, right?
+    document.dispatchEvent(events.formeoUpdated);
     return _data.formData;
   },
 
