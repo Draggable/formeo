@@ -17,7 +17,7 @@ export class Controls {
   constructor(controlOptions, formID) {
     this.formID = formID;
 
-    let defaults = {
+    var defaults = {
       sortable: true,
       groupOrder: [
         'common',
@@ -258,7 +258,7 @@ export class Controls {
 
     // remove disabled groups
     groups = groups.filter(group => {
-      return !helpers.inArray(group.id, opts.disable.groups);
+      return utils.match(group.id, opts.disable.groups);
     });
 
     // create group config
@@ -282,7 +282,6 @@ export class Controls {
 
       group.content = elements.filter(field => {
         let match = utils.match(field.meta.id, opts.disable.elements);
-
         return (field.meta.group === groups[i].id && match);
       }).map(field => _this.prepElement.call(this, field));
 
