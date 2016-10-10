@@ -17,7 +17,7 @@ export class Controls {
   constructor(controlOptions, formID) {
     this.formID = formID;
 
-    var defaults = {
+    this.defaults = {
       sortable: true,
       groupOrder: [
         'common',
@@ -206,7 +206,7 @@ export class Controls {
       }]
     };
 
-    opts = helpers.merge(defaults, controlOptions);
+    opts = helpers.merge(this.defaults, controlOptions);
   }
 
   prepElement(elem) {
@@ -273,16 +273,27 @@ export class Controls {
         config: {
           label: groups[i].label || ''
         }
-      };
+      },
+      defaultIds = this.defaults.elements.map(element => element.meta.id);
 
       // Apply order to elements
       if (groups[i].elementOrder) {
         elements = helpers.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id');
       }
 
+      /**
+       * Fill control groups with their fields
+       * @param  {Object} field Field configuration object.
+       * @return {Array}        Filtered array of Field config objects
+       */
       group.content = elements.filter(field => {
-        let match = utils.match(field.meta.id, opts.disable.elements);
-        return (field.meta.group === groups[i].id && match);
+        let fieldId = field.meta.id || '',
+            filters = [
+              utils.match(fieldId, opts.disable.elements),
+              (field.meta.group === groups[i].id)
+            ];
+
+        return helpers.inArray(fieldId, defaultIds) ? filters.every(val => val === true) : true;
       }).map(field => _this.prepElement.call(this, field));
 
       return group;
