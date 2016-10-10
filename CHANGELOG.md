@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.3.16 - Bugfix: add regex disable to control groups [#39](https://github.com/Draggable/formeo/pull/37 )
 - v0.3.15 - Bugfix: No visible controls without disable setting [#37](https://github.com/Draggable/formeo/pull/37 )
 - v0.3.14 - Chore/Bugfix: Improve control disabling [#36](https://github.com/Draggable/formeo/pull/36)
 - v0.3.13 - Bugfix: all buttons need type attribute [#33](https://github.com/Draggable/formeo/pull/33)
