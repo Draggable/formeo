@@ -334,7 +334,7 @@ export class Controls {
       stage.classList.remove('removing-all-fields');
       dataMap.stage.rows = [];
       data.save();
-      document.dispatchEvent(events.formeoUpdated);
+      // document.dispatchEvent(events.formeoUpdated);
     }, 300);
   }
 
@@ -539,7 +539,7 @@ export class Controls {
     data.saveRowOrder(row);
     data.save();
     //trigger formSaved event
-    document.dispatchEvent(events.formeoUpdated);
+    // document.dispatchEvent(events.formeoUpdated);
   }
 
 }
