@@ -1,11 +1,10 @@
 const utils = {};
 
 utils.match = (str, filter) => {
-  let matchOperatorsRe = /[|\\{}()[\]^$+?.]/g,
+  let matchOperators = /[|\\{}()[\]^*$+?.]/g,
   filterArray = (typeof filter === 'string') ? [filter] : filter;
-  console.log(filterArray);
   filterArray = filterArray.map((filterStr) => {
-    return filterStr === '*' ? '' : filterStr.replace(matchOperatorsRe, '\\$&');
+    return filterStr === '*' ? '' : filterStr.replace(matchOperators, '\\$&');
   });
 
   return filterArray.length ? !str.match(new RegExp(filterArray.join('|'), 'i')) : true;
