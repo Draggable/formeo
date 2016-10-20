@@ -39,6 +39,8 @@ function updateMd(version){
         });
     }
   });
+
+  return true;
 }
 
 
@@ -54,8 +56,8 @@ async function tag() {
 
   await updateMd(version);
 
+  await json.update('bower.json', { version: version.new });
   json.update('package.json', { version: version.new })
-  json.update('bower.json', { version: version.new })
   .then(() => {
     exec(`npm run build && git add --all && git commit -am "v${version.new}" && git tag v${version.new} && git push origin master --tags && npm publish`, function(err, stdout) {
       if (!err) {

@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.3.18 - Bugfix: Edit panel buttons missing type attribute [#43](https://github.com/Draggable/formeo/pull/43)
 - v0.3.17 - Bugfix: move formeoUpdate event, update disabled fields filter [#41](https://github.com/Draggable/formeo/pull/41 )
 - v0.3.16 - Bugfix: add regex disable to control groups [#39](https://github.com/Draggable/formeo/pull/39 )
 - v0.3.15 - Bugfix: No visible controls without disable setting [#37](https://github.com/Draggable/formeo/pull/37 )
