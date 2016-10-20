@@ -15,7 +15,7 @@ var argv = require('yargs').argv;
 
 function updateMd(version){
   const lastLog = fs.readFileSync('./CHANGELOG.md', 'utf8').split('\n')[2];
-  exec('git log -1 HEAD --pretty=format:%s', function(err, gitLog) {
+  return exec('git log -1 HEAD --pretty=format:%s', function(err, gitLog) {
     gitLog = gitLog.replace(/\(#(\d+)\)/g, '[#$1](https://github.com/Draggable/formeo/pull/$1)');
     const changes = [
       {
@@ -39,8 +39,6 @@ function updateMd(version){
         });
     }
   });
-
-  return true;
 }
 
 
@@ -57,7 +55,7 @@ async function tag() {
   await updateMd(version);
 
   await json.update('bower.json', { version: version.new });
-  json.update('package.json', { version: version.new })
+  return json.update('package.json', { version: version.new })
   .then(() => {
     exec(`npm run build && git add --all && git commit -am "v${version.new}" && git tag v${version.new} && git push origin master --tags && npm publish`, function(err, stdout) {
       if (!err) {
