@@ -8,8 +8,8 @@
   ],
   "homepage": "http://draggable.github.io/formeo/",
   "repository": {
-    "type": "git",
-    "url": "http://github.com/draggable/formeo"
+    "url": "http://github.com/draggable/formeo",
+    "type": "git"
   },
   "author": "Kevin Chappell <kevin.b.chappell@gmail.com>",
   "contributors": [],
@@ -51,19 +51,28 @@
   },
   "babel": {
     "presets": [
-      "es2015"
-    ]
+      "node6",
+      "stage-0"
+    ],
+    "env": {
+      "test": {
+        "plugins": [
+          "rewire"
+        ]
+      }
+    }
   },
   "scripts": {
     "prestart": "npm update",
-    "icons": ". ./build-icons.sh",
-    "build": "rm -rf ./dist/* && npm run icons && webpack --progress -p --colors && npm run copy",
+    "icons": ". ./tools/build-icons.sh",
+    "build": "rm -rf ./dist/* && webpack --progress -p --colors && npm run copy",
     "lang": "cp -a src/lang demo/assets && cp -a src/lang dist",
     "copy": "npm run lang && cp -a dist/*.js demo/assets/js && cp -a dist/*.css demo/assets/css && cp -a dist/*.svg demo/assets/img",
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
-    "dev": "webpack -d | webpack-dev-server -d --hot --inline --progress",
-    "deploy": "OVERCOMMIT_DISABLE=1 git push origin $(git subtree split --prefix demo master):gh-pages --force"
+    "start": "webpack -d | webpack-dev-server -d --hot --inline --progress",
+    "tag": "babel-node tools/run tag",
+    "deploy": "git push origin $(git subtree split --prefix demo master):gh-pages --force"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
@@ -71,6 +80,8 @@
     "babel-loader": "^6.2.4",
     "babel-plugin-transform-runtime": "^6.9.0",
     "babel-preset-es2015": "^6.9.0",
+    "babel-preset-node6": "^11.0.0",
+    "babel-preset-stage-0": "^6.16.0",
     "babel-register": "^6.9.0",
     "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.8",
@@ -85,6 +96,7 @@
     "node-sass": "^3.4.2",
     "postcss-loader": "^0.8.2",
     "purifycss-webpack-plugin": "^2.0.3",
+    "replace-in-file": "^2.0.1",
     "sass-loader": "^3.2.0",
     "sortablejs": "^1.4.2",
     "style-loader": "^0.13.1",
@@ -118,6 +130,7 @@
   },
   "engines": {},
   "dependencies": {
+    "json-update": "^3.0.0",
     "whatwg-fetch": "^1.0.0"
   }
 }
