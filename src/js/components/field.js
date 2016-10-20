@@ -163,9 +163,6 @@ export default class Field {
         action: {
           click: (evt) => {
             animate.slideUp(document.getElementById(property.id), 250, (elem) => {
-              let field = document.getElementById(_this.fieldID),
-                editGroup = field.querySelector('.field-edit-group'),
-                panel = editGroup.parentElement;
               dom.remove(elem);
               if (Array.isArray(dataMap.fields[_this.fieldID][args.panelType])) {
                 dataMap.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
@@ -173,7 +170,6 @@ export default class Field {
                 dataMap.fields[_this.fieldID][args.panelType][dataProp] = undefined;
               }
               data.save(args.panelType, _this.fieldID);
-              panel.parentElement.style.height = dom.getStyle(panel, 'height');
               dom.empty(_this.preview);
               let newPreview = dom.create(dataMap.fields[_this.fieldID], true);
               _this.preview.appendChild(newPreview);
@@ -362,6 +358,9 @@ export default class Field {
     let _this = this,
       addBtn = {
         tag: 'button',
+        attrs: {
+          type: 'button'
+        },
         content: i18n.get('panelEditButtons.' + type),
         action: {
           click: (evt) => {
