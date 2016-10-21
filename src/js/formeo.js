@@ -1,20 +1,30 @@
 'use strict';
 import '../sass/formeo.scss';
 import helpers from './common/helpers';
-import { data } from './common/data';
+import {data} from './common/data';
 import events from './common/events';
 import actions from './common/actions';
 import DOM from './common/dom';
 import i18n from 'mi18n';
-import { Controls } from './components/controls';
+import {Controls} from './components/controls';
 import Stage from './components/stage';
 
-var dom = new DOM();
+const dom = new DOM();
 
 // Simple object config for the main part of formeo
-var formeo = {};
-var opts = {};
+const formeo = {};
+let opts = {};
+
+/**
+ * Main class
+ */
 class Formeo {
+  /**
+   * [constructor description]
+   * @param  {Object} options  formeo options
+   * @param  {String|Object}   formData [description]
+   * @return {Object}          formeo references and actions
+   */
   constructor(options, formData) {
     // Default options
     const defaults = {
@@ -25,7 +35,7 @@ class Formeo {
       container: '.formeo-wrap',
       prefix: 'formeo-',
       // svgSprite: null, // change to null
-      iconFontFallback: null, // accepts 'glyphicons' || 'font-awesome' || 'fontello'
+      iconFontFallback: null, // 'glyphicons' || 'font-awesome' || 'fontello'
       events: {},
       actions: {},
       controls: {},
@@ -173,7 +183,8 @@ class Formeo {
       _this.container = document.querySelector(_this.container);
     }
 
-    // Remove `container` property before extending because container may be Element
+    // Remove `container` property before extending because container
+    // may be Element
     delete options.container;
 
     opts = helpers.extend(defaults, options);
@@ -194,6 +205,10 @@ class Formeo {
     return formeo;
   }
 
+  /**
+   * Load remote resources
+   * @return {Promise} asynchronously loaded remote resources
+   */
   loadResources() {
     let promises = [];
 
@@ -209,6 +224,11 @@ class Formeo {
     return window.Promise.all(promises);
   }
 
+  /**
+   * Formeo initializer
+   * @return {Object} References to formeo instance,
+   * dom elements, actions events and more.
+   */
   init() {
     let _this = this;
     i18n.init(opts.i18n)
@@ -240,10 +260,14 @@ class Formeo {
     return formeo;
   }
 
+  /**
+   * Render the formeo sections
+   * @return {void}
+   */
   render() {
-    let _this = this,
-      controls = formeo.controls.dom;
-    formeo.stage = _this.stage;
+    let _this = this;
+    let controls = formeo.controls.dom;
+    let stage = formeo.stage = _this.stage;
 
     let elemConfig = {
         tag: 'div',
@@ -251,14 +275,14 @@ class Formeo {
           className: opts.className,
           id: opts.formID
         },
-        content: [_this.stage, controls]
-      },
-      formeoElem = dom.create(elemConfig);
+        content: [stage, controls]
+      };
+    let formeoElem = dom.create(elemConfig);
 
     _this.container.innerHTML = '';
     _this.container.appendChild(formeoElem);
 
-    formeo.stage.childNodes[0].style.minHeight = dom.getStyle(controls ,'height');
+    stage.childNodes[0].style.minHeight = dom.getStyle(controls, 'height');
 
     events.formeoLoaded = new CustomEvent('formeoLoaded', {
       detail: {

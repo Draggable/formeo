@@ -2,26 +2,34 @@ import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
-import { data } from '../common/data';
-var dom = new DOM();
+import {data} from '../common/data';
+const dom = new DOM();
 
-var defaults = {
+const defaults = {
   type: 'field'
 };
 
+/**
+ * Edit and control sliding panels
+ */
 export default class Panels {
+ /**
+ * Panels initial setup
+ * @param  {Object} options Panels config
+ * @return {Object} Panels
+ */
   constructor(options) {
     let _this = this;
     _this.opts = Object.assign({}, defaults, options);
 
-    let labels = _this.panelNav(),
-      panels = _this.panelsWrap();
+    let labels = _this.panelNav();
+    let panels = _this.panelsWrap();
 
     _this.panels = panels.childNodes;
     _this.currentPanel = _this.panels[0];
     _this.labels = labels;
+console.log(_this.navActions());
     _this.nav = _this.navActions();
-
     if (_this.opts.type === 'field') {
       setTimeout(_this.setPanelsHeight.bind(_this), 10);
     }
@@ -43,14 +51,14 @@ export default class Panels {
     let field = document.getElementById(this.opts.id);
     this.slideToggle = field.querySelector('.field-edit');
 
-    //temp styles
+    // temp styles
     this.slideToggle.style.display = 'block';
     this.slideToggle.style.position = 'absolute';
     this.slideToggle.style.opacity = 0;
 
     this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
 
-    //reset styles
+    // reset styles
     this.slideToggle.style.display = 'none';
     this.slideToggle.style.position = 'relative';
     this.slideToggle.style.opacity = 1;
@@ -75,6 +83,11 @@ export default class Panels {
     return panelsWrap;
   }
 
+  /**
+   * Sortable panel properties
+   * @param  {Array} panels
+   * @return {[type]}        [description]
+   */
   sortableProperties(panels) {
     let _this = this,
       groups = panels.getElementsByClassName('field-edit-group');
@@ -84,14 +97,17 @@ export default class Panels {
         group.fieldID = _this.opts.id;
         Sortable.create(group, {
           animation: 150,
-          group: { name: 'edit-' + group.editGroup, pull: true, put: ['properties'] },
+          group: {
+            name: 'edit-' + group.editGroup,
+            pull: true, put: ['properties']
+          },
           sort: true,
           handle: '.prop-order',
           onAdd: (evt) => {
             _this.propertySave(group);
             _this.panelsWrap.style.height = dom.getStyle(_this.currentPanel, 'height');
           },
-          onUpdate: (evt) => {
+          onUpdate: () => {
             _this.propertySave(group);
             _this.panelsWrap.style.height = dom.getStyle(_this.currentPanel, 'height');
           }
@@ -100,12 +116,21 @@ export default class Panels {
     });
   }
 
+  /**
+   * Save a fields' property
+   * @param  {Object} group property group
+   * @return {Object}       DOM node for updated property preview
+   */
   propertySave(group) {
     data.saveOrder(group.editGroup, group);
     data.save(group.editGroup, group.fieldID);
-    this.opts.updatePreview();
+    return this.opts.updatePreview();
   }
 
+  /**
+   * Panel navigation, tabs and arrow buttons for slider
+   * @return {Object} DOM object for panel navigation wrapper
+   */
   panelNav() {
     let panelNavUL = {
         tag: 'div',
@@ -116,10 +141,10 @@ export default class Panels {
           tag: 'div',
           content: []
         }
-      },
-      panels = this.opts.panels.slice(); //make new array
+      };
+    let panels = this.opts.panels.slice(); // make new array
 
-    for (var i = 0; i < panels.length; i++) {
+    for (let i = 0; i < panels.length; i++) {
       let group = {
         tag: 'h5'
       };
@@ -153,11 +178,11 @@ export default class Panels {
           placement: 'top'
         },
         action: {
-          click: () => { this.nav.nextGroup() }
+          click: this.nav.nextGroup
         },
         content: dom.icon('triangle-right')
-      },
-      prev = {
+      };
+    let prev = {
         tag: 'button',
         attrs: {
           className: 'btn prev-group',
@@ -169,7 +194,7 @@ export default class Panels {
           placement: 'top'
         },
         action: {
-          click: () => { this.nav.prevGroup() }
+          click: this.nav.prevGroup
         },
         content: dom.icon('triangle-left')
       };
@@ -183,26 +208,31 @@ export default class Panels {
     });
   }
 
+  /**
+   * Handlers for navigating between panel groups
+   * @return {Object} actions that control panel groups
+   */
   navActions() {
-    let direction = {},
-      groupParent = this.currentPanel.parentElement,
-      firstControlNav = this.labels.querySelector('.panel-labels').firstChild,
-      siblingGroups = this.currentPanel.parentElement.children,
-      index = Array.prototype.indexOf.call(siblingGroups, this.currentPanel),
-      groupChange = (newIndex) => {
-        this.currentPanel = siblingGroups[newIndex];
-        this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
-        if (this.opts.type === 'field') {
-          this.slideToggle.style.height = 'auto';
-        }
-      };
+    let action = {};
+    let groupParent = this.currentPanel.parentElement;
+    let firstControlNav = this.labels.querySelector('.panel-labels').firstChild;
+    let siblingGroups = this.currentPanel.parentElement.children;
+    let index = Array.prototype.indexOf.call(siblingGroups, this.currentPanel);
 
-    direction.refresh = () => {
+    const groupChange = (newIndex) => {
+      this.currentPanel = siblingGroups[newIndex];
+      this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
+      if (this.opts.type === 'field') {
+        this.slideToggle.style.height = 'auto';
+      }
+    };
+
+    action.refresh = () => {
       firstControlNav.style.transform = `translateX(-${(firstControlNav.offsetWidth * index)}px)`;
       groupParent.style.transform = `translateX(-${(groupParent.offsetWidth * index)}px)`;
     };
 
-    direction.nextGroup = () => {
+    action.nextGroup = () => {
       let newIndex = (index + 1);
       if (newIndex !== siblingGroups.length) {
         firstControlNav.style.transform = `translateX(-${(firstControlNav.offsetWidth * newIndex)}px)`;
@@ -214,8 +244,8 @@ export default class Panels {
           firstControlNav.style.transform,
           groupParent.style.transform
         ];
-        firstControlNav.style.transform = `translateX(-${((firstControlNav.offsetWidth * index)+10)}px)`;
-        groupParent.style.transform = `translateX(-${((groupParent.offsetWidth * index)+10)}px)`;
+        firstControlNav.style.transform = `translateX(-${((firstControlNav.offsetWidth * index) + 10)}px)`;
+        groupParent.style.transform = `translateX(-${((groupParent.offsetWidth * index) + 10)}px)`;
         setTimeout(() => {
           firstControlNav.style.transform = curTranslate[0];
           groupParent.style.transform = curTranslate[1];
@@ -223,7 +253,7 @@ export default class Panels {
       }
     };
 
-    direction.prevGroup = () => {
+    action.prevGroup = () => {
       if (index !== 0) {
         let newIndex = (index - 1);
         firstControlNav.style.transform = `translateX(-${(firstControlNav.offsetWidth * newIndex)}px)`;
@@ -234,8 +264,8 @@ export default class Panels {
         let curTranslate = [
             firstControlNav.style.transform,
             groupParent.style.transform
-          ],
-          nudge = 'translateX(10px)';
+          ];
+        let nudge = 'translateX(10px)';
         firstControlNav.style.transform = nudge;
         groupParent.style.transform = nudge;
         setTimeout(() => {
@@ -245,7 +275,7 @@ export default class Panels {
       }
     };
 
-    return direction;
+    return action;
   }
 
 }

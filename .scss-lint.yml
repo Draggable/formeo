@@ -1,0 +1,8 @@
+linters:
+  NestingDepth:
+    enabled: true
+    max_depth: 4
+    ignore_parent_selectors: false
+
+  PropertySortOrder:
+    enabled: false

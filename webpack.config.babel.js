@@ -2,7 +2,7 @@ import pkg from './package.json';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import { optimize, BannerPlugin, DefinePlugin } from 'webpack';
+import {optimize, BannerPlugin, DefinePlugin} from 'webpack';
 
 const sassLoaders = [
   'css?sourceMap',
@@ -35,7 +35,7 @@ if (development) {
     new optimize.DedupePlugin(),
     new optimize.OccurenceOrderPlugin(),
     new optimize.UglifyJsPlugin({
-      compress: { warnings: false }
+      compress: {warnings: false}
     }),
     new BannerPlugin(bannerTemplate)
   ];
@@ -82,7 +82,7 @@ var webpackConfig = {
   postcss: function() {
     return {
       defaults: [autoprefixer],
-      cleaner: [autoprefixer({ browsers: ['last 2 versions'] })]
+      cleaner: [autoprefixer({browsers: ['last 2 versions']})]
     };
   },
   resolve: {

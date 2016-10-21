@@ -1,50 +1,56 @@
 import helpers from './helpers';
-import events from './events';
 import animate from './animation';
-import { dataMap, data } from './data';
+import {dataMap, data} from './data';
 
+/**
+ * General purpose markup utilities and generator.
+ */
 export default class DOM {
-  constructor() {}
-
+  /**
+   * Creates DOM elements
+   * @param  {Object}  elem      element config object
+   * @param  {Boolean} isPreview generating element for preview or render?
+   * @return {Object}            DOM Object
+   */
   create(elem, isPreview = false) {
-    let _this = this,
-      contentType,
-      tag = elem.tag || elem,
-      processed = [],
-      i,
-      wrap,
-      labelAfter = (elem) => {
-        let type = helpers.get(elem, 'attrs.type');
-        return (type === 'checkbox' || type === 'radio');
+    let _this = this;
+    let contentType;
+    let tag = elem.tag || elem;
+    let processed = [];
+    let i;
+    let wrap;
+    let labelAfter = (elem) => {
+      let type = helpers.get(elem, 'attrs.type');
+      return (type === 'checkbox' || type === 'radio');
+    };
+    let isInput = (['input', 'textarea', 'select'].indexOf(tag) !== -1);
+    let element = document.createElement(tag);
+    let holdsContent = (element.outerHTML.indexOf('/') !== -1);
+    let isBlockElement = (!isInput && holdsContent);
+    /**
+     * Object for mapping contentType to its function
+     * @type {Object}
+     */
+    let appendContent = {
+      string: (content) => {
+        element.innerHTML += content;
       },
-      isInput = (['input', 'textarea', 'select'].indexOf(tag) !== -1),
-      element = document.createElement(tag),
-      holdsContent = (element.outerHTML.indexOf('/') !== -1),
-      isBlockElement = (!isInput && holdsContent),
-      /**
-       * Object for mapping contentType to its function
-       * @type {Object}
-       */
-      appendContent = {
-        string: (content) => {
-          element.innerHTML += content;
-        },
-        object: (content) => {
-          return element.appendChild(_this.create(content));
-        },
-        node: (content) => {
-          return element.appendChild(content);
-        },
-        array: (content) => {
-          for (var i = 0; i < content.length; i++) {
-            contentType = _this.contentType(content[i]);
-            appendContent[contentType](content[i]);
-          }
-        },
-        undefined: () => {
-          console.error(elem);
+      object: (content) => {
+        return element.appendChild(_this.create(content));
+      },
+      node: (content) => {
+        return element.appendChild(content);
+      },
+      array: (content) => {
+        for (let i = 0; i < content.length; i++) {
+          contentType = _this.contentType(content[i]);
+          appendContent[contentType](content[i]);
         }
-      };
+      },
+      undefined: () => {
+        console.error(elem);
+      }
+    };
 
     processed.push('tag');
 
@@ -56,7 +62,6 @@ export default class DOM {
         appendContent.array.call(this, options);
         delete elem.content;
       } else {
-
         wrap = {
           tag: 'div',
           className: helpers.get(elem, 'config.inputWrap') || 'form-group',
@@ -75,7 +80,7 @@ export default class DOM {
 
     // check for root className property
     if (elem.className) {
-      elem.attrs = Object.assign({}, elem.attrs, { className: elem.className });
+      elem.attrs = Object.assign({}, elem.attrs, {className: elem.className});
       elem.attrs.className = elem.className;
       delete elem.className;
     }
@@ -88,7 +93,6 @@ export default class DOM {
 
     if (elem.config) {
       if (elem.config.label && tag !== 'button' && !isBlockElement) {
-
         let label;
 
         if (isPreview) {
@@ -128,7 +132,7 @@ export default class DOM {
 
     // Set the new element's dataset
     if (elem.dataset) {
-      for (var data in elem.dataset) {
+      for (const data in elem.dataset) {
         if (elem.dataset.hasOwnProperty(data)) {
           element.dataset[data] = elem.dataset[data];
         }
@@ -141,7 +145,7 @@ export default class DOM {
       let actions = Object.keys(elem.action);
       for (i = actions.length - 1; i >= 0; i--) {
         let event = actions[i];
-        element.addEventListener(event, (evt) => { elem.action[event](evt) });
+        element.addEventListener(event, evt => elem.action[event](evt));
       }
       processed.push('action');
     }
@@ -174,6 +178,14 @@ export default class DOM {
     return element;
   }
 
+  /**
+   * Create and SVG or font icon.
+   * Simple string concatenation instead of DOM.create because:
+   *  - we don't need the perks of having icons be DOM objects at this stage
+   *  - it forces the icon to be appended using innerHTML which helps svg render
+   * @param  {String} name icon name
+   * @return {String} icon markup
+   */
   icon(name) {
     let iconLink = document.getElementById('icon-' + name);
     let icon;
@@ -187,13 +199,19 @@ export default class DOM {
     return icon;
   }
 
+  /**
+   * JS Object to DOM attributes
+   * @param  {Object} elem    element config object
+   * @param  {Object} element DOM element we are building
+   * @return {void}
+   */
   processAttrs(elem, element) {
     // Set element attributes
-    for (var attr in elem.attrs) {
+    for (let attr in elem.attrs) {
       if (elem.attrs.hasOwnProperty(attr)) {
         if (elem.attrs[attr]) {
-          let name = helpers.safeAttrName(attr),
-            value = elem.attrs[attr] || '';
+          let name = helpers.safeAttrName(attr);
+          let value = elem.attrs[attr] || '';
 
           if (Array.isArray(value)) {
             value = value.join(' ');
@@ -203,9 +221,13 @@ export default class DOM {
         }
       }
     }
-
   }
 
+  /**
+   * Extend Array of option config objects
+   * @param  {Object} elem element config object
+   * @return {Array} option config objects
+   */
   processOptions(elem) {
     let fieldType = helpers.get(elem, 'attrs.type') || 'select';
 
@@ -235,7 +257,7 @@ export default class DOM {
           attrs: option,
           content: option.label
         },
-        button: Object.assign({}, elem, { options: undefined }),
+        button: Object.assign({}, elem, {options: undefined}),
         checkbox: defaultInput,
         radio: defaultInput
       };
@@ -248,6 +270,12 @@ export default class DOM {
     return elem.options.map(optionMap);
   }
 
+  /**
+   * Generate a label
+   * @param  {Object} elem config object
+   * @param  {String} fMap map to label's value in dataMap
+   * @return {Object}      config object
+   */
   label(elem, fMap) {
     let fieldLabel = {
       tag: 'label',
@@ -290,13 +318,15 @@ export default class DOM {
   }
 
   /**
-   * Get computed element style
+   * Get the computed style for DOM element
+   * @param  {Object}  elem     dom element
+   * @param  {Boolean} property style eg. width, height, opacity
+   * @return {String}           computed style
    */
   getStyle(elem, property = false) {
-    var style;
+    let style;
     if (window.getComputedStyle) {
       style = window.getComputedStyle(elem, null);
-
     } else if (elem.currentStyle) {
       style = elem.currentStyle;
     }
@@ -304,24 +334,28 @@ export default class DOM {
     return property ? style[property] : style;
   }
 
+  /**
+   * Retrieves an element by config object, string id, or existing reference
+   * @param  {[type]} elem [description]
+   * @return {[type]}      [description]
+   */
   getElement(elem) {
     let getElement = {
-        node: () => {
-          return elem;
-        },
-        object: () => {
-          return document.getElementById(elem.id);
-        },
-        string: () => {
-          return document.getElementById(elem);
-        }
-      },
-      type = this.contentType(elem),
-      element = getElement[type]();
+        node: () => elem,
+        object: () => document.getElementById(elem.id),
+        string: () => document.getElementById(elem)
+      };
+    let type = this.contentType(elem);
+    let element = getElement[type]();
 
     return element;
   }
 
+  /**
+   * Util to remove contents of DOM Object
+   * @param  {Object} element
+   * @return {Object}         element with its children removed
+   */
   empty(element) {
     while (element.firstChild) {
       element.removeChild(element.firstChild);
@@ -329,23 +363,29 @@ export default class DOM {
     return element;
   }
 
+  /**
+   * Move, close, and edit buttons for row, column and field
+   * @param  {String} id   element id
+   * @param  {String} item type of element eg. row, column, field
+   * @return {Object}      element config object
+   */
   actionButtons(id, item = 'column') {
-    let _this = this,
-      tag = (item === 'column' ? 'li' : 'div'),
-      moveIcon = (item === 'row') ? _this.icon('move-vertical') : _this.icon('move'),
-      btnWrap = {
+    let _this = this;
+    let tag = (item === 'column' ? 'li' : 'div');
+    let moveIcon = (item === 'row') ? _this.icon('move-vertical') : _this.icon('move');
+    let btnWrap = {
         tag: 'div',
         className: 'action-btn-wrap'
-      },
-      menuHandle = {
+      };
+      let menuHandle = {
         tag: 'button',
         content: [moveIcon, _this.icon('handle')],
         attrs: {
           className: item + '-handle btn-secondary btn',
           'type': 'button'
         }
-      },
-      editToggle = {
+      };
+      let editToggle = {
         tag: 'button',
         content: _this.icon('edit'),
         attrs: {
@@ -354,9 +394,9 @@ export default class DOM {
         },
         action: {
           click: (evt) => {
-            let element = document.getElementById(id),
-              editClass = 'editing-' + item,
-              editWindow = element.querySelector(`.${item}-edit`);
+            let element = document.getElementById(id);
+            let editClass = 'editing-' + item;
+            let editWindow = element.querySelector(`.${item}-edit`);
             animate.slideToggle(editWindow, 333);
             if (item === 'field') {
               animate.slideToggle(editWindow.nextSibling, 333);
@@ -367,8 +407,8 @@ export default class DOM {
             element.classList.toggle(editClass);
           }
         }
-      },
-      remove = {
+      };
+      let remove = {
         tag: 'button',
         content: _this.icon('remove'),
         attrs: {
@@ -414,10 +454,10 @@ export default class DOM {
   }
 
   removeEmpty(element) {
-    let _this = this,
-      parent = element.parentElement,
-      type = element.fType,
-      children;
+    let _this = this;
+    let parent = element.parentElement;
+    let type = element.fType;
+    let children;
     _this.remove(element);
     data.saveOrder(type, parent);
     data.save(type + 's', parent.id);
@@ -563,11 +603,11 @@ export default class DOM {
         }
       },
       presetMap = new Map();
-    presetMap.set(1, [{ value: '', label: '100%' }]);
-    presetMap.set(2, [{ value: '50,50', label: '50 | 50' }, { value: '33,66', label: '33 | 66' }]);
-    presetMap.set(3, [{ value: '33,33,33', label: '33 | 33 | 33' }, { value: '25,50,25', label: '25 | 50 | 25' }]);
-    presetMap.set(4, [{ value: '25,25,25,25', label: '25 | 25 | 25 | 25' }]);
-    presetMap.set('custom', [{ value: 'custom', label: 'Custom' }]);
+    presetMap.set(1, [{value: '', label: '100%'}]);
+    presetMap.set(2, [{value: '50,50', label: '50 | 50'}, {value: '33,66', label: '33 | 66'}]);
+    presetMap.set(3, [{value: '33,33,33', label: '33 | 33 | 33'}, {value: '25,50,25', label: '25 | 50 | 25'}]);
+    presetMap.set(4, [{value: '25,25,25,25', label: '25 | 25 | 25 | 25'}]);
+    presetMap.set('custom', [{value: 'custom', label: 'Custom'}]);
 
     if (row) {
       let columns = row.getElementsByClassName('stage-column');
@@ -595,8 +635,8 @@ export default class DOM {
    * @return {Object}      {x,y} coordinates
    */
   coords(element) {
-    let buttonPosition = element.getBoundingClientRect(),
-      bodyRect = document.body.getBoundingClientRect();
+    let buttonPosition = element.getBoundingClientRect();
+    let bodyRect = document.body.getBoundingClientRect();
 
     return {
       pageX: buttonPosition.left + (buttonPosition.width / 2),
