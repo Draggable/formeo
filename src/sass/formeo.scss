@@ -7,11 +7,10 @@
   @import 'components/controls';
   @import 'components/stage';
 
+  @include clearfix;
+
   // Sets a specific default `font-size` for user with `rem` type scales.
   font-size: $font-size-root;
-
-  // Changes the default tap highlight to be completely transparent in iOS.
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 
   // Make the `body` use the `font-size-root`
   font-family: $font-family-base;
@@ -19,6 +18,4 @@
 
   // Go easy on the eyes and use something other than `#000` for text
   color: $body-color;
-
-  @include clearfix;
 }

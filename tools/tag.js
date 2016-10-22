@@ -8,15 +8,18 @@ import semver from 'semver';
 import pkg from '../package.json';
 import fs from 'fs';
 import replace from 'replace-in-file';
-import { exec } from 'child_process';
+import {exec} from 'child_process';
 import json from 'json-update';
 
-var argv = require('yargs').argv;
-
-function updateMd(version){
+/**
+ * UpdateS README AND CHANGELOG
+ * @param  {Object} version current and new version
+ * @return {void}
+ */
+function updateMd(version) {
   const lastLog = fs.readFileSync('./CHANGELOG.md', 'utf8').split('\n')[2];
   return exec('git log -1 HEAD --pretty=format:%s', function(err, gitLog) {
-    gitLog = gitLog.replace(/\(#(\d+)\)/g, '[#$1](https://github.com/Draggable/formeo/pull/$1)');
+    gitLog = gitLog.replace(/\(#(\d+)\)/g, `[#$1](${pkg.repository.url}/pulls/$1)`);
     const changes = [
       {
         files: 'CHANGELOG.md',
@@ -29,7 +32,7 @@ function updateMd(version){
       }
     ];
 
-    for (var i = 0; i < changes.length; i++) {
+    for (let i = 0; i < changes.length; i++) {
       replace(changes[i])
         .then(changedFiles => {
           console.log('Modified files:', changedFiles.join(', '));
@@ -41,23 +44,31 @@ function updateMd(version){
   });
 }
 
-
 /**
- * Tag a release
+ * Modifies files, builds and tags the project
+ * @return {Promise} json.update
  */
 async function tag() {
-  let releaseType = process.argv.slice(3)[0] || 'patch',
-  version = {
+  let releaseType = process.argv.slice(3)[0] || 'patch';
+  let version = {
     current: pkg.version,
     new: semver.inc(pkg.version, releaseType)
   };
 
   await updateMd(version);
 
-  await json.update('bower.json', { version: version.new });
-  return json.update('package.json', { version: version.new })
+  await json.update('bower.json', {version: version.new});
+  return json.update('package.json', {version: version.new})
   .then(() => {
-    exec(`npm run build && git add --all && git commit -am "v${version.new}" && git tag v${version.new} && git push origin master --tags && npm publish`, function(err, stdout) {
+    const commands = [
+      'npm run build',
+      'git add --all',
+      `git commit -am "v${version.new}"`,
+      `git tag v${version.new}`,
+      'git push origin master --tags',
+      'npm publish'
+    ];
+    exec(commands.join(' && '), (err, stdout) => {
       if (!err) {
         console.log(stdout);
         console.log(`Version ${version.new} successfully released.`);

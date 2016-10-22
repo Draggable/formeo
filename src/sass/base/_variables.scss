@@ -4,10 +4,6 @@ $brand-info: #29ABE0 !default;
 $brand-warning: #F47C3C !default;
 $brand-danger: #d9534f !default;
 
-// $row-outline-color: #1D96BB;
-// $column-outline-color: #2072B2;
-// $field-outline-color: #424F9B;
-
 $row-outline-color: #325D88;
 $column-outline-color: #29ABE0;
 $field-outline-color: #93C54B;
@@ -377,3 +373,10 @@ $thumbnail-border-radius: $border-radius !default;
 $close-font-weight: bold !default;
 $close-color: #000 !default;
 $close-text-shadow: 0 1px 0 #fff !default;
+
+// Stage
+$stage-background: rgba(255, 255, 255, 0);
+$stage-background-empty: rgba(255, 255, 255, 0.25);
+
+// Row
+$hidden-field: rgba(255, 255, 255, 0.6);

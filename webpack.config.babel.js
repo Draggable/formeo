@@ -2,7 +2,7 @@ import pkg from './package.json';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import { optimize, BannerPlugin, DefinePlugin } from 'webpack';
+import {optimize, BannerPlugin, DefinePlugin} from 'webpack';
 
 const sassLoaders = [
   'css?sourceMap',
@@ -16,8 +16,8 @@ const bannerTemplate = [
   `Author: ${pkg.author}`
 ].join('\n');
 
-var development = (process.argv.indexOf('-d') !== -1);
-var plugins;
+const development = (process.argv.indexOf('-d') !== -1);
+let plugins;
 
 if (development) {
   plugins = [
@@ -35,13 +35,13 @@ if (development) {
     new optimize.DedupePlugin(),
     new optimize.OccurenceOrderPlugin(),
     new optimize.UglifyJsPlugin({
-      compress: { warnings: false }
+      compress: {warnings: false}
     }),
     new BannerPlugin(bannerTemplate)
   ];
 }
 
-var webpackConfig = {
+const webpackConfig = {
   context: path.join(__dirname, 'dist'),
   entry: {
     formeo: path.join(__dirname, pkg.config.files.formeo.js)
@@ -74,15 +74,14 @@ var webpackConfig = {
       loader: ExtractTextPlugin.extract('style', sassLoaders.join('!'))
     }]
   },
-  // devtool: 'source-map',
-  plugins: plugins,
+  plugins,
   sassLoader: {
     includePaths: [path.resolve(__dirname, './src/sass')]
   },
   postcss: function() {
     return {
       defaults: [autoprefixer],
-      cleaner: [autoprefixer({ browsers: ['last 2 versions'] })]
+      cleaner: [autoprefixer({browsers: ['last 2 versions']})]
     };
   },
   resolve: {

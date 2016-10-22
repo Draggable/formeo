@@ -1,3 +1,5 @@
+@include clearfix;
+
 .stage-row,
 .field-control {
   position: relative;
@@ -9,14 +11,12 @@
   flex-direction: row;
   display: flex;
 
-  &:after {
+  &::after {
     clear: both;
   }
 
-  @include clearfix;
-
   &.hidden-field {
-    background-color: rgba(255, 255, 255, 0.6);
+    background-color: $hidden-field;
   }
 
   &.control-ghost {
@@ -39,7 +39,7 @@
     }
 
     .stage-row {
-      &:before {
+      &::before {
         width: 100px;
       }
     }
@@ -65,7 +65,7 @@
 .stage-row {
   transition: background-color 125ms ease-in-out;
 
-  &:before {
+  &::before {
     left: 0;
   }
 
@@ -73,11 +73,9 @@
   &.hovering-row {
     box-shadow: 0 0 0 1px $row-outline-color inset;
 
-    &:before {
+    &::before {
       border-bottom: 1px solid $row-outline-color;
       border-right: 1px solid $row-outline-color;
-
-      // box-shadow: 0 0 1px 1px $row-outline-color;
       width: 80px !important;
     }
   }

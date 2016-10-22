@@ -1,12 +1,11 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
-import { data, dataMap } from '../common/data';
+import {data, dataMap} from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Field from './field';
-import events from '../common/events';
 
-var dom = new DOM();
+let dom = new DOM();
 
 export default class Column {
 
@@ -64,7 +63,7 @@ export default class Column {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
-      group: { name: 'columns', pull: true, put: ['columns', 'controls'] },
+      group: {name: 'columns', pull: true, put: ['columns', 'controls']},
       sort: true,
       onEnd: _this.onEnd.bind(_this),
       onAdd: _this.onAdd.bind(_this),
@@ -210,13 +209,11 @@ export default class Column {
 
       resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width');
       resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width');
-      resize.rowWidth = row.offsetWidth - rowPadding; //compensate for padding
-
+      resize.rowWidth = row.offsetWidth - rowPadding; // compensate for padding
 
       window.addEventListener('mousemove', resize.move, false);
       window.addEventListener('mouseup', resize.stop, false);
     })(evt);
-
   }
 
 }
