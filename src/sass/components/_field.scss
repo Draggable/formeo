@@ -27,14 +27,12 @@
     padding: 0 10px 0 0;
 
     &:focus {
-      border-style: solid;
-      border-color: $input-focus;
-      border-width: 0 0 1px 0;
+      border: 1px solid $input-focus;
       outline: none;
     }
   }
 
-  &:before {
+  &::before {
     display: none;
 
     // remove to animate field title
@@ -53,7 +51,7 @@
 
     // border: 1px solid $field-outline-color;
 
-    &:before {
+    &::before {
       line-height: 23px !important;
       width: 68px !important;
       border-left: 1px solid $field-outline-color;

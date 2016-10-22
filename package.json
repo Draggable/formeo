@@ -93,7 +93,7 @@
     "eslint-config-google": "^0.7.0",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "^0.9.0",
-    "mi18n": "^0.3.0",
+    "mi18n": "^0.3.2",
     "mocha": "^2.4.5",
     "node-sass": "^3.4.2",
     "postcss-loader": "^0.8.2",

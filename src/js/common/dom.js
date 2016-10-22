@@ -335,9 +335,10 @@ export default class DOM {
   }
 
   /**
-   * Retrieves an element by config object, string id, or existing reference
-   * @param  {[type]} elem [description]
-   * @return {[type]}      [description]
+   * Retrieves an element by config object, string id,
+   * or existing reference
+   * @param  {Object|String|Node} elem
+   * @return {Object}             DOM element
    */
   getElement(elem) {
     let getElement = {

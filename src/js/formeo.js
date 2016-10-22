@@ -229,33 +229,30 @@ class Formeo {
    * @return {Object} References to formeo instance,
    * dom elements, actions events and more.
    */
-  init() {
+  async init() {
     let _this = this;
-    i18n.init(opts.i18n)
-      .then(function() {
-          formeo.formData = data.get();
-          _this.formID = opts.formID = formeo.formData.id;
-          _this.stage = new Stage(opts, _this.formID);
-          formeo.controls = new Controls(opts.controls, _this.formID);
-          formeo.i18n = {
-            setLang: locale => {
-              let loadLang = i18n.setCurrent.call(i18n, locale);
-              loadLang.then(function() {
-                  _this.stage = new Stage(opts, _this.formID);
-                  formeo.controls = new Controls(opts.controls, _this.formID);
-                  _this.render();
-                },
-                err => {
-                  err.message = 'There was an error retrieving the language files';
-                  console.error(err);
-                });
-            }
-          };
-          _this.render();
-        },
-        err => {
-          console.error('There was an error retrieving the language files', err);
-        });
+    console.log(i18n);
+    await i18n.init(opts.i18n);
+    formeo.formData = data.get();
+    _this.formID = opts.formID = formeo.formData.id;
+    _this.stage = new Stage(opts, _this.formID);
+    formeo.controls = new Controls(opts.controls, _this.formID);
+    formeo.i18n = {
+      setLang: locale => {
+        let loadLang = i18n.setCurrent.call(i18n, locale);
+        loadLang.then(function() {
+            _this.stage = new Stage(opts, _this.formID);
+            formeo.controls = new Controls(opts.controls, _this.formID);
+            _this.render();
+          },
+          err => {
+            err.message = 'There was an error retrieving the language files';
+            console.error(err);
+          });
+      }
+    };
+
+    _this.render();
 
     return formeo;
   }

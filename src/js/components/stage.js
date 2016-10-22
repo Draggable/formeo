@@ -1,16 +1,25 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import { data, dataMap } from '../common/data';
+import {data, dataMap} from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Row from './row';
 import Column from './column';
 import Field from './field';
-var dom = new DOM();
+let dom = new DOM();
 
-var stageOpts = {};
+let stageOpts = {};
 
+/**
+ * Stage is where fields and elements are dragged to.
+ */
 export default class Stage {
+  /**
+   * Process options and load existing fields from data to the stage
+   * @param  {Object} formeoOptions
+   * @param  {String} formID
+   * @return {Object} DOM element
+   */
   constructor(formeoOptions, formID) {
     this.formID = formID;
     let defaultOptions = {
@@ -26,7 +35,7 @@ export default class Stage {
         config: {
           label: i18n.get('Form Title')
         }
-      },{
+      }, {
         tag: 'input',
         id: 'form-novalidate',
         attrs: {
@@ -47,9 +56,13 @@ export default class Stage {
     return this.stage;
   }
 
+  /**
+   * Prep stage to receive rows
+   * @return {Object} DOM element
+   */
   loadStage() {
-    let stageWrap = this.dom,
-      stage = stageWrap.firstChild;
+    let stageWrap = this.dom;
+    let stage = stageWrap.firstChild;
 
     if (dataMap.stage.rows && dataMap.stage.rows.length) {
       this.loadRows(stage);
@@ -59,10 +72,15 @@ export default class Stage {
     return stageWrap;
   }
 
+  /**
+   * Loop through the formData and append it to the stage
+   * @param  {Object} stage
+   * @return {Array}       loaded rows
+   */
   loadRows(stage) {
     // if (dataMap.stage.rows.length) {
     let rows = dataMap.stage.rows;
-    helpers.forEach(rows, (i) => {
+    return helpers.forEach(rows, (i) => {
       let row = new Row(rows[i]);
       this.loadColumns(row);
       stage.appendChild(row);
@@ -71,6 +89,11 @@ export default class Stage {
     // }
   }
 
+  /**
+   * Load columns to row
+   * @param  {Object} row
+   * @return {Array}     loaded rows
+   */
   loadColumns(row) {
     // if (dataMap.rows[row.id].columns.length) {
     let columns = dataMap.rows[row.id].columns;
@@ -150,15 +173,20 @@ export default class Stage {
     return row;
   }
 
+  /**
+   * Callback for when a row is sorted
+   * @param  {Object} evt
+   * @return {[type]}     [description]
+   */
   onSort(evt) {
-    data.saveRowOrder();
+    data.saveRowOrder(evt);
     data.save();
   }
 
   onAdd(evt) {
-    let stage = evt.target,
-      newIndex = helpers.indexOfNode(evt.item, stage),
-      row = this.addRow(evt);
+    let stage = evt.target;
+    let newIndex = helpers.indexOfNode(evt.item, stage);
+    let row = this.addRow(evt);
 
     if (evt.item.fType === 'column') {
       dom.columnWidths(row);
@@ -209,7 +237,7 @@ export default class Stage {
       fallbackClass: 'row-moving',
       forceFallback: true,
       // group: { pull: false, put: ['controls', 'columns'] },
-      group: { name: 'stage', pull: false, put: ['controls', 'rows', 'columns'] },
+      group: {name: 'stage', pull: false, put: ['controls', 'rows', 'columns']},
       // Element is dropped into the list from another list
       onAdd: _this.onAdd.bind(_this),
       onRemove: _this.onRemove.bind(_this),

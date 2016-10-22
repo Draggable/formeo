@@ -6,3 +6,7 @@ linters:
 
   PropertySortOrder:
     enabled: false
+
+  SelectorDepth:
+      enabled: true
+      max_depth: 4

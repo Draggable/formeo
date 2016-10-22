@@ -16,8 +16,8 @@ const bannerTemplate = [
   `Author: ${pkg.author}`
 ].join('\n');
 
-var development = (process.argv.indexOf('-d') !== -1);
-var plugins;
+const development = (process.argv.indexOf('-d') !== -1);
+let plugins;
 
 if (development) {
   plugins = [
@@ -41,7 +41,7 @@ if (development) {
   ];
 }
 
-var webpackConfig = {
+const webpackConfig = {
   context: path.join(__dirname, 'dist'),
   entry: {
     formeo: path.join(__dirname, pkg.config.files.formeo.js)
@@ -74,8 +74,7 @@ var webpackConfig = {
       loader: ExtractTextPlugin.extract('style', sassLoaders.join('!'))
     }]
   },
-  // devtool: 'source-map',
-  plugins: plugins,
+  plugins,
   sassLoader: {
     includePaths: [path.resolve(__dirname, './src/sass')]
   },

@@ -1,14 +1,14 @@
 'use strict';
-var isSite = (window.location.href.indexOf('draggable.github.io') !== -1),
+let isSite = (window.location.href.indexOf('draggable.github.io') !== -1),
   formeo;
 
 function readyState() {
-  var script = this;
+  let script = this;
   if (!script.readyState || script.readyState === 'loaded' || script.readyState === 'complete') {
     script.onload = script.onreadystatechange = null;
 
-    var container = document.querySelector('.build-form');
-    var formeoOpts = {
+    let container = document.querySelector('.build-form');
+    let formeoOpts = {
       container: container,
       debug: true,
       sessionStorage: true,
@@ -42,7 +42,7 @@ function postInit(formeo) {
 }
 
 (function getScript() {
-  var formeoScript = isSite ? '/formeo/assets/js/formeo.min.js' : '../dist/formeo.min.js',
+  let formeoScript = isSite ? '/formeo/assets/js/formeo.min.js' : '../dist/formeo.min.js',
     script = document.createElement('script');
   script.appendChild(document.createTextNode(''));
   script.setAttribute('src', formeoScript);
@@ -54,14 +54,13 @@ function postInit(formeo) {
 })();
 
 if (isSite) {
-
   ((window.gitter = {}).chat = {}).options = {
     room: 'draggable/formeo'
   };
 
   // Gitter
   (function(d) {
-    var js;
+    let js;
     js = d.createElement('script');
     js.src = '//sidecar.gitter.im/dist/sidecar.v1.js';
     d.body.appendChild(js);
@@ -69,7 +68,7 @@ if (isSite) {
 
   // Facepoop
   (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
+    let js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) {
       return;
     }
@@ -81,7 +80,7 @@ if (isSite) {
 
   // Twitter
   (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0],
+    let js, fjs = d.getElementsByTagName(s)[0],
       p = /^http:/.test(d.location) ? 'http' : 'https';
     if (!d.getElementById(id)) {
       js = d.createElement(s);

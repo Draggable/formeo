@@ -20,4 +20,4 @@ exclude_paths:
 - spec/
 - demo/
 - docs/
-- src/sass/base/bootstrap/
+- src/sass/base/

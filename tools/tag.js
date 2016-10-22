@@ -16,10 +16,10 @@ import json from 'json-update';
  * @param  {Object} version current and new version
  * @return {void}
  */
-function updateMd(version){
+function updateMd(version) {
   const lastLog = fs.readFileSync('./CHANGELOG.md', 'utf8').split('\n')[2];
   return exec('git log -1 HEAD --pretty=format:%s', function(err, gitLog) {
-    gitLog = gitLog.replace(/\(#(\d+)\)/g, '[#$1](https://github.com/Draggable/formeo/pull/$1)');
+    gitLog = gitLog.replace(/\(#(\d+)\)/g, `[#$1](${pkg.repository.url}/pulls/$1)`);
     const changes = [
       {
         files: 'CHANGELOG.md',
@@ -60,7 +60,15 @@ async function tag() {
   await json.update('bower.json', {version: version.new});
   return json.update('package.json', {version: version.new})
   .then(() => {
-    exec(`npm run build && git add --all && git commit -am "v${version.new}" && git tag v${version.new} && git push origin master --tags && npm publish`, function(err, stdout) {
+    const commands = [
+      'npm run build',
+      'git add --all',
+      `git commit -am "v${version.new}"`,
+      `git tag v${version.new}`,
+      'git push origin master --tags',
+      'npm publish'
+    ];
+    exec(commands.join(' && '), (err, stdout) => {
       if (!err) {
         console.log(stdout);
         console.log(`Version ${version.new} successfully released.`);

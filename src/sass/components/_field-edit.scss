@@ -2,16 +2,6 @@
   margin-top: 23px;
   display: none;
 
-  // background-color: $gray-lightest;
-  // border: 1px solid $gray-light;
-
-  // border-radius: 5px;
-
-  &.slide-toggle {
-    // height:
-
-  }
-
   .panel-nav {
     position: relative;
     margin-bottom: 1px;
@@ -39,45 +29,16 @@
       width: 15px;
       height: 15px;
     }
-
-    &:hover,
-    :not(.control-count-1) & {
-      .prop-control {
-        &:last-child {
-          border-radius: $border-radius 0 0 $border-radius;
-        }
-
-        &:first-child {
-          border-radius: 0 $border-radius $border-radius 0;
-        }
-      }
-    }
   }
 
   .prop-control {
     display: inline-block;
     padding: 7px;
     line-height: 0;
-
-    // padding: 0;
-    // width: 0;
-    // height: 0;
-    line-height: 0;
     text-align: center;
     position: absolute;
     right: 0;
     border-radius: $border-radius;
-
-    // position: absolute;
-    // bottom: 0;
-
-    // &.prop-order {
-    //   left: 0;
-    // }
-
-    // &.prop-remove {
-    //   right: 0;
-    // }
 
     @for $i from 1 through 4 {
       &:nth-of-type(#{$i}) {
@@ -87,6 +48,16 @@
 
     &:first-child {
       right: 0;
+    }
+
+    :not(.control-count-1) & {
+      &:last-child {
+        border-radius: $border-radius 0 0 $border-radius;
+      }
+
+      &:first-child {
+        border-radius: 0 $border-radius $border-radius 0;
+      }
     }
   }
 

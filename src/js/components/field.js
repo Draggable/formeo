@@ -1,12 +1,12 @@
 import i18n from 'mi18n';
-import { data, dataMap, registeredFields } from '../common/data';
+import {data, dataMap, registeredFields} from '../common/data';
 import animate from '../common/animation';
 import helpers from '../common/helpers';
 import actions from '../common/actions';
 import DOM from '../common/dom';
 import Panels from './panels';
 
-var dom = new DOM();
+let dom = new DOM();
 
 export default class Field {
 
@@ -38,7 +38,7 @@ export default class Field {
       dataset: {
         hoverTag: i18n.get('field')
       },
-      fType: 'field'
+          fType: 'field'
     };
 
     _this.elem = field = dom.create(field);
@@ -114,7 +114,7 @@ export default class Field {
             content: panelLabels,
             className: 'prop-labels'
           };
-        //removing labels until find a better way to handle them.
+        // removing labels until find a better way to handle them.
         // panelWrap.content.unshift(labelWrap);
         panelArray = dataObj[panelType];
       } else {
@@ -131,7 +131,6 @@ export default class Field {
         };
         panel.content.push(_this.panelContent(args));
       });
-
     }
 
     return panelWrap;
@@ -228,19 +227,12 @@ export default class Field {
             };
             return attrs[type];
           },
-          inputLabel = (key) => {
-            let label,
-              labelKey = panelType + '.' + key;
-            if (i18n.langs[i18n.current][labelKey]) {
-              label = i18n.get(labelKey);
-            } else {
-              label = helpers.capitalize(key);
-            }
-            return label;
+          inputLabel = key => {
+            let labelKey = panelType + '.' + key;
+            return i18n.current[labelKey] || helpers.capitalize(key);
           },
           propertyInputs = {
             string: (key, val) => {
-
               let input = {
                 tag: 'input',
                 attrs: typeAttrs(key, val, 'string'),
@@ -288,7 +280,7 @@ export default class Field {
             object: (objKey, objVal) => {
               let inputs = [];
 
-              for (var objProp in objVal) {
+              for (let objProp in objVal) {
                 if (objVal.hasOwnProperty(objProp)) {
                   inputs.push(processProperty(objProp, objVal[objProp]));
                 }
@@ -339,7 +331,7 @@ export default class Field {
       field = document.getElementById(_this.fieldID),
       dataObj = dataMap.fields[_this.fieldID],
       editGroup = field.querySelector('.field-edit-options'),
-      propData = { label: '', value: '', selected: false };
+      propData = {label: '', value: '', selected: false};
     dataObj.options.push(propData);
 
     let args = {
