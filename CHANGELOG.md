@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.3.20 - Linter and codeclimate improvments, syntax updates [#45](http://github.com/draggable/formeo/pulls/45)
 - v0.3.19 - Bugfix: icons are missing from dist [#44](https://github.com/Draggable/formeo/pull/44)
 - v0.3.18 - Bugfix: Edit panel buttons missing type attribute [#43](https://github.com/Draggable/formeo/pull/43)
 - v0.3.17 - Bugfix: move formeoUpdate event, update disabled fields filter [#41](https://github.com/Draggable/formeo/pull/41 )
