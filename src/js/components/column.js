@@ -94,7 +94,8 @@ export default class Column {
 
   onSort(evt) {
     data.saveFieldOrder(evt.target);
-    data.save('fields', evt.target.id);
+    console.log(evt.target.fType);
+    // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
 

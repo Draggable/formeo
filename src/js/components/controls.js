@@ -536,8 +536,8 @@ export class Controls {
     row.appendChild(column);
     data.saveColumnOrder(row);
     stage.appendChild(row);
-    data.saveRowOrder(row);
-    data.save();
+    // data.saveRowOrder(row);
+    // data.save();
     //trigger formSaved event
     // document.dispatchEvent(events.formeoUpdated);
   }

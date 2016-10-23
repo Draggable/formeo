@@ -231,7 +231,6 @@ class Formeo {
    */
   async init() {
     let _this = this;
-    console.log(i18n);
     await i18n.init(opts.i18n);
     formeo.formData = data.get();
     _this.formID = opts.formID = formeo.formData.id;

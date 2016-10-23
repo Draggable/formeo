@@ -460,8 +460,8 @@ export default class DOM {
     let type = element.fType;
     let children;
     _this.remove(element);
-    data.saveOrder(type, parent);
-    data.save(type + 's', parent.id);
+    // data.saveOrder(type, parent);
+    // data.save(type + 's', parent.id);
     children = parent.querySelectorAll('.stage-' + type);
     if (!children.length) {
       if (parent.fType !== 'stage') {

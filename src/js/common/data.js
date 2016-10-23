@@ -133,7 +133,8 @@ var data = {
         return _data.formData.settings;
       },
       rows: () => {
-        return helpers.clone(dataMap.stage.rows);
+        // _data.saveRowOrder();
+        return _data.formData.rows;
       },
       columns: (rowID) => {
         return helpers.clone(dataMap.rows[rowID].columns);
@@ -251,6 +252,9 @@ var data = {
     let map = {
       rows: () => {
         let formData = helpers.copyObj(_data.formData);
+    console.log(dataMap);
+    console.log(_data.formData);
+
         // map column ids to rows
         dataMap.stage.rows = helpers.map(formData.rows, (i) => {
           let formDataRow = formData.rows[i],
@@ -286,8 +290,11 @@ var data = {
   },
 
   jsonSave: (group, id) => {
+    console.log(_data.formData.id, _data.formData);
     let stage = document.getElementById(_data.formData.id + '-stage');
     data.saveType(group, id);
+    _data.formData = helpers.clone(dataMap);
+
     stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
     return _data.formData;
   },

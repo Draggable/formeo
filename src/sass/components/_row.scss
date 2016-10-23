@@ -1,7 +1,7 @@
-@include clearfix;
-
 .stage-row,
 .field-control {
+  @include clearfix;
+
   position: relative;
   clear: both;
   margin-left: 0;

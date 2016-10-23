@@ -46,6 +46,16 @@ export default class Stage {
         config: {
           label: i18n.get('Form novalidate')
         }
+      }, {
+        tag: 'input',
+        id: 'form-tags',
+        attrs: {
+          className: 'form-tags',
+          type: 'text'
+        },
+        config: {
+          label: i18n.get('Tags')
+        }
       }]
     };
 
@@ -116,9 +126,13 @@ export default class Stage {
     // }
   }
 
+  /**
+   * Generate the elements that make up the Stage
+   * @return {Object} stage elements, settings, stage ul
+   */
   elementConfigs() {
-    let _this = this,
-      config = {
+    let _this = this;
+    let config = {
         stage: {
           tag: 'ul',
           attrs: {
@@ -145,10 +159,15 @@ export default class Stage {
     return config;
   }
 
+  /**
+   * Create or add a field and column then return it.
+   * @param  {Object} evt Drag event data
+   * @return {Object}     column
+   */
   createColumn(evt) {
     // console.log(evt);
-    let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id),
-      column = new Column();
+    let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id);
+    let column = new Column();
 
     dataMap.fields[field.id].parent = column.id;
 
@@ -159,9 +178,9 @@ export default class Stage {
   }
 
   addRow(evt) {
-    let _this = this,
-      column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt),
-      row = new Row();
+    let _this = this;
+    let column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt);
+    let row = new Row();
 
     // Set parent IDs
     dataMap.columns[column.id].parent = row.id;
