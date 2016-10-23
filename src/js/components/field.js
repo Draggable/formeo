@@ -1,5 +1,5 @@
 import i18n from 'mi18n';
-import {data, dataMap, registeredFields} from '../common/data';
+import {data, formData, registeredFields} from '../common/data';
 import animate from '../common/animation';
 import helpers from '../common/helpers';
 import actions from '../common/actions';
@@ -12,12 +12,12 @@ export default class Field {
 
   constructor(dataID) {
     let _this = this,
-      fieldData = dataMap.fields[dataID] || helpers.copyObj(registeredFields[dataID]);
+      fieldData = formData.fields[dataID] || helpers.copyObj(registeredFields[dataID]);
 
     _this.fieldID = fieldData.id || helpers.uuid();
     fieldData.id = _this.fieldID;
 
-    dataMap.fields[_this.fieldID] = fieldData;
+    formData.fields[_this.fieldID] = fieldData;
 
     _this.preview = dom.create(_this.fieldPreview());
 
@@ -48,7 +48,7 @@ export default class Field {
 
   updatePreview() {
     let _this = this,
-      newPreview = dom.create(dataMap.fields[_this.fieldID], true);
+      newPreview = dom.create(formData.fields[_this.fieldID], true);
     dom.empty(_this.preview);
     _this.preview.appendChild(newPreview);
 
@@ -163,14 +163,14 @@ export default class Field {
           click: (evt) => {
             animate.slideUp(document.getElementById(property.id), 250, (elem) => {
               dom.remove(elem);
-              if (Array.isArray(dataMap.fields[_this.fieldID][args.panelType])) {
-                dataMap.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
+              if (Array.isArray(formData.fields[_this.fieldID][args.panelType])) {
+                formData.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
               } else {
-                dataMap.fields[_this.fieldID][args.panelType][dataProp] = undefined;
+                formData.fields[_this.fieldID][args.panelType][dataProp] = undefined;
               }
               data.save(args.panelType, _this.fieldID);
               dom.empty(_this.preview);
-              let newPreview = dom.create(dataMap.fields[_this.fieldID], true);
+              let newPreview = dom.create(formData.fields[_this.fieldID], true);
               _this.preview.appendChild(newPreview);
               _this.resizePanelWrap();
             });
@@ -206,7 +206,7 @@ export default class Field {
           fMap = propIsNum ? `${panelType}[${prop}].${key}` : panelType + '.' + key,
           typeAttrs = (key, val, type) => {
             let boolType = 'checkbox';
-            if (dataMap.fields[_this.fieldID].attrs.type === 'radio' && key === 'selected') {
+            if (formData.fields[_this.fieldID].attrs.type === 'radio' && key === 'selected') {
               boolType = 'radio';
             }
             let attrs = {
@@ -309,15 +309,15 @@ export default class Field {
     i18n.put('attrs' + safeAttr, helpers.capitalize(attr));
 
     try {
-      dataMap.fields[_this.fieldID].attrs[safeAttr] = window.JSON.parse(val);
+      formData.fields[_this.fieldID].attrs[safeAttr] = window.JSON.parse(val);
     } catch (e) {
-      dataMap.fields[_this.fieldID].attrs[safeAttr] = val;
+      formData.fields[_this.fieldID].attrs[safeAttr] = val;
     }
 
     let args = {
-      dataObj: dataMap.fields[_this.fieldID],
+      dataObj: formData.fields[_this.fieldID],
       dataProp: safeAttr,
-      i: Object.keys(dataMap.fields[_this.fieldID].attrs).length,
+      i: Object.keys(formData.fields[_this.fieldID].attrs).length,
       panelType: 'attrs',
       propType: dom.contentType(val)
     };
@@ -329,7 +329,7 @@ export default class Field {
   addOption() {
     let _this = this,
       field = document.getElementById(_this.fieldID),
-      dataObj = dataMap.fields[_this.fieldID],
+      dataObj = formData.fields[_this.fieldID],
       editGroup = field.querySelector('.field-edit-options'),
       propData = {label: '', value: '', selected: false};
     dataObj.options.push(propData);
@@ -383,7 +383,7 @@ export default class Field {
             // Save Fields Attrs
             data.save(type, _this.fieldID);
             dom.empty(_this.preview);
-            let newPreview = dom.create(dataMap.fields[_this.fieldID], true);
+            let newPreview = dom.create(formData.fields[_this.fieldID], true);
             _this.preview.appendChild(newPreview);
           }
         }
@@ -404,7 +404,7 @@ export default class Field {
       panels = [],
       editable = ['object', 'array'],
       noPanels = ['config', 'meta'],
-      fieldData = dataMap.fields[_this.fieldID],
+      fieldData = formData.fields[_this.fieldID],
       allowedPanels = Object.keys(fieldData).filter((elem) => {
         return !helpers.inArray(elem, noPanels);
       });
@@ -438,13 +438,13 @@ export default class Field {
 
                   // if this is radio we need to manually uncheck options in data model
                   if (evt.target.type === 'radio') {
-                    helpers.forEach(dataMap.fields[_this.fieldID].options, (i, option) => {
+                    helpers.forEach(formData.fields[_this.fieldID].options, (i, option) => {
                       option.selected = false;
                     });
                   }
                 }
 
-                helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, value);
+                helpers.set(formData.fields[_this.fieldID], evt.target.fMap, value);
                 data.save(prop, _this.fieldID);
                 // throttle this for sure
                 _this.updatePreview();
@@ -476,7 +476,7 @@ export default class Field {
 
   fieldPreview() {
     let _this = this,
-      fieldData = helpers.clone(dataMap.fields[_this.fieldID]);
+      fieldData = helpers.clone(formData.fields[_this.fieldID]);
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -490,9 +490,9 @@ export default class Field {
         input: (evt) => {
           if (evt.target.fMap) {
             if (evt.target.contentEditable === 'true') {
-              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
+              helpers.set(formData.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
             } else {
-              helpers.set(dataMap.fields[_this.fieldID], evt.target.fMap, evt.target.value);
+              helpers.set(formData.fields[_this.fieldID], evt.target.fMap, evt.target.value);
             }
             data.save('field', _this.fieldID);
           }

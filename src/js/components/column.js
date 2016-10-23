@@ -1,6 +1,6 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
-import {data, dataMap} from '../common/data';
+import {data, formData} from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Field from './field';
@@ -22,7 +22,7 @@ export default class Column {
       classList: []
     };
 
-    dataMap.columns[_this.columnID] = helpers.extend(columnDataDefault, dataMap.columns[_this.columnID]);
+    formData.columns[_this.columnID] = helpers.extend(columnDataDefault, formData.columns[_this.columnID]);
 
     let resizeHandle = {
         tag: 'li',
@@ -101,7 +101,7 @@ export default class Column {
 
   processConfig(column) {
     let _this = this,
-      columnData = dataMap.columns[_this.columnID];
+      columnData = formData.columns[_this.columnID];
     if (columnData.config.width) {
       let percentWidth = Math.round(columnData.config.width).toString() + '%';
       column.dataset.colWidth = percentWidth;
@@ -116,7 +116,7 @@ export default class Column {
         field = new Field(evt.item.id);
 
       column.insertBefore(field, column.childNodes[evt.newIndex]);
-      dataMap.fields[field.id].parent = column.id;
+      formData.fields[field.id].parent = column.id;
 
       // calculate field position, subtracting indexes for column-config and column-actions
       dom.fieldOrderClass(column);

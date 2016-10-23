@@ -2,7 +2,7 @@ import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import DOM from '../common/dom';
 import helpers from '../common/helpers';
-import { data, dataMap } from '../common/data';
+import { data, formData } from '../common/data';
 
 var dom = new DOM();
 
@@ -24,8 +24,8 @@ export default class Row {
         }
       };
 
-    // _this.rowData = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
-    dataMap.rows[_this.rowID] = helpers.extend(rowDataDefault, dataMap.rows[_this.rowID]);
+    // _this.rowData = helpers.extend(rowDataDefault, formData.rows[_this.rowID]);
+    formData.rows[_this.rowID] = helpers.extend(rowDataDefault, formData.rows[_this.rowID]);
 
 console.log(_this.rowID);
 
@@ -158,7 +158,7 @@ console.log(_this.rowID);
 
   onAdd(evt) {
     console.log('onAdd', evt);
-    let column = dataMap.columns[evt.item.id];
+    let column = formData.columns[evt.item.id];
     column.parent = evt.target.id;
     dom.columnWidths(evt.target);
     data.saveRowOrder(evt.target);

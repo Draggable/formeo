@@ -1,6 +1,6 @@
 import helpers from './helpers';
 import animate from './animation';
-import {dataMap, data} from './data';
+import {formData, data} from './data';
 
 /**
  * General purpose markup utilities and generator.
@@ -273,7 +273,7 @@ export default class DOM {
   /**
    * Generate a label
    * @param  {Object} elem config object
-   * @param  {String} fMap map to label's value in dataMap
+   * @param  {String} fMap map to label's value in formData
    * @return {Object}      config object
    */
   label(elem, fMap) {
@@ -562,14 +562,14 @@ export default class DOM {
         column.removeAttribute('style');
         column.className.replace(bsGridRegEx, ''); // removes bootstrap column classes
         column.classList.add(widthClass);
-        dataMap.columns[column.id].config.width = width;
-        dataMap.columns[column.id].classList.push(widthClass);
-        helpers.unique(dataMap.columns[column.id].classList);
+        formData.columns[column.id].config.width = width;
+        formData.columns[column.id].classList.push(widthClass);
+        helpers.unique(formData.columns[column.id].classList);
       }
 
       column.style.width = width + '%';
       column.style.float = 'left';
-      dataMap.columns[column.id].config.width = width;
+      formData.columns[column.id].config.width = width;
     });
 
     // Fix the editWindow for any fields that were being edited
@@ -600,7 +600,7 @@ export default class DOM {
   }
 
   columnPresetControl(rowID) {
-    let row = dataMap.rows[rowID];
+    let row = formData.rows[rowID];
     console.log(rowID);
     let columnSettingsPresetSelect = {
         tag: 'select',

@@ -3,29 +3,23 @@ import events from './events';
 import helpers from './helpers';
 
 // Object map of fields on the stage
-var _data = {},
-  dataMap = {
-    settings: {},
-    stage: {},
-    rows: {},
-    columns: {},
-    fields: {}
-  };
+let _data = {};
+let formData = {};
 
 // Registered fields are the fields that are configured on init. This variable acts as a data buffer
 // thats contains the configurations for a field's final view.
-var registeredFields = {};
+let registeredFields = {};
 
-var data = {
+let data = {
   init: (opts, formData) => {
     _data.opts = Object.assign({}, opts);
     let processFormData = (formData) => {
-      _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
-      _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
+      // _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
+      // _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
 
-      data.loadMap();
+      // data.loadMap();
     };
-
+console.log(formData);
     if (formData) {
       processFormData(formData);
     } else if (window.sessionStorage && _data.opts.sessionStorage) {
@@ -36,7 +30,14 @@ var data = {
         _data.formData = {};
       }
     } else {
-      _data.formData = {};
+      _data.formData = {
+        id: helpers.uuid(),
+        settings: {},
+        stage: {},
+        rows: {},
+        columns: {},
+        fields: {}
+      };
     }
 
     events.formeoUpdated = new CustomEvent('formeoUpdated', {
@@ -44,9 +45,6 @@ var data = {
         formData: _data.formData
       }
     });
-
-    _data.formData.id = _data.opts.formID || helpers.uuid();
-    _data.opts.formID = _data.formData.id;
 
     return data;
   },
@@ -57,33 +55,33 @@ var data = {
       return columns[i].id;
     });
 
-    dataMap.rows[row.id].columns = columnOrder;
+    formData.rows[row.id].columns = columnOrder;
 
     return columnOrder;
   },
 
   saveFieldOrder: (column) => {
-    let fields = column.getElementsByClassName('stage-field'),
-      fieldOrder = helpers.map(fields, (i) => {
-        return fields[i].id;
-      });
+    let fields = column.getElementsByClassName('stage-field');
+    let fieldOrder = helpers.map(fields, (i) => {
+      return fields[i].id;
+    });
 
-    dataMap.columns[column.id].fields = fieldOrder;
+    formData.columns[column.id].fields = fieldOrder;
 
     return fieldOrder;
   },
 
   saveRowOrder: () => {
-    let stage = document.getElementById(_data.formData.id + '-stage'),
-      rows = stage.getElementsByClassName('stage-row');
-    return dataMap.stage.rows = helpers.map(rows, (rowID) => {
+    let stage = document.getElementById(_data.formData.id + '-stage');
+    let rows = stage.getElementsByClassName('stage-row');
+    return formData.stage.rows = helpers.map(rows, (rowID) => {
       return rows[rowID].id;
     });
   },
 
   savePropOrder: (parent) => {
     let props = parent.getElementsByClassName('prop-wrap');
-    dataMap.fields[parent.fieldID][parent.editGroup] = helpers.map(props, (i) => {
+    formData.fields[parent.fieldID][parent.editGroup] = helpers.map(props, (i) => {
       return props[i].propData;
     });
   },
@@ -113,20 +111,21 @@ var data = {
   // },
 
 
-
   /**
-   * Converts dataMap into formData Object
-   * @return {Object} formData JS Object
+   * Formeo save functions
+   * @param  {String} group [description]
+   * @param  {String} id    [description]
+   * @return {[type]}       [description]
    */
   saveType: (group, id) => {
     let map = {
       settings: () => {
-        let stage = dataMap.stage.settings;
+        let stage = formData.stage.settings;
         _data.formData.settings = [];
 
         helpers.forEach(stage, (i, rowID) => {
-          _data.formData.rows[i] = helpers.clone(dataMap.rows[rowID]);
-          // _data.formData.rows[i] = Object.assign({}, dataMap.rows[rowID]);
+          _data.formData.rows[i] = helpers.clone(formData.rows[rowID]);
+          // _data.formData.rows[i] = Object.assign({}, formData.rows[rowID]);
           _data.formData.rows[i].columns = map.columns(rowID);
         });
 
@@ -137,27 +136,27 @@ var data = {
         return _data.formData.rows;
       },
       columns: (rowID) => {
-        return helpers.clone(dataMap.rows[rowID].columns);
+        return helpers.clone(formData.rows[rowID].columns);
       },
       fields: (columnID) => {
-        return helpers.clone(dataMap.columns[columnID].fields);
+        return helpers.clone(formData.columns[columnID].fields);
       },
       field: (fieldID) => {
-        let fieldLink = data.fieldLink(fieldID),
-          setString = data.fieldSetString(fieldID);
-        helpers.set(_data.formData, setString, helpers.clone(dataMap.fields[fieldID]));
+        let fieldLink = data.fieldLink(fieldID);
+        let setString = data.fieldSetString(fieldID);
+        helpers.set(_data.formData, setString, helpers.clone(formData.fields[fieldID]));
 
         return fieldLink;
       },
       attrs: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
-        fieldLink.attrs = helpers.clone(dataMap.fields[fieldID].attrs);
+        fieldLink.attrs = helpers.clone(formData.fields[fieldID].attrs);
 
         return fieldLink.attrs;
       },
       options: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
-        fieldLink.options = dataMap.fields[fieldID].options.slice();
+        fieldLink.options = formData.fields[fieldID].options.slice();
 
         return fieldLink.options;
       }
@@ -168,19 +167,19 @@ var data = {
 
   // returns index of row in formData
   rowIndex: (rowID) => {
-    return dataMap.stage.rows.indexOf(rowID);
+    return formData.stage.rows.indexOf(rowID);
   },
 
   // returns index of column in formData
   columnIndex: (columnID) => {
-    let column = dataMap.columns[columnID];
-    return dataMap.rows[column.parent].columns.indexOf(columnID);
+    let column = formData.columns[columnID];
+    return formData.rows[column.parent].columns.indexOf(columnID);
   },
 
   // returns index of field in formData
   fieldIndex: (fieldID) => {
-    let field = dataMap.fields[fieldID];
-    return dataMap.columns[field.parent].fields.indexOf(fieldID);
+    let field = formData.fields[fieldID];
+    return formData.columns[field.parent].fields.indexOf(fieldID);
   },
 
   /**
@@ -189,9 +188,9 @@ var data = {
    * @return {Object}         fieldData
    */
   fieldIndexMap: (fieldID) => {
-    let field = dataMap.fields[fieldID],
-      column = dataMap.columns[field.parent],
-      row = dataMap.rows[column.parent],
+    let field = formData.fields[fieldID],
+      column = formData.columns[field.parent],
+      row = formData.rows[column.parent],
       rowIndex = data.rowIndex(row.id),
       columnIndex = data.columnIndex(column.id),
       fieldIndex = data.fieldIndex(fieldID);
@@ -212,7 +211,7 @@ var data = {
     let indexMap = data.fieldIndexMap(fieldID),
       setString = '';
 
-    for (var prop in indexMap) {
+    for (let prop in indexMap) {
       if (indexMap.hasOwnProperty(prop)) {
         setString += `${prop}[${indexMap[prop]}].`;
       }
@@ -223,9 +222,9 @@ var data = {
 
   // Provides a reference to a field in formData
   fieldLink: (fieldID) => {
-    let field = dataMap.fields[fieldID],
-      column = dataMap.columns[field.parent],
-      row = dataMap.rows[column.parent],
+    let field = formData.fields[fieldID],
+      column = formData.columns[field.parent],
+      row = formData.rows[column.parent],
       rowIndex = data.rowIndex(row.id),
       columnIndex = data.columnIndex(column.id),
       fieldIndex = data.fieldIndex(fieldID);
@@ -235,16 +234,16 @@ var data = {
 
   // Provides a map to a column in formData
   columnLink: (columnID) => {
-    console.log(dataMap.rows[dataMap.columns[columnID].parent]);
-    let row = dataMap.rows[dataMap.columns[columnID].parent],
+    console.log(formData.rows[formData.columns[columnID].parent]);
+    let row = formData.rows[formData.columns[columnID].parent],
       columnIndex = row.columns.indexOf(columnID),
-      rowIndex = dataMap.stage.rows.indexOf(row.id);
+      rowIndex = formData.stage.rows.indexOf(row.id);
     return _data.formData.rows[rowIndex].columns[columnIndex];
   },
 
   // Provides a map to a row in formData
   rowLink: (rowID) => {
-    let rowIndex = dataMap.stage.rows.indexOf(rowID);
+    let rowIndex = formData.stage.rows.indexOf(rowID);
     return _data.formData.rows[rowIndex];
   },
 
@@ -252,35 +251,35 @@ var data = {
     let map = {
       rows: () => {
         let formData = helpers.copyObj(_data.formData);
-    console.log(dataMap);
+    console.log(formData);
     console.log(_data.formData);
 
         // map column ids to rows
-        dataMap.stage.rows = helpers.map(formData.rows, (i) => {
+        formData.stage.rows = helpers.map(formData.rows, (i) => {
           let formDataRow = formData.rows[i],
             rowID = formDataRow.id;
-          dataMap.rows[rowID] = formDataRow;
+          formData.rows[rowID] = formDataRow;
           map.columns(formDataRow);
           return rowID;
         });
       },
       columns: (formDataRow) => {
         // map column ids to rows
-        dataMap.rows[formDataRow.id].columns = helpers.map(formDataRow.columns, (i) => {
+        formData.rows[formDataRow.id].columns = helpers.map(formDataRow.columns, (i) => {
           let formDataColumn = formDataRow.columns[i],
             columnID = formDataColumn.id;
 
           formDataColumn.classList = formDataColumn.classList || [];
-          dataMap.columns[columnID] = formDataColumn;
+          formData.columns[columnID] = formDataColumn;
           map.fields(formDataColumn);
           return columnID;
         });
       },
       fields: (formDataColumn) => {
-        dataMap.columns[formDataColumn.id].fields = helpers.map(formDataColumn.fields, (i) => {
+        formData.columns[formDataColumn.id].fields = helpers.map(formDataColumn.fields, (i) => {
           let formDataField = formDataColumn.fields[i],
             fieldID = formDataField.id;
-          dataMap.fields[fieldID] = formDataField;
+          formData.fields[fieldID] = formDataField;
           return fieldID;
         });
       }
@@ -293,14 +292,14 @@ var data = {
     console.log(_data.formData.id, _data.formData);
     let stage = document.getElementById(_data.formData.id + '-stage');
     data.saveType(group, id);
-    _data.formData = helpers.clone(dataMap);
+    _data.formData = helpers.clone(formData);
 
-    stage.classList.toggle('stage-empty', (dataMap.stage.rows.length === 0));
+    stage.classList.toggle('stage-empty', (formData.stage.rows.length === 0));
     return _data.formData;
   },
 
   save: (group = 'rows', id) => {
-    var doSave = {
+    let doSave = {
       // xml: _this.xmlSave,
       json: data.jsonSave
     };
@@ -327,6 +326,6 @@ var data = {
 
 export {
   data,
-  dataMap,
+  formData,
   registeredFields
 };

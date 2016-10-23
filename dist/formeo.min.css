@@ -2155,10 +2155,6 @@
     display: inline-block !important; }
   .formeo [class*='hovering-'] > .group-actions .svg-icon.icon-handle {
     display: none !important; }
-  .formeo:after {
-    content: '';
-    display: table;
-    clear: both; }
   .formeo .stage-row,
   .formeo .field-control {
     position: relative;
@@ -2173,6 +2169,11 @@
     flex-wrap: nowrap;
     align-content: stretch;
     align-items: stretch; }
+    .formeo .stage-row:after,
+    .formeo .field-control:after {
+      content: '';
+      display: table;
+      clear: both; }
     .formeo .stage-row::after,
     .formeo .field-control::after {
       clear: both; }

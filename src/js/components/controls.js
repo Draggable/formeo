@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import { data, dataMap, registeredFields } from '../common/data';
+import { data, formData, registeredFields } from '../common/data';
 import helpers from '../common/helpers';
 import events from '../common/events';
 import utils from '../common/utils';
@@ -332,7 +332,7 @@ export class Controls {
         stage.removeChild(stage.firstChild);
       }
       stage.classList.remove('removing-all-fields');
-      dataMap.stage.rows = [];
+      formData.stage.rows = [];
       data.save();
       // document.dispatchEvent(events.formeoUpdated);
     }, 300);
@@ -515,11 +515,11 @@ export class Controls {
     let field = new Field(id),
       column = new Column();
 
-    dataMap.fields[field.id].parent = column.id;
+    formData.fields[field.id].parent = column.id;
 
     field.classList.add('first-field');
     column.appendChild(field);
-    dataMap.columns[column.id].fields.push(field.id);
+    formData.columns[column.id].fields.push(field.id);
     return column;
   }
 
@@ -531,8 +531,8 @@ export class Controls {
       row = new Row();
 
     // Set parent IDs
-    dataMap.columns[column.id].parent = row.id;
-    dataMap.rows[row.id].parent = stageID;
+    formData.columns[column.id].parent = row.id;
+    formData.rows[row.id].parent = stageID;
     row.appendChild(column);
     data.saveColumnOrder(row);
     stage.appendChild(row);

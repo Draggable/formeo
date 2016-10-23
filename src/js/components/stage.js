@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import {data, dataMap} from '../common/data';
+import {data, formData} from '../common/data';
 import helpers from '../common/helpers';
 import DOM from '../common/dom';
 import Row from './row';
@@ -74,7 +74,7 @@ export default class Stage {
     let stageWrap = this.dom;
     let stage = stageWrap.firstChild;
 
-    if (dataMap.stage.rows && dataMap.stage.rows.length) {
+    if (formData.stage.rows && formData.stage.rows.length) {
       this.loadRows(stage);
       stage.classList.remove('stage-empty');
     }
@@ -88,8 +88,8 @@ export default class Stage {
    * @return {Array}       loaded rows
    */
   loadRows(stage) {
-    // if (dataMap.stage.rows.length) {
-    let rows = dataMap.stage.rows;
+    // if (formData.stage.rows.length) {
+    let rows = formData.stage.rows;
     return helpers.forEach(rows, (i) => {
       let row = new Row(rows[i]);
       this.loadColumns(row);
@@ -105,8 +105,8 @@ export default class Stage {
    * @return {Array}     loaded rows
    */
   loadColumns(row) {
-    // if (dataMap.rows[row.id].columns.length) {
-    let columns = dataMap.rows[row.id].columns;
+    // if (formData.rows[row.id].columns.length) {
+    let columns = formData.rows[row.id].columns;
     helpers.forEach(columns, (i) => {
       let column = new Column(columns[i]);
       dom.fieldOrderClass(column);
@@ -117,8 +117,8 @@ export default class Stage {
   }
 
   loadFields(column) {
-    // if (dataMap.columns[column.id].fields.length) {
-    let fields = dataMap.columns[column.id].fields;
+    // if (formData.columns[column.id].fields.length) {
+    let fields = formData.columns[column.id].fields;
     helpers.forEach(fields, (i) => {
       let field = new Field(fields[i]);
       column.appendChild(field);
@@ -169,11 +169,11 @@ export default class Stage {
     let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id);
     let column = new Column();
 
-    dataMap.fields[field.id].parent = column.id;
+    formData.fields[field.id].parent = column.id;
 
     field.classList.add('first-field');
     column.appendChild(field);
-    dataMap.columns[column.id].fields.push(field.id);
+    formData.columns[column.id].fields.push(field.id);
     return column;
   }
 
@@ -183,8 +183,8 @@ export default class Stage {
     let row = new Row();
 
     // Set parent IDs
-    dataMap.columns[column.id].parent = row.id;
-    dataMap.rows[row.id].parent = _this.formID;
+    formData.columns[column.id].parent = row.id;
+    formData.rows[row.id].parent = _this.formID;
 
     row.appendChild(column);
     data.saveColumnOrder(row);
@@ -268,7 +268,7 @@ export default class Stage {
       onUpdate: (evt) => {
         // saveRowOrder();
         console.log('Stage onUpdate');
-        console.log(dataMap, evt);
+        console.log(formData, evt);
       },
       onSort: _this.onSort.bind(_this),
       onDrop: (evt) => { console.log(evt); },
