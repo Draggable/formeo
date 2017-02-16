@@ -63,6 +63,7 @@
     }
   },
   "scripts": {
+    "prestart": "yarn upgrade",
     "icons": ". ./tools/build-icons.sh",
     "build": "rm -rf ./dist/* && webpack --progress -p --colors && npm run copy",
     "lang": "cp -a src/lang demo/assets && cp -a src/lang dist",
