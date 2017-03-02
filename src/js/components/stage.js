@@ -258,11 +258,13 @@ export default class Stage {
         config.settings
       ]
     });
+    console.log([stageWrap]);
 
     Sortable.create(stageWrap.firstChild, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
+      fallbackTolerance: 0,
       // group: { pull: false, put: ['controls', 'columns'] },
       group: {name: 'stage', pull: false, put: ['controls', 'rows', 'columns']},
       // Element is dropped into the list from another list
@@ -279,6 +281,7 @@ export default class Stage {
       onDrop: (evt) => {
        console.log(evt);
       },
+      onMove: evt => console.log('moving row'),
       draggable: '.stage-row',
       handle: '.row-handle',
       // onFilter: function(evt) {
