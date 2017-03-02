@@ -2,16 +2,16 @@ import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import DOM from '../common/dom';
 import helpers from '../common/helpers';
-import { data, formData } from '../common/data';
+import {data, formData} from '../common/data';
 
-var dom = new DOM();
+const dom = new DOM();
 
 export default class Row {
 
   constructor(dataID) {
-    let _this = this,
-      rowDataDefault,
-      row;
+    let _this = this;
+    let rowDataDefault;
+    let row;
 
     _this.rowID = dataID || helpers.uuid();
 
@@ -26,8 +26,6 @@ export default class Row {
 
     // _this.rowData = helpers.extend(rowDataDefault, formData.rows[_this.rowID]);
     formData.rows[_this.rowID] = helpers.extend(rowDataDefault, formData.rows[_this.rowID]);
-
-console.log(_this.rowID);
 
     row = {
       tag: 'li',
@@ -56,7 +54,7 @@ console.log(_this.rowID);
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
-      group: { name: 'rows', pull: true, put: ['rows'] },
+      group: {name: 'rows', pull: true, put: ['rows']},
       sort: true,
       draggable: '.stage-column',
       handle: '.column-handle',
@@ -71,59 +69,59 @@ console.log(_this.rowID);
   }
 
   editWindow() {
-    let _this = this,
+    let _this = this;
 
-      editWindow = {
-        tag: 'div',
-        className: 'row-edit group-config'
+    let editWindow = {
+      tag: 'div',
+      className: 'row-edit group-config'
+    };
+    let fieldsetLabel = {
+      tag: 'label',
+      content: i18n.get('row.settings.fieldsetWrap')
+    };
+    let fieldsetInput = {
+      tag: 'input',
+      id: _this.rowID + '-fieldset',
+      attrs: {
+        type: 'checkbox',
+        ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
       },
-      fieldsetLabel = {
-        tag: 'label',
-        content: i18n.get('row.settings.fieldsetWrap')
-      },
-      fieldsetInput = {
-        tag: 'input',
-        id: _this.rowID + '-fieldset',
-        attrs: {
-          type: 'checkbox',
-          ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
-        },
-        action: {
-          change: (e) => {
-            console.log(e);
-          }
-        },
-        config: {
-          label: ' Fieldset',
-          noWrap: true
+      action: {
+        change: (e) => {
+          console.log(e);
         }
       },
-      // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
-      // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
-      inputAddon = {
-        tag: 'span',
-        className: 'input-group-addon',
-        content: fieldsetInput
-      },
-      legendInput = {
-        tag: 'input',
-        attrs: { type: 'text', ariaLabel: 'Legend for fieldset', placeholder: 'Legend' },
-        className: 'form-control'
-      },
-      fieldsetInputGroup = {
-        tag: 'div',
-        className: 'input-group',
-        content: [inputAddon, legendInput]
-      },
-      fieldSetControls = dom.formGroup([fieldsetLabel, fieldsetInputGroup]),
-      columnSettingsLabel = Object.assign({}, fieldsetLabel, { content: 'Define column widths' }),
-      columnSettingsPresetLabel = Object.assign({}, fieldsetLabel, { content: 'Layout Preset', className: 'col-sm-2 form-control-label' });
+      config: {
+        label: ' Fieldset',
+        noWrap: true
+      }
+    };
+    // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
+    // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
+    let inputAddon = {
+      tag: 'span',
+      className: 'input-group-addon',
+      content: fieldsetInput
+    };
+    let legendInput = {
+      tag: 'input',
+      attrs: {type: 'text', ariaLabel: 'Legend for fieldset', placeholder: 'Legend'},
+      className: 'form-control'
+    };
+    let fieldsetInputGroup = {
+      tag: 'div',
+      className: 'input-group',
+      content: [inputAddon, legendInput]
+    };
+    let fieldSetControls = dom.formGroup([fieldsetLabel, fieldsetInputGroup]);
+    let columnSettingsLabel = Object.assign({}, fieldsetLabel, {content: 'Define column widths'});
+    let columnSettingsPresetLabel = Object.assign({}, fieldsetLabel, {content: 'Layout Preset', className: 'col-sm-2 form-control-label'});
     let columnSettingsPresetSelect = {
-        tag: 'div',
-        className: 'col-sm-10',
-        content: dom.columnPresetControl(_this.rowID)
-      },
-      columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row');
+      tag: 'div',
+      className: 'col-sm-10',
+      content: dom.columnPresetControl(_this.rowID)
+    };
+    let columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row');
 
     editWindow.content = [fieldSetControls, '<hr>', columnSettingsLabel, columnSettingsPreset];
 
@@ -131,18 +129,20 @@ console.log(_this.rowID);
   }
 
   onMove(evt) {
-
+    console.log('dragging column');
   }
 
   onSort(evt) {
-    // console.log('onSort', evt);
-    data.save('columns', evt.target.id);
+    if (evt.target) {
+      data.save('columns', evt.target.id);
+      console.log('onSort', evt);
+    }
   }
 
   onRemove(evt) {
     console.log('onRemove', evt);
-    let row = evt.from,
-      columns = row.querySelectorAll('.stage-column');
+    let row = evt.from;
+    let columns = row.querySelectorAll('.stage-column');
     if (!columns.length) {
       dom.remove(row);
       data.saveRowOrder();

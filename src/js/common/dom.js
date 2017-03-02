@@ -47,6 +47,11 @@ export default class DOM {
           appendContent[contentType](content[i]);
         }
       },
+      function: content => {
+        content = content();
+        contentType = _this.contentType(content);
+        appendContent[contentType](content);
+      },
       undefined: () => {
         console.error(elem);
       }

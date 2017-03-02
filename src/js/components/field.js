@@ -7,12 +7,15 @@ import DOM from '../common/dom';
 import Panels from './panels';
 
 let dom = new DOM();
+// let formData = data.get();
+console.log(formData);
 
 export default class Field {
 
   constructor(dataID) {
-    let _this = this,
-      fieldData = formData.fields[dataID] || helpers.copyObj(registeredFields[dataID]);
+    // const formData = data.get();
+    let _this = this;
+    let fieldData = formData.fields[dataID] || helpers.copyObj(registeredFields[dataID]);
 
     _this.fieldID = fieldData.id || helpers.uuid();
     fieldData.id = _this.fieldID;

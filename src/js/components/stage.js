@@ -8,7 +8,10 @@ import Column from './column';
 import Field from './field';
 let dom = new DOM();
 
+console.log(formData);
+
 let stageOpts = {};
+// let formData = {};
 
 /**
  * Stage is where fields and elements are dragged to.
@@ -21,6 +24,7 @@ export default class Stage {
    * @return {Object} DOM element
    */
   constructor(formeoOptions, formID) {
+    // formData = data.get();
     this.formID = formID;
     let defaultOptions = {
       formSettings: [{
@@ -74,6 +78,8 @@ export default class Stage {
     let stageWrap = this.dom;
     let stage = stageWrap.firstChild;
 
+    console.log(formData);
+
     if (formData.stage.rows && formData.stage.rows.length) {
       this.loadRows(stage);
       stage.classList.remove('stage-empty');
@@ -84,8 +90,8 @@ export default class Stage {
 
   /**
    * Loop through the formData and append it to the stage
-   * @param  {Object} stage
-   * @return {Array}       loaded rows
+   * @param  {Object} stage DOM element
+   * @return {Array}  loaded rows
    */
   loadRows(stage) {
     // if (formData.stage.rows.length) {
@@ -226,7 +232,6 @@ export default class Stage {
    * @return {Object} onRemove event
    */
   onRemove(evt) {
-
     console.log('stage.js onRemove', evt);
     data.save();
   }
@@ -240,8 +245,8 @@ export default class Stage {
     if (this.stage) {
       return this.stage;
     }
-    let _this = this,
-      config = this.elementConfigs();
+    let _this = this;
+    let config = this.elementConfigs();
 
     let stageWrap = dom.create({
       tag: 'div',
@@ -271,7 +276,9 @@ export default class Stage {
         console.log(formData, evt);
       },
       onSort: _this.onSort.bind(_this),
-      onDrop: (evt) => { console.log(evt); },
+      onDrop: (evt) => {
+       console.log(evt);
+      },
       draggable: '.stage-row',
       handle: '.row-handle',
       // onFilter: function(evt) {

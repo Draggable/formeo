@@ -3,41 +3,46 @@ import events from './events';
 import helpers from './helpers';
 
 // Object map of fields on the stage
-let _data = {};
-let formData = {};
+const _data = {};
+let formData;
 
 // Registered fields are the fields that are configured on init. This variable acts as a data buffer
 // thats contains the configurations for a field's final view.
 let registeredFields = {};
 
 let data = {
-  init: (opts, formData) => {
-    _data.opts = Object.assign({}, opts);
-    let processFormData = (formData) => {
-      // _data.formData = (typeof formData === 'string') ? window.JSON.parse(formData) : formData;
-      // _data.formData.id = formData.id || _data.opts.formID || helpers.uuid();
-
-      // data.loadMap();
+  init: (opts, userFormData) => {
+    _data.formData = {
+      id: helpers.uuid(),
+      settings: {},
+      stage: {},
+      rows: {},
+      columns: {},
+      fields: {}
     };
-console.log(formData);
-    if (formData) {
-      processFormData(formData);
-    } else if (window.sessionStorage && _data.opts.sessionStorage) {
-      formData = window.sessionStorage.getItem('formData');
-      if (formData) {
-        processFormData(formData);
-      } else {
-        _data.formData = {};
+    _data.opts = Object.assign({}, opts);
+    let processFormData = data => {
+      if (typeof data === 'string') {
+        data = window.JSON.parse(data);
       }
-    } else {
-      _data.formData = {
-        id: helpers.uuid(),
-        settings: {},
-        stage: {},
-        rows: {},
-        columns: {},
-        fields: {}
-      };
+
+      _data.formData = data;
+      _data.formData.id = data.id || _data.opts.formID || helpers.uuid();
+
+      formData = _data.formData;
+    };
+
+    if (userFormData) {
+      processFormData(userFormData);
+    } else if (window.sessionStorage && _data.opts.sessionStorage) {
+      let sessionFormData = window.sessionStorage.getItem('formData');
+      if (sessionFormData) {
+        processFormData(sessionFormData);
+      }
+    }
+
+    if (!formData) {
+      formData = _data.formData;
     }
 
     events.formeoUpdated = new CustomEvent('formeoUpdated', {
@@ -188,12 +193,12 @@ console.log(formData);
    * @return {Object}         fieldData
    */
   fieldIndexMap: (fieldID) => {
-    let field = formData.fields[fieldID],
-      column = formData.columns[field.parent],
-      row = formData.rows[column.parent],
-      rowIndex = data.rowIndex(row.id),
-      columnIndex = data.columnIndex(column.id),
-      fieldIndex = data.fieldIndex(fieldID);
+    let field = formData.fields[fieldID];
+    let column = formData.columns[field.parent];
+    let row = formData.rows[column.parent];
+    let rowIndex = data.rowIndex(row.id);
+    let columnIndex = data.columnIndex(column.id);
+    let fieldIndex = data.fieldIndex(fieldID);
 
     return {
       rows: rowIndex,
@@ -208,8 +213,8 @@ console.log(formData);
    * @return {String}
    */
   fieldSetString: (fieldID) => {
-    let indexMap = data.fieldIndexMap(fieldID),
-      setString = '';
+    let indexMap = data.fieldIndexMap(fieldID);
+    let setString = '';
 
     for (let prop in indexMap) {
       if (indexMap.hasOwnProperty(prop)) {
@@ -222,22 +227,21 @@ console.log(formData);
 
   // Provides a reference to a field in formData
   fieldLink: (fieldID) => {
-    let field = formData.fields[fieldID],
-      column = formData.columns[field.parent],
-      row = formData.rows[column.parent],
-      rowIndex = data.rowIndex(row.id),
-      columnIndex = data.columnIndex(column.id),
-      fieldIndex = data.fieldIndex(fieldID);
+      let field = formData.fields[fieldID];
+      let column = formData.columns[field.parent];
+      let row = formData.rows[column.parent];
+      let rowIndex = data.rowIndex(row.id);
+      let columnIndex = data.columnIndex(column.id);
+      let fieldIndex = data.fieldIndex(fieldID);
 
     return _data.formData.rows[rowIndex].columns[columnIndex].fields[fieldIndex];
   },
 
   // Provides a map to a column in formData
   columnLink: (columnID) => {
-    console.log(formData.rows[formData.columns[columnID].parent]);
-    let row = formData.rows[formData.columns[columnID].parent],
-      columnIndex = row.columns.indexOf(columnID),
-      rowIndex = formData.stage.rows.indexOf(row.id);
+    let row = formData.rows[formData.columns[columnID].parent];
+    let columnIndex = row.columns.indexOf(columnID);
+    let rowIndex = formData.stage.rows.indexOf(row.id);
     return _data.formData.rows[rowIndex].columns[columnIndex];
   },
 
@@ -247,54 +251,12 @@ console.log(formData);
     return _data.formData.rows[rowIndex];
   },
 
-  loadMap: () => {
-    let map = {
-      rows: () => {
-        let formData = helpers.copyObj(_data.formData);
-    console.log(formData);
-    console.log(_data.formData);
-
-        // map column ids to rows
-        formData.stage.rows = helpers.map(formData.rows, (i) => {
-          let formDataRow = formData.rows[i],
-            rowID = formDataRow.id;
-          formData.rows[rowID] = formDataRow;
-          map.columns(formDataRow);
-          return rowID;
-        });
-      },
-      columns: (formDataRow) => {
-        // map column ids to rows
-        formData.rows[formDataRow.id].columns = helpers.map(formDataRow.columns, (i) => {
-          let formDataColumn = formDataRow.columns[i],
-            columnID = formDataColumn.id;
-
-          formDataColumn.classList = formDataColumn.classList || [];
-          formData.columns[columnID] = formDataColumn;
-          map.fields(formDataColumn);
-          return columnID;
-        });
-      },
-      fields: (formDataColumn) => {
-        formData.columns[formDataColumn.id].fields = helpers.map(formDataColumn.fields, (i) => {
-          let formDataField = formDataColumn.fields[i],
-            fieldID = formDataField.id;
-          formData.fields[fieldID] = formDataField;
-          return fieldID;
-        });
-      }
-    };
-
-    map.rows();
-  },
-
   jsonSave: (group, id) => {
-    console.log(_data.formData.id, _data.formData);
     let stage = document.getElementById(_data.formData.id + '-stage');
     data.saveType(group, id);
     _data.formData = helpers.clone(formData);
 
-    stage.classList.toggle('stage-empty', (formData.stage.rows.length === 0));
+    stage.classList.toggle('stage-empty', (formData.rows.length === 0));
     return _data.formData;
   },
 
@@ -307,6 +269,7 @@ console.log(formData);
     doSave[_data.opts.dataType](group, id);
 
     if (window.sessionStorage && _data.opts.sessionStorage) {
+      console.log('session.setItem');
       window.sessionStorage.setItem('formData', window.JSON.stringify(_data.formData));
     }
 
@@ -314,7 +277,7 @@ console.log(formData);
       console.log('Saved: ' + group);
     }
 
-    // Shouldn't be the case? because everytime save is called there should be some formData update, right?
+    // Shouldn't be the case? because every time save is called there should be some formData update, right?
     document.dispatchEvent(events.formeoUpdated);
     return _data.formData;
   },

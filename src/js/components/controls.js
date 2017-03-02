@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import { data, formData, registeredFields } from '../common/data';
+import {data, formData, registeredFields} from '../common/data';
 import helpers from '../common/helpers';
 import events from '../common/events';
 import utils from '../common/utils';
@@ -9,9 +9,9 @@ import Panels from './panels';
 import Row from './row';
 import Column from './column';
 import Field from './field';
-var dom = new DOM();
+let dom = new DOM();
 
-var opts = {};
+let opts = {};
 
 export class Controls {
   constructor(controlOptions, formID) {
@@ -209,18 +209,23 @@ export class Controls {
     opts = helpers.merge(this.defaults, controlOptions);
   }
 
+  /**
+   * Generate control config for UI and bind actions
+   * @param  {Object} elem
+   * @return {Object} elementControl
+   */
   prepElement(elem) {
-    let _this = this,
-      dataID = helpers.uuid(),
-      position = {},
-      clicked = (x, y) => {
-        let xMin = position.x - 5,
-          xMax = position.x + 5,
-          yMin = position.y - 5,
-          yMax = position.y + 5;
+    let _this = this;
+    let dataID = helpers.uuid();
+    let position = {};
+    const clicked = (x, y) => {
+      let xMin = position.x - 5;
+      let xMax = position.x + 5;
+      let yMin = position.y - 5;
+      let yMax = position.y + 5;
 
-        return (helpers.numberBetween(x, xMin, xMax) && helpers.numberBetween(y, yMin, yMax));
-      };
+      return (helpers.numberBetween(x, xMin, xMax) && helpers.numberBetween(y, yMin, yMax));
+    };
     let elementControl = {
       tag: 'li',
       className: 'field-control',
@@ -247,11 +252,15 @@ export class Controls {
     return elementControl;
   }
 
+  /**
+   * Group elements into their respective control group
+   * @return {Array} allGroups
+   */
   groupElements() {
-    let _this = this,
-      groups = opts.groups.slice(),
-      elements = opts.elements.slice(),
-      allGroups = [];
+    let _this = this;
+    let groups = opts.groups.slice();
+    let elements = opts.elements.slice();
+    let allGroups = [];
 
     // Apply order to Groups
     groups = helpers.orderObjectsBy(groups, opts.groupOrder, 'id');
@@ -273,8 +282,8 @@ export class Controls {
         config: {
           label: groups[i].label || ''
         }
-      },
-      defaultIds = this.defaults.elements.map(element => element.meta.id);
+      };
+      let defaultIds = this.defaults.elements.map(element => element.meta.id);
 
       // Apply order to elements
       if (groups[i].elementOrder) {
@@ -287,11 +296,11 @@ export class Controls {
        * @return {Array}        Filtered array of Field config objects
        */
       group.content = elements.filter(field => {
-        let fieldId = field.meta.id || '',
-            filters = [
-              utils.match(fieldId, opts.disable.elements),
-              (field.meta.group === groups[i].id)
-            ];
+        let fieldId = field.meta.id || '';
+        let filters = [
+          utils.match(fieldId, opts.disable.elements),
+          (field.meta.group === groups[i].id)
+        ];
 
         return helpers.inArray(fieldId, defaultIds) ? filters.every(val => val === true) : true;
       }).map(field => _this.prepElement.call(this, field));
@@ -319,7 +328,7 @@ export class Controls {
     // stage.classList.add('stage-empty');
     // }
 
-    var outerHeight = 0;
+    let outerHeight = 0;
     helpers.forEach(rows, (i) => {
       outerHeight += rows[i].offsetHeight + 5;
     });
@@ -380,7 +389,6 @@ export class Controls {
               });
 
               document.dispatchEvent(events.confirmClearAll);
-
             } else {
               alert('There are no fields to clear');
             }
@@ -409,7 +417,6 @@ export class Controls {
         className: ['btn', 'btn-secondary', 'save-form'],
         action: {
           click: (evt) => {
-
             // @todo: complete actions connection
             // let saveEvt = {
             //   action: () => {},
@@ -494,7 +501,7 @@ export class Controls {
     };
 
     // Make controls sortable
-    for (var i = groups.length - 1; i >= 0; i--) {
+    for (let i = groups.length - 1; i >= 0; i--) {
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
@@ -511,9 +518,14 @@ export class Controls {
     return element;
   }
 
+  /**
+   * Creates a column on the stage
+   * @param  {String} id
+   * @return {Object} column
+   */
   createColumn(id) {
-    let field = new Field(id),
-      column = new Column();
+    let field = new Field(id);
+    let column = new Column();
 
     formData.fields[field.id].parent = column.id;
 
@@ -523,12 +535,16 @@ export class Controls {
     return column;
   }
 
+  /**
+   * Append an element to the stage
+   * @param {String} id of elements
+   */
   addRow(id) {
     let _this = this;
-    let stageID = _this.formID + '-stage',
-      stage = document.getElementById(stageID),
-      column = _this.createColumn(id),
-      row = new Row();
+    let stageID = _this.formID + '-stage';
+    let stage = document.getElementById(stageID);
+    let column = _this.createColumn(id);
+    let row = new Row();
 
     // Set parent IDs
     formData.columns[column.id].parent = row.id;
@@ -536,10 +552,10 @@ export class Controls {
     row.appendChild(column);
     data.saveColumnOrder(row);
     stage.appendChild(row);
-    // data.saveRowOrder(row);
-    // data.save();
-    //trigger formSaved event
-    // document.dispatchEvent(events.formeoUpdated);
+    data.saveRowOrder(row);
+    data.save();
+    // trigger formSaved event
+    document.dispatchEvent(events.formeoUpdated);
   }
 
 }
