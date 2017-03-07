@@ -1,57 +1,26 @@
 'use strict';
-let isSite = (window.location.href.indexOf('draggable.github.io') !== -1),
-  formeo;
+const isSite = (window.location.href.indexOf('draggable.github.io') !== -1);
+let container = document.querySelector('.build-form');
+let formeoOpts = {
+  container: container,
+  debug: true,
+  sessionStorage: true,
+  editPanelOrder: ['attrs', 'options']
+};
+const formeo = new window.Formeo(formeoOpts);
 
-function readyState() {
-  let script = this;
-  if (!script.readyState || script.readyState === 'loaded' || script.readyState === 'complete') {
-    script.onload = script.onreadystatechange = null;
+let debugWrap = document.getElementById('debug-wrap');
+let debugBtn = document.getElementById('debug-demo');
+let locale = document.getElementById('locale');
 
-    let container = document.querySelector('.build-form');
-    let formeoOpts = {
-      container: container,
-      debug: true,
-      sessionStorage: true,
-      editPanelOrder: ['attrs', 'options']
-    };
+debugBtn.onclick = function() {
+  debugWrap.classList.toggle('open');
+};
 
-    if (!isSite) {
-      let style = document.getElementById('formeo-style');
-      style.parentElement.removeChild(style);
-      formeoOpts.style = '../dist/formeo.min.css';
-    }
-
-    formeo = new window.Formeo(formeoOpts);
-    postInit(formeo);
-  }
-}
-
-function postInit(formeo) {
-  let debugWrap = document.getElementById('debug-wrap'),
-    debugBtn = document.getElementById('debug-demo'),
-    locale = document.getElementById('locale');
-
-  debugBtn.onclick = function() {
-    debugWrap.classList.toggle('open');
-  };
-
-  locale.addEventListener('change', function() {
-    formeo.i18n.setLang(locale.value);
-  });
-  console.log(formeo);
-}
-
-(function getScript() {
-  let formeoScript = isSite ? '/formeo/assets/js/formeo.min.js' : '../dist/formeo.min.js',
-    script = document.createElement('script');
-  script.appendChild(document.createTextNode(''));
-  script.setAttribute('src', formeoScript);
-  script.setAttribute('type', 'text/javascript');
-  script.async = true;
-  // Attach handlers for all browsers
-  script.onload = script.onreadystatechange = readyState;
-  document.body.appendChild(script);
-})();
+locale.addEventListener('change', function() {
+  formeo.i18n.setLang(locale.value);
+});
+console.log(formeo);
 
 if (isSite) {
   ((window.gitter = {}).chat = {}).options = {

@@ -4,11 +4,9 @@ import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import {optimize, BannerPlugin, DefinePlugin} from 'webpack';
 
-const sassLoaders = [
-  'css?sourceMap',
-  'sass?sourceMap',
-  'postcss-loader?pack=cleaner'
-];
+const isDebug = !process.argv.includes('--release');
+const isVerbose = process.argv.includes('--verbose');
+const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
 
 const bannerTemplate = [
   `${pkg.name} - ${pkg.homepage}`,
@@ -16,55 +14,40 @@ const bannerTemplate = [
   `Author: ${pkg.author}`
 ].join('\n');
 
-const development = (process.argv.indexOf('-d') !== -1);
-let plugins;
-
-if (development) {
-  plugins = [
-    new ExtractTextPlugin('[name].min.css'),
-  ];
-} else {
-  plugins = [
-    new ExtractTextPlugin('[name].min.css'),
-    new DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify('production')
-      }
-    }),
-    new optimize.OccurenceOrderPlugin(),
-    new optimize.UglifyJsPlugin({
-      compress: {warnings: false}
-    }),
-    new BannerPlugin(bannerTemplate)
-  ];
-}
+let plugins = [
+  new ExtractTextPlugin('[name].min.css'),
+  new DefinePlugin({
+    'process.env': {
+      'NODE_ENV': JSON.stringify('production')
+    }
+  }),
+  new optimize.UglifyJsPlugin({
+    compress: {warnings: false}
+  }),
+  new BannerPlugin(bannerTemplate)
+];
 
 const webpackConfig = {
-  context: path.join(__dirname, 'dist'),
+  context: path.join(__dirname, 'demo/assets/'),
   entry: {
     formeo: path.join(__dirname, pkg.config.files.formeo.js)
   },
   output: {
-    path: path.join(__dirname, 'dist'),
-    publicPath: 'dist/',
+    path: path.join(__dirname, 'demo/assets/'),
+    publicPath: '/assets/',
     filename: '[name].min.js'
   },
   module: {
-    // preLoaders: [{
-    //   test: /\.js?$/,
-    //   loaders: ['eslint'],
-    //   include: 'src/js/'
-    // }],
     rules: [
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader',
+    {
+      enforce: 'pre',
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'eslint-loader',
     }, {
       test: /\.js$/,
       exclude: /node_modules/,
-      loader: 'babel',
+      loader: 'babel-loader',
       query: {
         presets: ['es2015'],
         plugins: ['transform-runtime']
@@ -74,20 +57,28 @@ const webpackConfig = {
       loader: 'file?name=[path][name].[ext]&context=./src'
     }, {
       test: /\.scss$/,
-      loaders: sassLoaders,
-      // loader: ExtractTextPlugin.extract('style', sassLoaders.join('!'))
+      use: ExtractTextPlugin
+      .extract({
+        fallback: 'style-loader',
+        use: [
+          {
+            loader: 'css-loader',
+            query: {modules: false, sourceMaps: true}
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: [autoprefixer({browsers: ['last 2 versions']})]
+            }
+          },
+          {
+            loader: 'sass-loader', query: {sourceMaps: true}
+          }
+        ]
+      })
     }]
   },
   plugins,
-  // sassLoader: {
-  //   includePaths: [path.resolve(__dirname, './src/sass')]
-  // },
-  // postcss: function() {
-  //   return {
-  //     defaults: [autoprefixer],
-  //     cleaner: [autoprefixer({browsers: ['last 2 versions']})]
-  //   };
-  // },
   resolve: {
     modules: [
       path.join(__dirname, 'src'),
@@ -101,5 +92,11 @@ const webpackConfig = {
     noInfo: true
   }
 };
+
+// if (!isDebug) {
+//   webpackConfig.context = path.join(__dirname, 'dist');
+//   webpackConfig.output.path = path.join(__dirname, 'dist');
+//   webpackConfig.output.publicPath = 'dist/';
+// }
 
 module.exports = webpackConfig;

@@ -8,14 +8,23 @@ import Panels from './panels';
 
 let dom = new DOM();
 // let formData = data.get();
-console.log(formData);
+console.log('formData:', formData);
 
+/**
+ * Element/Field class.
+ */
 export default class Field {
 
+  /**
+   * Set defaults and load fieldData
+   * @param  {String} dataID existing field ID
+   * @return {Object} field object
+   */
   constructor(dataID) {
     // const formData = data.get();
     let _this = this;
-    let fieldData = formData.fields[dataID] || helpers.copyObj(registeredFields[dataID]);
+    let fieldConfig = helpers.copyObj(registeredFields[dataID]);
+    let fieldData = formData.fields[dataID] || fieldConfig;
 
     _this.fieldID = fieldData.id || helpers.uuid();
     fieldData.id = _this.fieldID;
@@ -49,9 +58,13 @@ export default class Field {
     return field;
   }
 
+  /**
+   * Updates a field's preview
+   * @return {Object} fresh preview
+   */
   updatePreview() {
-    let _this = this,
-      newPreview = dom.create(formData.fields[_this.fieldID], true);
+    let _this = this;
+    let newPreview = dom.create(formData.fields[_this.fieldID], true);
     dom.empty(_this.preview);
     _this.preview.appendChild(newPreview);
 
@@ -65,58 +78,58 @@ export default class Field {
    * @return {Object}           formeo DOM config object
    */
   editPanel(panelType, dataObj) {
-    let _this = this,
-      propType,
-      panel,
-      panelWrap = {
-        tag: 'div',
-        className: 'f-panel-wrap',
-        content: []
-      };
+    let _this = this;
+    let propType;
+    let panel;
+    let panelWrap = {
+      tag: 'div',
+      className: 'f-panel-wrap',
+      content: []
+    };
 
     if (dataObj[panelType]) {
       panel = {
-          tag: 'ul',
-          attrs: {
-            className: [
-              'field-edit-group',
-              'field-edit-' + panelType
-            ]
-          },
-          editGroup: panelType,
-          isSortable: (panelType === 'options'),
-          content: []
+        tag: 'ul',
+        attrs: {
+          className: [
+            'field-edit-group',
+            'field-edit-' + panelType
+          ]
         },
-        propType = dom.contentType(dataObj[panelType]);
+        editGroup: panelType,
+        isSortable: (panelType === 'options'),
+        content: []
+      };
+      propType = dom.contentType(dataObj[panelType]);
 
       panelWrap.content.push(panel);
 
       let panelArray;
       if (propType === 'array') {
-        let props = Object.keys(dataObj[panelType][0]),
-          panelLabels = {
-            tag: 'div',
-            className: 'input-group',
-            content: props.map((elem) => {
-              let label = {
-                tag: 'label',
-                className: ['prop-label-' + elem],
-                content: helpers.capitalize(elem)
-              };
+        let props = Object.keys(dataObj[panelType][0]);
+        let panelLabels = {
+          tag: 'div',
+          className: 'input-group',
+          content: props.map((elem) => {
+            let label = {
+              tag: 'label',
+              className: ['prop-label-' + elem],
+              content: helpers.capitalize(elem)
+            };
 
-              if (typeof dataObj[panelType][0][elem] === 'boolean') {
-                label.tag = 'span';
-                label.className.push('input-group-addon');
-              }
+            if (typeof dataObj[panelType][0][elem] === 'boolean') {
+              label.tag = 'span';
+              label.className.push('input-group-addon');
+            }
 
-              return label;
-            })
-          },
-          labelWrap = {
-            tag: 'header',
-            content: panelLabels,
-            className: 'prop-labels'
-          };
+            return label;
+          })
+        };
+        let labelWrap = {
+          tag: 'header',
+          content: panelLabels,
+          className: 'prop-labels'
+        };
         // removing labels until find a better way to handle them.
         // panelWrap.content.unshift(labelWrap);
         panelArray = dataObj[panelType];
@@ -139,53 +152,58 @@ export default class Field {
     return panelWrap;
   }
 
+  /**
+   * Field panel contents, `attrs`, `options`, `config`
+   * @param  {Object} args [description]
+   * @return {Object} DOM element
+   */
   panelContent(args) {
-    let _this = this,
-      dataProp = (typeof args.dataProp === 'string') ? args.dataProp : args.i,
-      id = helpers.uuid(),
-      inputs = {
-        tag: 'div',
-        className: ['prop-inputs'],
-        content: _this.editPanelInputs(dataProp, args.dataObj[args.panelType][dataProp], args.panelType, id)
+    let _this = this;
+    let dataProp = (typeof args.dataProp === 'string') ? args.dataProp : args.i;
+    let id = helpers.uuid();
+    let inputs = {
+      tag: 'div',
+      className: ['prop-inputs'],
+      content: _this.editPanelInputs(dataProp, args.dataObj[args.panelType][dataProp], args.panelType, id)
+    };
+    let property = {
+      tag: 'li',
+      className: [`${args.panelType}-${dataProp}-wrap`, 'prop-wrap'],
+      id: id,
+      content: []
+    };
+    let order = {
+      tag: 'span',
+      className: 'btn btn-secondary prop-order prop-control',
+      content: dom.icon('move-vertical')
+    };
+    let remove = {
+      tag: 'span',
+      className: 'btn btn-secondary prop-remove prop-control',
+      action: {
+        click: (evt) => {
+          animate.slideUp(document.getElementById(property.id), 250, (elem) => {
+            dom.remove(elem);
+            if (Array.isArray(formData.fields[_this.fieldID][args.panelType])) {
+              formData.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
+            } else {
+              formData.fields[_this.fieldID][args.panelType][dataProp] = undefined;
+            }
+            data.save(args.panelType, _this.fieldID);
+            dom.empty(_this.preview);
+            let newPreview = dom.create(formData.fields[_this.fieldID], true);
+            _this.preview.appendChild(newPreview);
+            _this.resizePanelWrap();
+          });
+        }
       },
-      property = {
-        tag: 'li',
-        className: [`${args.panelType}-${dataProp}-wrap`, 'prop-wrap'],
-        id: id,
-        content: []
-      },
-      order = {
-        tag: 'span',
-        className: 'btn btn-secondary prop-order prop-control',
-        content: dom.icon('move-vertical')
-      },
-      remove = {
-        tag: 'span',
-        className: 'btn btn-secondary prop-remove prop-control',
-        action: {
-          click: (evt) => {
-            animate.slideUp(document.getElementById(property.id), 250, (elem) => {
-              dom.remove(elem);
-              if (Array.isArray(formData.fields[_this.fieldID][args.panelType])) {
-                formData.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
-              } else {
-                formData.fields[_this.fieldID][args.panelType][dataProp] = undefined;
-              }
-              data.save(args.panelType, _this.fieldID);
-              dom.empty(_this.preview);
-              let newPreview = dom.create(formData.fields[_this.fieldID], true);
-              _this.preview.appendChild(newPreview);
-              _this.resizePanelWrap();
-            });
-          }
-        },
-        content: dom.icon('remove')
-      },
-      controls = {
-        tag: 'div',
-        className: 'prop-controls',
-        content: [remove]
-      };
+      content: dom.icon('remove')
+    };
+    let controls = {
+      tag: 'div',
+      className: 'prop-controls',
+      content: [remove]
+    };
 
     if (args.propType === 'array') {
       inputs.className.push('input-group-sm', 'input-group');
@@ -350,8 +368,8 @@ export default class Field {
   }
 
   panelEditButtons(type) {
-    let _this = this,
-      addBtn = {
+    let _this = this;
+    let addBtn = {
         tag: 'button',
         attrs: {
           type: 'button'
@@ -390,8 +408,8 @@ export default class Field {
             _this.preview.appendChild(newPreview);
           }
         }
-      },
-      panelEditButtons = {
+      };
+    let panelEditButtons = {
         tag: 'div',
         attrs: {
           className: 'add-remove-attrs'
@@ -403,12 +421,12 @@ export default class Field {
   }
 
   fieldEdit() {
-    let _this = this,
-      panels = [],
-      editable = ['object', 'array'],
-      noPanels = ['config', 'meta'],
-      fieldData = formData.fields[_this.fieldID],
-      allowedPanels = Object.keys(fieldData).filter((elem) => {
+    let _this = this;
+    let panels = [];
+    let editable = ['object', 'array'];
+    let noPanels = ['config', 'meta'];
+    let fieldData = formData.fields[_this.fieldID];
+    let allowedPanels = Object.keys(fieldData).filter((elem) => {
         return !helpers.inArray(elem, noPanels);
       });
 
@@ -478,8 +496,8 @@ export default class Field {
   }
 
   fieldPreview() {
-    let _this = this,
-      fieldData = helpers.clone(formData.fields[_this.fieldID]);
+    let _this = this;
+    let fieldData = helpers.clone(formData.fields[_this.fieldID]);
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -511,6 +529,10 @@ export default class Field {
     return fieldPreview;
   }
 
+  /**
+   * Actions to take when a field is removed
+   * @param  {Object} field DOM element
+   */
   onRemove(field) {
     let column = field.parentElement;
     dom.remove(field);
