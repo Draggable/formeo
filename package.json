@@ -63,7 +63,6 @@
     }
   },
   "scripts": {
-    "prestart": "yarn upgrade",
     "icons": ". ./tools/build-icons.sh",
     "build": "rm -rf ./dist/* && webpack --progress -p --colors && npm run copy",
     "lang": "cp -a src/lang demo/assets && cp -a src/lang dist",
@@ -137,6 +136,7 @@
   },
   "engines": {},
   "dependencies": {
+    "eslint-loader": "^1.6.3",
     "json-update": "^3.0.0",
     "whatwg-fetch": "^1.0.0"
   }
