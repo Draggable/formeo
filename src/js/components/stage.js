@@ -2,13 +2,11 @@ import Sortable from 'sortablejs';
 import i18n from 'mi18n';
 import {data, formData} from '../common/data';
 import helpers from '../common/helpers';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import Row from './row';
 import Column from './column';
 import Field from './field';
-let dom = new DOM();
-
-console.log(formData);
+// let dom = new DOM();
 
 let stageOpts = {};
 // let formData = {};

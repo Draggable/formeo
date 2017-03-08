@@ -1,9 +1,9 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import helpers from '../common/helpers';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import {data} from '../common/data';
-const dom = new DOM();
+// const dom = new DOM();
 
 const defaults = {
   type: 'field'

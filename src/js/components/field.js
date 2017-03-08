@@ -3,10 +3,10 @@ import {data, formData, registeredFields} from '../common/data';
 import animate from '../common/animation';
 import h from '../common/helpers';
 import actions from '../common/actions';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import Panels from './panels';
 
-let dom = new DOM();
+// let dom = new DOM();
 // let formData = data.get();
 console.log('formData:', formData);
 

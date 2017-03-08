@@ -1,10 +1,10 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import h from '../common/helpers';
 import {data, formData} from '../common/data';
 
-const dom = new DOM();
+// const dom = new DOM();
 
 /**
  *

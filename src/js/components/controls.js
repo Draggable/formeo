@@ -4,12 +4,12 @@ import {data, formData, registeredFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
 import utils from '../common/utils';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import Panels from './panels';
 import Row from './row';
 import Column from './column';
 import Field from './field';
-let dom = new DOM();
+// let dom = new DOM();
 
 let opts = {};
 

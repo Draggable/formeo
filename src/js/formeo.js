@@ -4,12 +4,10 @@ import helpers from './common/helpers';
 import {data} from './common/data';
 import events from './common/events';
 import actions from './common/actions';
-import DOM from './common/dom';
+import dom from './common/dom';
 import i18n from 'mi18n';
 import {Controls} from './components/controls';
 import Stage from './components/stage';
-
-const dom = new DOM();
 
 // Simple object config for the main part of formeo
 const formeo = {};

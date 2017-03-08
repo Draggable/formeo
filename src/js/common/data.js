@@ -4,7 +4,7 @@ import h from './helpers';
 
 // Object map of fields on the stage
 const _data = {};
-let formData;
+let formData = {};
 
 // Registered fields are the fields that are configured on init.
 // This variable acts as a data buffer thats contains
@@ -29,7 +29,7 @@ let data = {
 
       _data.formData = data;
       _data.formData.id = data.id || _data.opts.formID || h.uuid();
-
+// console.log(formData, _data.formData);
       formData = _data.formData;
     };
 
@@ -52,7 +52,7 @@ let data = {
       }
     });
 
-    return data;
+    return formData;
   },
 
   saveColumnOrder: (row) => {
@@ -80,9 +80,7 @@ let data = {
   saveRowOrder: () => {
     let stage = document.getElementById(_data.formData.id + '-stage');
     let rows = stage.getElementsByClassName('stage-row');
-    return formData.stage.rows = h.map(rows, (rowID) => {
-      return rows[rowID].id;
-    });
+    return formData.stage.rows = h.map(rows, rowID => rows[rowID].id);
   },
 
   savePropOrder: parent => {
@@ -272,7 +270,7 @@ let data = {
     doSave[_data.opts.dataType](group, id);
 
     if (storage && _data.opts.sessionStorage) {
-      console.log('session.setItem');
+      // console.log('session.setItem');
       storage.setItem('formData', stringify(_data.formData));
     }
 

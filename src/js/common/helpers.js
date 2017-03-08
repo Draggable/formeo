@@ -1,8 +1,8 @@
 'use strict';
-import DOM from './dom';
+import dom from './dom';
 import uuid from 'uuid-v4';
 import deepExtend from 'deep-extend';
-let dom = new DOM();
+// let dom = new DOM();
 
 /**
  * [memoize description]

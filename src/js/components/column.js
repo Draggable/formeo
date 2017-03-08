@@ -2,10 +2,10 @@ import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import {data, formData} from '../common/data';
 import helpers from '../common/helpers';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import Field from './field';
 
-let dom = new DOM();
+// let dom = new DOM();
 
 /**
  * Setup Column elements

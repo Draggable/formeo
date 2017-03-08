@@ -5,7 +5,8 @@ import {formData} from './data';
 /**
  * General purpose markup utilities and generator.
  */
-export default class DOM {
+class DOM {
+
   /**
    * Creates DOM elements
    * @param  {Object}  elem      element config object
@@ -704,3 +705,6 @@ export default class DOM {
   }
 
 }
+
+
+export default new DOM();
