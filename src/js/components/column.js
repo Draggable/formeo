@@ -7,22 +7,31 @@ import Field from './field';
 
 let dom = new DOM();
 
+/**
+ * Setup Column elements
+ */
 export default class Column {
-
+  /**
+   * Set defaults and/or load existing columns
+   * @param  {String} dataID columnId
+   * @return {Object} Column config object
+   */
   constructor(dataID) {
-    let _this = this,
-      columnDataDefault;
+    let _this = this;
+    let cData = formData.columns;
+    let columnDefaults;
 
-    _this.columnID = dataID || helpers.uuid();
 
-    columnDataDefault = {
+    let columnID = _this.columnID = dataID || helpers.uuid();
+
+    columnDefaults = {
       fields: [],
-      id: _this.columnID,
+      id: columnID,
       config: {},
       classList: []
     };
 
-    formData.columns[_this.columnID] = helpers.extend(columnDataDefault, formData.columns[_this.columnID]);
+    cData[columnID] = helpers.extend(columnDefaults, cData[columnID]);
 
     let resizeHandle = {
         tag: 'li',
@@ -30,8 +39,8 @@ export default class Column {
         action: {
           mousedown: _this.resize
         }
-      },
-      editWindow = {
+      };
+    let editWindow = {
         tag: 'li',
         className: 'column-edit group-config'
       };
@@ -92,13 +101,23 @@ export default class Column {
     return column;
   }
 
+  /**
+   * Column sorted event
+   * @param  {Object} evt sort event data
+   * @return {Object} Column order, array of column ids
+   */
   onSort(evt) {
-    data.saveFieldOrder(evt.target);
     console.log(evt.target.fType);
+    return data.saveFieldOrder(evt.target);
     // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
 
+  /**
+   * Process column configuration data
+   * @param  {Object} column [description]
+   * @return {[type]}        [description]
+   */
   processConfig(column) {
     let _this = this,
       columnData = formData.columns[_this.columnID];
@@ -110,15 +129,20 @@ export default class Column {
     }
   }
 
+  /**
+   * Event when column is added
+   * @param  {Object} evt
+   */
   onAdd(evt) {
     if (evt.from.fType === 'controlGroup') {
-      let column = evt.target,
-        field = new Field(evt.item.id);
+      let column = evt.target;
+      let field = new Field(evt.item.id);
 
       column.insertBefore(field, column.childNodes[evt.newIndex]);
       formData.fields[field.id].parent = column.id;
 
-      // calculate field position, subtracting indexes for column-config and column-actions
+      // calculates field position, subtracting indexes
+      // for column-config and column-actions
       dom.fieldOrderClass(column);
       dom.remove(evt.item);
       data.saveFieldOrder(column);
@@ -129,9 +153,14 @@ export default class Column {
     evt.target.classList.remove('hovering-column');
   }
 
+  /**
+   * Event when column is removed
+   * @param  {[type]} column [description]
+   * @return {[type]}        [description]
+   */
   onRemove(column) {
-    let fields = column.querySelectorAll('.stage-field'),
-      row = column.parentElement;
+    let fields = column.querySelectorAll('.stage-field');
+    let row = column.parentElement;
 
     if (!fields.length) {
       dom.remove(column);

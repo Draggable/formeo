@@ -6,6 +6,7 @@ import actions from '../common/actions';
 import DOM from '../common/dom';
 import Panels from './panels';
 
+const h = helpers;
 let dom = new DOM();
 // let formData = data.get();
 console.log('formData:', formData);
@@ -23,10 +24,10 @@ export default class Field {
   constructor(dataID) {
     // const formData = data.get();
     let _this = this;
-    let fieldConfig = helpers.copyObj(registeredFields[dataID]);
+    let fieldConfig = h.copyObj(registeredFields[dataID]);
     let fieldData = formData.fields[dataID] || fieldConfig;
 
-    _this.fieldID = fieldData.id || helpers.uuid();
+    _this.fieldID = fieldData.id || h.uuid();
     fieldData.id = _this.fieldID;
 
     formData.fields[_this.fieldID] = fieldData;
@@ -114,7 +115,7 @@ export default class Field {
             let label = {
               tag: 'label',
               className: ['prop-label-' + elem],
-              content: helpers.capitalize(elem)
+              content: h.capitalize(elem)
             };
 
             if (typeof dataObj[panelType][0][elem] === 'boolean') {
@@ -137,7 +138,7 @@ export default class Field {
         panelArray = Object.keys(dataObj[panelType]);
       }
 
-      helpers.forEach(panelArray, (i) => {
+      h.forEach(panelArray, (i) => {
         let args = {
           i,
           dataProp: panelArray[i],
@@ -160,11 +161,12 @@ export default class Field {
   panelContent(args) {
     let _this = this;
     let dataProp = (typeof args.dataProp === 'string') ? args.dataProp : args.i;
-    let id = helpers.uuid();
+    let id = h.uuid();
+    let propVal = args.dataObj[args.panelType][dataProp];
     let inputs = {
       tag: 'div',
       className: ['prop-inputs'],
-      content: _this.editPanelInputs(dataProp, args.dataObj[args.panelType][dataProp], args.panelType, id)
+      content: _this.editPanelInputs(dataProp, propVal, args.panelType, id)
     };
     let property = {
       tag: 'li',
@@ -183,11 +185,12 @@ export default class Field {
       action: {
         click: (evt) => {
           animate.slideUp(document.getElementById(property.id), 250, (elem) => {
+            let fieldPanel = formData.fields[_this.fieldID][args.panelType];
             dom.remove(elem);
-            if (Array.isArray(formData.fields[_this.fieldID][args.panelType])) {
-              formData.fields[_this.fieldID][args.panelType].splice(dataProp, 1);
+            if (Array.isArray(fieldPanel)) {
+              fieldPanel.splice(dataProp, 1);
             } else {
-              formData.fields[_this.fieldID][args.panelType][dataProp] = undefined;
+              fieldPanel[dataProp] = undefined;
             }
             data.save(args.panelType, _this.fieldID);
             dom.empty(_this.preview);
@@ -218,41 +221,56 @@ export default class Field {
     return property;
   }
 
+  /**
+   * Generate the inputs for an edit panel
+   * @param  {String} prop      property name
+   * @param  {String|Array} propVal   property value
+   * @param  {String} panelType attrs, options, config
+   * @param  {String} id        [description]
+   * @return {Array} element config array
+   */
   editPanelInputs(prop, propVal, panelType, id) {
-    let _this = this,
-      inputs = [],
-      processProperty = (key, val) => {
-        let propType = dom.contentType(val),
-          propIsNum = (typeof prop === 'number'),
-          fMap = propIsNum ? `${panelType}[${prop}].${key}` : panelType + '.' + key,
-          typeAttrs = (key, val, type) => {
-            let boolType = 'checkbox';
-            if (formData.fields[_this.fieldID].attrs.type === 'radio' && key === 'selected') {
-              boolType = 'radio';
+    console.log(prop, propVal, panelType, id);
+    let _this = this;
+    let inputs = [];
+    let processProperty = (key, val) => {
+        let propType = dom.contentType(val);
+        let propIsNum = (typeof prop === 'number');
+        let fMap = panelType + '.' + key;
+
+        if (propIsNum) {
+          fMap = `${panelType}[${prop}].${key}`;
+        }
+        const typeAttrs = (key, val, type) => {
+          let boolType = 'checkbox';
+          let attrType = formData.fields[_this.fieldID].attrs.type;
+          if (attrType === 'radio' && key === 'selected') {
+            boolType = 'radio';
+          }
+          let placeholder = i18n.get(`placeholder.${key}`) || h.capitalize(key);
+          let attrs = {
+            string: {
+              className: 'form-control form-control-sm',
+              type: 'text',
+              value: val,
+              placeholder
+            },
+            'boolean': {
+              type: boolType,
+              value: val
+            },
+            number: {
+              type: 'number',
+              value: val
             }
-            let attrs = {
-              string: {
-                className: 'form-control form-control-sm',
-                type: 'text',
-                value: val,
-                placeholder: i18n.get('placeholder.' + key) || helpers.capitalize(key)
-              },
-              'boolean': {
-                type: boolType,
-                value: val
-              },
-              number: {
-                type: 'number',
-                value: val
-              }
-            };
-            return attrs[type];
-          },
-          inputLabel = key => {
+          };
+          return attrs[type];
+        };
+        const inputLabel = key => {
             let labelKey = panelType + '.' + key;
-            return i18n.current[labelKey] || helpers.capitalize(key);
-          },
-          propertyInputs = {
+            return i18n.current[labelKey] || h.capitalize(key);
+          };
+        const propertyInputs = {
             string: (key, val) => {
               let input = {
                 tag: 'input',
@@ -269,7 +287,7 @@ export default class Field {
 
               return input;
             },
-            'boolean': (key, val) => {
+            boolean: (key, val) => {
               let input = {
                 tag: 'input',
                 attrs: typeAttrs(key, val, 'boolean'),
@@ -321,13 +339,18 @@ export default class Field {
     return inputs;
   }
 
+  /**
+   * Add a new attribute to the attrs panels
+   * @param {String} attr
+   * @param {String|Array} val
+   */
   addAttribute(attr, val) {
-    let _this = this,
-      field = document.getElementById(_this.fieldID),
-      editGroup = field.querySelector('.field-edit-attrs'),
-      safeAttr = helpers.hyphenCase(attr);
+    let _this = this;
+    let field = document.getElementById(_this.fieldID);
+    let editGroup = field.querySelector('.field-edit-attrs');
+    let safeAttr = h.hyphenCase(attr);
 
-    i18n.put('attrs' + safeAttr, helpers.capitalize(attr));
+    i18n.put('attrs' + safeAttr, h.capitalize(attr));
 
     try {
       formData.fields[_this.fieldID].attrs[safeAttr] = window.JSON.parse(val);
@@ -347,12 +370,15 @@ export default class Field {
     _this.resizePanelWrap();
   }
 
+  /**
+   * Add option to options panel
+   */
   addOption() {
-    let _this = this,
-      field = document.getElementById(_this.fieldID),
-      dataObj = formData.fields[_this.fieldID],
-      editGroup = field.querySelector('.field-edit-options'),
-      propData = {label: '', value: '', selected: false};
+    let _this = this;
+    let field = document.getElementById(_this.fieldID);
+    let dataObj = formData.fields[_this.fieldID];
+    let editGroup = field.querySelector('.field-edit-options');
+    let propData = {label: '', value: '', selected: false};
     dataObj.options.push(propData);
 
     let args = {
@@ -367,6 +393,11 @@ export default class Field {
     _this.resizePanelWrap();
   }
 
+  /**
+   * Generate edit buttons for interacting with attrs and options panel
+   * @param  {String} type
+   * @return {Object} panel edit buttons config
+   */
   panelEditButtons(type) {
     let _this = this;
     let addBtn = {
@@ -391,7 +422,8 @@ export default class Field {
               addEvt.addAction = _this.addOption.bind(_this);
             }
 
-            let customEvt = new CustomEvent('onAdd' + helpers.capitalize(type), {
+            let eventType = h.capitalize(type);
+            let customEvt = new CustomEvent(`onAdd${eventType}`, {
               detail: addEvt
             });
 
@@ -420,6 +452,10 @@ export default class Field {
     return panelEditButtons;
   }
 
+  /**
+   * Generate the markup for field edit mode
+   * @return {Object} fieldEdit elemnt config
+   */
   fieldEdit() {
     let _this = this;
     let panels = [];
@@ -427,7 +463,7 @@ export default class Field {
     let noPanels = ['config', 'meta'];
     let fieldData = formData.fields[_this.fieldID];
     let allowedPanels = Object.keys(fieldData).filter((elem) => {
-        return !helpers.inArray(elem, noPanels);
+        return !h.inArray(elem, noPanels);
       });
 
     let fieldEdit = {
@@ -435,9 +471,9 @@ export default class Field {
       className: ['field-edit', 'slide-toggle', 'panels-wrap']
     };
 
-    helpers.forEach(allowedPanels, function(i, prop) {
+    h.forEach(allowedPanels, function(i, prop) {
       let propType = dom.contentType(fieldData[prop]);
-      if (helpers.inArray(propType, editable)) {
+      if (h.inArray(propType, editable)) {
         let panel = {
           tag: 'div',
           attrs: {
@@ -451,21 +487,21 @@ export default class Field {
             _this.panelEditButtons(prop)
           ],
           action: {
-            change: (evt) => {
+            change: evt => {
               if (evt.target.fMap) {
                 let value = evt.target.value;
-                if (evt.target.type === 'checkbox' || evt.target.type === 'radio') {
+                let targetType = evt.target.type;
+                if (targetType === 'checkbox' || targetType === 'radio') {
+                  let options = formData.fields[_this.fieldID].options;
                   value = evt.target.checked;
 
-                  // if this is radio we need to manually uncheck options in data model
+                  // uncheck options if radio
                   if (evt.target.type === 'radio') {
-                    helpers.forEach(formData.fields[_this.fieldID].options, (i, option) => {
-                      option.selected = false;
-                    });
+                    options.forEach(option => option.selected = false);
                   }
                 }
 
-                helpers.set(formData.fields[_this.fieldID], evt.target.fMap, value);
+                h.set(formData.fields[_this.fieldID], evt.target.fMap, value);
                 data.save(prop, _this.fieldID);
                 // throttle this for sure
                 _this.updatePreview();
@@ -495,9 +531,13 @@ export default class Field {
     return fieldEdit;
   }
 
+  /**
+   * Generate field preview config
+   * @return {Object} fieldPreview
+   */
   fieldPreview() {
     let _this = this;
-    let fieldData = helpers.clone(formData.fields[_this.fieldID]);
+    let fieldData = h.clone(formData.fields[_this.fieldID]);
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -506,14 +546,15 @@ export default class Field {
       attrs: {
         className: 'field-preview'
       },
-      content: dom.create(fieldData, true), // get the config for this field's preview
+      content: dom.create(fieldData, true),
       action: {
-        input: (evt) => {
+        input: evt => {
+          let fieldData = formData.fields[_this.fieldID];
           if (evt.target.fMap) {
             if (evt.target.contentEditable === 'true') {
-              helpers.set(formData.fields[_this.fieldID], evt.target.fMap, evt.target.innerHTML);
+              h.set(fieldData, evt.target.fMap, evt.target.innerHTML);
             } else {
-              helpers.set(formData.fields[_this.fieldID], evt.target.fMap, evt.target.value);
+              h.set(fieldData, evt.target.fMap, evt.target.value);
             }
             data.save('field', _this.fieldID);
           }
