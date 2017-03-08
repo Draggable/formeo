@@ -6,10 +6,6 @@ import actions from '../common/actions';
 import dom from '../common/dom';
 import Panels from './panels';
 
-// let dom = new DOM();
-// let formData = data.get();
-console.log('formData:', formData);
-
 /**
  * Element/Field class.
  */

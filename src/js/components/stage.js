@@ -1,15 +1,13 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
 import {data, formData} from '../common/data';
-import helpers from '../common/helpers';
+import h from '../common/helpers';
 import dom from '../common/dom';
 import Row from './row';
 import Column from './column';
 import Field from './field';
-// let dom = new DOM();
 
 let stageOpts = {};
-// let formData = {};
 
 /**
  * Stage is where fields and elements are dragged to.
@@ -18,12 +16,12 @@ export default class Stage {
   /**
    * Process options and load existing fields from data to the stage
    * @param  {Object} formeoOptions
-   * @param  {String} formID
+   * @param  {String} stageID uuid
    * @return {Object} DOM element
    */
-  constructor(formeoOptions, formID) {
+  constructor(formeoOptions, stageID) {
     // formData = data.get();
-    this.formID = formID;
+    this.stageID = stageID || h.uuid();
     let defaultOptions = {
       formSettings: [{
         tag: 'input',
@@ -75,10 +73,9 @@ export default class Stage {
   loadStage() {
     let stageWrap = this.dom;
     let stage = stageWrap.firstChild;
+    let stageData = formData.stages[this.stageID];
 
-    console.log(formData);
-
-    if (formData.stage.rows && formData.stage.rows.length) {
+    if (stageData && stageData.rows) {
       this.loadRows(stage);
       stage.classList.remove('stage-empty');
     }
@@ -92,9 +89,9 @@ export default class Stage {
    * @return {Array}  loaded rows
    */
   loadRows(stage) {
-    // if (formData.stage.rows.length) {
-    let rows = formData.stage.rows;
-    return helpers.forEach(rows, (i) => {
+    // if (formData.stages.rows.length) {
+    let rows = formData.stages.rows;
+    return h.forEach(rows, (i) => {
       let row = new Row(rows[i]);
       this.loadColumns(row);
       stage.appendChild(row);
@@ -110,7 +107,8 @@ export default class Stage {
   loadColumns(row) {
     // if (formData.rows[row.id].columns.length) {
     let columns = formData.rows[row.id].columns;
-    helpers.forEach(columns, (i) => {
+    console.log(columns);
+    h.forEach(columns, (i) => {
       let column = new Column(columns[i]);
       dom.fieldOrderClass(column);
       this.loadFields(column);
@@ -126,7 +124,7 @@ export default class Stage {
   loadFields(column) {
     // if (formData.columns[column.id].fields.length) {
     let fields = formData.columns[column.id].fields;
-    helpers.forEach(fields, (i) => {
+    h.forEach(fields, (i) => {
       let field = new Field(fields[i]);
       column.appendChild(field);
     });
@@ -147,7 +145,7 @@ export default class Stage {
               'stage',
               'stage-empty'
             ],
-            id: _this.formID + '-stage'
+            id: _this.stageID
           },
           fType: 'stage'
         },
@@ -155,7 +153,7 @@ export default class Stage {
           tag: 'div',
           attrs: {
             className: 'formeo-settings',
-            id: _this.formID + '-settings'
+            id: `${_this.stageID}-settings`
           },
           fType: 'settings'
         }
@@ -196,7 +194,7 @@ export default class Stage {
 
     // Set parent IDs
     formData.columns[column.id].parent = row.id;
-    formData.rows[row.id].parent = _this.formID;
+    formData.rows[row.id].parent = _this.stageID;
 
     row.appendChild(column);
     data.saveColumnOrder(row);
@@ -220,7 +218,7 @@ export default class Stage {
    */
   onAdd(evt) {
     let stage = evt.target;
-    let newIndex = helpers.indexOfNode(evt.item, stage);
+    let newIndex = h.indexOfNode(evt.item, stage);
     let row = this.addRow(evt);
 
     if (evt.item.fType === 'column') {
@@ -269,7 +267,6 @@ export default class Stage {
         config.settings
       ]
     });
-    console.log([stageWrap]);
 
     Sortable.create(stageWrap.firstChild, {
       animation: 150,

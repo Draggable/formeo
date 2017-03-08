@@ -191,7 +191,7 @@ class Formeo {
       opts.actions.debug = opts.events.debug = true;
     }
 
-    data.init(opts, formData);
+    formeo.formData = data.init(opts, formData);
     events.init(opts.events);
     actions.init(opts.actions);
 
@@ -232,13 +232,13 @@ class Formeo {
     await i18n.init(opts.i18n);
     formeo.formData = data.get();
     _this.formID = opts.formID = formeo.formData.id;
-    _this.stage = new Stage(opts, _this.formID);
+    _this.stages = _this.buildStages();
     formeo.controls = new Controls(opts.controls, _this.formID);
     formeo.i18n = {
       setLang: locale => {
         let loadLang = i18n.setCurrent.call(i18n, locale);
         loadLang.then(function() {
-            _this.stage = new Stage(opts, _this.formID);
+            _this.stages = _this.buildStages();
             formeo.controls = new Controls(opts.controls, _this.formID);
             _this.render();
           },
@@ -255,13 +255,32 @@ class Formeo {
   }
 
   /**
+   * Generate the stages we will drag out elements to
+   * @return {Object} stages map
+   */
+  buildStages() {
+    let stages = {};
+    let stagesData = Object.keys(formeo.formData.stages);
+    if (stagesData.length) {
+      stagesData.forEach(stageID => {
+        stages[stageID] = new Stage(opts, stageID);
+      });
+    } else {
+      const newStage = new Stage(opts);
+      stages[newStage.id] = newStage;
+    }
+
+    return stages;
+  }
+
+  /**
    * Render the formeo sections
    * @return {void}
    */
   render() {
     let _this = this;
     let controls = formeo.controls.dom;
-    let stage = formeo.stage = _this.stage;
+    let stage = formeo.stage = _this.stages;
 
     let elemConfig = {
         tag: 'div',

@@ -4,7 +4,7 @@ import h from './helpers';
 
 // Object map of fields on the stage
 const _data = {};
-let formData = {};
+let formData;
 
 // Registered fields are the fields that are configured on init.
 // This variable acts as a data buffer thats contains
@@ -16,7 +16,7 @@ let data = {
     _data.formData = {
       id: h.uuid(),
       settings: {},
-      stage: {},
+      stages: {},
       rows: {},
       columns: {},
       fields: {}
@@ -29,7 +29,6 @@ let data = {
 
       _data.formData = data;
       _data.formData.id = data.id || _data.opts.formID || h.uuid();
-// console.log(formData, _data.formData);
       formData = _data.formData;
     };
 
@@ -80,7 +79,7 @@ let data = {
   saveRowOrder: () => {
     let stage = document.getElementById(_data.formData.id + '-stage');
     let rows = stage.getElementsByClassName('stage-row');
-    return formData.stage.rows = h.map(rows, rowID => rows[rowID].id);
+    return formData.stages.rows = h.map(rows, rowID => rows[rowID].id);
   },
 
   savePropOrder: parent => {
@@ -123,7 +122,7 @@ let data = {
   saveType: (group, id) => {
     let map = {
       settings: () => {
-        let stage = formData.stage.settings;
+        let stage = formData.stages.settings;
         _data.formData.settings = [];
 
         h.forEach(stage, (i, rowID) => {
@@ -135,29 +134,29 @@ let data = {
         return _data.formData.settings;
       },
       rows: () => {
-        // _data.saveRowOrder();
+        _data.saveRowOrder();
         return _data.formData.rows;
       },
-      columns: (rowID) => {
+      columns: rowID => {
         return h.clone(formData.rows[rowID].columns);
       },
-      fields: (columnID) => {
+      fields: columnID => {
         return h.clone(formData.columns[columnID].fields);
       },
-      field: (fieldID) => {
+      field: fieldID => {
         let fieldLink = data.fieldLink(fieldID);
         let setString = data.fieldSetString(fieldID);
         h.set(_data.formData, setString, h.clone(formData.fields[fieldID]));
 
         return fieldLink;
       },
-      attrs: (fieldID) => {
+      attrs: fieldID => {
         let fieldLink = data.fieldLink(fieldID);
         fieldLink.attrs = h.clone(formData.fields[fieldID].attrs);
 
         return fieldLink.attrs;
       },
-      options: (fieldID) => {
+      options: fieldID => {
         let fieldLink = data.fieldLink(fieldID);
         fieldLink.options = formData.fields[fieldID].options.slice();
 
@@ -169,18 +168,18 @@ let data = {
   },
 
   // returns index of row in formData
-  rowIndex: (rowID) => {
-    return formData.stage.rows.indexOf(rowID);
+  rowIndex: rowID => {
+    return formData.stages.rows.indexOf(rowID);
   },
 
   // returns index of column in formData
-  columnIndex: (columnID) => {
+  columnIndex: columnID => {
     let column = formData.columns[columnID];
     return formData.rows[column.parent].columns.indexOf(columnID);
   },
 
   // returns index of field in formData
-  fieldIndex: (fieldID) => {
+  fieldIndex: fieldID => {
     let field = formData.fields[fieldID];
     return formData.columns[field.parent].fields.indexOf(fieldID);
   },
@@ -240,13 +239,13 @@ let data = {
   columnLink: (columnID) => {
     let row = formData.rows[formData.columns[columnID].parent];
     let columnIndex = row.columns.indexOf(columnID);
-    let rowIndex = formData.stage.rows.indexOf(row.id);
+    let rowIndex = formData.stages.rows.indexOf(row.id);
     return _data.formData.rows[rowIndex].columns[columnIndex];
   },
 
   // Provides a map to a row in formData
   rowLink: (rowID) => {
-    let rowIndex = formData.stage.rows.indexOf(rowID);
+    let rowIndex = formData.stages.rows.indexOf(rowID);
     return _data.formData.rows[rowIndex];
   },
 
@@ -255,7 +254,7 @@ let data = {
     data.saveType(group, id);
     _data.formData = h.clone(formData);
 
-    stage.classList.toggle('stage-empty', (formData.rows.length === 0));
+    // stage.classList.toggle('stage-empty', (formData.rows.length === 0));
     return _data.formData;
   },
 
