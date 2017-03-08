@@ -1,12 +1,11 @@
 import i18n from 'mi18n';
 import {data, formData, registeredFields} from '../common/data';
 import animate from '../common/animation';
-import helpers from '../common/helpers';
+import h from '../common/helpers';
 import actions from '../common/actions';
 import DOM from '../common/dom';
 import Panels from './panels';
 
-const h = helpers;
 let dom = new DOM();
 // let formData = data.get();
 console.log('formData:', formData);
@@ -107,30 +106,30 @@ export default class Field {
 
       let panelArray;
       if (propType === 'array') {
-        let props = Object.keys(dataObj[panelType][0]);
-        let panelLabels = {
-          tag: 'div',
-          className: 'input-group',
-          content: props.map((elem) => {
-            let label = {
-              tag: 'label',
-              className: ['prop-label-' + elem],
-              content: h.capitalize(elem)
-            };
+        // let props = Object.keys(dataObj[panelType][0]);
+        // let panelLabels = {
+        //   tag: 'div',
+        //   className: 'input-group',
+        //   content: props.map((elem) => {
+        //     let label = {
+        //       tag: 'label',
+        //       className: ['prop-label-' + elem],
+        //       content: h.capitalize(elem)
+        //     };
 
-            if (typeof dataObj[panelType][0][elem] === 'boolean') {
-              label.tag = 'span';
-              label.className.push('input-group-addon');
-            }
+        //     if (typeof dataObj[panelType][0][elem] === 'boolean') {
+        //       label.tag = 'span';
+        //       label.className.push('input-group-addon');
+        //     }
 
-            return label;
-          })
-        };
-        let labelWrap = {
-          tag: 'header',
-          content: panelLabels,
-          className: 'prop-labels'
-        };
+        //     return label;
+        //   })
+        // };
+        // let labelWrap = {
+        //   tag: 'header',
+        //   content: panelLabels,
+        //   className: 'prop-labels'
+        // };
         // removing labels until find a better way to handle them.
         // panelWrap.content.unshift(labelWrap);
         panelArray = dataObj[panelType];

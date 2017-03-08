@@ -1,6 +1,6 @@
 import helpers from './helpers';
 import animate from './animation';
-import {formData, data} from './data';
+import {formData} from './data';
 
 /**
  * General purpose markup utilities and generator.
@@ -198,9 +198,9 @@ export default class DOM {
     if (iconLink) {
       icon = `<svg class="svg-icon icon-${name}"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-${name}"></use></svg>`;
     } else {
+      //eslint-disable-next-line
       icon = `<span class="glyphicon glyphicon-${name}" aria-hidden="true"></span>`;
     }
-    // console.log(iconLink);
     return icon;
   }
 
@@ -377,15 +377,16 @@ export default class DOM {
    */
   actionButtons(id, item = 'column') {
     let _this = this;
+    let icon = _this.icon;
     let tag = (item === 'column' ? 'li' : 'div');
-    let moveIcon = (item === 'row') ? _this.icon('move-vertical') : _this.icon('move');
+    let moveIcon = item === 'row' ? icon('move-vertical') : icon('move');
     let btnWrap = {
         tag: 'div',
         className: 'action-btn-wrap'
       };
       let menuHandle = {
         tag: 'button',
-        content: [moveIcon, _this.icon('handle')],
+        content: [moveIcon, icon('handle')],
         attrs: {
           className: item + '-handle btn-secondary btn',
           'type': 'button'
@@ -393,7 +394,7 @@ export default class DOM {
       };
       let editToggle = {
         tag: 'button',
-        content: _this.icon('edit'),
+        content: icon('edit'),
         attrs: {
           className: item + '-edit-toggle btn-secondary btn',
           'type': 'button'
@@ -416,7 +417,7 @@ export default class DOM {
       };
       let remove = {
         tag: 'button',
-        content: _this.icon('remove'),
+        content: icon('remove'),
         attrs: {
           className: item + '-remove btn-secondary btn',
           'type': 'button'
@@ -459,6 +460,10 @@ export default class DOM {
     return actions;
   }
 
+  /**
+   * [removeEmpty description]
+   * @param  {[type]} element [description]
+   */
   removeEmpty(element) {
     let _this = this;
     let parent = element.parentElement;
@@ -480,8 +485,8 @@ export default class DOM {
 
   /**
    * Removes element by reference or ID
-   *
-   * @param  {String | Object} elem
+   * @param  {String|Object} elem
+   * @return  {Object} parent element
    */
   remove(elem) {
     let element = this.getElement(elem);
@@ -495,17 +500,17 @@ export default class DOM {
    * @param  {String | Array} className
    */
   removeClasses(nodeList, className) {
-    let _this = this,
-      removeClass = {
-        string: (elem) => {
-          elem.className = elem.className.replace(className, '');
-        },
-        array: (elem) => {
-          for (var i = className.length - 1; i >= 0; i--) {
-            elem.classList.remove(className[i]);
-          }
+    let _this = this;
+    let removeClass = {
+      string: elem => {
+        elem.className = elem.className.replace(className, '');
+      },
+      array: elem => {
+        for (let i = className.length - 1; i >= 0; i--) {
+          elem.classList.remove(className[i]);
         }
-      };
+      }
+    };
     removeClass.object = removeClass.string; // handles regex map
     helpers.forEach(nodeList, (i) => {
       removeClass[_this.contentType(className)](nodeList[i]);
@@ -519,22 +524,26 @@ export default class DOM {
    * @param  {String | Array} className
    */
   addClasses(nodeList, className) {
-    let _this = this,
-      addClass = {
-        string: (elem) => {
-          elem.classList.add(className);
-        },
-        array: (elem) => {
-          for (var i = className.length - 1; i >= 0; i--) {
-            elem.classList.add(className[i]);
-          }
+    let _this = this;
+    let addClass = {
+      string: elem => {
+        elem.classList.add(className);
+      },
+      array: elem => {
+        for (let i = className.length - 1; i >= 0; i--) {
+          elem.classList.add(className[i]);
         }
-      };
+      }
+    };
     helpers.forEach(nodeList, (i) => {
       addClass[_this.contentType(className)](nodeList[i]);
     });
   }
 
+  /**
+   * [fieldOrderClass description]
+   * @param  {[type]} column [description]
+   */
   fieldOrderClass(column) {
     let fields = column.querySelectorAll('.stage-field');
 
@@ -545,18 +554,29 @@ export default class DOM {
     }
   }
 
+  /**
+   * [columnWidths description]
+   * @param  {[type]}  row    [description]
+   * @param  {Boolean} widths [description]
+   * @return {[type]}         [description]
+   */
   columnWidths(row, widths = false) {
-    let _this = this,
-      columns = row.getElementsByClassName('stage-column');
+    let _this = this;
+    let columns = row.getElementsByClassName('stage-column');
     if (!columns.length) {
       return false;
     }
     let colWidth = (12 / columns.length);
-    let width = widths ? widths : new Array(columns.length).fill(100 / columns.length),
-      rowStyle = _this.getStyle(row),
-      bsGridRegEx = /\bcol-\w+-\d+/g,
-      rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight),
-      rowWidth = row.offsetWidth - rowPadding; //compensate for padding
+    let width = widths;
+    if (!width) {
+      width = new Array(columns.length).fill(100 / columns.length);
+    }
+    let rowStyle = _this.getStyle(row);
+    let bsGridRegEx = /\bcol-\w+-\d+/g;
+    let rowPadding = parseFloat(rowStyle.paddingLeft) +
+    parseFloat(rowStyle.paddingRight);
+    // compensate for padding;
+    let rowWidth = row.offsetWidth - rowPadding;
 
     _this.removeClasses(columns, bsGridRegEx);
 
@@ -565,7 +585,8 @@ export default class DOM {
       if (helpers.isInt(colWidth)) {
         let widthClass = 'col-md-' + colWidth;
         column.removeAttribute('style');
-        column.className.replace(bsGridRegEx, ''); // removes bootstrap column classes
+        // removes bootstrap column classes
+        column.className.replace(bsGridRegEx, '');
         column.classList.add(widthClass);
         formData.columns[column.id].config.width = width;
         formData.columns[column.id].classList.push(widthClass);
@@ -580,7 +601,7 @@ export default class DOM {
     // Fix the editWindow for any fields that were being edited
     let editingFields = row.getElementsByClassName('editing-field');
     if (editingFields.length) {
-      for (var i = editingFields.length - 1; i >= 0; i--) {
+      for (let i = editingFields.length - 1; i >= 0; i--) {
         editingFields[i].panelNav.refresh();
       }
     }
@@ -596,6 +617,12 @@ export default class DOM {
     return colWidth;
   }
 
+  /**
+   * [formGroup description]
+   * @param  {[type]} content   [description]
+   * @param  {String} className [description]
+   * @return {[type]}           [description]
+   */
   formGroup(content, className = '') {
     return {
       tag: 'div',
@@ -604,43 +631,60 @@ export default class DOM {
     };
   }
 
+  /**
+   * Generates the element config for column layout in row
+   * @param  {String} rowID [description]
+   * @return {Object}       [description]
+   */
   columnPresetControl(rowID) {
     let row = formData.rows[rowID];
-    console.log(rowID);
-    let columnSettingsPresetSelect = {
+    let layoutPreset = {
         tag: 'select',
         attrs: {
           ariaLabel: 'Define a column layout',
           className: 'form-control column-preset'
         }
       };
-    let presetMap = new Map();
+    let pMap = new Map();
 
-    presetMap.set(1, [{value: '', label: '100%'}]);
-    presetMap.set(2, [{value: '50,50', label: '50 | 50'}, {value: '33,66', label: '33 | 66'}]);
-    presetMap.set(3, [{value: '33,33,33', label: '33 | 33 | 33'}, {value: '25,50,25', label: '25 | 50 | 25'}]);
-    presetMap.set(4, [{value: '25,25,25,25', label: '25 | 25 | 25 | 25'}]);
-    presetMap.set('custom', [{value: 'custom', label: 'Custom'}]);
+    pMap.set(1, [{value: '', label: '100%'}]);
+    pMap.set(2, [
+      {value: '50,50', label: '50 | 50'},
+      {value: '33,66', label: '33 | 66'}
+    ]);
+    pMap.set(3, [
+      {value: '33,33,33', label: '33 | 33 | 33'},
+      {value: '25,50,25', label: '25 | 50 | 25'}
+    ]);
+    pMap.set(4, [{value: '25,25,25,25', label: '25 | 25 | 25 | 25'}]);
+    pMap.set('custom', [{value: 'custom', label: 'Custom'}]);
 
     if (row) {
       // let columns = row.getElementsByClassName('stage-column');
       let columns = row.columns;
-      columnSettingsPresetSelect.options = presetMap.get(columns.length) || presetMap.get('custom');
+      layoutPreset.options = pMap.get(columns.length) || pMap.get('custom');
     } else {
-      columnSettingsPresetSelect.options = presetMap.get(1);
+      layoutPreset.options = pMap.get(1);
     }
 
-    return columnSettingsPresetSelect;
+    return layoutPreset;
   }
 
+  /**
+   * Updates the column preset <select>
+   * @param  {String} row [description]
+   * @return {Object} columnPresetConfig
+   */
   updateColumnPreset(row) {
     console.log('updateColumnPreset');
-    let _this = this,
-      oldColumnPreset = row.querySelector('.column-preset'),
-      rowEdit = oldColumnPreset.parentElement,
-      newColumnPreset = _this.create(_this.columnPresetControl(row.id));
+    let _this = this;
+    let oldColumnPreset = row.querySelector('.column-preset');
+    let rowEdit = oldColumnPreset.parentElement;
+    let columnPresetConfig = _this.columnPresetControl(row.id);
+    let newColumnPreset = _this.create(columnPresetConfig);
 
     rowEdit.replaceChild(newColumnPreset, oldColumnPreset);
+    return columnPresetConfig;
   }
 
   /**
@@ -658,11 +702,5 @@ export default class DOM {
       pageY: (buttonPosition.top - bodyRect.top) - (buttonPosition.height / 2)
     };
   }
-
-  // manualColumnWidth(column, width) {
-  //   let _this = this;
-
-  //   parseFloat($(this)[0].style.height / $('#idOfFirstParent').height ()) * 100;
-  // }
 
 }

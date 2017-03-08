@@ -1,21 +1,29 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import DOM from '../common/dom';
-import helpers from '../common/helpers';
+import h from '../common/helpers';
 import {data, formData} from '../common/data';
 
 const dom = new DOM();
 
+/**
+ *
+ */
 export default class Row {
 
+  /**
+   * [constructor description]
+   * @param  {[type]} dataID [description]
+   * @return {[type]}        [description]
+   */
   constructor(dataID) {
     let _this = this;
-    let rowDataDefault;
+    let defaults;
     let row;
 
-    _this.rowID = dataID || helpers.uuid();
+    _this.rowID = dataID || h.uuid();
 
-    rowDataDefault = {
+    defaults = {
         columns: [],
         id: _this.rowID,
         config: {
@@ -24,8 +32,8 @@ export default class Row {
         }
       };
 
-    // _this.rowData = helpers.extend(rowDataDefault, formData.rows[_this.rowID]);
-    formData.rows[_this.rowID] = helpers.extend(rowDataDefault, formData.rows[_this.rowID]);
+    // _this.rowData = h.extend(defaults, formData.rows[_this.rowID]);
+    formData.rows[_this.rowID] = h.extend(defaults, formData.rows[_this.rowID]);
 
     row = {
       tag: 'li',
@@ -68,6 +76,10 @@ export default class Row {
     return row;
   }
 
+  /**
+   * [editWindow description]
+   * @return {[type]} [description]
+   */
   editWindow() {
     let _this = this;
 
@@ -96,8 +108,9 @@ export default class Row {
         noWrap: true
       }
     };
-    // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
-    // fieldsetAddon = Object.assign({}, fieldsetLabel, { content: [fieldsetInput, ' Fieldset'] }),
+    // let fieldsetAddon = Object.assign({}, fieldsetLabel, {
+      // content: [fieldsetInput, ' Fieldset']
+    // });
     let inputAddon = {
       tag: 'span',
       className: 'input-group-addon',
@@ -105,7 +118,11 @@ export default class Row {
     };
     let legendInput = {
       tag: 'input',
-      attrs: {type: 'text', ariaLabel: 'Legend for fieldset', placeholder: 'Legend'},
+      attrs: {
+        type: 'text',
+        ariaLabel: 'Legend for fieldset',
+        placeholder: 'Legend'
+      },
       className: 'form-control'
     };
     let fieldsetInputGroup = {
@@ -114,24 +131,45 @@ export default class Row {
       content: [inputAddon, legendInput]
     };
     let fieldSetControls = dom.formGroup([fieldsetLabel, fieldsetInputGroup]);
-    let columnSettingsLabel = Object.assign({}, fieldsetLabel, {content: 'Define column widths'});
-    let columnSettingsPresetLabel = Object.assign({}, fieldsetLabel, {content: 'Layout Preset', className: 'col-sm-2 form-control-label'});
+    let columnSettingsLabel = Object.assign({}, fieldsetLabel, {
+      content: 'Define column widths'
+    });
+    let columnSettingsPresetLabel = Object.assign({}, fieldsetLabel, {
+      content: 'Layout Preset', className: 'col-sm-2 form-control-label'
+    });
     let columnSettingsPresetSelect = {
       tag: 'div',
       className: 'col-sm-10',
       content: dom.columnPresetControl(_this.rowID)
     };
-    let columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row');
+    let formGroupContent = [
+      columnSettingsPresetLabel,
+      columnSettingsPresetSelect
+    ];
+    let columnSettingsPreset = dom.formGroup(formGroupContent, 'row');
 
-    editWindow.content = [fieldSetControls, '<hr>', columnSettingsLabel, columnSettingsPreset];
+    editWindow.content = [
+      fieldSetControls,
+      '<hr>',
+      columnSettingsLabel,
+      columnSettingsPreset
+    ];
 
     return editWindow;
   }
 
+  /**
+   * [onMove description]
+   * @param  {[type]} evt [description]
+   */
   onMove(evt) {
     console.log('dragging column');
   }
 
+  /**
+   * [onMove description]
+   * @param  {[type]} evt [description]
+   */
   onSort(evt) {
     if (evt.target) {
       data.save('columns', evt.target.id);
@@ -139,6 +177,10 @@ export default class Row {
     }
   }
 
+  /**
+   * [onMove description]
+   * @param  {[type]} evt [description]
+   */
   onRemove(evt) {
     console.log('onRemove', evt);
     let row = evt.from;
@@ -156,6 +198,10 @@ export default class Row {
     data.save('columns', row.id);
   }
 
+  /**
+   * [onMove description]
+   * @param  {[type]} evt [description]
+   */
   onAdd(evt) {
     console.log('onAdd', evt);
     let column = formData.columns[evt.item.id];
@@ -167,8 +213,8 @@ export default class Row {
     data.save('columns', evt.target.id);
   }
 
-  columnWidth() {
+  // columnWidth() {
 
-  }
+  // }
 
 }

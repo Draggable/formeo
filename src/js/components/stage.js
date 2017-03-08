@@ -108,7 +108,6 @@ export default class Stage {
   /**
    * Load columns to row
    * @param  {Object} row
-   * @return {Array}     loaded rows
    */
   loadColumns(row) {
     // if (formData.rows[row.id].columns.length) {
@@ -122,6 +121,10 @@ export default class Stage {
     // }
   }
 
+  /**
+   * [loadFields description]
+   * @param  {[type]} column [description]
+   */
   loadFields(column) {
     // if (formData.columns[column.id].fields.length) {
     let fields = formData.columns[column.id].fields;
@@ -183,6 +186,11 @@ export default class Stage {
     return column;
   }
 
+  /**
+   * [addRow description]
+   * @param {[type]} evt [description]
+   * @return {Object} row
+   */
   addRow(evt) {
     let _this = this;
     let column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt);
@@ -201,13 +209,17 @@ export default class Stage {
   /**
    * Callback for when a row is sorted
    * @param  {Object} evt
-   * @return {[type]}     [description]
    */
   onSort(evt) {
     data.saveRowOrder(evt);
     data.save();
   }
 
+  /**
+   * [onAdd description]
+   * @param  {Object} evt
+   * @return {Object} formData
+   */
   onAdd(evt) {
     let stage = evt.target;
     let newIndex = helpers.indexOfNode(evt.item, stage);
@@ -224,16 +236,17 @@ export default class Stage {
       dom.remove(evt.item);
     }
 
-    data.save();
+    return data.save();
   }
 
   /**
    * Does some cleanup after an element is removed from the stage
-   * @return {Object} onRemove event
+   * @param  {Object} evt
+   * @return {Object} formData
    */
   onRemove(evt) {
     console.log('stage.js onRemove', evt);
-    data.save();
+    return data.save();
   }
 
   /**

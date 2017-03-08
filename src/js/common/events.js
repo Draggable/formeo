@@ -1,8 +1,6 @@
-'use strict';
-import helpers from './helpers';
 
 // Default options
-var defaults = {
+let defaults = {
   formeoLoaded: (evt) => {},
   onAdd: () => {},
   onUpdate: (evt) => {},
@@ -17,7 +15,7 @@ var defaults = {
 /**
  * Events class is used to register events and throttle their callbacks
  */
-var events = {
+const events = {
   init: function(options) {
     this.opts = Object.assign({}, defaults, options);
     return this;

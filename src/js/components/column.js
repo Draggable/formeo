@@ -115,12 +115,11 @@ export default class Column {
 
   /**
    * Process column configuration data
-   * @param  {Object} column [description]
-   * @return {[type]}        [description]
+   * @param  {Object} column
    */
   processConfig(column) {
-    let _this = this,
-      columnData = formData.columns[_this.columnID];
+    let _this = this;
+    let columnData = formData.columns[_this.columnID];
     if (columnData.config.width) {
       let percentWidth = Math.round(columnData.config.width).toString() + '%';
       column.dataset.colWidth = percentWidth;
@@ -156,7 +155,6 @@ export default class Column {
   /**
    * Event when column is removed
    * @param  {[type]} column [description]
-   * @return {[type]}        [description]
    */
   onRemove(column) {
     let fields = column.querySelectorAll('.stage-field');
@@ -173,41 +171,47 @@ export default class Column {
     dom.columnWidths(row);
   }
 
+  /**
+   * Callback for when dragging ends
+   * @param  {Object} evt
+   */
   onEnd(evt) {
     if (evt.target) {
       evt.target.classList.remove('hovering-column');
     }
   }
 
+  /**
+   * Handle column resizing
+   * @param  {Object} evt resize event
+   */
   resize(evt) {
-    let resize = {},
-      column = evt.target.parentElement,
-      sibling = evt.target.parentElement.nextSibling || evt.target.parentElement.previousSibling,
-      row = column.parentElement,
-      rowStyle = dom.getStyle(row),
-      rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight);
+    let resize = {};
+    let column = evt.target.parentElement;
+    let sibling = column.nextSibling || column.previousSibling;
+    let row = column.parentElement;
+    let rowStyle = dom.getStyle(row);
+    let rowPadding = parseFloat(rowStyle.paddingLeft) +
+    parseFloat(rowStyle.paddingRight);
 
     /**
      * Set the width before resizing so the column
      * does not resize near window edges
+     * @param  {Object} evt
      */
     function setWidths(evt) {
-      let newColWidth = (resize.colStartWidth + evt.clientX - resize.startX),
-        newSibWidth = (resize.sibStartWidth - evt.clientX + resize.startX),
-        numToPercentString = (num) => {
-          return num.toString() + '%';
-        },
-        percent = (width) => {
-          return (width / resize.rowWidth * 100);
-        },
-        colWidthPercent = percent(newColWidth),
-        sibWidthPercent = percent(newSibWidth);
+      let newColWidth = (resize.colStartWidth + evt.clientX - resize.startX);
+      let newSibWidth = (resize.sibStartWidth - evt.clientX + resize.startX);
+      const numToPercent = num => num.toString() + '%';
+      const percent = width => (width / resize.rowWidth * 100);
+      let colWidthPercent = percent(newColWidth);
+      let sibWidthPercent = percent(newSibWidth);
 
-      column.dataset.colWidth = numToPercentString(Math.round(colWidthPercent));
-      sibling.dataset.colWidth = numToPercentString(Math.round(sibWidthPercent));
+      column.dataset.colWidth = numToPercent(Math.round(colWidthPercent));
+      sibling.dataset.colWidth = numToPercent(Math.round(sibWidthPercent));
 
-      column.style.width = numToPercentString(colWidthPercent);
-      sibling.style.width = numToPercentString(sibWidthPercent);
+      column.style.width = numToPercent(colWidthPercent);
+      sibling.style.width = numToPercent(sibWidthPercent);
     }
 
     resize.move = function(evt) {
@@ -232,7 +236,9 @@ export default class Column {
       column.className.replace(reg, '');
       sibling.className.replace(reg, '');
 
+      // eslint-disable-next-line
       resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width');
+      // eslint-disable-next-line
       resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width');
       resize.rowWidth = row.offsetWidth - rowPadding; // compensate for padding
 

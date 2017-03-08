@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
 import {data, formData, registeredFields} from '../common/data';
-import helpers from '../common/helpers';
+import h from '../common/helpers';
 import events from '../common/events';
 import utils from '../common/utils';
 import DOM from '../common/dom';
@@ -13,7 +13,15 @@ let dom = new DOM();
 
 let opts = {};
 
+/**
+ *
+ */
 export class Controls {
+  /**
+   * [constructor description]
+   * @param  {[type]} controlOptions [description]
+   * @param  {[type]} formID         [description]
+   */
   constructor(controlOptions, formID) {
     this.formID = formID;
 
@@ -108,7 +116,10 @@ export class Controls {
         },
         options: [1, 2, 3, 4].map(i => {
           return {
-            label: i18n.get('labelCount', {label: i18n.get('option'), count: i}),
+            label: i18n.get('labelCount', {
+              label: i18n.get('option'),
+              count: i
+            }),
             value: 'option-' + i,
             selected: false
           };
@@ -143,7 +154,10 @@ export class Controls {
           id: 'checkbox'
         },
         options: [{
-          label: i18n.get('labelCount', {label: i18n.get('checkbox'), count: 1}),
+          label: i18n.get('labelCount', {
+            label: i18n.get('checkbox'),
+            count: 1
+          }),
           value: 'checkbox-1',
           selected: true
         }]
@@ -191,7 +205,7 @@ export class Controls {
           icon: 'paragraph',
           id: 'paragraph'
         },
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non nibh massa. Curabitur quis dictum lorem. Quisque ac lacus dignissim, malesuada turpis eget, venenatis nunc. '
+        content: 'Lorem ipsum dolor.'
       }, {
         tag: 'hr',
         config: {
@@ -206,7 +220,7 @@ export class Controls {
       }]
     };
 
-    opts = helpers.merge(this.defaults, controlOptions);
+    opts = h.merge(this.defaults, controlOptions);
   }
 
   /**
@@ -216,7 +230,7 @@ export class Controls {
    */
   prepElement(elem) {
     let _this = this;
-    let dataID = helpers.uuid();
+    let dataID = h.uuid();
     let position = {};
     const clicked = (x, y) => {
       let xMin = position.x - 5;
@@ -224,7 +238,7 @@ export class Controls {
       let yMin = position.y - 5;
       let yMax = position.y + 5;
 
-      return (helpers.numberBetween(x, xMin, xMax) && helpers.numberBetween(y, yMin, yMax));
+      return (h.numberBetween(x, xMin, xMax) && h.numberBetween(y, yMin, yMax));
     };
     let elementControl = {
       tag: 'li',
@@ -263,7 +277,7 @@ export class Controls {
     let allGroups = [];
 
     // Apply order to Groups
-    groups = helpers.orderObjectsBy(groups, opts.groupOrder, 'id');
+    groups = h.orderObjectsBy(groups, opts.groupOrder, 'id');
 
     // remove disabled groups
     groups = groups.filter(group => {
@@ -271,7 +285,7 @@ export class Controls {
     });
 
     // create group config
-    allGroups = helpers.map(groups, (i) => {
+    allGroups = h.map(groups, (i) => {
       let group = {
         tag: 'ul',
         attrs: {
@@ -287,7 +301,10 @@ export class Controls {
 
       // Apply order to elements
       if (groups[i].elementOrder) {
-        elements = helpers.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id');
+        elements = h.orderObjectsBy(
+          elements,
+          groups[i].elementOrder,
+          'meta.id');
       }
 
       /**
@@ -302,7 +319,13 @@ export class Controls {
           (field.meta.group === groups[i].id)
         ];
 
-        return helpers.inArray(fieldId, defaultIds) ? filters.every(val => val === true) : true;
+        let shouldFilter = true;
+
+        if (h.inArray(fieldId, defaultIds)) {
+          shouldFilter = filters.every(val => val === true);
+        }
+
+        return shouldFilter;
       }).map(field => _this.prepElement.call(this, field));
 
       return group;
@@ -311,6 +334,10 @@ export class Controls {
     return allGroups;
   }
 
+  /**
+   * [clearAll description]
+   * @param  {[type]} rows [description]
+   */
   clearAll(rows) {
     let stage = rows[0].parentElement;
     stage.classList.add('removing-all-fields');
@@ -329,7 +356,7 @@ export class Controls {
     // }
 
     let outerHeight = 0;
-    helpers.forEach(rows, (i) => {
+    h.forEach(rows, (i) => {
       outerHeight += rows[i].offsetHeight + 5;
     });
 
@@ -347,9 +374,13 @@ export class Controls {
     }, 300);
   }
 
+  /**
+   * [formActions description]
+   * @return {[type]} [description]
+   */
   formActions() {
-    let _this = this,
-      btnTemplate = {
+    let _this = this;
+    let btnTemplate = {
         tag: 'button',
         attrs: {
           type: 'button'
@@ -361,80 +392,80 @@ export class Controls {
       }
     });
 
-    let clearBtn = helpers.merge(btnTemplate, {
-        content: [dom.icon('bin'), i18n.get('clear')],
-        className: ['btn', 'btn-secondary', 'clear-form'],
-        attrs: {
-          title: i18n.get('clearAll')
-        },
-        action: {
-          click: (evt) => {
-            let stage = document.getElementById(_this.formID + '-stage'),
-              rows = stage.getElementsByClassName('stage-row'),
-              buttonPosition = evt.target.getBoundingClientRect(),
-              bodyRect = document.body.getBoundingClientRect(),
-              coords = {
-                pageX: buttonPosition.left + (buttonPosition.width / 2),
-                pageY: (buttonPosition.top - bodyRect.top) - 12
-              };
+    let clearBtn = h.merge(btnTemplate, {
+      content: [dom.icon('bin'), i18n.get('clear')],
+      className: ['btn', 'btn-secondary', 'clear-form'],
+      attrs: {
+        title: i18n.get('clearAll')
+      },
+      action: {
+        click: (evt) => {
+          let stage = document.getElementById(_this.formID + '-stage');
+          let rows = stage.getElementsByClassName('stage-row');
+          let buttonPosition = evt.target.getBoundingClientRect();
+          let bodyRect = document.body.getBoundingClientRect();
+          let coords = {
+              pageX: buttonPosition.left + (buttonPosition.width / 2),
+              pageY: (buttonPosition.top - bodyRect.top) - 12
+            };
 
-            if (rows.length) {
-              events.confirmClearAll = new CustomEvent('confirmClearAll', {
-                detail: {
-                  confirmationMessage: i18n.get('confirmClearAll'),
-                  clearAllAction: _this.clearAll,
-                  btnCoords: coords,
-                  rows: rows
-                }
-              });
+          if (rows.length) {
+            events.confirmClearAll = new CustomEvent('confirmClearAll', {
+              detail: {
+                confirmationMessage: i18n.get('confirmClearAll'),
+                clearAllAction: _this.clearAll,
+                btnCoords: coords,
+                rows: rows
+              }
+            });
 
-              document.dispatchEvent(events.confirmClearAll);
-            } else {
-              alert('There are no fields to clear');
-            }
+            document.dispatchEvent(events.confirmClearAll);
+          } else {
+            alert('There are no fields to clear');
           }
         }
-      }),
-      settingsBtn = helpers.merge(btnTemplate, {
-        content: [dom.icon('settings'), i18n.get('settings')],
-        attrs: {
-          title: i18n.get('settings')
-        },
-        className: ['btn', 'btn-secondary', 'edit-settings'],
-        action: {
-          click: () => {
-            console.log('clicked');
-            let stage = document.getElementById(_this.formID + '-stage');
-            stage.parentElement.classList.toggle('editing-stage');
-          }
+      }
+    });
+    let settingsBtn = h.merge(btnTemplate, {
+      content: [dom.icon('settings'), i18n.get('settings')],
+      attrs: {
+        title: i18n.get('settings')
+      },
+      className: ['btn', 'btn-secondary', 'edit-settings'],
+      action: {
+        click: () => {
+          console.log('clicked');
+          let stage = document.getElementById(_this.formID + '-stage');
+          stage.parentElement.classList.toggle('editing-stage');
         }
-      }),
-      saveBtn = helpers.merge(btnTemplate, {
-        content: [dom.icon('floppy-disk'), i18n.get('save')],
-        attrs: {
-          title: i18n.get('save')
-        },
-        className: ['btn', 'btn-secondary', 'save-form'],
-        action: {
-          click: (evt) => {
-            // @todo: complete actions connection
-            // let saveEvt = {
-            //   action: () => {},
-            //   coords: dom.coords(evt.target),
-            //   message: ''
-            // };
+      }
+    });
+    let saveBtn = h.merge(btnTemplate, {
+      content: [dom.icon('floppy-disk'), i18n.get('save')],
+      attrs: {
+        title: i18n.get('save')
+      },
+      className: ['btn', 'btn-secondary', 'save-form'],
+      action: {
+        click: (evt) => {
+          // @todo: complete actions connection
+          // let saveEvt = {
+          //   action: () => {},
+          //   coords: dom.coords(evt.target),
+          //   message: ''
+          // };
 
-            // actions.click.btn(saveEvt);
-            data.save();
-            document.dispatchEvent(events.formeoSaved);
-          }
+          // actions.click.btn(saveEvt);
+          data.save();
+          document.dispatchEvent(events.formeoSaved);
         }
-      }),
-      formActions = {
-        tag: 'div',
-        className: 'form-actions',
-        content: [clearBtn, settingsBtn, saveBtn]
-      };
+      }
+    });
+    let formActions = {
+      tag: 'div',
+      className: 'form-actions',
+      content: [clearBtn, settingsBtn, saveBtn]
+    };
 
     return formActions;
   }
@@ -451,9 +482,14 @@ export class Controls {
     let groupedFields = this.groupElements();
     let formActions = this.formActions();
     let controlPanels = new Panels({panels: groupedFields, type: 'controls'});
+    let groupsWrapClasses = [
+      'control-groups',
+      'panels-wrap',
+      `panel-count-${groupedFields.length}`
+    ];
     let groupsWrap = dom.create({
       tag: 'div',
-      className: 'control-groups panels-wrap panel-count-' + groupedFields.length,
+      className: groupsWrapClasses,
       content: controlPanels.content
     });
 
@@ -461,8 +497,8 @@ export class Controls {
         tag: 'div',
         className: this.formID + '-controls formeo-controls',
         content: [groupsWrap, formActions]
-      }),
-      groups = element.getElementsByClassName('control-group');
+      });
+    let groups = element.getElementsByClassName('control-group');
 
     this.element = element;
     this.groups = groups;
@@ -470,14 +506,16 @@ export class Controls {
 
     this.actions = {
       filter: (term) => {
-        let filtering = (term !== ''),
-          filteredTerm = groupsWrap.querySelector('.filtered-term'),
-          fields = controlPanels.content[1].querySelectorAll('.field-control');
+        let cpContent = controlPanels.content[1];
+        let filtering = (term !== '');
+        let filteredTerm = groupsWrap.querySelector('.filtered-term');
+        let fields = cpContent.querySelectorAll('.field-control');
 
-        helpers.toggleElementsByStr(fields, term);
+        h.toggleElementsByStr(fields, term);
 
         if (filtering) {
-          let filteredStr = `Filtering '${term}'`; // @todo change to use language file
+          // @todo change to use language file
+          let filteredStr = `Filtering '${term}'`;
 
           element.classList.add('filtered');
 

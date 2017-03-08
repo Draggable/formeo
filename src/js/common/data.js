@@ -1,19 +1,20 @@
 'use strict';
 import events from './events';
-import helpers from './helpers';
+import h from './helpers';
 
 // Object map of fields on the stage
 const _data = {};
 let formData;
 
-// Registered fields are the fields that are configured on init. This variable acts as a data buffer
-// thats contains the configurations for a field's final view.
+// Registered fields are the fields that are configured on init.
+// This variable acts as a data buffer thats contains
+// the configurations for a field's final view.
 let registeredFields = {};
 
 let data = {
   init: (opts, userFormData) => {
     _data.formData = {
-      id: helpers.uuid(),
+      id: h.uuid(),
       settings: {},
       stage: {},
       rows: {},
@@ -27,7 +28,7 @@ let data = {
       }
 
       _data.formData = data;
-      _data.formData.id = data.id || _data.opts.formID || helpers.uuid();
+      _data.formData.id = data.id || _data.opts.formID || h.uuid();
 
       formData = _data.formData;
     };
@@ -56,7 +57,7 @@ let data = {
 
   saveColumnOrder: (row) => {
     let columns = row.getElementsByClassName('stage-column');
-    let columnOrder = helpers.map(columns, (i) => {
+    let columnOrder = h.map(columns, (i) => {
       return columns[i].id;
     });
 
@@ -67,7 +68,7 @@ let data = {
 
   saveFieldOrder: (column) => {
     let fields = column.getElementsByClassName('stage-field');
-    let fieldOrder = helpers.map(fields, (i) => {
+    let fieldOrder = h.map(fields, (i) => {
       return fields[i].id;
     });
 
@@ -79,16 +80,15 @@ let data = {
   saveRowOrder: () => {
     let stage = document.getElementById(_data.formData.id + '-stage');
     let rows = stage.getElementsByClassName('stage-row');
-    return formData.stage.rows = helpers.map(rows, (rowID) => {
+    return formData.stage.rows = h.map(rows, (rowID) => {
       return rows[rowID].id;
     });
   },
 
-  savePropOrder: (parent) => {
+  savePropOrder: parent => {
     let props = parent.getElementsByClassName('prop-wrap');
-    formData.fields[parent.fieldID][parent.editGroup] = helpers.map(props, (i) => {
-      return props[i].propData;
-    });
+    let fieldData = formData.fields[parent.fieldID];
+    fieldData[parent.editGroup] = h.map(props, i => props[i].propData);
   },
 
   saveOrder: (group, parent) => {
@@ -128,8 +128,8 @@ let data = {
         let stage = formData.stage.settings;
         _data.formData.settings = [];
 
-        helpers.forEach(stage, (i, rowID) => {
-          _data.formData.rows[i] = helpers.clone(formData.rows[rowID]);
+        h.forEach(stage, (i, rowID) => {
+          _data.formData.rows[i] = h.clone(formData.rows[rowID]);
           // _data.formData.rows[i] = Object.assign({}, formData.rows[rowID]);
           _data.formData.rows[i].columns = map.columns(rowID);
         });
@@ -141,21 +141,21 @@ let data = {
         return _data.formData.rows;
       },
       columns: (rowID) => {
-        return helpers.clone(formData.rows[rowID].columns);
+        return h.clone(formData.rows[rowID].columns);
       },
       fields: (columnID) => {
-        return helpers.clone(formData.columns[columnID].fields);
+        return h.clone(formData.columns[columnID].fields);
       },
       field: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
         let setString = data.fieldSetString(fieldID);
-        helpers.set(_data.formData, setString, helpers.clone(formData.fields[fieldID]));
+        h.set(_data.formData, setString, h.clone(formData.fields[fieldID]));
 
         return fieldLink;
       },
       attrs: (fieldID) => {
         let fieldLink = data.fieldLink(fieldID);
-        fieldLink.attrs = helpers.clone(formData.fields[fieldID].attrs);
+        fieldLink.attrs = h.clone(formData.fields[fieldID].attrs);
 
         return fieldLink.attrs;
       },
@@ -233,8 +233,9 @@ let data = {
       let rowIndex = data.rowIndex(row.id);
       let columnIndex = data.columnIndex(column.id);
       let fieldIndex = data.fieldIndex(fieldID);
+      let rowData = _data.formData.rows[rowIndex];
 
-    return _data.formData.rows[rowIndex].columns[columnIndex].fields[fieldIndex];
+    return rowData.columns[columnIndex].fields[fieldIndex];
   },
 
   // Provides a map to a column in formData
@@ -254,7 +255,7 @@ let data = {
   jsonSave: (group, id) => {
     let stage = document.getElementById(_data.formData.id + '-stage');
     data.saveType(group, id);
-    _data.formData = helpers.clone(formData);
+    _data.formData = h.clone(formData);
 
     stage.classList.toggle('stage-empty', (formData.rows.length === 0));
     return _data.formData;
@@ -265,19 +266,22 @@ let data = {
       // xml: _this.xmlSave,
       json: data.jsonSave
     };
+    const storage = window.sessionStorage;
+    const stringify = window.JSON.stringify;
 
     doSave[_data.opts.dataType](group, id);
 
-    if (window.sessionStorage && _data.opts.sessionStorage) {
+    if (storage && _data.opts.sessionStorage) {
       console.log('session.setItem');
-      window.sessionStorage.setItem('formData', window.JSON.stringify(_data.formData));
+      storage.setItem('formData', stringify(_data.formData));
     }
 
     if (_data.opts.debug) {
       console.log('Saved: ' + group);
     }
 
-    // Shouldn't be the case? because every time save is called there should be some formData update, right?
+    // Shouldn't be the case? because every time
+    // save is called there should be some formData update, right?
     document.dispatchEvent(events.formeoUpdated);
     return _data.formData;
   },

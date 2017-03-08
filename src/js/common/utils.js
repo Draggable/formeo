@@ -11,13 +11,18 @@ utils.match = (str = '', filter) => {
     console.warn('utils.match missing argument 2.');
     return false;
   }
-  let matchOperators = /[|\\{}()[\]^*$+?.]/g,
-  filterArray = (typeof filter === 'string') ? [filter] : filter;
-  filterArray = filterArray.map((filterStr) => {
+  let matchOperators = /[|\\{}()[\]^*$+?.]/g;
+  let filterArray = (typeof filter === 'string') ? [filter] : filter;
+  filterArray = filterArray.map(filterStr => {
     return filterStr === '*' ? '' : filterStr.replace(matchOperators, '\\$&');
   });
 
-  return filterArray.length ? !str.match(new RegExp(filterArray.join('|'), 'i')) : true;
+  let isMatch = true;
+  if (filterArray.length) {
+    isMatch = !str.match(new RegExp(filterArray.join('|'), 'i'));
+  }
+
+  return isMatch;
 };
 
 export default utils;

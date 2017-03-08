@@ -1,4 +1,3 @@
-'use strict';
 
 /**
  * Throttle class provides and easy way for binding
