@@ -1,4 +1,8 @@
 import helpers from './helpers';
+import Row from '../components/row';
+import Column from '../components/column';
+import Field from '../components/field';
+
 import animate from './animation';
 import {formData} from './data';
 
@@ -6,6 +10,16 @@ import {formData} from './data';
  * General purpose markup utilities and generator.
  */
 class DOM {
+  /**
+   * Set defaults, store references to key elements
+   * like stages, rows, columns etc
+   */
+  constructor() {
+    this.stages = {};
+    this.rows = {};
+    this.columns = {};
+    this.fields = {};
+  }
 
   /**
    * Creates DOM elements
@@ -33,16 +47,16 @@ class DOM {
      * @type {Object}
      */
     let appendContent = {
-      string: (content) => {
+      string: content => {
         element.innerHTML += content;
       },
-      object: (content) => {
+      object: content => {
         return element.appendChild(_this.create(content));
       },
-      node: (content) => {
+      node: content => {
         return element.appendChild(content);
       },
-      array: (content) => {
+      array: content => {
         for (let i = 0; i < content.length; i++) {
           contentType = _this.contentType(content[i]);
           appendContent[contentType](content[i]);
@@ -702,6 +716,89 @@ class DOM {
       pageX: buttonPosition.left + (buttonPosition.width / 2),
       pageY: (buttonPosition.top - bodyRect.top) - (buttonPosition.height / 2)
     };
+  }
+
+  /**
+   * Loop through the formData and append it to the stage
+   * @param  {Object} stage DOM element
+   * @return {Array}  loaded rows
+   */
+  loadRows(stage) {
+    if (!stage) {
+      stage = this.activeStage;
+    }
+
+    let rows = formData.stages[stage.id].rows;
+    return rows.forEach(rowID => {
+      let row = new Row(rowID);
+      this.loadColumns(row);
+      stage.appendChild(row);
+      // dom.updateColumnPreset(row);
+    });
+  }
+
+  /**
+   * Load columns to row
+   * @param  {Object} row
+   */
+  loadColumns(row) {
+    let _this = this;
+    let columns = formData.rows[row.id].columns;
+    columns.forEach(columnID => {
+      let column = new Column(columnID);
+      _this.fieldOrderClass(column);
+      this.loadFields(column);
+      row.appendChild(column);
+    });
+  }
+
+  /**
+   * [loadFields description]
+   * @param  {[type]} column [description]
+   */
+  loadFields(column) {
+    let fields = formData.columns[column.id].fields;
+    fields.forEach(fieldID => {
+      let field = new Field(fieldID);
+      column.appendChild(field);
+    });
+  }
+
+  /**
+   * Create or add a field and column then return it.
+   * @param  {Object} evt Drag event data
+   * @return {Object}     column
+   */
+  createColumn(evt) {
+    let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id);
+    let column = new Column();
+
+    formData.fields[field.id].parent = column.id;
+
+    field.classList.add('first-field');
+    column.appendChild(field);
+    formData.columns[column.id].fields.push(field.id);
+    return column;
+  }
+
+  /**
+   * [addRow description]
+   * @param {[type]} evt [description]
+   * @return {Object} row
+   */
+  addRow(evt) {
+    let _this = this;
+    let column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt);
+    let row = new Row();
+
+    // Set parent IDs
+    formData.columns[column.id].parent = row.id;
+    formData.rows[row.id].parent = _this.activeStage.id;
+
+    row.appendChild(column);
+    // data.saveColumnOrder(row);
+
+    return row;
   }
 
 }

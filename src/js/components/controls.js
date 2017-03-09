@@ -221,6 +221,7 @@ export class Controls {
     };
 
     opts = h.merge(this.defaults, controlOptions);
+    this.dom = this.buildDOM();
   }
 
   /**
@@ -474,7 +475,7 @@ export class Controls {
    * Returns the markup for the form controls/fields
    * @return {DOM}
    */
-  get dom() {
+  buildDOM() {
     if (this.element) {
       return this.element;
     }
@@ -579,18 +580,15 @@ export class Controls {
    */
   addRow(id) {
     let _this = this;
-    let stageID = _this.formID + '-stage';
-    let stage = document.getElementById(stageID);
     let column = _this.createColumn(id);
     let row = new Row();
-    console.log(row);
 
     // Set parent IDs
     // formData.columns[column.id].parent = row.id;
     // formData.rows[row.id].parent = stageID;
     row.appendChild(column);
-    stage.appendChild(row);
-    // data.saveColumnOrder(row);
+    dom.activeStage.appendChild(row);
+    data.saveColumnOrder(row);
     // data.saveRowOrder(row);
     data.save();
     // trigger formSaved event

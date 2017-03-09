@@ -1,5 +1,5 @@
 import i18n from 'mi18n';
-import {data, formData, registeredFields} from '../common/data';
+import {data, formData, registeredFields as rFields} from '../common/data';
 import animate from '../common/animation';
 import h from '../common/helpers';
 import actions from '../common/actions';
@@ -17,10 +17,9 @@ export default class Field {
    * @return {Object} field object
    */
   constructor(dataID) {
-    // const formData = data.get();
     let _this = this;
-    let fieldConfig = h.copyObj(registeredFields[dataID]);
-    let fieldData = formData.fields[dataID] || fieldConfig;
+
+    let fieldData = formData.fields[dataID] || h.copyObj(rFields[dataID]);
 
     _this.fieldID = fieldData.id || h.uuid();
     fieldData.id = _this.fieldID;
@@ -225,7 +224,6 @@ export default class Field {
    * @return {Array} element config array
    */
   editPanelInputs(prop, propVal, panelType, id) {
-    console.log(prop, propVal, panelType, id);
     let _this = this;
     let inputs = [];
     let processProperty = (key, val) => {

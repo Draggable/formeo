@@ -231,9 +231,9 @@ class Formeo {
     let _this = this;
     await i18n.init(opts.i18n);
     formeo.formData = data.get();
-    _this.formID = opts.formID = formeo.formData.id;
-    _this.stages = _this.buildStages();
+    _this.formID = formeo.formData.id;
     formeo.controls = new Controls(opts.controls, _this.formID);
+    _this.stages = _this.buildStages();
     formeo.i18n = {
       setLang: locale => {
         let loadLang = i18n.setCurrent.call(i18n, locale);
@@ -259,15 +259,19 @@ class Formeo {
    * @return {Object} stages map
    */
   buildStages() {
-    let stages = {};
+    let stages = [];
     let stagesData = Object.keys(formeo.formData.stages);
+    let newStageWrap;
     if (stagesData.length) {
       stagesData.forEach(stageID => {
-        stages[stageID] = new Stage(opts, stageID);
+        newStageWrap = new Stage(opts, stageID);
+        stages.push(newStageWrap);
+        dom.activeStage = newStageWrap.firstChild;
       });
     } else {
-      const newStage = new Stage(opts);
-      stages[newStage.id] = newStage;
+      newStageWrap = new Stage(opts);
+      stages.push(newStageWrap);
+      dom.activeStage = newStageWrap.firstChild;
     }
 
     return stages;
@@ -280,22 +284,24 @@ class Formeo {
   render() {
     let _this = this;
     let controls = formeo.controls.dom;
-    let stage = formeo.stage = _this.stages;
 
     let elemConfig = {
         tag: 'div',
         attrs: {
           className: opts.className,
-          id: opts.formID
+          id: _this.formID
         },
-        content: [stage, controls]
+        content: [_this.stages, controls]
       };
     let formeoElem = dom.create(elemConfig);
 
     _this.container.innerHTML = '';
     _this.container.appendChild(formeoElem);
 
-    stage.childNodes[0].style.minHeight = dom.getStyle(controls, 'height');
+    _this.stages.forEach(stageWrap => {
+      let stage = stageWrap.childNodes[0];
+      stage.style.minHeight = dom.getStyle(controls, 'height');
+    });
 
     events.formeoLoaded = new CustomEvent('formeoLoaded', {
       detail: {

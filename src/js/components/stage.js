@@ -3,9 +3,6 @@ import i18n from 'mi18n';
 import {data, formData} from '../common/data';
 import h from '../common/helpers';
 import dom from '../common/dom';
-import Row from './row';
-import Column from './column';
-import Field from './field';
 
 let stageOpts = {};
 
@@ -61,9 +58,18 @@ export default class Stage {
 
     stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions);
 
-    this.stage = this.loadStage();
+    if (!formData.stages[this.stageID]) {
+      formData.stages[this.stageID] = {
+        settings: {},
+        rows: []
+      };
+    }
 
-    return this.stage;
+    const stageWrap = this.loadStage();
+
+    dom.stages[this.stageID] = this.stage;
+
+    return stageWrap;
   }
 
   /**
@@ -72,64 +78,14 @@ export default class Stage {
    */
   loadStage() {
     let stageWrap = this.dom;
-    let stage = stageWrap.firstChild;
-    let stageData = formData.stages[this.stageID];
-
-    if (stageData && stageData.rows) {
-      this.loadRows(stage);
-      stage.classList.remove('stage-empty');
+    if (formData.stages[this.stageID].rows.length) {
+      dom.loadRows(this.stage);
+      this.stage.classList.remove('stage-empty');
     }
 
     return stageWrap;
   }
 
-  /**
-   * Loop through the formData and append it to the stage
-   * @param  {Object} stage DOM element
-   * @return {Array}  loaded rows
-   */
-  loadRows(stage) {
-    // if (formData.stages.rows.length) {
-    let rows = formData.stages.rows;
-    return h.forEach(rows, (i) => {
-      let row = new Row(rows[i]);
-      this.loadColumns(row);
-      stage.appendChild(row);
-      // dom.updateColumnPreset(row);
-    });
-    // }
-  }
-
-  /**
-   * Load columns to row
-   * @param  {Object} row
-   */
-  loadColumns(row) {
-    // if (formData.rows[row.id].columns.length) {
-    let columns = formData.rows[row.id].columns;
-    console.log(columns);
-    h.forEach(columns, (i) => {
-      let column = new Column(columns[i]);
-      dom.fieldOrderClass(column);
-      this.loadFields(column);
-      row.appendChild(column);
-    });
-    // }
-  }
-
-  /**
-   * [loadFields description]
-   * @param  {[type]} column [description]
-   */
-  loadFields(column) {
-    // if (formData.columns[column.id].fields.length) {
-    let fields = formData.columns[column.id].fields;
-    h.forEach(fields, (i) => {
-      let field = new Field(fields[i]);
-      column.appendChild(field);
-    });
-    // }
-  }
 
   /**
    * Generate the elements that make up the Stage
@@ -165,44 +121,6 @@ export default class Stage {
   }
 
   /**
-   * Create or add a field and column then return it.
-   * @param  {Object} evt Drag event data
-   * @return {Object}     column
-   */
-  createColumn(evt) {
-    // console.log(evt);
-    let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id);
-    let column = new Column();
-
-    formData.fields[field.id].parent = column.id;
-
-    field.classList.add('first-field');
-    column.appendChild(field);
-    formData.columns[column.id].fields.push(field.id);
-    return column;
-  }
-
-  /**
-   * [addRow description]
-   * @param {[type]} evt [description]
-   * @return {Object} row
-   */
-  addRow(evt) {
-    let _this = this;
-    let column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt);
-    let row = new Row();
-
-    // Set parent IDs
-    formData.columns[column.id].parent = row.id;
-    formData.rows[row.id].parent = _this.stageID;
-
-    row.appendChild(column);
-    data.saveColumnOrder(row);
-
-    return row;
-  }
-
-  /**
    * Callback for when a row is sorted
    * @param  {Object} evt
    */
@@ -219,7 +137,7 @@ export default class Stage {
   onAdd(evt) {
     let stage = evt.target;
     let newIndex = h.indexOfNode(evt.item, stage);
-    let row = this.addRow(evt);
+    let row = dom.addRow(evt);
 
     if (evt.item.fType === 'column') {
       dom.columnWidths(row);
@@ -267,6 +185,8 @@ export default class Stage {
         config.settings
       ]
     });
+    this.stage = stageWrap.firstChild;
+
 
     Sortable.create(stageWrap.firstChild, {
       animation: 150,
@@ -280,13 +200,16 @@ export default class Stage {
       onRemove: _this.onRemove.bind(_this),
       // onDrop: _this.onAdd.bind(_this),
       sort: true,
-      onUpdate: (evt) => {
+      onStart: evt => {
+        dom.activeStage = _this.stage;
+      },
+      onUpdate: evt => {
         // saveRowOrder();
         console.log('Stage onUpdate');
         console.log(formData, evt);
       },
       onSort: _this.onSort.bind(_this),
-      onDrop: (evt) => {
+      onDrop: evt => {
        console.log(evt);
       },
       onMove: evt => console.log('moving row'),
