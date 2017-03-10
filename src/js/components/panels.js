@@ -3,8 +3,6 @@ import Sortable from 'sortablejs';
 import helpers from '../common/helpers';
 import dom from '../common/dom';
 import {data} from '../common/data';
-import {closest} from '../common/utils';
-// const dom = new DOM();
 
 const defaults = {
   type: 'field'

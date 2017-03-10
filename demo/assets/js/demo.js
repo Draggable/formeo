@@ -9,26 +9,30 @@ let formeoOpts = {
   editPanelOrder: ['attrs', 'options']
 };
 const formeo = new window.Formeo(formeoOpts);
+let editing = true;
 
 console.log(formeo);
 
 let debugWrap = document.getElementById('debug-wrap');
 let debugBtn = document.getElementById('debug-demo');
 let locale = document.getElementById('locale');
-let renderBtn = document.getElementById('renderForm');
-let editBtn = document.getElementById('editForm');
+let toggleEdit = document.getElementById('renderForm');
 
 debugBtn.onclick = function() {
   debugWrap.classList.toggle('open');
 };
 
-renderBtn.onclick = function() {
-  formeo.render(renderContainer);
-};
+toggleEdit.onclick = evt => {
+    document.body.classList.toggle('form-rendered', editing);
+    if (editing) {
+      formeo.render(renderContainer);
+      evt.target.innerHTML = 'Edit Form';
+    } else {
+      evt.target.innerHTML = 'Render Form';
+    }
 
-editBtn.onclick = function() {
-  formeo.edit();
-};
+    return editing = !editing;
+  };
 
 locale.addEventListener('change', function() {
   formeo.i18n.setLang(locale.value);

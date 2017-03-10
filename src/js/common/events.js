@@ -3,7 +3,11 @@
 let defaults = {
   formeoLoaded: (evt) => {},
   onAdd: () => {},
-  onUpdate: evt => console.log(evt),
+  onUpdate: evt => {
+    if (events.opts.debug) {
+      console.log(evt);
+    }
+  },
   onSave: (evt) => {},
   confirmClearAll: (evt) => {
     if (window.confirm(evt.confirmationMessage)) {

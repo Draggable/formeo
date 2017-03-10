@@ -188,10 +188,6 @@ class Formeo {
 
     opts = helpers.extend(defaults, options);
 
-    if (opts.debug) {
-      opts.actions.debug = opts.events.debug = true;
-    }
-
     formeo.formData = data.init(opts, formData);
     events.init(opts.events);
     actions.init(opts.actions);

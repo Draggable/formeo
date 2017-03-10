@@ -4,17 +4,15 @@ import dom from '../common/dom';
 import h from '../common/helpers';
 import {data, formData} from '../common/data';
 
-// const dom = new DOM();
-
 /**
- *
+ * Editor Row
  */
 export default class Row {
 
   /**
-   * [constructor description]
-   * @param  {[type]} dataID [description]
-   * @return {[type]}        [description]
+   * Set default and generate dom for row in editor
+   * @param  {String} dataID
+   * @return {Object}
    */
   constructor(dataID) {
     let _this = this;

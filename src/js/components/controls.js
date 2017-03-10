@@ -541,6 +541,7 @@ export class Controls {
     row.appendChild(column);
     dom.activeStage.appendChild(row);
     data.saveColumnOrder(row);
+    dom.columnWidths(row);
     // data.saveRowOrder(row);
     data.save();
     // trigger formSaved event

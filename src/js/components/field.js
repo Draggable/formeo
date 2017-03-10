@@ -337,8 +337,6 @@ export default class Field {
 
     inputs.push(processProperty(prop, propVal));
 
-    console.log(inputs);
-
     return inputs;
   }
 

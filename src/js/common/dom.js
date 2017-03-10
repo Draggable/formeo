@@ -571,10 +571,10 @@ class DOM {
   }
 
   /**
-   * [columnWidths description]
+   * Read columns and generate bootstrap cols
    * @param  {Object}  row    DOM element
-   * @param  {Boolean} widths [description]
-   * @return {[type]}         [description]
+   * @param  {Boolean} widths
+   * @return {Object} colWidth
    */
   columnWidths(row, widths = false) {
     let _this = this;
@@ -596,7 +596,7 @@ class DOM {
 
     _this.removeClasses(columns, bsGridRegEx);
 
-    h.forEach(columns, (i) => {
+    h.forEach(columns, i => {
       let column = columns[i];
       let cDataClassNames = formData.columns[column.id].className;
       if (h.isInt(colWidth)) {

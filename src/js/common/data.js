@@ -258,7 +258,6 @@ let data = {
   },
 
   jsonSave: (group, id) => {
-    console.log(group, id);
     data.saveType(group, id);
     formData = h.clone(formData);
     let noData = (Object.entries(formData.rows) === 0);
