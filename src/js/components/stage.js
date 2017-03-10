@@ -187,14 +187,13 @@ export default class Stage {
     });
     this.stage = stageWrap.firstChild;
 
-
     Sortable.create(stageWrap.firstChild, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
       fallbackTolerance: 0,
       // group: { pull: false, put: ['controls', 'columns'] },
-      group: {name: 'stage', pull: false, put: ['controls', 'rows', 'columns']},
+      group: {name: 'stages', pull: true, put: ['controls', 'rows', 'columns']},
       // Element is dropped into the list from another list
       onAdd: _this.onAdd.bind(_this),
       onRemove: _this.onRemove.bind(_this),

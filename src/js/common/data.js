@@ -6,6 +6,7 @@ import dom from './dom';
 // Object map of fields on the stage
 const _data = {};
 let formData;
+let update;
 
 // Registered fields are the fields that are configured on init.
 // This variable acts as a data buffer thats contains
@@ -47,11 +48,8 @@ let data = {
       formData = defaultFormData;
     }
 
-    events.formeoUpdated = new CustomEvent('formeoUpdated', {
-      detail: {
-        formData
-      }
-    });
+    events.formeoUpdated = new CustomEvent('formeoUpdated', update);
+    events.formeoUpdated.data = update;
 
     return formData;
   },
@@ -65,7 +63,7 @@ let data = {
     return columnOrder;
   },
 
-  saveFieldOrder: (column) => {
+  saveFieldOrder: column => {
     let fields = column.getElementsByClassName('stage-field');
     let fieldOrder = h.map(fields, (i) => {
       return fields[i].id;
@@ -84,10 +82,14 @@ let data = {
     return rowOrder;
   },
 
-  savePropOrder: parent => {
+  saveOptionOrder: parent => {
+    console.log(parent);
     let props = parent.getElementsByClassName('prop-wrap');
-    let fieldData = formData.fields[parent.fieldID];
-    fieldData[parent.editGroup] = h.map(props, i => props[i].propData);
+    let propData = h.map(props, i => {
+      return props[i].propData;
+    });
+    formData.fields[parent.fieldID][parent.editGroup] = propData;
+    return propData;
   },
 
   saveOrder: (group, parent) => {
@@ -95,7 +97,7 @@ let data = {
       row: data.saveRowOrder,
       column: data.saveColumnOrder,
       field: data.saveFieldOrder,
-      options: data.savePropOrder
+      options: data.saveOptionOrder
     };
 
     return saveOrder[group](parent);
@@ -140,29 +142,26 @@ let data = {
         return formData.rows;
       },
       columns: rowID => {
-        return h.clone(formData.rows[rowID].columns);
+        return formData.columns;
       },
       fields: columnID => {
-        return h.clone(formData.columns[columnID].fields);
+        return formData.fields;
       },
       field: fieldID => {
-        let fieldLink = data.fieldLink(fieldID);
-        let setString = data.fieldSetString(fieldID);
-        h.set(formData, setString, h.clone(formData.fields[fieldID]));
-
-        return fieldLink;
+        return formData.fields[fieldID];
       },
       attrs: fieldID => {
-        let fieldLink = data.fieldLink(fieldID);
-        fieldLink.attrs = h.clone(formData.fields[fieldID].attrs);
-
-        return fieldLink.attrs;
+        return formData.fields[fieldID].attrs;
       },
-      options: fieldID => {
-        let fieldLink = data.fieldLink(fieldID);
-        fieldLink.options = formData.fields[fieldID].options.slice();
+      options: optionUL => {
+        events.formeoUpdated.data = {
+          changed: 'options',
+          oldValue: formData.fields[optionUL.fieldID].options,
+          newValue: data.saveOrder('options', optionUL)
+        };
+        document.dispatchEvent(events.formeoUpdated);
 
-        return fieldLink.options;
+        return update;
       }
     };
 
@@ -211,7 +210,7 @@ let data = {
    * @param  {String} fieldID
    * @return {String}
    */
-  fieldSetString: (fieldID) => {
+  fieldSetString: fieldID => {
     let indexMap = data.fieldIndexMap(fieldID);
     let setString = '';
 
@@ -224,34 +223,42 @@ let data = {
     return setString.substring(0, setString.length - 1);
   },
 
-  // Provides a reference to a field in formData
-  fieldLink: fieldID => {
-      let field = formData.fields[fieldID];
-      let column = formData.columns[field.parent];
-      let row = formData.rows[column.parent];
-      let rowIndex = data.rowIndex(row.id);
-      let columnIndex = data.columnIndex(column.id);
-      let fieldIndex = data.fieldIndex(fieldID);
-      let rowData = formData.rows[rowIndex];
+  // Empties the data register for an element
+  // and its children
+  empty: (type, id) => {
+    let removed = {};
+    const emptyType = {
+      stage: id => {
+        let rows = formData.stages[id].rows;
+        removed.rows = rows.map(rowID => {
+          emptyType['row'](rowID);
+          delete formData.rows[rowID];
+          return rowID;
+        });
+      },
+      row: id => {
+        let columns = formData.rows[id].columns;
+        removed.columns = columns.map(columnID => {
+          emptyType['column'](columnID);
+          delete formData.columns[columnID];
+          return columnID;
+        });
+      },
+      column: id => {
+        let fields = formData.columns[id].fields;
+        removed.fields = fields.map(fieldID => {
+          delete formData.fields[fieldID];
+          return fieldID;
+        });
+      }
+    };
 
-    return rowData.columns[columnIndex].fields[fieldIndex];
-  },
-
-  // Provides a map to a column in formData
-  columnLink: columnID => {
-    let row = formData.rows[formData.columns[columnID].parent];
-    let columnIndex = row.columns.indexOf(columnID);
-    let rowIndex = formData.stages.rows.indexOf(row.id);
-    return formData.rows[rowIndex].columns[columnIndex];
-  },
-
-  // Provides a map to a row in formData
-  rowLink: rowID => {
-    let rowIndex = formData.stages.rows.indexOf(rowID);
-    return formData.rows[rowIndex];
+    emptyType[type](id);
+    return removed;
   },
 
   jsonSave: (group, id) => {
+    console.log(group, id);
     data.saveType(group, id);
     formData = h.clone(formData);
     let noData = (Object.entries(formData.rows) === 0);
@@ -281,7 +288,7 @@ let data = {
 
     // Shouldn't be the case? because every time
     // save is called there should be some formData update, right?
-    document.dispatchEvent(events.formeoUpdated);
+    // document.dispatchEvent(events.formeoUpdated);
     return formData;
   },
 

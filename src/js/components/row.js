@@ -29,6 +29,9 @@ export default class Row {
         config: {
           fieldset: false, // wrap contents of row in fieldset
           legend: '' // Legend for fieldset
+        },
+        attrs: {
+          className: 'row'
         }
       };
 
@@ -163,6 +166,7 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onMove(evt) {
+    console.log(evt);
     console.log('dragging column');
   }
 
@@ -171,6 +175,7 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onSort(evt) {
+    console.log(evt);
     if (evt.target) {
       data.save('columns', evt.target.id);
       console.log('onSort', evt);
@@ -184,18 +189,18 @@ export default class Row {
   onRemove(evt) {
     console.log('onRemove', evt);
     let row = evt.from;
+    let stage = row.parentElement;
     let columns = row.querySelectorAll('.stage-column');
     if (!columns.length) {
       dom.remove(row);
-      data.saveRowOrder();
-      data.save('rows');
+      data.save();
     } else if (columns.length === 1) {
       columns[0].style.float = 'none';
     }
 
     dom.columnWidths(row);
     dom.updateColumnPreset(evt.target);
-    data.save('columns', row.id);
+    data.save('rows', stage.id);
   }
 
   /**

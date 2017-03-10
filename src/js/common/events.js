@@ -3,11 +3,11 @@
 let defaults = {
   formeoLoaded: (evt) => {},
   onAdd: () => {},
-  onUpdate: (evt) => {},
+  onUpdate: evt => console.log(evt),
   onSave: (evt) => {},
   confirmClearAll: (evt) => {
     if (window.confirm(evt.confirmationMessage)) {
-      evt.clearAllAction(evt.rows);
+      evt.clearAllAction();
     }
   }
 };
@@ -23,12 +23,13 @@ const events = {
 };
 
 document.addEventListener('formeoUpdated', function(evt) {
-  evt = {
-    timeStamp: evt.timeStamp,
-    type: evt.type,
-    formData: evt.detail.formData
+  let {timeStamp, type, data} = evt;
+  let evtData = {
+    timeStamp,
+    type,
+    data
   };
-  events.opts.onUpdate(evt);
+  events.opts.onUpdate(evtData);
 });
 
 document.addEventListener('confirmClearAll', function(evt) {

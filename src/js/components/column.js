@@ -1,6 +1,7 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import {data, formData} from '../common/data';
+import {remove} from '../common/utils';
 import helpers from '../common/helpers';
 import dom from '../common/dom';
 import Field from './field';
@@ -28,7 +29,7 @@ export default class Column {
       fields: [],
       id: columnID,
       config: {},
-      classList: []
+      className: []
     };
 
     cData[columnID] = helpers.extend(columnDefaults, cData[columnID]);
@@ -78,9 +79,7 @@ export default class Column {
       onEnd: _this.onEnd.bind(_this),
       onAdd: _this.onAdd.bind(_this),
       onSort: _this.onSort.bind(_this),
-      onRemove: (evt) => {
-        _this.onRemove(evt.target);
-      },
+      onRemove: _this.onRemove,
       // Attempt to drag a filtered element
       onMove: (evt) => {
         if (evt.from !== evt.to) {
@@ -107,7 +106,6 @@ export default class Column {
    * @return {Object} Column order, array of column ids
    */
   onSort(evt) {
-    console.log(evt.target.fType);
     return data.saveFieldOrder(evt.target);
     // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
@@ -153,22 +151,28 @@ export default class Column {
   }
 
   /**
-   * Event when column is removed
-   * @param  {[type]} column [description]
+   * Event when field is removed from column
+   * @param  {Object} evt
    */
-  onRemove(column) {
+  onRemove(evt) {
+    let field = evt.item;
+    let column = evt.target;
     let fields = column.querySelectorAll('.stage-field');
     let row = column.parentElement;
 
     if (!fields.length) {
       dom.remove(column);
+      data.saveColumnOrder(row);
       let columns = row.querySelectorAll('.stage-column');
       if (!columns.length) {
         dom.remove(row);
+        data.saveRowOrder();
       }
     }
     dom.fieldOrderClass(column);
     dom.columnWidths(row);
+    data.save('columns', row.id);
+    remove(formData.columns[column.id].fields, field.id);
   }
 
   /**

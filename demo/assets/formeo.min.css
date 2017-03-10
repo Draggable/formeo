@@ -2196,6 +2196,11 @@
         align-content: stretch;
     -ms-flex-align: stretch;
         align-items: stretch; }
+    .formeo .stage-row:after,
+    .formeo .field-control:after {
+      content: '';
+      display: table;
+      clear: both; }
     .formeo .stage-row::after,
     .formeo .field-control::after {
       clear: both; }

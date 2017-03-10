@@ -45,10 +45,11 @@ export default class Field {
       dataset: {
         hoverTag: i18n.get('field')
       },
-          fType: 'field'
+      fType: 'field'
     };
 
     _this.elem = field = dom.create(field);
+    dom.fields[_this.fieldID] = field;
 
     return field;
   }
@@ -178,7 +179,7 @@ export default class Field {
       className: 'btn btn-secondary prop-remove prop-control',
       action: {
         click: (evt) => {
-          animate.slideUp(document.getElementById(property.id), 250, (elem) => {
+          animate.slideUp(document.getElementById(property.id), 250, elem => {
             let fieldPanel = formData.fields[_this.fieldID][args.panelType];
             dom.remove(elem);
             if (Array.isArray(fieldPanel)) {
@@ -266,10 +267,17 @@ export default class Field {
         const propertyInputs = {
             string: (key, val) => {
               let input = {
+                fMap,
                 tag: 'input',
+                id: `${prop}-${id}`,
                 attrs: typeAttrs(key, val, 'string'),
-                fMap: fMap,
-                id: prop + '-' + id
+                action: {
+                  input: evt => {
+                    // eslint-disable-next-line
+                    formData.fields[_this.fieldID][panelType][prop][key] = evt.target.value;
+                    // evt.target.propData
+                  }
+                },
               };
 
               if (!propIsNum) {
@@ -329,6 +337,8 @@ export default class Field {
 
     inputs.push(processProperty(prop, propVal));
 
+    console.log(inputs);
+
     return inputs;
   }
 
@@ -368,7 +378,7 @@ export default class Field {
    */
   addOption() {
     let _this = this;
-    let field = document.getElementById(_this.fieldID);
+    let field = dom.fields[_this.fieldID];
     let dataObj = formData.fields[_this.fieldID];
     let editGroup = field.querySelector('.field-edit-options');
     let propData = {label: '', value: '', selected: false};
@@ -384,6 +394,11 @@ export default class Field {
 
     editGroup.appendChild(dom.create(_this.panelContent(args)));
     _this.resizePanelWrap();
+    // Save Fields Attrs
+    data.save('options', editGroup);
+    dom.empty(_this.preview);
+    let newPreview = dom.create(formData.fields[_this.fieldID], true);
+    _this.preview.appendChild(newPreview);
   }
 
   /**
@@ -425,12 +440,6 @@ export default class Field {
 
             // Fire Event
             document.dispatchEvent(customEvt);
-
-            // Save Fields Attrs
-            data.save(type, _this.fieldID);
-            dom.empty(_this.preview);
-            let newPreview = dom.create(formData.fields[_this.fieldID], true);
-            _this.preview.appendChild(newPreview);
           }
         }
       };
@@ -447,7 +456,7 @@ export default class Field {
 
   /**
    * Generate the markup for field edit mode
-   * @return {Object} fieldEdit elemnt config
+   * @return {Object} fieldEdit element config
    */
   fieldEdit() {
     let _this = this;
@@ -473,33 +482,33 @@ export default class Field {
             className: `f-panel ${prop}-panel`
           },
           config: {
-            label: i18n.get('panelLabels.' + prop) || ''
+            label: i18n.get(`panelLabels.${prop}`) || ''
           },
           content: [
             _this.editPanel(prop, fieldData),
             _this.panelEditButtons(prop)
           ],
           action: {
-            change: evt => {
-              if (evt.target.fMap) {
-                let value = evt.target.value;
-                let targetType = evt.target.type;
-                if (targetType === 'checkbox' || targetType === 'radio') {
-                  let options = formData.fields[_this.fieldID].options;
-                  value = evt.target.checked;
+            // change: evt => {
+            //   if (evt.target.fMap) {
+            //     let value = evt.target.value;
+            //     let targetType = evt.target.type;
+            //     if (targetType === 'checkbox' || targetType === 'radio') {
+            //       let options = formData.fields[_this.fieldID].options;
+            //       value = evt.target.checked;
 
-                  // uncheck options if radio
-                  if (evt.target.type === 'radio') {
-                    options.forEach(option => option.selected = false);
-                  }
-                }
+            //       // uncheck options if radio
+            //       if (evt.target.type === 'radio') {
+            //         options.forEach(option => option.selected = false);
+            //       }
+            //     }
 
-                h.set(formData.fields[_this.fieldID], evt.target.fMap, value);
-                data.save(prop, _this.fieldID);
-                // throttle this for sure
-                _this.updatePreview();
-              }
-            }
+        //     h.set(formData.fields[_this.fieldID], evt.target.fMap, value);
+            //     data.save(prop, _this.fieldID);
+            //     // throttle this for sure
+            //     _this.updatePreview();
+            //   }
+            // }
           }
         };
 

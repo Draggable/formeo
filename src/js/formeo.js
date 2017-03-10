@@ -26,6 +26,7 @@ class Formeo {
   constructor(options, formData) {
     // Default options
     const defaults = {
+      allowEdit: true,
       dataType: 'json',
       debug: false,
       sessionStorage: false,
@@ -194,10 +195,14 @@ class Formeo {
     formeo.formData = data.init(opts, formData);
     events.init(opts.events);
     actions.init(opts.actions);
+    formeo.render = renderTarget => dom.renderForm.call(dom, renderTarget);
 
     // Load remote resources such as css and svg sprite
     _this.loadResources().then(() => {
-      _this.init.call(_this);
+      if (opts.allowEdit) {
+        formeo.edit = _this.init.bind(_this);
+        _this.init.call(_this);
+      }
     });
 
     return formeo;

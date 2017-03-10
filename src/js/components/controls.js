@@ -336,46 +336,6 @@ export class Controls {
   }
 
   /**
-   * [clearAll description]
-   * @param  {[type]} rows [description]
-   */
-  clearAll(rows) {
-    let stage = rows[0].parentElement;
-    stage.classList.add('removing-all-fields');
-    // var markEmptyArray = [];
-
-    // if (opts.prepend) {
-    //   markEmptyArray.push(true);
-    // }
-
-    // if (opts.append) {
-    //   markEmptyArray.push(true);
-    // }
-
-    // if (!markEmptyArray.some(elem => elem === true)) {
-    // stage.classList.add('stage-empty');
-    // }
-
-    let outerHeight = 0;
-    h.forEach(rows, (i) => {
-      outerHeight += rows[i].offsetHeight + 5;
-    });
-
-    rows[0].style.marginTop = (-outerHeight) + 'px';
-    stage.classList.add('stage-empty');
-
-    setTimeout(function() {
-      while (stage.firstChild) {
-        stage.removeChild(stage.firstChild);
-      }
-      stage.classList.remove('removing-all-fields');
-      formData.stage.rows = [];
-      data.save();
-      // document.dispatchEvent(events.formeoUpdated);
-    }, 300);
-  }
-
-  /**
    * [formActions description]
    * @return {[type]} [description]
    */
@@ -400,22 +360,14 @@ export class Controls {
         title: i18n.get('clearAll')
       },
       action: {
-        click: (evt) => {
-          let stage = document.getElementById(_this.formID + '-stage');
-          let rows = stage.getElementsByClassName('stage-row');
-          let buttonPosition = evt.target.getBoundingClientRect();
-          let bodyRect = document.body.getBoundingClientRect();
-          let coords = {
-              pageX: buttonPosition.left + (buttonPosition.width / 2),
-              pageY: (buttonPosition.top - bodyRect.top) - 12
-            };
-
+        click: evt => {
+          let rows = Object.keys(formData.rows);
           if (rows.length) {
             events.confirmClearAll = new CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: _this.clearAll,
-                btnCoords: coords,
+                clearAllAction: () => dom.clearForm.call(dom),
+                btnCoords: dom.coords(evt.target),
                 rows: rows
               }
             });
@@ -543,7 +495,7 @@ export class Controls {
     for (let i = groups.length - 1; i >= 0; i--) {
       Sortable.create(groups[i], {
         animation: 150,
-        forceFallback: true,
+        // forceFallback: true,
         ghostClass: 'control-ghost',
         group: {
           name: 'controls',

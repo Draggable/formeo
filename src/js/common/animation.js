@@ -160,7 +160,7 @@ const animate = {
     } else {
       animate.slideUp(elem, duration);
     }
-  }
+  },
 
   // animation.translateX = (distance, duration = 250) => {
   //   var increment = distance / (duration / 60);

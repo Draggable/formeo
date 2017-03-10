@@ -1,10 +1,9 @@
-import helpers from './helpers';
+import h from './helpers';
 import Row from '../components/row';
 import Column from '../components/column';
 import Field from '../components/field';
-
 import animate from './animation';
-import {formData} from './data';
+import {data, formData} from './data';
 
 /**
  * General purpose markup utilities and generator.
@@ -15,6 +14,8 @@ class DOM {
    * like stages, rows, columns etc
    */
   constructor() {
+    // Maintain references to DOM nodes
+    // so we don't have to keep doing getElementById
     this.stages = {};
     this.rows = {};
     this.columns = {};
@@ -34,8 +35,8 @@ class DOM {
     let processed = [];
     let i;
     let wrap;
-    let labelAfter = (elem) => {
-      let type = helpers.get(elem, 'attrs.type');
+    let labelAfter = elem => {
+      let type = h.get(elem, 'attrs.type');
       return (type === 'checkbox' || type === 'radio');
     };
     let isInput = (['input', 'textarea', 'select'].indexOf(tag) !== -1);
@@ -84,11 +85,11 @@ class DOM {
       } else {
         wrap = {
           tag: 'div',
-          className: helpers.get(elem, 'config.inputWrap') || 'form-group',
+          className: h.get(elem, 'config.inputWrap') || 'form-group',
           content: []
         };
 
-        helpers.forEach(options, (i) => {
+        h.forEach(options, (i) => {
           wrap.content.push(_this.create(options[i], isPreview));
         });
 
@@ -124,7 +125,7 @@ class DOM {
         if (!elem.config.noWrap) {
           wrap = {
             tag: 'div',
-            className: helpers.get(elem, 'config.inputWrap') || 'form-group',
+            className: h.get(elem, 'config.inputWrap') || 'form-group',
             content: [element]
           };
 
@@ -176,7 +177,7 @@ class DOM {
       'field'
     ];
 
-    if (helpers.inArray(elem.fType, fieldDataBindings)) {
+    if (h.inArray(elem.fType, fieldDataBindings)) {
       let dataType = elem.fType + 'Data';
       element[dataType] = elem;
       if (dataType === 'fieldData') {
@@ -186,7 +187,7 @@ class DOM {
     }
 
     // Subtract processed and ignored and attach the rest
-    let remaining = helpers.subtract(processed, Object.keys(elem));
+    let remaining = h.subtract(processed, Object.keys(elem));
     for (i = remaining.length - 1; i >= 0; i--) {
       element[remaining[i]] = elem[remaining[i]];
     }
@@ -203,7 +204,7 @@ class DOM {
    * Simple string concatenation instead of DOM.create because:
    *  - we don't need the perks of having icons be DOM objects at this stage
    *  - it forces the icon to be appended using innerHTML which helps svg render
-   * @param  {String} name icon name
+   * @param  {String} name - icon name
    * @return {String} icon markup
    */
   icon(name) {
@@ -230,7 +231,7 @@ class DOM {
     for (let attr in elem.attrs) {
       if (elem.attrs.hasOwnProperty(attr)) {
         if (elem.attrs[attr]) {
-          let name = helpers.safeAttrName(attr);
+          let name = h.safeAttrName(attr);
           let value = elem.attrs[attr] || '';
 
           if (Array.isArray(value)) {
@@ -249,7 +250,7 @@ class DOM {
    * @return {Array} option config objects
    */
   processOptions(elem) {
-    let fieldType = helpers.get(elem, 'attrs.type') || 'select';
+    let fieldType = h.get(elem, 'attrs.type') || 'select';
 
     let optionMap = (option, i) => {
       let defaultInput = {
@@ -527,7 +528,7 @@ class DOM {
       }
     };
     removeClass.object = removeClass.string; // handles regex map
-    helpers.forEach(nodeList, (i) => {
+    h.forEach(nodeList, (i) => {
       removeClass[_this.contentType(className)](nodeList[i]);
     });
   }
@@ -550,7 +551,7 @@ class DOM {
         }
       }
     };
-    helpers.forEach(nodeList, (i) => {
+    h.forEach(nodeList, (i) => {
       addClass[_this.contentType(className)](nodeList[i]);
     });
   }
@@ -571,7 +572,7 @@ class DOM {
 
   /**
    * [columnWidths description]
-   * @param  {[type]}  row    [description]
+   * @param  {Object}  row    DOM element
    * @param  {Boolean} widths [description]
    * @return {[type]}         [description]
    */
@@ -595,17 +596,20 @@ class DOM {
 
     _this.removeClasses(columns, bsGridRegEx);
 
-    helpers.forEach(columns, (i) => {
+    h.forEach(columns, (i) => {
       let column = columns[i];
-      if (helpers.isInt(colWidth)) {
+      let cDataClassNames = formData.columns[column.id].className;
+      if (h.isInt(colWidth)) {
         let widthClass = 'col-md-' + colWidth;
         column.removeAttribute('style');
         // removes bootstrap column classes
         column.className.replace(bsGridRegEx, '');
         column.classList.add(widthClass);
         formData.columns[column.id].config.width = width;
-        formData.columns[column.id].classList.push(widthClass);
-        helpers.unique(formData.columns[column.id].classList);
+        formData.columns[column.id].className = cDataClassNames
+        .map(className => className.replace(bsGridRegEx, ''));
+        formData.columns[column.id].className.push(widthClass);
+        h.unique(formData.columns[column.id].className);
       }
 
       column.style.width = width + '%';
@@ -623,7 +627,7 @@ class DOM {
 
     // This is temporary until column resizing happens on hover
     // setTimeout(() => {
-    helpers.forEach(columns, (i) => {
+    h.forEach(columns, (i) => {
       colWidth = (columns[i].offsetWidth / rowWidth * 100);
       columns[i].dataset.colWidth = Math.round(colWidth).toString() + '%';
     });
@@ -709,12 +713,12 @@ class DOM {
    * @return {Object}      {x,y} coordinates
    */
   coords(element) {
-    let buttonPosition = element.getBoundingClientRect();
+    let elemPosition = element.getBoundingClientRect();
     let bodyRect = document.body.getBoundingClientRect();
 
     return {
-      pageX: buttonPosition.left + (buttonPosition.width / 2),
-      pageY: (buttonPosition.top - bodyRect.top) - (buttonPosition.height / 2)
+      pageX: elemPosition.left + (elemPosition.width / 2),
+      pageY: (elemPosition.top - bodyRect.top) - (elemPosition.height / 2)
     };
   }
 
@@ -799,6 +803,91 @@ class DOM {
     // data.saveColumnOrder(row);
 
     return row;
+  }
+
+  /**
+   * Renders currently loaded formData to the renderTarget
+   * @param {Object} renderTarget
+   */
+  renderForm(renderTarget) {
+    this.empty(renderTarget);
+    let renderData = h.copyObj(formData);
+    let renderCount = document.getElementsByClassName('formeo-rendered').length;
+    let content = Object.values(renderData.stages).map(stageData => {
+      let {rows, ...stage} = stageData;
+      rows = rows.map(rowID => {
+        let {columns, ...row} = renderData.rows[rowID];
+        let cols = columns.map(columnID => {
+          let col = renderData.columns[columnID];
+          let fields = col.fields.map(fieldID => renderData.fields[fieldID]);
+          col.tag = 'div';
+          col.content = fields;
+          return col;
+        });
+        row.tag = 'div';
+        row.content = cols;
+        return row;
+      });
+      stage.tag = 'div';
+      stage.content = rows;
+      stage.className = 'rendered-stage container';
+      return stage;
+    });
+
+    let config = {
+      tag: 'div',
+      id: `formeo-rendered-${renderCount}`,
+      className: 'formeo-rendered',
+      content
+    };
+
+    renderTarget.appendChild(this.create(config));
+  }
+
+  /**
+   * Clears the editor
+   * @param  {Object} evt
+   */
+  clearForm(evt) {
+    let _this = this;
+    let stages = Object.values(_this.stages);
+    stages.forEach(stage => _this.clearStage(stage));
+  }
+
+  /**
+   * Removes all fields and resets a stage
+   * @param  {[type]} stage DOM element
+   */
+  clearStage(stage) {
+    let _this = this;
+    stage.classList.add('removing-all-fields');
+    const resetStage = () => {
+      _this.empty(stage);
+      // Empty the data register for stage
+      // and everything below it.
+      data.empty('stage', stage.id);
+      formData.stages[stage.id].rows = [];
+      animate.slideDown(stage);
+      data.save();
+      stage.classList.remove('removing-all-fields');
+      stage.classList.add('stage-empty');
+    };
+
+    // var markEmptyArray = [];
+
+    // if (opts.prepend) {
+    //   markEmptyArray.push(true);
+    // }
+
+    // if (opts.append) {
+    //   markEmptyArray.push(true);
+    // }
+
+    // if (!markEmptyArray.some(elem => elem === true)) {
+    // stage.classList.add('stage-empty');
+    // }
+
+    animate.slideUp(stage, 600, resetStage);
   }
 
 }

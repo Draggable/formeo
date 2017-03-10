@@ -1,6 +1,7 @@
 'use strict';
 const isSite = (window.location.href.indexOf('draggable.github.io') !== -1);
 let container = document.querySelector('.build-form');
+let renderContainer = document.querySelector('.render-form');
 let formeoOpts = {
   container: container,
   debug: true,
@@ -9,18 +10,29 @@ let formeoOpts = {
 };
 const formeo = new window.Formeo(formeoOpts);
 
+console.log(formeo);
+
 let debugWrap = document.getElementById('debug-wrap');
 let debugBtn = document.getElementById('debug-demo');
 let locale = document.getElementById('locale');
+let renderBtn = document.getElementById('renderForm');
+let editBtn = document.getElementById('editForm');
 
 debugBtn.onclick = function() {
   debugWrap.classList.toggle('open');
 };
 
+renderBtn.onclick = function() {
+  formeo.render(renderContainer);
+};
+
+editBtn.onclick = function() {
+  formeo.edit();
+};
+
 locale.addEventListener('change', function() {
   formeo.i18n.setLang(locale.value);
 });
-console.log(formeo);
 
 if (isSite) {
   ((window.gitter = {}).chat = {}).options = {

@@ -1,6 +1,6 @@
 .stage-row,
 .field-control {
-  // @include clearfix;
+  @include clearfix;
 
   position: relative;
   clear: both;

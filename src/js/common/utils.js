@@ -25,4 +25,29 @@ utils.match = (str = '', filter) => {
   return isMatch;
 };
 
+/**
+ * Removes a value from an array
+ * @param  {Array} arr
+ * @param  {String|Number} val
+ */
+export const remove = (arr, val) => {
+  let index = arr.indexOf(val);
+
+  if (index > -1) {
+     arr.splice(index, 1);
+  }
+};
+
+/**
+ * Find the closest parent by class
+ * @param  {Object} el  DOM element
+ * @param  {String} cls class
+ * @return {Object}     DOM Element
+ */
+export const closest = (el, cls) => {
+  let className = cls.replace('.', '');
+  while ((el = el.parentElement) && !el.classList.contains(className));
+  return el;
+};
+
 export default utils;

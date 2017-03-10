@@ -284,9 +284,9 @@ const helpers = {
       return arr.indexOf(elem) === pos;
     });
   },
+
   /**
    * Orders an array of objects by specific attribute
-   *
    * @param  {Array}  elements  Array of element objects
    * @param  {Array}  order     array of keys to order objects by
    * @param  {String} path      string path to property to order by
@@ -294,7 +294,7 @@ const helpers = {
    */
   orderObjectsBy: (elements, order, path) => {
     let objOrder = helpers.unique(order);
-    const newOrder = objOrder.map((key) => {
+    const newOrder = objOrder.map(key => {
         return elements.filter(function(elem) {
           let propVal = helpers.get(elem, path);
           return propVal === key;
