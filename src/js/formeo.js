@@ -261,18 +261,17 @@ class Formeo {
    */
   buildStages() {
     let stages = [];
-    let stagesData = Object.keys(formeo.formData.stages);
-    let newStageWrap;
-    if (stagesData.length) {
-      stagesData.forEach(stageID => {
-        newStageWrap = new Stage(opts, stageID);
-        stages.push(newStageWrap);
-        dom.activeStage = newStageWrap.firstChild;
+    const createStage = stageID => {
+      let newStageWrap = new Stage(opts, stageID);
+      dom.activeStage = newStageWrap.firstChild;
+      return newStageWrap;
+    };
+    if (formeo.formData.stages.size) {
+      formeo.formData.stages.forEach((stageConf, stageID) => {
+        stages.push(createStage(stageID));
       });
     } else {
-      newStageWrap = new Stage(opts);
-      stages.push(newStageWrap);
-      dom.activeStage = newStageWrap.firstChild;
+      stages.push(createStage());
     }
 
     return stages;

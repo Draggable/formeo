@@ -16,10 +16,10 @@ class DOM {
   constructor() {
     // Maintain references to DOM nodes
     // so we don't have to keep doing getElementById
-    this.stages = {};
-    this.rows = {};
-    this.columns = {};
-    this.fields = {};
+    this.stages = new Map();
+    this.rows = new Map();
+    this.columns = new Map();
+    this.fields = new Map();
   }
 
   /**
@@ -441,7 +441,7 @@ class DOM {
         action: {
           click: () => {
             let element = document.getElementById(id);
-            animate.slideUp(element, 250, (elem) => {
+            animate.slideUp(element, 250, elem => {
               _this.removeEmpty(elem);
             });
           }
@@ -487,15 +487,16 @@ class DOM {
     let children;
     _this.remove(element);
     // data.saveOrder(type, parent);
-    // data.save(type + 's', parent.id);
+    data.save(type, parent.id);
     children = parent.querySelectorAll('.stage-' + type);
     if (!children.length) {
-      if (parent.fType !== 'stage') {
+      if (parent.fType !== 'stages') {
         _this.removeEmpty(parent);
       } else {
         parent.classList.add('stage-empty');
       }
     }
+    data.empty(type, element.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
 
@@ -505,8 +506,14 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
-    let element = this.getElement(elem);
-    return element.parentElement.removeChild(element);
+    if (elem.fType) {
+      console.log(elem.fType, formData[elem.fType][elem.id]);
+      console.log(formData[elem.fType]);
+      // if (formData[elem.fType][elem.id]) {
+        formData[elem.fType].delete(elem.id);
+      // }
+    }
+    return elem.parentElement.removeChild(elem);
   }
 
   /**
@@ -603,7 +610,7 @@ class DOM {
         let widthClass = 'col-md-' + colWidth;
         column.removeAttribute('style');
         // removes bootstrap column classes
-        column.className.replace(bsGridRegEx, '');
+        column.className = column.className.replace(bsGridRegEx, '');
         column.classList.add(widthClass);
         formData.columns[column.id].config.width = width;
         formData.columns[column.id].className = cDataClassNames
@@ -774,10 +781,11 @@ class DOM {
    * @return {Object}     column
    */
   createColumn(evt) {
-    let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id);
+    let fType = evt.from.fType;
+    let field = fType === 'columns' ? evt.item : new Field(evt.item.id);
     let column = new Column();
 
-    formData.fields[field.id].parent = column.id;
+    // formData.fields[field.id].parent = column.id;
 
     field.classList.add('first-field');
     column.appendChild(field);
@@ -790,20 +798,20 @@ class DOM {
    * @param {[type]} evt [description]
    * @return {Object} row
    */
-  addRow(evt) {
-    let _this = this;
-    let column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt);
-    let row = new Row();
+// addRow(evt) {
+//   let _this = this;
+// let column = evt.from.fType === 'rows' ? evt.item : _this.createColumn(evt);
+//   let row = new Row();
 
-    // Set parent IDs
-    formData.columns[column.id].parent = row.id;
-    formData.rows[row.id].parent = _this.activeStage.id;
+//   // Set parent IDs
+//   formData.columns[column.id].parent = row.id;
+//   formData.rows[row.id].parent = _this.activeStage.id;
 
-    row.appendChild(column);
-    // data.saveColumnOrder(row);
+//   row.appendChild(column);
+//   data.saveColumnOrder(row);
 
-    return row;
-  }
+//   return row;
+// }
 
   /**
    * Renders currently loaded formData to the renderTarget
@@ -815,6 +823,7 @@ class DOM {
     let renderCount = document.getElementsByClassName('formeo-rendered').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;
+      console.log(rows);
       rows = rows.map(rowID => {
         let {columns, ...row} = renderData.rows[rowID];
         let cols = columns.map(columnID => {
@@ -888,6 +897,49 @@ class DOM {
     // }
 
     animate.slideUp(stage, 600, resetStage);
+  }
+
+  /**
+   * Adds a row to the stage
+   * @param {String} stageID
+   * @return {Object} DOM element
+   */
+  addRow(stageID) {
+    let row = new Row();
+    this.rows.set(row.id, row);
+    if (stageID) {
+      this.stages[stageID].appendChild(row);
+    } else {
+      this.activeStage.appendChild(row);
+    }
+    return row;
+  }
+
+  /**
+   * Adds a Column to a row
+   * @param {String} rowID
+   * @return {Object} DOM element
+   */
+  addColumn(rowID) {
+    let column = new Column();
+    this.columns.set(column.id, column);
+    this.rows[rowID].appendChild(column);
+    return column;
+  }
+
+  /**
+   * [addField description]
+   * @param {String} columnID
+   * @param {String} fieldID
+   * @return {Object} field
+   */
+  addField(columnID, fieldID) {
+    let field = new Field(fieldID);
+    this.fields.set(field.id, field);
+    if (columnID) {
+      this.columns[columnID].appendChild(field);
+    }
+    return field;
   }
 
 }

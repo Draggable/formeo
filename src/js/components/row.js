@@ -39,7 +39,7 @@ export default class Row {
     row = {
       tag: 'li',
       attrs: {
-        className: 'stage-row'
+        className: 'stage-row empty-row'
       },
       dataset: {
         hoverTag: i18n.get('row')
@@ -54,16 +54,17 @@ export default class Row {
       },
       id: _this.rowID,
       content: [dom.actionButtons(_this.rowID, 'row'), _this.editWindow()],
-      fType: 'row'
+      fType: 'rows'
     };
 
     row = dom.create(row);
+    dom.rows[_this.rowID] = row;
 
     Sortable.create(row, {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
-      group: {name: 'rows', pull: true, put: ['rows']},
+      group: {name: 'rows', pull: true, put: ['rows', 'controls']},
       sort: true,
       draggable: '.stage-column',
       handle: '.column-handle',
@@ -164,8 +165,9 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onMove(evt) {
-    console.log(evt);
-    console.log('dragging column');
+
+    // console.log(evt);
+    // console.log('dragging column');
   }
 
   /**
@@ -173,10 +175,10 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onSort(evt) {
-    console.log(evt);
+    // console.log(evt);
     if (evt.target) {
       data.save('columns', evt.target.id);
-      console.log('onSort', evt);
+      // console.log('onSort', evt);
     }
   }
 
@@ -187,18 +189,17 @@ export default class Row {
   onRemove(evt) {
     console.log('onRemove', evt);
     let row = evt.from;
-    let stage = row.parentElement;
     let columns = row.querySelectorAll('.stage-column');
     if (!columns.length) {
       dom.remove(row);
-      data.save();
     } else if (columns.length === 1) {
       columns[0].style.float = 'none';
     }
 
     dom.columnWidths(row);
     dom.updateColumnPreset(evt.target);
-    data.save('rows', stage.id);
+
+    data.save();
   }
 
   /**
@@ -207,13 +208,18 @@ export default class Row {
    */
   onAdd(evt) {
     console.log('onAdd', evt);
-    let column = formData.columns[evt.item.id];
-    column.parent = evt.target.id;
-    dom.columnWidths(evt.target);
-    data.saveRowOrder(evt.target);
-    data.saveColumnOrder(evt.target);
-    dom.updateColumnPreset(evt.target);
-    data.save('columns', evt.target.id);
+    let {from, item, to} = evt;
+    let column = from.fType === 'rows' ? item : dom.addColumn(to.id);
+    let field = from.fType === 'columns' ? item : dom.addField(column.id, item.id);
+
+    let columnData = formData.columns[evt.item.id];
+
+    // columnData.parent = to.id;
+    dom.columnWidths(to);
+    data.saveRowOrder(to);
+    data.saveColumnOrder(to);
+    dom.updateColumnPreset(to);
+    data.save('columns', to.id);
   }
 
   // columnWidth() {

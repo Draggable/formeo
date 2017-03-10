@@ -63,12 +63,14 @@ export default class Column {
       },
       id: _this.columnID,
       content: [dom.actionButtons(_this.columnID), editWindow, resizeHandle],
-      fType: 'column'
+      fType: 'columns'
     };
 
     column = dom.create(column);
 
     this.processConfig(column);
+    dom.columns[columnID] = column;
+
 
     Sortable.create(column, {
       animation: 150,
@@ -88,7 +90,7 @@ export default class Column {
         // evt.target.classList.add('hovering-column');
         // evt.target.parentReference = element;
 
-        if (evt.related.parentElement.fType === 'column') {
+        if (evt.related.parentElement.fType === 'columns') {
           // evt.to.classList.add('hovering-column');
           evt.related.parentElement.classList.add('hovering-column');
         }
@@ -136,7 +138,7 @@ export default class Column {
       let field = new Field(evt.item.id);
 
       column.insertBefore(field, column.childNodes[evt.newIndex]);
-      formData.fields[field.id].parent = column.id;
+      // formData.fields[field.id].parent = column.id;
 
       // calculates field position, subtracting indexes
       // for column-config and column-actions
@@ -155,7 +157,6 @@ export default class Column {
    * @param  {Object} evt
    */
   onRemove(evt) {
-    let field = evt.item;
     let column = evt.target;
     let fields = column.querySelectorAll('.stage-field');
     let row = column.parentElement;
@@ -172,7 +173,6 @@ export default class Column {
     dom.fieldOrderClass(column);
     dom.columnWidths(row);
     data.save('columns', row.id);
-    remove(formData.columns[column.id].fields, field.id);
   }
 
   /**

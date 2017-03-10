@@ -17,18 +17,17 @@ let data = {
   init: (opts, userFormData) => {
     let defaultFormData = {
       id: h.uuid(),
-      settings: {},
-      stages: {},
-      rows: {},
-      columns: {},
-      fields: {}
+      settings: new Map(),
+      stages: new Map(),
+      rows: new Map(),
+      columns: new Map(),
+      fields: new Map()
     };
     _data.opts = opts;
     let processFormData = data => {
       if (typeof data === 'string') {
         data = window.JSON.parse(data);
       }
-
 
       let id = data.id || h.uuid();
 
@@ -168,63 +167,13 @@ let data = {
     return map[group](id);
   },
 
-  // returns index of row in formData
-  rowIndex: rowID => {
-    return formData.stages.rows.indexOf(rowID);
-  },
-
-  // returns index of column in formData
-  columnIndex: columnID => {
-    let column = formData.columns[columnID];
-    return formData.rows[column.parent].columns.indexOf(columnID);
-  },
-
-  // returns index of field in formData
-  fieldIndex: fieldID => {
-    let field = formData.fields[fieldID];
-    return formData.columns[field.parent].fields.indexOf(fieldID);
-  },
-
   /**
-   * Return a map to fieldData in formData
-   * @param  {String} fieldID
-   * @return {Object}         fieldData
+   * Empties the data register for an element
+   * and its children
+   * @param  {String} type [description]
+   * @param  {String} id   [description]
+   * @return {Object}      [description]
    */
-  fieldIndexMap: (fieldID) => {
-    let field = formData.fields[fieldID];
-    let column = formData.columns[field.parent];
-    let row = formData.rows[column.parent];
-    let rowIndex = data.rowIndex(row.id);
-    let columnIndex = data.columnIndex(column.id);
-    let fieldIndex = data.fieldIndex(fieldID);
-
-    return {
-      rows: rowIndex,
-      columns: columnIndex,
-      fields: fieldIndex
-    };
-  },
-
-  /**
-   * Returns a setString
-   * @param  {String} fieldID
-   * @return {String}
-   */
-  fieldSetString: fieldID => {
-    let indexMap = data.fieldIndexMap(fieldID);
-    let setString = '';
-
-    for (let prop in indexMap) {
-      if (indexMap.hasOwnProperty(prop)) {
-        setString += `${prop}[${indexMap[prop]}].`;
-      }
-    }
-
-    return setString.substring(0, setString.length - 1);
-  },
-
-  // Empties the data register for an element
-  // and its children
   empty: (type, id) => {
     let removed = {};
     const emptyType = {

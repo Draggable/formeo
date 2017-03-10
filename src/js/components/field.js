@@ -45,11 +45,10 @@ export default class Field {
       dataset: {
         hoverTag: i18n.get('field')
       },
-      fType: 'field'
+      fType: 'fields'
     };
 
     _this.elem = field = dom.create(field);
-    dom.fields[_this.fieldID] = field;
 
     return field;
   }

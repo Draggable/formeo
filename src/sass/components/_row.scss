@@ -1,7 +1,6 @@
 .stage-row,
 .field-control {
   @include clearfix;
-
   position: relative;
   clear: both;
   margin-left: 0;
@@ -69,7 +68,13 @@
 }
 
 .stage-row {
+  min-height: 60px;
   transition: background-color 125ms ease-in-out;
+  &.empty-row{
+    .stage-column{
+      display:none;
+    }
+  }
 
   &::before {
     left: 0;

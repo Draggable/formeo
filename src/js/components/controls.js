@@ -495,7 +495,7 @@ export class Controls {
     for (let i = groups.length - 1; i >= 0; i--) {
       Sortable.create(groups[i], {
         animation: 150,
-        // forceFallback: true,
+        forceFallback: true,
         ghostClass: 'control-ghost',
         group: {
           name: 'controls',
@@ -518,7 +518,7 @@ export class Controls {
     let field = new Field(id);
     let column = new Column();
 
-    formData.fields[field.id].parent = column.id;
+    // formData.fields[field.id].parent = column.id;
 
     field.classList.add('first-field');
     column.appendChild(field);
@@ -530,21 +530,32 @@ export class Controls {
    * Append an element to the stage
    * @param {String} id of elements
    */
-  addRow(id) {
+  addElement(id) {
     let _this = this;
     let column = _this.createColumn(id);
-    let row = new Row();
+    let row = dom.addRow();
 
     // Set parent IDs
     // formData.columns[column.id].parent = row.id;
     // formData.rows[row.id].parent = stageID;
     row.appendChild(column);
-    dom.activeStage.appendChild(row);
+    row.className = row.className.replace(/\bempty-\w+/, '');
     data.saveColumnOrder(row);
     dom.columnWidths(row);
     // data.saveRowOrder(row);
     data.save();
     // trigger formSaved event
+    document.dispatchEvent(events.formeoUpdated);
+  }
+
+  /**
+   * Append an element to the stage
+   * @param {String} id of elements
+   */
+  addRow() {
+    console.log('controls addRow');
+    dom.addRow();
+    data.save();
     document.dispatchEvent(events.formeoUpdated);
   }
 

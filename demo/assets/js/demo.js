@@ -4,7 +4,7 @@ let container = document.querySelector('.build-form');
 let renderContainer = document.querySelector('.render-form');
 let formeoOpts = {
   container: container,
-  debug: true,
+  // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options']
 };

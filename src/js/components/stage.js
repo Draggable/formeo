@@ -129,26 +129,47 @@ export default class Stage {
     data.save();
   }
 
+  // createColumn(evt) {
+  //   let fType = evt.from.fType;
+  //   let field = fType === 'columns' ? evt.item : new Field(evt.item.id);
+  //   let column = new Column();
+
+  //   // formData.fields[field.id].parent = column.id;
+
+  //   field.classList.add('first-field');
+  //   column.appendChild(field);
+  //   formData.columns[column.id].fields.push(field.id);
+  //   return column;
+  // }
+
   /**
-   * [onAdd description]
+   * Method for handling stage drop
    * @param  {Object} evt
    * @return {Object} formData
    */
   onAdd(evt) {
-    let stage = evt.target;
-    let newIndex = h.indexOfNode(evt.item, stage);
-    let row = dom.addRow(evt);
+    let _this = this;
+    let {from, item, target} = evt;
+    let stage = target;
+    let newIndex = h.indexOfNode(item, stage);
+    let row = from.fType === 'stages' ? item : dom.addRow();
+    let column = from.fType === 'rows' ? item : dom.addColumn(row.id);
 
-    if (evt.item.fType === 'column') {
+    if (from.fType === 'controlGroup') {
+      dom.addField(column.id, item.id);
+      dom.remove(item);
+    } else if (from.fType === 'columns') {
+      column = _this.createColumn(evt);
+    }
+    row.appendChild(column);
+    dom.activeStage = dom.stages[_this.stageID];
+
+    if (item.fType === 'columns') {
       dom.columnWidths(row);
     }
 
     stage.insertBefore(row, stage.children[newIndex]);
     data.saveRowOrder(row);
-
-    if (evt.from.fType === 'controlGroup') {
-      dom.remove(evt.item);
-    }
 
     return data.save();
   }
