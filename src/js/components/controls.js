@@ -3,13 +3,11 @@ import i18n from 'mi18n';
 import {data, formData, registeredFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
-import utils from '../common/utils';
+import {match, unique} from '../common/utils';
 import dom from '../common/dom';
 import Panels from './panels';
-import Row from './row';
 import Column from './column';
 import Field from './field';
-// let dom = new DOM();
 
 let opts = {};
 
@@ -18,20 +16,26 @@ let opts = {};
  */
 export class Controls {
   /**
-   * [constructor description]
-   * @param  {[type]} controlOptions [description]
-   * @param  {[type]} formID         [description]
+   * Setup defaults and return Controls DOM
+   * @param  {Object} controlOptions
+   * @param  {String} formID
    */
   constructor(controlOptions, formID) {
     this.formID = formID;
+    let {groupOrder = []} = controlOptions;
+    this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']));
+    // console.log(['common', 'html', 'layout'].concat(groupOrder));
 
     this.defaults = {
       sortable: true,
-      groupOrder: [
-        'common',
-        'html'
-      ],
       groups: [{
+        id: 'layout',
+        label: i18n.get('layout'),
+        elementOrder: [
+          'row',
+          'column'
+        ]
+      }, {
         id: 'common',
         label: i18n.get('commonFields'),
         elementOrder: [
@@ -51,6 +55,26 @@ export class Controls {
         elements: []
       },
       elements: [{
+        tag: 'div',
+        config: {
+          label: i18n.get('column')
+        },
+        meta: {
+          group: 'layout',
+          icon: 'columns',
+          id: 'layout-column'
+        }
+      }, {
+        tag: 'div',
+        config: {
+          label: i18n.get('row')
+        },
+        meta: {
+          group: 'layout',
+          icon: 'rows',
+          id: 'layout-row'
+        }
+      }, {
         tag: 'input',
         attrs: {
           type: 'text',
@@ -243,7 +267,11 @@ export class Controls {
     };
     let elementControl = {
       tag: 'li',
-      className: 'field-control',
+      className: [
+        'field-control',
+        `${elem.meta.group}-control`,
+        `${elem.meta.id}-control`,
+      ],
       id: dataID,
       action: {
         mousedown: (evt) => {
@@ -278,11 +306,11 @@ export class Controls {
     let allGroups = [];
 
     // Apply order to Groups
-    groups = h.orderObjectsBy(groups, opts.groupOrder, 'id');
+    groups = h.orderObjectsBy(groups, this.groupOrder, 'id');
 
     // remove disabled groups
     groups = groups.filter(group => {
-      return utils.match(group.id, opts.disable.groups);
+      return match(group.id, opts.disable.groups);
     });
 
     // create group config
@@ -316,7 +344,7 @@ export class Controls {
       group.content = elements.filter(field => {
         let fieldId = field.meta.id || '';
         let filters = [
-          utils.match(fieldId, opts.disable.elements),
+          match(fieldId, opts.disable.elements),
           (field.meta.group === groups[i].id)
         ];
 

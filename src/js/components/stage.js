@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import {data, formData} from '../common/data';
+import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import dom from '../common/dom';
 
@@ -153,15 +153,26 @@ export default class Stage {
     let stage = target;
     let newIndex = h.indexOfNode(item, stage);
     let row = from.fType === 'stages' ? item : dom.addRow();
-    let column = from.fType === 'rows' ? item : dom.addColumn(row.id);
+    let column;
 
     if (from.fType === 'controlGroup') {
-      dom.addField(column.id, item.id);
+      let group = h.get(rFields[item.id], 'meta.group');
+      console.log();
+      if (group && group === 'layout') {
+        // dom.addField(column.id, item.id);
+      } else {
+        column = from.fType === 'rows' ? item : dom.addColumn(row.id);
+        dom.addField(column.id, item.id);
+      }
       dom.remove(item);
     } else if (from.fType === 'columns') {
       column = _this.createColumn(evt);
     }
-    row.appendChild(column);
+
+    if (column) {
+      row.appendChild(column);
+    }
+
     dom.activeStage = dom.stages[_this.stageID];
 
     if (item.fType === 'columns') {
@@ -239,7 +250,7 @@ export default class Stage {
       //   console.log(evt);
       // return false;
       // },
-      // filter: '.stage-column'
+      filter: '.layout-control'
     });
 
     return stageWrap;

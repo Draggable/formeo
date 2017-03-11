@@ -72,7 +72,8 @@ export default class Row {
       onRemove: _this.onRemove,
       onAdd: _this.onAdd,
       onMove: _this.onMove,
-      onSort: _this.onSort
+      onSort: _this.onSort,
+      filter: '.layout-control'
     });
 
     return row;
@@ -210,16 +211,24 @@ export default class Row {
     console.log('onAdd', evt);
     let {from, item, to} = evt;
     let column = from.fType === 'rows' ? item : dom.addColumn(to.id);
+    //eslint-disable-next-line
     let field = from.fType === 'columns' ? item : dom.addField(column.id, item.id);
 
-    let columnData = formData.columns[evt.item.id];
+    if (from.fType === 'controlGroup') {
+      column.appendChild(field);
+      dom.remove(item);
+    }
+
+    to.appendChild(column);
+
+    // let columnData = formData.columns[evt.item.id];
 
     // columnData.parent = to.id;
-    dom.columnWidths(to);
-    data.saveRowOrder(to);
-    data.saveColumnOrder(to);
-    dom.updateColumnPreset(to);
-    data.save('columns', to.id);
+    // dom.columnWidths(to);
+    // data.saveRowOrder(to);
+    // data.saveColumnOrder(to);
+    // dom.updateColumnPreset(to);
+    // data.save('columns', to.id);
   }
 
   // columnWidth() {

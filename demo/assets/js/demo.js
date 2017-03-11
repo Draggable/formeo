@@ -4,6 +4,10 @@ let container = document.querySelector('.build-form');
 let renderContainer = document.querySelector('.render-form');
 let formeoOpts = {
   container: container,
+  controls: {
+    groupOrder: ['layout', 'common']
+  },
+  svgSprite: 'assets/img/formeo-sprite.svg',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options']

@@ -63,7 +63,7 @@
     }
   },
   "scripts": {
-    "icons": ". ./tools/build-icons.sh",
+    "icons": ". ./tools/build-icons.sh && cp -a dist/*.svg demo/assets",
     "dev": "webpack -p --progress",
     "clean": "rm -rf dist/*",
     "build": "npm run clean && npm run dev -f && npm run copy",

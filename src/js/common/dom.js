@@ -922,8 +922,10 @@ class DOM {
    */
   addColumn(rowID) {
     let column = new Column();
+    let row = this.rows[rowID];
     this.columns.set(column.id, column);
-    this.rows[rowID].appendChild(column);
+    row.appendChild(column);
+    row.className = row.className.replace(/\bempty-\w+/, '');
     return column;
   }
 

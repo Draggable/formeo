@@ -2,8 +2,7 @@
 import dom from './dom';
 import uuid from 'uuid-v4';
 import deepExtend from 'deep-extend';
-// let dom = new DOM();
-
+import {unique} from './utils';
 /**
  * [memoize description]
  * @param  {[type]} func     [description]
@@ -274,16 +273,6 @@ const helpers = {
     }
     return mergedObj;
   },
-  /**
-   * Remove duplicates from an array of elements
-   * @param  {Array} array with possible duplicates
-   * @return {Array} array with only unique values
-   */
-  unique: (array) => {
-    return array.filter((elem, pos, arr) => {
-      return arr.indexOf(elem) === pos;
-    });
-  },
 
   /**
    * Orders an array of objects by specific attribute
@@ -293,7 +282,7 @@ const helpers = {
    * @return {Array}            Ordered Array of Element Objects
    */
   orderObjectsBy: (elements, order, path) => {
-    let objOrder = helpers.unique(order);
+    let objOrder = unique(order);
     const newOrder = objOrder.map(key => {
         return elements.filter(function(elem) {
           let propVal = helpers.get(elem, path);
@@ -302,7 +291,7 @@ const helpers = {
       }).filter(Boolean);
     let orderedElements = newOrder.concat(elements);
 
-    return helpers.unique(orderedElements);
+    return unique(orderedElements);
   },
 
   numberBetween: (num, min, max) => (num > min && num < max),

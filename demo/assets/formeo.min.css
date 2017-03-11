@@ -2237,7 +2237,10 @@
     .formeo .field-control.resizing-columns .stage-column {
       transition: none; }
   .formeo .stage-row {
+    min-height: 60px;
     transition: background-color 125ms ease-in-out; }
+    .formeo .stage-row.empty-row .stage-column {
+      display: none; }
     .formeo .stage-row::before {
       left: 0; }
     .formeo .stage-row.editing-row.hovering-row .stage-column {
@@ -2248,6 +2251,8 @@
         border-bottom: 1px solid #325D88;
         border-right: 1px solid #325D88;
         width: 80px !important; }
+    .formeo .stage-row .layout-row-control {
+      display: none; }
   .formeo .row-edit {
     padding-top: 2rem; }
   .formeo .input-group-addon label {
@@ -2557,6 +2562,18 @@
       content: attr(data-hover-tag);
       border-bottom-right-radius: 5px;
       background-color: #fff; }
+    .formeo .stage-wrap [class*="empty-"][class*="editing-"]::after {
+      opacity: 0; }
+    .formeo .stage-wrap [class*="empty-"]::after {
+      opacity: 1;
+      font-size: 24px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      color: #bcbfc1;
+      text-align: center;
+      transform: translate(-50%, -50%);
+      content: attr(data-hover-tag); }
     .formeo .stage-wrap.editing-stage .formeo-settings {
       display: block; }
     .formeo .stage-wrap.editing-stage .stage {

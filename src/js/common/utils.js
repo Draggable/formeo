@@ -1,12 +1,10 @@
-const utils = {};
-
 /**
  * Match the values from a string or array against a str.
  * @param  {String} str    String we are searching
  * @param  {String|Array}  filter String or array of values to match
  * @return {Boolean}        [description]
  */
-utils.match = (str = '', filter) => {
+export const match = (str = '', filter) => {
   if (!filter) {
     console.warn('utils.match missing argument 2.');
     return false;
@@ -50,4 +48,12 @@ export const closest = (el, cls) => {
   return el;
 };
 
-export default utils;
+/**
+ * Remove duplicates from an array of elements
+ * @param  {Array} array with possible duplicates
+ * @return {Array} array with only unique values
+ */
+export const unique = array =>
+  array.filter((elem, pos, arr) =>
+    (arr.indexOf(elem) === pos));
+

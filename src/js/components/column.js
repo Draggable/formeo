@@ -1,7 +1,6 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import {data, formData} from '../common/data';
-import {remove} from '../common/utils';
 import helpers from '../common/helpers';
 import dom from '../common/dom';
 import Field from './field';
