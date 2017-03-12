@@ -4,6 +4,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
+import {unique} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -612,7 +613,7 @@ class DOM {
         formData.columns.get(column.id).className = cDataClassNames
         .map(className => className.replace(bsGridRegEx, ''));
         formData.columns.get(column.id).className.push(widthClass);
-        h.unique(formData.columns.get(column.id).className);
+        unique(formData.columns.get(column.id).className);
       }
 
       column.style.width = width + '%';
@@ -860,9 +861,9 @@ class DOM {
       // Empty the data register for stage
       // and everything below it.
       data.empty('stages', stage.id);
+      // formData.rows.forEach(console.log);
       dom.empty(stage);
       stage.classList.remove('removing-all-fields');
-      stage.classList.add('stage-empty');
       data.save();
       animate.slideDown(stage, 300);
     };

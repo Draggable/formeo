@@ -3,9 +3,6 @@ import Sortable from 'sortablejs';
 import {data, formData} from '../common/data';
 import helpers from '../common/helpers';
 import dom from '../common/dom';
-import Field from './field';
-
-// let dom = new DOM();
 
 /**
  * Setup Column elements
@@ -76,7 +73,7 @@ export default class Column {
       group: {name: 'columns', pull: true, put: ['columns', 'controls']},
       sort: true,
       onEnd: _this.onEnd.bind(_this),
-      onAdd: _this.onAdd.bind(_this),
+      onAdd: _this.onAdd,
       onSort: _this.onSort.bind(_this),
       onRemove: _this.onRemove,
       // Attempt to drag a filtered element
@@ -130,23 +127,25 @@ export default class Column {
    * @param  {Object} evt
    */
   onAdd(evt) {
-    if (evt.from.fType === 'controlGroup') {
-      let column = evt.target;
-      let field = new Field(evt.item.id);
+    let {from, item, to} = evt;
+    let fromColumn = from.fType === 'columns';
+    let field = fromColumn ? item : dom.addField(to.id, item.id);
 
-      column.insertBefore(field, column.childNodes[evt.newIndex]);
-      // formData.fields[field.id].parent = column.id;
-
-      // calculates field position, subtracting indexes
-      // for column-config and column-actions
-      dom.fieldOrderClass(column);
+    if (from.fType === 'controlGroup') {
       dom.remove(evt.item);
-      data.saveFieldOrder(column);
-      data.save('fields', column.id);
+      data.saveFieldOrder(to);
+      data.save('fields', to.id);
       // document.dispatchEvent(events.formeoUpdated);
     }
 
-    evt.target.classList.remove('hovering-column');
+    dom.fieldOrderClass(to);
+
+    if (fromColumn) {
+      dom.fieldOrderClass(from);
+    }
+    to.insertBefore(field, to.childNodes[evt.newIndex]);
+
+    to.classList.remove('hovering-column');
   }
 
   /**
@@ -168,7 +167,6 @@ export default class Column {
       }
     }
     dom.fieldOrderClass(column);
-    dom.columnWidths(row);
     data.save('columns', row.id);
   }
 

@@ -572,27 +572,4 @@ export default class Field {
     return fieldPreview;
   }
 
-  /**
-   * Actions to take when a field is removed
-   * @param  {Object} field DOM element
-   */
-  onRemove(field) {
-    let column = field.parentElement;
-    dom.remove(field);
-    let fields = column.querySelectorAll('.stage-field');
-
-    if (!fields.length) {
-      let row = column.parentElement;
-      dom.remove(column);
-      let columns = row.querySelectorAll('.stage-column');
-      if (!columns.length) {
-        dom.remove(row);
-      } else {
-        dom.columnWidths(row);
-      }
-    }
-
-    dom.fieldOrderClass(column);
-  }
-
 }

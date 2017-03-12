@@ -64,7 +64,7 @@ export default class Row {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
-      group: {name: 'rows', pull: true, put: ['rows', 'controls']},
+      group: {name: 'rows', pull: true, put: ['rows', 'controls', 'columns']},
       sort: true,
       draggable: '.stage-column',
       handle: '.column-handle',
@@ -184,8 +184,8 @@ export default class Row {
   }
 
   /**
-   * [onMove description]
-   * @param  {[type]} evt [description]
+   * Handler for removing content from a row
+   * @param  {Object} evt
    */
   onRemove(evt) {
     console.log('onRemove', evt);
@@ -204,35 +204,34 @@ export default class Row {
   }
 
   /**
-   * [onMove description]
-   * @param  {[type]} evt [description]
+   * Handler for adding content to a row
+   * @param  {Object} evt
    */
   onAdd(evt) {
-    console.log('onAdd', evt);
     let {from, item, to} = evt;
-    let column = from.fType === 'rows' ? item : dom.addColumn(to.id);
-    //eslint-disable-next-line
-    let field = from.fType === 'columns' ? item : dom.addField(column.id, item.id);
+    let fromRow = from.fType === 'rows';
+    let fromColumn = from.fType === 'columns';
+    let column;
 
-    if (from.fType === 'controlGroup') {
-      column.appendChild(field);
+    if (fromRow) {
+      column = item;
+    } else if(fromColumn) {
+      column = dom.addColumn(to.id);
+      dom.addField(column.id, item.id);
+      to.appendChild(column);
+    }
+
+    if (fromColumn || from.fType === 'controlGroup') {
       dom.remove(item);
     }
 
-    to.appendChild(column);
-
-    // let columnData = formData.columns[evt.item.id];
-
-    // columnData.parent = to.id;
-    // dom.columnWidths(to);
-    // data.saveRowOrder(to);
     data.saveColumnOrder(to);
-    // dom.updateColumnPreset(to);
+    dom.updateColumnPreset(to);
+    if (fromColumn) {
+      dom.updateColumnPreset(from);
+    }
+
     data.save();
   }
-
-  // columnWidth() {
-
-  // }
 
 }

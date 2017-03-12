@@ -19,3 +19,8 @@
   // Go easy on the eyes and use something other than `#000` for text
   color: $body-color;
 }
+
+
+.rendered-stage .row{
+  min-height:60px;
+}

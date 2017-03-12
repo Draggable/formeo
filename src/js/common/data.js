@@ -186,12 +186,14 @@ let data = {
         if (!id) {
           id = dom.activeStage.id;
         }
-        let rows = formData.stages.get(id).rows;
+        let stageData = formData.stages.get(id);
+        let rows = stageData.rows;
         removed.rows = rows.map(rowID => {
           emptyType['rows'](rowID);
           formData.rows.delete(rowID);
           return rowID;
         });
+        stageData.rows = [];
       },
       rows: id => {
         let row = formData.rows.get(id);
@@ -202,6 +204,7 @@ let data = {
             formData.columns.delete(columnID);
             return columnID;
           });
+          columns = [];
         }
       },
       columns: id => {
@@ -211,6 +214,7 @@ let data = {
           formData.fields.delete(fieldID);
           return fieldID;
         });
+        fields = [];
       }
     };
 
