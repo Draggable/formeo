@@ -19,12 +19,11 @@ export default class Field {
   constructor(dataID) {
     let _this = this;
 
-    let fieldData = formData.fields[dataID] || h.copyObj(rFields[dataID]);
-
+    let fieldData = formData.fields.get(dataID) || h.copyObj(rFields[dataID]);
     _this.fieldID = fieldData.id || h.uuid();
     fieldData.id = _this.fieldID;
 
-    formData.fields[_this.fieldID] = fieldData;
+    formData.fields.set(_this.fieldID, fieldData);
 
     _this.preview = dom.create(_this.fieldPreview());
 
@@ -59,7 +58,8 @@ export default class Field {
    */
   updatePreview() {
     let _this = this;
-    let newPreview = dom.create(formData.fields[_this.fieldID], true);
+    let fieldData = formData.fields.get(_this.fieldID);
+    let newPreview = dom.create(fieldData, true);
     dom.empty(_this.preview);
     _this.preview.appendChild(newPreview);
 
@@ -179,16 +179,17 @@ export default class Field {
       action: {
         click: (evt) => {
           animate.slideUp(document.getElementById(property.id), 250, elem => {
-            let fieldPanel = formData.fields[_this.fieldID][args.panelType];
+            let fieldData = formData.fields.get(_this.fieldID);
+            let fieldPanelData = fieldData[args.panelType];
             dom.remove(elem);
-            if (Array.isArray(fieldPanel)) {
-              fieldPanel.splice(dataProp, 1);
+            if (Array.isArray(fieldPanelData)) {
+              fieldPanelData.splice(dataProp, 1);
             } else {
-              fieldPanel[dataProp] = undefined;
+              fieldPanelData[dataProp] = undefined;
             }
             data.save(args.panelType, _this.fieldID);
             dom.empty(_this.preview);
-            let newPreview = dom.create(formData.fields[_this.fieldID], true);
+            let newPreview = dom.create(fieldData, true);
             _this.preview.appendChild(newPreview);
             _this.resizePanelWrap();
           });
@@ -236,7 +237,7 @@ export default class Field {
         }
         const typeAttrs = (key, val, type) => {
           let boolType = 'checkbox';
-          let attrType = formData.fields[_this.fieldID].attrs.type;
+          let attrType = formData.fields.get(_this.fieldID).attrs.type;
           if (attrType === 'radio' && key === 'selected') {
             boolType = 'radio';
           }
@@ -273,7 +274,7 @@ export default class Field {
                 action: {
                   input: evt => {
                     // eslint-disable-next-line
-                    formData.fields[_this.fieldID][panelType][prop][key] = evt.target.value;
+                    formData.fields.get(_this.fieldID)[panelType][prop][key] = evt.target.value;
                     // evt.target.propData
                   }
                 },
@@ -349,19 +350,20 @@ export default class Field {
     let field = document.getElementById(_this.fieldID);
     let editGroup = field.querySelector('.field-edit-attrs');
     let safeAttr = h.hyphenCase(attr);
+    let fieldData = formData.fields.get(_this.fieldID);
 
     i18n.put('attrs' + safeAttr, h.capitalize(attr));
 
     try {
-      formData.fields[_this.fieldID].attrs[safeAttr] = window.JSON.parse(val);
+      fieldData.attrs[safeAttr] = window.JSON.parse(val);
     } catch (e) {
-      formData.fields[_this.fieldID].attrs[safeAttr] = val;
+      fieldData.attrs[safeAttr] = val;
     }
 
     let args = {
-      dataObj: formData.fields[_this.fieldID],
+      dataObj: formData.fields.get(_this.fieldID),
       dataProp: safeAttr,
-      i: Object.keys(formData.fields[_this.fieldID].attrs).length,
+      i: Object.keys(formData.fields.get(_this.fieldID).attrs).length,
       panelType: 'attrs',
       propType: dom.contentType(val)
     };
@@ -375,8 +377,8 @@ export default class Field {
    */
   addOption() {
     let _this = this;
-    let field = dom.fields[_this.fieldID];
-    let dataObj = formData.fields[_this.fieldID];
+    let field = dom.fields.get(_this.fieldID);
+    let dataObj = formData.fields.get(_this.fieldID);
     let editGroup = field.querySelector('.field-edit-options');
     let propData = {label: '', value: '', selected: false};
     dataObj.options.push(propData);
@@ -394,7 +396,7 @@ export default class Field {
     // Save Fields Attrs
     data.save('options', editGroup);
     dom.empty(_this.preview);
-    let newPreview = dom.create(formData.fields[_this.fieldID], true);
+    let newPreview = dom.create(formData.fields.get(_this.fieldID), true);
     _this.preview.appendChild(newPreview);
   }
 
@@ -460,7 +462,7 @@ export default class Field {
     let panels = [];
     let editable = ['object', 'array'];
     let noPanels = ['config', 'meta'];
-    let fieldData = formData.fields[_this.fieldID];
+    let fieldData = formData.fields.get(_this.fieldID);
     let allowedPanels = Object.keys(fieldData).filter((elem) => {
         return !h.inArray(elem, noPanels);
       });
@@ -487,11 +489,12 @@ export default class Field {
           ],
           action: {
             // change: evt => {
+            // let fieldData = formData.fields.get(_this.fieldID);
             //   if (evt.target.fMap) {
             //     let value = evt.target.value;
             //     let targetType = evt.target.type;
             //     if (targetType === 'checkbox' || targetType === 'radio') {
-            //       let options = formData.fields[_this.fieldID].options;
+            //       let options = fieldData.options;
             //       value = evt.target.checked;
 
             //       // uncheck options if radio
@@ -500,7 +503,7 @@ export default class Field {
             //       }
             //     }
 
-        //     h.set(formData.fields[_this.fieldID], evt.target.fMap, value);
+            //     h.set(fieldData, evt.target.fMap, value);
             //     data.save(prop, _this.fieldID);
             //     // throttle this for sure
             //     _this.updatePreview();
@@ -536,7 +539,7 @@ export default class Field {
    */
   fieldPreview() {
     let _this = this;
-    let fieldData = h.clone(formData.fields[_this.fieldID]);
+    let fieldData = h.clone(formData.fields.get(_this.fieldID));
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -548,7 +551,7 @@ export default class Field {
       content: dom.create(fieldData, true),
       action: {
         input: evt => {
-          let fieldData = formData.fields[_this.fieldID];
+          let fieldData = formData.fields.get(_this.fieldID);
           if (evt.target.fMap) {
             if (evt.target.contentEditable === 'true') {
               h.set(fieldData, evt.target.fMap, evt.target.innerHTML);

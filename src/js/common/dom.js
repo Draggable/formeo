@@ -375,14 +375,20 @@ class DOM {
 
   /**
    * Util to remove contents of DOM Object
-   * @param  {Object} element
-   * @return {Object}         element with its children removed
+   * @param  {Object} elem
+   * @return {Object} element with its children removed
    */
-  empty(element) {
-    while (element.firstChild) {
-      element.removeChild(element.firstChild);
+  empty(elem) {
+    let _this = this;
+    while (elem.firstChild) {
+      let fType = elem.firstChild.fType;
+      if (fType) {
+        _this[fType].delete(elem.firstChild.id);
+        data.empty(fType, elem.firstChild.id);
+      }
+      elem.removeChild(elem.firstChild);
     }
-    return element;
+    return elem;
   }
 
   /**
@@ -492,11 +498,8 @@ class DOM {
     if (!children.length) {
       if (parent.fType !== 'stages') {
         _this.removeEmpty(parent);
-      } else {
-        parent.classList.add('stage-empty');
       }
     }
-    data.empty(type, element.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
 
@@ -506,13 +509,6 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
-    if (elem.fType) {
-      console.log(elem.fType, formData[elem.fType][elem.id]);
-      console.log(formData[elem.fType]);
-      // if (formData[elem.fType][elem.id]) {
-        formData[elem.fType].delete(elem.id);
-      // }
-    }
     return elem.parentElement.removeChild(elem);
   }
 
@@ -605,23 +601,23 @@ class DOM {
 
     h.forEach(columns, i => {
       let column = columns[i];
-      let cDataClassNames = formData.columns[column.id].className;
+      let cDataClassNames = formData.columns.get(column.id).className;
       if (h.isInt(colWidth)) {
         let widthClass = 'col-md-' + colWidth;
         column.removeAttribute('style');
         // removes bootstrap column classes
         column.className = column.className.replace(bsGridRegEx, '');
         column.classList.add(widthClass);
-        formData.columns[column.id].config.width = width;
-        formData.columns[column.id].className = cDataClassNames
+        formData.columns.get(column.id).config.width = width;
+        formData.columns.get(column.id).className = cDataClassNames
         .map(className => className.replace(bsGridRegEx, ''));
-        formData.columns[column.id].className.push(widthClass);
-        h.unique(formData.columns[column.id].className);
+        formData.columns.get(column.id).className.push(widthClass);
+        h.unique(formData.columns.get(column.id).className);
       }
 
       column.style.width = width + '%';
       column.style.float = 'left';
-      formData.columns[column.id].config.width = width;
+      formData.columns.get(column.id).config.width = width;
     });
 
     // Fix the editWindow for any fields that were being edited
@@ -663,7 +659,7 @@ class DOM {
    * @return {Object}       [description]
    */
   columnPresetControl(rowID) {
-    let row = formData.rows[rowID];
+    let row = formData.rows.get(rowID);
     let layoutPreset = {
         tag: 'select',
         attrs: {
@@ -739,7 +735,7 @@ class DOM {
       stage = this.activeStage;
     }
 
-    let rows = formData.stages[stage.id].rows;
+    let rows = formData.stages.get(stage.id).rows;
     return rows.forEach(rowID => {
       let row = new Row(rowID);
       this.loadColumns(row);
@@ -753,13 +749,10 @@ class DOM {
    * @param  {Object} row
    */
   loadColumns(row) {
-    let _this = this;
-    let columns = formData.rows[row.id].columns;
+    let columns = formData.rows.get(row.id).columns;
     columns.forEach(columnID => {
-      let column = new Column(columnID);
-      _this.fieldOrderClass(column);
+      let column = this.addColumn(row.id, columnID);
       this.loadFields(column);
-      row.appendChild(column);
     });
   }
 
@@ -768,11 +761,9 @@ class DOM {
    * @param  {[type]} column [description]
    */
   loadFields(column) {
-    let fields = formData.columns[column.id].fields;
-    fields.forEach(fieldID => {
-      let field = new Field(fieldID);
-      column.appendChild(field);
-    });
+    let fields = formData.columns.get(column.id).fields;
+    fields.forEach(fieldID => this.addField(column.id, fieldID));
+    this.fieldOrderClass(column);
   }
 
   /**
@@ -785,11 +776,9 @@ class DOM {
     let field = fType === 'columns' ? evt.item : new Field(evt.item.id);
     let column = new Column();
 
-    // formData.fields[field.id].parent = column.id;
-
     field.classList.add('first-field');
     column.appendChild(field);
-    formData.columns[column.id].fields.push(field.id);
+    formData.columns.get(column.id).fields.push(field.id);
     return column;
   }
 
@@ -804,7 +793,7 @@ class DOM {
 //   let row = new Row();
 
 //   // Set parent IDs
-//   formData.columns[column.id].parent = row.id;
+//   formData.columns.get(column.id).parent = row.id;
 //   formData.rows[row.id].parent = _this.activeStage.id;
 
 //   row.appendChild(column);
@@ -819,11 +808,10 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget);
-    let renderData = h.copyObj(formData);
+    let renderData = data.jsonSave(formData);
     let renderCount = document.getElementsByClassName('formeo-rendered').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;
-      console.log(rows);
       rows = rows.map(rowID => {
         let {columns, ...row} = renderData.rows[rowID];
         let cols = columns.map(columnID => {
@@ -858,9 +846,7 @@ class DOM {
    * @param  {Object} evt
    */
   clearForm(evt) {
-    let _this = this;
-    let stages = Object.values(_this.stages);
-    stages.forEach(stage => _this.clearStage(stage));
+    this.stages.forEach(this.clearStage);
   }
 
   /**
@@ -868,18 +854,17 @@ class DOM {
    * @param  {[type]} stage DOM element
    */
   clearStage(stage) {
-    let _this = this;
     stage.classList.add('removing-all-fields');
+
     const resetStage = () => {
-      _this.empty(stage);
       // Empty the data register for stage
       // and everything below it.
-      data.empty('stage', stage.id);
-      formData.stages[stage.id].rows = [];
-      animate.slideDown(stage);
-      data.save();
+      data.empty('stages', stage.id);
+      dom.empty(stage);
       stage.classList.remove('removing-all-fields');
       stage.classList.add('stage-empty');
+      data.save();
+      animate.slideDown(stage, 300);
     };
 
     // var markEmptyArray = [];
@@ -897,35 +882,36 @@ class DOM {
     // }
 
     animate.slideUp(stage, 600, resetStage);
+    // animate.slideUp(stage, 2000);
   }
 
   /**
    * Adds a row to the stage
    * @param {String} stageID
+   * @param {String} rowID
    * @return {Object} DOM element
    */
-  addRow(stageID) {
-    let row = new Row();
-    this.rows.set(row.id, row);
-    if (stageID) {
-      this.stages[stageID].appendChild(row);
-    } else {
-      this.activeStage.appendChild(row);
-    }
+  addRow(stageID, rowID) {
+    let row = new Row(rowID);
+    let stage = stageID ? this.stages.get(stageID) : this.activeStage;
+    stage.appendChild(row);
+    data.saveRowOrder(stage);
     return row;
   }
 
   /**
    * Adds a Column to a row
    * @param {String} rowID
+   * @param {String} columnID
    * @return {Object} DOM element
    */
-  addColumn(rowID) {
-    let column = new Column();
-    let row = this.rows[rowID];
+  addColumn(rowID, columnID) {
+    let column = new Column(columnID);
+    let row = this.rows.get(rowID);
     this.columns.set(column.id, column);
     row.appendChild(column);
     row.className = row.className.replace(/\bempty-\w+/, '');
+    data.saveColumnOrder(row);
     return column;
   }
 
@@ -939,12 +925,15 @@ class DOM {
     let field = new Field(fieldID);
     this.fields.set(field.id, field);
     if (columnID) {
-      this.columns[columnID].appendChild(field);
+      let column = this.columns.get(columnID);
+      column.appendChild(field);
+      data.saveFieldOrder(column);
     }
     return field;
   }
 
 }
 
+const dom = new DOM();
 
-export default new DOM();
+export default dom;

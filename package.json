@@ -63,12 +63,12 @@
     }
   },
   "scripts": {
-    "icons": ". ./tools/build-icons.sh && cp -a dist/*.svg demo/assets",
+    "icons": ". ./tools/build-icons.sh",
     "dev": "webpack -p --progress",
     "clean": "rm -rf dist/*",
     "build": "npm run clean && npm run dev -f && npm run copy",
     "lang": "cp -a src/lang demo/assets && cp -a src/lang dist",
-    "copy": "npm run icons && npm run lang && cp -a dist/*.svg demo/assets && cp demo/assets/formeo.min* dist",
+    "copy": "npm run icons && npm run lang && cp demo/assets/formeo.min* dist",
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
     "start": "webpack -d | webpack-dev-server -d --hot --inline --progress",

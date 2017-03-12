@@ -2,7 +2,7 @@
 import events from './events';
 import h from './helpers';
 import dom from './dom';
-
+import {strMapToObj, objToStrMap} from './utils';
 // Object map of fields on the stage
 const _data = {};
 let formData;
@@ -29,8 +29,13 @@ let data = {
         data = window.JSON.parse(data);
       }
 
-      let id = data.id || h.uuid();
+      data.settings = objToStrMap(data.settings);
+      data.stages = objToStrMap(data.stages);
+      data.rows = objToStrMap(data.rows);
+      data.columns = objToStrMap(data.columns);
+      data.fields = objToStrMap(data.fields);
 
+      let id = data.id || h.uuid();
       formData = Object.assign({}, defaultFormData, {id}, data);
     };
 
@@ -56,38 +61,39 @@ let data = {
   saveColumnOrder: row => {
     let columns = row.getElementsByClassName('stage-column');
     let columnOrder = h.map(columns, i => columns[i].id);
+    let rowData = formData.rows.get(row.id);
 
-    formData.rows[row.id].columns = columnOrder;
+    rowData.columns = columnOrder;
 
     return columnOrder;
   },
 
   saveFieldOrder: column => {
     let fields = column.getElementsByClassName('stage-field');
-    let fieldOrder = h.map(fields, (i) => {
-      return fields[i].id;
-    });
+    let fieldOrder = h.map(fields, i => fields[i].id);
 
-    formData.columns[column.id].fields = fieldOrder;
+    formData.columns.get(column.id).fields = fieldOrder;
 
     return fieldOrder;
   },
 
-  saveRowOrder: () => {
-    let stage = dom.activeStage;
-    let rows = dom.activeStage.getElementsByClassName('stage-row');
+  saveRowOrder: stage => {
+    if (!stage) {
+      stage = dom.activeStage;
+    }
+    let rows = stage.getElementsByClassName('stage-row');
     let rowOrder = h.map(rows, rowID => rows[rowID].id);
-    formData.stages[stage.id].rows = rowOrder;
+    formData.stages.get(stage.id).rows = rowOrder;
     return rowOrder;
   },
 
   saveOptionOrder: parent => {
-    console.log(parent);
     let props = parent.getElementsByClassName('prop-wrap');
     let propData = h.map(props, i => {
       return props[i].propData;
     });
-    formData.fields[parent.fieldID][parent.editGroup] = propData;
+    let fieldData = formData.fields.get(parent.fieldID);
+    fieldData[parent.editGroup] = propData;
     return propData;
   },
 
@@ -125,19 +131,18 @@ let data = {
   saveType: (group, id) => {
     let map = {
       settings: () => {
-        let stage = formData.stages.settings;
-        formData.settings = [];
+        // let stage = formData.stages.settings;
+        // formData.settings = [];
 
-        h.forEach(stage, (i, rowID) => {
-          formData.rows[i] = h.clone(formData.rows[rowID]);
+        // h.forEach(stage, (i, rowID) => {
+        //   formData.rows[i] = h.clone(formData.rows[rowID]);
           // formData.rows[i] = Object.assign({}, formData.rows[rowID]);
-          formData.rows[i].columns = map.columns(rowID);
-        });
+        //   formData.rows[i].columns = map.columns(rowID);
+        // });
 
         return formData.settings;
       },
       rows: () => {
-        data.saveRowOrder();
         return formData.rows;
       },
       columns: rowID => {
@@ -147,15 +152,15 @@ let data = {
         return formData.fields;
       },
       field: fieldID => {
-        return formData.fields[fieldID];
+        return formData.fields.get(fieldID);
       },
       attrs: fieldID => {
-        return formData.fields[fieldID].attrs;
+        return formData.fields.get(fieldID).attrs;
       },
       options: optionUL => {
         events.formeoUpdated.data = {
           changed: 'options',
-          oldValue: formData.fields[optionUL.fieldID].options,
+          oldValue: formData.fields.get(optionUL.fieldID).options,
           newValue: data.saveOrder('options', optionUL)
         };
         document.dispatchEvent(events.formeoUpdated);
@@ -177,26 +182,33 @@ let data = {
   empty: (type, id) => {
     let removed = {};
     const emptyType = {
-      stage: id => {
-        let rows = formData.stages[id].rows;
+      stages: id => {
+        if (!id) {
+          id = dom.activeStage.id;
+        }
+        let rows = formData.stages.get(id).rows;
         removed.rows = rows.map(rowID => {
-          emptyType['row'](rowID);
-          delete formData.rows[rowID];
+          emptyType['rows'](rowID);
+          formData.rows.delete(rowID);
           return rowID;
         });
       },
-      row: id => {
-        let columns = formData.rows[id].columns;
-        removed.columns = columns.map(columnID => {
-          emptyType['column'](columnID);
-          delete formData.columns[columnID];
-          return columnID;
-        });
+      rows: id => {
+        let row = formData.rows.get(id);
+        if (row) {
+          let columns = row.columns;
+          removed.columns = columns.map(columnID => {
+            emptyType['columns'](columnID);
+            formData.columns.delete(columnID);
+            return columnID;
+          });
+        }
       },
-      column: id => {
-        let fields = formData.columns[id].fields;
+      columns: id => {
+        let column = formData.columns.get(id);
+        let fields = column.fields;
         removed.fields = fields.map(fieldID => {
-          delete formData.fields[fieldID];
+          formData.fields.delete(fieldID);
           return fieldID;
         });
       }
@@ -207,32 +219,42 @@ let data = {
   },
 
   jsonSave: (group, id) => {
-    data.saveType(group, id);
-    formData = h.clone(formData);
-    let noData = (Object.entries(formData.rows) === 0);
+    let jsonData = {};
 
-    dom.activeStage.classList.toggle('stage-empty', noData);
-    return formData;
+    Object.keys(formData).forEach(key => {
+      if (typeof formData[key] === 'string') {
+        jsonData[key] = formData[key];
+      } else {
+        jsonData[key] = strMapToObj(formData[key]);
+      }
+    });
+    return jsonData;
   },
 
   save: (group = 'rows', id) => {
+    data.saveType(group, id);
     let doSave = {
-      // xml: _this.xmlSave,
       json: data.jsonSave
     };
     const storage = window.sessionStorage;
     const stringify = window.JSON.stringify;
 
-    doSave[_data.opts.dataType](group, id);
+    let jsonData = doSave[_data.opts.dataType](group, id);
 
     if (storage && _data.opts.sessionStorage) {
       // console.log('session.setItem');
-      storage.setItem('formData', stringify(formData));
+      storage.setItem('formData', stringify(jsonData));
     }
 
     if (_data.opts.debug) {
       console.log('Saved: ' + group);
     }
+
+    // toggle empty class if stage(s) have data
+    formData.stages.forEach(stage => {
+      let stageDom = dom.stages.get(stage.id);
+      stageDom.classList.toggle('stage-empty', !stage.rows.length);
+    });
 
     // Shouldn't be the case? because every time
     // save is called there should be some formData update, right?

@@ -18,11 +18,10 @@ export default class Column {
    */
   constructor(dataID) {
     let _this = this;
-    let cData = formData.columns;
     let columnDefaults;
 
-
     let columnID = _this.columnID = dataID || helpers.uuid();
+    let columnData = formData.columns.get(columnID);
 
     columnDefaults = {
       fields: [],
@@ -31,7 +30,7 @@ export default class Column {
       className: []
     };
 
-    cData[columnID] = helpers.extend(columnDefaults, cData[columnID]);
+    formData.columns.set(columnID, helpers.extend(columnDefaults, columnData));
 
     let resizeHandle = {
         tag: 'li',
@@ -68,8 +67,7 @@ export default class Column {
     column = dom.create(column);
 
     this.processConfig(column);
-    dom.columns[columnID] = column;
-
+    dom.columns.set(columnID, column);
 
     Sortable.create(column, {
       animation: 150,
@@ -118,7 +116,7 @@ export default class Column {
    */
   processConfig(column) {
     let _this = this;
-    let columnData = formData.columns[_this.columnID];
+    let columnData = formData.columns.get(_this.columnID);
     if (columnData.config.width) {
       let percentWidth = Math.round(columnData.config.width).toString() + '%';
       column.dataset.colWidth = percentWidth;

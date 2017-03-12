@@ -263,11 +263,7 @@ class Formeo {
    */
   buildStages() {
     let stages = [];
-    const createStage = stageID => {
-      let newStageWrap = new Stage(opts, stageID);
-      dom.activeStage = newStageWrap.firstChild;
-      return newStageWrap;
-    };
+    const createStage = stageID => new Stage(opts, stageID);
     if (formeo.formData.stages.size) {
       formeo.formData.stages.forEach((stageConf, stageID) => {
         stages.push(createStage(stageID));

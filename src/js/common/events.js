@@ -9,9 +9,9 @@ let defaults = {
     }
   },
   onSave: (evt) => {},
-  confirmClearAll: (evt) => {
+  confirmClearAll: evt => {
     if (window.confirm(evt.confirmationMessage)) {
-      evt.clearAllAction();
+      evt.clearAllAction(evt);
     }
   }
 };
@@ -40,7 +40,6 @@ document.addEventListener('confirmClearAll', function(evt) {
   evt = {
     timeStamp: evt.timeStamp,
     type: evt.type,
-    rows: evt.detail.rows,
     rowCount: evt.detail.rows.length,
     confirmationMessage: evt.detail.confirmationMessage,
     clearAllAction: evt.detail.clearAllAction,

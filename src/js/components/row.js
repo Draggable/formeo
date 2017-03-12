@@ -19,7 +19,7 @@ export default class Row {
     let defaults;
     let row;
 
-    _this.rowID = dataID || h.uuid();
+    let rowID = _this.rowID = dataID || h.uuid();
 
     defaults = {
         columns: [],
@@ -34,7 +34,7 @@ export default class Row {
       };
 
     // _this.rowData = h.extend(defaults, formData.rows[_this.rowID]);
-    formData.rows[_this.rowID] = h.extend(defaults, formData.rows[_this.rowID]);
+    formData.rows.set(rowID, h.extend(defaults, formData.rows.get(rowID)));
 
     row = {
       tag: 'li',
@@ -52,13 +52,13 @@ export default class Row {
           // evt.target.classList.remove('hovering');
         }
       },
-      id: _this.rowID,
-      content: [dom.actionButtons(_this.rowID, 'row'), _this.editWindow()],
+      id: rowID,
+      content: [dom.actionButtons(rowID, 'row'), _this.editWindow()],
       fType: 'rows'
     };
 
     row = dom.create(row);
-    dom.rows[_this.rowID] = row;
+    dom.rows.set(rowID, row);
 
     Sortable.create(row, {
       animation: 150,
@@ -226,9 +226,9 @@ export default class Row {
     // columnData.parent = to.id;
     // dom.columnWidths(to);
     // data.saveRowOrder(to);
-    // data.saveColumnOrder(to);
+    data.saveColumnOrder(to);
     // dom.updateColumnPreset(to);
-    // data.save('columns', to.id);
+    data.save();
   }
 
   // columnWidth() {

@@ -2578,6 +2578,8 @@
       display: block; }
     .formeo .stage-wrap.editing-stage .stage {
       display: none; }
+    .formeo .stage-wrap .layout-column-control {
+      display: none; }
   .formeo .formeo-settings {
     display: none; }
   .formeo:after {

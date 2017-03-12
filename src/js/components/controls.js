@@ -24,7 +24,6 @@ export class Controls {
     this.formID = formID;
     let {groupOrder = []} = controlOptions;
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']));
-    // console.log(['common', 'html', 'layout'].concat(groupOrder));
 
     this.defaults = {
       sortable: true,
@@ -389,14 +388,14 @@ export class Controls {
       },
       action: {
         click: evt => {
-          let rows = Object.keys(formData.rows);
-          if (rows.length) {
+          if (formData.rows.size) {
             events.confirmClearAll = new CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: () => dom.clearForm.call(dom),
+                clearAllAction: dom.clearForm.bind(dom),
                 btnCoords: dom.coords(evt.target),
-                rows: rows
+                rows: dom.rows,
+                rowCount: dom.rows.size
               }
             });
 
@@ -543,6 +542,7 @@ export class Controls {
    * @return {Object} column
    */
   createColumn(id) {
+    console.log('controls createCOlumn');
     let field = new Field(id);
     let column = new Column();
 
@@ -550,7 +550,7 @@ export class Controls {
 
     field.classList.add('first-field');
     column.appendChild(field);
-    formData.columns[column.id].fields.push(field.id);
+    formData.columns.get(column.id).fields.push(field.id);
     return column;
   }
 
@@ -564,7 +564,7 @@ export class Controls {
     let row = dom.addRow();
 
     // Set parent IDs
-    // formData.columns[column.id].parent = row.id;
+    // formData.columns.get(column.id).parent = row.id;
     // formData.rows[row.id].parent = stageID;
     row.appendChild(column);
     row.className = row.className.replace(/\bempty-\w+/, '');

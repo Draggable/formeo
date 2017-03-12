@@ -58,16 +58,19 @@ export default class Stage {
 
     stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions);
 
-    if (!formData.stages[this.stageID]) {
-      formData.stages[this.stageID] = {
-        settings: {},
-        rows: []
-      };
+    if (!formData.stages.get(this.stageID)) {
+      let defaultStageData = {
+          id: this.stageID,
+          settings: {},
+          rows: []
+        };
+      formData.stages.set(this.stageID, defaultStageData);
     }
 
     const stageWrap = this.loadStage();
 
-    dom.stages[this.stageID] = this.stage;
+    dom.stages.set(this.stageID, this.stage);
+    dom.activeStage = this.stage;
 
     return stageWrap;
   }
@@ -78,7 +81,7 @@ export default class Stage {
    */
   loadStage() {
     let stageWrap = this.dom;
-    if (formData.stages[this.stageID].rows.length) {
+    if (formData.stages.get(this.stageID).rows.length) {
       dom.loadRows(this.stage);
       this.stage.classList.remove('stage-empty');
     }
@@ -125,7 +128,7 @@ export default class Stage {
    * @param  {Object} evt
    */
   onSort(evt) {
-    data.saveRowOrder(evt);
+    data.saveRowOrder();
     data.save();
   }
 
@@ -138,7 +141,7 @@ export default class Stage {
 
   //   field.classList.add('first-field');
   //   column.appendChild(field);
-  //   formData.columns[column.id].fields.push(field.id);
+  //   formData.columns.get(column.id).fields.push(field.id);
   //   return column;
   // }
 
@@ -149,6 +152,7 @@ export default class Stage {
    */
   onAdd(evt) {
     let _this = this;
+    dom.activeStage = _this.stage;
     let {from, item, target} = evt;
     let stage = target;
     let newIndex = h.indexOfNode(item, stage);
@@ -157,10 +161,7 @@ export default class Stage {
 
     if (from.fType === 'controlGroup') {
       let group = h.get(rFields[item.id], 'meta.group');
-      console.log();
-      if (group && group === 'layout') {
-        // dom.addField(column.id, item.id);
-      } else {
+      if (group !== 'layout') {
         column = from.fType === 'rows' ? item : dom.addColumn(row.id);
         dom.addField(column.id, item.id);
       }
@@ -173,20 +174,19 @@ export default class Stage {
       row.appendChild(column);
     }
 
-    dom.activeStage = dom.stages[_this.stageID];
 
     if (item.fType === 'columns') {
       dom.columnWidths(row);
     }
 
     stage.insertBefore(row, stage.children[newIndex]);
-    data.saveRowOrder(row);
+    data.saveRowOrder(stage);
 
     return data.save();
   }
 
   /**
-   * Does some cleanup after an element is removed from the stage
+   * Handle removal of a row from stage
    * @param  {Object} evt
    * @return {Object} formData
    */

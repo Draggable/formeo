@@ -57,3 +57,18 @@ export const unique = array =>
   array.filter((elem, pos, arr) =>
     (arr.indexOf(elem) === pos));
 
+export const objToStrMap = obj => {
+  let strMap = new Map();
+  for (let k of Object.keys(obj)) {
+    strMap.set(k, obj[k]);
+  }
+  return strMap;
+};
+
+export const strMapToObj = strMap => {
+  let obj = Object.create(null);
+  strMap.forEach((v, k) => {
+    obj[k] = v;
+  });
+  return obj;
+};
