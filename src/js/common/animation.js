@@ -130,10 +130,11 @@ const animate = {
   },
 
   slideUp: (elem, duration = 250, cb = false) => {
-    let height = parseInt(animate.getStyle(elem, 'height'), 10);
+    let style = animate.getStyle(elem);
+    let height = parseInt(style.height);
     elem.style.overflow = 'hidden';
     elem.style.height = height + 'px';
-    let defMinHeight = elem.style.minHeight;
+    let defMinHeight = style.minHeight;
     elem.style.minHeight = 'auto';
     let increment = parseFloat(height / (duration / 60)).toFixed(2);
 
@@ -141,11 +142,12 @@ const animate = {
       let curHeight = parseInt(elem.style.height, 10);
       let val = (curHeight - increment);
       if (val > 0) {
-        elem.style.height = (val + 'px');
+        elem.style.height = val + 'px';
         requestAnimationFrame(slideUp);
       } else {
-        elem.removeAttribute('style');
+        elem.style.display = 'none';
         elem.style.minHeight = defMinHeight;
+        delete elem.style.height;
         if (cb) {
           cb(elem);
         }

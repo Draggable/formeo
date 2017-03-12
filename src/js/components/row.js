@@ -166,8 +166,8 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onMove(evt) {
-
-    // console.log(evt);
+    console.log(evt);
+    evt.to.classList.remove('empty-row');
     // console.log('dragging column');
   }
 
@@ -230,6 +230,8 @@ export default class Row {
     if (fromColumn) {
       dom.updateColumnPreset(from);
     }
+
+    to.className = to.className.replace(/\bempty-\w+/, '');
 
     data.save();
   }

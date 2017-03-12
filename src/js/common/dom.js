@@ -380,14 +380,9 @@ class DOM {
    * @return {Object} element with its children removed
    */
   empty(elem) {
-    let _this = this;
     while (elem.firstChild) {
-      let fType = elem.firstChild.fType;
-      if (fType) {
-        _this[fType].delete(elem.firstChild.id);
-        data.empty(fType, elem.firstChild.id);
-      }
-      elem.removeChild(elem.firstChild);
+      console.log(elem.firstChild);
+      this.remove(elem.firstChild);
     }
     return elem;
   }
@@ -430,8 +425,6 @@ class DOM {
             animate.slideToggle(editWindow, 333);
             if (item === 'field') {
               animate.slideToggle(editWindow.nextSibling, 333);
-            }
-            if (item === 'field') {
               element.parentElement.classList.toggle('column-' + editClass);
             }
             element.classList.toggle(editClass);
@@ -493,7 +486,6 @@ class DOM {
     let type = element.fType;
     let children;
     _this.remove(element);
-    // data.saveOrder(type, parent);
     data.save(type, parent.id);
     children = parent.querySelectorAll('.stage-' + type);
     if (!children.length) {
@@ -510,6 +502,14 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
+    let fType = elem.fType;
+    if (fType) {
+      this[fType].delete(elem.id);
+      formData[fType].delete(elem.id);
+      console.log(fType);
+      console.log(this[fType].size);
+      console.log(formData[fType].size);
+    }
     return elem.parentElement.removeChild(elem);
   }
 
@@ -860,7 +860,7 @@ class DOM {
     const resetStage = () => {
       // Empty the data register for stage
       // and everything below it.
-      data.empty('stages', stage.id);
+      // data.empty('stages', stage.id);
       // formData.rows.forEach(console.log);
       dom.empty(stage);
       stage.classList.remove('removing-all-fields');

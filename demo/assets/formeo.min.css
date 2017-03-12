@@ -2586,3 +2586,6 @@
     content: '';
     display: table;
     clear: both; }
+
+.rendered-stage .row {
+  min-height: 60px; }

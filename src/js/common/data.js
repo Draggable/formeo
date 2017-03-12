@@ -142,6 +142,9 @@ let data = {
 
         return formData.settings;
       },
+      stages: () => {
+        data.saveRowOrder();
+      },
       rows: () => {
         return formData.rows;
       },
@@ -209,12 +212,14 @@ let data = {
       },
       columns: id => {
         let column = formData.columns.get(id);
-        let fields = column.fields;
-        removed.fields = fields.map(fieldID => {
-          formData.fields.delete(fieldID);
-          return fieldID;
-        });
-        fields = [];
+        if (column) {
+          let fields = column.fields;
+          removed.fields = fields.map(fieldID => {
+            formData.fields.delete(fieldID);
+            return fieldID;
+          });
+          fields = [];
+        }
       }
     };
 
@@ -235,7 +240,7 @@ let data = {
     return jsonData;
   },
 
-  save: (group = 'rows', id) => {
+  save: (group = 'stages', id) => {
     data.saveType(group, id);
     let doSave = {
       json: data.jsonSave
@@ -246,7 +251,6 @@ let data = {
     let jsonData = doSave[_data.opts.dataType](group, id);
 
     if (storage && _data.opts.sessionStorage) {
-      // console.log('session.setItem');
       storage.setItem('formData', stringify(jsonData));
     }
 

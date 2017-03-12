@@ -279,7 +279,7 @@ export class Controls {
         },
         mouseup: (evt) => {
           if (clicked(evt.clientX, evt.clientY)) {
-            _this.addRow(evt.target.id);
+            _this.addElement(evt.target.id);
           }
         }
       },
@@ -559,31 +559,15 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement(id) {
-    let _this = this;
-    let column = _this.createColumn(id);
     let row = dom.addRow();
+    let column = dom.addColumn(row.id);
+    dom.addField(column.id, id);
 
-    // Set parent IDs
-    // formData.columns.get(column.id).parent = row.id;
-    // formData.rows[row.id].parent = stageID;
     row.appendChild(column);
-    row.className = row.className.replace(/\bempty-\w+/, '');
     data.saveColumnOrder(row);
     dom.columnWidths(row);
-    // data.saveRowOrder(row);
     data.save();
     // trigger formSaved event
-    document.dispatchEvent(events.formeoUpdated);
-  }
-
-  /**
-   * Append an element to the stage
-   * @param {String} id of elements
-   */
-  addRow() {
-    console.log('controls addRow');
-    dom.addRow();
-    data.save();
     document.dispatchEvent(events.formeoUpdated);
   }
 
