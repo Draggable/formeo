@@ -4,7 +4,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {unique} from './utils';
+import {unique, uuid} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -40,10 +40,9 @@ class DOM {
       let type = h.get(elem, 'attrs.type');
       return (type === 'checkbox' || type === 'radio');
     };
-    let isInput = (['input', 'textarea', 'select'].indexOf(tag) !== -1);
     let element = document.createElement(tag);
     let holdsContent = (element.outerHTML.indexOf('/') !== -1);
-    let isBlockElement = (!isInput && holdsContent);
+    let isBlockElement = (!this.isInput && holdsContent);
     /**
      * Object for mapping contentType to its function
      * @type {Object}
@@ -109,7 +108,7 @@ class DOM {
 
     // Set element attributes
     if (elem.attrs) {
-      _this.processAttrs(elem, element);
+      _this.processAttrs(elem, element, isPreview);
       processed.push('attrs');
     }
 
@@ -167,12 +166,19 @@ class DOM {
       let actions = Object.keys(elem.action);
       for (i = actions.length - 1; i >= 0; i--) {
         let event = actions[i];
-        element.addEventListener(event, evt => elem.action[event](evt));
+        if (elem.config) {
+          if (elem.config) {
+            console.log(elem.config.label);
+          }
+        }
+
+        element.addEventListener(event, elem.action[event]);
       }
       processed.push('action');
     }
 
     let fieldDataBindings = [
+      'stage',
       'row',
       'column',
       'field'
@@ -225,9 +231,16 @@ class DOM {
    * JS Object to DOM attributes
    * @param  {Object} elem    element config object
    * @param  {Object} element DOM element we are building
+   * @param  {Boolean} isPreview
    * @return {void}
    */
-  processAttrs(elem, element) {
+  processAttrs(elem, element, isPreview) {
+    let {attrs = {}} = elem;
+    if (!isPreview) {
+      if (!attrs.name && this.isInput(elem.tag)) {
+        attrs.name = uuid(elem);
+      }
+    }
     // Set element attributes
     for (let attr in elem.attrs) {
       if (elem.attrs.hasOwnProperty(attr)) {
@@ -290,6 +303,18 @@ class DOM {
     };
 
     return elem.options.map(optionMap);
+  }
+
+  /**
+   * Determine if an element is an input field
+   * @param  {String|Object} tag tagName or DOM element
+   * @return {Boolean} isInput
+   */
+  isInput(tag) {
+    if (typeof tag !== 'string') {
+      tag = tag.tagName;
+    }
+    return (['input', 'textarea', 'select'].indexOf(tag) !== -1);
   }
 
   /**

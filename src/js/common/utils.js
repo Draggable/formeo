@@ -1,3 +1,4 @@
+import uuidv4 from 'uuid-v4';
 /**
  * Match the values from a string or array against a str.
  * @param  {String} str    String we are searching
@@ -71,4 +72,16 @@ export const strMapToObj = strMap => {
     obj[k] = v;
   });
   return obj;
+};
+
+export const uuid = elem => {
+  let id;
+  if (elem) {
+    let {attrs = {}} = elem;
+    id = elem.id || attrs.id || uuidv4();
+    elem.id = id;
+  } else {
+    id = uuidv4();
+  }
+  return id;
 };

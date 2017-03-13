@@ -18,28 +18,31 @@ let formeoOpts = {
 const formeo = new window.Formeo(formeoOpts);
 let editing = true;
 
-console.log(formeo);
-
 let debugWrap = document.getElementById('debug-wrap');
 let debugBtn = document.getElementById('debug-demo');
 let locale = document.getElementById('locale');
 let toggleEdit = document.getElementById('renderForm');
+let viewData = document.getElementById('viewData');
 
 debugBtn.onclick = function() {
   debugWrap.classList.toggle('open');
 };
 
 toggleEdit.onclick = evt => {
-    document.body.classList.toggle('form-rendered', editing);
-    if (editing) {
-      formeo.render(renderContainer);
-      evt.target.innerHTML = 'Edit Form';
-    } else {
-      evt.target.innerHTML = 'Render Form';
-    }
+  document.body.classList.toggle('form-rendered', editing);
+  if (editing) {
+    formeo.render(renderContainer);
+    evt.target.innerHTML = 'Edit Form';
+  } else {
+    evt.target.innerHTML = 'Render Form';
+  }
 
-    return editing = !editing;
-  };
+  return editing = !editing;
+};
+
+viewData.onclick = evt => {
+  console.log(formeo.formData);
+};
 
 locale.addEventListener('change', function() {
   formeo.i18n.setLang(locale.value);

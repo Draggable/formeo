@@ -1,6 +1,5 @@
 'use strict';
 import dom from './dom';
-import uuid from 'uuid-v4';
 import deepExtend from 'deep-extend';
 import {unique} from './utils';
 /**
@@ -104,19 +103,6 @@ const helpers = {
       content: response.responseText
     });
     document.head.appendChild(formeoStyle);
-  },
-  uuid: function(elem) {
-    if (elem) {
-      if (!elem.id) {
-        if (elem.attrs && elem.attrs.id) {
-          elem.id = elem.attrs.id;
-        } else {
-          elem.id = uuid();
-        }
-      }
-    } else {
-      return uuid();
-    }
   },
   capitalize: str => {
     return str.replace(/\b\w/g, function(m) {

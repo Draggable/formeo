@@ -107,6 +107,9 @@
 
     .field-control {
       @extend %field-control;
+      .svg-icon {
+        pointer-events: none;
+      }
     }
   }
 

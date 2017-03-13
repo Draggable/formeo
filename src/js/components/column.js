@@ -3,6 +3,7 @@ import Sortable from 'sortablejs';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import dom from '../common/dom';
+import {uuid} from '../common/utils';
 
 /**
  * Setup Column elements
@@ -17,7 +18,7 @@ export default class Column {
     let _this = this;
     let columnDefaults;
 
-    let columnID = _this.columnID = dataID || h.uuid();
+    let columnID = _this.columnID = dataID || uuid();
     let columnData = formData.columns.get(columnID);
 
     columnDefaults = {

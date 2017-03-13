@@ -1,7 +1,7 @@
 'use strict';
 import '../sass/formeo.scss';
 import helpers from './common/helpers';
-import {data} from './common/data';
+import {data, formData} from './common/data';
 import events from './common/events';
 import actions from './common/actions';
 import dom from './common/dom';
@@ -10,7 +10,11 @@ import {Controls} from './components/controls';
 import Stage from './components/stage';
 
 // Simple object config for the main part of formeo
-const formeo = {};
+const formeo = {
+  get formData() {
+    return data.json;
+  }
+};
 let opts = {};
 
 /**
@@ -20,10 +24,10 @@ class Formeo {
   /**
    * [constructor description]
    * @param  {Object} options  formeo options
-   * @param  {String|Object}   formData [description]
+   * @param  {String|Object}   userFormData [description]
    * @return {Object}          formeo references and actions
    */
-  constructor(options, formData) {
+  constructor(options, userFormData) {
     // Default options
     const defaults = {
       allowEdit: true,
@@ -190,7 +194,7 @@ class Formeo {
 
     opts = helpers.extend(defaults, options);
 
-    formeo.formData = data.init(opts, formData);
+    data.init(opts, userFormData);
     events.init(opts.events);
     actions.init(opts.actions);
     formeo.render = renderTarget => dom.renderForm.call(dom, renderTarget);
@@ -233,8 +237,7 @@ class Formeo {
   async init() {
     let _this = this;
     await i18n.init(opts.i18n);
-    formeo.formData = data.get();
-    _this.formID = formeo.formData.id;
+    _this.formID = formData.id;
     formeo.controls = new Controls(opts.controls, _this.formID);
     _this.stages = _this.buildStages();
     formeo.i18n = {
@@ -264,8 +267,8 @@ class Formeo {
   buildStages() {
     let stages = [];
     const createStage = stageID => new Stage(opts, stageID);
-    if (formeo.formData.stages.size) {
-      formeo.formData.stages.forEach((stageConf, stageID) => {
+    if (formData.stages.size) {
+      formData.stages.forEach((stageConf, stageID) => {
         stages.push(createStage(stageID));
       });
     } else {

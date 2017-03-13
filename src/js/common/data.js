@@ -2,7 +2,7 @@
 import events from './events';
 import h from './helpers';
 import dom from './dom';
-import {strMapToObj, objToStrMap} from './utils';
+import {strMapToObj, objToStrMap, uuid} from './utils';
 // Object map of fields on the stage
 const _data = {};
 let formData;
@@ -16,7 +16,7 @@ let registeredFields = {};
 let data = {
   init: (opts, userFormData) => {
     let defaultFormData = {
-      id: h.uuid(),
+      id: uuid(),
       settings: new Map(),
       stages: new Map(),
       rows: new Map(),
@@ -35,8 +35,7 @@ let data = {
       data.columns = objToStrMap(data.columns);
       data.fields = objToStrMap(data.fields);
 
-      let id = data.id || h.uuid();
-      formData = Object.assign({}, defaultFormData, {id}, data);
+      formData = Object.assign({}, defaultFormData, data);
     };
 
     if (userFormData) {
@@ -213,7 +212,7 @@ let data = {
     return removed;
   },
 
-  jsonSave: (group, id) => {
+  jsonSave: () => {
     let jsonData = {};
 
     Object.keys(formData).forEach(key => {
@@ -256,8 +255,12 @@ let data = {
     return formData;
   },
 
-  get: () => {
-    return formData;
+  /**
+   * getter method for JSON formData
+   * @return {JSON} formData
+   */
+  get json() {
+    return data.jsonSave();
   }
 };
 

@@ -1823,7 +1823,7 @@
     fill: #d9534f; }
   .formeo button[class*='-remove']:hover .svg-icon {
     fill: #d9534f; }
-  .formeo .formeo-controls ul, .formeo .stage-column, .formeo .field-edit-group, .formeo .panels-wrap ul, .formeo .stage-wrap .stage {
+  .formeo .formeo-controls ul, .formeo .stage-columns, .formeo .field-edit-group, .formeo .panels-wrap ul, .formeo .stage-wrap .stage {
     margin: 0;
     padding: 0;
     list-style: none; }
@@ -2071,7 +2071,7 @@
       display: none; }
   .formeo .column-editing-field .column-actions {
     display: none; }
-  .formeo .stage-field.hovering-field .field-actions, .formeo .stage-field.editing-field .field-actions {
+  .formeo .stage-fields.hovering-field .field-actions, .formeo .stage-fields.editing-field .field-actions {
     width: 72px !important;
     border-color: #93C54B;
     border-width: 0 0 1px 1px;
@@ -2176,7 +2176,7 @@
     display: inline-block !important; }
   .formeo [class*='hovering-'] > .group-actions .svg-icon.icon-handle {
     display: none !important; }
-  .formeo .stage-row,
+  .formeo .stage-rows,
   .formeo .field-control {
     position: relative;
     clear: both;
@@ -2196,66 +2196,66 @@
         align-content: stretch;
     -ms-flex-align: stretch;
         align-items: stretch; }
-    .formeo .stage-row:after,
+    .formeo .stage-rows:after,
     .formeo .field-control:after {
       content: '';
       display: table;
       clear: both; }
-    .formeo .stage-row::after,
+    .formeo .stage-rows::after,
     .formeo .field-control::after {
       clear: both; }
-    .formeo .stage-row.hidden-field,
+    .formeo .stage-rows.hidden-field,
     .formeo .field-control.hidden-field {
       background-color: rgba(255, 255, 255, 0.6); }
-    .formeo .stage-row.control-ghost,
+    .formeo .stage-rows.control-ghost,
     .formeo .field-control.control-ghost {
       padding: 10px; }
-    .formeo .stage-row:first-child,
+    .formeo .stage-rows:first-child,
     .formeo .field-control:first-child {
       border-top-right-radius: 5px;
       border-top-left-radius: 0; }
-    .formeo .stage-row:last-child,
+    .formeo .stage-rows:last-child,
     .formeo .field-control:last-child {
       border-bottom-right-radius: 5px;
       border-bottom-left-radius: 5px; }
-    .formeo .stage-row.hovering-row:first-child,
+    .formeo .stage-rows.hovering-row:first-child,
     .formeo .field-control.hovering-row:first-child {
       border-top-left-radius: 0; }
-    .formeo .stage-row.hovering-row .stage-row::before,
-    .formeo .field-control.hovering-row .stage-row::before {
+    .formeo .stage-rows.hovering-row .stage-rows::before,
+    .formeo .field-control.hovering-row .stage-rows::before {
       width: 100px; }
-    .formeo .stage-row.hovering-row .stage-column,
-    .formeo .field-control.hovering-row .stage-column {
+    .formeo .stage-rows.hovering-row .stage-columns,
+    .formeo .field-control.hovering-row .stage-columns {
       opacity: .5; }
-    .formeo .stage-row.editing-row,
+    .formeo .stage-rows.editing-row,
     .formeo .field-control.editing-row {
       display: block; }
-      .formeo .stage-row.editing-row .row-edit,
+      .formeo .stage-rows.editing-row .row-edit,
       .formeo .field-control.editing-row .row-edit {
         display: block; }
-    .formeo .stage-row.resizing-columns .stage-column,
-    .formeo .field-control.resizing-columns .stage-column {
+    .formeo .stage-rows.resizing-columns .stage-columns,
+    .formeo .field-control.resizing-columns .stage-columns {
       transition: none; }
-  .formeo .stage-row {
+  .formeo .stage-rows {
     min-height: 60px;
     transition: background-color 125ms ease-in-out; }
-    .formeo .stage-row::before {
+    .formeo .stage-rows::before {
       left: 0; }
-    .formeo .stage-row.editing-row.hovering-row .stage-column {
+    .formeo .stage-rows.editing-row.hovering-row .stage-columns {
       opacity: 1; }
-    .formeo .stage-row.editing-row, .formeo .stage-row.hovering-row {
+    .formeo .stage-rows.editing-row, .formeo .stage-rows.hovering-row {
       box-shadow: 0 0 0 1px #325D88 inset; }
-      .formeo .stage-row.editing-row::before, .formeo .stage-row.hovering-row::before {
+      .formeo .stage-rows.editing-row::before, .formeo .stage-rows.hovering-row::before {
         border-bottom: 1px solid #325D88;
         border-right: 1px solid #325D88;
         width: 80px !important; }
-    .formeo .stage-row .layout-row-control {
+    .formeo .stage-rows .layout-row-control {
       display: none; }
   .formeo .row-edit {
     padding-top: 2rem; }
   .formeo .input-group-addon label {
     margin-bottom: 0; }
-  .formeo .stage-column {
+  .formeo .stage-columns {
     transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
     position: relative;
     background-color: #fff;
@@ -2265,16 +2265,16 @@
     display: flex;
     -ms-flex: 1;
         flex: 1; }
-    .formeo .stage-column[class*='col-'] {
+    .formeo .stage-columns[class*='col-'] {
       padding: 0; }
-    .formeo .stage-column:first-of-type {
+    .formeo .stage-columns:first-of-type {
       border-top-right-radius: 5px; }
-    .formeo .stage-column:last-of-type {
+    .formeo .stage-columns:last-of-type {
       border-bottom-right-radius: 5px;
       border-bottom-left-radius: 5px; }
-      .formeo .stage-column:last-of-type .resize-x-handle {
+      .formeo .stage-columns:last-of-type .resize-x-handle {
         display: none !important; }
-    .formeo .stage-column .resize-x-handle {
+    .formeo .stage-columns .resize-x-handle {
       display: none;
       position: absolute;
       right: -4px;
@@ -2284,35 +2284,35 @@
       border: 4px dotted #fff;
       z-index: 1;
       cursor: ew-resize; }
-    .formeo .stage-column:before {
+    .formeo .stage-columns:before {
       padding: 0 10px;
       left: 50%;
       transform: translateX(12px); }
-    .formeo .stage-column.hovering-column:first-child {
+    .formeo .stage-columns.hovering-column:first-child {
       border-top-left-radius: 0; }
-    .formeo .stage-column.hovering-column .stage-field {
+    .formeo .stage-columns.hovering-column .stage-fields {
       opacity: .5; }
-    .formeo .stage-column.editing-column, .formeo .stage-column.hovering-column {
+    .formeo .stage-columns.editing-column, .formeo .stage-columns.hovering-column {
       box-shadow: 0 0 0 1px #29ABE0 inset; }
-      .formeo .stage-column.editing-column:before, .formeo .stage-column.hovering-column:before {
+      .formeo .stage-columns.editing-column:before, .formeo .stage-columns.hovering-column:before {
         line-height: 23px !important;
         width: 68px !important;
         border-right: 1px solid #29ABE0;
         border-bottom: 1px solid #29ABE0; }
-    .formeo .stage-column.editing-column {
+    .formeo .stage-columns.editing-column {
       overflow: hidden; }
-      .formeo .stage-column.editing-column .column-edit {
+      .formeo .stage-columns.editing-column .column-edit {
         display: block; }
-  .formeo .editing-row .stage-column {
+  .formeo .editing-row .stage-columns {
     display: table-cell;
     border-radius: 5px;
     height: 60px;
     background-color: #bcbfc1; }
-    .formeo .editing-row .stage-column .stage-field {
+    .formeo .editing-row .stage-columns .stage-fields {
       display: none; }
-    .formeo .editing-row .stage-column .resize-x-handle {
+    .formeo .editing-row .stage-columns .resize-x-handle {
       display: block; }
-    .formeo .editing-row .stage-column:after {
+    .formeo .editing-row .stage-columns:after {
       content: attr(data-col-width);
       display: block;
       width: 100%;
@@ -2320,26 +2320,26 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%); }
-  .formeo .stage-field {
+  .formeo .stage-fields {
     position: relative;
     padding: 5px;
     transition: background-color 125ms ease-in-out; }
-    .formeo .stage-field:hover .group-actions {
+    .formeo .stage-fields:hover .group-actions {
       display: block; }
-    .formeo .stage-field.first-field {
+    .formeo .stage-fields.first-field {
       border-top-right-radius: 0.25rem;
       border-top-left-radius: 0.25rem; }
-    .formeo .stage-field.last-field {
+    .formeo .stage-fields.last-field {
       border-bottom-right-radius: 0.25rem;
       border-bottom-left-radius: 0.25rem; }
-    .formeo .stage-field [contenteditable] {
+    .formeo .stage-fields [contenteditable] {
       transition: border-color 250ms;
       border-bottom: 1px dashed #d6d8da;
       padding: 0 10px 0 0; }
-      .formeo .stage-field [contenteditable]:focus {
+      .formeo .stage-fields [contenteditable]:focus {
         border: 1px solid #66afe9;
         outline: none; }
-    .formeo .stage-field::before {
+    .formeo .stage-fields::before {
       display: none;
       position: absolute;
       top: 0;
@@ -2348,14 +2348,14 @@
       transform: translateX(-72px);
       border-bottom-right-radius: 0;
       border-bottom-left-radius: 0.25rem; }
-    .formeo .stage-field.editing-field, .formeo .stage-field.hovering-field {
+    .formeo .stage-fields.editing-field, .formeo .stage-fields.hovering-field {
       box-shadow: 0 0 0 1px #93C54B inset; }
-      .formeo .stage-field.editing-field::before, .formeo .stage-field.hovering-field::before {
+      .formeo .stage-fields.editing-field::before, .formeo .stage-fields.hovering-field::before {
         line-height: 23px !important;
         width: 68px !important;
         border-left: 1px solid #93C54B;
         border-bottom: 1px solid #93C54B; }
-    .formeo .stage-field.editing-field {
+    .formeo .stage-fields.editing-field {
       background-color: #f1f2f2;
       z-index: 1; }
   .formeo .field-preview p {
@@ -2537,15 +2537,15 @@
         background-color: rgba(255, 255, 255, 0.25); }
       .formeo .stage-wrap .stage.removing-all-fields {
         overflow: hidden; }
-        .formeo .stage-wrap .stage.removing-all-fields .stage-row {
+        .formeo .stage-wrap .stage.removing-all-fields .stage-rows {
           transition: margin-top 250ms ease-in; }
     .formeo .stage-wrap .field-control {
       margin-bottom: 5px; }
       .formeo .stage-wrap .field-control.sortable-ghost {
         opacity: 1; }
-    .formeo .stage-wrap .stage-column::before,
-    .formeo .stage-wrap .stage-row::before,
-    .formeo .stage-wrap .stage-field::before {
+    .formeo .stage-wrap .stage-columns::before,
+    .formeo .stage-wrap .stage-rows::before,
+    .formeo .stage-wrap .stage-fields::before {
       font-size: 12px;
       position: absolute;
       top: 0;

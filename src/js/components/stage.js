@@ -3,6 +3,7 @@ import i18n from 'mi18n';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import dom from '../common/dom';
+import {uuid} from '../common/utils';
 
 let stageOpts = {};
 
@@ -18,7 +19,7 @@ export default class Stage {
    */
   constructor(formeoOptions, stageID) {
     // formData = data.get();
-    this.stageID = stageID || h.uuid();
+    this.stageID = stageID || uuid();
     let defaultOptions = {
       formSettings: [{
         tag: 'input',
@@ -126,8 +127,7 @@ export default class Stage {
    * @param  {Object} evt
    */
   onSort(evt) {
-    data.saveRowOrder();
-    data.save();
+
   }
 
   /**
@@ -217,15 +217,14 @@ export default class Stage {
         dom.activeStage = _this.stage;
       },
       onUpdate: evt => {
-        // saveRowOrder();
-        console.log('Stage onUpdate');
-        console.log(formData, evt);
+        data.saveRowOrder();
+        data.save();
+        // console.log(formData, evt);
       },
-      onSort: _this.onSort.bind(_this),
+      onSort: _this.onSort,
       onDrop: evt => {
        console.log(evt);
       },
-      onMove: evt => console.log('moving row'),
       draggable: '.stage-rows',
       handle: '.row-handle',
       // onFilter: function(evt) {

@@ -3,6 +3,7 @@ import Sortable from 'sortablejs';
 import dom from '../common/dom';
 import h from '../common/helpers';
 import {data, formData, registeredFields as rFields} from '../common/data';
+import {uuid} from '../common/utils';
 
 /**
  * Editor Row
@@ -19,21 +20,21 @@ export default class Row {
     let defaults;
     let row;
 
-    let rowID = _this.rowID = dataID || h.uuid();
+    let rowID = _this.rowID = dataID || uuid();
 
     defaults = {
         columns: [],
         id: _this.rowID,
         config: {
           fieldset: false, // wrap contents of row in fieldset
-          legend: '' // Legend for fieldset
+          legend: '', // Legend for fieldset
+          inputGroup: false // is repeatable input-group?
         },
         attrs: {
           className: 'row'
         }
       };
 
-    // _this.rowData = h.extend(defaults, formData.rows[_this.rowID]);
     formData.rows.set(rowID, h.extend(defaults, formData.rows.get(rowID)));
 
     row = {
@@ -51,7 +52,7 @@ export default class Row {
         }
       },
       id: rowID,
-      content: [dom.actionButtons(rowID, 'row'), _this.editWindow()],
+      content: [dom.actionButtons(rowID, 'row'), _this.editWindow],
       fType: 'rows'
     };
 
@@ -81,7 +82,7 @@ export default class Row {
    * [editWindow description]
    * @return {[type]} [description]
    */
-  editWindow() {
+  get editWindow() {
     let _this = this;
 
     let editWindow = {
@@ -100,15 +101,36 @@ export default class Row {
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
       },
       action: {
-        change: (e) => {
-          console.log(e);
-        }
+        click: console.log
       },
       config: {
         label: ' Fieldset',
         noWrap: true
       }
     };
+
+    let inputGroupInput = {
+      tag: 'input',
+      id: _this.rowID + '-inputGroup',
+      attrs: {
+        type: 'checkbox',
+        ariaLabel: i18n.get('row.settings.inputGroup.aria')
+      },
+      action: {
+        mouseover: console.log,
+        change: e => {
+          let rowData = data.rows.get(_this.rowID);
+          console.log(rowData);
+          return rowData && rowData.config.inputGroup;
+        }
+      },
+      config: {
+        label: 'Make this row an input group.',
+        //eslint-disable-next-line
+        description: 'Input Groups enable users to add sets of inputs at a time.'
+      }
+    };
+
     // let fieldsetAddon = Object.assign({}, fieldsetLabel, {
       // content: [fieldsetInput, ' Fieldset']
     // });
@@ -131,7 +153,12 @@ export default class Row {
       className: 'input-group',
       content: [inputAddon, legendInput]
     };
-    let fieldSetControls = dom.formGroup([fieldsetLabel, fieldsetInputGroup]);
+
+    let fieldSetControls = [
+      fieldsetLabel,
+      fieldsetInputGroup
+    ];
+    fieldSetControls = dom.formGroup(fieldSetControls);
     let columnSettingsLabel = Object.assign({}, fieldsetLabel, {
       content: 'Define column widths'
     });
@@ -150,6 +177,8 @@ export default class Row {
     let columnSettingsPreset = dom.formGroup(formGroupContent, 'row');
 
     editWindow.content = [
+      inputGroupInput,
+      '<hr>',
       fieldSetControls,
       '<hr>',
       columnSettingsLabel,
@@ -181,16 +210,7 @@ export default class Row {
    * @param  {Object} evt
    */
   onRemove(evt) {
-    console.log('onRemove', evt);
-    let row = evt.from;
-    let columns = row.querySelectorAll('.stage-columns');
-    if (!columns.length) {
-      dom.remove(row);
-    } else if (columns.length === 1) {
-      columns[0].style.float = 'none';
-    }
-
-    dom.columnWidths(row);
+    dom.columnWidths(evt.from);
 
     data.save();
   }

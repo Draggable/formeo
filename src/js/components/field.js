@@ -5,6 +5,7 @@ import h from '../common/helpers';
 import actions from '../common/actions';
 import dom from '../common/dom';
 import Panels from './panels';
+import {uuid} from '../common/utils';
 
 /**
  * Element/Field class.
@@ -20,7 +21,7 @@ export default class Field {
     let _this = this;
 
     let fieldData = formData.fields.get(dataID) || h.copyObj(rFields[dataID]);
-    _this.fieldID = fieldData.id || h.uuid();
+    _this.fieldID = fieldData.id || uuid();
     fieldData.id = _this.fieldID;
 
     formData.fields.set(_this.fieldID, fieldData);
@@ -155,7 +156,7 @@ export default class Field {
   panelContent(args) {
     let _this = this;
     let dataProp = (typeof args.dataProp === 'string') ? args.dataProp : args.i;
-    let id = h.uuid();
+    let id = uuid();
     let propVal = args.dataObj[args.panelType][dataProp];
     let inputs = {
       tag: 'div',
