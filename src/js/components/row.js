@@ -38,7 +38,7 @@ export default class Row {
 
     row = {
       tag: 'li',
-      className: 'stage-row empty-rows',
+      className: 'stage-rows empty-rows',
       dataset: {
         hoverTag: i18n.get('row')
       },
@@ -64,7 +64,7 @@ export default class Row {
       forceFallback: true,
       group: {name: 'rows', pull: true, put: ['rows', 'controls', 'columns']},
       sort: true,
-      draggable: '.stage-column',
+      draggable: '.stage-columns',
       handle: '.column-handle',
       // filter: '.group-actions',
       onRemove: _this.onRemove,
@@ -164,9 +164,7 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onMove(evt) {
-    console.log(evt);
-    // evt.to.classList.remove('empty-row');
-    // console.log('dragging column');
+    // console.log(evt);
   }
 
   /**
@@ -174,11 +172,8 @@ export default class Row {
    * @param  {[type]} evt [description]
    */
   onSort(evt) {
-    // console.log(evt);
-    if (evt.target) {
-      data.save('columns', evt.target.id);
-      // console.log('onSort', evt);
-    }
+    data.saveColumnOrder(evt.target);
+    data.save();
   }
 
   /**
@@ -188,7 +183,7 @@ export default class Row {
   onRemove(evt) {
     console.log('onRemove', evt);
     let row = evt.from;
-    let columns = row.querySelectorAll('.stage-column');
+    let columns = row.querySelectorAll('.stage-columns');
     if (!columns.length) {
       dom.remove(row);
     } else if (columns.length === 1) {
@@ -196,7 +191,6 @@ export default class Row {
     }
 
     dom.columnWidths(row);
-    dom.updateColumnPreset(evt.target);
 
     data.save();
   }

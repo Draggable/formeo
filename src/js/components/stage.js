@@ -155,11 +155,10 @@ export default class Stage {
       }
       dom.remove(item);
     } else if (fromColumn) {
-      dom.addColumn(row.id);
-    }
-
-    if (item.fType === 'columns') {
-      // dom.columnWidths(row);
+      let column = dom.addColumn(row.id);
+      column.appendChild(item);
+      data.saveFieldOrder(column);
+      dom.emptyClass(column);
     }
 
     stage.insertBefore(row, stage.children[newIndex]);
@@ -227,7 +226,7 @@ export default class Stage {
        console.log(evt);
       },
       onMove: evt => console.log('moving row'),
-      draggable: '.stage-row',
+      draggable: '.stage-rows',
       handle: '.row-handle',
       // onFilter: function(evt) {
       //   console.log(evt);

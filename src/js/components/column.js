@@ -43,7 +43,7 @@ export default class Column {
 
     let column = {
       tag: 'ul',
-      className: ['stage-column', 'empty-columns'],
+      className: ['stage-columns', 'empty-columns'],
       dataset: {
         hoverTag: i18n.get('column')
       },
@@ -89,7 +89,7 @@ export default class Column {
           evt.related.parentElement.classList.add('hovering-column');
         }
       },
-      draggable: '.stage-field',
+      draggable: '.stage-fields',
       handle: '.field-handle'
     });
 
@@ -135,8 +135,8 @@ export default class Column {
       let meta = h.get(rFields[item.id], 'meta');
       if (meta.group !== 'layout') {
         let field = dom.addField(to.id, item.id);
-        data.saveFieldOrder(to);
         to.insertBefore(field, to.childNodes[evt.newIndex]);
+        data.saveFieldOrder(to);
         data.save('fields', to.id);
       } else {
         if (meta.id === 'layout-column') {
@@ -156,6 +156,10 @@ export default class Column {
       dom.fieldOrderClass(from);
     }
 
+    dom.emptyClass(evt.to);
+
+    data.save();
+
     to.classList.remove('hovering-column');
   }
 
@@ -164,21 +168,11 @@ export default class Column {
    * @param  {Object} evt
    */
   onRemove(evt) {
-    let column = evt.target;
-    let fields = column.querySelectorAll('.stage-field');
-    let row = column.parentElement;
-
-    if (!fields.length) {
-      dom.remove(column);
-      data.saveColumnOrder(row);
-      let columns = row.querySelectorAll('.stage-column');
-      if (!columns.length) {
-        dom.remove(row);
-        data.saveRowOrder();
-      }
+    if (evt.from.parent) {
+      dom.columnWidths(evt.from.parentElement);
+      data.saveColumnOrder(evt.from.parentElement);
     }
-    dom.fieldOrderClass(column);
-    data.save('columns', row.id);
+    dom.emptyClass(evt.from);
   }
 
   /**
@@ -186,8 +180,20 @@ export default class Column {
    * @param  {Object} evt
    */
   onEnd(evt) {
-    if (evt.target) {
-      evt.target.classList.remove('hovering-column');
+    let {to, from} = evt;
+
+    // dom.removeEmpty(from);
+    dom.fieldOrderClass(to);
+    dom.fieldOrderClass(from);
+
+    if (from.parent) {
+      dom.columnWidths(from.parentElement);
+    }
+
+    data.save();
+
+    if (to) {
+      to.classList.remove('hovering-column');
     }
   }
 

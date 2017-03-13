@@ -59,7 +59,7 @@ let data = {
   },
 
   saveColumnOrder: row => {
-    let columns = row.getElementsByClassName('stage-column');
+    let columns = row.getElementsByClassName('stage-columns');
     let columnOrder = h.map(columns, i => columns[i].id);
     let rowData = formData.rows.get(row.id);
 
@@ -69,7 +69,7 @@ let data = {
   },
 
   saveFieldOrder: column => {
-    let fields = column.getElementsByClassName('stage-field');
+    let fields = column.getElementsByClassName('stage-fields');
     let fieldOrder = h.map(fields, i => fields[i].id);
 
     formData.columns.get(column.id).fields = fieldOrder;
@@ -81,7 +81,7 @@ let data = {
     if (!stage) {
       stage = dom.activeStage;
     }
-    let rows = stage.getElementsByClassName('stage-row');
+    let rows = stage.getElementsByClassName('stage-rows');
     let rowOrder = h.map(rows, rowID => rows[rowID].id);
     formData.stages.get(stage.id).rows = rowOrder;
     return rowOrder;
@@ -107,20 +107,6 @@ let data = {
 
     return saveOrder[group](parent);
   },
-
-  // getColumnData: (row) => {
-  //   let columns = row.getElementsByClassName('stage-column'),
-  //     allColumnData = [];
-  //   Array.prototype.forEach.call(columns, function(column) {
-  //     let columnData = {
-  //       id: column.id,
-  //       fields: column.getElementsByClassName('stage-field')
-  //     };
-  //     allColumnData.push(columnData);
-  //   });
-  //   return allColumnData;
-  // },
-
 
   /**
    * Formeo save functions

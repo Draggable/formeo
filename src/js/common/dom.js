@@ -381,7 +381,6 @@ class DOM {
    */
   empty(elem) {
     while (elem.firstChild) {
-      console.log(elem.firstChild);
       this.remove(elem.firstChild);
     }
     return elem;
@@ -486,8 +485,7 @@ class DOM {
     let type = element.fType;
     let children;
     _this.remove(element);
-    data.save(type, parent.id);
-    children = parent.querySelectorAll('.stage-' + type);
+    children = parent.getElementsByClassName('stage-' + type);
     if (!children.length) {
       if (parent.fType !== 'stages') {
         _this.removeEmpty(parent);
@@ -506,12 +504,8 @@ class DOM {
   remove(elem) {
     let fType = elem.fType;
     if (fType) {
-      console.log(fType);
       this[fType].delete(elem.id);
       formData[fType].delete(elem.id);
-      console.log(fType);
-      console.log(this[fType].size);
-      console.log(formData[fType].size);
     }
     return elem.parentElement.removeChild(elem);
   }
@@ -568,7 +562,7 @@ class DOM {
    * @param  {[type]} column [description]
    */
   fieldOrderClass(column) {
-    let fields = column.querySelectorAll('.stage-field');
+    let fields = column.querySelectorAll('.stage-fields');
 
     if (fields.length) {
       this.removeClasses(fields, ['first-field', 'last-field']);
@@ -585,7 +579,7 @@ class DOM {
    */
   columnWidths(row, widths = false) {
     let _this = this;
-    let columns = row.getElementsByClassName('stage-column');
+    let columns = row.getElementsByClassName('stage-columns');
     if (!columns.length) {
       return false;
     }
@@ -634,14 +628,12 @@ class DOM {
     }
 
     // This is temporary until column resizing happens on hover
-    // setTimeout(() => {
+    setTimeout(() => {
     h.forEach(columns, (i) => {
-      let colStyle = _this.getStyle(columns[i]);
-      console.log(colStyle, colStyle.width);
       colWidth = (columns[i].offsetWidth / rowWidth * 100);
       columns[i].dataset.colWidth = Math.round(colWidth).toString() + '%';
     });
-    // }, 10);
+    }, 10);
 
     return colWidth;
   }
@@ -689,7 +681,6 @@ class DOM {
     pMap.set('custom', [{value: 'custom', label: 'Custom'}]);
 
     if (row) {
-      // let columns = row.getElementsByClassName('stage-column');
       let columns = row.columns;
       layoutPreset.options = pMap.get(columns.length) || pMap.get('custom');
     } else {
@@ -705,7 +696,7 @@ class DOM {
    * @return {Object} columnPresetConfig
    */
   updateColumnPreset(row) {
-    console.log('updateColumnPreset');
+    // console.log('updateColumnPreset');
     let _this = this;
     let oldColumnPreset = row.querySelector('.column-preset');
     let rowEdit = oldColumnPreset.parentElement;
@@ -738,7 +729,6 @@ class DOM {
    * @return {Array}  loaded rows
    */
   loadRows(stage) {
-      console.log(stage);
     if (!stage) {
       stage = this.activeStage;
     }
@@ -747,8 +737,8 @@ class DOM {
     return rows.forEach(rowID => {
       let row = this.addRow(stage.id, rowID);
       this.loadColumns(row);
+      dom.updateColumnPreset(row);
       stage.appendChild(row);
-      // dom.updateColumnPreset(row);
     });
   }
 
@@ -762,6 +752,7 @@ class DOM {
       let column = this.addColumn(row.id, columnID);
       this.loadFields(column);
     });
+    dom.columnWidths(row);
   }
 
   /**
@@ -903,7 +894,6 @@ class DOM {
   addRow(stageID, rowID) {
     let row = new Row(rowID);
     let stage = stageID ? this.stages.get(stageID) : this.activeStage;
-    console.log(this.activeStage);
     stage.appendChild(row);
     data.saveRowOrder(stage);
     this.emptyClass(stage);
@@ -938,7 +928,6 @@ class DOM {
     if (columnID) {
       let column = this.columns.get(columnID);
       column.appendChild(field);
-      // column.className = column.className.replace(/\bempty-\w+/, '');
       data.saveFieldOrder(column);
       this.emptyClass(column);
     }
@@ -953,9 +942,9 @@ class DOM {
     let type = elem.fType;
     if (type) {
       let childMap = new Map();
-      childMap.set('rows', 'column');
-      childMap.set('columns', 'field');
-      childMap.set('stages', 'row');
+      childMap.set('rows', 'columns');
+      childMap.set('columns', 'fields');
+      childMap.set('stages', 'rows');
       let children = elem.getElementsByClassName(`stage-${childMap.get(type)}`);
       elem.classList.toggle(`empty-${type}`, !children.length);
     }

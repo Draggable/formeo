@@ -30,7 +30,7 @@ export default class Field {
     let field = {
       tag: 'li',
       attrs: {
-        className: 'stage-field'
+        className: 'stage-fields'
       },
       id: _this.fieldID,
       content: [

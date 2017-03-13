@@ -1,4 +1,4 @@
-.stage-column {
+.stage-columns {
   transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
   position: relative;
   background-color: $white;
@@ -48,7 +48,7 @@
       border-top-left-radius: 0;
     }
 
-    .stage-field {
+    .stage-fields {
       opacity: .5;
     }
   }
@@ -77,13 +77,13 @@
 }
 
 .editing-row {
-  .stage-column {
+  .stage-columns {
     display: table-cell;
     border-radius: 5px;
     height: 60px;
     background-color: $gray-light;
 
-    .stage-field {
+    .stage-fields {
       display: none;
     }
 
