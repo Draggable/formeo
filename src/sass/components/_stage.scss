@@ -30,7 +30,7 @@
     padding-left: 25px;
     padding-bottom: 15px;
 
-    &.stage-empty {
+    &.empty-stages {
       border: 3px dashed $gray-lighter;
       background-color: $stage-background-empty;
     }
@@ -103,9 +103,9 @@
       display: none;
     }
   }
-  .layout-column-control{
-    display:none;
-  }
+  // .layout-column-control{
+  //   display:none;
+  // }
 }
 
 .formeo-settings {

@@ -69,9 +69,6 @@ export default class Stage {
 
     const stageWrap = this.loadStage();
 
-    dom.stages.set(this.stageID, this.stage);
-    dom.activeStage = this.stage;
-
     return stageWrap;
   }
 
@@ -81,9 +78,10 @@ export default class Stage {
    */
   loadStage() {
     let stageWrap = this.dom;
+    dom.stages.set(this.stageID, this.stage);
+    dom.activeStage = this.stage;
     if (formData.stages.get(this.stageID).rows.length) {
       dom.loadRows(this.stage);
-      this.stage.classList.remove('stage-empty');
     }
 
     return stageWrap;
@@ -102,11 +100,11 @@ export default class Stage {
           attrs: {
             className: [
               'stage',
-              'stage-empty'
+              'empty-stages'
             ],
             id: _this.stageID
           },
-          fType: 'stage'
+          fType: 'stages'
         },
         settings: {
           tag: 'div',
@@ -132,19 +130,6 @@ export default class Stage {
     data.save();
   }
 
-  // createColumn(evt) {
-  //   let fType = evt.from.fType;
-  //   let field = fType === 'columns' ? evt.item : new Field(evt.item.id);
-  //   let column = new Column();
-
-  //   // formData.fields[field.id].parent = column.id;
-
-  //   field.classList.add('first-field');
-  //   column.appendChild(field);
-  //   formData.columns.get(column.id).fields.push(field.id);
-  //   return column;
-  // }
-
   /**
    * Method for handling stage drop
    * @param  {Object} evt
@@ -157,26 +142,24 @@ export default class Stage {
     let stage = target;
     let newIndex = h.indexOfNode(item, stage);
     let row = from.fType === 'stages' ? item : dom.addRow();
+    let fromColumn = from.fType === 'columns';
     let column;
 
     if (from.fType === 'controlGroup') {
-      let group = h.get(rFields[item.id], 'meta.group');
-      if (group !== 'layout') {
-        column = from.fType === 'rows' ? item : dom.addColumn(row.id);
+      let meta = rFields[item.id].meta;
+      if (meta.group !== 'layout') {
+        column = dom.addColumn(row.id);
         dom.addField(column.id, item.id);
+      } else if (meta.id === 'layout-column') {
+        dom.addColumn(row.id);
       }
       dom.remove(item);
-    } else if (from.fType === 'columns') {
-      column = _this.createColumn(evt);
+    } else if (fromColumn) {
+      dom.addColumn(row.id);
     }
-
-    if (column) {
-      row.appendChild(column);
-    }
-
 
     if (item.fType === 'columns') {
-      dom.columnWidths(row);
+      // dom.columnWidths(row);
     }
 
     stage.insertBefore(row, stage.children[newIndex]);

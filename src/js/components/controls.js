@@ -1,6 +1,6 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import {data, formData, registeredFields} from '../common/data';
+import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
 import {match, unique} from '../common/utils';
@@ -290,7 +290,7 @@ export class Controls {
       elementControl.content.unshift(dom.icon(elem.meta.icon));
     }
 
-    registeredFields[dataID] = elem;
+    rFields[dataID] = elem;
     return elementControl;
   }
 
@@ -559,13 +559,21 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement(id) {
+    // let column;
     let row = dom.addRow();
-    let column = dom.addColumn(row.id);
-    dom.addField(column.id, id);
+    let meta = h.get(rFields[id], 'meta');
+    if (meta.group !== 'layout') {
+      let column = dom.addColumn(row.id);
+      dom.addField(column.id, id);
+    } else if (meta.id === 'layout-column') {
+      dom.addColumn(row.id);
+    }
 
-    row.appendChild(column);
+    // if (column) {
+    //   row.appendChild(column);
+    // }
     data.saveColumnOrder(row);
-    dom.columnWidths(row);
+    // dom.columnWidths(row);
     data.save();
     // trigger formSaved event
     document.dispatchEvent(events.formeoUpdated);

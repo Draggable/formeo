@@ -70,10 +70,10 @@
 .stage-row {
   min-height: 60px;
   transition: background-color 125ms ease-in-out;
-  &.empty-row{
-    .stage-column{
-      display:none;
-    }
+  &.empty-rows{
+    // .stage-column{
+    //   display:none;
+    // }
   }
 
   &::before {

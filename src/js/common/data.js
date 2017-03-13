@@ -259,10 +259,10 @@ let data = {
     }
 
     // toggle empty class if stage(s) have data
-    formData.stages.forEach(stage => {
-      let stageDom = dom.stages.get(stage.id);
-      stageDom.classList.toggle('stage-empty', !stage.rows.length);
-    });
+    // formData.stages.forEach(stage => {
+    //   let stageDom = dom.stages.get(stage.id);
+    //   stageDom.classList.toggle('empty-stages', !stage.rows.length);
+    // });
 
     // Shouldn't be the case? because every time
     // save is called there should be some formData update, right?

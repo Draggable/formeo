@@ -1,7 +1,7 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
-import {data, formData} from '../common/data';
-import helpers from '../common/helpers';
+import {data, formData, registeredFields as rFields} from '../common/data';
+import h from '../common/helpers';
 import dom from '../common/dom';
 
 /**
@@ -17,7 +17,7 @@ export default class Column {
     let _this = this;
     let columnDefaults;
 
-    let columnID = _this.columnID = dataID || helpers.uuid();
+    let columnID = _this.columnID = dataID || h.uuid();
     let columnData = formData.columns.get(columnID);
 
     columnDefaults = {
@@ -27,7 +27,7 @@ export default class Column {
       className: []
     };
 
-    formData.columns.set(columnID, helpers.extend(columnDefaults, columnData));
+    formData.columns.set(columnID, h.extend(columnDefaults, columnData));
 
     let resizeHandle = {
         tag: 'li',
@@ -43,7 +43,7 @@ export default class Column {
 
     let column = {
       tag: 'ul',
-      className: ['stage-column'],
+      className: ['stage-column', 'empty-columns'],
       dataset: {
         hoverTag: i18n.get('column')
       },
@@ -129,12 +129,24 @@ export default class Column {
   onAdd(evt) {
     let {from, item, to} = evt;
     let fromColumn = from.fType === 'columns';
-    let field = fromColumn ? item : dom.addField(to.id, item.id);
+    let fromControl = from.fType === 'controlGroup';
 
-    if (from.fType === 'controlGroup') {
+    if (fromControl) {
+      let meta = h.get(rFields[item.id], 'meta');
+      if (meta.group !== 'layout') {
+        let field = dom.addField(to.id, item.id);
+        data.saveFieldOrder(to);
+        to.insertBefore(field, to.childNodes[evt.newIndex]);
+        data.save('fields', to.id);
+      } else {
+        if (meta.id === 'layout-column') {
+          let row = to.parentElement;
+          dom.addColumn(row.id);
+          dom.columnWidths(to);
+        }
+      }
+
       dom.remove(evt.item);
-      data.saveFieldOrder(to);
-      data.save('fields', to.id);
       // document.dispatchEvent(events.formeoUpdated);
     }
 
@@ -143,7 +155,6 @@ export default class Column {
     if (fromColumn) {
       dom.fieldOrderClass(from);
     }
-    to.insertBefore(field, to.childNodes[evt.newIndex]);
 
     to.classList.remove('hovering-column');
   }

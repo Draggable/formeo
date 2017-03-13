@@ -2,7 +2,7 @@ import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import dom from '../common/dom';
 import h from '../common/helpers';
-import {data, formData} from '../common/data';
+import {data, formData, registeredFields as rFields} from '../common/data';
 
 /**
  * Editor Row
@@ -38,9 +38,7 @@ export default class Row {
 
     row = {
       tag: 'li',
-      attrs: {
-        className: 'stage-row empty-row'
-      },
+      className: 'stage-row empty-rows',
       dataset: {
         hoverTag: i18n.get('row')
       },
@@ -167,7 +165,7 @@ export default class Row {
    */
   onMove(evt) {
     console.log(evt);
-    evt.to.classList.remove('empty-row');
+    // evt.to.classList.remove('empty-row');
     // console.log('dragging column');
   }
 
@@ -211,17 +209,22 @@ export default class Row {
     let {from, item, to} = evt;
     let fromRow = from.fType === 'rows';
     let fromColumn = from.fType === 'columns';
+    let fromControls = from.fType === 'controlGroup';
     let column;
 
     if (fromRow) {
       column = item;
-    } else if(fromColumn) {
-      column = dom.addColumn(to.id);
-      dom.addField(column.id, item.id);
-      to.appendChild(column);
+    } else if(fromColumn || fromControls) {
+      let meta = h.get(rFields[item.id], 'meta');
+      if (meta.group !== 'layout') {
+        column = dom.addColumn(to.id);
+        dom.addField(column.id, item.id);
+      } else if (meta.id === 'layout-column') {
+        dom.addColumn(to.id);
+      }
     }
 
-    if (fromColumn || from.fType === 'controlGroup') {
+    if (fromColumn || fromControls) {
       dom.remove(item);
     }
 
@@ -231,8 +234,7 @@ export default class Row {
       dom.updateColumnPreset(from);
     }
 
-    to.className = to.className.replace(/\bempty-\w+/, '');
-
+    dom.columnWidths(to);
     data.save();
   }
 
