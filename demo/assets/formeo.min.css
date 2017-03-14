@@ -1951,6 +1951,8 @@
         border-top-right-radius: 0; }
       .formeo .formeo-controls .control-group > li:last-child {
         border-radius: 0 0 0 5px; }
+      .formeo .formeo-controls .control-group .field-control .svg-icon {
+        pointer-events: none; }
     .formeo .formeo-controls.filtered .panel-nav {
       display: none; }
     .formeo .formeo-controls.filtered .control-group {

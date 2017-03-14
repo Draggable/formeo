@@ -275,11 +275,11 @@ export class Controls {
       ],
       id: dataID,
       action: {
-        mousedown: (evt) => {
+        mousedown: evt => {
           position.x = evt.clientX;
           position.y = evt.clientY;
         },
-        mouseup: (evt) => {
+        mouseup: evt => {
           if (clicked(evt.clientX, evt.clientY, evt.button)) {
             _this.addElement(evt.target.id);
           }

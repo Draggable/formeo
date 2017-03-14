@@ -18,6 +18,8 @@ let formeoOpts = {
 const formeo = new window.Formeo(formeoOpts);
 let editing = true;
 
+console.log(document.getElementsByClassName('stage-rows'));
+
 let debugWrap = document.getElementById('debug-wrap');
 let debugBtn = document.getElementById('debug-demo');
 let locale = document.getElementById('locale');

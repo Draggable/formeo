@@ -101,7 +101,7 @@ export default class Row {
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
       },
       action: {
-        click: console.log
+        click: e => console.log(e)
       },
       config: {
         label: ' Fieldset',
@@ -117,12 +117,8 @@ export default class Row {
         ariaLabel: i18n.get('row.settings.inputGroup.aria')
       },
       action: {
-        mouseover: console.log,
-        change: e => {
-          let rowData = data.rows.get(_this.rowID);
-          console.log(rowData);
-          return rowData && rowData.config.inputGroup;
-        }
+        click: console.log,
+        change: console.log
       },
       config: {
         label: 'Make this row an input group.',
@@ -178,9 +174,9 @@ export default class Row {
 
     editWindow.content = [
       inputGroupInput,
-      '<hr>',
+      dom.create('hr'),
       fieldSetControls,
-      '<hr>',
+      dom.create('hr'),
       columnSettingsLabel,
       columnSettingsPreset
     ];

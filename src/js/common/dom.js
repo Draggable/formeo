@@ -131,7 +131,7 @@ class DOM {
 
           if (!elem.config.hideLabel) {
             if (labelAfter(elem)) {
-              wrap.content.push(' ', label);
+              wrap.content.push(label); // PROBLEM RIGHT HERE!!!
             } else {
               wrap.content.unshift(label);
             }
@@ -166,13 +166,12 @@ class DOM {
       let actions = Object.keys(elem.action);
       for (i = actions.length - 1; i >= 0; i--) {
         let event = actions[i];
-        if (elem.config) {
-          if (elem.config) {
-            console.log(elem.config.label);
-          }
-        }
 
         element.addEventListener(event, elem.action[event]);
+        if (elem.id === '1509b3d9-6b1f-4cbf-a1a9-e7991871274a-inputGroup') {
+            console.log(event, elem.action[event]);
+            console.log(element);
+        }
       }
       processed.push('action');
     }
@@ -442,7 +441,7 @@ class DOM {
           'type': 'button'
         },
         action: {
-          click: (evt) => {
+          click: evt => {
             let element = document.getElementById(id);
             let editClass = 'editing-' + item;
             let editWindow = element.querySelector(`.${item}-edit`);
@@ -518,6 +517,7 @@ class DOM {
         this.emptyClass(parent);
       }
     }
+    data.save();
     // document.dispatchEvent(events.formeoUpdated);
   }
 
@@ -530,6 +530,7 @@ class DOM {
     let fType = elem.fType;
     if (fType) {
       this[fType].delete(elem.id);
+      data.empty(fType, elem.id);
       formData[fType].delete(elem.id);
     }
     return elem.parentElement.removeChild(elem);

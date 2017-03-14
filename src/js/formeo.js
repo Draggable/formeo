@@ -310,6 +310,32 @@ class Formeo {
       }
     });
 
+let stageWrap = document.querySelector('.stage-wrap');
+let inputGroupInput = {
+      tag: 'input',
+      id: 'inputGroup',
+      attrs: {
+        type: 'checkbox',
+        ariaLabel: i18n.get('row.settings.inputGroup.aria')
+      },
+      action: {
+        // mouseover: console.log,
+        click: console.log,
+        // change: e => {
+        //   let rowData = data.rows.get(_this.rowID);
+        //   console.log(rowData);
+        //   return rowData && rowData.config.inputGroup;
+        // }
+      },
+      config: {
+        label: 'Make this row an input group.',
+        //eslint-disable-next-line
+        description: 'Input Groups enable users to add sets of inputs at a time.'
+      }
+    };
+console.log(inputGroupInput);
+    stageWrap.appendChild(dom.create(inputGroupInput));
+
     document.dispatchEvent(events.formeoLoaded);
   }
 }
