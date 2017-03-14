@@ -5,7 +5,7 @@ import h from '../common/helpers';
 import actions from '../common/actions';
 import dom from '../common/dom';
 import Panels from './panels';
-import {uuid} from '../common/utils';
+import {uuid, clone} from '../common/utils';
 
 /**
  * Element/Field class.
@@ -20,7 +20,7 @@ export default class Field {
   constructor(dataID) {
     let _this = this;
 
-    let fieldData = formData.fields.get(dataID) || h.copyObj(rFields[dataID]);
+    let fieldData = formData.fields.get(dataID) || clone(rFields[dataID]);
     _this.fieldID = fieldData.id || uuid();
     fieldData.id = _this.fieldID;
 
@@ -540,7 +540,7 @@ export default class Field {
    */
   fieldPreview() {
     let _this = this;
-    let fieldData = h.clone(formData.fields.get(_this.fieldID));
+    let fieldData = clone(formData.fields.get(_this.fieldID));
 
     fieldData.id = 'prev-' + _this.fieldID;
 

@@ -891,7 +891,8 @@
   .formeo .radio input[type='radio'],
   .formeo .checkbox input[type='checkbox'] {
     position: relative;
-    margin-left: 0; }
+    margin-left: -1.25em;
+    margin-right: 0.5em; }
   .formeo .radio + .radio,
   .formeo .checkbox + .checkbox {
     margin-top: -.25rem; }
@@ -2239,7 +2240,7 @@
     .formeo .field-control.resizing-columns .stage-columns {
       transition: none; }
   .formeo .stage-rows {
-    min-height: 60px;
+    min-height: 75px;
     transition: background-color 125ms ease-in-out; }
     .formeo .stage-rows::before {
       left: 0; }
@@ -2336,11 +2337,13 @@
       border-bottom-left-radius: 0.25rem; }
     .formeo .stage-fields [contenteditable] {
       transition: border-color 250ms;
-      border-bottom: 1px dashed #d6d8da;
-      padding: 0 10px 0 0; }
+      border-bottom: 1px dashed #d6d8da; }
       .formeo .stage-fields [contenteditable]:focus {
         border: 1px solid #66afe9;
         outline: none; }
+    .formeo .stage-fields .checkbox [contenteditable] {
+      margin-left: 1.25em;
+      padding: 0; }
     .formeo .stage-fields::before {
       display: none;
       position: absolute;

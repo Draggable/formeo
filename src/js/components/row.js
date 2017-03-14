@@ -214,6 +214,7 @@ export default class Row {
    */
   onRemove(evt) {
     dom.columnWidths(evt.from);
+    dom.emptyClass(evt.from);
 
     data.save();
   }
@@ -252,6 +253,7 @@ export default class Row {
     }
 
     dom.columnWidths(to);
+    dom.emptyClass(evt.to);
     data.save();
   }
 

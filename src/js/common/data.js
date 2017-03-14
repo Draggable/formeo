@@ -2,7 +2,7 @@
 import events from './events';
 import h from './helpers';
 import dom from './dom';
-import {strMapToObj, objToStrMap, uuid} from './utils';
+import {strMapToObj, objToStrMap, uuid, remove} from './utils';
 // Object map of fields on the stage
 const _data = {};
 let formData;
@@ -205,6 +205,13 @@ let data = {
           });
           fields = [];
         }
+      },
+      fields: id => {
+        let field = dom.fields.get(id);
+        if (field) {
+          let column = formData.columns.get(field.parentElement.id);
+          remove(column.fields, id);
+        }
       }
     };
 
@@ -212,31 +219,13 @@ let data = {
     return removed;
   },
 
-  jsonSave: () => {
-    let jsonData = {};
-
-    Object.keys(formData).forEach(key => {
-      if (typeof formData[key] === 'string') {
-        jsonData[key] = formData[key];
-      } else {
-        jsonData[key] = strMapToObj(formData[key]);
-      }
-    });
-    return jsonData;
-  },
-
   save: (group = 'stages', id) => {
     data.saveType(group, id);
-    let doSave = {
-      json: data.jsonSave
-    };
     const storage = window.sessionStorage;
     const stringify = window.JSON.stringify;
 
-    let jsData = doSave[_data.opts.dataType](group, id);
-
     if (storage && _data.opts.sessionStorage) {
-      storage.setItem('formData', stringify(jsData));
+      storage.setItem('formData', stringify(data.js));
     }
 
     if (_data.opts.debug) {
@@ -255,12 +244,25 @@ let data = {
     return formData;
   },
 
+  get js() {
+    let jsData = {};
+
+    Object.keys(formData).forEach(key => {
+      if (typeof formData[key] === 'string') {
+        jsData[key] = formData[key];
+      } else {
+        jsData[key] = strMapToObj(formData[key]);
+      }
+    });
+    return jsData;
+  },
+
   /**
    * getter method for JSON formData
    * @return {JSON} formData
    */
   get json() {
-    return data.jsonSave();
+    return window.JSON.stringify(data.js, null, '\t');
   }
 };
 

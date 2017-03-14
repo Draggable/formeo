@@ -2,8 +2,9 @@
   transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
   position: relative;
   background-color: $white;
+  max-width:none;
   flex-direction: column;
-  display: flex;
+  // display: flex;
   flex: 1;
 
   &[class*='col-'] {

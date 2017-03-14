@@ -3,7 +3,7 @@ import Sortable from 'sortablejs';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import dom from '../common/dom';
-import {uuid} from '../common/utils';
+import {uuid, numToPercent} from '../common/utils';
 
 /**
  * Setup Column elements
@@ -19,7 +19,7 @@ export default class Column {
     let columnDefaults;
 
     let columnID = _this.columnID = dataID || uuid();
-    let columnData = formData.columns.get(columnID);
+    _this.columnData = formData.columns.get(columnID);
 
     columnDefaults = {
       fields: [],
@@ -28,7 +28,7 @@ export default class Column {
       className: []
     };
 
-    formData.columns.set(columnID, h.extend(columnDefaults, columnData));
+    formData.columns.set(columnID, h.extend(columnDefaults, _this.columnData));
 
     let resizeHandle = {
         tag: 'li',
@@ -116,9 +116,8 @@ export default class Column {
     let _this = this;
     let columnData = formData.columns.get(_this.columnID);
     if (columnData.config.width) {
-      let percentWidth = Math.round(columnData.config.width).toString() + '%';
-      column.dataset.colWidth = percentWidth;
-      column.style.width = percentWidth;
+      column.dataset.colWidth = columnData.config.width;
+      column.style.width = columnData.config.width;
       column.style.float = 'left';
     }
   }
@@ -143,7 +142,7 @@ export default class Column {
         if (meta.id === 'layout-column') {
           let row = to.parentElement;
           dom.addColumn(row.id);
-          dom.columnWidths(to);
+          dom.columnWidths(row);
         }
       }
 
@@ -210,6 +209,9 @@ export default class Column {
     let rowStyle = dom.getStyle(row);
     let rowPadding = parseFloat(rowStyle.paddingLeft) +
     parseFloat(rowStyle.paddingRight);
+    let colWidthPercent;
+    let sibWidthPercent;
+
 
     /**
      * Set the width before resizing so the column
@@ -219,27 +221,57 @@ export default class Column {
     function setWidths(evt) {
       let newColWidth = (resize.colStartWidth + evt.clientX - resize.startX);
       let newSibWidth = (resize.sibStartWidth - evt.clientX + resize.startX);
-      const numToPercent = num => num.toString() + '%';
-      const percent = width => (width / resize.rowWidth * 100);
-      let colWidthPercent = percent(newColWidth);
-      let sibWidthPercent = percent(newSibWidth);
 
-      column.dataset.colWidth = numToPercent(Math.round(colWidthPercent));
-      sibling.dataset.colWidth = numToPercent(Math.round(sibWidthPercent));
+      const percent = width => (width / resize.rowWidth * 100);
+      colWidthPercent = parseFloat(percent(newColWidth));
+      sibWidthPercent = parseFloat(percent(newSibWidth));
+
+      column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1));
+      sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1));
 
       column.style.width = numToPercent(colWidthPercent);
       sibling.style.width = numToPercent(sibWidthPercent);
     }
 
-    resize.move = function(evt) {
+    resize.move = evt => {
       setWidths(evt);
+      resize.resized = true;
     };
 
     resize.stop = function() {
-      // events.mousemove.callbacks = [];
-      column.style.cursor = 'default';
-      row.classList.remove('resizing-columns');
       window.removeEventListener('mousemove', resize.move);
+      window.removeEventListener('mouseup', resize.stop);
+      if (!resize.resized) {
+        return;
+      }
+      let columnData = formData.columns.get(column.id);
+      let sibColumnData = formData.columns.get(sibling.id);
+      let totalUsed = colWidthPercent + sibWidthPercent;
+        console.log(totalUsed);
+      let row = column.parentElement;
+      row.classList.remove('resizing-columns');
+      let columns = row.getElementsByClassName('stage-columns');
+      if (columns.length > 2) {
+        let remaining = (100 - totalUsed);
+        let remainWidth = parseFloat(remaining / columns.length - 2).toFixed(1);
+        console.log(remaining, remainWidth);
+  // let remaining = parseFloat((totalUsed / columns.length - 1).toFixed(1));
+        console.log(remainWidth);
+        h.forEach(columns, i => {
+          console.log();
+          if (!h.inArray(columns[i].id, [column.id, sibling.id])) {
+            let percentWidth = numToPercent(remainWidth);
+            columns[i].dataset.colWidth = percentWidth;
+            columns[i].style.width = percentWidth;
+            formData.columns.get(columns[i].id).config.width = percentWidth;
+          }
+        });
+      }
+      columnData.config.width = column.dataset.colWidth;
+      sibColumnData.config.width = sibling.dataset.colWidth;
+      // column.style.cursor = 'default';
+      resize.resized = false;
+      data.save();
     };
 
     resize.start = (function(evt) {
@@ -259,8 +291,8 @@ export default class Column {
       resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width');
       resize.rowWidth = row.offsetWidth - rowPadding; // compensate for padding
 
-      window.addEventListener('mousemove', resize.move, false);
       window.addEventListener('mouseup', resize.stop, false);
+      window.addEventListener('mousemove', resize.move, false);
     })(evt);
   }
 

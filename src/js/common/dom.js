@@ -4,7 +4,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {unique, uuid} from './utils';
+import {unique, uuid, clone} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -125,6 +125,7 @@ class DOM {
             if (labelAfter(elem)) {
               label.classList.add('form-check-label');
               wrap.className = elem.attrs.type;
+              element.classList.add('form-check-input');
               label.insertBefore(element, label.firstChild);
               wrap.content.push(label);
             } else {
@@ -490,11 +491,11 @@ class DOM {
       }
     };
 
-    // if (item === 'column') {
-    //   btnWrap.content = [menuHandle, remove];
-    // } else {
-    btnWrap.content = [menuHandle, editToggle, remove];
-    // }
+    if (item === 'column') {
+      btnWrap.content = [menuHandle, remove];
+    } else {
+      btnWrap.content = [menuHandle, editToggle, remove];
+    }
 
     actions.content = btnWrap;
 
@@ -531,8 +532,8 @@ class DOM {
   remove(elem) {
     let fType = elem.fType;
     if (fType) {
-      this[fType].delete(elem.id);
       data.empty(fType, elem.id);
+      this[fType].delete(elem.id);
       formData[fType].delete(elem.id);
     }
     return elem.parentElement.removeChild(elem);
@@ -614,14 +615,14 @@ class DOM {
     let colWidth = (12 / columns.length);
     let width = widths;
     if (!width) {
-      width = new Array(columns.length).fill(100 / columns.length);
+      width = parseFloat((100 / columns.length).toFixed(1));
     }
-    let rowStyle = _this.getStyle(row);
     let bsGridRegEx = /\bcol-\w+-\d+/g;
-    let rowPadding = parseFloat(rowStyle.paddingLeft) +
-    parseFloat(rowStyle.paddingRight);
     // compensate for padding;
-    let rowWidth = row.offsetWidth - rowPadding;
+    // let rowStyle = _this.getStyle(row);
+    // let rowPadding = parseFloat(rowStyle.paddingLeft) +
+    // parseFloat(rowStyle.paddingRight);
+    // let rowWidth = row.offsetWidth - rowPadding;
 
     _this.removeClasses(columns, bsGridRegEx);
 
@@ -645,6 +646,7 @@ class DOM {
       column.style.width = width + '%';
       column.style.float = 'left';
       columnData.config.width = width;
+      column.dataset.colWidth = width + '%';
     });
 
     // Fix the editWindow for any fields that were being edited
@@ -654,14 +656,6 @@ class DOM {
         editingFields[i].panelNav.refresh();
       }
     }
-
-    // This is temporary until column resizing happens on hover
-    setTimeout(() => {
-    h.forEach(columns, (i) => {
-      colWidth = (columns[i].offsetWidth / rowWidth * 100);
-      columns[i].dataset.colWidth = Math.round(colWidth).toString() + '%';
-    });
-    }, 10);
 
     return colWidth;
   }
@@ -767,6 +761,7 @@ class DOM {
       this.loadColumns(row);
       dom.updateColumnPreset(row);
       stage.appendChild(row);
+      // dom.columnWidths(row);
     });
   }
 
@@ -780,12 +775,11 @@ class DOM {
       let column = this.addColumn(row.id, columnID);
       this.loadFields(column);
     });
-    dom.columnWidths(row);
   }
 
   /**
-   * [loadFields description]
-   * @param  {[type]} column [description]
+   * Load a columns fields
+   * @param  {Object} column column config object
    */
   loadFields(column) {
     let fields = formData.columns.get(column.id).fields;
@@ -835,7 +829,7 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget);
-    let renderData = data.jsonSave(formData);
+    let renderData = data.js;
     let renderCount = document.getElementsByClassName('formeo-rendered').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;
@@ -849,7 +843,61 @@ class DOM {
           return col;
         });
         row.tag = 'div';
-        row.content = cols;
+        row.content = [cols];
+        let rowData = clone(row);
+        if (row.config.inputGroup) {
+          let removeButton = {
+            tag: 'button',
+            className: 'remove-input-group',
+            content: dom.icon('remove'),
+            action: {
+              click: e => {
+                let cIGroup = e.target.parentElement;
+                let iGWrap = cIGroup.parentElement;
+                let iG = iGWrap.getElementsByClassName('f-input-group');
+                if (iG.length > 1) {
+                  dom.remove(cIGroup);
+                } else {
+                  console.log('Need at least 1 group');
+                }
+              }
+            }
+          };
+          rowData.content.unshift(removeButton);
+          let inputGroupWrap = {
+            tag: 'div',
+            id: uuid(),
+            className: 'f-input-group-wrap'
+          };
+          // const inputGroupClass = (row => {
+            if (rowData.attrs.className) {
+              if (typeof rowData.attrs.className === 'string') {
+                rowData.attrs.className += ' f-input-group';
+              } else {
+                rowData.attrs.className.push('f-input-group');
+              }
+            }
+          // })(row);
+          let addButton = {
+            tag: 'button',
+            className: 'add-input-group',
+            content: 'Add +',
+            action: {
+              click: e => {
+                // inputGroupClass
+                // rowData.content.unshift(removeButton);
+                let fInputGroup = e.target.parentElement;
+                let newRow = dom.create(rowData);
+                fInputGroup.insertBefore(newRow, fInputGroup.lastChild);
+              }
+            }
+          };
+
+
+          row.content.unshift(removeButton);
+          inputGroupWrap.content = [rowData, addButton];
+          row = inputGroupWrap;
+        }
         return row;
       });
       stage.tag = 'div';
@@ -886,8 +934,6 @@ class DOM {
     const resetStage = () => {
       // Empty the data register for stage
       // and everything below it.
-      // data.empty('stages', stage.id);
-      // formData.rows.forEach(console.log);
       dom.empty(stage);
       stage.classList.remove('removing-all-fields');
       data.save();
@@ -963,8 +1009,8 @@ class DOM {
   }
 
   /**
-   * [emptyClass description]
-   * @param  {[type]} elem [description]
+   * Aplly empty class to element if does not have children
+   * @param  {Object} elem
    */
   emptyClass(elem) {
     let type = elem.fType;

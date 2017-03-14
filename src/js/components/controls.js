@@ -6,8 +6,6 @@ import events from '../common/events';
 import {match, unique, uuid} from '../common/utils';
 import dom from '../common/dom';
 import Panels from './panels';
-import Column from './column';
-import Field from './field';
 
 let opts = {};
 
@@ -369,7 +367,6 @@ export class Controls {
    * @return {[type]} [description]
    */
   formActions() {
-    let _this = this;
     let btnTemplate = {
         tag: 'button',
         attrs: {
@@ -408,20 +405,20 @@ export class Controls {
         }
       }
     });
-    let settingsBtn = h.merge(btnTemplate, {
-      content: [dom.icon('settings'), i18n.get('settings')],
-      attrs: {
-        title: i18n.get('settings')
-      },
-      className: ['btn', 'btn-secondary', 'edit-settings'],
-      action: {
-        click: () => {
-          console.log('clicked');
-          let stage = document.getElementById(_this.formID + '-stage');
-          stage.parentElement.classList.toggle('editing-stage');
-        }
-      }
-    });
+    // let settingsBtn = h.merge(btnTemplate, {
+    //   content: [dom.icon('settings'), i18n.get('settings')],
+    //   attrs: {
+    //     title: i18n.get('settings')
+    //   },
+    //   className: ['btn', 'btn-secondary', 'edit-settings'],
+    //   action: {
+    //     click: () => {
+    //       console.log('clicked');
+    //       let stage = document.getElementById(_this.formID + '-stage');
+    //       stage.parentElement.classList.toggle('editing-stage');
+    //     }
+    //   }
+    // });
     let saveBtn = h.merge(btnTemplate, {
       content: [dom.icon('floppy-disk'), i18n.get('save')],
       attrs: {
@@ -446,7 +443,8 @@ export class Controls {
     let formActions = {
       tag: 'div',
       className: 'form-actions',
-      content: [clearBtn, settingsBtn, saveBtn]
+      // content: [clearBtn, settingsBtn, saveBtn]
+      content: [clearBtn, saveBtn]
     };
 
     return formActions;
@@ -539,24 +537,6 @@ export class Controls {
   }
 
   /**
-   * Creates a column on the stage
-   * @param  {String} id
-   * @return {Object} column
-   */
-  createColumn(id) {
-    console.log('controls createCOlumn');
-    let field = new Field(id);
-    let column = new Column();
-
-    // formData.fields[field.id].parent = column.id;
-
-    field.classList.add('first-field');
-    column.appendChild(field);
-    formData.columns.get(column.id).fields.push(field.id);
-    return column;
-  }
-
-  /**
    * Append an element to the stage
    * @param {String} id of elements
    */
@@ -571,9 +551,6 @@ export class Controls {
       dom.addColumn(row.id);
     }
 
-    // if (column) {
-    //   row.appendChild(column);
-    // }
     data.saveColumnOrder(row);
     dom.columnWidths(row);
     data.save();
