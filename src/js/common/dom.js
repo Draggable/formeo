@@ -35,7 +35,11 @@ class DOM {
     let tag = elem.tag || elem;
     let processed = [];
     let i;
-    let wrap;
+    let wrap = {
+      tag: 'div',
+      className: [h.get(elem, 'config.inputWrap') || 'form-group'],
+      content: []
+    };
     let labelAfter = elem => {
       let type = h.get(elem, 'attrs.type');
       return (type === 'checkbox' || type === 'radio');
@@ -83,12 +87,6 @@ class DOM {
         appendContent.array.call(this, options);
         delete elem.content;
       } else {
-        wrap = {
-          tag: 'div',
-          className: h.get(elem, 'config.inputWrap') || 'form-group',
-          content: []
-        };
-
         h.forEach(options, (i) => {
           wrap.content.push(_this.create(options[i], isPreview));
         });
@@ -123,20 +121,17 @@ class DOM {
         }
 
         if (!elem.config.noWrap) {
-          wrap = {
-            tag: 'div',
-            className: h.get(elem, 'config.inputWrap') || 'form-group',
-            content: [element]
-          };
-
           if (!elem.config.hideLabel) {
             if (labelAfter(elem)) {
-              wrap.content.push(label); // PROBLEM RIGHT HERE!!!
+              label.classList.add('form-check-label');
+              wrap.className = elem.attrs.type;
+              label.insertBefore(element, label.firstChild);
+              wrap.content.push(label);
             } else {
-              wrap.content.unshift(label);
+              wrap.content.push(label, element);
             }
           } else {
-            element = label;
+            // element = label;
           }
         }
       }
@@ -166,12 +161,7 @@ class DOM {
       let actions = Object.keys(elem.action);
       for (i = actions.length - 1; i >= 0; i--) {
         let event = actions[i];
-
         element.addEventListener(event, elem.action[event]);
-        if (elem.id === '1509b3d9-6b1f-4cbf-a1a9-e7991871274a-inputGroup') {
-            console.log(event, elem.action[event]);
-            console.log(element);
-        }
       }
       processed.push('action');
     }
@@ -198,7 +188,7 @@ class DOM {
       element[remaining[i]] = elem[remaining[i]];
     }
 
-    if (wrap) {
+    if (wrap.content.length) {
       element = this.create(wrap);
     }
 
@@ -317,6 +307,17 @@ class DOM {
   }
 
   /**
+   * Converts escaped HTML into usable HTML
+   * @param  {String} html escaped HTML
+   * @return {String}      parsed HTML
+   */
+  parsedHtml(html) {
+    let escapeElement = document.createElement('textarea');
+    escapeElement.innerHTML = html;
+    return escapeElement.textContent;
+  }
+
+  /**
    * Generate a label
    * @param  {Object} elem config object
    * @param  {String} fMap map to label's value in formData
@@ -326,7 +327,8 @@ class DOM {
     let fieldLabel = {
       tag: 'label',
       attrs: {},
-      content: [elem.config.label],
+      className: [],
+      content: this.parsedHtml(elem.config.label),
       action: {}
     };
 
@@ -344,7 +346,7 @@ class DOM {
       fieldLabel.fMap = fMap;
     }
 
-    return fieldLabel;
+    return dom.create(fieldLabel);
   }
 
   /**

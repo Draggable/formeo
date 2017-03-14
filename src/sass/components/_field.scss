@@ -24,11 +24,17 @@
   [contenteditable] {
     transition: border-color 250ms;
     border-bottom: 1px dashed $gray-lighter;
-    padding: 0 10px 0 0;
 
     &:focus {
       border: 1px solid $input-focus;
       outline: none;
+    }
+  }
+
+  .checkbox {
+    [contenteditable]{
+      margin-left:1.25em;
+      padding: 0;
     }
   }
 

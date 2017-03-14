@@ -233,10 +233,10 @@ let data = {
     const storage = window.sessionStorage;
     const stringify = window.JSON.stringify;
 
-    let jsonData = doSave[_data.opts.dataType](group, id);
+    let jsData = doSave[_data.opts.dataType](group, id);
 
     if (storage && _data.opts.sessionStorage) {
-      storage.setItem('formData', stringify(jsonData));
+      storage.setItem('formData', stringify(jsData));
     }
 
     if (_data.opts.debug) {

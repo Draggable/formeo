@@ -35,7 +35,9 @@ export default class Row {
         }
       };
 
-    formData.rows.set(rowID, h.extend(defaults, formData.rows.get(rowID)));
+    let rowData = formData.rows.get(rowID);
+
+    formData.rows.set(rowID, h.extend(defaults, rowData));
 
     row = {
       tag: 'li',
@@ -84,6 +86,7 @@ export default class Row {
    */
   get editWindow() {
     let _this = this;
+    let rowData = formData.rows.get(_this.rowID);
 
     let editWindow = {
       tag: 'div',
@@ -114,11 +117,15 @@ export default class Row {
       id: _this.rowID + '-inputGroup',
       attrs: {
         type: 'checkbox',
+        checked: rowData.config.inputGroup,
         ariaLabel: i18n.get('row.settings.inputGroup.aria')
       },
       action: {
-        click: console.log,
-        change: console.log
+        click: e => {
+          let rowData = formData.rows.get(_this.rowID);
+          rowData.config.inputGroup = e.target.checked;
+          data.save();
+        }
       },
       config: {
         label: 'Make this row an input group.',

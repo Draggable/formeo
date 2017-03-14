@@ -180,7 +180,8 @@
 .radio input[type='radio'],
 .checkbox input[type='checkbox'] {
   position: relative;
-  margin-left: 0;
+  margin-left: -1.25em;
+  margin-right: 0.5em;
 }
 
 // Checkboxes and radios
