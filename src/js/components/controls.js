@@ -529,8 +529,10 @@ export class Controls {
       addGroup: (group) => console.log(group)
     };
 
+
     // Make controls sortable
     for (let i = groups.length - 1; i >= 0; i--) {
+      let storeID = `formeo-controls-${groups[i]}`;
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
@@ -544,7 +546,27 @@ export class Controls {
         onRemove: (evt) => {
           _this.applyControlEvents(evt.item);
         },
-        sort: opts.sortable
+        sort: opts.sortable,
+        store: {
+          /**
+           * Get the order of elements.
+           * @param   {Sortable}  sortable
+           * @return {Array}
+           */
+          get: sortable => {
+            let order = localStorage.getItem(storeID);
+            return order ? order.split('|') : [];
+          },
+
+          /**
+           * Save the order of elements.
+           * @param {Sortable}  sortable
+           */
+          set: sortable => {
+            let order = sortable.toArray();
+            localStorage.setItem(storeID, order.join('|'));
+          }
+        }
       });
     }
 

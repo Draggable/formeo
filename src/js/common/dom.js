@@ -665,10 +665,10 @@ class DOM {
   }
 
   /**
-   * [formGroup description]
-   * @param  {[type]} content   [description]
-   * @param  {String} className [description]
-   * @return {[type]}           [description]
+   * Wrap content in a formGroup
+   * @param  {Object|Array|String} content
+   * @param  {String} className
+   * @return {Object} formGroup config
    */
   formGroup(content, className = '') {
     return {
