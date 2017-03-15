@@ -23,12 +23,12 @@ function updateMd(version) {
     const changes = [
       {
         files: 'CHANGELOG.md',
-        replace: lastLog,
-        with: `- v${version.new} - ${gitLog}\n${lastLog}`
+        from: lastLog,
+        to: `- v${version.new} - ${gitLog}\n${lastLog}`
       }, {
         files: 'README.md',
-        replace: 'Formeo v' + version.current,
-        with: 'Formeo v' + version.new
+        from: 'Formeo v' + version.current,
+        to: 'Formeo v' + version.new
       }
     ];
 
@@ -65,7 +65,7 @@ async function tag() {
       'git add --all',
       `git commit -am "v${version.new}"`,
       `git tag v${version.new}`,
-      'git push origin master --tags',
+      'git push upstream master --tags',
       'npm publish'
     ];
     exec(commands.join(' && '), (err, stdout) => {
