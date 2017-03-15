@@ -240,7 +240,10 @@ export default class Row {
       }
     }
 
-    dom.remove(item);
+    if (fromColumn || fromControls) {
+      dom.remove(item);
+    }
+
     data.saveColumnOrder(to);
 
     dom.columnWidths(to);

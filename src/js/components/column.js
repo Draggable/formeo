@@ -186,7 +186,6 @@ export default class Column {
   onEnd(evt) {
     let {to, from} = evt;
 
-    // dom.removeEmpty(from);
     dom.fieldOrderClass(to);
     dom.fieldOrderClass(from);
 
