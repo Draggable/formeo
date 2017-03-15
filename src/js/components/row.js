@@ -60,6 +60,7 @@ export default class Row {
       group: {name: 'rows', pull: true, put: ['rows', 'controls', 'columns']},
       sort: true,
       onRemove: _this.onRemove,
+      onEnd: _this.onEnd,
       onAdd: _this.onAdd,
       onSort: _this.onSort,
       onMove: _this.onMove,
@@ -216,6 +217,16 @@ export default class Row {
   onRemove(evt) {
     dom.columnWidths(evt.from);
     dom.emptyClass(evt.from);
+  }
+
+  /**
+   * Handler for removing content from a row
+   * @param  {Object} evt
+   */
+  onEnd(evt) {
+    if(evt.from.classList.contains('empty-rows')) {
+      dom.removeEmpty(evt.from);
+    }
 
     data.save();
   }
@@ -248,10 +259,6 @@ export default class Row {
     }
 
     data.saveColumnOrder(to);
-    dom.updateColumnPreset(to);
-    if (fromColumn) {
-      dom.updateColumnPreset(from);
-    }
 
     dom.columnWidths(to);
     dom.emptyClass(to);

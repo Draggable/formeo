@@ -503,8 +503,8 @@ class DOM {
   }
 
   /**
-   * [removeEmpty description]
-   * @param  {[type]} element [description]
+   * Remove elements without f children
+   * @param  {Object} element DOM element
    */
   removeEmpty(element) {
     let _this = this;
@@ -659,14 +659,16 @@ class DOM {
       }
     }
 
+    dom.updateColumnPreset(row);
+
     return colCount;
   }
 
   /**
-   * [formGroup description]
-   * @param  {[type]} content   [description]
-   * @param  {String} className [description]
-   * @return {[type]}           [description]
+   * Wrap content in a formGroup
+   * @param  {Object|Array|String} content
+   * @param  {String} className
+   * @return {Object} formGroup config
    */
   formGroup(content, className = '') {
     return {

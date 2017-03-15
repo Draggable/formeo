@@ -19,9 +19,11 @@ export class Controls {
    * @param  {String} formID
    */
   constructor(controlOptions, formID) {
+    let _this = this;
     this.formID = formID;
     let {groupOrder = []} = controlOptions;
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']));
+    this.cPosition = {};
 
     this.defaults = {
       sortable: true,
@@ -242,7 +244,36 @@ export class Controls {
     };
 
     opts = h.merge(this.defaults, controlOptions);
+
+    this.controlEvents = {
+      mousedown: evt => {
+        let position = _this.cPosition;
+        position.x = evt.clientX;
+        position.y = evt.clientY;
+      },
+      mouseup: evt => {
+        let position = _this.cPosition;
+        if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
+          _this.addElement(evt.target.id);
+        }
+      }
+    };
+
     this.dom = this.buildDOM();
+  }
+
+  /**
+   * Dragging form the control bar clears element
+   * events lets add them back after drag.
+   * @param  {Object} item dragged control
+   */
+  applyControlEvents(item) {
+    let control = document.getElementById(item.id);
+    let actions = Object.keys(this.controlEvents);
+    for (let i = actions.length - 1; i >= 0; i--) {
+      let event = actions[i];
+      control.addEventListener(event, this.controlEvents[event]);
+    }
   }
 
   /**
@@ -253,7 +284,6 @@ export class Controls {
   prepElement(elem) {
     let _this = this;
     let dataID = uuid();
-    let position = {};
     let elementControl = {
       tag: 'li',
       className: [
@@ -262,17 +292,8 @@ export class Controls {
         `${elem.meta.id}-control`,
       ],
       id: dataID,
-      action: {
-        mousedown: evt => {
-          position.x = evt.clientX;
-          position.y = evt.clientY;
-        },
-        mouseup: evt => {
-          if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
-            _this.addElement(evt.target.id);
-          }
-        }
-      },
+      cPosition: {},
+      action: _this.controlEvents,
       content: [elem.config.label]
     };
 
@@ -448,7 +469,7 @@ export class Controls {
     if (this.element) {
       return this.element;
     }
-
+    let _this = this;
     let groupedFields = this.groupElements();
     let formActions = this.formActions();
     let controlPanels = new Panels({panels: groupedFields, type: 'controls'});
@@ -508,8 +529,10 @@ export class Controls {
       addGroup: (group) => console.log(group)
     };
 
+
     // Make controls sortable
     for (let i = groups.length - 1; i >= 0; i--) {
+      let storeID = `formeo-controls-${groups[i]}`;
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
@@ -520,7 +543,30 @@ export class Controls {
           put: false,
           revertClone: true
         },
-        sort: opts.sortable
+        onRemove: (evt) => {
+          _this.applyControlEvents(evt.item);
+        },
+        sort: opts.sortable,
+        store: {
+          /**
+           * Get the order of elements.
+           * @param   {Sortable}  sortable
+           * @return {Array}
+           */
+          get: sortable => {
+            let order = localStorage.getItem(storeID);
+            return order ? order.split('|') : [];
+          },
+
+          /**
+           * Save the order of elements.
+           * @param {Sortable}  sortable
+           */
+          set: sortable => {
+            let order = sortable.toArray();
+            localStorage.setItem(storeID, order.join('|'));
+          }
+        }
       });
     }
 

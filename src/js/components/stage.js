@@ -138,11 +138,11 @@ export default class Stage {
   onAdd(evt) {
     let _this = this;
     dom.activeStage = _this.stage;
-    let {from, item, target} = evt;
-    let stage = target;
-    let newIndex = h.indexOfNode(item, stage);
+    let {from, item, to} = evt;
+    let newIndex = h.indexOfNode(item, to);
     let row = from.fType === 'stages' ? item : dom.addRow();
     let fromColumn = from.fType === 'columns';
+    let fromRow = from.fType === 'rows';
     let column;
 
     if (from.fType === 'controlGroup') {
@@ -159,10 +159,15 @@ export default class Stage {
       column.appendChild(item);
       data.saveFieldOrder(column);
       dom.emptyClass(column);
+    } else if(fromRow) {
+      row.appendChild(item);
+      data.saveColumnOrder(row);
+      dom.emptyClass(row);
     }
 
-    stage.insertBefore(row, stage.children[newIndex]);
-    data.saveRowOrder(stage);
+    to.insertBefore(row, to.children[newIndex]);
+    dom.columnWidths(to);
+    data.saveRowOrder(to);
 
     return data.save();
   }
