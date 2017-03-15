@@ -1,4 +1,4 @@
-Formeo v0.4.3
+Formeo v0.4.4
 ===========
 
 A zero dependency JavaScript module for drag and drop form creation.
