@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.4.2 - Bugfixes [#53](http://github.com/draggable/formeo/pulls/53)
 - v0.4.1 - Update icons [#52](http://github.com/draggable/formeo/pulls/52)
 - v0.4.0 - Render and repeatable groups [#51](http://github.com/draggable/formeo/pulls/51)
 - v0.3.20 - Linter and codeclimate improvments, syntax updates [#45](http://github.com/draggable/formeo/pulls/45)
