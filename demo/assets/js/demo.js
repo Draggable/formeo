@@ -23,9 +23,15 @@ let debugBtn = document.getElementById('debug-demo');
 let locale = document.getElementById('locale');
 let toggleEdit = document.getElementById('renderForm');
 let viewData = document.getElementById('viewData');
+let reloadBtn = document.getElementById('reloadBtn');
 
 debugBtn.onclick = function() {
   debugWrap.classList.toggle('open');
+};
+
+reloadBtn.onclick = function() {
+  window.sessionStorage.removeItem('formData');
+  location.reload();
 };
 
 toggleEdit.onclick = evt => {
