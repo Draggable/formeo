@@ -49,7 +49,7 @@ function updateMd(version) {
  * @return {Promise} json.update
  */
 async function tag() {
-  let releaseType = process.argv.slice(3)[0] || 'patch';
+  let releaseType = process.argv[3] || 'patch';
   let version = {
     current: pkg.version,
     new: semver.inc(pkg.version, releaseType)
