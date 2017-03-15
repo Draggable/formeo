@@ -1,27 +1,34 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
-import {data, dataMap} from '../common/data';
-import helpers from '../common/helpers';
-import DOM from '../common/dom';
-import Field from './field';
+import {data, formData, registeredFields as rFields} from '../common/data';
+import h from '../common/helpers';
+import dom from '../common/dom';
+import {uuid, numToPercent} from '../common/utils';
 
-let dom = new DOM();
-
+/**
+ * Setup Column elements
+ */
 export default class Column {
-
+  /**
+   * Set defaults and/or load existing columns
+   * @param  {String} dataID columnId
+   * @return {Object} Column config object
+   */
   constructor(dataID) {
-    let _this = this,
-      columnDataDefault;
+    let _this = this;
+    let columnDefaults;
 
-    _this.columnID = dataID || helpers.uuid();
+    let columnID = _this.columnID = dataID || uuid();
+    _this.columnData = formData.columns.get(columnID);
 
-    columnDataDefault = {
+    columnDefaults = {
       fields: [],
-      id: _this.columnID,
-      config: {}
+      id: columnID,
+      config: {},
+      className: []
     };
 
-    dataMap.columns[_this.columnID] = helpers.extend(columnDataDefault, dataMap.columns[_this.columnID]);
+    formData.columns.set(columnID, h.extend(columnDefaults, _this.columnData));
 
     let resizeHandle = {
         tag: 'li',
@@ -29,15 +36,15 @@ export default class Column {
         action: {
           mousedown: _this.resize
         }
-      },
-      editWindow = {
+      };
+    let editWindow = {
         tag: 'li',
         className: 'column-edit group-config'
       };
 
     let column = {
       tag: 'ul',
-      className: ['stage-column'],
+      className: ['stage-columns', 'empty-columns'],
       dataset: {
         hoverTag: i18n.get('column')
       },
@@ -52,25 +59,29 @@ export default class Column {
       },
       id: _this.columnID,
       content: [dom.actionButtons(_this.columnID), editWindow, resizeHandle],
-      fType: 'column'
+      fType: 'columns'
     };
 
-    this.processConfig(column);
-
     column = dom.create(column);
+
+    this.processConfig(column);
+    dom.columns.set(columnID, column);
 
     Sortable.create(column, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
-      group: {name: 'columns', pull: true, put: ['columns', 'controls']},
-      sort: true,
-      onEnd: _this.onEnd.bind(_this),
-      onAdd: _this.onAdd.bind(_this),
-      onSort: _this.onSort.bind(_this),
-      onRemove: (evt) => {
-        _this.onRemove(evt.target);
+      group: {
+        name: 'columns',
+        pull: true,
+        put: ['columns', 'controls'],
+        revertClone: true
       },
+      sort: true,
+      onEnd: _this.onEnd,
+      onAdd: _this.onAdd,
+      onSort: _this.onSort,
+      onRemove: _this.onRemove,
       // Attempt to drag a filtered element
       onMove: (evt) => {
         if (evt.from !== evt.to) {
@@ -79,121 +90,187 @@ export default class Column {
         // evt.target.classList.add('hovering-column');
         // evt.target.parentReference = element;
 
-        if (evt.related.parentElement.fType === 'column') {
+        if (evt.related.parentElement.fType === 'columns') {
           // evt.to.classList.add('hovering-column');
           evt.related.parentElement.classList.add('hovering-column');
         }
       },
-      draggable: '.stage-field',
+      draggable: '.stage-fields',
       handle: '.field-handle'
     });
 
     return column;
   }
 
+  /**
+   * Column sorted event
+   * @param  {Object} evt sort event data
+   * @return {Object} Column order, array of column ids
+   */
   onSort(evt) {
-    data.saveFieldOrder(evt.target);
-    data.save('fields', evt.target.id);
+    return data.saveFieldOrder(evt.target);
+    // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
 
+  /**
+   * Process column configuration data
+   * @param  {Object} column
+   */
   processConfig(column) {
-    let _this = this,
-      columnData = dataMap.columns[_this.columnID];
+    let _this = this;
+    let columnData = formData.columns.get(_this.columnID);
     if (columnData.config.width) {
-      let width = columnData.config.width,
-        widthType = dom.contentType(width);
-
-      if (widthType === 'string') {
-        column.className.push(width);
-      } else if (widthType === 'array') {
-        column.className.push(...width);
-      } else {
-        column.style.width = width.toString() + '%';
-      }
+      column.dataset.colWidth = columnData.config.width;
+      column.style.width = columnData.config.width;
+      column.style.float = 'left';
     }
   }
 
+  /**
+   * Event when column is added
+   * @param  {Object} evt
+   */
   onAdd(evt) {
-    if (evt.from.fType === 'controlGroup') {
-      let column = evt.target,
-        field = new Field(evt.item.id);
+    let {from, item, to} = evt;
+    let fromColumn = from.fType === 'columns';
+    let fromControl = from.fType === 'controlGroup';
 
-      column.insertBefore(field, column.childNodes[evt.newIndex]);
-      dataMap.fields[field.id].parent = column.id;
+    if (fromControl) {
+      let meta = h.get(rFields[item.id], 'meta');
+      if (meta.group !== 'layout') {
+        let field = dom.addField(to.id, item.id);
+        to.insertBefore(field, to.childNodes[evt.newIndex]);
+        data.saveFieldOrder(to);
+        data.save('fields', to.id);
+      } else {
+        if (meta.id === 'layout-column') {
+          let row = to.parentElement;
+          dom.addColumn(row.id);
+          dom.columnWidths(row);
+        }
+      }
 
-      // calculate field position, subtracting indexes for column-config and column-actions
-      dom.fieldOrderClass(column);
       dom.remove(evt.item);
-      data.saveFieldOrder(column);
-      data.save('fields', column.id);
       // document.dispatchEvent(events.formeoUpdated);
     }
 
-    evt.target.classList.remove('hovering-column');
-  }
+    dom.fieldOrderClass(to);
 
-  onRemove(column) {
-    let fields = column.querySelectorAll('.stage-field'),
-      row = column.parentElement;
-
-    if (!fields.length) {
-      dom.remove(column);
-      let columns = row.querySelectorAll('.stage-column');
-      if (!columns.length) {
-        dom.remove(row);
-      }
+    if (fromColumn) {
+      dom.fieldOrderClass(from);
     }
-    dom.fieldOrderClass(column);
-    dom.columnWidths(row);
+
+    dom.emptyClass(evt.to);
+
+    data.save();
+
+    to.classList.remove('hovering-column');
   }
 
+  /**
+   * Event when field is removed from column
+   * @param  {Object} evt
+   */
+  onRemove(evt) {
+    if (evt.from.parent) {
+      dom.columnWidths(evt.from.parentElement);
+      data.saveColumnOrder(evt.from.parentElement);
+    }
+    dom.emptyClass(evt.from);
+  }
+
+  /**
+   * Callback for when dragging ends
+   * @param  {Object} evt
+   */
   onEnd(evt) {
-    if (evt.target) {
-      evt.target.classList.remove('hovering-column');
+    let {to, from} = evt;
+
+    // dom.removeEmpty(from);
+    dom.fieldOrderClass(to);
+    dom.fieldOrderClass(from);
+
+    if (from.parent) {
+      dom.columnWidths(from.parentElement);
+    }
+
+    data.save();
+
+    if (to) {
+      to.classList.remove('hovering-column');
     }
   }
 
+  /**
+   * Handle column resizing
+   * @param  {Object} evt resize event
+   */
   resize(evt) {
-    let resize = {},
-      column = evt.target.parentElement,
-      sibling = evt.target.parentElement.nextSibling || evt.target.parentElement.previousSibling,
-      row = column.parentElement,
-      rowStyle = dom.getStyle(row),
-      rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight);
+    let resize = {};
+    let column = evt.target.parentElement;
+    let sibling = column.nextSibling || column.previousSibling;
+    let row = column.parentElement;
+    let rowStyle = dom.getStyle(row);
+    let rowPadding = parseFloat(rowStyle.paddingLeft) +
+    parseFloat(rowStyle.paddingRight);
+    let colWidthPercent;
+    let sibWidthPercent;
+
 
     /**
      * Set the width before resizing so the column
      * does not resize near window edges
+     * @param  {Object} evt
      */
     function setWidths(evt) {
-      let newColWidth = (resize.colStartWidth + evt.clientX - resize.startX),
-        newSibWidth = (resize.sibStartWidth - evt.clientX + resize.startX),
-        numToPercentString = (num) => {
-          return num.toString() + '%';
-        },
-        percent = (width) => {
-          return (width / resize.rowWidth * 100);
-        },
-        colWidthPercent = percent(newColWidth),
-        sibWidthPercent = percent(newSibWidth);
+      let newColWidth = (resize.colStartWidth + evt.clientX - resize.startX);
+      let newSibWidth = (resize.sibStartWidth - evt.clientX + resize.startX);
 
-      column.dataset.colWidth = numToPercentString(Math.round(colWidthPercent));
-      sibling.dataset.colWidth = numToPercentString(Math.round(sibWidthPercent));
+      const percent = width => (width / resize.rowWidth * 100);
+      colWidthPercent = parseFloat(percent(newColWidth));
+      sibWidthPercent = parseFloat(percent(newSibWidth));
 
-      column.style.width = numToPercentString(colWidthPercent);
-      sibling.style.width = numToPercentString(sibWidthPercent);
+      column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1));
+      sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1));
+
+      column.style.width = numToPercent(colWidthPercent);
+      sibling.style.width = numToPercent(sibWidthPercent);
     }
 
-    resize.move = function(evt) {
+    resize.move = evt => {
       setWidths(evt);
+      resize.resized = true;
     };
 
     resize.stop = function() {
-      // events.mousemove.callbacks = [];
-      column.style.cursor = 'default';
-      row.classList.remove('resizing-columns');
       window.removeEventListener('mousemove', resize.move);
+      window.removeEventListener('mouseup', resize.stop);
+      if (!resize.resized) {
+        return;
+      }
+      let columnData = formData.columns.get(column.id);
+      let sibColumnData = formData.columns.get(sibling.id);
+      let row = column.parentElement;
+      row.classList.remove('resizing-columns');
+  // let totalUsed = parseFloat(colWidthPercent + sibWidthPercent).toFixed(1)/1;
+  //     let columns = row.getElementsByClassName('stage-columns');
+  //     if (columns.length > 2) {
+  //       let remaining = (100 - totalUsed) / (columns.length - 2);
+  //       let remainWidth = parseFloat(remaining).toFixed(1)/1;
+  //       h.forEach(columns, i => {
+  //         if (!h.inArray(columns[i].id, [column.id, sibling.id])) {
+  //           let percentWidth = numToPercent(remainWidth);
+  //           columns[i].dataset.colWidth = percentWidth;
+  //           columns[i].style.width = percentWidth;
+  //           formData.columns.get(columns[i].id).config.width = percentWidth;
+  //         }
+  //       });
+  //     }
+      columnData.config.width = column.dataset.colWidth;
+      sibColumnData.config.width = sibling.dataset.colWidth;
+      resize.resized = false;
+      data.save();
     };
 
     resize.start = (function(evt) {
@@ -207,12 +284,14 @@ export default class Column {
       column.className.replace(reg, '');
       sibling.className.replace(reg, '');
 
+      // eslint-disable-next-line
       resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width');
+      // eslint-disable-next-line
       resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width');
       resize.rowWidth = row.offsetWidth - rowPadding; // compensate for padding
 
-      window.addEventListener('mousemove', resize.move, false);
       window.addEventListener('mouseup', resize.stop, false);
+      window.addEventListener('mousemove', resize.move, false);
     })(evt);
   }
 

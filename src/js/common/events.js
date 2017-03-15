@@ -1,15 +1,17 @@
-'use strict';
-import helpers from './helpers';
 
 // Default options
-var defaults = {
+let defaults = {
   formeoLoaded: (evt) => {},
   onAdd: () => {},
-  onUpdate: (evt) => {},
+  onUpdate: evt => {
+    if (events.opts.debug) {
+      console.log(evt);
+    }
+  },
   onSave: (evt) => {},
-  confirmClearAll: (evt) => {
+  confirmClearAll: evt => {
     if (window.confirm(evt.confirmationMessage)) {
-      evt.clearAllAction(evt.rows);
+      evt.clearAllAction(evt);
     }
   }
 };
@@ -17,7 +19,7 @@ var defaults = {
 /**
  * Events class is used to register events and throttle their callbacks
  */
-var events = {
+const events = {
   init: function(options) {
     this.opts = Object.assign({}, defaults, options);
     return this;
@@ -25,19 +27,19 @@ var events = {
 };
 
 document.addEventListener('formeoUpdated', function(evt) {
-  evt = {
-    timeStamp: evt.timeStamp,
-    type: evt.type,
-    formData: evt.detail.formData
+  let {timeStamp, type, data} = evt;
+  let evtData = {
+    timeStamp,
+    type,
+    data
   };
-  events.opts.onUpdate(evt);
+  events.opts.onUpdate(evtData);
 });
 
 document.addEventListener('confirmClearAll', function(evt) {
   evt = {
     timeStamp: evt.timeStamp,
     type: evt.type,
-    rows: evt.detail.rows,
     rowCount: evt.detail.rows.length,
     confirmationMessage: evt.detail.confirmationMessage,
     clearAllAction: evt.detail.clearAllAction,

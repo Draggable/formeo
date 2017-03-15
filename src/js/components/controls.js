@@ -1,29 +1,38 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import { data, dataMap, registeredFields } from '../common/data';
-import helpers from '../common/helpers';
+import {data, formData, registeredFields as rFields} from '../common/data';
+import h from '../common/helpers';
 import events from '../common/events';
-import utils from '../common/utils';
-import DOM from '../common/dom';
+import {match, unique, uuid, clicked} from '../common/utils';
+import dom from '../common/dom';
 import Panels from './panels';
-import Row from './row';
-import Column from './column';
-import Field from './field';
-var dom = new DOM();
 
-var opts = {};
+let opts = {};
 
+/**
+ *
+ */
 export class Controls {
+  /**
+   * Setup defaults and return Controls DOM
+   * @param  {Object} controlOptions
+   * @param  {String} formID
+   */
   constructor(controlOptions, formID) {
     this.formID = formID;
+    let {groupOrder = []} = controlOptions;
+    this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']));
 
     this.defaults = {
       sortable: true,
-      groupOrder: [
-        'common',
-        'html'
-      ],
       groups: [{
+        id: 'layout',
+        label: i18n.get('layout'),
+        elementOrder: [
+          'row',
+          'column'
+        ]
+      }, {
         id: 'common',
         label: i18n.get('commonFields'),
         elementOrder: [
@@ -43,6 +52,26 @@ export class Controls {
         elements: []
       },
       elements: [{
+        tag: 'div',
+        config: {
+          label: i18n.get('column')
+        },
+        meta: {
+          group: 'layout',
+          icon: 'columns',
+          id: 'layout-column'
+        }
+      }, {
+        tag: 'div',
+        config: {
+          label: i18n.get('row')
+        },
+        meta: {
+          group: 'layout',
+          icon: 'rows',
+          id: 'layout-row'
+        }
+      }, {
         tag: 'input',
         attrs: {
           type: 'text',
@@ -108,7 +137,10 @@ export class Controls {
         },
         options: [1, 2, 3, 4].map(i => {
           return {
-            label: i18n.get('labelCount', {label: i18n.get('option'), count: i}),
+            label: i18n.get('labelCount', {
+              label: i18n.get('option'),
+              count: i
+            }),
             value: 'option-' + i,
             selected: false
           };
@@ -143,7 +175,10 @@ export class Controls {
           id: 'checkbox'
         },
         options: [{
-          label: i18n.get('labelCount', {label: i18n.get('checkbox'), count: 1}),
+          label: i18n.get('labelCount', {
+            label: i18n.get('checkbox'),
+            count: 1
+          }),
           value: 'checkbox-1',
           selected: true
         }]
@@ -191,7 +226,7 @@ export class Controls {
           icon: 'paragraph',
           id: 'paragraph'
         },
-        content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras non nibh massa. Curabitur quis dictum lorem. Quisque ac lacus dignissim, malesuada turpis eget, venenatis nunc. '
+        content: 'Lorem ipsum dolor.'
       }, {
         tag: 'hr',
         config: {
@@ -206,33 +241,35 @@ export class Controls {
       }]
     };
 
-    opts = helpers.merge(this.defaults, controlOptions);
+    opts = h.merge(this.defaults, controlOptions);
+    this.dom = this.buildDOM();
   }
 
+  /**
+   * Generate control config for UI and bind actions
+   * @param  {Object} elem
+   * @return {Object} elementControl
+   */
   prepElement(elem) {
-    let _this = this,
-      dataID = helpers.uuid(),
-      position = {},
-      clicked = (x, y) => {
-        let xMin = position.x - 5,
-          xMax = position.x + 5,
-          yMin = position.y - 5,
-          yMax = position.y + 5;
-
-        return (helpers.numberBetween(x, xMin, xMax) && helpers.numberBetween(y, yMin, yMax));
-      };
+    let _this = this;
+    let dataID = uuid();
+    let position = {};
     let elementControl = {
       tag: 'li',
-      className: 'field-control',
+      className: [
+        'field-control',
+        `${elem.meta.group}-control`,
+        `${elem.meta.id}-control`,
+      ],
       id: dataID,
       action: {
-        mousedown: (evt) => {
+        mousedown: evt => {
           position.x = evt.clientX;
           position.y = evt.clientY;
         },
-        mouseup: (evt) => {
-          if (clicked(evt.clientX, evt.clientY)) {
-            _this.addRow(evt.target.id);
+        mouseup: evt => {
+          if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
+            _this.addElement(evt.target.id);
           }
         }
       },
@@ -243,26 +280,30 @@ export class Controls {
       elementControl.content.unshift(dom.icon(elem.meta.icon));
     }
 
-    registeredFields[dataID] = elem;
+    rFields[dataID] = elem;
     return elementControl;
   }
 
+  /**
+   * Group elements into their respective control group
+   * @return {Array} allGroups
+   */
   groupElements() {
-    let _this = this,
-      groups = opts.groups.slice(),
-      elements = opts.elements.slice(),
-      allGroups = [];
+    let _this = this;
+    let groups = opts.groups.slice();
+    let elements = opts.elements.slice();
+    let allGroups = [];
 
     // Apply order to Groups
-    groups = helpers.orderObjectsBy(groups, opts.groupOrder, 'id');
+    groups = h.orderObjectsBy(groups, this.groupOrder, 'id');
 
     // remove disabled groups
     groups = groups.filter(group => {
-      return utils.match(group.id, opts.disable.groups);
+      return match(group.id, opts.disable.groups);
     });
 
     // create group config
-    allGroups = helpers.map(groups, (i) => {
+    allGroups = h.map(groups, (i) => {
       let group = {
         tag: 'ul',
         attrs: {
@@ -273,12 +314,15 @@ export class Controls {
         config: {
           label: groups[i].label || ''
         }
-      },
-      defaultIds = this.defaults.elements.map(element => element.meta.id);
+      };
+      let defaultIds = this.defaults.elements.map(element => element.meta.id);
 
       // Apply order to elements
       if (groups[i].elementOrder) {
-        elements = helpers.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id');
+        elements = h.orderObjectsBy(
+          elements,
+          groups[i].elementOrder,
+          'meta.id');
       }
 
       /**
@@ -287,13 +331,19 @@ export class Controls {
        * @return {Array}        Filtered array of Field config objects
        */
       group.content = elements.filter(field => {
-        let fieldId = field.meta.id || '',
-            filters = [
-              utils.match(fieldId, opts.disable.elements),
-              (field.meta.group === groups[i].id)
-            ];
+        let fieldId = field.meta.id || '';
+        let filters = [
+          match(fieldId, opts.disable.elements),
+          (field.meta.group === groups[i].id)
+        ];
 
-        return helpers.inArray(fieldId, defaultIds) ? filters.every(val => val === true) : true;
+        let shouldFilter = true;
+
+        if (h.inArray(fieldId, defaultIds)) {
+          shouldFilter = filters.every(val => val === true);
+        }
+
+        return shouldFilter;
       }).map(field => _this.prepElement.call(this, field));
 
       return group;
@@ -302,45 +352,12 @@ export class Controls {
     return allGroups;
   }
 
-  clearAll(rows) {
-    let stage = rows[0].parentElement;
-    stage.classList.add('removing-all-fields');
-    // var markEmptyArray = [];
-
-    // if (opts.prepend) {
-    //   markEmptyArray.push(true);
-    // }
-
-    // if (opts.append) {
-    //   markEmptyArray.push(true);
-    // }
-
-    // if (!markEmptyArray.some(elem => elem === true)) {
-    // stage.classList.add('stage-empty');
-    // }
-
-    var outerHeight = 0;
-    helpers.forEach(rows, (i) => {
-      outerHeight += rows[i].offsetHeight + 5;
-    });
-
-    rows[0].style.marginTop = (-outerHeight) + 'px';
-    stage.classList.add('stage-empty');
-
-    setTimeout(function() {
-      while (stage.firstChild) {
-        stage.removeChild(stage.firstChild);
-      }
-      stage.classList.remove('removing-all-fields');
-      dataMap.stage.rows = [];
-      data.save();
-      // document.dispatchEvent(events.formeoUpdated);
-    }, 300);
-  }
-
+  /**
+   * [formActions description]
+   * @return {[type]} [description]
+   */
   formActions() {
-    let _this = this,
-      btnTemplate = {
+    let btnTemplate = {
         tag: 'button',
         attrs: {
           type: 'button'
@@ -348,86 +365,77 @@ export class Controls {
       };
     events.formeoSaved = new CustomEvent('formeoSaved', {
       detail: {
-        formData: data.get()
+        formData: data.json
       }
     });
 
-    let clearBtn = helpers.merge(btnTemplate, {
-        content: [dom.icon('bin'), i18n.get('clear')],
-        className: ['btn', 'btn-secondary', 'clear-form'],
-        attrs: {
-          title: i18n.get('clearAll')
-        },
-        action: {
-          click: (evt) => {
-            let stage = document.getElementById(_this.formID + '-stage'),
-              rows = stage.getElementsByClassName('stage-row'),
-              buttonPosition = evt.target.getBoundingClientRect(),
-              bodyRect = document.body.getBoundingClientRect(),
-              coords = {
-                pageX: buttonPosition.left + (buttonPosition.width / 2),
-                pageY: (buttonPosition.top - bodyRect.top) - 12
-              };
+    let clearBtn = h.merge(btnTemplate, {
+      content: [dom.icon('bin'), i18n.get('clear')],
+      className: ['btn', 'btn-secondary', 'clear-form'],
+      attrs: {
+        title: i18n.get('clearAll')
+      },
+      action: {
+        click: evt => {
+          if (formData.rows.size) {
+            events.confirmClearAll = new CustomEvent('confirmClearAll', {
+              detail: {
+                confirmationMessage: i18n.get('confirmClearAll'),
+                clearAllAction: dom.clearForm.bind(dom),
+                btnCoords: dom.coords(evt.target),
+                rows: dom.rows,
+                rowCount: dom.rows.size
+              }
+            });
 
-            if (rows.length) {
-              events.confirmClearAll = new CustomEvent('confirmClearAll', {
-                detail: {
-                  confirmationMessage: i18n.get('confirmClearAll'),
-                  clearAllAction: _this.clearAll,
-                  btnCoords: coords,
-                  rows: rows
-                }
-              });
-
-              document.dispatchEvent(events.confirmClearAll);
-
-            } else {
-              alert('There are no fields to clear');
-            }
+            document.dispatchEvent(events.confirmClearAll);
+          } else {
+            alert('There are no fields to clear');
           }
         }
-      }),
-      settingsBtn = helpers.merge(btnTemplate, {
-        content: [dom.icon('settings'), i18n.get('settings')],
-        attrs: {
-          title: i18n.get('settings')
-        },
-        className: ['btn', 'btn-secondary', 'edit-settings'],
-        action: {
-          click: () => {
-            console.log('clicked');
-            let stage = document.getElementById(_this.formID + '-stage');
-            stage.parentElement.classList.toggle('editing-stage');
-          }
-        }
-      }),
-      saveBtn = helpers.merge(btnTemplate, {
-        content: [dom.icon('floppy-disk'), i18n.get('save')],
-        attrs: {
-          title: i18n.get('save')
-        },
-        className: ['btn', 'btn-secondary', 'save-form'],
-        action: {
-          click: (evt) => {
+      }
+    });
+    // let settingsBtn = h.merge(btnTemplate, {
+    //   content: [dom.icon('settings'), i18n.get('settings')],
+    //   attrs: {
+    //     title: i18n.get('settings')
+    //   },
+    //   className: ['btn', 'btn-secondary', 'edit-settings'],
+    //   action: {
+    //     click: () => {
+    //       console.log('clicked');
+    //       let stage = document.getElementById(_this.formID + '-stage');
+    //       stage.parentElement.classList.toggle('editing-stage');
+    //     }
+    //   }
+    // });
+    let saveBtn = h.merge(btnTemplate, {
+      content: [dom.icon('floppy-disk'), i18n.get('save')],
+      attrs: {
+        title: i18n.get('save')
+      },
+      className: ['btn', 'btn-secondary', 'save-form'],
+      action: {
+        click: (evt) => {
+          // @todo: complete actions connection
+          // let saveEvt = {
+          //   action: () => {},
+          //   coords: dom.coords(evt.target),
+          //   message: ''
+          // };
 
-            // @todo: complete actions connection
-            // let saveEvt = {
-            //   action: () => {},
-            //   coords: dom.coords(evt.target),
-            //   message: ''
-            // };
-
-            // actions.click.btn(saveEvt);
-            data.save();
-            document.dispatchEvent(events.formeoSaved);
-          }
+          // actions.click.btn(saveEvt);
+          data.save();
+          document.dispatchEvent(events.formeoSaved);
         }
-      }),
-      formActions = {
-        tag: 'div',
-        className: 'form-actions',
-        content: [clearBtn, settingsBtn, saveBtn]
-      };
+      }
+    });
+    let formActions = {
+      tag: 'div',
+      className: 'form-actions',
+      // content: [clearBtn, settingsBtn, saveBtn]
+      content: [clearBtn, saveBtn]
+    };
 
     return formActions;
   }
@@ -436,7 +444,7 @@ export class Controls {
    * Returns the markup for the form controls/fields
    * @return {DOM}
    */
-  get dom() {
+  buildDOM() {
     if (this.element) {
       return this.element;
     }
@@ -444,9 +452,14 @@ export class Controls {
     let groupedFields = this.groupElements();
     let formActions = this.formActions();
     let controlPanels = new Panels({panels: groupedFields, type: 'controls'});
+    let groupsWrapClasses = [
+      'control-groups',
+      'panels-wrap',
+      `panel-count-${groupedFields.length}`
+    ];
     let groupsWrap = dom.create({
       tag: 'div',
-      className: 'control-groups panels-wrap panel-count-' + groupedFields.length,
+      className: groupsWrapClasses,
       content: controlPanels.content
     });
 
@@ -454,8 +467,8 @@ export class Controls {
         tag: 'div',
         className: this.formID + '-controls formeo-controls',
         content: [groupsWrap, formActions]
-      }),
-      groups = element.getElementsByClassName('control-group');
+      });
+    let groups = element.getElementsByClassName('control-group');
 
     this.element = element;
     this.groups = groups;
@@ -463,14 +476,16 @@ export class Controls {
 
     this.actions = {
       filter: (term) => {
-        let filtering = (term !== ''),
-          filteredTerm = groupsWrap.querySelector('.filtered-term'),
-          fields = controlPanels.content[1].querySelectorAll('.field-control');
+        let cpContent = controlPanels.content[1];
+        let filtering = (term !== '');
+        let filteredTerm = groupsWrap.querySelector('.filtered-term');
+        let fields = cpContent.querySelectorAll('.field-control');
 
-        helpers.toggleElementsByStr(fields, term);
+        h.toggleElementsByStr(fields, term);
 
         if (filtering) {
-          let filteredStr = `Filtering '${term}'`; // @todo change to use language file
+          // @todo change to use language file
+          let filteredStr = `Filtering '${term}'`;
 
           element.classList.add('filtered');
 
@@ -494,7 +509,7 @@ export class Controls {
     };
 
     // Make controls sortable
-    for (var i = groups.length - 1; i >= 0; i--) {
+    for (let i = groups.length - 1; i >= 0; i--) {
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
@@ -502,7 +517,8 @@ export class Controls {
         group: {
           name: 'controls',
           pull: 'clone',
-          put: false
+          put: false,
+          revertClone: true
         },
         sort: opts.sortable
       });
@@ -511,35 +527,26 @@ export class Controls {
     return element;
   }
 
-  createColumn(id) {
-    let field = new Field(id),
-      column = new Column();
+  /**
+   * Append an element to the stage
+   * @param {String} id of elements
+   */
+  addElement(id) {
+    // let column;
+    let row = dom.addRow();
+    let meta = h.get(rFields[id], 'meta');
+    if (meta.group !== 'layout') {
+      let column = dom.addColumn(row.id);
+      dom.addField(column.id, id);
+    } else if (meta.id === 'layout-column') {
+      dom.addColumn(row.id);
+    }
 
-    dataMap.fields[field.id].parent = column.id;
-
-    field.classList.add('first-field');
-    column.appendChild(field);
-    dataMap.columns[column.id].fields.push(field.id);
-    return column;
-  }
-
-  addRow(id) {
-    let _this = this;
-    let stageID = _this.formID + '-stage',
-      stage = document.getElementById(stageID),
-      column = _this.createColumn(id),
-      row = new Row();
-
-    // Set parent IDs
-    dataMap.columns[column.id].parent = row.id;
-    dataMap.rows[row.id].parent = stageID;
-    row.appendChild(column);
     data.saveColumnOrder(row);
-    stage.appendChild(row);
-    data.saveRowOrder(row);
+    dom.columnWidths(row);
     data.save();
-    //trigger formSaved event
-    // document.dispatchEvent(events.formeoUpdated);
+    // trigger formSaved event
+    document.dispatchEvent(events.formeoUpdated);
   }
 
 }

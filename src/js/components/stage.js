@@ -1,12 +1,9 @@
 import Sortable from 'sortablejs';
 import i18n from 'mi18n';
-import {data, dataMap} from '../common/data';
-import helpers from '../common/helpers';
-import DOM from '../common/dom';
-import Row from './row';
-import Column from './column';
-import Field from './field';
-let dom = new DOM();
+import {data, formData, registeredFields as rFields} from '../common/data';
+import h from '../common/helpers';
+import dom from '../common/dom';
+import {uuid} from '../common/utils';
 
 let stageOpts = {};
 
@@ -17,11 +14,12 @@ export default class Stage {
   /**
    * Process options and load existing fields from data to the stage
    * @param  {Object} formeoOptions
-   * @param  {String} formID
+   * @param  {String} stageID uuid
    * @return {Object} DOM element
    */
-  constructor(formeoOptions, formID) {
-    this.formID = formID;
+  constructor(formeoOptions, stageID) {
+    // formData = data.get();
+    this.stageID = stageID || uuid();
     let defaultOptions = {
       formSettings: [{
         tag: 'input',
@@ -46,14 +44,33 @@ export default class Stage {
         config: {
           label: i18n.get('Form novalidate')
         }
+      }, {
+        tag: 'input',
+        id: 'form-tags',
+        attrs: {
+          className: 'form-tags',
+          type: 'text'
+        },
+        config: {
+          label: i18n.get('Tags')
+        }
       }]
     };
 
     stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions);
 
-    this.stage = this.loadStage();
+    if (!formData.stages.get(this.stageID)) {
+      let defaultStageData = {
+          id: this.stageID,
+          settings: {},
+          rows: []
+        };
+      formData.stages.set(this.stageID, defaultStageData);
+    }
 
-    return this.stage;
+    const stageWrap = this.loadStage();
+
+    return stageWrap;
   }
 
   /**
@@ -62,151 +79,102 @@ export default class Stage {
    */
   loadStage() {
     let stageWrap = this.dom;
-    let stage = stageWrap.firstChild;
-
-    if (dataMap.stage.rows && dataMap.stage.rows.length) {
-      this.loadRows(stage);
-      stage.classList.remove('stage-empty');
+    dom.stages.set(this.stageID, this.stage);
+    dom.activeStage = this.stage;
+    if (formData.stages.get(this.stageID).rows.length) {
+      dom.loadRows(this.stage);
     }
 
     return stageWrap;
   }
 
-  /**
-   * Loop through the formData and append it to the stage
-   * @param  {Object} stage
-   * @return {Array}       loaded rows
-   */
-  loadRows(stage) {
-    // if (dataMap.stage.rows.length) {
-    let rows = dataMap.stage.rows;
-    return helpers.forEach(rows, (i) => {
-      let row = new Row(rows[i]);
-      this.loadColumns(row);
-      stage.appendChild(row);
-      dom.updateColumnPreset(row);
-    });
-    // }
-  }
 
   /**
-   * Load columns to row
-   * @param  {Object} row
-   * @return {Array}     loaded rows
+   * Generate the elements that make up the Stage
+   * @return {Object} stage elements, settings, stage ul
    */
-  loadColumns(row) {
-    // if (dataMap.rows[row.id].columns.length) {
-    let columns = dataMap.rows[row.id].columns;
-    helpers.forEach(columns, (i) => {
-      let column = new Column(columns[i]);
-      dom.fieldOrderClass(column);
-      this.loadFields(column);
-      row.appendChild(column);
-    });
-    // }
-  }
-
-  loadFields(column) {
-    // if (dataMap.columns[column.id].fields.length) {
-    let fields = dataMap.columns[column.id].fields;
-    helpers.forEach(fields, (i) => {
-      let field = new Field(fields[i]);
-      column.appendChild(field);
-    });
-    // }
-  }
-
   elementConfigs() {
-    let _this = this,
-      config = {
+    let _this = this;
+    let config = {
         stage: {
           tag: 'ul',
           attrs: {
             className: [
               'stage',
-              'stage-empty'
+              'empty-stages'
             ],
-            id: _this.formID + '-stage'
+            id: _this.stageID
           },
-          fType: 'stage'
+          fType: 'stages'
         },
         settings: {
           tag: 'div',
           attrs: {
             className: 'formeo-settings',
-            id: _this.formID + '-settings'
+            id: `${_this.stageID}-settings`
           },
           fType: 'settings'
         }
       };
 
-      config.settings.content = stageOpts.formSettings.slice();
+    config.settings.content = stageOpts.formSettings.slice();
 
     return config;
-  }
-
-  createColumn(evt) {
-    // console.log(evt);
-    let field = evt.from.fType === 'column' ? evt.item : new Field(evt.item.id),
-      column = new Column();
-
-    dataMap.fields[field.id].parent = column.id;
-
-    field.classList.add('first-field');
-    column.appendChild(field);
-    dataMap.columns[column.id].fields.push(field.id);
-    return column;
-  }
-
-  addRow(evt) {
-    let _this = this,
-      column = evt.from.fType === 'row' ? evt.item : _this.createColumn(evt),
-      row = new Row();
-
-    // Set parent IDs
-    dataMap.columns[column.id].parent = row.id;
-    dataMap.rows[row.id].parent = _this.formID;
-
-    row.appendChild(column);
-    data.saveColumnOrder(row);
-
-    return row;
   }
 
   /**
    * Callback for when a row is sorted
    * @param  {Object} evt
-   * @return {[type]}     [description]
    */
   onSort(evt) {
-    data.saveRowOrder(evt);
     data.save();
-  }
-
-  onAdd(evt) {
-    let stage = evt.target;
-    let newIndex = helpers.indexOfNode(evt.item, stage);
-    let row = this.addRow(evt);
-
-    if (evt.item.fType === 'column') {
-      dom.columnWidths(row);
-    }
-
-    stage.insertBefore(row, stage.children[newIndex]);
-    data.saveRowOrder(row);
-    data.save();
-
-    if (evt.from.fType === 'controlGroup') {
-      dom.remove(evt.item);
-    }
   }
 
   /**
-   * Does some cleanup after an element is removed from the stage
-   * @return {Object} onRemove event
+   * Method for handling stage drop
+   * @param  {Object} evt
+   * @return {Object} formData
+   */
+  onAdd(evt) {
+    let _this = this;
+    dom.activeStage = _this.stage;
+    let {from, item, target} = evt;
+    let stage = target;
+    let newIndex = h.indexOfNode(item, stage);
+    let row = from.fType === 'stages' ? item : dom.addRow();
+    let fromColumn = from.fType === 'columns';
+    let column;
+
+    if (from.fType === 'controlGroup') {
+      let meta = rFields[item.id].meta;
+      if (meta.group !== 'layout') {
+        column = dom.addColumn(row.id);
+        dom.addField(column.id, item.id);
+      } else if (meta.id === 'layout-column') {
+        dom.addColumn(row.id);
+      }
+      dom.remove(item);
+    } else if (fromColumn) {
+      let column = dom.addColumn(row.id);
+      column.appendChild(item);
+      data.saveFieldOrder(column);
+      dom.emptyClass(column);
+    }
+
+    stage.insertBefore(row, stage.children[newIndex]);
+    data.saveRowOrder(stage);
+
+    return data.save();
+  }
+
+  /**
+   * Handle removal of a row from stage
+   * @param  {Object} evt
+   * @return {Object} formData
    */
   onRemove(evt) {
-    data.save();
+    console.log('stage.js onRemove', evt);
+    return data.save();
   }
 
   /**
@@ -218,8 +186,8 @@ export default class Stage {
     if (this.stage) {
       return this.stage;
     }
-    let _this = this,
-      config = this.elementConfigs();
+    let _this = this;
+    let config = this.elementConfigs();
 
     let stageWrap = dom.create({
       tag: 'div',
@@ -231,32 +199,37 @@ export default class Stage {
         config.settings
       ]
     });
+    this.stage = stageWrap.firstChild;
 
     Sortable.create(stageWrap.firstChild, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
-      // group: { pull: false, put: ['controls', 'columns'] },
-      group: {name: 'stage', pull: false, put: ['controls', 'rows', 'columns']},
+      fallbackTolerance: 0,
+      group: {name: 'stages', pull: true, put: [
+        'controls',
+        'rows',
+        'columns'
+      ]},
       // Element is dropped into the list from another list
       onAdd: _this.onAdd.bind(_this),
       onRemove: _this.onRemove.bind(_this),
       // onDrop: _this.onAdd.bind(_this),
       sort: true,
-      onUpdate: (evt) => {
-        // saveRowOrder();
-        console.log('Stage onUpdate');
-        console.log(dataMap, evt);
+      onStart: evt => {
+        dom.activeStage = _this.stage;
       },
-      onSort: _this.onSort.bind(_this),
-      onDrop: (evt) => { console.log(evt); },
-      draggable: '.stage-row',
+      onUpdate: evt => {
+        data.saveRowOrder();
+        data.save();
+      },
+      onSort: _this.onSort,
+      onDrop: evt => {
+       console.log(evt);
+      },
+      draggable: '.stage-rows',
       handle: '.row-handle',
-      // onFilter: function(evt) {
-      //   console.log(evt);
-      // return false;
-      // },
-      // filter: '.stage-column'
+      filter: '.layout-control'
     });
 
     return stageWrap;

@@ -1,18 +1,20 @@
 'use strict';
 import '../sass/formeo.scss';
 import helpers from './common/helpers';
-import {data} from './common/data';
+import {data, formData} from './common/data';
 import events from './common/events';
 import actions from './common/actions';
-import DOM from './common/dom';
+import dom from './common/dom';
 import i18n from 'mi18n';
 import {Controls} from './components/controls';
 import Stage from './components/stage';
 
-const dom = new DOM();
-
 // Simple object config for the main part of formeo
-const formeo = {};
+const formeo = {
+  get formData() {
+    return data.json;
+  }
+};
 let opts = {};
 
 /**
@@ -22,12 +24,13 @@ class Formeo {
   /**
    * [constructor description]
    * @param  {Object} options  formeo options
-   * @param  {String|Object}   formData [description]
+   * @param  {String|Object}   userFormData [description]
    * @return {Object}          formeo references and actions
    */
-  constructor(options, formData) {
+  constructor(options, userFormData) {
     // Default options
     const defaults = {
+      allowEdit: true,
       dataType: 'json',
       debug: false,
       sessionStorage: false,
@@ -66,6 +69,7 @@ class Formeo {
             'clearAll': 'Clear',
             'clearAllMessage': 'Are you sure you want to clear all fields?',
             'close': 'Close',
+            'column': 'Column',
             'commonFields': 'Common Fields',
             'confirmClearAll': 'Are you sure you want to remove all fields?',
             'content': 'Content',
@@ -99,6 +103,7 @@ class Formeo {
             'label': 'Label',
             'labelCount': '{label} {count}',
             'labelEmpty': 'Field Label cannot be empty',
+            'layout': 'Layout',
             'limitRole': 'Limit access to one or more of the following roles:',
             'mandatory': 'Mandatory',
             'maxlength': 'Max Length',
@@ -189,17 +194,17 @@ class Formeo {
 
     opts = helpers.extend(defaults, options);
 
-    if (opts.debug) {
-      opts.actions.debug = opts.events.debug = true;
-    }
-
-    data.init(opts, formData);
+    data.init(opts, userFormData);
     events.init(opts.events);
     actions.init(opts.actions);
+    formeo.render = renderTarget => dom.renderForm.call(dom, renderTarget);
 
     // Load remote resources such as css and svg sprite
     _this.loadResources().then(() => {
-      _this.init.call(_this);
+      if (opts.allowEdit) {
+        formeo.edit = _this.init.bind(_this);
+        _this.init.call(_this);
+      }
     });
 
     return formeo;
@@ -231,17 +236,15 @@ class Formeo {
    */
   async init() {
     let _this = this;
-    console.log(i18n);
     await i18n.init(opts.i18n);
-    formeo.formData = data.get();
-    _this.formID = opts.formID = formeo.formData.id;
-    _this.stage = new Stage(opts, _this.formID);
+    _this.formID = formData.id;
     formeo.controls = new Controls(opts.controls, _this.formID);
+    _this.stages = _this.buildStages();
     formeo.i18n = {
       setLang: locale => {
         let loadLang = i18n.setCurrent.call(i18n, locale);
         loadLang.then(function() {
-            _this.stage = new Stage(opts, _this.formID);
+            _this.stages = _this.buildStages();
             formeo.controls = new Controls(opts.controls, _this.formID);
             _this.render();
           },
@@ -258,28 +261,48 @@ class Formeo {
   }
 
   /**
+   * Generate the stages we will drag out elements to
+   * @return {Object} stages map
+   */
+  buildStages() {
+    let stages = [];
+    const createStage = stageID => new Stage(opts, stageID);
+    if (formData.stages.size) {
+      formData.stages.forEach((stageConf, stageID) => {
+        stages.push(createStage(stageID));
+      });
+    } else {
+      stages.push(createStage());
+    }
+
+    return stages;
+  }
+
+  /**
    * Render the formeo sections
    * @return {void}
    */
   render() {
     let _this = this;
     let controls = formeo.controls.dom;
-    let stage = formeo.stage = _this.stage;
 
     let elemConfig = {
         tag: 'div',
         attrs: {
           className: opts.className,
-          id: opts.formID
+          id: _this.formID
         },
-        content: [stage, controls]
+        content: [_this.stages, controls]
       };
     let formeoElem = dom.create(elemConfig);
 
     _this.container.innerHTML = '';
     _this.container.appendChild(formeoElem);
 
-    stage.childNodes[0].style.minHeight = dom.getStyle(controls, 'height');
+    _this.stages.forEach(stageWrap => {
+      let stage = stageWrap.childNodes[0];
+      stage.style.minHeight = dom.getStyle(controls, 'height');
+    });
 
     events.formeoLoaded = new CustomEvent('formeoLoaded', {
       detail: {

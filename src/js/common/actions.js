@@ -1,16 +1,15 @@
-'use strict';
-import helpers from './helpers';
+// Actions are the callbacks for things like adding
+// new attributes, options, field removal confirmations etc.
+// Every Action below can be overridden via module options
 
 // Default options
-var defaultActions = {
+const defaultActions = {
   add: {
     attr: (evt) => {
-      let attr = window.prompt(evt.message.attr),
-        val;
+      let attr = window.prompt(evt.message.attr);
+      let val;
       if (attr) {
         val = String(window.prompt(evt.message.value, ''));
-      }
-      if (attr) {
         evt.addAction(attr, val);
       }
     },
@@ -29,7 +28,7 @@ var defaultActions = {
 /**
  * Events class is used to register actions and throttle their callbacks
  */
-var actions = {
+const actions = {
   init: function(options) {
     this.opts = Object.assign({}, defaultActions, options);
     return this;

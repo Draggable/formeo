@@ -174,13 +174,14 @@
 // horizontal forms, use the predefined grid classes.
 
 .form-group {
-  margin-bottom: $form-group-margin-bottom;
+  margin-bottom: 0;
 }
 
 .radio input[type='radio'],
 .checkbox input[type='checkbox'] {
   position: relative;
-  margin-left: 0;
+  margin-left: -1.25em;
+  margin-right: 0.5em;
 }
 
 // Checkboxes and radios

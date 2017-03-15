@@ -1,6 +1,6 @@
-import DOM from './dom';
+import dom from './dom';
 import helpers from './helpers';
-var dom = new DOM();
+// var dom = new DOM();
 
 var defaults = {
 

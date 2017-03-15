@@ -1,9 +1,8 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import helpers from '../common/helpers';
-import DOM from '../common/dom';
+import dom from '../common/dom';
 import {data} from '../common/data';
-const dom = new DOM();
 
 const defaults = {
   type: 'field'
@@ -105,8 +104,11 @@ export default class Panels {
 
     return helpers.forEach(groups, function(index, group) {
       if (group.isSortable) {
-        let changeCallback = (evt) => {
-          _this.propertySave(group);
+        let onEnd = evt => {
+          _this.propertySave(evt.from);
+          if (evt.from !== evt.to) {
+            _this.propertySave(evt.to);
+          }
           _this.resizePanels();
         };
         group.fieldID = _this.opts.id;
@@ -118,8 +120,8 @@ export default class Panels {
           },
           sort: true,
           handle: '.prop-order',
-          onAdd: changeCallback,
-          onUpdate: changeCallback
+          onAdd: console.log,
+          onEnd
         });
       }
     });
@@ -131,8 +133,8 @@ export default class Panels {
    * @return {Object}       DOM node for updated property preview
    */
   propertySave(group) {
-    data.saveOrder(group.editGroup, group);
-    data.save(group.editGroup, group.fieldID);
+    console.log(group);
+    data.save(group.editGroup, group);
     return this.opts.updatePreview();
   }
 

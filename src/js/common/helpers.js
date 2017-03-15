@@ -1,22 +1,26 @@
 'use strict';
-import DOM from './dom';
-import uuid from 'uuid-v4';
+import dom from './dom';
 import deepExtend from 'deep-extend';
-var dom = new DOM();
-
+import {unique} from './utils';
+/**
+ * [memoize description]
+ * @param  {[type]} func     [description]
+ * @param  {[type]} resolver [description]
+ * @return {[type]}          [description]
+ */
 function memoize(func, resolver) {
-  if (typeof func !== 'function' || (resolver && typeof resolver !== 'function')) {
+  if (typeof func !== 'function' ||
+    (resolver && typeof resolver !== 'function')) {
     throw new TypeError('memoize: First argument must be a function');
   }
-  var memoized = () => {
-    var args = arguments,
-      key = resolver ? resolver.apply(this, args) : args[0],
-      cache = memoized.cache;
+  const memoized = (...args) => {
+    let key = resolver ? resolver.apply(memoized, args) : args[0];
+    let cache = memoized.cache;
 
     if (cache.has(key)) {
       return cache.get(key);
     }
-    var result = func.apply(this, args);
+    let result = func.apply(memoized, args);
     memoized.cache = cache.set(key, result);
     return result;
   };
@@ -27,11 +31,12 @@ function memoize(func, resolver) {
 // Assign cache to `_.memoize`.
 memoize.Cache = Map;
 
-var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
-var reEscapeChar = /\\(\\)?/g;
+// eslint-disable-next-line
+const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
+const reEscapeChar = /\\(\\)?/g;
 
-var stringToPath = function(string) {
-  var result = [];
+const stringToPath = function(string) {
+  let result = [];
   string.replace(rePropName, function(match, number, quote, string) {
     result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
   });
@@ -62,7 +67,7 @@ const helpers = {
   },
   ajax: (file, callback) => {
     return new window.Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
       xhr.open('GET', file, true);
       xhr.onload = function() {
         if (this.status >= 200 && this.status < 300) {
@@ -84,29 +89,22 @@ const helpers = {
       xhr.send();
     });
   },
-  insertIcons: function(response) {
-    let iconSpriteWrap = dom.create({ tag: 'div', content: response.responseText });
+  insertIcons: response => {
+    let iconSpriteWrap = dom.create({
+      tag: 'div',
+      content: response.responseText
+    });
     iconSpriteWrap.style.display = 'none';
     document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
   },
-  insertStyle: function(response) {
-    let formeoStyle = dom.create({ tag: 'style', content: response.responseText });
+  insertStyle: response => {
+    let formeoStyle = dom.create({
+      tag: 'style',
+      content: response.responseText
+    });
     document.head.appendChild(formeoStyle);
   },
-  uuid: function(elem) {
-    if (elem) {
-      if (!elem.id) {
-        if (elem.attrs && elem.attrs.id) {
-          elem.id = elem.attrs.id;
-        } else {
-          elem.id = uuid();
-        }
-      }
-    } else {
-      return uuid();
-    }
-  },
-  capitalize: (str) => {
+  capitalize: str => {
     return str.replace(/\b\w/g, function(m) {
       return m.toUpperCase();
     });
@@ -117,60 +115,20 @@ const helpers = {
   },
   // forEach that can be used on nodeList
   forEach: (array, callback, scope) => {
-    for (var i = 0; i < array.length; i++) {
+    for (let i = 0; i < array.length; i++) {
       callback.call(scope, i, array[i]);
     }
   },
   // Added because Object.assign is mutating objects.
   // Maybe a babel polyfill issue?
-  copyObj: (obj) => {
+  copyObj: obj => {
     return (window.JSON.parse(window.JSON.stringify(obj)));
   },
-  clone: (obj) => {
-    var copy;
 
-    // Handle the 3 simple types, and null or undefined
-    if (null === obj || 'object' != typeof obj) {
-      return obj;
-    }
-
-    // Handle Date
-    if (obj instanceof Date) {
-      copy = new Date();
-      copy.setTime(obj.getTime());
-      return copy;
-    }
-
-    // Handle Array
-    if (obj instanceof Array) {
-      copy = [];
-      for (var i = 0, len = obj.length; i < len; i++) {
-        copy[i] = helpers.clone(obj[i]);
-      }
-      return copy;
-    }
-
-    // Handle Object
-    if (obj instanceof Object) {
-      copy = {};
-      for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) {
-          copy[attr] = helpers.clone(obj[attr]);
-        }
-      }
-      return copy;
-    }
-
-    throw new Error('Unable to copy Object, type not supported.');
-  },
   // basic map that can be used on nodeList
   map: (arr, callback, scope) => {
-    let newArray = [],
-      mapCallback = (i) => {
-        newArray.push(callback(i));
-      };
-
-    helpers.forEach(arr, mapCallback);
+    let newArray = [];
+    helpers.forEach(arr, i => newArray.push(callback(i)));
 
     return newArray;
   },
@@ -181,8 +139,8 @@ const helpers = {
   },
   // find the index of one node in another
   indexOfNode: (node, parent) => {
-    let parentElement = parent || node.parentElement,
-      nodeList = Array.prototype.slice.call(parentElement.childNodes);
+    let parentElement = parent || node.parentElement;
+    let nodeList = Array.prototype.slice.call(parentElement.childNodes);
     return nodeList.indexOf(node);
   },
   // Tests if is whole number. returns false if n is Float
@@ -198,13 +156,13 @@ const helpers = {
    * @private
    * @param {Object} object The object to query.
    * @param {String} path The path of the property to get.
-   * @returns {*} Returns the resolved value.
+   * @return {String|Array|Object} Returns the resolved value.
    */
   get: (object, path) => {
     path = stringToPath(path);
 
-    var index = 0,
-      length = path.length;
+    let index = 0;
+    let length = path.length;
 
     while (object != null && index < length) {
       object = object[path[index++]];
@@ -215,17 +173,17 @@ const helpers = {
   set: (object, path, value, customizer) => {
     path = stringToPath(path);
 
-    var index = -1,
-      length = path.length,
-      lastIndex = length - 1,
-      nested = object;
+    let index = -1;
+    let length = path.length;
+    let lastIndex = length - 1;
+    let nested = object;
 
     while (nested !== null && ++index < length) {
-      var key = path[index];
+      let key = path[index];
       if (typeof nested === 'object') {
-        var newValue = value;
+        let newValue = value;
         if (index !== lastIndex) {
-          var objValue = nested[key];
+          let objValue = nested[key];
           newValue = customizer ? customizer(objValue, key, nested) : undefined;
           if (newValue === undefined) {
             newValue = objValue === null ? [] : objValue;
@@ -254,6 +212,7 @@ const helpers = {
     for (let prop in obj2) {
       if (mergedObj.hasOwnProperty(prop)) {
         if (Array.isArray(obj2[prop])) {
+          // eslint-disable-next-line
           mergedObj[prop] = Array.isArray(obj1[prop]) ? obj1[prop].concat(obj2[prop]) : obj2[prop];
         } else if (typeof obj2[prop] === 'object') {
           mergedObj[prop] = helpers.merge(obj1[prop], obj2[prop]);
@@ -264,39 +223,25 @@ const helpers = {
     }
     return mergedObj;
   },
-  /**
-   * Remove duplicates from an array of elements
-   * @param  {Array} array with possible duplicates
-   * @return {Array} array with only unique values
-   */
-  unique: (array) => {
-    return array.filter((elem, pos, arr) => {
-      return arr.indexOf(elem) === pos;
-    });
-  },
+
   /**
    * Orders an array of objects by specific attribute
-   *
    * @param  {Array}  elements  Array of element objects
    * @param  {Array}  order     array of keys to order objects by
    * @param  {String} path      string path to property to order by
    * @return {Array}            Ordered Array of Element Objects
    */
   orderObjectsBy: (elements, order, path) => {
-    var objOrder = helpers.unique(order),
-      newOrder = objOrder.map((key) => {
+    let objOrder = unique(order);
+    const newOrder = objOrder.map(key => {
         return elements.filter(function(elem) {
           let propVal = helpers.get(elem, path);
           return propVal === key;
         })[0];
-      }).filter(Boolean),
-      orderedElements = newOrder.concat(elements);
+      }).filter(Boolean);
+    let orderedElements = newOrder.concat(elements);
 
-    return helpers.unique(orderedElements);
-  },
-
-  numberBetween: (num, min, max) => {
-    return num > min && num < max;
+    return unique(orderedElements);
   },
 
   /**

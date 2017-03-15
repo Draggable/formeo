@@ -108,3 +108,16 @@ body {
   align-self: stretch;
   padding: 20px;
 }
+
+.form-rendered .build-form{
+  display:none;
+}
+.render-form{
+  display:none;
+}
+.form-rendered .render-form{
+  display:block;
+}
+.render-btn-wrap{
+  text-align:center;
+}

@@ -1,7 +1,6 @@
-@include clearfix;
-
-.stage-row,
+.stage-rows,
 .field-control {
+  @include clearfix;
   position: relative;
   clear: both;
   margin-left: 0;
@@ -9,7 +8,10 @@
   background-color: $white;
   padding: 5px;
   flex-direction: row;
-  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  align-content: stretch;
+  align-items: stretch;
 
   &::after {
     clear: both;
@@ -38,35 +40,47 @@
       border-top-left-radius: 0;
     }
 
-    .stage-row {
+    .stage-rows {
       &::before {
         width: 100px;
       }
     }
 
-    .stage-column {
+    .stage-columns {
       opacity: .5;
     }
   }
 
   &.editing-row {
+    display: block;
+
     .row-edit {
       display: block;
     }
   }
 
   &.resizing-columns {
-    .stage-column {
+    .stage-columns {
       transition: none;
     }
   }
 }
 
-.stage-row {
+.stage-rows {
+  min-height: 75px;
   transition: background-color 125ms ease-in-out;
+  display:flex;
 
   &::before {
     left: 0;
+  }
+
+  &.editing-row {
+    &.hovering-row {
+      .stage-columns {
+        opacity: 1;
+      }
+    }
   }
 
   &.editing-row,
@@ -78,5 +92,9 @@
       border-right: 1px solid $row-outline-color;
       width: 80px !important;
     }
+  }
+
+  .layout-row-control{
+    display:none;
   }
 }
