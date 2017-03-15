@@ -63,7 +63,6 @@ export default class Row {
       onEnd: _this.onEnd,
       onAdd: _this.onAdd,
       onSort: _this.onSort,
-      onMove: _this.onMove,
       draggable: '.stage-columns',
       handle: '.column-handle'
     });
@@ -98,13 +97,8 @@ export default class Row {
       action: {
         click: e => {
           rowData.config.fieldset = e.target.checked;
-          console.log(e.target.checked);
           data.save();
         }
-      },
-      config: {
-        label: ' Fieldset',
-        noWrap: true
       }
     };
 
@@ -168,11 +162,11 @@ export default class Row {
       content: 'Define column widths'
     });
     let columnSettingsPresetLabel = Object.assign({}, fieldsetLabel, {
-      content: 'Layout Preset', className: 'col-sm-2 form-control-label'
+      content: 'Layout Preset', className: 'col-sm-4 form-control-label'
     });
     let columnSettingsPresetSelect = {
       tag: 'div',
-      className: 'col-sm-10',
+      className: 'col-sm-8',
       content: dom.columnPresetControl(_this.rowID)
     };
     let formGroupContent = [
@@ -194,16 +188,8 @@ export default class Row {
   }
 
   /**
-   * [onMove description]
-   * @param  {[type]} evt [description]
-   */
-  onMove(evt) {
-    // console.log(evt);
-  }
-
-  /**
-   * [onMove description]
-   * @param  {[type]} evt [description]
+   * Update column order and save
+   * @param  {Object} evt
    */
   onSort(evt) {
     data.saveColumnOrder(evt.target);
@@ -254,10 +240,7 @@ export default class Row {
       }
     }
 
-    if (fromColumn) {
-      dom.remove(item);
-    }
-
+    dom.remove(item);
     data.saveColumnOrder(to);
 
     dom.columnWidths(to);
