@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.4.1 - Update icons [#52](http://github.com/draggable/formeo/pulls/52)
 - v0.4.0 - Render and repeatable groups [#51](http://github.com/draggable/formeo/pulls/51)
 - v0.3.20 - Linter and codeclimate improvments, syntax updates [#45](http://github.com/draggable/formeo/pulls/45)
 - v0.3.19 - Bugfix: icons are missing from dist [#44](https://github.com/Draggable/formeo/pull/44)
