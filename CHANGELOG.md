@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.4.3 - Add column class on render fix bug where cannot drag column to Row [#54](http://github.com/draggable/formeo/pulls/54)
 - v0.4.2 - Bugfixes [#53](http://github.com/draggable/formeo/pulls/53)
 - v0.4.1 - Update icons [#52](http://github.com/draggable/formeo/pulls/52)
 - v0.4.0 - Render and repeatable groups [#51](http://github.com/draggable/formeo/pulls/51)
