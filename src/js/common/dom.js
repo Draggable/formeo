@@ -682,36 +682,86 @@ class DOM {
    * @return {Object}       [description]
    */
   columnPresetControl(rowID) {
-    let row = formData.rows.get(rowID);
+    let _this = this;
+    let row = this.rows.get(rowID);
+    let rowData = formData.rows.get(rowID);
     let layoutPreset = {
         tag: 'select',
         attrs: {
           ariaLabel: 'Define a column layout',
           className: 'form-control column-preset'
+        },
+        action: {
+          change: e => {
+            _this.setColumnWidths(row, e.target.value);
+            data.save();
+          }
         }
       };
     let pMap = new Map();
+    let custom = {value: 'custom', label: 'Custom'};
 
-    pMap.set(1, [{value: '', label: '100%'}]);
+    pMap.set(1, [{value: '100.0', label: '100%'}]);
     pMap.set(2, [
-      {value: '50,50', label: '50 | 50'},
-      {value: '33,66', label: '33 | 66'}
+      {value: '50.0,50.0', label: '50 | 50'},
+      {value: '33.0,66.0', label: '33 | 66'},
+      {value: '66.0,33.0', label: '66 | 33'},
+      custom
     ]);
     pMap.set(3, [
-      {value: '33,33,33', label: '33 | 33 | 33'},
-      {value: '25,50,25', label: '25 | 50 | 25'}
+      {value: '33.3,33.3,33.3', label: '33 | 33 | 33'},
+      {value: '25.0,25.0,50.0', label: '25 | 25 | 50'},
+      {value: '50.0,25.0,25.0', label: '50 | 25 | 25'},
+      {value: '25.0,50.0,25.0', label: '25 | 50 | 25'},
+      custom
     ]);
-    pMap.set(4, [{value: '25,25,25,25', label: '25 | 25 | 25 | 25'}]);
-    pMap.set('custom', [{value: 'custom', label: 'Custom'}]);
+    pMap.set(4, [
+      {value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25'},
+      custom
+      ]);
+    pMap.set('custom', [custom]);
 
-    if (row) {
-      let columns = row.columns;
-      layoutPreset.options = pMap.get(columns.length) || pMap.get('custom');
+    if (rowData && rowData.columns.length) {
+      let columns = rowData.columns;
+      let pMapVal = pMap.get(columns.length);
+      layoutPreset.options = pMapVal || pMap.get('custom');
+      let curVal = columns.map((columnID, i) => {
+        let colData = formData.columns.get(columnID);
+        return colData.config.width.replace('%', '');
+      }).join(',');
+      pMapVal.forEach((val, i) => {
+        let options = layoutPreset.options;
+        if (val.value === curVal) {
+          options[i].selected = true;
+        } else {
+          delete options[i].selected;
+        }
+      });
     } else {
       layoutPreset.options = pMap.get(1);
     }
 
     return layoutPreset;
+  }
+
+  /**
+   * Set the widths of columns in a row
+   * @param {Object} row DOM element
+   * @param {String} widths
+   */
+  setColumnWidths(row, widths) {
+    if (widths === 'custom') {
+      return;
+    }
+    widths = widths.split(',');
+    let columns = row.getElementsByClassName('stage-columns');
+    h.forEach(columns, i => {
+      let column = columns[i];
+      let percentWidth = widths[i] + '%';
+      column.dataset.colWidth = percentWidth;
+      column.style.width = percentWidth;
+      formData.columns.get(column.id).config.width = percentWidth;
+    });
   }
 
   /**

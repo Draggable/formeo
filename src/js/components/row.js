@@ -45,14 +45,6 @@ export default class Row {
       dataset: {
         hoverTag: i18n.get('row')
       },
-      action: {
-        mouseover: (evt) => {
-          // evt.target.classList.add('hovering');
-        },
-        mouseout: (evt) => {
-          // evt.target.classList.remove('hovering');
-        }
-      },
       id: rowID,
       content: [dom.actionButtons(rowID, 'row'), _this.editWindow],
       fType: 'rows'
@@ -99,10 +91,15 @@ export default class Row {
       id: _this.rowID + '-fieldset',
       attrs: {
         type: 'checkbox',
+        checked: rowData.config.fieldset,
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria')
       },
       action: {
-        click: e => console.log(e)
+        click: e => {
+          rowData.config.fieldset = e.target.checked;
+          console.log(e.target.checked);
+          data.save();
+        }
       },
       config: {
         label: ' Fieldset',
@@ -120,7 +117,6 @@ export default class Row {
       },
       action: {
         click: e => {
-          let rowData = formData.rows.get(_this.rowID);
           rowData.config.inputGroup = e.target.checked;
           data.save();
         }
@@ -145,7 +141,14 @@ export default class Row {
       attrs: {
         type: 'text',
         ariaLabel: 'Legend for fieldset',
+        value: rowData.config.legend,
         placeholder: 'Legend'
+      },
+      action: {
+        input: e => {
+          rowData.config.legend = e.target.value;
+          data.save();
+        }
       },
       className: 'form-control'
     };
