@@ -4,6 +4,7 @@ let container = document.querySelector('.build-form');
 let renderContainer = document.querySelector('.render-form');
 let formeoOpts = {
   container: container,
+  // allowEdit: false,
   controls: {
     groupOrder: [
     'common',

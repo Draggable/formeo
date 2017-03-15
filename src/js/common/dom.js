@@ -503,8 +503,8 @@ class DOM {
   }
 
   /**
-   * [removeEmpty description]
-   * @param  {[type]} element [description]
+   * Remove elements without f children
+   * @param  {Object} element DOM element
    */
   removeEmpty(element) {
     let _this = this;
