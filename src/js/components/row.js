@@ -259,10 +259,6 @@ export default class Row {
     }
 
     data.saveColumnOrder(to);
-    dom.updateColumnPreset(to);
-    if (fromColumn) {
-      dom.updateColumnPreset(from);
-    }
 
     dom.columnWidths(to);
     dom.emptyClass(to);

@@ -659,6 +659,8 @@ class DOM {
       }
     }
 
+    dom.updateColumnPreset(row);
+
     return colCount;
   }
 
