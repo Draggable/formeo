@@ -67,14 +67,12 @@ export default class Row {
       forceFallback: true,
       group: {name: 'rows', pull: true, put: ['rows', 'controls', 'columns']},
       sort: true,
-      draggable: '.stage-columns',
-      handle: '.column-handle',
-      // filter: '.group-actions',
       onRemove: _this.onRemove,
       onAdd: _this.onAdd,
-      onMove: _this.onMove,
       onSort: _this.onSort,
-      filter: '.layout-control'
+      onMove: _this.onMove,
+      draggable: '.stage-columns',
+      handle: '.column-handle'
     });
 
     return row;
@@ -242,7 +240,7 @@ export default class Row {
       }
     }
 
-    if (fromColumn || fromControls) {
+    if (fromColumn) {
       dom.remove(item);
     }
 
@@ -253,7 +251,7 @@ export default class Row {
     }
 
     dom.columnWidths(to);
-    dom.emptyClass(evt.to);
+    dom.emptyClass(to);
     data.save();
   }
 

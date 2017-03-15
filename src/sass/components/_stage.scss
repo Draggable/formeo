@@ -88,6 +88,7 @@
       top: 50%;
       left: 50%;
       color: $gray-light;
+      // color: $black;
       text-align: center;
       transform: translate(-50%, -50%);
       content: attr(data-hover-tag);

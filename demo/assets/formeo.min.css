@@ -887,7 +887,7 @@
     line-height: 1.33333;
     border-radius: 0.3rem; }
   .formeo .form-group {
-    margin-bottom: 1rem; }
+    margin-bottom: 0; }
   .formeo .radio input[type='radio'],
   .formeo .checkbox input[type='checkbox'] {
     position: relative;
@@ -1819,7 +1819,8 @@
   .formeo .svg-icon {
     display: inline-block;
     width: 24px;
-    height: 24px; }
+    height: 24px;
+    pointer-events: none; }
   .formeo .icon-remove:hover {
     fill: #d9534f; }
   .formeo button[class*='-remove']:hover .svg-icon {
@@ -2189,8 +2190,6 @@
     padding: 5px;
     -ms-flex-direction: row;
         flex-direction: row;
-    display: -ms-flexbox;
-    display: flex;
     -ms-flex-pack: start;
         justify-content: flex-start;
     -ms-flex-wrap: nowrap;
@@ -2262,10 +2261,9 @@
     transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
     position: relative;
     background-color: #fff;
+    max-width: none;
     -ms-flex-direction: column;
         flex-direction: column;
-    display: -ms-flexbox;
-    display: flex;
     -ms-flex: 1;
         flex: 1; }
     .formeo .stage-columns[class*='col-'] {
@@ -2306,6 +2304,8 @@
       overflow: hidden; }
       .formeo .stage-columns.editing-column .column-edit {
         display: block; }
+    .formeo .stage-columns.empty-columns {
+      min-height: 75px; }
   .formeo .editing-row .stage-columns {
     display: table-cell;
     border-radius: 5px;
@@ -2589,4 +2589,27 @@
     clear: both; }
 
 .rendered-stage .row {
-  min-height: 60px; }
+  min-height: 75px; }
+
+.rendered-stage .f-input-group {
+  position: relative; }
+  .rendered-stage .f-input-group:first-child .remove-input-group {
+    display: none; }
+  .rendered-stage .f-input-group .remove-input-group {
+    position: absolute;
+    left: -32px;
+    transform: translate(0, -50%);
+    width: 32px;
+    height: 32px;
+    top: 50%;
+    border: 0 none;
+    background: transparent;
+    outline: 0 none; }
+    .rendered-stage .f-input-group .remove-input-group:hover .svg-icon {
+      fill: #d9534f; }
+    .rendered-stage .f-input-group .remove-input-group .svg-icon {
+      pointer-events: none; }
+
+.rendered-stage .svg-icon {
+  max-width: 100%;
+  max-height: 100%; }

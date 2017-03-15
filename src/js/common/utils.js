@@ -126,3 +126,16 @@ export const clone = obj => {
 };
 
 export const numToPercent = num => num.toString() + '%';
+
+export const numberBetween = (num, min, max) => (num > min && num < max);
+
+export const clicked = (x, y, position, button) => {
+  let xMin = position.x - 5;
+  let xMax = position.x + 5;
+  let yMin = position.y - 5;
+  let yMax = position.y + 5;
+  let xOK = numberBetween(x, xMin, xMax);
+  let yOK = numberBetween(y, yMin, yMax);
+
+  return (xOK && yOK && button !== 2);
+};

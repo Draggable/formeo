@@ -71,11 +71,16 @@ export default class Column {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
-      group: {name: 'columns', pull: true, put: ['columns', 'controls']},
+      group: {
+        name: 'columns',
+        pull: true,
+        put: ['columns', 'controls'],
+        revertClone: true
+      },
       sort: true,
-      onEnd: _this.onEnd.bind(_this),
+      onEnd: _this.onEnd,
       onAdd: _this.onAdd,
-      onSort: _this.onSort.bind(_this),
+      onSort: _this.onSort,
       onRemove: _this.onRemove,
       // Attempt to drag a filtered element
       onMove: (evt) => {
@@ -246,30 +251,24 @@ export default class Column {
       }
       let columnData = formData.columns.get(column.id);
       let sibColumnData = formData.columns.get(sibling.id);
-      let totalUsed = colWidthPercent + sibWidthPercent;
-        console.log(totalUsed);
       let row = column.parentElement;
       row.classList.remove('resizing-columns');
-      let columns = row.getElementsByClassName('stage-columns');
-      if (columns.length > 2) {
-        let remaining = (100 - totalUsed);
-        let remainWidth = parseFloat(remaining / columns.length - 2).toFixed(1);
-        console.log(remaining, remainWidth);
-  // let remaining = parseFloat((totalUsed / columns.length - 1).toFixed(1));
-        console.log(remainWidth);
-        h.forEach(columns, i => {
-          console.log();
-          if (!h.inArray(columns[i].id, [column.id, sibling.id])) {
-            let percentWidth = numToPercent(remainWidth);
-            columns[i].dataset.colWidth = percentWidth;
-            columns[i].style.width = percentWidth;
-            formData.columns.get(columns[i].id).config.width = percentWidth;
-          }
-        });
-      }
+  // let totalUsed = parseFloat(colWidthPercent + sibWidthPercent).toFixed(1)/1;
+  //     let columns = row.getElementsByClassName('stage-columns');
+  //     if (columns.length > 2) {
+  //       let remaining = (100 - totalUsed) / (columns.length - 2);
+  //       let remainWidth = parseFloat(remaining).toFixed(1)/1;
+  //       h.forEach(columns, i => {
+  //         if (!h.inArray(columns[i].id, [column.id, sibling.id])) {
+  //           let percentWidth = numToPercent(remainWidth);
+  //           columns[i].dataset.colWidth = percentWidth;
+  //           columns[i].style.width = percentWidth;
+  //           formData.columns.get(columns[i].id).config.width = percentWidth;
+  //         }
+  //       });
+  //     }
       columnData.config.width = column.dataset.colWidth;
       sibColumnData.config.width = sibling.dataset.colWidth;
-      // column.style.cursor = 'default';
       resize.resized = false;
       data.save();
     };

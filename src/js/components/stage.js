@@ -127,7 +127,7 @@ export default class Stage {
    * @param  {Object} evt
    */
   onSort(evt) {
-
+    data.save();
   }
 
   /**
@@ -206,8 +206,11 @@ export default class Stage {
       fallbackClass: 'row-moving',
       forceFallback: true,
       fallbackTolerance: 0,
-      // group: { pull: false, put: ['controls', 'columns'] },
-      group: {name: 'stages', pull: true, put: ['controls', 'rows', 'columns']},
+      group: {name: 'stages', pull: true, put: [
+        'controls',
+        'rows',
+        'columns'
+      ]},
       // Element is dropped into the list from another list
       onAdd: _this.onAdd.bind(_this),
       onRemove: _this.onRemove.bind(_this),
@@ -219,7 +222,6 @@ export default class Stage {
       onUpdate: evt => {
         data.saveRowOrder();
         data.save();
-        // console.log(formData, evt);
       },
       onSort: _this.onSort,
       onDrop: evt => {
@@ -227,10 +229,6 @@ export default class Stage {
       },
       draggable: '.stage-rows',
       handle: '.row-handle',
-      // onFilter: function(evt) {
-      //   console.log(evt);
-      // return false;
-      // },
       filter: '.layout-control'
     });
 

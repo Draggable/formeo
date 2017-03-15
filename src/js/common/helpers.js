@@ -244,8 +244,6 @@ const helpers = {
     return unique(orderedElements);
   },
 
-  numberBetween: (num, min, max) => (num > min && num < max),
-
   /**
    * Hide or show an Array or HTMLCollection of elements
    * @param  {Array} elems

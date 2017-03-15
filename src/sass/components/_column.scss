@@ -5,7 +5,7 @@
   max-width:none;
   flex-direction: column;
   // display: flex;
-  flex: 1;
+  flex: auto;
 
   &[class*='col-'] {
     padding: 0;
@@ -75,14 +75,29 @@
       display: block;
     }
   }
+
+  &.empty-columns{
+    min-height:75px;
+    &::after{
+      margin-top: 11px;
+    }
+  }
 }
 
+.stage-wrap{
 .editing-row {
-  .stage-columns {
+  .stage-columns,
+  .empty-columns {
     display: table-cell;
     border-radius: 5px;
     height: 60px;
     background-color: $gray-light;
+
+
+    &.empty-columns{
+      min-height:0;
+    }
+
 
     .stage-fields {
       display: none;
@@ -92,14 +107,21 @@
       display: block;
     }
 
-    &:after {
-      content: attr(data-col-width);
+    &::after {
+      color: $gray-dark !important;
+      line-height: 1em;
+      opacity: 1;
+      font-size: 1.1em;
+      content: attr(data-col-width) !important;
       display: block;
       width: 100%;
       text-align: center;
       position: absolute;
+      left: 50%;
+      margin-top: 0;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translate(-50%, -50%);
     }
   }
+}
 }

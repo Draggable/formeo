@@ -3,7 +3,7 @@ import i18n from 'mi18n';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
-import {match, unique, uuid} from '../common/utils';
+import {match, unique, uuid, clicked} from '../common/utils';
 import dom from '../common/dom';
 import Panels from './panels';
 
@@ -254,16 +254,6 @@ export class Controls {
     let _this = this;
     let dataID = uuid();
     let position = {};
-    const clicked = (x, y, button) => {
-      let xMin = position.x - 5;
-      let xMax = position.x + 5;
-      let yMin = position.y - 5;
-      let yMax = position.y + 5;
-      let xOK = h.numberBetween(x, xMin, xMax);
-      let yOK = h.numberBetween(y, yMin, yMax);
-
-      return (xOK && yOK && button !== 2);
-    };
     let elementControl = {
       tag: 'li',
       className: [
@@ -278,7 +268,7 @@ export class Controls {
           position.y = evt.clientY;
         },
         mouseup: evt => {
-          if (clicked(evt.clientX, evt.clientY, evt.button)) {
+          if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
             _this.addElement(evt.target.id);
           }
         }
@@ -527,7 +517,8 @@ export class Controls {
         group: {
           name: 'controls',
           pull: 'clone',
-          put: false
+          put: false,
+          revertClone: true
         },
         sort: opts.sortable
       });

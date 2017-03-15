@@ -4,7 +4,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {unique, uuid, clone} from './utils';
+import {unique, uuid, clone, numToPercent} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -612,10 +612,10 @@ class DOM {
     if (!columns.length) {
       return false;
     }
-    let colWidth = (12 / columns.length);
+    let colCount = parseFloat(12 / columns.length);
     let width = widths;
     if (!width) {
-      width = parseFloat((100 / columns.length).toFixed(1));
+      width = parseFloat((100 / columns.length).toFixed(1))/1;
     }
     let bsGridRegEx = /\bcol-\w+-\d+/g;
     // compensate for padding;
@@ -630,8 +630,8 @@ class DOM {
       let column = columns[i];
       let columnData = formData.columns.get(column.id);
       let cDataClassNames = columnData.className;
-      if (h.isInt(colWidth)) {
-        let widthClass = 'col-md-' + colWidth;
+      if (h.isInt(colCount)) {
+        let widthClass = 'col-md-' + colCount;
         column.removeAttribute('style');
         // removes bootstrap column classes
         column.className = column.className.replace(bsGridRegEx, '');
@@ -643,10 +643,12 @@ class DOM {
         unique(columnData.className);
       }
 
-      column.style.width = width + '%';
+      let colWidth = numToPercent(width);
+
+      column.style.width = colWidth;
       column.style.float = 'left';
-      columnData.config.width = width;
-      column.dataset.colWidth = width + '%';
+      columnData.config.width = colWidth;
+      column.dataset.colWidth = colWidth;
     });
 
     // Fix the editWindow for any fields that were being edited
@@ -657,7 +659,7 @@ class DOM {
       }
     }
 
-    return colWidth;
+    return colCount;
   }
 
   /**
