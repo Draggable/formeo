@@ -161,8 +161,8 @@ export default class Stage {
       dom.emptyClass(column);
     } else if(fromRow) {
       row.appendChild(item);
-      dom.emptyClass(row);
       data.saveColumnOrder(row);
+      dom.emptyClass(row);
     }
 
     to.insertBefore(row, to.children[newIndex]);
