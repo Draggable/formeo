@@ -63,7 +63,6 @@ export default class Column {
     };
 
     column = dom.create(column);
-
     this.processConfig(column);
     dom.columns.set(columnID, column);
 
@@ -252,21 +251,8 @@ export default class Column {
       let columnData = formData.columns.get(column.id);
       let sibColumnData = formData.columns.get(sibling.id);
       let row = column.parentElement;
+      row.querySelector('.column-preset').value = 'custom';
       row.classList.remove('resizing-columns');
-  // let totalUsed = parseFloat(colWidthPercent + sibWidthPercent).toFixed(1)/1;
-  //     let columns = row.getElementsByClassName('stage-columns');
-  //     if (columns.length > 2) {
-  //       let remaining = (100 - totalUsed) / (columns.length - 2);
-  //       let remainWidth = parseFloat(remaining).toFixed(1)/1;
-  //       h.forEach(columns, i => {
-  //         if (!h.inArray(columns[i].id, [column.id, sibling.id])) {
-  //           let percentWidth = numToPercent(remainWidth);
-  //           columns[i].dataset.colWidth = percentWidth;
-  //           columns[i].style.width = percentWidth;
-  //           formData.columns.get(columns[i].id).config.width = percentWidth;
-  //         }
-  //       });
-  //     }
       columnData.config.width = column.dataset.colWidth;
       sibColumnData.config.width = sibling.dataset.colWidth;
       resize.resized = false;

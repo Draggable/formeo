@@ -73,8 +73,9 @@ export default class Field {
    * @param  {Object} dataObj   field config object
    * @return {Object}           formeo DOM config object
    */
-  editPanel(panelType, dataObj) {
+  editPanel(panelType) {
     let _this = this;
+    let fieldData = formData.fields.get(_this.fieldID);
     let propType;
     let panel;
     let panelWrap = {
@@ -83,7 +84,7 @@ export default class Field {
       content: []
     };
 
-    if (dataObj[panelType]) {
+    if (fieldData[panelType]) {
       panel = {
         tag: 'ul',
         attrs: {
@@ -96,13 +97,13 @@ export default class Field {
         isSortable: (panelType === 'options'),
         content: []
       };
-      propType = dom.contentType(dataObj[panelType]);
+      propType = dom.contentType(fieldData[panelType]);
 
       panelWrap.content.push(panel);
 
       let panelArray;
       if (propType === 'array') {
-        // let props = Object.keys(dataObj[panelType][0]);
+        // let props = Object.keys(fieldData[panelType][0]);
         // let panelLabels = {
         //   tag: 'div',
         //   className: 'input-group',
@@ -113,7 +114,7 @@ export default class Field {
         //       content: h.capitalize(elem)
         //     };
 
-        //     if (typeof dataObj[panelType][0][elem] === 'boolean') {
+        //     if (typeof fieldData[panelType][0][elem] === 'boolean') {
         //       label.tag = 'span';
         //       label.className.push('input-group-addon');
         //     }
@@ -128,16 +129,16 @@ export default class Field {
         // };
         // removing labels until find a better way to handle them.
         // panelWrap.content.unshift(labelWrap);
-        panelArray = dataObj[panelType];
+        panelArray = fieldData[panelType];
       } else {
-        panelArray = Object.keys(dataObj[panelType]);
+        panelArray = Object.keys(fieldData[panelType]);
       }
 
       h.forEach(panelArray, (i) => {
         let args = {
           i,
           dataProp: panelArray[i],
-          dataObj,
+          fieldData,
           panelType,
           propType
         };
@@ -155,17 +156,19 @@ export default class Field {
    */
   panelContent(args) {
     let _this = this;
-    let dataProp = (typeof args.dataProp === 'string') ? args.dataProp : args.i;
+    let {panelType, dataProp} = args;
+    let fieldData = formData.fields.get(_this.fieldID);
+    dataProp = (typeof dataProp === 'string') ? dataProp : args.i;
     let id = uuid();
-    let propVal = args.dataObj[args.panelType][dataProp];
+    let propVal = fieldData[panelType][dataProp];
     let inputs = {
       tag: 'div',
       className: ['prop-inputs'],
-      content: _this.editPanelInputs(dataProp, propVal, args.panelType, id)
+      content: _this.editPanelInputs(dataProp, propVal, panelType, id)
     };
     let property = {
       tag: 'li',
-      className: [`${args.panelType}-${dataProp}-wrap`, 'prop-wrap'],
+      className: [`${panelType}-${dataProp}-wrap`, 'prop-wrap'],
       id: id,
       content: []
     };
@@ -181,14 +184,14 @@ export default class Field {
         click: (evt) => {
           animate.slideUp(document.getElementById(property.id), 250, elem => {
             let fieldData = formData.fields.get(_this.fieldID);
-            let fieldPanelData = fieldData[args.panelType];
+            let fieldPanelData = fieldData[panelType];
             dom.remove(elem);
             if (Array.isArray(fieldPanelData)) {
               fieldPanelData.splice(dataProp, 1);
             } else {
               fieldPanelData[dataProp] = undefined;
             }
-            data.save(args.panelType, _this.fieldID);
+            data.save(panelType, _this.fieldID);
             dom.empty(_this.preview);
             let newPreview = dom.create(fieldData, true);
             _this.preview.appendChild(newPreview);
@@ -209,7 +212,7 @@ export default class Field {
       controls.content.unshift(order);
     }
 
-    property.propData = args.dataObj[args.panelType][dataProp];
+    property.propData = fieldData[panelType][dataProp];
     property.content.push(controls, inputs);
 
     property.className.push('control-count-' + controls.content.length);
@@ -274,9 +277,9 @@ export default class Field {
                 attrs: typeAttrs(key, val, 'string'),
                 action: {
                   input: evt => {
-                    // eslint-disable-next-line
-                    formData.fields.get(_this.fieldID)[panelType][prop][key] = evt.target.value;
-                    // evt.target.propData
+                    let fieldData = formData.fields.get(_this.fieldID);
+                    fieldData[panelType][prop] = evt.target.value;
+                    data.save();
                   }
                 },
               };
@@ -355,11 +358,7 @@ export default class Field {
 
     i18n.put('attrs' + safeAttr, h.capitalize(attr));
 
-    try {
-      fieldData.attrs[safeAttr] = window.JSON.parse(val);
-    } catch (e) {
-      fieldData.attrs[safeAttr] = val;
-    }
+    fieldData.attrs[safeAttr] = val;
 
     let args = {
       dataObj: formData.fields.get(_this.fieldID),
@@ -369,7 +368,15 @@ export default class Field {
       propType: dom.contentType(val)
     };
 
-    editGroup.appendChild(dom.create(_this.panelContent(args)));
+    let existingAttr = editGroup.querySelector(`.attrs-${safeAttr}-wrap`);
+    let newAttr = dom.create(_this.panelContent(args));
+    if (existingAttr) {
+      editGroup.replaceChild(newAttr, existingAttr);
+    } else {
+      editGroup.appendChild(newAttr);
+    }
+
+    data.save();
     _this.resizePanelWrap();
   }
 
@@ -379,23 +386,24 @@ export default class Field {
   addOption() {
     let _this = this;
     let field = dom.fields.get(_this.fieldID);
-    let dataObj = formData.fields.get(_this.fieldID);
+    let fieldData = formData.fields.get(_this.fieldID);
     let editGroup = field.querySelector('.field-edit-options');
     let propData = {label: '', value: '', selected: false};
-    dataObj.options.push(propData);
+    fieldData.options.push(propData);
 
     let args = {
       i: editGroup.childNodes.length,
       dataProp: propData,
-      dataObj,
+      dataObj: fieldData,
       panelType: 'options',
       propType: 'array'
     };
 
     editGroup.appendChild(dom.create(_this.panelContent(args)));
     _this.resizePanelWrap();
+
     // Save Fields Attrs
-    data.save('options', editGroup);
+    data.save();
     dom.empty(_this.preview);
     let newPreview = dom.create(formData.fields.get(_this.fieldID), true);
     _this.preview.appendChild(newPreview);
@@ -473,20 +481,20 @@ export default class Field {
       className: ['field-edit', 'slide-toggle', 'panels-wrap']
     };
 
-    h.forEach(allowedPanels, function(i, prop) {
-      let propType = dom.contentType(fieldData[prop]);
+    h.forEach(allowedPanels, function(i, panelType) {
+      let propType = dom.contentType(fieldData[panelType]);
       if (h.inArray(propType, editable)) {
         let panel = {
           tag: 'div',
           attrs: {
-            className: `f-panel ${prop}-panel`
+            className: `f-panel ${panelType}-panel`
           },
           config: {
-            label: i18n.get(`panelLabels.${prop}`) || ''
+            label: i18n.get(`panelLabels.${panelType}`) || ''
           },
           content: [
-            _this.editPanel(prop, fieldData),
-            _this.panelEditButtons(prop)
+            _this.editPanel(panelType),
+            _this.panelEditButtons(panelType)
           ],
           action: {
             // change: evt => {

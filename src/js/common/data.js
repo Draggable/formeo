@@ -2,7 +2,12 @@
 import events from './events';
 import h from './helpers';
 import dom from './dom';
-import {strMapToObj, objToStrMap, uuid, remove} from './utils';
+import {
+  strMapToObj,
+  objToStrMap,
+  uuid,
+  remove
+} from './utils';
 // Object map of fields on the stage
 const _data = {};
 let formData;
@@ -219,28 +224,35 @@ let data = {
     return removed;
   },
 
+  saveThrottle: false,
+
   save: (group = 'stages', id) => {
-    data.saveType(group, id);
-    const storage = window.sessionStorage;
-    const stringify = window.JSON.stringify;
+    const doSave = function() {
+      data.saveType(group, id);
+      const storage = window.sessionStorage;
+      const stringify = window.JSON.stringify;
 
-    if (storage && _data.opts.sessionStorage) {
-      storage.setItem('formData', stringify(data.js));
+      if (storage && _data.opts.sessionStorage) {
+        storage.setItem('formData', stringify(data.js));
+      }
+
+      if (_data.opts.debug) {
+        console.log('Saved: ' + group);
+      }
+
+      // document.dispatchEvent(events.formeoUpdated);
+      return formData;
+    };
+
+    if (!data.saveThrottle) {
+      doSave();
+      data.saveThrottle = true;
+      setTimeout(() => {
+        doSave();
+        data.saveThrottle = false;
+      }, 500);
     }
 
-    if (_data.opts.debug) {
-      console.log('Saved: ' + group);
-    }
-
-    // toggle empty class if stage(s) have data
-    // formData.stages.forEach(stage => {
-    //   let stageDom = dom.stages.get(stage.id);
-    //   stageDom.classList.toggle('empty-stages', !stage.rows.length);
-    // });
-
-    // Shouldn't be the case? because every time
-    // save is called there should be some formData update, right?
-    // document.dispatchEvent(events.formeoUpdated);
     return formData;
   },
 

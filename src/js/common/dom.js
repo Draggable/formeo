@@ -629,19 +629,19 @@ class DOM {
     h.forEach(columns, i => {
       let column = columns[i];
       let columnData = formData.columns.get(column.id);
-      let cDataClassNames = columnData.className;
-      if (h.isInt(colCount)) {
-        let widthClass = 'col-md-' + colCount;
-        column.removeAttribute('style');
-        // removes bootstrap column classes
-        column.className = column.className.replace(bsGridRegEx, '');
-        column.classList.add(widthClass);
-        columnData.config.width = width;
-        columnData.className = cDataClassNames
-        .map(className => className.replace(bsGridRegEx, ''));
-        columnData.className.push(widthClass);
-        unique(columnData.className);
-      }
+      // let cDataClassNames = columnData.className;
+      // if (h.isInt(colCount)) {
+      //   let widthClass = 'col-md-' + colCount;
+      //   column.removeAttribute('style');
+      //   // removes bootstrap column classes
+      //   column.className = column.className.replace(bsGridRegEx, '');
+      //   column.classList.add(widthClass);
+      //   columnData.config.width = width;
+      //   columnData.className = cDataClassNames
+      //   .map(className => className.replace(bsGridRegEx, ''));
+      //   columnData.className.push(widthClass);
+      //   unique(columnData.className);
+      // }
 
       let colWidth = numToPercent(width);
 
@@ -706,8 +706,8 @@ class DOM {
     pMap.set(1, [{value: '100.0', label: '100%'}]);
     pMap.set(2, [
       {value: '50.0,50.0', label: '50 | 50'},
-      {value: '33.0,66.0', label: '33 | 66'},
-      {value: '66.0,33.0', label: '66 | 33'},
+      {value: '33.3,66.6', label: '33 | 66'},
+      {value: '66.6,33.3', label: '66 | 33'},
       custom
     ]);
     pMap.set(3, [
@@ -858,24 +858,21 @@ class DOM {
   }
 
   /**
-   * [addRow description]
-   * @param {[type]} evt [description]
-   * @return {Object} row
+   * [processColumnConfig description]
+   * @param  {[type]} columnData [description]
+   * @return {[type]}         [description]
    */
-// addRow(evt) {
-//   let _this = this;
-// let column = evt.from.fType === 'rows' ? evt.item : _this.createColumn(evt);
-//   let row = new Row();
-
-//   // Set parent IDs
-//   formData.columns.get(column.id).parent = row.id;
-//   formData.rows[row.id].parent = _this.activeStage.id;
-
-//   row.appendChild(column);
-//   data.saveColumnOrder(row);
-
-//   return row;
-// }
+  processColumnConfig(columnData) {
+    // console.log(columnData);
+    if (columnData.className) {
+      columnData.className.push('rendered-column');
+    } else {
+      console.log(columnData);
+    }
+    let colWidth = columnData.config.width || '100%';
+    columnData.style = `width: ${colWidth}`;
+    return columnData;
+  }
 
   /**
    * Renders currently loaded formData to the renderTarget
@@ -890,7 +887,7 @@ class DOM {
       rows = rows.map(rowID => {
         let {columns, ...row} = renderData.rows[rowID];
         let cols = columns.map(columnID => {
-          let col = renderData.columns[columnID];
+          let col = this.processColumnConfig(renderData.columns[columnID]);
           let fields = col.fields.map(fieldID => renderData.fields[fieldID]);
           col.tag = 'div';
           col.content = fields;
