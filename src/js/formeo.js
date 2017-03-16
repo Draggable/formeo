@@ -34,7 +34,6 @@ class Formeo {
       dataType: 'json',
       debug: false,
       sessionStorage: false,
-      className: 'formeo',
       container: '.formeo-wrap',
       prefix: 'formeo-',
       // svgSprite: null, // change to null
@@ -289,7 +288,7 @@ class Formeo {
     let elemConfig = {
         tag: 'div',
         attrs: {
-          className: opts.className,
+          className: 'formeo formeo-editor',
           id: _this.formID
         },
         content: [_this.stages, controls]

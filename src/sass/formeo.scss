@@ -1,61 +1,53 @@
 @import 'base/variables';
+@import 'base/bootstrap/bootstrap';
+@import 'base/icons';
+@import 'base/mixins';
+@import 'base/animation';
+@include clearfix;
 .formeo {
-  @import 'base/bootstrap/bootstrap';
-  @import 'base/icons';
-  @import 'base/mixins';
-  @import 'base/animation';
-  @import 'components/controls';
-  @import 'components/stage';
 
-  @include clearfix;
-
-  // Sets a specific default `font-size` for user with `rem` type scales.
-  font-size: $font-size-root;
-
-  // Make the `body` use the `font-size-root`
-  font-family: $font-family-base;
-  line-height: $line-height;
-
-  // Go easy on the eyes and use something other than `#000` for text
-  color: $body-color;
-}
-
-.rendered-stage {
-  .row {
-    min-height:75px;
+  &.formeo-editor{
+    @import 'components/controls';
+    @import 'components/stage';
   }
-  .f-input-group {
-    position:relative;
-    &:first-child{
-      .remove-input-group{
-        display:none;
-      }
+
+  &.formeo-render{
+    .row {
+      min-height:75px;
     }
-    .remove-input-group {
-      position: absolute;
-      left: -32px;
-      transform: translate(0, -50%);
-      width: 32px;
-      height: 32px;
-      top: 50%;
-      border: 0 none;
-      background: transparent;
-      outline:0 none;
-      &:hover{
-        .svg-icon{
-          fill: $brand-danger;
+    .f-input-group {
+      position:relative;
+      &:first-child{
+        .remove-input-group{
+          display:none;
         }
       }
-      .svg-icon {
-        pointer-events: none;
+      .remove-input-group {
+        position: absolute;
+        left: -32px;
+        transform: translate(0, -50%);
+        width: 32px;
+        height: 32px;
+        top: 50%;
+        border: 0 none;
+        background: transparent;
+        outline:0 none;
+        &:hover{
+          .svg-icon{
+            fill: $brand-danger;
+          }
+        }
+        .svg-icon {
+          pointer-events: none;
+        }
       }
     }
-  }
-  .svg-icon{
-    max-width:100%;
-    max-height:100%
-  }
-  .rendered-column{
-    padding: 0 5px;
+    .svg-icon{
+      max-width:100%;
+      max-height:100%
+    }
+    .rendered-column{
+      padding: 0 5px;
+    }
   }
 }

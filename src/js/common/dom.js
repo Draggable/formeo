@@ -4,7 +4,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {unique, uuid, clone, numToPercent} from './utils';
+import {uuid, clone, numToPercent} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -863,11 +863,8 @@ class DOM {
    * @return {[type]}         [description]
    */
   processColumnConfig(columnData) {
-    // console.log(columnData);
     if (columnData.className) {
       columnData.className.push('rendered-column');
-    } else {
-      console.log(columnData);
     }
     let colWidth = columnData.config.width || '100%';
     columnData.style = `width: ${colWidth}`;
@@ -953,7 +950,7 @@ class DOM {
       });
       stage.tag = 'div';
       stage.content = rows;
-      stage.className = 'rendered-stage container';
+      stage.className = 'formeo-render';
       return stage;
     });
 
