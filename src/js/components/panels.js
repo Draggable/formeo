@@ -133,7 +133,6 @@ export default class Panels {
    * @return {Object}       DOM node for updated property preview
    */
   propertySave(group) {
-    console.log(group);
     data.save(group.editGroup, group);
     return this.opts.updatePreview();
   }
@@ -232,7 +231,7 @@ export default class Panels {
     let index = Array.prototype.indexOf.call(siblingGroups, this.currentPanel);
     let offset = {};
 
-    const groupChange = (newIndex) => {
+    const groupChange = newIndex => {
       this.currentPanel = siblingGroups[newIndex];
       this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height');
       if (this.opts.type === 'field') {

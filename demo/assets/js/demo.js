@@ -6,10 +6,37 @@ let formeoOpts = {
   container: container,
   // allowEdit: false,
   controls: {
+    sortable: false,
     groupOrder: [
     'common',
-    'layout'
-    ]
+    'html',
+    ],
+    elements: [
+      {
+        tag: 'input',
+        attrs: {
+          type: 'file',
+          className: 'form-control'
+        },
+        config: {
+          label: 'File Upload'
+        },
+        meta: {
+          group: 'common',
+          icon: 'upload',
+          id: 'upload'
+        },
+        fMap: 'attrs.value'
+      }
+    ],
+    elementOrder: {
+      common: [
+      'upload',
+      'checkbox',
+      'date-input',
+      'button',
+      ]
+    }
   },
   svgSprite: 'assets/img/formeo-sprite.svg',
   // debug: true,

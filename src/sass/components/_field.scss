@@ -22,19 +22,25 @@
   }
 
   [contenteditable] {
+    padding: 1px 1px 0;
     transition: border-color 250ms;
     border-bottom: 1px dashed $gray-lighter;
 
     &:focus {
       border: 1px solid $input-focus;
       outline: none;
+      padding: 0;
     }
   }
 
-  .checkbox {
+  .checkbox,
+  .radio {
     [contenteditable]{
       margin-left:1.25em;
       padding: 0;
+    }
+    .form-check-input:only-child{
+      position:absolute;
     }
   }
 

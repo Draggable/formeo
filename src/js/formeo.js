@@ -152,6 +152,7 @@ class Formeo {
             'selectOptions': 'Options',
             'selectionsMessage': 'Allow Multiple Selections',
             'settings': 'Settings',
+            'separator': 'Separator',
             'size': 'Size',
             'sizes': 'Sizes',
             'sizes.lg': 'Large',

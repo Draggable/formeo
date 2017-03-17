@@ -214,6 +214,7 @@ let data = {
       fields: id => {
         let field = dom.fields.get(id);
         if (field) {
+          field = field.field;
           let column = formData.columns.get(field.parentElement.id);
           remove(column.fields, id);
         }

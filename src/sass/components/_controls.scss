@@ -26,6 +26,11 @@
     overflow: hidden;
     height: 38px;
 
+    h5{
+      font-size:13px;
+      line-height:22px;
+    }
+
     .btn {
       position: absolute;
       width: 24px;
@@ -57,6 +62,11 @@
     }
   }
 
+  .panels-wrap{
+    font-size: .85em;
+    line-height: 1.8em;
+  }
+
   .panel-labels {
     border-top: 1px solid $gray-lighter;
   }
@@ -83,17 +93,6 @@
     vertical-align: top;
     display: inline-block;
     width: 100%;
-
-    h5 {
-      margin: 0;
-      color: $gray;
-      line-height: 2.25em;
-      padding: 0 10px;
-      display: inline-block;
-      width: 100%;
-      font-size: 1.1em;
-      letter-spacing: 1px;
-    }
 
     > li {
       &:first-child {

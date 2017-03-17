@@ -1,9 +1,8 @@
 @import 'base/variables';
-@import 'base/bootstrap/bootstrap';
+@import 'base/bootstrap';
 @import 'base/icons';
 @import 'base/mixins';
 @import 'base/animation';
-@include clearfix;
 .formeo {
 
   &.formeo-editor{
@@ -12,8 +11,13 @@
   }
 
   &.formeo-render{
-    .row {
-      min-height:75px;
+    @include clearfix;
+    .f-row {
+      flex-direction: row;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      align-content: stretch;
+      align-items: stretch;
     }
     .f-input-group {
       position:relative;
@@ -46,8 +50,13 @@
       max-width:100%;
       max-height:100%
     }
-    .rendered-column{
+    .f-render-column{
       padding: 0 5px;
+      float:left;
+      display:inline-block;
+      max-width: none;
+      flex-direction: column;
+      flex: auto;
     }
   }
 }
