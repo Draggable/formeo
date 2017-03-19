@@ -223,7 +223,7 @@ export class Controls {
         config: {
           label: i18n.get('header'),
           editable: true,
-          // hideLabel: true
+          hideLabel: true
         },
         meta: {
           group: 'html',
@@ -235,7 +235,7 @@ export class Controls {
         tag: 'p',
         config: {
           label: i18n.get('paragraph'),
-          // hideLabel: true
+          hideLabel: true,
           editable: true,
         },
         meta: {
@@ -248,7 +248,8 @@ export class Controls {
       }, {
         tag: 'hr',
         config: {
-          label: i18n.get('separator')
+          label: i18n.get('separator'),
+          hideLabel: true
         },
         meta: {
           group: 'html',

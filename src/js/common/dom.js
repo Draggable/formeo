@@ -142,7 +142,7 @@ class DOM {
         }
 
         // if (!elem.config.noWrap) {
-          // if (!elem.config.hideLabel) {
+          if (!elem.config.hideLabel) {
             if (labelAfter(elem)) {
               label.classList.add('form-check-label');
               wrap.className = elem.attrs.type;
@@ -151,6 +151,9 @@ class DOM {
               wrap.content.push(label);
             } else {
               wrap.content.push(label, element);
+            }
+          } else if (elem.config.editable && isPreview) {
+              element.contentEditable = true;
             }
           // } else {
             // element.contentEditable = true;
@@ -682,7 +685,9 @@ class DOM {
     setTimeout(() => {
       fields.forEach(fieldID => {
         let field = dom.fields.get(fieldID);
-        field.panels.nav.refresh();
+        if (field.panels) {
+          field.panels.nav.refresh();
+        }
       });
     }, 100);
 
