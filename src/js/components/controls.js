@@ -3,7 +3,7 @@ import i18n from 'mi18n';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
-import {match, unique, uuid, clicked} from '../common/utils';
+import {match, unique, uuid, clicked, closest} from '../common/utils';
 import dom from '../common/dom';
 import Panels from './panels';
 
@@ -158,6 +158,17 @@ export class Controls {
         config: {
           label: i18n.get('textarea')
         },
+        action: {
+          // mousedown: `evt => {
+          //   let fieldID = closest(evt.target, '.stage-fields').id;
+          //   console.log(fieldID);
+          // }`
+          mousedown: evt => {
+            let fieldID = closest(evt.target, '.stage-fields').id;
+            console.log(fieldID);
+          }
+
+        },
         meta: {
           group: 'common',
           icon: 'textarea',
@@ -219,6 +230,7 @@ export class Controls {
             {value: 'h3', label: 'H3'},
             {value: 'h4', label: 'H4'}
           ],
+          className: ''
         },
         config: {
           label: i18n.get('header'),
@@ -233,6 +245,9 @@ export class Controls {
         content: i18n.get('header')
       }, {
         tag: 'p',
+        attrs: {
+          className: ''
+        },
         config: {
           label: i18n.get('paragraph'),
           hideLabel: true,

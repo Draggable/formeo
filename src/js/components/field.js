@@ -64,7 +64,7 @@ export default class Field {
    */
   updatePreview() {
     let _this = this;
-    let fieldData = formData.fields.get(_this.fieldID);
+    let fieldData = h.copyObj(formData.fields.get(_this.fieldID));
     let newPreview = dom.create(fieldData, true);
     dom.empty(_this.preview);
     _this.preview.appendChild(newPreview);
@@ -236,6 +236,7 @@ export default class Field {
   editPanelInputs(prop, propVal, panelType, id) {
     let _this = this;
     let inputs = [];
+    let fieldData = formData.fields.get(_this.fieldID);
     let processProperty = (key, val) => {
         let propType = dom.contentType(val);
         let propIsNum = (typeof prop === 'number');
@@ -296,7 +297,6 @@ export default class Field {
               }),
               action: {
                 change: evt => {
-                  let fieldData = formData.fields.get(_this.fieldID);
                   let values = [];
                   let newValue = fieldData[panelType][prop].map(value => {
                     //eslint-disable-next-line
@@ -307,8 +307,9 @@ export default class Field {
 
                   let index = values.indexOf(evt.target.value);
                   newValue[index].selected = true;
-                  fieldData[panelType][prop] = newValue;
+                  h.set(fieldData, fMap, newValue);
                   data.save();
+                  _this.updatePreview();
                 }
               },
             };
@@ -321,9 +322,9 @@ export default class Field {
               id: `${prop}-${id}`,
               attrs: typeAttrs(key, val, 'string'),
               action: {
-                input: evt => {
-                  let fieldData = formData.fields.get(_this.fieldID);
-                  fieldData[panelType][prop] = evt.target.value;
+                change: evt => {
+                  h.set(fieldData, fMap, evt.target.value);
+                  _this.updatePreview();
                   data.save();
                 }
               },
@@ -341,9 +342,15 @@ export default class Field {
             let input = {
               tag: 'input',
               attrs: typeAttrs(key, val, 'boolean'),
-              fMap: fMap,
+              fMap,
               id: prop + '-' + id,
-              name: _this.fieldID + '-selected'
+              name: _this.fieldID + '-selected',
+              action: {
+                change: evt => {
+                  h.set(fieldData, fMap, evt.target.checked);
+                  _this.updatePreview();
+                }
+              }
             };
 
             if (val) {
@@ -453,6 +460,7 @@ export default class Field {
     dom.empty(_this.preview);
     let newPreview = dom.create(formData.fields.get(_this.fieldID), true);
     _this.preview.appendChild(newPreview);
+    console.log(fieldData.options);
   }
 
   /**
@@ -516,7 +524,7 @@ export default class Field {
     let _this = this;
     let panels = [];
     let editable = ['object', 'array'];
-    let noPanels = ['config', 'meta'];
+    let noPanels = ['config', 'meta', 'action'];
     let fieldData = formData.fields.get(_this.fieldID);
     let allowedPanels = Object.keys(fieldData).filter(elem => {
         return !h.inArray(elem, noPanels);
@@ -579,11 +587,18 @@ export default class Field {
 
     if (panels.length) {
       let editPanels = _this.panels = new Panels(panelsConfig);
-      // dom.panels.set(_this.fieldID, editPanels);
       fieldEdit.className.push('panel-count-' + panels.length);
       fieldEdit.content = editPanels.content;
       _this.panelNav = editPanels.nav;
       _this.resizePanelWrap = editPanels.actions.resize;
+    } else {
+      setTimeout(() => {
+        let field = dom.fields.get(_this.fieldID).field;
+        let editToggle = field.querySelector('.field-edit-toggle');
+        let fieldActions = field.querySelector('.field-actions');
+        fieldActions.style.maxWidth = '49px';
+        dom.remove(editToggle);
+      }, 0);
     }
 
     return fieldEdit;
@@ -596,6 +611,14 @@ export default class Field {
   fieldPreview() {
     let _this = this;
     let fieldData = clone(formData.fields.get(_this.fieldID));
+    const togglePreviewEdit = evt => {
+      if (evt.target.contentEditable === 'true') {
+        let field = dom.fields.get(_this.fieldID).field;
+        let row = field.parentElement.parentElement;
+        let isActive = document.activeElement === evt.target;
+        row.classList.toggle('editing-field-preview', isActive);
+      }
+    };
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -606,6 +629,13 @@ export default class Field {
       },
       content: dom.create(fieldData, true),
       action: {
+        focus: togglePreviewEdit,
+        blur: togglePreviewEdit,
+        click: evt => {
+          if (evt.target.contentEditable === 'true') {
+            evt.preventDefault();
+          }
+        },
         input: evt => {
           let fieldData = formData.fields.get(_this.fieldID);
           let prop = 'content';
@@ -618,11 +648,6 @@ export default class Field {
             h.set(fieldData, prop, evt.target.value);
           }
           data.save('field', _this.fieldID);
-        },
-        change: (evt) => {
-          if (evt.target.fMap) {
-            console.log(evt.target.fMap);
-          }
         }
       }
     };

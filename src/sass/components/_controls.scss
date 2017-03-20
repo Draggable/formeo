@@ -26,9 +26,9 @@
     overflow: hidden;
     height: 38px;
 
-    h5{
-      font-size:13px;
-      line-height:22px;
+    h5 {
+      font-size: 13px;
+      line-height: 22px;
     }
 
     .btn {
@@ -62,7 +62,7 @@
     }
   }
 
-  .panels-wrap{
+  .panels-wrap {
     font-size: .85em;
     line-height: 1.8em;
   }
@@ -106,6 +106,7 @@
 
     .field-control {
       @extend %field-control;
+
       .svg-icon {
         pointer-events: none;
       }
@@ -236,7 +237,6 @@
         border-radius: 0;
         line-height: 0;
         width: 100%;
-        max-width: 100%;
         float: none;
         position: relative;
         display: block;

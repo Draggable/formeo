@@ -1,6 +1,7 @@
 .stage-rows,
 .field-control {
   @include clearfix;
+
   position: relative;
   clear: both;
   margin-left: 0;
@@ -68,7 +69,7 @@
 
 .stage-rows {
   transition: background-color 125ms ease-in-out;
-  display:flex;
+  display: flex;
 
   &::before {
     left: 0;
@@ -93,7 +94,7 @@
     }
   }
 
-  .layout-row-control{
-    display:none;
+  .layout-row-control {
+    display: none;
   }
 }

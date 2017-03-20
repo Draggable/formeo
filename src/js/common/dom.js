@@ -33,7 +33,7 @@ class DOM {
     }
     let tagName;
     if (elem.attrs) {
-      let {tag} = elem.attrs;
+      let tag = elem.attrs.tag;
       if (tag) {
         let selectedTag = tag.filter(t => (t.selected === true));
         if (selectedTag.length) {
@@ -41,6 +41,7 @@ class DOM {
         }
       }
     }
+
     elem.tag = tagName || elem.tag || elem;
   }
 
@@ -132,6 +133,7 @@ class DOM {
     }
 
     if (elem.config) {
+      let editablePreview = (elem.config.editable && isPreview);
       if (elem.config.label && tag !== 'button') {
         let label;
 
@@ -152,14 +154,14 @@ class DOM {
             } else {
               wrap.content.push(label, element);
             }
-          } else if (elem.config.editable && isPreview) {
-              element.contentEditable = true;
-            }
+          } else if (editablePreview) {
+            element.contentEditable = true;
+          }
           // } else {
             // element.contentEditable = true;
           // }
         // }
-      } else if (elem.config.editable && isPreview) {
+      } else if (editablePreview) {
         element.contentEditable = true;
       }
 
@@ -188,7 +190,16 @@ class DOM {
       let actions = Object.keys(elem.action);
       for (i = actions.length - 1; i >= 0; i--) {
         let event = actions[i];
-        element.addEventListener(event, elem.action[event]);
+        let action = elem.action[event];
+        if (typeof action === 'string') {
+          action = eval(elem.action[event]);
+        }
+        let useCaptureEvts = [
+          'focus',
+          'blur'
+        ];
+        let useCapture = h.inArray(event, useCaptureEvts);
+        element.addEventListener(event, action, useCapture);
       }
       processed.push('action');
     }
@@ -385,12 +396,15 @@ class DOM {
     }
 
     if (fMap) {
+      // for attribute will prevent label focus
+      delete fieldLabel.attrs.for;
+
       fieldLabel.attrs.contenteditable = true;
-      fieldLabel.action.click = function(e) {
-        if (e.target.contentEditable === 'true') {
-          e.preventDefault();
-        }
-      };
+      // fieldLabel.action.click = function(e) {
+      //   if (e.target.contentEditable === 'true') {
+      //     e.preventDefault();
+      //   }
+      // };
       fieldLabel.fMap = fMap;
     }
 
@@ -917,7 +931,7 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget);
-    let renderData = data.js;
+    let renderData = h.copyObj(data.js);
     let renderCount = document.getElementsByClassName('formeo-render').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;

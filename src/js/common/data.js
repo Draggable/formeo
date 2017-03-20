@@ -275,7 +275,19 @@ let data = {
    * @return {JSON} formData
    */
   get json() {
-    return window.JSON.stringify(data.js, null, '\t');
+    let jsData = data.js;
+    Object.keys(jsData).forEach(type => {
+      Object.keys(type).forEach(ent => {
+        if (ent.action) {
+          console.log(ent.action);
+          Object.keys(ent.action).forEach(fn => {
+            ent.action[fn] = ent.action[fn].toString();
+          });
+        }
+      });
+    });
+
+    return window.JSON.stringify(jsData, null, '\t');
   }
 };
 

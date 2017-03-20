@@ -75,12 +75,13 @@
     }
   }
 
-  [class*="empty-"] {
-    &[class*="editing-"]{
+  [class*='empty-'] {
+    &[class*='editing-'] {
       &::after {
         opacity: 0;
       }
     }
+
     &::after {
       opacity: 1;
       font-size: 24px;
@@ -88,6 +89,7 @@
       top: 50%;
       left: 50%;
       color: $gray-light;
+
       // color: $black;
       text-align: center;
       transform: translate(-50%, -50%);
@@ -104,11 +106,13 @@
       display: none;
     }
   }
+
   // .layout-column-control{
   //   display:none;
   // }
-  .form-group{
-    margin-bottom:0;
+
+  .form-group {
+    margin-bottom: 0;
   }
 }
 

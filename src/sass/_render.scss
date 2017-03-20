@@ -1,0 +1,57 @@
+.formeo-render {
+  @include clearfix;
+
+  .f-row {
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-content: stretch;
+    align-items: stretch;
+  }
+
+  .f-input-group {
+    position: relative;
+
+    &:first-child {
+      .remove-input-group {
+        display: none;
+      }
+    }
+  }
+
+  .remove-input-group {
+    position: absolute;
+    left: -32px;
+    transform: translate(0, -50%);
+    width: 32px;
+    height: 32px;
+    top: 50%;
+    border: 0 none;
+    background: transparent;
+    outline: 0 none;
+
+    &:hover {
+      .svg-icon {
+        fill: $brand-danger;
+      }
+    }
+
+    .svg-icon {
+      pointer-events: none;
+    }
+  }
+
+  .svg-icon {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .f-render-column {
+    padding: 0 5px;
+    float: left;
+    display: inline-block;
+    max-width: none;
+    flex-direction: column;
+    flex: auto;
+  }
+}

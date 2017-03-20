@@ -186,6 +186,11 @@ export default class Column {
   onEnd(evt) {
     let {to, from} = evt;
 
+    if (from.classList.contains('empty-columns')) {
+      dom.removeEmpty(evt.from);
+      return;
+    }
+
     dom.fieldOrderClass(to);
     dom.fieldOrderClass(from);
 
