@@ -57,7 +57,6 @@ class DOM {
    */
   create(elem, isPreview = false) {
     elem = this.processTagName(elem);
-    console.log(elem);
     let _this = this;
     let contentType;
     let {tag} = elem;
