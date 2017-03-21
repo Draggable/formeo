@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.5.1 - Remove console
 - v0.5.0 - Numerous visual and functional fixes. [#57](http://github.com/draggable/formeo/pulls/57)
 - v0.4.4 - bug where element is removed from row onAdd [#55](http://github.com/draggable/formeo/pulls/55)
 - v0.4.3 - Add column class on render fix bug where cannot drag column to Row [#54](http://github.com/draggable/formeo/pulls/54)
