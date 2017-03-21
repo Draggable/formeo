@@ -6,10 +6,75 @@ let formeoOpts = {
   container: container,
   // allowEdit: false,
   controls: {
+    sortable: false,
     groupOrder: [
     'common',
-    'layout'
-    ]
+    'html',
+    ],
+    elements: [
+      {
+        tag: 'input',
+        attrs: {
+          type: 'file',
+          className: 'form-control'
+        },
+        config: {
+          label: 'File Upload'
+        },
+        meta: {
+          group: 'common',
+          icon: 'upload',
+          id: 'upload'
+        },
+        fMap: 'attrs.value'
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'number',
+          className: 'form-control'
+        },
+        config: {
+          label: 'Number',
+          disabledAttrs: ['type']
+        },
+        meta: {
+          group: 'common',
+          icon: 'hash',
+          id: 'number'
+        },
+        fMap: 'attrs.value'
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'hidden',
+          value: 'my hidden value'
+        },
+        config: {
+          label: 'Hidden',
+          hideLabel: true,
+        },
+        meta: {
+          group: 'common',
+          icon: 'hidden',
+          id: 'hidden'
+        },
+        fMap: 'attrs.value'
+      }
+    ],
+    elementOrder: {
+      common: [
+      'button',
+      'checkbox',
+      'date-input',
+      'hidden',
+      'upload',
+      'number',
+      'radio',
+      'select',
+      'text-input',
+      'textarea',
+      ]
+    }
   },
   svgSprite: 'assets/img/formeo-sprite.svg',
   // debug: true,

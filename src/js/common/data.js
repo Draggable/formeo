@@ -214,6 +214,7 @@ let data = {
       fields: id => {
         let field = dom.fields.get(id);
         if (field) {
+          field = field.field;
           let column = formData.columns.get(field.parentElement.id);
           remove(column.fields, id);
         }
@@ -230,10 +231,9 @@ let data = {
     const doSave = function() {
       data.saveType(group, id);
       const storage = window.sessionStorage;
-      const stringify = window.JSON.stringify;
 
       if (storage && _data.opts.sessionStorage) {
-        storage.setItem('formData', stringify(data.js));
+        storage.setItem('formData', data.json);
       }
 
       if (_data.opts.debug) {
@@ -269,12 +269,28 @@ let data = {
     return jsData;
   },
 
+  prepJSON: jsData => {
+    console.log(jsData);
+  },
+
   /**
    * getter method for JSON formData
    * @return {JSON} formData
    */
   get json() {
-    return window.JSON.stringify(data.js, null, '\t');
+    let jsData = data.js;
+    Object.keys(jsData).forEach(type => {
+      Object.keys(jsData[type]).forEach(entKey => {
+        let entity = jsData[type][entKey];
+        if (entity.action) {
+          Object.keys(entity.action).forEach(fn => {
+            entity.action[fn] = entity.action[fn].toString();
+          });
+        }
+      });
+    });
+
+    return window.JSON.stringify(jsData, null, '\t');
   }
 };
 

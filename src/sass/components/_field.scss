@@ -1,4 +1,5 @@
 .stage-fields {
+  min-height: 24px;
   position: relative;
   padding: 5px;
   transition: background-color 125ms ease-in-out;
@@ -22,19 +23,26 @@
   }
 
   [contenteditable] {
+    padding: 1px 1px 0;
     transition: border-color 250ms;
     border-bottom: 1px dashed $gray-lighter;
 
     &:focus {
       border: 1px solid $input-focus;
       outline: none;
+      padding: 0;
     }
   }
 
-  .checkbox {
-    [contenteditable]{
-      margin-left:1.25em;
+  .checkbox,
+  .radio {
+    [contenteditable] {
+      margin-left: 1.25em;
       padding: 0;
+    }
+
+    .form-check-input:only-child {
+      position: absolute;
     }
   }
 
@@ -55,8 +63,6 @@
   &.hovering-field {
     box-shadow: 0 0 0 1px $field-outline-color inset;
 
-    // border: 1px solid $field-outline-color;
-
     &::before {
       line-height: 23px !important;
       width: 68px !important;
@@ -68,6 +74,12 @@
   &.editing-field {
     background-color: $gray-lightest;
     z-index: 1;
+  }
+
+  &.editing-field-preview {
+    .field-actions {
+      display: none;
+    }
   }
 }
 

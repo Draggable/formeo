@@ -31,7 +31,7 @@ export default class Row {
           inputGroup: false // is repeatable input-group?
         },
         attrs: {
-          className: 'row'
+          className: 'f-row'
         }
       };
 

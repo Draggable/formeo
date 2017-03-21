@@ -178,7 +178,6 @@ export default class Stage {
    * @return {Object} formData
    */
   onRemove(evt) {
-    console.log('stage.js onRemove', evt);
     return data.save();
   }
 
@@ -229,9 +228,6 @@ export default class Stage {
         data.save();
       },
       onSort: _this.onSort,
-      onDrop: evt => {
-       console.log(evt);
-      },
       draggable: '.stage-rows',
       handle: '.row-handle',
       filter: '.layout-control'

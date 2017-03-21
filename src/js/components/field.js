@@ -22,6 +22,7 @@ export default class Field {
 
     let fieldData = formData.fields.get(dataID) || clone(rFields[dataID]);
     _this.fieldID = fieldData.id || uuid();
+    _this.metaID = fieldData.meta.id;
     fieldData.id = _this.fieldID;
 
     formData.fields.set(_this.fieldID, fieldData);
@@ -48,7 +49,12 @@ export default class Field {
       fType: 'fields'
     };
 
-    _this.elem = field = dom.create(field);
+    field = dom.create(field);
+
+    dom.fields.set(_this.fieldID, {
+      field,
+      instance: _this
+    });
 
     return field;
   }
@@ -59,7 +65,7 @@ export default class Field {
    */
   updatePreview() {
     let _this = this;
-    let fieldData = formData.fields.get(_this.fieldID);
+    let fieldData = h.copyObj(formData.fields.get(_this.fieldID));
     let newPreview = dom.create(fieldData, true);
     dom.empty(_this.preview);
     _this.preview.appendChild(newPreview);
@@ -213,7 +219,11 @@ export default class Field {
     }
 
     property.propData = fieldData[panelType][dataProp];
-    property.content.push(controls, inputs);
+
+    // Checks if the property is allowed
+    if (this.isAllowedAttr(dataProp)) {
+      property.content.push(controls, inputs);
+    }
 
     property.className.push('control-count-' + controls.content.length);
 
@@ -231,6 +241,7 @@ export default class Field {
   editPanelInputs(prop, propVal, panelType, id) {
     let _this = this;
     let inputs = [];
+    let fieldData = formData.fields.get(_this.fieldID);
     let processProperty = (key, val) => {
         let propType = dom.contentType(val);
         let propIsNum = (typeof prop === 'number');
@@ -260,6 +271,9 @@ export default class Field {
             number: {
               type: 'number',
               value: val
+            },
+            array: {
+              className: 'form-control form-control-sm',
             }
           };
           return attrs[type];
@@ -269,70 +283,113 @@ export default class Field {
             return i18n.current[labelKey] || h.capitalize(key);
           };
         const propertyInputs = {
-            string: (key, val) => {
-              let input = {
-                fMap,
-                tag: 'input',
-                id: `${prop}-${id}`,
-                attrs: typeAttrs(key, val, 'string'),
-                action: {
-                  input: evt => {
-                    let fieldData = formData.fields.get(_this.fieldID);
-                    fieldData[panelType][prop] = evt.target.value;
-                    data.save();
-                  }
-                },
+          array: (key, val) => {
+            let select = {
+              fMap,
+              tag: 'select',
+              id: `${prop}-${id}`,
+              attrs: typeAttrs(key, val, 'array'),
+              config: {label: inputLabel(key)},
+              content: val.map(v => {
+                return {
+                  tag: 'option',
+                  attrs: {
+                    value: v.value,
+                    selected: v.selected
+                  },
+                  content: v.label
+                };
+              }),
+              action: {
+                change: evt => {
+                  let values = [];
+                  let newValue = fieldData[panelType][prop].map(value => {
+                    //eslint-disable-next-line
+                    let {selected, ...option} = value;
+                    values.push(option.value);
+                    return option;
+                  });
+
+                  let index = values.indexOf(evt.target.value);
+                  newValue[index].selected = true;
+                  h.set(fieldData, fMap, newValue);
+                  data.save();
+                  _this.updatePreview();
+                }
+              },
+            };
+            return select;
+          },
+          string: (key, val) => {
+            let input = {
+              fMap,
+              tag: 'input',
+              id: `${prop}-${id}`,
+              attrs: typeAttrs(key, val, 'string'),
+              action: {
+                change: evt => {
+                  h.set(fieldData, fMap, evt.target.value);
+                  _this.updatePreview();
+                  data.save();
+                }
+              },
+            };
+
+            if (!propIsNum) {
+              input.config = {
+                label: inputLabel(key)
               };
+            }
 
-              if (!propIsNum) {
-                input.config = {
-                  label: inputLabel(key)
-                };
-              }
-
-              return input;
-            },
-            boolean: (key, val) => {
-              let input = {
-                tag: 'input',
-                attrs: typeAttrs(key, val, 'boolean'),
-                fMap: fMap,
-                id: prop + '-' + id,
-                name: _this.fieldID + '-selected'
-              };
-
-              if (val) {
-                input.attrs.checked = val;
-              }
-
-              if (!propIsNum) {
-                input.config = {
-                  label: inputLabel(key)
-                };
-              }
-
-              if (propIsNum) {
-                input = {
-                  tag: 'span',
-                  className: 'input-group-addon',
-                  content: input
-                };
-              }
-
-              return input;
-            },
-            object: (objKey, objVal) => {
-              let inputs = [];
-
-              for (let objProp in objVal) {
-                if (objVal.hasOwnProperty(objProp)) {
-                  inputs.push(processProperty(objProp, objVal[objProp]));
+            return input;
+          },
+          boolean: (key, val) => {
+            let input = {
+              tag: 'input',
+              attrs: typeAttrs(key, val, 'boolean'),
+              fMap,
+              id: prop + '-' + id,
+              name: _this.fieldID + '-selected',
+              action: {
+                change: evt => {
+                  h.set(fieldData, fMap, evt.target.checked);
+                  _this.updatePreview();
                 }
               }
+            };
 
-              return inputs;
+            if (val) {
+              input.attrs.checked = val;
             }
-          };
+
+            if (!propIsNum) {
+              input.config = {
+                label: inputLabel(key)
+              };
+            }
+
+            if (propIsNum) {
+              input = {
+                tag: 'span',
+                className: 'input-group-addon',
+                content: input
+              };
+            }
+
+            return input;
+          },
+          object: (objKey, objVal) => {
+            let inputs = [];
+
+            for (let objProp in objVal) {
+              if (objVal.hasOwnProperty(objProp)) {
+                inputs.push(processProperty(objProp, objVal[objProp]));
+              }
+            }
+
+            return inputs;
+          }
+        };
 
         propertyInputs.number = propertyInputs.string;
 
@@ -344,12 +401,33 @@ export default class Field {
     return inputs;
   }
 
+
+  /**
+   * Checks if attribute is allowed to be edited
+   * @param  {String}  attr
+   * @return {Boolean}      [description]
+   */
+  isAllowedAttr(attr = 'type') {
+    let _this = this;
+    let allowed = true;
+    let disabledAttrs = rFields[_this.metaID].config.disabledAttrs;
+    if (disabledAttrs) {
+      allowed = !h.inArray(attr, disabledAttrs);
+    }
+
+    return allowed;
+  }
+
   /**
    * Add a new attribute to the attrs panels
    * @param {String} attr
    * @param {String|Array} val
    */
   addAttribute(attr, val) {
+    if (!this.isAllowedAttr(attr)) {
+      window.alert(`Attribute "${attr}": not permitted`);
+    }
+
     let _this = this;
     let field = document.getElementById(_this.fieldID);
     let editGroup = field.querySelector('.field-edit-attrs');
@@ -377,6 +455,7 @@ export default class Field {
     }
 
     data.save();
+    _this.updatePreview();
     _this.resizePanelWrap();
   }
 
@@ -385,7 +464,7 @@ export default class Field {
    */
   addOption() {
     let _this = this;
-    let field = dom.fields.get(_this.fieldID);
+    let field = dom.fields.get(_this.fieldID).field;
     let fieldData = formData.fields.get(_this.fieldID);
     let editGroup = field.querySelector('.field-edit-options');
     let propData = {label: '', value: '', selected: false};
@@ -470,9 +549,9 @@ export default class Field {
     let _this = this;
     let panels = [];
     let editable = ['object', 'array'];
-    let noPanels = ['config', 'meta'];
+    let noPanels = ['config', 'meta', 'action'];
     let fieldData = formData.fields.get(_this.fieldID);
-    let allowedPanels = Object.keys(fieldData).filter((elem) => {
+    let allowedPanels = Object.keys(fieldData).filter(elem => {
         return !h.inArray(elem, noPanels);
       });
 
@@ -532,11 +611,19 @@ export default class Field {
     };
 
     if (panels.length) {
-      let editPanels = new Panels(panelsConfig);
+      let editPanels = _this.panels = new Panels(panelsConfig);
       fieldEdit.className.push('panel-count-' + panels.length);
       fieldEdit.content = editPanels.content;
       _this.panelNav = editPanels.nav;
       _this.resizePanelWrap = editPanels.actions.resize;
+    } else {
+      setTimeout(() => {
+        let field = dom.fields.get(_this.fieldID).field;
+        let editToggle = field.querySelector('.field-edit-toggle');
+        let fieldActions = field.querySelector('.field-actions');
+        fieldActions.style.maxWidth = '49px';
+        dom.remove(editToggle);
+      }, 0);
     }
 
     return fieldEdit;
@@ -549,6 +636,14 @@ export default class Field {
   fieldPreview() {
     let _this = this;
     let fieldData = clone(formData.fields.get(_this.fieldID));
+    const togglePreviewEdit = evt => {
+      if (evt.target.contentEditable === 'true') {
+        let field = dom.fields.get(_this.fieldID).field;
+        let row = field.parentElement.parentElement;
+        let isActive = document.activeElement === evt.target;
+        row.classList.toggle('editing-field-preview', isActive);
+      }
+    };
 
     fieldData.id = 'prev-' + _this.fieldID;
 
@@ -559,21 +654,25 @@ export default class Field {
       },
       content: dom.create(fieldData, true),
       action: {
-        input: evt => {
-          let fieldData = formData.fields.get(_this.fieldID);
-          if (evt.target.fMap) {
-            if (evt.target.contentEditable === 'true') {
-              h.set(fieldData, evt.target.fMap, evt.target.innerHTML);
-            } else {
-              h.set(fieldData, evt.target.fMap, evt.target.value);
-            }
-            data.save('field', _this.fieldID);
+        focus: togglePreviewEdit,
+        blur: togglePreviewEdit,
+        click: evt => {
+          if (evt.target.contentEditable === 'true') {
+            evt.preventDefault();
           }
         },
-        change: (evt) => {
+        input: evt => {
+          let fieldData = formData.fields.get(_this.fieldID);
+          let prop = 'content';
           if (evt.target.fMap) {
-            console.log(evt.target.fMap);
+            prop = evt.target.fMap;
           }
+          if (evt.target.contentEditable === 'true') {
+            h.set(fieldData, prop, evt.target.innerHTML);
+          } else {
+            h.set(fieldData, prop, evt.target.value);
+          }
+          data.save('field', _this.fieldID);
         }
       }
     };

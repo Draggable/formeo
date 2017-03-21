@@ -4,7 +4,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {unique, uuid, clone, numToPercent} from './utils';
+import {uuid, clone, numToPercent} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -24,15 +24,38 @@ class DOM {
   }
 
   /**
+   * [processTagName description]
+   * @param  {[type]} elem [description]
+   */
+  processTagName(elem) {
+    if (typeof elem === 'string') {
+      elem = {tag: elem};
+    }
+    let tagName;
+    if (elem.attrs) {
+      let tag = elem.attrs.tag;
+      if (tag) {
+        let selectedTag = tag.filter(t => (t.selected === true));
+        if (selectedTag.length) {
+          tagName = selectedTag[0].value;
+        }
+      }
+    }
+
+    elem.tag = tagName || elem.tag || elem;
+  }
+
+  /**
    * Creates DOM elements
    * @param  {Object}  elem      element config object
    * @param  {Boolean} isPreview generating element for preview or render?
    * @return {Object}            DOM Object
    */
   create(elem, isPreview = false) {
+    this.processTagName(elem);
     let _this = this;
     let contentType;
-    let tag = elem.tag || elem;
+    let {tag} = elem;
     let processed = [];
     let i;
     let wrap = {
@@ -45,8 +68,7 @@ class DOM {
       return (type === 'checkbox' || type === 'radio');
     };
     let element = document.createElement(tag);
-    let holdsContent = (element.outerHTML.indexOf('/') !== -1);
-    let isBlockElement = (!this.isInput && holdsContent);
+
     /**
      * Object for mapping contentType to its function
      * @type {Object}
@@ -82,7 +104,7 @@ class DOM {
     // Append Element Content
     if (elem.options) {
       let options = this.processOptions(elem);
-      if (holdsContent && tag !== 'button') {
+      if (this.holdsContent(element) && tag !== 'button') {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
         delete elem.content;
@@ -111,7 +133,8 @@ class DOM {
     }
 
     if (elem.config) {
-      if (elem.config.label && tag !== 'button' && !isBlockElement) {
+      let editablePreview = (elem.config.editable && isPreview);
+      if (elem.config.label && tag !== 'button') {
         let label;
 
         if (isPreview) {
@@ -120,7 +143,7 @@ class DOM {
           label = _this.label(elem);
         }
 
-        if (!elem.config.noWrap) {
+        // if (!elem.config.noWrap) {
           if (!elem.config.hideLabel) {
             if (labelAfter(elem)) {
               label.classList.add('form-check-label');
@@ -131,10 +154,15 @@ class DOM {
             } else {
               wrap.content.push(label, element);
             }
-          } else {
-            // element = label;
+          } else if (editablePreview) {
+            element.contentEditable = true;
           }
-        }
+          // } else {
+            // element.contentEditable = true;
+          // }
+        // }
+      } else if (editablePreview) {
+        element.contentEditable = true;
       }
 
       processed.push('config');
@@ -162,7 +190,16 @@ class DOM {
       let actions = Object.keys(elem.action);
       for (i = actions.length - 1; i >= 0; i--) {
         let event = actions[i];
-        element.addEventListener(event, elem.action[event]);
+        let action = elem.action[event];
+        if (typeof action === 'string') {
+          action = eval(`(${elem.action[event]})`);
+        }
+        let useCaptureEvts = [
+          'focus',
+          'blur'
+        ];
+        let useCapture = h.inArray(event, useCaptureEvts);
+        element.addEventListener(event, action, useCapture);
       }
       processed.push('action');
     }
@@ -226,17 +263,19 @@ class DOM {
    */
   processAttrs(elem, element, isPreview) {
     let {attrs = {}} = elem;
+    delete attrs.tag;
+
     if (!isPreview) {
       if (!attrs.name && this.isInput(elem.tag)) {
         attrs.name = uuid(elem);
       }
     }
     // Set element attributes
-    for (let attr in elem.attrs) {
-      if (elem.attrs.hasOwnProperty(attr)) {
-        if (elem.attrs[attr]) {
+    for (let attr in attrs) {
+      if (attrs.hasOwnProperty(attr)) {
+        if (attrs[attr]) {
           let name = h.safeAttrName(attr);
-          let value = elem.attrs[attr] || '';
+          let value = attrs[attr] || '';
 
           if (Array.isArray(value)) {
             value = value.join(' ');
@@ -296,6 +335,25 @@ class DOM {
   }
 
   /**
+   * Checks if there is a closing tag, if so it can hold content
+   * @param  {Object} element DOM element
+   * @return {Boolean} holdsContent
+   */
+  holdsContent(element) {
+    return (element.outerHTML.indexOf('/') !== -1);
+  }
+
+  /**
+   * Is this a textarea, select or other block input
+   * also isContentEditable
+   * @param  {Object}  element
+   * @return {Boolean}
+   */
+  isBlockInput(element) {
+    return (!this.isInput(element) && this.holdsContent(element));
+  }
+
+  /**
    * Determine if an element is an input field
    * @param  {String|Object} tag tagName or DOM element
    * @return {Boolean} isInput
@@ -338,12 +396,15 @@ class DOM {
     }
 
     if (fMap) {
+      // for attribute will prevent label focus
+      delete fieldLabel.attrs.for;
+
       fieldLabel.attrs.contenteditable = true;
-      fieldLabel.action.click = function(e) {
-        if (e.target.contentEditable === 'true') {
-          e.preventDefault();
-        }
-      };
+      // fieldLabel.action.click = function(e) {
+      //   if (e.target.contentEditable === 'true') {
+      //     e.preventDefault();
+      //   }
+      // };
       fieldLabel.fMap = fMap;
     }
 
@@ -608,6 +669,7 @@ class DOM {
    */
   columnWidths(row, widths = false) {
     let _this = this;
+    let fields = [];
     let columns = row.getElementsByClassName('stage-columns');
     if (!columns.length) {
       return false;
@@ -618,30 +680,13 @@ class DOM {
       width = parseFloat((100 / columns.length).toFixed(1))/1;
     }
     let bsGridRegEx = /\bcol-\w+-\d+/g;
-    // compensate for padding;
-    // let rowStyle = _this.getStyle(row);
-    // let rowPadding = parseFloat(rowStyle.paddingLeft) +
-    // parseFloat(rowStyle.paddingRight);
-    // let rowWidth = row.offsetWidth - rowPadding;
 
     _this.removeClasses(columns, bsGridRegEx);
 
     h.forEach(columns, i => {
       let column = columns[i];
       let columnData = formData.columns.get(column.id);
-      // let cDataClassNames = columnData.className;
-      // if (h.isInt(colCount)) {
-      //   let widthClass = 'col-md-' + colCount;
-      //   column.removeAttribute('style');
-      //   // removes bootstrap column classes
-      //   column.className = column.className.replace(bsGridRegEx, '');
-      //   column.classList.add(widthClass);
-      //   columnData.config.width = width;
-      //   columnData.className = cDataClassNames
-      //   .map(className => className.replace(bsGridRegEx, ''));
-      //   columnData.className.push(widthClass);
-      //   unique(columnData.className);
-      // }
+      fields.push(...columnData.fields);
 
       let colWidth = numToPercent(width);
 
@@ -650,6 +695,15 @@ class DOM {
       columnData.config.width = colWidth;
       column.dataset.colWidth = colWidth;
     });
+
+    setTimeout(() => {
+      fields.forEach(fieldID => {
+        let field = dom.fields.get(fieldID).instance;
+        if (field.panels) {
+          field.panels.nav.refresh();
+        }
+      });
+    }, 100);
 
     // Fix the editWindow for any fields that were being edited
     let editingFields = row.getElementsByClassName('editing-field');
@@ -863,11 +917,8 @@ class DOM {
    * @return {[type]}         [description]
    */
   processColumnConfig(columnData) {
-    // console.log(columnData);
     if (columnData.className) {
-      columnData.className.push('rendered-column');
-    } else {
-      console.log(columnData);
+      columnData.className.push('f-render-column');
     }
     let colWidth = columnData.config.width || '100%';
     columnData.style = `width: ${colWidth}`;
@@ -880,8 +931,8 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget);
-    let renderData = data.js;
-    let renderCount = document.getElementsByClassName('formeo-rendered').length;
+    let renderData = h.copyObj(data.js);
+    let renderCount = document.getElementsByClassName('formeo-render').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;
       rows = rows.map(rowID => {
@@ -953,14 +1004,14 @@ class DOM {
       });
       stage.tag = 'div';
       stage.content = rows;
-      stage.className = 'rendered-stage container';
+      stage.className = 'formeo-render';
       return stage;
     });
 
     let config = {
       tag: 'div',
       id: `formeo-rendered-${renderCount}`,
-      className: 'formeo-rendered',
+      className: 'formeo-render formeo',
       content
     };
 
@@ -1049,7 +1100,6 @@ class DOM {
    */
   addField(columnID, fieldID) {
     let field = new Field(fieldID);
-    this.fields.set(field.id, field);
     if (columnID) {
       let column = this.columns.get(columnID);
       column.appendChild(field);

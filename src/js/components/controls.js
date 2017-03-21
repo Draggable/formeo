@@ -22,11 +22,16 @@ export class Controls {
     let _this = this;
     this.formID = formID;
     let {groupOrder = []} = controlOptions;
-    this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']));
+    this.groupOrder = unique(groupOrder.concat([
+      'common',
+      'html',
+      'layout',
+    ]));
     this.cPosition = {};
 
     this.defaults = {
       sortable: true,
+      elementOrder: {},
       groups: [{
         id: 'layout',
         label: i18n.get('layout'),
@@ -38,8 +43,8 @@ export class Controls {
         id: 'common',
         label: i18n.get('commonFields'),
         elementOrder: [
-          'text-input',
-          'checkbox'
+        'button',
+        'checkbox',
         ]
       }, {
         id: 'html',
@@ -111,7 +116,7 @@ export class Controls {
         content: i18n.get('button'),
         config: {
           label: i18n.get('button'),
-          hideLabel: true
+          // hideLabel: true
         },
         meta: {
           group: 'common',
@@ -153,6 +158,26 @@ export class Controls {
         config: {
           label: i18n.get('textarea')
         },
+        // This is the beginning of actions being supported for render
+        // editor field actions should be in config.action
+        // action: {
+        //   mousedown: function(evt) {
+        //     let {target} = evt;
+        //     let startHeight = target.style.height;
+        //     const onMouseup = evt => {
+        //       let {target} = evt;
+        //       let endHeight = target.style.height;
+        //       if (startHeight !== endHeight) {
+        //         //eslint-disable-next-line
+        //         let fieldID = closest(target, '.stage-fields').id;
+        //         const field = d.fields.get(fieldID).instance;
+        //         field.addAttribute('style', `height: ${endHeight}`);
+        //       }
+        //       target.removeEventListener('mouseup', onMouseup);
+        //     };
+        //     target.addEventListener('mouseup', onMouseup);
+        //   }
+        // },
         meta: {
           group: 'common',
           icon: 'textarea',
@@ -207,8 +232,18 @@ export class Controls {
         })
       }, {
         tag: 'h1',
+        attrs: {
+          tag: [
+            {value: 'h1', label: 'H1'},
+            {value: 'h2', label: 'H2'},
+            {value: 'h3', label: 'H3'},
+            {value: 'h4', label: 'H4'}
+          ],
+          className: ''
+        },
         config: {
           label: i18n.get('header'),
+          editable: true,
           hideLabel: true
         },
         meta: {
@@ -219,21 +254,26 @@ export class Controls {
         content: i18n.get('header')
       }, {
         tag: 'p',
+        attrs: {
+          className: ''
+        },
         config: {
           label: i18n.get('paragraph'),
-          hideLabel: true
+          hideLabel: true,
+          editable: true,
         },
         meta: {
           group: 'html',
           icon: 'paragraph',
           id: 'paragraph'
         },
-        content: 'Lorem ipsum dolor.'
+        //eslint-disable-next-line
+        content: 'Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.'
       }, {
         tag: 'hr',
         config: {
-          label: i18n.get('paragraph'),
-          noWrap: true
+          label: i18n.get('separator'),
+          hideLabel: true
         },
         meta: {
           group: 'html',
@@ -259,7 +299,7 @@ export class Controls {
       }
     };
 
-    this.dom = this.buildDOM();
+    this.buildDOM();
   }
 
   /**
@@ -301,7 +341,8 @@ export class Controls {
       elementControl.content.unshift(dom.icon(elem.meta.icon));
     }
 
-    rFields[dataID] = elem;
+    // Add field to the register by uuid and meta id
+    rFields[dataID] = rFields[elem.meta.id] = elem;
     return elementControl;
   }
 
@@ -336,15 +377,14 @@ export class Controls {
           label: groups[i].label || ''
         }
       };
-      let defaultIds = this.defaults.elements.map(element => element.meta.id);
 
       // Apply order to elements
-      if (groups[i].elementOrder) {
-        elements = h.orderObjectsBy(
-          elements,
-          groups[i].elementOrder,
-          'meta.id');
+      if (opts.elementOrder[groups[i].id]) {
+        let userOrder = opts.elementOrder[groups[i].id];
+        let newOrder = unique(userOrder.concat(groups[i].elementOrder));
+        groups[i].elementOrder = newOrder;
       }
+      elements = h.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id');
 
       /**
        * Fill control groups with their fields
@@ -359,10 +399,7 @@ export class Controls {
         ];
 
         let shouldFilter = true;
-
-        if (h.inArray(fieldId, defaultIds)) {
-          shouldFilter = filters.every(val => val === true);
-        }
+        shouldFilter = filters.every(val => val === true);
 
         return shouldFilter;
       }).map(field => _this.prepElement.call(this, field));
@@ -529,10 +566,12 @@ export class Controls {
       addGroup: (group) => console.log(group)
     };
 
-
     // Make controls sortable
     for (let i = groups.length - 1; i >= 0; i--) {
       let storeID = `formeo-controls-${groups[i]}`;
+      if (!opts.sortable) {
+        localStorage.removeItem(storeID);
+      }
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,

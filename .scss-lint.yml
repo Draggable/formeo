@@ -10,3 +10,11 @@ linters:
   SelectorDepth:
       enabled: true
       max_depth: 4
+
+  LeadingZero:
+      enabled: true
+      style: include_zero
+
+  ElsePlacement:
+      enabled: true
+      style: new_line # or 'new_line'

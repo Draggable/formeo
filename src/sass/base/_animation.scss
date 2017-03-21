@@ -25,7 +25,8 @@
 }
 
 @keyframes EDIT_PULSE {
-  from, to {
+  from,
+  to {
     border-color: $input-focus;
   }
 

@@ -34,7 +34,6 @@ class Formeo {
       dataType: 'json',
       debug: false,
       sessionStorage: false,
-      className: 'formeo',
       container: '.formeo-wrap',
       prefix: 'formeo-',
       // svgSprite: null, // change to null
@@ -153,6 +152,7 @@ class Formeo {
             'selectOptions': 'Options',
             'selectionsMessage': 'Allow Multiple Selections',
             'settings': 'Settings',
+            'separator': 'Separator',
             'size': 'Size',
             'sizes': 'Sizes',
             'sizes.lg': 'Large',
@@ -284,12 +284,12 @@ class Formeo {
    */
   render() {
     let _this = this;
-    let controls = formeo.controls.dom;
+    let controls = formeo.controls.element;
 
     let elemConfig = {
         tag: 'div',
         attrs: {
-          className: opts.className,
+          className: 'formeo formeo-editor',
           id: _this.formID
         },
         content: [_this.stages, controls]

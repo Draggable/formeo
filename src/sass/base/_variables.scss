@@ -1,12 +1,12 @@
-$brand-primary: #325D88 !default;
-$brand-success: #93C54B !default;
-$brand-info: #29ABE0 !default;
-$brand-warning: #F47C3C !default;
+$brand-primary: #325d88 !default;
+$brand-success: #93c54b !default;
+$brand-info: #29abe0 !default;
+$brand-warning: #f47c3c !default;
 $brand-danger: #d9534f !default;
 
-$row-outline-color: #325D88;
-$column-outline-color: #29ABE0;
-$field-outline-color: #93C54B;
+$row-outline-color: #325d88;
+$column-outline-color: #29abe0;
+$field-outline-color: #93c54b;
 
 $input-focus: #66afe9;
 
@@ -21,8 +21,8 @@ $white: #fff;
 $off-white: #fefefe;
 $gray: #55595c !default;
 $gray-dark: #373a3c !default;
-$gray-light: lighten($gray, 40%) !default;
-$gray-lighter: lighten($gray, 50%) !default;
+$gray-light: lighten($gray, 20%) !default;
+$gray-lighter: lighten($gray, 40%) !default;
 $gray-lightest: lighten($gray, 60%) !default;
 
 // Options
@@ -372,7 +372,7 @@ $thumbnail-border-radius: $border-radius !default;
 
 $close-font-weight: bold !default;
 $close-color: #000 !default;
-$close-text-shadow: 0 1px 0 #fff !default;
+$close-text-shadow: 0 1px 0 $white !default;
 
 // Stage
 $stage-background: rgba(255, 255, 255, 0);
