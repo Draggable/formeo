@@ -158,17 +158,26 @@ export class Controls {
         config: {
           label: i18n.get('textarea')
         },
-        action: {
-          // mousedown: `evt => {
-          //   let fieldID = closest(evt.target, '.stage-fields').id;
-          //   console.log(fieldID);
-          // }`
-          mousedown: evt => {
-            let fieldID = closest(evt.target, '.stage-fields').id;
-            console.log(fieldID);
-          }
-
-        },
+        // This is the beginning of actions being supported for render
+        // editor field actions should be in config.action
+        // action: {
+        //   mousedown: function(evt) {
+        //     let {target} = evt;
+        //     let startHeight = target.style.height;
+        //     const onMouseup = evt => {
+        //       let {target} = evt;
+        //       let endHeight = target.style.height;
+        //       if (startHeight !== endHeight) {
+        //         //eslint-disable-next-line
+        //         let fieldID = closest(target, '.stage-fields').id;
+        //         const field = d.fields.get(fieldID).instance;
+        //         field.addAttribute('style', `height: ${endHeight}`);
+        //       }
+        //       target.removeEventListener('mouseup', onMouseup);
+        //     };
+        //     target.addEventListener('mouseup', onMouseup);
+        //   }
+        // },
         meta: {
           group: 'common',
           icon: 'textarea',
@@ -290,7 +299,7 @@ export class Controls {
       }
     };
 
-    this.dom = this.buildDOM();
+    this.buildDOM();
   }
 
   /**

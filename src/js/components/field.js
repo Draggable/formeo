@@ -52,7 +52,7 @@ export default class Field {
 
     dom.fields.set(_this.fieldID, {
       field,
-      panels: _this.panels
+      instance: _this
     });
 
     return field;

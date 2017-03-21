@@ -3626,6 +3626,9 @@ button[class*='-remove']:hover .svg-icon {
     top: 50%;
     transform: translate(-50%, -50%); }
 
+.formeo.formeo-editor .editing-field-preview .column-actions {
+  display: none; }
+
 .formeo.formeo-editor .stage-fields {
   position: relative;
   padding: 5px;
@@ -3672,6 +3675,8 @@ button[class*='-remove']:hover .svg-icon {
   .formeo.formeo-editor .stage-fields.editing-field {
     background-color: #f1f2f2;
     z-index: 1; }
+  .formeo.formeo-editor .stage-fields.editing-field-preview .field-actions {
+    display: none; }
 
 .formeo.formeo-editor .field-preview p {
   white-space: normal; }
@@ -3679,6 +3684,8 @@ button[class*='-remove']:hover .svg-icon {
 .formeo.formeo-editor .field-edit {
   margin-top: 23px;
   display: none; }
+  .formeo.formeo-editor .field-edit label {
+    font-size: .85em; }
   .formeo.formeo-editor .field-edit .panel-nav {
     position: relative;
     margin-bottom: 1px;

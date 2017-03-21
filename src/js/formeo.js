@@ -284,7 +284,7 @@ class Formeo {
    */
   render() {
     let _this = this;
-    let controls = formeo.controls.dom;
+    let controls = formeo.controls.element;
 
     let elemConfig = {
         tag: 'div',

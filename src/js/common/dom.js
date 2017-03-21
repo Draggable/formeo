@@ -192,7 +192,7 @@ class DOM {
         let event = actions[i];
         let action = elem.action[event];
         if (typeof action === 'string') {
-          action = eval(elem.action[event]);
+          action = eval(`(${elem.action[event]})`);
         }
         let useCaptureEvts = [
           'focus',
