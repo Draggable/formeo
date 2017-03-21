@@ -121,3 +121,8 @@ body {
 .render-btn-wrap{
   text-align:center;
 }
+
+.formeo-render{
+  max-width:800px;
+  margin:auto;
+}

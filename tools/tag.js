@@ -66,7 +66,7 @@ async function tag() {
       `git commit -am "v${version.new}"`,
       `git tag v${version.new}`,
       'git push upstream master --tags',
-      'npm publish'
+      // 'npm publish',
     ];
     exec(commands.join(' && '), (err, stdout) => {
       if (!err) {

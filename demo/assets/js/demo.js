@@ -4,6 +4,11 @@ let container = document.querySelector('.build-form');
 let renderContainer = document.querySelector('.render-form');
 let formeoOpts = {
   container: container,
+  i18n: {
+    preloaded: {
+      'en-US': {'row.makeInputGroup': ' Repeatable Region'}
+    }
+  },
   // allowEdit: false,
   controls: {
     sortable: false,
