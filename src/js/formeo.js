@@ -146,6 +146,9 @@ class Formeo {
             'row': 'Row',
             'row.settings.fieldsetWrap': 'Wrap row in a &lt;fieldset&gt; tag',
             'row.settings.fieldsetWrap.aria': 'Wrap Row in Fieldset',
+            'row.makeInputGroup': 'Make this row an input group.',
+            //eslint-disable-next-line
+            'row.makeInputGroupDesc': 'Input Groups enable users to add sets of inputs at a time.',
             'save': 'Save',
             'select': 'Select',
             'selectColor': 'Select Color',

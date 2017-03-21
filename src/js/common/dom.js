@@ -24,14 +24,16 @@ class DOM {
   }
 
   /**
-   * [processTagName description]
-   * @param  {[type]} elem [description]
+   * Ensure elements have proper tagName
+   * @param  {Object|String} elem
+   * @return {Object} valid element object
    */
   processTagName(elem) {
-    if (typeof elem === 'string') {
-      elem = {tag: elem};
-    }
     let tagName;
+    if (typeof elem === 'string') {
+      tagName = elem;
+      elem = {tag: tagName};
+    }
     if (elem.attrs) {
       let tag = elem.attrs.tag;
       if (tag) {
@@ -42,7 +44,9 @@ class DOM {
       }
     }
 
-    elem.tag = tagName || elem.tag || elem;
+    elem.tag = tagName || elem.tag;
+
+    return elem;
   }
 
   /**
@@ -52,7 +56,8 @@ class DOM {
    * @return {Object}            DOM Object
    */
   create(elem, isPreview = false) {
-    this.processTagName(elem);
+    elem = this.processTagName(elem);
+    console.log(elem);
     let _this = this;
     let contentType;
     let {tag} = elem;
@@ -953,6 +958,12 @@ class DOM {
             className: 'remove-input-group',
             content: dom.icon('remove'),
             action: {
+              mouseover: e => {
+                e.target.parentElement.classList.add('will-remove');
+              },
+              mouseleave: e => {
+                e.target.parentElement.classList.remove('will-remove');
+              },
               click: e => {
                 let cIGroup = e.target.parentElement;
                 let iGWrap = cIGroup.parentElement;
@@ -982,7 +993,7 @@ class DOM {
           // })(row);
           let addButton = {
             tag: 'button',
-            className: 'add-input-group',
+            className: 'add-input-group btn pull-right',
             content: 'Add +',
             action: {
               click: e => {

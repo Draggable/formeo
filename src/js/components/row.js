@@ -117,9 +117,8 @@ export default class Row {
         }
       },
       config: {
-        label: 'Make this row an input group.',
-        //eslint-disable-next-line
-        description: 'Input Groups enable users to add sets of inputs at a time.'
+        label: i18n.get('row.makeInputGroup'),
+        description: i18n.get('row.makeInputGroupDesc')
       }
     };
 
