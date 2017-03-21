@@ -22,6 +22,7 @@ export default class Field {
 
     let fieldData = formData.fields.get(dataID) || clone(rFields[dataID]);
     _this.fieldID = fieldData.id || uuid();
+    _this.metaID = fieldData.meta.id;
     fieldData.id = _this.fieldID;
 
     formData.fields.set(_this.fieldID, fieldData);
@@ -218,7 +219,11 @@ export default class Field {
     }
 
     property.propData = fieldData[panelType][dataProp];
-    property.content.push(controls, inputs);
+
+    // Checks if the property is allowed
+    if (this.isAllowedAttr(dataProp)) {
+      property.content.push(controls, inputs);
+    }
 
     property.className.push('control-count-' + controls.content.length);
 
@@ -396,12 +401,33 @@ export default class Field {
     return inputs;
   }
 
+
+  /**
+   * Checks if attribute is allowed to be edited
+   * @param  {String}  attr
+   * @return {Boolean}      [description]
+   */
+  isAllowedAttr(attr = 'type') {
+    let _this = this;
+    let allowed = true;
+    let disabledAttrs = rFields[_this.metaID].config.disabledAttrs;
+    if (disabledAttrs) {
+      allowed = !h.inArray(attr, disabledAttrs);
+    }
+
+    return allowed;
+  }
+
   /**
    * Add a new attribute to the attrs panels
    * @param {String} attr
    * @param {String|Array} val
    */
   addAttribute(attr, val) {
+    if (!this.isAllowedAttr(attr)) {
+      window.alert(`Attribute "${attr}": not permitted`);
+    }
+
     let _this = this;
     let field = document.getElementById(_this.fieldID);
     let editGroup = field.querySelector('.field-edit-attrs');
@@ -460,7 +486,6 @@ export default class Field {
     dom.empty(_this.preview);
     let newPreview = dom.create(formData.fields.get(_this.fieldID), true);
     _this.preview.appendChild(newPreview);
-    console.log(fieldData.options);
   }
 
   /**

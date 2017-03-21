@@ -698,7 +698,7 @@ class DOM {
 
     setTimeout(() => {
       fields.forEach(fieldID => {
-        let field = dom.fields.get(fieldID);
+        let field = dom.fields.get(fieldID).instance;
         if (field.panels) {
           field.panels.nav.refresh();
         }

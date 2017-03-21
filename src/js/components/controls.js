@@ -3,7 +3,7 @@ import i18n from 'mi18n';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
-import {match, unique, uuid, clicked, closest} from '../common/utils';
+import {match, unique, uuid, clicked} from '../common/utils';
 import dom from '../common/dom';
 import Panels from './panels';
 
@@ -43,8 +43,8 @@ export class Controls {
         id: 'common',
         label: i18n.get('commonFields'),
         elementOrder: [
-          'checkbox',
-          'textarea',
+        'button',
+        'checkbox',
         ]
       }, {
         id: 'html',
@@ -341,7 +341,8 @@ export class Controls {
       elementControl.content.unshift(dom.icon(elem.meta.icon));
     }
 
-    rFields[dataID] = elem;
+    // Add field to the register by uuid and meta id
+    rFields[dataID] = rFields[elem.meta.id] = elem;
     return elementControl;
   }
 
