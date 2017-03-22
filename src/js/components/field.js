@@ -26,13 +26,14 @@ export default class Field {
     fieldData.id = _this.fieldID;
 
     formData.fields.set(_this.fieldID, fieldData);
+    this.fieldData = fieldData;
 
     _this.preview = dom.create(_this.fieldPreview());
 
     let field = {
       tag: 'li',
       attrs: {
-        className: 'stage-fields'
+        className: `stage-fields field-type-${fieldData.meta.id}`
       },
       id: _this.fieldID,
       content: [
@@ -242,6 +243,7 @@ export default class Field {
     let _this = this;
     let inputs = [];
     let fieldData = formData.fields.get(_this.fieldID);
+    const isOption = (panelType === 'options');
     let processProperty = (key, val) => {
         let propType = dom.contentType(val);
         let propIsNum = (typeof prop === 'number');
@@ -251,11 +253,6 @@ export default class Field {
           fMap = `${panelType}[${prop}].${key}`;
         }
         const typeAttrs = (key, val, type) => {
-          let boolType = 'checkbox';
-          let attrType = formData.fields.get(_this.fieldID).attrs.type;
-          if (attrType === 'radio' && key === 'selected') {
-            boolType = 'radio';
-          }
           let placeholder = i18n.get(`placeholder.${key}`) || h.capitalize(key);
           let attrs = {
             string: {
@@ -264,8 +261,17 @@ export default class Field {
               value: val,
               placeholder
             },
-            'boolean': {
-              type: boolType,
+            boolean: {
+              get type() {
+                let boolType = 'checkbox';
+                if (_this.fieldData.attrs) {
+                  let attrType = _this.fieldData.attrs.type;
+                  if (attrType === 'radio' && key === 'selected') {
+                    boolType = 'radio';
+                  }
+                }
+                return boolType;
+              },
               value: val
             },
             number: {
@@ -289,7 +295,10 @@ export default class Field {
               tag: 'select',
               id: `${prop}-${id}`,
               attrs: typeAttrs(key, val, 'array'),
-              config: {label: inputLabel(key)},
+              config: {
+                label: inputLabel(key),
+                hideLabel: isOption
+              },
               content: val.map(v => {
                 return {
                   tag: 'option',
@@ -303,7 +312,9 @@ export default class Field {
               action: {
                 change: evt => {
                   let values = [];
-                  let newValue = fieldData[panelType][prop].map(value => {
+                  let propData = fieldData[panelType][prop];
+                  let optionData = isOption ? propData[key] : propData;
+                  let newValue = optionData.map(value => {
                     //eslint-disable-next-line
                     let {selected, ...option} = value;
                     values.push(option.value);
@@ -466,8 +477,9 @@ export default class Field {
     let _this = this;
     let field = dom.fields.get(_this.fieldID).field;
     let fieldData = formData.fields.get(_this.fieldID);
+    let optionData = fieldData['options'];
     let editGroup = field.querySelector('.field-edit-options');
-    let propData = {label: '', value: '', selected: false};
+    let propData = Object.assign({}, optionData[optionData.length-1]);
     fieldData.options.push(propData);
 
     let args = {
@@ -606,8 +618,7 @@ export default class Field {
 
     let panelsConfig = {
       panels: panels,
-      id: _this.fieldID,
-      updatePreview: _this.updatePreview.bind(_this)
+      id: _this.fieldID
     };
 
     if (panels.length) {

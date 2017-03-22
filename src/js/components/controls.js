@@ -28,37 +28,7 @@ export class Controls {
       'layout',
     ]));
     this.cPosition = {};
-
-    this.defaults = {
-      sortable: true,
-      elementOrder: {},
-      groups: [{
-        id: 'layout',
-        label: i18n.get('layout'),
-        elementOrder: [
-          'row',
-          'column'
-        ]
-      }, {
-        id: 'common',
-        label: i18n.get('commonFields'),
-        elementOrder: [
-        'button',
-        'checkbox',
-        ]
-      }, {
-        id: 'html',
-        label: i18n.get('htmlElements'),
-        elementOrder: [
-          'header',
-          'block-text'
-        ]
-      }],
-      disable: {
-        groups: [],
-        elements: []
-      },
-      elements: [{
+    const defaultElements = [{
         tag: 'div',
         config: {
           label: i18n.get('column')
@@ -110,13 +80,14 @@ export class Controls {
       }, {
         tag: 'button',
         attrs: {
-          type: 'button',
-          className: 'btn-secondary btn'
+          className: [
+          {label: 'Un-Grouped', value: 'form-group'},
+          {label: 'Group', value: 'btn-group'},
+          ]
         },
-        content: i18n.get('button'),
         config: {
-          label: i18n.get('button'),
-          // hideLabel: true
+          label: 'Button',
+          disabledAttrs: ['type']
         },
         meta: {
           group: 'common',
@@ -124,9 +95,20 @@ export class Controls {
           id: 'button'
         },
         options: [{
-          label: i18n.get('button'),
-          value: 'button',
-          disabled: false
+          label: 'Button',
+          type: [
+            {label: 'Button', value: 'button', selected: true},
+            {label: 'Reset', value: 'reset'},
+            {label: 'Submit', value: 'submit'},
+          ],
+          className: [
+            {label: 'Primary', value: 'btn-primary btn', selected: true},
+            {label: 'Secondary', value: 'btn-secondary btn'},
+            {label: 'Danger', value: 'btn-danger btn'},
+            {label: 'Success', value: 'btn-success btn'},
+            {label: 'Info', value: 'btn-info btn'},
+            {label: 'Warning', value: 'btn-warning btn'}
+          ]
         }]
       }, {
         tag: 'select',
@@ -280,10 +262,43 @@ export class Controls {
           icon: 'divider',
           id: 'divider'
         }
-      }]
+      }];
+
+    this.defaults = {
+      sortable: true,
+      elementOrder: {},
+      groups: [{
+        id: 'layout',
+        label: i18n.get('layout'),
+        elementOrder: [
+          'row',
+          'column'
+        ]
+      }, {
+        id: 'common',
+        label: i18n.get('commonFields'),
+        elementOrder: [
+        'button',
+        'checkbox',
+        ]
+      }, {
+        id: 'html',
+        label: i18n.get('htmlElements'),
+        elementOrder: [
+          'header',
+          'block-text'
+        ]
+      }],
+      disable: {
+        groups: [],
+        elements: []
+      },
+      elements: []
     };
 
     opts = h.merge(this.defaults, controlOptions);
+
+    opts.elements = opts.elements.concat(defaultElements);
 
     this.controlEvents = {
       mousedown: evt => {
@@ -355,6 +370,7 @@ export class Controls {
     let groups = opts.groups.slice();
     let elements = opts.elements.slice();
     let allGroups = [];
+    let usedElementIds = [];
 
     // Apply order to Groups
     groups = h.orderObjectsBy(groups, this.groupOrder, 'id');
@@ -395,11 +411,15 @@ export class Controls {
         let fieldId = field.meta.id || '';
         let filters = [
           match(fieldId, opts.disable.elements),
-          (field.meta.group === groups[i].id)
+          (field.meta.group === groups[i].id),
+          !h.inArray(field.meta.id, usedElementIds)
         ];
 
         let shouldFilter = true;
         shouldFilter = filters.every(val => val === true);
+        if (shouldFilter) {
+          usedElementIds.push(fieldId);
+        }
 
         return shouldFilter;
       }).map(field => _this.prepElement.call(this, field));

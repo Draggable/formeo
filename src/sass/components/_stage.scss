@@ -54,27 +54,6 @@
     }
   }
 
-  .stage-columns,
-  .stage-rows,
-  .stage-fields {
-    &::before {
-      font-size: 12px;
-      position: absolute;
-      top: 0;
-      width: 0;
-      padding: 0;
-      line-height: 24px;
-      text-align: center;
-      overflow: hidden;
-      z-index: 100;
-      transition-property: width;
-      transition-duration: 150ms;
-      content: attr(data-hover-tag);
-      border-bottom-right-radius: 5px;
-      background-color: $white;
-    }
-  }
-
   [class*='empty-'] {
     &[class*='editing-'] {
       &::after {

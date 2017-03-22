@@ -4,8 +4,6 @@
   background-color: $white;
   max-width: none;
   flex-direction: column;
-
-  // display: flex;
   flex: auto;
 
   &[class*='col-'] {
@@ -39,10 +37,19 @@
     cursor: ew-resize;
   }
 
-  &:before {
+  &::before {
+    @extend %element-tag;
+
+    transition-property: height;
+    transition-duration: 150ms;
     padding: 0 10px;
     left: 50%;
-    transform: translateX(12px);
+    top: 1px;
+    transform: translate(-50%, -100%);
+    width: auto;
+    height: 0;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
   }
 
   &.hovering-column {
@@ -51,7 +58,7 @@
     }
 
     .stage-fields {
-      opacity: .5;
+      opacity: 0.5;
     }
   }
 
@@ -59,14 +66,16 @@
   &.hovering-column {
     box-shadow: 0 0 0 1px $column-outline-color inset;
 
-    // border: 1px solid $column-outline-color;
-
-    &:before {
-      line-height: 23px !important;
-      width: 68px !important;
+    &::before {
+      height: 23px;
       border-right: 1px solid $column-outline-color;
-      border-bottom: 1px solid $column-outline-color;
+      border-left: 1px solid $column-outline-color;
+      border-top: 1px solid $column-outline-color;
     }
+  }
+
+  &.column-moving {
+    box-shadow: 0 0 0 1px $column-outline-color inset, 0 0 30px 0 $gray-light;
   }
 
   &.editing-column {

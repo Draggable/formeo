@@ -159,10 +159,6 @@
     width: 3 * $field-btn-width;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: $border-radius;
-    border-width: 0 0 1px 1px;
-    border-style: solid;
-    border-color: $column-outline-color;
-    background-color: $white;
 
     button {
       &:first-child {

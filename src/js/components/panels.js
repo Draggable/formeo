@@ -104,13 +104,6 @@ export default class Panels {
 
     return helpers.forEach(groups, function(index, group) {
       if (group.isSortable) {
-        let onEnd = evt => {
-          _this.propertySave(evt.from);
-          if (evt.from !== evt.to) {
-            _this.propertySave(evt.to);
-          }
-          _this.resizePanels();
-        };
         group.fieldID = _this.opts.id;
         Sortable.create(group, {
           animation: 150,
@@ -120,8 +113,10 @@ export default class Panels {
           },
           sort: true,
           handle: '.prop-order',
-          onAdd: console.log,
-          onEnd
+          onSort: evt => {
+            _this.propertySave(evt.to);
+            _this.resizePanels();
+          }
         });
       }
     });
@@ -133,8 +128,9 @@ export default class Panels {
    * @return {Object}       DOM node for updated property preview
    */
   propertySave(group) {
-    data.save(group.editGroup, group);
-    return this.opts.updatePreview();
+    const field = dom.fields.get(this.opts.id);
+    data.save(group.editGroup, group, false);
+    return field.instance.updatePreview();
   }
 
   /**
