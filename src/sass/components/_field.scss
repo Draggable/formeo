@@ -47,6 +47,8 @@
   }
 
   &::before {
+    @extend %element-tag;
+
     display: none;
 
     // remove to animate field title

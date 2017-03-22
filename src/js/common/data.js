@@ -227,7 +227,10 @@ let data = {
 
   saveThrottle: false,
 
-  save: (group = 'stages', id) => {
+  save: (group = 'stages', id, disableThrottle = false) => {
+    if (disableThrottle) {
+      data.saveThrottle = disableThrottle;
+    }
     const doSave = function() {
       data.saveType(group, id);
       const storage = window.sessionStorage;

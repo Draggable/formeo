@@ -72,6 +72,9 @@
   display: flex;
 
   &::before {
+    @extend %element-tag;
+
+    border-bottom-right-radius: $border-radius;
     left: 0;
   }
 

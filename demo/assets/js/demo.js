@@ -13,8 +13,8 @@ let formeoOpts = {
   controls: {
     sortable: false,
     groupOrder: [
-    'common',
-    'html',
+      'common',
+      'html',
     ],
     elements: [
       {

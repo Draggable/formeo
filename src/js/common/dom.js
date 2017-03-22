@@ -107,7 +107,8 @@ class DOM {
 
     // Append Element Content
     if (elem.options) {
-      let options = this.processOptions(elem);
+      let {options} = elem;
+      options = this.processOptions(options, elem);
       if (this.holdsContent(element) && tag !== 'button') {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
@@ -117,6 +118,10 @@ class DOM {
           wrap.content.push(_this.create(options[i], isPreview));
         });
 
+        if (tag === 'button') {
+          wrap.className = elem.attrs.className;
+        }
+
         return this.create(wrap, isPreview);
       }
 
@@ -125,8 +130,8 @@ class DOM {
 
     // check for root className property
     if (elem.className) {
-      elem.attrs = Object.assign({}, elem.attrs, {className: elem.className});
-      elem.attrs.className = elem.className;
+      let {className} = elem;
+      elem.attrs = Object.assign({}, elem.attrs, {className});
       delete elem.className;
     }
 
@@ -274,6 +279,7 @@ class DOM {
         attrs.name = uuid(elem);
       }
     }
+
     // Set element attributes
     for (let attr in attrs) {
       if (attrs.hasOwnProperty(attr)) {
@@ -282,10 +288,17 @@ class DOM {
           let value = attrs[attr] || '';
 
           if (Array.isArray(value)) {
-            value = value.join(' ');
+            if (typeof value[0] === 'object') {
+              let selected = value.filter(t => (t.selected === true));
+              value = selected.length ? selected[0].value : value[0].value;
+            } else {
+              value = value.join(' ');
+            }
           }
 
-          element.setAttribute(name, value);
+          if (value) {
+            element.setAttribute(name, value);
+          }
         }
       }
     }
@@ -293,12 +306,12 @@ class DOM {
 
   /**
    * Extend Array of option config objects
+   * @param  {Array} options
    * @param  {Object} elem element config object
    * @return {Array} option config objects
    */
-  processOptions(elem) {
-    let fieldType = h.get(elem, 'attrs.type') || 'select';
-
+  processOptions(options, elem) {
+    let fieldType = h.get(elem, 'attrs.type') || elem.tag;
     let optionMap = (option, i) => {
       let defaultInput = {
         tag: 'input',
@@ -325,17 +338,21 @@ class DOM {
           attrs: option,
           content: option.label
         },
-        button: Object.assign({}, elem, {options: undefined}),
+        button: Object.assign({}, elem, {
+          className: option.className,
+          id: uuid(),
+          options: undefined,
+          content: option.label
+        }),
         checkbox: defaultInput,
         radio: defaultInput
       };
 
-      // delete optionMarkup[fieldType].attrs.label;
-
       return optionMarkup[fieldType];
     };
 
-    return elem.options.map(optionMap);
+
+    return options.map(optionMap);
   }
 
   /**
@@ -498,7 +515,7 @@ class DOM {
         content: [moveIcon, icon('handle')],
         attrs: {
           className: item + '-handle btn-secondary btn',
-          'type': 'button'
+          type: 'button'
         }
       };
       let editToggle = {
@@ -506,7 +523,7 @@ class DOM {
         content: icon('edit'),
         attrs: {
           className: item + '-edit-toggle btn-secondary btn',
-          'type': 'button'
+          type: 'button'
         },
         action: {
           click: evt => {
