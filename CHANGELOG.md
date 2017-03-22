@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.6.0 - Add buttons, column style update [#59](http://github.com/draggable/formeo/pulls/59)
 - v0.5.1 - Remove console
 - v0.5.0 - Numerous visual and functional fixes. [#57](http://github.com/draggable/formeo/pulls/57)
 - v0.4.4 - bug where element is removed from row onAdd [#55](http://github.com/draggable/formeo/pulls/55)
