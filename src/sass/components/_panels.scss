@@ -11,9 +11,8 @@
   nav {
     position: relative;
     margin-bottom: 1px;
-    padding: 0 24px;
+    padding: 0;
     overflow: hidden;
-    height: 38px;
 
     .btn {
       position: absolute;
@@ -63,6 +62,8 @@
     vertical-align: top;
     display: inline-block;
     width: 100%;
+    flex-direction: column;
+    flex: 1 0 100%;
 
     > li {
       &:last-child {
@@ -80,6 +81,8 @@
     transition-property: transform, height;
     transition-duration: 150ms;
     transition-timing-function: ease-in-out;
+    will-change: transform;
+    flex-direction: row;
   }
 
   .panel-labels {
@@ -90,7 +93,52 @@
 
     div {
       transition: transform 150ms ease-in-out;
+      will-change: transform;
       white-space: nowrap;
+    }
+  }
+}
+
+.tabbed-panels {
+  .panel-nav {
+    height: auto;
+
+    .btn {
+      display: none;
+    }
+  }
+
+  .panels {
+    transition: none;
+  }
+
+  .f-panel {
+    background-color: $white;
+    height: 100%;
+  }
+
+  .panel-labels {
+    div {
+      flex-direction: row;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      align-content: stretch;
+      align-items: stretch;
+      display: flex;
+    }
+
+    h5 {
+      flex-direction: column;
+      flex: 1;
+      cursor: pointer;
+      background-color: $gray-lighter;
+      box-shadow: 0 -1px 6px $gray-light inset;
+
+      &.active-tab {
+        color: $black;
+        box-shadow: none;
+        background-color: $white;
+      }
     }
   }
 }

@@ -5,6 +5,7 @@
   max-width: none;
   flex-direction: column;
   flex: auto;
+  will-change: width;
 
   &[class*='col-'] {
     padding: 0;

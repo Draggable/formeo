@@ -441,6 +441,7 @@ export class Controls {
           type: 'button'
         }
       };
+
     events.formeoSaved = new CustomEvent('formeoSaved', {
       detail: {
         formData: data.json

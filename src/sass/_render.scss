@@ -7,17 +7,18 @@
     flex-wrap: nowrap;
     align-content: stretch;
     align-items: stretch;
-    display:flex;
-    background-color:transparent;
+    display: flex;
+    background-color: transparent;
     border-radius: $border-radius;
     transition: background-color 200ms;
-    &.will-remove{
-      background-color:$remove-bg;
+
+    &.will-remove {
+      background-color: $remove-bg;
       box-shadow: 0 0 3px 1px $brand-danger inset;
     }
   }
 
-  .f-input-group-wrap{
+  .f-input-group-wrap {
     @include clearfix;
   }
 
@@ -31,9 +32,9 @@
     }
   }
 
-  .add-input-group{
-    float:right;
-    margin-top:10px;
+  .add-input-group {
+    float: right;
+    margin-top: 10px;
   }
 
   .remove-input-group {
@@ -46,7 +47,7 @@
     border: 0 none;
     background: transparent;
     outline: 0 none;
-    line-height:0;
+    line-height: 0;
 
     &:hover {
       .svg-icon {
@@ -57,6 +58,10 @@
     .svg-icon {
       pointer-events: none;
     }
+  }
+
+  .form-check-input:only-child {
+    position: absolute;
   }
 
   .svg-icon {

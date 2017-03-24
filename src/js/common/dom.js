@@ -1,4 +1,5 @@
 import h from './helpers';
+import events from './events';
 import Row from '../components/row';
 import Column from '../components/column';
 import Field from '../components/field';
@@ -419,7 +420,6 @@ class DOM {
     if (fMap) {
       // for attribute will prevent label focus
       delete fieldLabel.attrs.for;
-
       fieldLabel.attrs.contenteditable = true;
       // fieldLabel.action.click = function(e) {
       //   if (e.target.contentEditable === 'true') {
@@ -715,16 +715,18 @@ class DOM {
       column.style.float = 'left';
       columnData.config.width = colWidth;
       column.dataset.colWidth = colWidth;
+      document.dispatchEvent(events.columnResized);
     });
 
     setTimeout(() => {
       fields.forEach(fieldID => {
-        let field = dom.fields.get(fieldID).instance;
-        if (field.panels) {
-          field.panels.nav.refresh();
+        let field = dom.fields.get(fieldID);
+        if (field.instance.panels) {
+          field.instance.panels.actions.resize();
+          field.instance.panels.nav.refresh();
         }
       });
-    }, 100);
+    }, 250);
 
     // Fix the editWindow for any fields that were being edited
     let editingFields = row.getElementsByClassName('editing-field');

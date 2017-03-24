@@ -617,7 +617,7 @@ export default class Field {
     });
 
     let panelsConfig = {
-      panels: panels,
+      panels,
       id: _this.fieldID
     };
 

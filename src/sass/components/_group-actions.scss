@@ -81,6 +81,7 @@
   border-bottom-left-radius: $border-radius;
   border-bottom-right-radius: 0;
   padding-right: 2px;
+  will-change: width;
 
   button {
     border-radius: 0;
