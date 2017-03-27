@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.6.1 - Tabbed edit panel, style updates, bugfixes [#60](http://github.com/draggable/formeo/pulls/60)
 - v0.6.0 - Add buttons, column style update [#59](http://github.com/draggable/formeo/pulls/59)
 - v0.5.1 - Remove console
 - v0.5.0 - Numerous visual and functional fixes. [#57](http://github.com/draggable/formeo/pulls/57)
