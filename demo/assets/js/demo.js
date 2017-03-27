@@ -21,7 +21,7 @@ let formeoOpts = {
         tag: 'input',
         attrs: {
           type: 'file',
-          className: 'form-control'
+          className: 'form-control-file'
         },
         config: {
           label: 'File Upload'

@@ -3728,7 +3728,8 @@ button[class*='-remove']:hover .svg-icon {
   transition: width .15s;
   border-bottom-left-radius: 0.25rem;
   border-bottom-right-radius: 0;
-  padding-right: 2px; }
+  padding-right: 2px;
+  will-change: width; }
   .formeo.formeo-editor .field-actions button {
     border-radius: 0;
     position: absolute; }
@@ -3915,7 +3916,8 @@ button[class*='-remove']:hover .svg-icon {
   -ms-flex-direction: column;
       flex-direction: column;
   -ms-flex: auto;
-      flex: auto; }
+      flex: auto;
+  will-change: width; }
   .formeo.formeo-editor .stage-columns[class*='col-'] {
     padding: 0; }
   .formeo.formeo-editor .stage-columns:first-of-type {
@@ -4025,8 +4027,7 @@ button[class*='-remove']:hover .svg-icon {
   .formeo.formeo-editor .stage-fields .radio [contenteditable] {
     margin-left: 1.25em;
     padding: 0; }
-  .formeo.formeo-editor .stage-fields .checkbox .form-check-input:only-child,
-  .formeo.formeo-editor .stage-fields .radio .form-check-input:only-child {
+  .formeo.formeo-editor .stage-fields .form-check-input:only-child {
     position: absolute; }
   .formeo.formeo-editor .stage-fields::before {
     display: none;
@@ -4059,11 +4060,9 @@ button[class*='-remove']:hover .svg-icon {
   .formeo.formeo-editor .field-edit label {
     font-size: .85em; }
   .formeo.formeo-editor .field-edit .panel-nav {
-    position: relative;
-    margin-bottom: 1px;
+    margin-bottom: 0;
     padding: 0;
-    overflow: hidden;
-    height: 38px; }
+    overflow: hidden; }
   .formeo.formeo-editor .field-edit.field-edit-options {
     list-style: decimal; }
   .formeo.formeo-editor .field-edit .prop-controls {
@@ -4110,7 +4109,8 @@ button[class*='-remove']:hover .svg-icon {
     padding: 10px; }
   .formeo.formeo-editor .field-edit .prop-inputs,
   .formeo.formeo-editor .field-edit .prop-controls {
-    transition: width 150ms; }
+    transition: width 150ms;
+    will-change: width; }
   .formeo.formeo-editor .field-edit .prop-inputs {
     width: 100%; }
     .formeo.formeo-editor .field-edit .prop-inputs .form-group {
@@ -4168,9 +4168,8 @@ button[class*='-remove']:hover .svg-icon {
 .formeo.formeo-editor .panels-wrap nav {
   position: relative;
   margin-bottom: 1px;
-  padding: 0 24px;
-  overflow: hidden;
-  height: 38px; }
+  padding: 0;
+  overflow: hidden; }
   .formeo.formeo-editor .panels-wrap nav .btn {
     position: absolute;
     width: 24px;
@@ -4199,7 +4198,11 @@ button[class*='-remove']:hover .svg-icon {
 .formeo.formeo-editor .panels-wrap .f-panel {
   vertical-align: top;
   display: inline-block;
-  width: 100%; }
+  width: 100%;
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex: 1 0 100%;
+      flex: 1 0 100%; }
   .formeo.formeo-editor .panels-wrap .f-panel > li:last-child {
     border-radius: 0 0 5px 5px; }
 
@@ -4207,7 +4210,10 @@ button[class*='-remove']:hover .svg-icon {
   white-space: nowrap;
   transition-property: transform, height;
   transition-duration: 150ms;
-  transition-timing-function: ease-in-out; }
+  transition-timing-function: ease-in-out;
+  will-change: transform;
+  -ms-flex-direction: row;
+      flex-direction: row; }
 
 .formeo.formeo-editor .panels-wrap .panel-labels {
   height: 100%;
@@ -4216,7 +4222,47 @@ button[class*='-remove']:hover .svg-icon {
   text-align: center; }
   .formeo.formeo-editor .panels-wrap .panel-labels div {
     transition: transform 150ms ease-in-out;
+    will-change: transform;
     white-space: nowrap; }
+
+.formeo.formeo-editor .tabbed-panels .panel-nav {
+  height: auto; }
+  .formeo.formeo-editor .tabbed-panels .panel-nav .btn {
+    display: none; }
+
+.formeo.formeo-editor .tabbed-panels .panels {
+  transition: none; }
+
+.formeo.formeo-editor .tabbed-panels .f-panel {
+  background-color: #fff;
+  height: 100%; }
+
+.formeo.formeo-editor .tabbed-panels .panel-labels div {
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-pack: start;
+      justify-content: flex-start;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -ms-flex-line-pack: stretch;
+      align-content: stretch;
+  -ms-flex-align: stretch;
+      align-items: stretch;
+  display: -ms-flexbox;
+  display: flex; }
+
+.formeo.formeo-editor .tabbed-panels .panel-labels h5 {
+  -ms-flex-direction: column;
+      flex-direction: column;
+  -ms-flex: 1;
+      flex: 1;
+  cursor: pointer;
+  background-color: #bcbfc1;
+  box-shadow: 0 -1px 6px #878c90 inset; }
+  .formeo.formeo-editor .tabbed-panels .panel-labels h5.active-tab {
+    color: #000;
+    box-shadow: none;
+    background-color: #fff; }
 
 .formeo.formeo-editor .options-panel .prop-inputs .form-group {
   width: 33%;
@@ -4327,6 +4373,9 @@ button[class*='-remove']:hover .svg-icon {
     fill: #d9534f; }
   .formeo .formeo-render .remove-input-group .svg-icon {
     pointer-events: none; }
+
+.formeo .formeo-render .form-check-input:only-child {
+  position: absolute; }
 
 .formeo .formeo-render .svg-icon {
   max-width: 100%;

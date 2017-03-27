@@ -158,7 +158,7 @@ export default class Field {
 
   /**
    * Field panel contents, `attrs`, `options`, `config`
-   * @param  {Object} args [description]
+   * @param  {Object} args
    * @return {Object} DOM element
    */
   panelContent(args) {
@@ -604,7 +604,7 @@ export default class Field {
             //     }
 
             //     h.set(fieldData, evt.target.fMap, value);
-            //     data.save(prop, _this.fieldID);
+            //     data.save(panelType, _this.fieldID);
             //     // throttle this for sure
             //     _this.updatePreview();
             //   }
@@ -650,9 +650,9 @@ export default class Field {
     const togglePreviewEdit = evt => {
       if (evt.target.contentEditable === 'true') {
         let field = dom.fields.get(_this.fieldID).field;
-        let row = field.parentElement.parentElement;
+        let column = field.parentElement;
         let isActive = document.activeElement === evt.target;
-        row.classList.toggle('editing-field-preview', isActive);
+        column.classList.toggle('editing-field-preview', isActive);
       }
     };
 
@@ -667,6 +667,24 @@ export default class Field {
       action: {
         focus: togglePreviewEdit,
         blur: togglePreviewEdit,
+        change: evt => {
+          let {target} = evt;
+          if (target.fMap) {
+            let fieldData = formData.fields.get(_this.fieldID);
+            let {checked, type, fMap} = target;
+            if (h.inArray(type, ['checkbox', 'radio'])) {
+              let options = fieldData.options;
+
+              // uncheck options if radio
+              if (type === 'radio') {
+                options.forEach(option => option.selected = false);
+              }
+              h.set(fieldData, fMap, checked);
+
+              data.save();
+            }
+          }
+        },
         click: evt => {
           if (evt.target.contentEditable === 'true') {
             evt.preventDefault();

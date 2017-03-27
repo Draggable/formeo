@@ -4,14 +4,6 @@
   padding: 5px;
   transition: background-color 125ms ease-in-out;
 
-  &:hover {
-    // box-shadow: 0 0 0 1px $field-outline-color inset;
-
-    .group-actions {
-      display: block;
-    }
-  }
-
   &.first-field {
     border-top-right-radius: $border-radius;
     border-top-left-radius: $border-radius;
@@ -34,12 +26,8 @@
     }
   }
 
-  .checkbox,
-  .radio {
-    [contenteditable] {
-      margin-left: 1.25em;
-      padding: 0;
-    }
+  .form-check {
+    margin-left: 1.25em;
   }
 
   .form-check-input:only-child {
@@ -77,11 +65,11 @@
     background-color: $gray-lightest;
     z-index: 1;
   }
+}
 
-  &.editing-field-preview {
-    .field-actions {
-      display: none;
-    }
+.editing-field-preview {
+  .field-actions {
+    display: none;
   }
 }
 

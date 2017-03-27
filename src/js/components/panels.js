@@ -48,14 +48,15 @@ export default class Panels {
    */
   resizePanels() {
     let panelsWrap = this.panelsWrap;
-    let column = this.panelsWrap.parentElement.parentElement;
+    let column = panelsWrap.parentElement.parentElement;
     let width = parseInt(dom.getStyle(column, 'width'));
     let isTabbed = (width > 390);
     this.panelDisplay = isTabbed ? 'tabbed' : 'slider';
     panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed);
     let panelStyle = panelsWrap.style;
+    let activePanelHeight = dom.getStyle(this.currentPanel, 'height');
 
-    return panelStyle.height = dom.getStyle(this.currentPanel, 'height');
+    return panelStyle.height = activePanelHeight;
   }
 
   /**
@@ -85,19 +86,12 @@ export default class Panels {
    * @return {Object} DOM element
    */
   panelsWrap() {
-    let _this = this;
     this.panelsWrap = dom.create({
       tag: 'div',
       attrs: {
         className: 'panels'
       },
-      content: this.opts.panels,
-      action: {
-        resize: evt => {
-          console.log(evt);
-          _this.resizePanels();
-        }
-      }
+      content: this.opts.panels
     });
 
     this.panelsWrap = this.panelsWrap;
@@ -172,12 +166,12 @@ export default class Panels {
         tag: 'h5',
         action: {
           click: evt => {
-            let labels = evt.target.parentElement.childNodes;
             let index = h.indexOfNode(evt.target, evt.target.parentElement);
+            _this.currentPanel = _this.panels[index];
+            let labels = evt.target.parentElement.childNodes;
+            _this.nav.refresh(index);
             dom.removeClasses(labels, 'active-tab');
             evt.target.classList.add('active-tab');
-            _this.currentPanel = _this.panels[index];
-            _this.nav.refresh(index);
           }
         },
         content: panels[i].config.label
@@ -253,11 +247,14 @@ export default class Panels {
       if (this.opts.type === 'field') {
         this.slideToggle.style.height = 'auto';
       }
+      return this.currentPanel;
     };
 
     const translateX = offset => {
       if (_this.panelDisplay !== 'tabbed') {
         firstControlNav.style.transform = `translateX(-${offset.nav}px)`;
+      } else {
+        firstControlNav.removeAttribute('style');
       }
       groupParent.style.transform = `translateX(-${offset.panel}px)`;
     };
@@ -265,7 +262,9 @@ export default class Panels {
     action.refresh = newIndex => {
       if (newIndex !== undefined) {
         index = newIndex;
+        groupChange(newIndex);
       }
+      _this.resizePanels();
       offset = {
         nav: firstControlNav.offsetWidth * index,
         panel: groupParent.offsetWidth * index

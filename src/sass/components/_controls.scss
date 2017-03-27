@@ -13,7 +13,7 @@
     background-color: $white;
     text-align: center;
     border-radius: $btn-border-radius $btn-border-radius 0 0;
-    border: 1px solid #d6d8da;
+    border: 1px solid $gray-lighter;
     border-bottom: 0 none;
     height: 21px;
     width: calc(100% - 2px);
@@ -69,6 +69,7 @@
 
   .panel-labels {
     border-top: 1px solid $gray-lighter;
+    border-radius: $border-radius;
   }
 
   .panel-count-1 {

@@ -5,7 +5,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {uuid, clone, numToPercent} from './utils';
+import {uuid, clone, numToPercent, remove} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -109,17 +109,17 @@ class DOM {
     // Append Element Content
     if (elem.options) {
       let {options} = elem;
-      options = this.processOptions(options, elem);
+      options = this.processOptions(options, elem, isPreview);
       if (this.holdsContent(element) && tag !== 'button') {
         // mainly used for <select> tag
         appendContent.array.call(this, options);
         delete elem.content;
       } else {
-        h.forEach(options, (i) => {
+        h.forEach(options, i => {
           wrap.content.push(_this.create(options[i], isPreview));
         });
 
-        if (tag === 'button') {
+        if (elem.attrs.className) {
           wrap.className = elem.attrs.className;
         }
 
@@ -153,24 +153,19 @@ class DOM {
           label = _this.label(elem);
         }
 
-        // if (!elem.config.noWrap) {
-          if (!elem.config.hideLabel) {
-            if (labelAfter(elem)) {
-              label.classList.add('form-check-label');
-              wrap.className = elem.attrs.type;
-              element.classList.add('form-check-input');
-              label.insertBefore(element, label.firstChild);
-              wrap.content.push(label);
-            } else {
-              wrap.content.push(label, element);
-            }
-          } else if (editablePreview) {
-            element.contentEditable = true;
+        if (!elem.config.hideLabel) {
+          if (labelAfter(elem)) {
+            label.classList.add('form-check-label');
+            wrap.className = elem.attrs.type;
+            element.classList.add('form-check-input');
+            label.insertBefore(element, label.firstChild);
+            wrap.content.push(label);
+          } else {
+            wrap.content.push(label, element);
           }
-          // } else {
-            // element.contentEditable = true;
-          // }
-        // }
+        } else if (editablePreview) {
+          element.contentEditable = true;
+        }
       } else if (editablePreview) {
         element.contentEditable = true;
       }
@@ -309,47 +304,84 @@ class DOM {
    * Extend Array of option config objects
    * @param  {Array} options
    * @param  {Object} elem element config object
+   * @param  {Boolean} isPreview
    * @return {Array} option config objects
    */
-  processOptions(options, elem) {
+  processOptions(options, elem, isPreview) {
     let fieldType = h.get(elem, 'attrs.type') || elem.tag;
     let optionMap = (option, i) => {
-      let defaultInput = {
-        tag: 'input',
-        attrs: {
-          name: elem.id,
-          id: null,
-          type: fieldType,
-          value: option.value || ''
-        },
-        config: {
-          inputWrap: fieldType,
-          label: option.label
-        },
-        fMap: `options[${i}].selected`
+      const defaultInput = () => {
+        let input = {
+          tag: 'input',
+          attrs: {
+            id: elem.id,
+            type: fieldType,
+            value: option.value || '',
+            className: 'form-check-input'
+          },
+        };
+        let optionLabel = {
+          tag: 'label',
+          attrs: {},
+          config: {
+            inputWrap: 'form-check'
+          },
+          className: 'form-check-label',
+          content: [this.parsedHtml(option.label)]
+        };
+        let inputWrap = {
+          tag: 'div',
+          className: ['form-check'],
+          content: [optionLabel]
+        };
+
+        if (elem.attrs.className) {
+          elem.config.inputWrap = elem.attrs.className;
+        }
+
+        if (elem.config.inline) {
+          inputWrap.className.push('form-check-inline');
+        }
+
+        if (!isPreview) {
+          input.attrs.name = elem.id;
+          optionLabel.content.unshift(input);
+        } else {
+          input.fMap = `options[${i}].selected`;
+          optionLabel.attrs.contenteditable = true;
+          optionLabel.fMap = `options[${i}].label`;
+          inputWrap.content.unshift(input);
+        }
+
+        if (option.selected) {
+          input.attrs.checked = true;
+        }
+
+
+        return inputWrap;
       };
 
-      if (option.selected) {
-        defaultInput.attrs.checked = true;
-      }
-
       let optionMarkup = {
-        select: {
-          tag: 'option',
-          attrs: option,
-          content: option.label
+        select: () => {
+          return {
+            tag: 'option',
+            attrs: option,
+            content: option.label
+          };
         },
-        button: Object.assign({}, elem, {
-          className: option.className,
-          id: uuid(),
-          options: undefined,
-          content: option.label
-        }),
+        button: () => {
+          return Object.assign({}, elem, {
+            className: option.className,
+            id: uuid(),
+            options: undefined,
+            content: option.label
+          });
+        },
         checkbox: defaultInput,
         radio: defaultInput
       };
 
-      return optionMarkup[fieldType];
+      return optionMarkup[fieldType]();
     };
 
 
@@ -421,11 +453,6 @@ class DOM {
       // for attribute will prevent label focus
       delete fieldLabel.attrs.for;
       fieldLabel.attrs.contenteditable = true;
-      // fieldLabel.action.click = function(e) {
-      //   if (e.target.contentEditable === 'true') {
-      //     e.preventDefault();
-      //   }
-      // };
       fieldLabel.fMap = fMap;
     }
 
@@ -587,6 +614,7 @@ class DOM {
   /**
    * Remove elements without f children
    * @param  {Object} element DOM element
+   * @return {Object} formData
    */
   removeEmpty(element) {
     let _this = this;
@@ -597,26 +625,32 @@ class DOM {
     children = parent.getElementsByClassName('stage-' + type);
     if (!children.length) {
       if (parent.fType !== 'stages') {
-        _this.removeEmpty(parent);
+        return _this.removeEmpty(parent);
       } else {
         this.emptyClass(parent);
       }
     }
-    data.save();
+    if (type === 'columns') {
+      _this.columnWidths(parent);
+    }
+    return data.save();
     // document.dispatchEvent(events.formeoUpdated);
   }
 
   /**
-   * Removes element by reference or ID
-   * @param  {String|Object} elem
+   * Removes element from DOM and data
+   * @param  {Object} elem
    * @return  {Object} parent element
    */
   remove(elem) {
-    let fType = elem.fType;
+    let {fType, id} = elem;
     if (fType) {
-      data.empty(fType, elem.id);
-      this[fType].delete(elem.id);
-      formData[fType].delete(elem.id);
+      let parent = elem.parentElement;
+      let pData = formData[parent.fType].get(parent.id);
+      data.empty(fType, id);
+      this[fType].delete(id);
+      formData[fType].delete(id);
+      remove(pData[fType], id);
     }
     return elem.parentElement.removeChild(elem);
   }
@@ -722,19 +756,10 @@ class DOM {
       fields.forEach(fieldID => {
         let field = dom.fields.get(fieldID);
         if (field.instance.panels) {
-          field.instance.panels.actions.resize();
           field.instance.panels.nav.refresh();
         }
       });
     }, 250);
-
-    // Fix the editWindow for any fields that were being edited
-    let editingFields = row.getElementsByClassName('editing-field');
-    if (editingFields.length) {
-      for (let i = editingFields.length - 1; i >= 0; i--) {
-        editingFields[i].panelNav.refresh();
-      }
-    }
 
     dom.updateColumnPreset(row);
 

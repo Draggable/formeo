@@ -272,10 +272,6 @@ let data = {
     return jsData;
   },
 
-  prepJSON: jsData => {
-    console.log(jsData);
-  },
-
   /**
    * getter method for JSON formData
    * @return {JSON} formData
