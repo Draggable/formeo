@@ -1,6 +1,6 @@
 import i18n from 'mi18n';
 import Sortable from 'sortablejs';
-import helpers from '../common/helpers';
+import h from '../common/helpers';
 import dom from '../common/dom';
 import {data} from '../common/data';
 
@@ -31,6 +31,8 @@ export default class Panels {
       setTimeout(_this.setPanelsHeight.bind(_this), 10);
     }
 
+    _this.panelDisplay = 'slider';
+
     return {
       content: [_this.labels, panels],
       nav: _this.nav,
@@ -45,8 +47,16 @@ export default class Panels {
    * @return {String} panel's height in pixels
    */
   resizePanels() {
-    let panelStyle = this.panelsWrap.style;
-    return panelStyle.height = dom.getStyle(this.currentPanel, 'height');
+    let panelsWrap = this.panelsWrap;
+    let column = panelsWrap.parentElement.parentElement;
+    let width = parseInt(dom.getStyle(column, 'width'));
+    let isTabbed = (width > 390);
+    this.panelDisplay = isTabbed ? 'tabbed' : 'slider';
+    panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed);
+    let panelStyle = panelsWrap.style;
+    let activePanelHeight = dom.getStyle(this.currentPanel, 'height');
+
+    return panelStyle.height = activePanelHeight;
   }
 
   /**
@@ -102,7 +112,7 @@ export default class Panels {
     let _this = this;
     let groups = panels.getElementsByClassName('field-edit-group');
 
-    return helpers.forEach(groups, function(index, group) {
+    return h.forEach(groups, function(index, group) {
       if (group.isSortable) {
         group.fieldID = _this.opts.id;
         Sortable.create(group, {
@@ -138,7 +148,8 @@ export default class Panels {
    * @return {Object} DOM object for panel navigation wrapper
    */
   panelNav() {
-    let panelNavUL = {
+    let _this = this;
+    let panelNavLabels = {
         tag: 'div',
         attrs: {
           className: 'panel-labels'
@@ -148,28 +159,30 @@ export default class Panels {
           content: []
         }
       };
-    let panels = this.opts.panels.slice(); // make new array
+    let panels = this.opts.panels; // make new array
 
     for (let i = 0; i < panels.length; i++) {
-      let group = {
-        tag: 'h5'
+      let panelLabel = {
+        tag: 'h5',
+        action: {
+          click: evt => {
+            let index = h.indexOfNode(evt.target, evt.target.parentElement);
+            _this.currentPanel = _this.panels[index];
+            let labels = evt.target.parentElement.childNodes;
+            _this.nav.refresh(index);
+            dom.removeClasses(labels, 'active-tab');
+            evt.target.classList.add('active-tab');
+          }
+        },
+        content: panels[i].config.label
       };
+      delete panels[i].config.label;
 
-      if (panels[i].config) {
-        if (panels[i].config.label) {
-          group.content = panels[i].config.label;
-          delete panels[i].config;
-        }
+      if (i === 0) {
+        panelLabel.className = 'active-tab';
       }
 
-      if (panels[i].label) {
-        if (panels[i].label) {
-          group.content = panels[i].label;
-          delete panels[i].label;
-        }
-      }
-
-      panelNavUL.content.content.push(group);
+      panelNavLabels.content.content.push(panelLabel);
     }
 
     let next = {
@@ -210,7 +223,7 @@ export default class Panels {
       attrs: {
         className: 'panel-nav'
       },
-      content: [prev, panelNavUL, next]
+      content: [prev, panelNavLabels, next]
     });
   }
 
@@ -220,11 +233,12 @@ export default class Panels {
    * @return {Object} actions that control panel groups
    */
   navActions() {
+    let _this = this;
     let action = {};
     let groupParent = this.currentPanel.parentElement;
     let firstControlNav = this.labels.querySelector('.panel-labels').firstChild;
-    let siblingGroups = this.currentPanel.parentElement.children;
-    let index = Array.prototype.indexOf.call(siblingGroups, this.currentPanel);
+    let siblingGroups = this.currentPanel.parentElement.childNodes;
+    let index = h.indexOfNode(this.currentPanel, groupParent);
     let offset = {};
 
     const groupChange = newIndex => {
@@ -233,14 +247,24 @@ export default class Panels {
       if (this.opts.type === 'field') {
         this.slideToggle.style.height = 'auto';
       }
+      return this.currentPanel;
     };
 
     const translateX = offset => {
-      firstControlNav.style.transform = `translateX(-${offset.nav}px)`;
+      if (_this.panelDisplay !== 'tabbed') {
+        firstControlNav.style.transform = `translateX(-${offset.nav}px)`;
+      } else {
+        firstControlNav.removeAttribute('style');
+      }
       groupParent.style.transform = `translateX(-${offset.panel}px)`;
     };
 
-    action.refresh = () => {
+    action.refresh = newIndex => {
+      if (newIndex !== undefined) {
+        index = newIndex;
+        groupChange(newIndex);
+      }
+      _this.resizePanels();
       offset = {
         nav: firstControlNav.offsetWidth * index,
         panel: groupParent.offsetWidth * index

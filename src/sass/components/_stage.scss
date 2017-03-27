@@ -54,28 +54,6 @@
     }
   }
 
-  [class*='empty-'] {
-    &[class*='editing-'] {
-      &::after {
-        opacity: 0;
-      }
-    }
-
-    &::after {
-      opacity: 1;
-      font-size: 24px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      color: $gray-light;
-
-      // color: $black;
-      text-align: center;
-      transform: translate(-50%, -50%);
-      content: attr(data-hover-tag);
-    }
-  }
-
   &.editing-stage {
     .formeo-settings {
       display: block;
@@ -92,6 +70,30 @@
 
   .form-group {
     margin-bottom: 0;
+  }
+}
+
+[class*='empty-'] {
+  &[class*='editing-'] {
+    &::after {
+      opacity: 0;
+    }
+  }
+
+  &::after {
+    opacity: 1;
+    font-size: 24px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: $gray-light;
+    transition: opacity 200ms ease-in-out;
+    will-change: opacity;
+
+    // color: $black;
+    text-align: center;
+    transform: translate(-50%, -50%);
+    content: attr(data-hover-tag);
   }
 }
 

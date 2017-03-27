@@ -63,8 +63,7 @@ export default class Row {
       onEnd: _this.onEnd,
       onAdd: _this.onAdd,
       onSort: _this.onSort,
-      draggable: '.stage-columns',
-      handle: '.column-handle'
+      draggable: '.stage-columns'
     });
 
     return row;
@@ -201,6 +200,7 @@ export default class Row {
    */
   onRemove(evt) {
     dom.columnWidths(evt.from);
+    data.saveColumnOrder(evt.target);
     dom.emptyClass(evt.from);
   }
 

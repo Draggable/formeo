@@ -2,6 +2,7 @@ import i18n from 'mi18n';
 import Sortable from 'sortablejs';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
+import events from '../common/events';
 import dom from '../common/dom';
 import {uuid, numToPercent} from '../common/utils';
 
@@ -66,6 +67,13 @@ export default class Column {
     this.processConfig(column);
     dom.columns.set(columnID, column);
 
+    events.columnResized = new CustomEvent('columnResized', {
+      detail: {
+        column,
+        instance: _this
+      }
+    });
+
     Sortable.create(column, {
       animation: 150,
       fallbackClass: 'field-moving',
@@ -94,8 +102,7 @@ export default class Column {
           evt.related.parentElement.classList.add('hovering-column');
         }
       },
-      draggable: '.stage-fields',
-      handle: '.field-handle'
+      draggable: '.stage-fields'
     });
 
     return column;

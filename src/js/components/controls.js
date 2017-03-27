@@ -172,11 +172,12 @@ export class Controls {
         tag: 'input',
         attrs: {
           type: 'checkbox',
-          className: 'form-control'
+          required: false
         },
         config: {
           label: i18n.get('checkbox') + '/' + i18n.get('group'),
-          required: true
+          required: true,
+          disabledAttrs: ['type']
         },
         meta: {
           group: 'common',
@@ -198,7 +199,8 @@ export class Controls {
           required: false
         },
         config: {
-          label: i18n.get('radioGroup')
+          label: i18n.get('radioGroup'),
+          disabledAttrs: ['type']
         },
         meta: {
           group: 'common',
@@ -441,6 +443,7 @@ export class Controls {
           type: 'button'
         }
       };
+
     events.formeoSaved = new CustomEvent('formeoSaved', {
       detail: {
         formData: data.json
