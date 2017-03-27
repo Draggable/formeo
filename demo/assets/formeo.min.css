@@ -3530,7 +3530,7 @@ button[class*='-remove']:hover .svg-icon {
     background-color: #fff;
     text-align: center;
     border-radius: 0.25rem 0.25rem 0 0;
-    border: 1px solid #d6d8da;
+    border: 1px solid #bcbfc1;
     border-bottom: 0 none;
     height: 21px;
     width: calc(100% - 2px); }
@@ -3569,7 +3569,8 @@ button[class*='-remove']:hover .svg-icon {
     font-size: .85em;
     line-height: 1.8em; }
   .formeo.formeo-editor .formeo-controls .panel-labels {
-    border-top: 1px solid #bcbfc1; }
+    border-top: 1px solid #bcbfc1;
+    border-radius: 0.25rem; }
   .formeo.formeo-editor .formeo-controls .panel-count-1 {
     border-bottom-left-radius: 0; }
     .formeo.formeo-editor .formeo-controls .panel-count-1 .panel-nav {
@@ -3842,7 +3843,8 @@ button[class*='-remove']:hover .svg-icon {
   -ms-flex-line-pack: stretch;
       align-content: stretch;
   -ms-flex-align: stretch;
-      align-items: stretch; }
+      align-items: stretch;
+  min-height: 34px; }
   .formeo.formeo-editor .stage-rows:after,
   .formeo.formeo-editor .field-control:after {
     content: '';
@@ -3899,6 +3901,9 @@ button[class*='-remove']:hover .svg-icon {
       border-bottom: 1px solid #325d88;
       border-right: 1px solid #325d88;
       width: 80px !important; }
+  .formeo.formeo-editor .stage-rows.empty-rows::after {
+    left: 0;
+    transform: translate(10px, -50%); }
   .formeo.formeo-editor .stage-rows .layout-row-control {
     display: none; }
 
@@ -3952,6 +3957,8 @@ button[class*='-remove']:hover .svg-icon {
     border-top-left-radius: 0; }
   .formeo.formeo-editor .stage-columns.hovering-column .stage-fields {
     opacity: 0.5; }
+  .formeo.formeo-editor .stage-columns.hovering-column::after {
+    opacity: 0; }
   .formeo.formeo-editor .stage-columns.editing-column, .formeo.formeo-editor .stage-columns.hovering-column {
     box-shadow: 0 0 0 1px #29abe0 inset; }
     .formeo.formeo-editor .stage-columns.editing-column::before, .formeo.formeo-editor .stage-columns.hovering-column::before {
@@ -3965,26 +3972,24 @@ button[class*='-remove']:hover .svg-icon {
     overflow: hidden; }
     .formeo.formeo-editor .stage-columns.editing-column .column-edit {
       display: block; }
-  .formeo.formeo-editor .stage-columns.empty-columns::after {
-    margin-top: 11px; }
 
-.formeo.formeo-editor .stage-wrap .editing-row .stage-columns,
-.formeo.formeo-editor .stage-wrap .editing-row .empty-columns {
+.formeo.formeo-editor .editing-row .stage-columns,
+.formeo.formeo-editor .editing-row .empty-columns {
   display: table-cell;
   border-radius: 5px;
   height: 60px;
   background-color: #bcbfc1; }
-  .formeo.formeo-editor .stage-wrap .editing-row .stage-columns.empty-columns,
-  .formeo.formeo-editor .stage-wrap .editing-row .empty-columns.empty-columns {
+  .formeo.formeo-editor .editing-row .stage-columns.empty-columns,
+  .formeo.formeo-editor .editing-row .empty-columns.empty-columns {
     min-height: 0; }
-  .formeo.formeo-editor .stage-wrap .editing-row .stage-columns .stage-fields,
-  .formeo.formeo-editor .stage-wrap .editing-row .empty-columns .stage-fields {
+  .formeo.formeo-editor .editing-row .stage-columns .stage-fields,
+  .formeo.formeo-editor .editing-row .empty-columns .stage-fields {
     display: none; }
-  .formeo.formeo-editor .stage-wrap .editing-row .stage-columns .resize-x-handle,
-  .formeo.formeo-editor .stage-wrap .editing-row .empty-columns .resize-x-handle {
+  .formeo.formeo-editor .editing-row .stage-columns .resize-x-handle,
+  .formeo.formeo-editor .editing-row .empty-columns .resize-x-handle {
     display: block; }
-  .formeo.formeo-editor .stage-wrap .editing-row .stage-columns::after,
-  .formeo.formeo-editor .stage-wrap .editing-row .empty-columns::after {
+  .formeo.formeo-editor .editing-row .stage-columns::after,
+  .formeo.formeo-editor .editing-row .empty-columns::after {
     color: #373a3c !important;
     line-height: 1em;
     opacity: 1;
@@ -4007,8 +4012,6 @@ button[class*='-remove']:hover .svg-icon {
   position: relative;
   padding: 5px;
   transition: background-color 125ms ease-in-out; }
-  .formeo.formeo-editor .stage-fields:hover .group-actions {
-    display: block; }
   .formeo.formeo-editor .stage-fields.first-field {
     border-top-right-radius: 0.25rem;
     border-top-left-radius: 0.25rem; }
@@ -4023,10 +4026,8 @@ button[class*='-remove']:hover .svg-icon {
       border: 1px solid #66afe9;
       outline: none;
       padding: 0; }
-  .formeo.formeo-editor .stage-fields .checkbox [contenteditable],
-  .formeo.formeo-editor .stage-fields .radio [contenteditable] {
-    margin-left: 1.25em;
-    padding: 0; }
+  .formeo.formeo-editor .stage-fields .form-check {
+    margin-left: 1.25em; }
   .formeo.formeo-editor .stage-fields .form-check-input:only-child {
     position: absolute; }
   .formeo.formeo-editor .stage-fields::before {
@@ -4048,8 +4049,9 @@ button[class*='-remove']:hover .svg-icon {
   .formeo.formeo-editor .stage-fields.editing-field {
     background-color: #f1f2f2;
     z-index: 1; }
-  .formeo.formeo-editor .stage-fields.editing-field-preview .field-actions {
-    display: none; }
+
+.formeo.formeo-editor .editing-field-preview .field-actions {
+  display: none; }
 
 .formeo.formeo-editor .field-preview p {
   white-space: normal; }
@@ -4234,8 +4236,7 @@ button[class*='-remove']:hover .svg-icon {
   transition: none; }
 
 .formeo.formeo-editor .tabbed-panels .f-panel {
-  background-color: #fff;
-  height: 100%; }
+  background-color: #fff; }
 
 .formeo.formeo-editor .tabbed-panels .panel-labels div {
   -ms-flex-direction: row;
@@ -4297,24 +4298,28 @@ button[class*='-remove']:hover .svg-icon {
     margin-bottom: 5px; }
     .formeo.formeo-editor .stage-wrap .field-control.sortable-ghost {
       opacity: 1; }
-  .formeo.formeo-editor .stage-wrap [class*='empty-'][class*='editing-']::after {
-    opacity: 0; }
-  .formeo.formeo-editor .stage-wrap [class*='empty-']::after {
-    opacity: 1;
-    font-size: 24px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    color: #878c90;
-    text-align: center;
-    transform: translate(-50%, -50%);
-    content: attr(data-hover-tag); }
   .formeo.formeo-editor .stage-wrap.editing-stage .formeo-settings {
     display: block; }
   .formeo.formeo-editor .stage-wrap.editing-stage .stage {
     display: none; }
   .formeo.formeo-editor .stage-wrap .form-group {
     margin-bottom: 0; }
+
+.formeo.formeo-editor [class*='empty-'][class*='editing-']::after {
+  opacity: 0; }
+
+.formeo.formeo-editor [class*='empty-']::after {
+  opacity: 1;
+  font-size: 24px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #878c90;
+  transition: opacity 200ms ease-in-out;
+  will-change: opacity;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  content: attr(data-hover-tag); }
 
 .formeo.formeo-editor .formeo-settings {
   display: none; }

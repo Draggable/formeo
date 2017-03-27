@@ -102,8 +102,7 @@ export default class Column {
           evt.related.parentElement.classList.add('hovering-column');
         }
       },
-      draggable: '.stage-fields',
-      handle: '.field-handle'
+      draggable: '.stage-fields'
     });
 
     return column;

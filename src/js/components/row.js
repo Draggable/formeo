@@ -63,8 +63,7 @@ export default class Row {
       onEnd: _this.onEnd,
       onAdd: _this.onAdd,
       onSort: _this.onSort,
-      draggable: '.stage-columns',
-      handle: '.column-handle'
+      draggable: '.stage-columns'
     });
 
     return row;

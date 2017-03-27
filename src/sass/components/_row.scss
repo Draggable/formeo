@@ -13,6 +13,7 @@
   flex-wrap: nowrap;
   align-content: stretch;
   align-items: stretch;
+  min-height: 34px;
 
   &::after {
     clear: both;
@@ -94,6 +95,13 @@
       border-bottom: 1px solid $row-outline-color;
       border-right: 1px solid $row-outline-color;
       width: 80px !important;
+    }
+  }
+
+  &.empty-rows {
+    &::after {
+      left: 0;
+      transform: translate(10px, -50%);
     }
   }
 
