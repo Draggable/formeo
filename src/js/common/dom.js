@@ -916,14 +916,16 @@ class DOM {
         let colData = formData.columns.get(columnID);
         return colData.config.width.replace('%', '');
       }).join(',');
-      pMapVal.forEach((val, i) => {
-        let options = layoutPreset.options;
-        if (val.value === curVal) {
-          options[i].selected = true;
-        } else {
-          delete options[i].selected;
-        }
-      });
+      if (pMapVal) {
+        pMapVal.forEach((val, i) => {
+          let options = layoutPreset.options;
+          if (val.value === curVal) {
+            options[i].selected = true;
+          } else {
+            delete options[i].selected;
+          }
+        });
+      }
     } else {
       layoutPreset.options = pMap.get(1);
     }
