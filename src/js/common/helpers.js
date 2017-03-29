@@ -37,9 +37,19 @@ const reEscapeChar = /\\(\\)?/g;
 
 const stringToPath = function(string) {
   let result = [];
-  string.replace(rePropName, function(match, number, quote, string) {
-    result.push(quote ? string.replace(reEscapeChar, '$1') : (number || match));
-  });
+  if (Array.isArray(string)) {
+    result = string;
+  } else {
+    string.replace(rePropName, function(match, number, quote, string) {
+      let segment;
+      if (quote) {
+        segment = string.replace(reEscapeChar, '$1');
+      } else {
+        segment = (number || match);
+      }
+      result.push(segment);
+    });
+  }
   return result;
 };
 
@@ -116,7 +126,7 @@ const helpers = {
   // forEach that can be used on nodeList
   forEach: (array, callback, scope) => {
     for (let i = 0; i < array.length; i++) {
-      callback.call(scope, i, array[i]);
+      callback.call(scope, array[i], i);
     }
   },
   // Added because Object.assign is mutating objects.
@@ -128,7 +138,7 @@ const helpers = {
   // basic map that can be used on nodeList
   map: (arr, callback, scope) => {
     let newArray = [];
-    helpers.forEach(arr, i => newArray.push(callback(i)));
+    helpers.forEach(arr, (elem, i) => newArray.push(callback(i)));
 
     return newArray;
   },

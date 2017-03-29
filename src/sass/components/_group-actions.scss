@@ -14,10 +14,12 @@
     border: 0 none;
     line-height: 0;
     overflow: hidden;
+    background-color: $white;
 
     &:focus {
       border: 0 none;
       outline: 0 none;
+      box-shadow: none;
     }
   }
 
@@ -27,7 +29,7 @@
   }
 
   .icon-handle {
-    opacity: .5;
+    opacity: 0.5;
   }
 
   .last-field & {
@@ -55,9 +57,10 @@
   &.hovering-field,
   &.editing-field {
     .field-actions {
-      width: (3 * $field-btn-width) !important;
+      box-shadow: -1px 1px 1px $gray-lighter;
+      width: 3 * $field-btn-width;
       border-color: $field-outline-color;
-      border-width: 0 0 1px 1px;
+      border-width: 1px 1px 0 0;
       border-style: solid;
     }
   }
@@ -208,7 +211,7 @@
 .hovering-row,
 .editing-row {
   .row-actions {
-    height: 80px;
+    height: 3 * ($field-btn-width + 1);
 
     button {
       &:first-child {

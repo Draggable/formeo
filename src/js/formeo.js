@@ -1,6 +1,6 @@
 'use strict';
 import '../sass/formeo.scss';
-import helpers from './common/helpers';
+import h from './common/helpers';
 import {data, formData} from './common/data';
 import events from './common/events';
 import actions from './common/actions';
@@ -41,7 +41,11 @@ class Formeo {
       events: {},
       actions: {},
       controls: {},
-      settings: {},
+      config: {
+        rows: {},
+        columns: {},
+        fields: {}
+      },
       i18n: {
         langs: [
           'en-US'
@@ -195,7 +199,8 @@ class Formeo {
     // may be Element
     delete options.container;
 
-    opts = helpers.extend(defaults, options);
+    opts = h.extend(defaults, options);
+    dom.setConfig = opts.config;
 
     data.init(opts, userFormData);
     events.init(opts.events);
@@ -221,12 +226,12 @@ class Formeo {
     let promises = [];
 
     if (opts.style) {
-      promises.push(helpers.ajax(opts.style, helpers.insertStyle));
+      promises.push(h.ajax(opts.style, h.insertStyle));
     }
 
     // Ajax load svgSprite and inject into markup.
     if (opts.svgSprite) {
-      promises.push(helpers.ajax(opts.svgSprite, helpers.insertIcons));
+      promises.push(h.ajax(opts.svgSprite, h.insertIcons));
     }
 
     return window.Promise.all(promises);

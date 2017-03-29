@@ -21,7 +21,7 @@ export default class Field {
     let _this = this;
 
     let fieldData = formData.fields.get(dataID) || clone(rFields[dataID]);
-    _this.fieldID = fieldData.id || uuid();
+    _this.fieldID = dataID || fieldData.id || uuid();
     _this.metaID = fieldData.meta.id;
     fieldData.id = _this.fieldID;
 
@@ -141,10 +141,10 @@ export default class Field {
         panelArray = Object.keys(fieldData[panelType]);
       }
 
-      h.forEach(panelArray, (i) => {
+      h.forEach(panelArray, (dataProp, i) => {
         let args = {
           i,
-          dataProp: panelArray[i],
+          dataProp,
           fieldData,
           panelType,
           propType
@@ -572,7 +572,7 @@ export default class Field {
       className: ['field-edit', 'slide-toggle', 'panels-wrap']
     };
 
-    h.forEach(allowedPanels, function(i, panelType) {
+    h.forEach(allowedPanels, (panelType, i) => {
       let propType = dom.contentType(fieldData[panelType]);
       if (h.inArray(propType, editable)) {
         let panel = {

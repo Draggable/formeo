@@ -1,8 +1,12 @@
 .stage-fields {
-  min-height: 24px;
+  min-height: 26px;
   position: relative;
   padding: 5px;
   transition: background-color 125ms ease-in-out;
+
+  &.field-moving {
+    background-color: $white;
+  }
 
   &.first-field {
     border-top-right-radius: $border-radius;
@@ -64,6 +68,10 @@
   &.editing-field {
     background-color: $gray-lightest;
     z-index: 1;
+  }
+
+  &.field-type-hidden {
+    border: 1px dashed $gray-lighter;
   }
 }
 

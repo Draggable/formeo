@@ -81,8 +81,8 @@ export class Controls {
         tag: 'button',
         attrs: {
           className: [
+          {label: 'Grouped', value: 'btn-group'},
           {label: 'Un-Grouped', value: 'form-group'},
-          {label: 'Group', value: 'btn-group'},
           ]
         },
         config: {
@@ -444,12 +444,6 @@ export class Controls {
         }
       };
 
-    events.formeoSaved = new CustomEvent('formeoSaved', {
-      detail: {
-        formData: data.json
-      }
-    });
-
     let clearBtn = h.merge(btnTemplate, {
       content: [dom.icon('bin'), i18n.get('clear')],
       className: ['btn', 'btn-secondary', 'clear-form'],
@@ -507,7 +501,6 @@ export class Controls {
 
           // actions.click.btn(saveEvt);
           data.save();
-          document.dispatchEvent(events.formeoSaved);
         }
       }
     });
@@ -598,12 +591,12 @@ export class Controls {
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
+        fallbackOnBody: true,
         ghostClass: 'control-ghost',
         group: {
           name: 'controls',
           pull: 'clone',
-          put: false,
-          revertClone: true
+          put: false
         },
         onRemove: (evt) => {
           _this.applyControlEvents(evt.item);
@@ -653,8 +646,6 @@ export class Controls {
     data.saveColumnOrder(row);
     dom.columnWidths(row);
     data.save();
-    // trigger formSaved event
-    document.dispatchEvent(events.formeoUpdated);
   }
 
 }

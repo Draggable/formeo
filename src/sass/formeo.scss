@@ -5,10 +5,20 @@
 @import 'base/animation';
 
 .formeo {
+  @import 'components/elements';
+
   &.formeo-editor {
     @import 'components/controls';
     @import 'components/stage';
   }
 
   @import 'render';
+}
+
+.field-control {
+  @extend %field-control;
+
+  .svg-icon {
+    pointer-events: none;
+  }
 }

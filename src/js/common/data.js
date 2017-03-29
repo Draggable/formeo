@@ -11,7 +11,6 @@ import {
 // Object map of fields on the stage
 const _data = {};
 let formData;
-let update;
 
 // Registered fields are the fields that are configured on init.
 // This variable acts as a data buffer thats contains
@@ -56,9 +55,6 @@ let data = {
       formData = defaultFormData;
     }
 
-    events.formeoUpdated = new CustomEvent('formeoUpdated', update);
-    events.formeoUpdated.data = update;
-
     return formData;
   },
 
@@ -85,9 +81,19 @@ let data = {
     if (!stage) {
       stage = dom.activeStage;
     }
+    let oldValue = formData.stages.get(stage.id).rows.slice();
     let rows = stage.getElementsByClassName('stage-rows');
     let rowOrder = h.map(rows, rowID => rows[rowID].id);
     formData.stages.get(stage.id).rows = rowOrder;
+    new CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'sort',
+        changed: 'rows',
+        oldValue,
+        newValue: rowOrder
+      }
+    });
+    document.dispatchEvent(events.formeoUpdated);
     return rowOrder;
   },
 
@@ -133,7 +139,7 @@ let data = {
         return formData.settings;
       },
       stages: () => {
-        data.saveRowOrder();
+        // data.saveRowOrder();
       },
       rows: () => {
         return formData.rows;
@@ -151,14 +157,19 @@ let data = {
         return formData.fields.get(fieldID).attrs;
       },
       options: optionUL => {
-        events.formeoUpdated.data = {
-          changed: 'options',
-          oldValue: formData.fields.get(optionUL.fieldID).options,
-          newValue: data.saveOrder('options', optionUL)
-        };
+        let oldValue = formData.fields.get(optionUL.fieldID).options;
+        let newValue = data.saveOrder('options', optionUL);
+        events.formeoUpdated = new CustomEvent('formeoUpdated', {
+          data: {
+            changed: 'field.options',
+            updateType: 'sort',
+            oldValue,
+            newValue
+          }
+        });
         document.dispatchEvent(events.formeoUpdated);
 
-        return update;
+        return newValue;
       }
     };
 
@@ -216,7 +227,17 @@ let data = {
         if (field) {
           field = field.field;
           let column = formData.columns.get(field.parentElement.id);
+          let oldValue = column.fields.slice();
           remove(column.fields, id);
+          events.formeoUpdated = new CustomEvent('formeoUpdated', {
+            data: {
+              updateType: 'removed',
+              changed: 'column.fields',
+              oldValue,
+              newValue: column.fields
+            }
+          });
+          document.dispatchEvent(events.formeoUpdated);
         }
       }
     };
@@ -226,6 +247,7 @@ let data = {
   },
 
   saveThrottle: false,
+  saveThrottled: false,
 
   save: (group = 'stages', id, disableThrottle = false) => {
     if (disableThrottle) {
@@ -243,7 +265,13 @@ let data = {
         console.log('Saved: ' + group);
       }
 
-      // document.dispatchEvent(events.formeoUpdated);
+      events.formeoSaved = new CustomEvent('formeoSaved', {
+        detail: {
+          formData: data.js
+        }
+      });
+
+      document.dispatchEvent(events.formeoSaved);
       return formData;
     };
 
@@ -251,9 +279,14 @@ let data = {
       doSave();
       data.saveThrottle = true;
       setTimeout(() => {
-        doSave();
+        if (data.saveThrottled) {
+          doSave();
+          data.saveThrottled = false;
+        }
         data.saveThrottle = false;
       }, 500);
+    } else {
+      data.saveThrottled = true;
     }
 
     return formData;
