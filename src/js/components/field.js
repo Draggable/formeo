@@ -21,7 +21,7 @@ export default class Field {
     let _this = this;
 
     let fieldData = formData.fields.get(dataID) || clone(rFields[dataID]);
-    _this.fieldID = dataID || fieldData.id || uuid();
+    _this.fieldID = fieldData.id || uuid();
     _this.metaID = fieldData.meta.id;
     fieldData.id = _this.fieldID;
 
