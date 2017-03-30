@@ -16,7 +16,7 @@ button[class*='-remove'] {
     background-color: $brand-danger !important;
 
     .svg-icon {
-      fill: $white !important;
+      fill: $white;
     }
   }
 }
@@ -26,17 +26,17 @@ button[class*='-clone'] {
     background-color: $brand-success !important;
 
     .svg-icon {
-      fill: $white !important;
+      fill: $white;
     }
   }
 }
 
-button[class*='-edit-toggle'] {
+.item-edit-toggle {
   &:hover {
     background-color: $brand-primary !important;
 
     .svg-icon {
-      fill: $white !important;
+      fill: $white;
     }
   }
 }

@@ -229,7 +229,7 @@ export default class Stage {
       },
       onSort: _this.onSort,
       draggable: '.stage-rows',
-      handle: '.row-handle'
+      handle: '.item-handle'
     });
 
     return stageWrap;
