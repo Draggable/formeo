@@ -1,5 +1,4 @@
-.stage-rows,
-.field-control {
+.stage-rows {
   @include clearfix;
 
   position: relative;
@@ -17,10 +16,6 @@
 
   &::after {
     clear: both;
-  }
-
-  &.hidden-field {
-    background-color: $hidden-field;
   }
 
   &.control-ghost {
@@ -42,10 +37,8 @@
       border-top-left-radius: 0;
     }
 
-    .stage-rows {
-      &::before {
-        width: 100px;
-      }
+    &::before {
+      width: 100px;
     }
 
     .stage-columns {

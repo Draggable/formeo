@@ -104,14 +104,6 @@
         border-radius: 0 0 0 5px;
       }
     }
-
-    .field-control {
-      @extend %field-control;
-
-      .svg-icon {
-        pointer-events: none;
-      }
-    }
   }
 
   &.filtered {

@@ -13,8 +13,30 @@
 
 button[class*='-remove'] {
   &:hover {
+    background-color: $brand-danger !important;
+
     .svg-icon {
-      fill: $brand-danger;
+      fill: $white !important;
+    }
+  }
+}
+
+button[class*='-clone'] {
+  &:hover {
+    background-color: $brand-success !important;
+
+    .svg-icon {
+      fill: $white !important;
+    }
+  }
+}
+
+button[class*='-edit-toggle'] {
+  &:hover {
+    background-color: $brand-primary !important;
+
+    .svg-icon {
+      fill: $white !important;
     }
   }
 }

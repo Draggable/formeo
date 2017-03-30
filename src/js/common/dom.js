@@ -25,6 +25,25 @@ class DOM {
   }
 
   /**
+   * Merges a user's configuration with default
+   * @param  {Object} userConfig
+   * @return {Object} config
+   */
+  set setConfig(userConfig) {
+    let defaultConfig = {
+        rows: {
+          actionButtons: {
+            disabled: 'clone'
+          }
+        },
+        columns: {},
+        fields: {}
+      };
+    this.config = h.merge(defaultConfig, userConfig);
+    return this.config;
+  }
+
+  /**
    * Ensure elements have proper tagName
    * @param  {Object|String} elem
    * @return {Object} valid element object
@@ -115,8 +134,8 @@ class DOM {
         appendContent.array.call(this, options);
         delete elem.content;
       } else {
-        h.forEach(options, i => {
-          wrap.content.push(_this.create(options[i], isPreview));
+        h.forEach(options, option => {
+          wrap.content.push(_this.create(option, isPreview));
         });
 
         if (elem.attrs.className) {
@@ -369,19 +388,23 @@ class DOM {
             content: option.label
           };
         },
-        button: () => {
+        button: option => {
+          let {type, label, className} = option;
           return Object.assign({}, elem, {
-            className: option.className,
+            attrs: {
+              type
+            },
+            className,
             id: uuid(),
             options: undefined,
-            content: option.label
+            content: label
           });
         },
         checkbox: defaultInput,
         radio: defaultInput
       };
 
-      return optionMarkup[fieldType]();
+      return optionMarkup[fieldType](option);
     };
 
 
@@ -541,15 +564,29 @@ class DOM {
         tag: 'button',
         content: [moveIcon, icon('handle')],
         attrs: {
-          className: item + '-handle btn-secondary btn',
+          className: item + '-handle btn',
           type: 'button'
         }
       };
+      // let clone = {
+      //   tag: 'button',
+      //   content: icon('copy'),
+      //   attrs: {
+      //     className: item + '-clone btn',
+      //     type: 'button'
+      //   },
+      //   action: {
+      //     click: evt => {
+      //       _this.clone(document.getElementById(id));
+      //       data.save();
+      //     }
+      //   }
+      // };
       let editToggle = {
         tag: 'button',
         content: icon('edit'),
         attrs: {
-          className: item + '-edit-toggle btn-secondary btn',
+          className: item + '-edit-toggle btn',
           type: 'button'
         },
         action: {
@@ -570,7 +607,7 @@ class DOM {
         tag: 'button',
         content: icon('remove'),
         attrs: {
-          className: item + '-remove btn-secondary btn',
+          className: item + '-remove btn',
           'type': 'button'
         },
         action: {
@@ -593,22 +630,82 @@ class DOM {
           evt.target.parentReference = element;
         },
         mouseleave: (evt) => {
-          // if (evt.toElement !== evt.target.parentReference) {
           evt.target.parentReference.classList.remove('hovering-' + item);
-          // }
         }
       }
     };
 
     if (item === 'column') {
-      btnWrap.content = [menuHandle, remove];
+      btnWrap.content = [
+        menuHandle,
+        // clone,
+        remove
+      ];
     } else {
-      btnWrap.content = [menuHandle, editToggle, remove];
+      btnWrap.content = [
+        menuHandle,
+        editToggle,
+        // clone,
+        remove
+      ];
     }
 
     actions.content = btnWrap;
 
     return actions;
+  }
+
+  /**
+   * Clones an element, it's data and
+   * it's nested elements and data
+   * @param {Object} elem element we are cloning
+   * @param {Object} parent
+   * @return {Object} cloned element
+   */
+  clone(elem, parent) {
+    let _this = this;
+    let {id, fType} = elem;
+    let dataClone = clone(formData[fType].get(id));
+    const newIndex = h.indexOfNode(elem) + 1;
+    let noParent = false;
+    dataClone.id = uuid();
+    formData[fType].set(dataClone.id, dataClone);
+    if (!parent) {
+      parent = elem.parentElement;
+      noParent = true;
+    }
+    const cloneType = {
+      rows: () => {
+        dataClone.columns = [];
+        const stage = _this.activeStage;
+        const newRow = _this.addRow(null, dataClone.id);
+        const columns = elem.getElementsByClassName('stage-columns');
+
+        stage.insertBefore(newRow, stage.childNodes[newIndex]);
+        h.forEach(columns, column => _this.clone(column, newRow));
+        data.saveRowOrder();
+        return newRow;
+      },
+      columns: () => {
+        dataClone.fields = [];
+        const newColumn = _this.addColumn(parent.id, dataClone.id);
+        parent.insertBefore(newColumn, parent.childNodes[newIndex]);
+        let fields = elem.getElementsByClassName('stage-fields');
+
+        if (noParent) {
+          dom.columnWidths(parent);
+        }
+        h.forEach(fields, field => _this.clone(field, newColumn));
+        return newColumn;
+      },
+      fields: () => {
+        const newField = _this.addField(parent.id, dataClone.id);
+        parent.insertBefore(newField, parent.childNodes[newIndex]);
+        return newField;
+      },
+    };
+
+    return cloneType[fType]();
   }
 
   /**
@@ -634,7 +731,6 @@ class DOM {
       _this.columnWidths(parent);
     }
     return data.save();
-    // document.dispatchEvent(events.formeoUpdated);
   }
 
   /**
@@ -674,9 +770,7 @@ class DOM {
       }
     };
     removeClass.object = removeClass.string; // handles regex map
-    h.forEach(nodeList, (i) => {
-      removeClass[_this.contentType(className)](nodeList[i]);
-    });
+    h.forEach(nodeList, removeClass[_this.contentType(className)]);
   }
 
   /**
@@ -697,9 +791,7 @@ class DOM {
         }
       }
     };
-    h.forEach(nodeList, (i) => {
-      addClass[_this.contentType(className)](nodeList[i]);
-    });
+    h.forEach(nodeList, addClass[_this.contentType(className)]);
   }
 
   /**
@@ -719,27 +811,20 @@ class DOM {
   /**
    * Read columns and generate bootstrap cols
    * @param  {Object}  row    DOM element
-   * @param  {Boolean} widths
-   * @return {Object} colWidth
    */
-  columnWidths(row, widths = false) {
+  columnWidths(row) {
     let _this = this;
     let fields = [];
     let columns = row.getElementsByClassName('stage-columns');
     if (!columns.length) {
-      return false;
+      return;
     }
-    let colCount = parseFloat(12 / columns.length);
-    let width = widths;
-    if (!width) {
-      width = parseFloat((100 / columns.length).toFixed(1))/1;
-    }
+      let width = parseFloat((100 / columns.length).toFixed(1))/1;
     let bsGridRegEx = /\bcol-\w+-\d+/g;
 
     _this.removeClasses(columns, bsGridRegEx);
 
-    h.forEach(columns, i => {
-      let column = columns[i];
+    h.forEach(columns, column => {
       let columnData = formData.columns.get(column.id);
       fields.push(...columnData.fields);
 
@@ -762,8 +847,6 @@ class DOM {
     }, 250);
 
     dom.updateColumnPreset(row);
-
-    return colCount;
   }
 
   /**
@@ -859,8 +942,7 @@ class DOM {
     }
     widths = widths.split(',');
     let columns = row.getElementsByClassName('stage-columns');
-    h.forEach(columns, i => {
-      let column = columns[i];
+    h.forEach(columns, (column, i) => {
       let percentWidth = widths[i] + '%';
       column.dataset.colWidth = percentWidth;
       column.style.width = percentWidth;
@@ -1127,6 +1209,15 @@ class DOM {
     stage.appendChild(row);
     data.saveRowOrder(stage);
     this.emptyClass(stage);
+    events.formeoUpdated = new CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'added',
+        changed: 'row',
+        oldValue: undefined,
+        newValue: formData.rows.get(row.id)
+      }
+    });
+    document.dispatchEvent(events.formeoUpdated);
     return row;
   }
 
@@ -1143,6 +1234,15 @@ class DOM {
     row.appendChild(column);
     data.saveColumnOrder(row);
     this.emptyClass(row);
+    events.formeoUpdated = new CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'added',
+        changed: 'column',
+        oldValue: undefined,
+        newValue: formData.columns.get(column.id)
+      }
+    });
+    document.dispatchEvent(events.formeoUpdated);
     return column;
   }
 
@@ -1160,6 +1260,15 @@ class DOM {
       data.saveFieldOrder(column);
       this.emptyClass(column);
     }
+    events.formeoUpdated = new CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'add',
+        changed: 'field',
+        oldValue: undefined,
+        newValue: formData.fields.get(field.id)
+      }
+    });
+    document.dispatchEvent(events.formeoUpdated);
     return field;
   }
 

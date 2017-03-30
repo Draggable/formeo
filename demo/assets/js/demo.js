@@ -17,6 +17,49 @@ let formeoOpts = {
       'html',
     ],
     elements: [
+//     {
+//   tag: 'input',
+//   attrs: {
+//     type: 'radio',
+//     required: false
+//   },
+//   config: {
+//     label: 'Radio Group',
+//     disabledAttrs: ['type']
+//   },
+//   meta: {
+//     group: 'common',
+//     icon: 'radio-group',
+//     id: 'radio'
+//   },
+//   options: (() => {
+//     let options = [1, 2, 3].map(i => {
+//       return {
+//         label: 'Radio ' + i,
+//         value: 'radio-' + i,
+//         selected: false
+//       };
+//     });
+//     let otherOption = {
+//         label: 'Other',
+//         value: 'other',
+//         selected: false
+//       };
+//     options.push(otherOption);
+//     return options;
+//   })(),
+//   action: {
+//     click: evt => {
+//       console.log(evt);
+//       const {target} = evt;
+//       if (target.value === 'other') {
+//         const otherInput = target.cloneNode(true);
+//         otherInput.type = 'text';
+//         target.parentElement.appendChild(otherInput);
+//       }
+//     }
+//   }
+// },
       {
         tag: 'input',
         attrs: {
@@ -81,12 +124,19 @@ let formeoOpts = {
       ]
     }
   },
-  svgSprite: 'assets/img/formeo-sprite.svg',
+  events: {
+    // onUpdate: console.log,
+    // onSave: console.log
+  },
+  // svgSprite: 'assets/img/formeo-sprite.svg',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options']
 };
+
+
 const formeo = new window.Formeo(formeoOpts);
+console.log(formeo);
 let editing = true;
 
 let debugWrap = document.getElementById('debug-wrap');

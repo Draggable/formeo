@@ -28,7 +28,7 @@ export default class Panels {
     _this.currentPanel = _this.panels[0];
     _this.nav = _this.navActions();
     if (_this.opts.type === 'field') {
-      setTimeout(_this.setPanelsHeight.bind(_this), 10);
+      setTimeout(_this.setPanelsHeight.bind(_this), 100);
     }
 
     _this.panelDisplay = 'slider';
@@ -55,7 +55,6 @@ export default class Panels {
     panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed);
     let panelStyle = panelsWrap.style;
     let activePanelHeight = dom.getStyle(this.currentPanel, 'height');
-
     return panelStyle.height = activePanelHeight;
   }
 
@@ -112,7 +111,7 @@ export default class Panels {
     let _this = this;
     let groups = panels.getElementsByClassName('field-edit-group');
 
-    return h.forEach(groups, function(index, group) {
+    return h.forEach(groups, (group, index) => {
       if (group.isSortable) {
         group.fieldID = _this.opts.id;
         Sortable.create(group, {
@@ -264,7 +263,7 @@ export default class Panels {
         index = newIndex;
         groupChange(newIndex);
       }
-      _this.resizePanels();
+      // _this.resizePanels();
       offset = {
         nav: firstControlNav.offsetWidth * index,
         panel: groupParent.offsetWidth * index

@@ -23,7 +23,10 @@ const events = {
   init: function(options) {
     this.opts = Object.assign({}, defaults, options);
     return this;
-  }
+  },
+  formeoSaved: new CustomEvent('formeoSaved', {}),
+  formeoUpdated: new CustomEvent('formeoUpdated', {})
+
 };
 
 document.addEventListener('formeoUpdated', function(evt) {
@@ -49,7 +52,7 @@ document.addEventListener('confirmClearAll', function(evt) {
   events.opts.confirmClearAll(evt);
 });
 
-document.addEventListener('formeoSaved', function(evt) {
+document.addEventListener('formeoSaved', evt => {
   evt = {
     timeStamp: evt.timeStamp,
     type: evt.type,

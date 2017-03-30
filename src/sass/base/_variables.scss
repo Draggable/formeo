@@ -4,7 +4,7 @@ $brand-info: #29abe0 !default;
 $brand-warning: #f47c3c !default;
 $brand-danger: #d9534f !default;
 
-$remove-bg: rgba(217,83,79, .5) !default;
+$remove-bg: rgba(217, 83, 79, 0.5) !default;
 
 $row-outline-color: #325d88;
 $column-outline-color: #29abe0;
@@ -30,6 +30,3 @@ $gray-lightest: lighten($gray, 60%) !default;
 // Stage
 $stage-background: rgba(255, 255, 255, 0);
 $stage-background-empty: rgba(255, 255, 255, 0.25);
-
-// Row
-$hidden-field: rgba(255, 255, 255, 0.6);
