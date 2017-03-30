@@ -50,6 +50,17 @@ export const closest = (el, cls) => {
 };
 
 /**
+ * Find the closest parent by class
+ * @param  {Object} el  DOM element
+ * @param  {String} cls class
+ * @return {Object}     DOM Element
+ */
+export const closestFtype = el => {
+  while ((el = el.parentElement) && !el.fType);
+  return el;
+};
+
+/**
  * Remove duplicates from an array of elements
  * @param  {Array} array with possible duplicates
  * @return {Array} array with only unique values
@@ -90,8 +101,8 @@ export const uuid = elem => {
 export const clone = obj => {
   let copy;
 
-  // Handle the 3 simple types, and null or undefined
-  if (null === obj || 'object' != typeof obj) {
+  // Handle the 4 simple types, and null or undefined
+  if (null === obj || 'object' !== typeof obj) {
     return obj;
   }
 

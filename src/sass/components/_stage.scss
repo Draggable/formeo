@@ -29,6 +29,7 @@
     background-color: $stage-background;
     padding-left: 25px;
     padding-bottom: 15px;
+    overflow: visible;
 
     &.empty-stages {
       border: 3px dashed $gray-lighter;
@@ -36,8 +37,6 @@
     }
 
     &.removing-all-fields {
-      overflow: hidden;
-
       .stage-rows {
         transition: margin-top 250ms ease-in;
       }

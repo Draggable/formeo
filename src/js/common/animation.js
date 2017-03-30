@@ -108,8 +108,10 @@ const animate = {
 
   slideDown: (elem, duration = 250, cb = false) => {
     elem.style.display = 'block';
+    const style = animate.getStyle(elem);
+    let overFlowBack = style.overflow;
     elem.style.overflow = 'hidden';
-    let height = parseInt(animate.getStyle(elem, 'height'), 10);
+    let height = parseInt(style.height, 10);
     let increment = height / (duration / 60);
     elem.style.height = '0px';
     (function slideDown() {
@@ -119,6 +121,7 @@ const animate = {
         elem.style.height = (val + 'px');
         requestAnimationFrame(slideDown);
       } else {
+        elem.style.overflow = overFlowBack;
         // reset height to be used by slideUp
         // elem.style.height = height + 'px';
         elem.style.height = 'auto';
@@ -132,6 +135,7 @@ const animate = {
   slideUp: (elem, duration = 250, cb = false) => {
     let style = animate.getStyle(elem);
     let height = parseInt(style.height);
+    let overFlowBack = style.overflow;
     elem.style.overflow = 'hidden';
     elem.style.height = height + 'px';
     let defMinHeight = style.minHeight;
@@ -145,6 +149,7 @@ const animate = {
         elem.style.height = val + 'px';
         requestAnimationFrame(slideUp);
       } else {
+        elem.style.overflow = overFlowBack;
         elem.style.display = 'none';
         elem.style.minHeight = defMinHeight;
         delete elem.style.height;

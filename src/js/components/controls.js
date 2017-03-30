@@ -378,9 +378,7 @@ export class Controls {
     groups = h.orderObjectsBy(groups, this.groupOrder, 'id');
 
     // remove disabled groups
-    groups = groups.filter(group => {
-      return match(group.id, opts.disable.groups);
-    });
+    groups = groups.filter(group => match(group.id, opts.disable.groups));
 
     // create group config
     allGroups = h.map(groups, (i) => {

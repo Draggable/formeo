@@ -5,7 +5,7 @@ import Column from '../components/column';
 import Field from '../components/field';
 import animate from './animation';
 import {data, formData} from './data';
-import {uuid, clone, numToPercent, remove} from './utils';
+import {uuid, clone, numToPercent, remove, closestFtype} from './utils';
 
 /**
  * General purpose markup utilities and generator.
@@ -30,16 +30,152 @@ class DOM {
    * @return {Object} config
    */
   set setConfig(userConfig) {
+    const _this = this;
+    const icon = _this.icon;
+    let btnTemplate = {
+        tag: 'button',
+        content: [],
+        attrs: {
+          className: ['btn'],
+          type: 'button'
+        }
+      };
+
+    let handle = h.merge(Object.assign({}, btnTemplate), {
+      content: [icon('move'), icon('handle')],
+      attrs: {
+        className: ['item-handle'],
+      },
+      meta: {
+        id: 'handle'
+      }
+    });
+
+    let edit = h.merge(Object.assign({}, btnTemplate), {
+      content: icon('edit'),
+      attrs: {
+        className: ['item-edit-toggle'],
+      },
+      meta: {
+        id: 'edit'
+      },
+      action: {
+        click: evt => {
+          const element = closestFtype(evt.target);
+          let {fType} = element;
+          fType = fType.replace(/s$/, '');
+          let editClass = 'editing-' + fType;
+          let editWindow = element.querySelector(`.${fType}-edit`);
+          animate.slideToggle(editWindow, 333);
+          if (fType === 'field') {
+            animate.slideToggle(editWindow.nextSibling, 333);
+            element.parentElement.classList.toggle('column-' + editClass);
+          }
+          element.classList.toggle(editClass);
+        }
+      }
+    });
+
+    let remove = h.merge(Object.assign({}, btnTemplate), {
+      content: icon('remove'),
+      attrs: {
+        className: ['item-remove'],
+      },
+      meta: {
+        id: 'remove'
+      },
+      action: {
+        click: (evt, id) => {
+          const element = closestFtype(evt.target);
+          animate.slideUp(element, 250, elem => {
+            _this.removeEmpty(elem);
+          });
+        }
+      }
+    });
+
+    let cloneItem = h.merge(Object.assign({}, btnTemplate), {
+      content: icon('copy'),
+      attrs: {
+        className: ['item-clone'],
+      },
+      meta: {
+        id: 'clone'
+      },
+      action: {
+        click: evt => {
+          _this.clone(closestFtype(evt.target));
+          data.save();
+        }
+      }
+    });
+
     let defaultConfig = {
         rows: {
           actionButtons: {
-            disabled: 'clone'
+            buttons: [
+              clone(handle),
+              edit,
+              cloneItem,
+              remove
+            ],
+            order: [],
+            disabled: ['clone']
           }
         },
-        columns: {},
-        fields: {}
+        columns: {
+          actionButtons: {
+            buttons: [
+              clone(cloneItem),
+              clone(handle),
+              remove
+            ],
+            order: [],
+            disabled: ['clone']
+          }
+        },
+        fields: {
+          actionButtons: {
+            buttons: [
+              handle,
+              edit,
+              cloneItem,
+              remove
+            ],
+            order: [],
+            disabled: ['clone']
+          }
+        }
       };
-    this.config = h.merge(defaultConfig, userConfig);
+
+    defaultConfig.rows.actionButtons.buttons[0].content = [
+      icon('move-vertical'),
+      icon('handle')
+    ];
+    defaultConfig.columns.actionButtons.buttons[0].content = [
+      icon('copy'),
+      icon('handle'),
+    ];
+    let mergedConfig = h.merge(defaultConfig, userConfig);
+
+    Object.keys(mergedConfig).forEach(key => {
+      if (mergedConfig[key].actionButtons) {
+        const aButtons = mergedConfig[key].actionButtons;
+        const disabled = aButtons.disabled;
+        let buttons = aButtons.buttons;
+
+        // Order buttons
+        aButtons.buttons = h.orderObjectsBy(buttons, aButtons.order, 'meta.id');
+        // filter disabled buttons
+        aButtons.buttons = aButtons.buttons.filter(button => {
+          let metaId = h.get(button, 'meta.id');
+          return !h.inArray(metaId, disabled);
+        });
+      }
+    });
+
+    this.config = mergedConfig;
+
     return this.config;
   }
 
@@ -552,104 +688,37 @@ class DOM {
    * @return {Object}      element config object
    */
   actionButtons(id, item = 'column') {
-    let _this = this;
-    let icon = _this.icon;
     let tag = (item === 'column' ? 'li' : 'div');
-    let moveIcon = item === 'row' ? icon('move-vertical') : icon('move');
     let btnWrap = {
         tag: 'div',
         className: 'action-btn-wrap'
       };
-      let menuHandle = {
-        tag: 'button',
-        content: [moveIcon, icon('handle')],
-        attrs: {
-          className: item + '-handle btn',
-          type: 'button'
-        }
-      };
-      // let clone = {
-      //   tag: 'button',
-      //   content: icon('copy'),
-      //   attrs: {
-      //     className: item + '-clone btn',
-      //     type: 'button'
-      //   },
-      //   action: {
-      //     click: evt => {
-      //       _this.clone(document.getElementById(id));
-      //       data.save();
-      //     }
-      //   }
-      // };
-      let editToggle = {
-        tag: 'button',
-        content: icon('edit'),
-        attrs: {
-          className: item + '-edit-toggle btn',
-          type: 'button'
-        },
-        action: {
-          click: evt => {
-            let element = document.getElementById(id);
-            let editClass = 'editing-' + item;
-            let editWindow = element.querySelector(`.${item}-edit`);
-            animate.slideToggle(editWindow, 333);
-            if (item === 'field') {
-              animate.slideToggle(editWindow.nextSibling, 333);
-              element.parentElement.classList.toggle('column-' + editClass);
-            }
-            element.classList.toggle(editClass);
-          }
-        }
-      };
-      let remove = {
-        tag: 'button',
-        content: icon('remove'),
-        attrs: {
-          className: item + '-remove btn',
-          'type': 'button'
-        },
-        action: {
-          click: () => {
-            let element = document.getElementById(id);
-            animate.slideUp(element, 250, elem => {
-              _this.removeEmpty(elem);
-            });
-          }
-        }
-      };
-
     let actions = {
-      tag: tag,
+      tag,
       className: item + '-actions group-actions',
       action: {
-        mouseenter: (evt) => {
+        mouseenter: evt => {
+          let btnGroup = evt.target;
           let element = document.getElementById(id);
           element.classList.add('hovering-' + item);
           evt.target.parentReference = element;
+          const buttons = btnGroup.getElementsByTagName('button');
+          const expandedWidth = (buttons.length * 24) + 'px';
+          if (item === 'row') {
+            btnGroup.style.height = expandedWidth;
+          } else {
+            btnGroup.style.width = expandedWidth;
+          }
         },
-        mouseleave: (evt) => {
+        mouseleave: evt => {
+          let btnGroup = evt.target;
           evt.target.parentReference.classList.remove('hovering-' + item);
+          btnGroup.removeAttribute('style');
         }
       }
     };
 
-    if (item === 'column') {
-      btnWrap.content = [
-        menuHandle,
-        // clone,
-        remove
-      ];
-    } else {
-      btnWrap.content = [
-        menuHandle,
-        editToggle,
-        // clone,
-        remove
-      ];
-    }
-
+    btnWrap.content = this.config[`${item}s`].actionButtons.buttons;
     actions.content = btnWrap;
 
     return actions;
@@ -916,14 +985,16 @@ class DOM {
         let colData = formData.columns.get(columnID);
         return colData.config.width.replace('%', '');
       }).join(',');
-      pMapVal.forEach((val, i) => {
-        let options = layoutPreset.options;
-        if (val.value === curVal) {
-          options[i].selected = true;
-        } else {
-          delete options[i].selected;
-        }
-      });
+      if (pMapVal) {
+        pMapVal.forEach((val, i) => {
+          let options = layoutPreset.options;
+          if (val.value === curVal) {
+            options[i].selected = true;
+          } else {
+            delete options[i].selected;
+          }
+        });
+      }
     } else {
       layoutPreset.options = pMap.get(1);
     }
@@ -952,7 +1023,7 @@ class DOM {
 
   /**
    * Updates the column preset <select>
-   * @param  {String} row [description]
+   * @param  {String} row
    * @return {Object} columnPresetConfig
    */
   updateColumnPreset(row) {

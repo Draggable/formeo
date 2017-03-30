@@ -43,7 +43,6 @@ export default class Field {
         _this.preview // fieldPreview
       ],
       panelNav: _this.panelNav,
-      dataID: dataID,
       dataset: {
         hoverTag: i18n.get('field')
       },

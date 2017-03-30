@@ -1,4 +1,5 @@
 .group-actions {
+  min-width: $field-btn-width;
   width: $field-btn-width;
   height: $field-btn-width;
   overflow: hidden;
@@ -41,6 +42,7 @@
   }
 
   .icon-menu,
+  .icon-copy,
   .icon-move,
   .icon-move-vertical {
     display: none;
@@ -58,7 +60,6 @@
   &.editing-field {
     .field-actions {
       box-shadow: -1px 1px 1px $gray-lighter;
-      width: 3 * $field-btn-width;
       border-color: $field-outline-color;
       border-width: 1px 1px 0 0;
       border-style: solid;
@@ -90,7 +91,7 @@
     border-radius: 0;
     position: absolute;
 
-    @for $i from 1 through 3 {
+    @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
         right: $i * $field-btn-width - $field-btn-width;
       }
@@ -130,10 +131,9 @@
   button {
     position: absolute;
     background-color: transparent;
-    margin-bottom: 1px;
     border-radius: 0;
 
-    @for $i from 1 through 3 {
+    @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
         right: $i * $field-btn-width - $field-btn-width;
       }
@@ -160,14 +160,19 @@
 .hovering-column,
 .editing-column {
   .column-actions {
-    width: 3 * $field-btn-width;
+    transform: translateX(50%);
+    width: auto;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: $border-radius;
 
     button {
       &:first-child {
-        border-bottom-right-radius: 0;
+        border-bottom-right-radius: $border-radius;
         right: 0;
+      }
+
+      &:last-child {
+        border-bottom-left-radius: $border-radius;
       }
     }
   }
@@ -182,14 +187,13 @@
   transition: height 150ms ease-in-out;
   white-space: normal;
 
-  .row-handle {
+  .item-handle {
     .icon-handle {
       transform: rotate(90deg);
     }
   }
 
   button {
-    margin-bottom: 1px;
     border-radius: 0;
 
     &:first-child {
@@ -211,8 +215,6 @@
 .hovering-row,
 .editing-row {
   .row-actions {
-    height: 3 * ($field-btn-width + 1);
-
     button {
       &:first-child {
         border-bottom-left-radius: 0;
@@ -226,6 +228,7 @@
     .svg-icon {
       &.icon-menu,
       &.icon-move,
+      &.icon-copy,
       &.icon-move-vertical {
         display: inline-block !important;
       }
