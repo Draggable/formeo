@@ -1,35 +1,6 @@
 'use strict';
 import dom from './dom';
-import deepExtend from 'deep-extend';
 import {unique} from './utils';
-/**
- * [memoize description]
- * @param  {[type]} func     [description]
- * @param  {[type]} resolver [description]
- * @return {[type]}          [description]
- */
-function memoize(func, resolver) {
-  if (typeof func !== 'function' ||
-    (resolver && typeof resolver !== 'function')) {
-    throw new TypeError('memoize: First argument must be a function');
-  }
-  const memoized = (...args) => {
-    let key = resolver ? resolver.apply(memoized, args) : args[0];
-    let cache = memoized.cache;
-
-    if (cache.has(key)) {
-      return cache.get(key);
-    }
-    let result = func.apply(memoized, args);
-    memoized.cache = cache.set(key, result);
-    return result;
-  };
-  memoized.cache = new(memoize.Cache);
-  return memoized;
-}
-
-// Assign cache to `_.memoize`.
-memoize.Cache = Map;
 
 // eslint-disable-next-line
 const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
@@ -157,9 +128,6 @@ const helpers = {
   isInt: (n) => {
     return Number(n) === n && n % 1 === 0;
   },
-  extend: (obj1, obj2) => {
-    return deepExtend(obj1, obj2);
-  },
   /**
    * get nested property value in an object
    *
@@ -223,7 +191,15 @@ const helpers = {
       if (mergedObj.hasOwnProperty(prop)) {
         if (Array.isArray(obj2[prop])) {
           // eslint-disable-next-line
-          mergedObj[prop] = Array.isArray(obj1[prop]) ? obj1[prop].concat(obj2[prop]) : obj2[prop];
+          if (obj1) {
+            if (Array.isArray(obj1[prop])) {
+              mergedObj[prop] = obj1[prop].concat(obj2[prop]);
+            } else {
+              mergedObj[prop] = obj2[prop];
+            }
+          } else {
+            mergedObj[prop] = obj2[prop];
+          }
         } else if (typeof obj2[prop] === 'object') {
           mergedObj[prop] = helpers.merge(obj1[prop], obj2[prop]);
         } else {

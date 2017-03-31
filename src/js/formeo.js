@@ -88,6 +88,7 @@ class Formeo {
             'editNames': 'Edit Names',
             'editXML': 'Edit XML',
             'editorTitle': 'Form Elements',
+            'editing.row': 'Editing Row',
             'en - US': 'English',
             'field': 'Field',
             'fieldNonEditable': 'This field cannot be edited.',
@@ -199,7 +200,7 @@ class Formeo {
     // may be Element
     delete options.container;
 
-    opts = h.extend(defaults, options);
+    opts = h.merge(defaults, options);
     dom.setConfig = opts.config;
 
     data.init(opts, userFormData);

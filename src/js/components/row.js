@@ -37,13 +37,14 @@ export default class Row {
 
     let rowData = formData.rows.get(rowID);
 
-    formData.rows.set(rowID, h.extend(defaults, rowData));
+    formData.rows.set(rowID, h.merge(defaults, rowData));
 
     row = {
       tag: 'li',
       className: 'stage-rows empty-rows',
       dataset: {
-        hoverTag: i18n.get('row')
+        hoverTag: i18n.get('row'),
+        editingHoverTag: i18n.get('editing.row')
       },
       id: rowID,
       content: [dom.actionButtons(rowID, 'row'), _this.editWindow],

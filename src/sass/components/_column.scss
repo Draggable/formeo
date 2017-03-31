@@ -29,13 +29,39 @@
   .resize-x-handle {
     display: none;
     position: absolute;
-    right: -4px;
+    right: -8px;
     top: 0;
     bottom: 0;
-    width: 6px;
-    border: 4px dotted $white;
-    z-index: 1;
+    width: 16px;
+    z-index: 2;
     cursor: ew-resize;
+
+    &::before {
+      width: 0;
+      right: 6px;
+      border: 1px dashed $column-outline-color;
+      border-width: 0 2px;
+      display: block;
+      top: 0;
+      position: absolute;
+      height: 100%;
+      content: '';
+    }
+
+    svg {
+      fill: $column-outline-color;
+      position: absolute;
+      right: 1px;
+      width: 14px;
+
+      &.icon-triangle-down {
+        top: -14px;
+      }
+
+      &.icon-triangle-up {
+        bottom: -14px;
+      }
+    }
   }
 
   &::before {
@@ -105,7 +131,7 @@
     display: table-cell;
     border-radius: 5px;
     height: 60px;
-    background-color: $gray-lighter;
+    background-color: $gray-lightest;
 
     &.empty-columns {
       min-height: 0;
@@ -134,6 +160,15 @@
       top: 50%;
       transform: translate(-50%, -50%);
     }
+
+    // &::before {
+    //   top: 0;
+    //   transform: translate(-50%, 0);
+    //   height: 18px;
+    //   line-height: 1.5;
+    //   background: transparent;
+    // }
+
   }
 }
 

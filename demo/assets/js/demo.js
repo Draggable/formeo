@@ -60,54 +60,7 @@ let formeoOpts = {
 //     }
 //   }
 // },
-      {
-        tag: 'input',
-        attrs: {
-          type: 'file',
-          className: 'form-control-file'
-        },
-        config: {
-          label: 'File Upload'
-        },
-        meta: {
-          group: 'common',
-          icon: 'upload',
-          id: 'upload'
-        },
-        fMap: 'attrs.value'
-      }, {
-        tag: 'input',
-        attrs: {
-          type: 'number',
-          className: 'form-control'
-        },
-        config: {
-          label: 'Number',
-          disabledAttrs: ['type']
-        },
-        meta: {
-          group: 'common',
-          icon: 'hash',
-          id: 'number'
-        },
-        fMap: 'attrs.value'
-      }, {
-        tag: 'input',
-        attrs: {
-          type: 'hidden',
-          value: 'my hidden value'
-        },
-        config: {
-          label: 'Hidden',
-          hideLabel: true,
-        },
-        meta: {
-          group: 'common',
-          icon: 'hidden',
-          id: 'hidden'
-        },
-        fMap: 'attrs.value'
-      }
+
     ],
     elementOrder: {
       common: [

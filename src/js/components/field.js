@@ -285,7 +285,7 @@ export default class Field {
         };
         const inputLabel = key => {
             let labelKey = panelType + '.' + key;
-            return i18n.current[labelKey] || h.capitalize(key);
+            return i18n.get(labelKey) || h.capitalize(key);
           };
         const propertyInputs = {
           array: (key, val) => {
@@ -629,7 +629,7 @@ export default class Field {
     } else {
       setTimeout(() => {
         let field = dom.fields.get(_this.fieldID).field;
-        let editToggle = field.querySelector('.field-edit-toggle');
+        let editToggle = field.querySelector('.item-edit-toggle');
         let fieldActions = field.querySelector('.field-actions');
         fieldActions.style.maxWidth = '49px';
         dom.remove(editToggle);

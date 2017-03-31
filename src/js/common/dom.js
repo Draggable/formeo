@@ -217,11 +217,13 @@ class DOM {
     let contentType;
     let {tag} = elem;
     let processed = [];
+    let required = false;
     let i;
     let wrap = {
       tag: 'div',
       className: [h.get(elem, 'config.inputWrap') || 'form-group'],
-      content: []
+      content: [],
+      config: {}
     };
     let labelAfter = elem => {
       let type = h.get(elem, 'attrs.type');
@@ -261,6 +263,14 @@ class DOM {
 
     processed.push('tag');
 
+
+    // check for root className property
+    if (elem.className) {
+      let {className} = elem;
+      elem.attrs = Object.assign({}, elem.attrs, {className});
+      delete elem.className;
+    }
+
     // Append Element Content
     if (elem.options) {
       let {options} = elem;
@@ -278,21 +288,18 @@ class DOM {
           wrap.className = elem.attrs.className;
         }
 
+        wrap.config = Object.assign({}, elem.config);
+        wrap.className.push = h.get(elem, 'attrs.className');
+
         return this.create(wrap, isPreview);
       }
 
       processed.push('options');
     }
 
-    // check for root className property
-    if (elem.className) {
-      let {className} = elem;
-      elem.attrs = Object.assign({}, elem.attrs, {className});
-      delete elem.className;
-    }
-
     // Set element attributes
     if (elem.attrs) {
+      required = h.inArray('required', Object.keys(elem.attrs));
       _this.processAttrs(elem, element, isPreview);
       processed.push('attrs');
     }
@@ -316,7 +323,16 @@ class DOM {
             label.insertBefore(element, label.firstChild);
             wrap.content.push(label);
           } else {
-            wrap.content.push(label, element);
+            wrap.content.push(label);
+            if (required) {
+              let requiredMark = {
+                tag: 'span',
+                className: 'text-danger',
+                content: '*'
+              };
+              wrap.content.push(requiredMark);
+            }
+            wrap.content.push(element);
           }
         } else if (editablePreview) {
           element.contentEditable = true;
@@ -992,6 +1008,7 @@ class DOM {
             options[i].selected = true;
           } else {
             delete options[i].selected;
+            options[options.length-1].selected = true;
           }
         });
       }
@@ -1070,7 +1087,6 @@ class DOM {
       this.loadColumns(row);
       dom.updateColumnPreset(row);
       stage.appendChild(row);
-      // dom.columnWidths(row);
     });
   }
 
@@ -1161,11 +1177,11 @@ class DOM {
                 e.target.parentElement.classList.remove('will-remove');
               },
               click: e => {
-                let cIGroup = e.target.parentElement;
-                let iGWrap = cIGroup.parentElement;
+                let currentInputGroup = e.target.parentElement;
+                let iGWrap = currentInputGroup.parentElement;
                 let iG = iGWrap.getElementsByClassName('f-input-group');
                 if (iG.length > 1) {
-                  dom.remove(cIGroup);
+                  dom.remove(currentInputGroup);
                 } else {
                   console.log('Need at least 1 group');
                 }
@@ -1178,7 +1194,6 @@ class DOM {
             id: uuid(),
             className: 'f-input-group-wrap'
           };
-          // const inputGroupClass = (row => {
             if (rowData.attrs.className) {
               if (typeof rowData.attrs.className === 'string') {
                 rowData.attrs.className += ' f-input-group';
@@ -1186,15 +1201,15 @@ class DOM {
                 rowData.attrs.className.push('f-input-group');
               }
             }
-          // })(row);
           let addButton = {
             tag: 'button',
-            className: 'add-input-group btn pull-right',
+            attrs: {
+              className: 'add-input-group btn pull-right',
+              type: 'button'
+            },
             content: 'Add +',
             action: {
               click: e => {
-                // inputGroupClass
-                // rowData.content.unshift(removeButton);
                 let fInputGroup = e.target.parentElement;
                 let newRow = dom.create(rowData);
                 fInputGroup.insertBefore(newRow, fInputGroup.lastChild);

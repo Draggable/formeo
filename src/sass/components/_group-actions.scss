@@ -179,13 +179,16 @@
 }
 
 .row-actions {
-  width: $field-btn-width;
-  height: $field-btn-width;
+  width: $field-btn-width + 2;
+  height: $field-btn-width + 2;
   left: -25px;
   text-align: right;
+  border-top-left-radius: $border-radius;
   border-bottom-left-radius: $border-radius;
   transition: height 150ms ease-in-out;
   white-space: normal;
+  border: 1px solid $gray-lighter;
+  border-right: 1px solid $white;
 
   .item-handle {
     .icon-handle {
@@ -195,26 +198,15 @@
 
   button {
     border-radius: 0;
-
-    &:first-child {
-      border-top-left-radius: 5px;
-      border-bottom-left-radius: 5px;
-
-      .hovering-row &,
-      .editing-row & {
-        border-bottom-left-radius: 0;
-      }
-    }
-
-    &:last-child {
-      border-bottom-left-radius: 5px;
-    }
   }
 }
 
 .hovering-row,
 .editing-row {
   .row-actions {
+    // box-shadow: 1px 1px 1px $gray-lighter;
+    border: 1px solid $row-outline-color;
+
     button {
       &:first-child {
         border-bottom-left-radius: 0;

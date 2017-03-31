@@ -2,6 +2,7 @@ import pkg from './package.json';
 import path from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import CompressionPlugin from 'compression-webpack-plugin';
 import {optimize, BannerPlugin, DefinePlugin} from 'webpack';
 
 const isDebug = !process.argv.includes('--release');
@@ -24,7 +25,14 @@ let plugins = [
   new optimize.UglifyJsPlugin({
     compress: {warnings: false}
   }),
-  new BannerPlugin(bannerTemplate)
+  new BannerPlugin(bannerTemplate),
+  new CompressionPlugin({
+      asset: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: /\.(js)$/,
+      threshold: 10240,
+      minRatio: 0.8
+    })
 ];
 
 const webpackConfig = {
@@ -88,8 +96,10 @@ const webpackConfig = {
   },
   devServer: {
     hot: true,
+    inline: true,
     contentBase: 'demo/',
-    noInfo: true
+    noInfo: true,
+    host: '192.168.1.82'
   }
 };
 
