@@ -299,7 +299,7 @@ class DOM {
 
     // Set element attributes
     if (elem.attrs) {
-      required = h.inArray('required', Object.keys(elem.attrs));
+      required = h.get(elem.attrs, 'required');
       _this.processAttrs(elem, element, isPreview);
       processed.push('attrs');
     }

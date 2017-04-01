@@ -132,7 +132,7 @@ export class Controls {
           label: i18n.get('select')
         },
         attrs: {
-          required: true,
+          required: false,
           className: 'form-control'
         },
         meta: {
