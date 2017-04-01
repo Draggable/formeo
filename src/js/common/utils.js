@@ -150,3 +150,33 @@ export const clicked = (x, y, position, button) => {
 
   return (xOK && yOK && button !== 2);
 };
+
+
+/**
+ * Cache results of expensive functions
+ * @param  {Function} fn
+ * @param  {Function} resolver
+ * @return {String|Object} memoized
+ */
+export const memoize = (fn, resolver) => {
+  if (typeof fn !== 'function' ||
+    (resolver && typeof resolver !== 'function')) {
+    throw new TypeError('memoize: First argument must be a function');
+  }
+  const memoized = (...args) => {
+    let key = resolver ? resolver.apply(memoized, args) : args[0];
+    let cache = memoized.cache;
+
+    if (cache.has(key)) {
+      return cache.get(key);
+    }
+    let result = fn.apply(memoized, args);
+    memoized.cache = cache.set(key, result);
+    return result;
+  };
+  memoized.cache = new(memoize.Cache);
+  return memoized;
+};
+
+// Assign cache to `_.memoize`.
+memoize.Cache = Map;

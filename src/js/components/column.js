@@ -29,14 +29,16 @@ export default class Column {
       className: []
     };
 
-    formData.columns.set(columnID, h.extend(columnDefaults, _this.columnData));
+    formData.columns.set(columnID, h.merge(columnDefaults, _this.columnData));
 
     let resizeHandle = {
         tag: 'li',
         className: 'resize-x-handle',
         action: {
-          mousedown: _this.resize
-        }
+          mousedown: _this.resize,
+          touchstart: _this.resize
+        },
+        content: [dom.icon('triangle-down'), dom.icon('triangle-up')]
       };
     let editWindow = {
         tag: 'li',
@@ -94,11 +96,7 @@ export default class Column {
         if (evt.from !== evt.to) {
           evt.from.classList.remove('hovering-column');
         }
-        // evt.target.classList.add('hovering-column');
-        // evt.target.parentReference = element;
-
         if (evt.related.parentElement.fType === 'columns') {
-          // evt.to.classList.add('hovering-column');
           evt.related.parentElement.classList.add('hovering-column');
         }
       },
@@ -234,8 +232,14 @@ export default class Column {
      * @param  {Object} evt
      */
     function setWidths(evt) {
-      let newColWidth = (resize.colStartWidth + evt.clientX - resize.startX);
-      let newSibWidth = (resize.sibStartWidth - evt.clientX + resize.startX);
+      let clientX;
+      if (evt.type === 'touchmove') {
+        clientX = evt.touches[0].clientX;
+      } else {
+        clientX = evt.clientX;
+      }
+      let newColWidth = (resize.colStartWidth + clientX - resize.startX);
+      let newSibWidth = (resize.sibStartWidth - clientX + resize.startX);
 
       const percent = width => (width / resize.rowWidth * 100);
       colWidthPercent = parseFloat(percent(newColWidth));
@@ -256,6 +260,8 @@ export default class Column {
     resize.stop = function() {
       window.removeEventListener('mousemove', resize.move);
       window.removeEventListener('mouseup', resize.stop);
+      window.removeEventListener('touchmove', resize.move);
+      window.removeEventListener('touchend', resize.stop);
       if (!resize.resized) {
         return;
       }
@@ -271,10 +277,12 @@ export default class Column {
     };
 
     resize.start = (function(evt) {
-      resize.startX = evt.clientX;
+      if (evt.type === 'touchstart') {
+        resize.startX = evt.touches[0].clientX;
+      } else {
+        resize.startX = evt.clientX;
+      }
       row.classList.add('resizing-columns');
-
-      // setWidths(evt);
 
       // remove bootstrap column classes since we are custom sizing
       let reg = /\bcol-\w+-\d+/g;
@@ -289,6 +297,8 @@ export default class Column {
 
       window.addEventListener('mouseup', resize.stop, false);
       window.addEventListener('mousemove', resize.move, false);
+      window.addEventListener('touchend', resize.stop, false);
+      window.addEventListener('touchmove', resize.move, false);
     })(evt);
   }
 

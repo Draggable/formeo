@@ -26,6 +26,7 @@
       &:focus {
         outline: none;
         border: 1px solid $input-focus;
+        box-shadow: none;
       }
 
       .svg-icon {
@@ -69,10 +70,6 @@
       &:last-child {
         border-radius: 0 0 5px 5px;
       }
-    }
-
-    .field-control {
-      @extend %field-control;
     }
   }
 

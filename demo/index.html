@@ -7,7 +7,7 @@
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="description" content="Vanilla Javascript form building module">
   <meta name="theme-color" content="#232323">
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="assets/formeo.min.css">
   <link rel="stylesheet" type="text/css" href="assets/css/demo.css">
   <title>Formeo | Drag &amp; Drop Form Creation</title>
@@ -20,22 +20,35 @@
     <div id="debug-wrap">
       <div class="debug-window inner">
         <div class="option-editor debug-type">
-          <h2>Option Editor</h2>
-          <select name="locale" id="locale">
-            <option value="en-US">en-US</option>
-            <option value="es-ES">es-ES</option>
-            <option value="zh-TW">zh-TW</option>
-          </select>
+          <!-- <h2>Language</h2> -->
+
         </div>
-        <div class="action-tester debug-type">
+        <!-- <div class="action-tester debug-type">
           <h2>Action Tester</h2>
-        </div>
+        </div> -->
       </div>
     </div>
       <nav>
         <ul>
           <li style="float: left; line-height: 30px;">
-            <a href="#debug" id="debug-demo" title="Debug">Debug</a>
+          <label for="locale">Language</label>
+          <select name="locale" id="locale">
+            <option value="ar-TN" dir="rtl">تونسي</option>
+            <option value="de-DE">Deutsch</option>
+            <option value="en-US">English</option>
+            <option value="es-ES">español</option>
+            <option value="fa-IR" dir="rtl">فارسى</option>
+            <option value="fr-FR">français</option>
+            <option value="nb-NO">norsk</option>
+            <option value="nl-NL">Nederlands</option>
+            <option value="pt-BR">português</option>
+            <option value="ro-RO">român</option>
+            <option value="ru-RU">Русский язык</option>
+            <option value="tr-TR">Türkçe</option>
+            <option value="vi-VN">tiếng việt</option>
+            <option value="zh-TW">台語</option>
+          </select>
+            <!-- <a href="#debug" id="debug-demo" title="Debug">Debug</a> -->
           </li>
           <li>
             <a href="https://github.com/Draggable/formeo" target="_blank" title="View project on GitHub">

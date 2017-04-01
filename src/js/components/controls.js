@@ -81,12 +81,13 @@ export class Controls {
         tag: 'button',
         attrs: {
           className: [
-          {label: 'Grouped', value: 'btn-group'},
-          {label: 'Un-Grouped', value: 'form-group'},
+          {label: i18n.get('grouped'), value: 'btn-group'},
+          {label: i18n.get('ungrouped'), value: 'form-group'},
           ]
         },
         config: {
-          label: 'Button',
+          label: i18n.get('button'),
+          hideLabel: true,
           disabledAttrs: ['type']
         },
         meta: {
@@ -95,19 +96,33 @@ export class Controls {
           id: 'button'
         },
         options: [{
-          label: 'Button',
+          label: i18n.get('button'),
           type: [
-            {label: 'Button', value: 'button', selected: true},
-            {label: 'Reset', value: 'reset'},
-            {label: 'Submit', value: 'submit'},
+            {label: i18n.get('button'), value: 'button', selected: true},
+            {label: i18n.get('reset'), value: 'reset'},
+            {label: i18n.get('submit'), value: 'submit'},
           ],
           className: [
-            {label: 'Primary', value: 'btn-primary btn', selected: true},
-            {label: 'Secondary', value: 'btn-secondary btn'},
-            {label: 'Danger', value: 'btn-danger btn'},
-            {label: 'Success', value: 'btn-success btn'},
-            {label: 'Info', value: 'btn-info btn'},
-            {label: 'Warning', value: 'btn-warning btn'}
+            {
+              label: i18n.get('primary'),
+              value: 'btn-primary btn',
+              selected: true
+            },
+            {
+              label: i18n.get('secondary'),
+            value: 'btn-secondary btn'},
+            {
+              label: i18n.get('danger'),
+            value: 'btn-danger btn'},
+            {
+              label: i18n.get('success'),
+            value: 'btn-success btn'},
+            {
+              label: i18n.get('info'),
+            value: 'btn-info btn'},
+            {
+              label: i18n.get('warning'),
+            value: 'btn-warning btn'}
           ]
         }]
       }, {
@@ -117,6 +132,7 @@ export class Controls {
           label: i18n.get('select')
         },
         attrs: {
+          required: true,
           className: 'form-control'
         },
         meta: {
@@ -176,7 +192,6 @@ export class Controls {
         },
         config: {
           label: i18n.get('checkbox') + '/' + i18n.get('group'),
-          required: true,
           disabledAttrs: ['type']
         },
         meta: {
@@ -264,6 +279,54 @@ export class Controls {
           icon: 'divider',
           id: 'divider'
         }
+      },
+      {
+        tag: 'input',
+        attrs: {
+          type: 'file',
+          className: 'form-control-file'
+        },
+        config: {
+          label: i18n.get('fileUpload')
+        },
+        meta: {
+          group: 'common',
+          icon: 'upload',
+          id: 'upload'
+        },
+        fMap: 'attrs.value'
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'number',
+          className: 'form-control'
+        },
+        config: {
+          label: i18n.get('number'),
+          disabledAttrs: ['type']
+        },
+        meta: {
+          group: 'common',
+          icon: 'hash',
+          id: 'number'
+        },
+        fMap: 'attrs.value'
+      }, {
+        tag: 'input',
+        attrs: {
+          type: 'hidden',
+          value: ''
+        },
+        config: {
+          label: i18n.get('hidden'),
+          hideLabel: true,
+        },
+        meta: {
+          group: 'common',
+          icon: 'hidden',
+          id: 'hidden'
+        },
+        fMap: 'attrs.value'
       }];
 
     this.defaults = {
@@ -311,7 +374,7 @@ export class Controls {
       mouseup: evt => {
         let position = _this.cPosition;
         if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
-          _this.addElement(evt.target.id);
+          _this.addElement(evt.target.parentElement.id);
         }
       }
     };
@@ -341,6 +404,13 @@ export class Controls {
   prepElement(elem) {
     let _this = this;
     let dataID = uuid();
+    let button = {
+      tag: 'button',
+      attrs: {
+        type: 'button'
+      },
+      content: [elem.config.label]
+    };
     let elementControl = {
       tag: 'li',
       className: [
@@ -351,11 +421,11 @@ export class Controls {
       id: dataID,
       cPosition: {},
       action: _this.controlEvents,
-      content: [elem.config.label]
+      content: button
     };
 
     if (elem.meta.icon) {
-      elementControl.content.unshift(dom.icon(elem.meta.icon));
+      button.content.unshift(dom.icon(elem.meta.icon));
     }
 
     // Add field to the register by uuid and meta id
@@ -576,7 +646,7 @@ export class Controls {
           filteredTerm.remove();
         }
       },
-      addElement: (elem) => console.log(elem),
+      addElement: _this.addElement,
       addGroup: (group) => console.log(group)
     };
 
@@ -589,8 +659,8 @@ export class Controls {
       Sortable.create(groups[i], {
         animation: 150,
         forceFallback: true,
+        fallbackClass: 'control-moving',
         fallbackOnBody: true,
-        ghostClass: 'control-ghost',
         group: {
           name: 'controls',
           pull: 'clone',
@@ -631,7 +701,6 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement(id) {
-    // let column;
     let row = dom.addRow();
     let meta = h.get(rFields[id], 'meta');
     if (meta.group !== 'layout') {

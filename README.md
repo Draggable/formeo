@@ -20,7 +20,7 @@ new Formeo({ container: '.build-form' });
 ## Options
 ### General
 | Option  | Type | Value(s) | Default |
-| ------------- | ------------- |------------- |------------- |
+| ------------- | ------------- | ------------- | ------------- |
 | [debug](#) | {Bool} | `true` \| `false` | `false` |
 | [svgSprite](#) | {String} | svg sprite location | `null` |
 | [style](#) | {String} | formeo stylesheet location | `null` |

@@ -217,11 +217,13 @@ class DOM {
     let contentType;
     let {tag} = elem;
     let processed = [];
+    let required = false;
     let i;
     let wrap = {
       tag: 'div',
       className: [h.get(elem, 'config.inputWrap') || 'form-group'],
-      content: []
+      content: [],
+      config: {}
     };
     let labelAfter = elem => {
       let type = h.get(elem, 'attrs.type');
@@ -261,6 +263,14 @@ class DOM {
 
     processed.push('tag');
 
+
+    // check for root className property
+    if (elem.className) {
+      let {className} = elem;
+      elem.attrs = Object.assign({}, elem.attrs, {className});
+      delete elem.className;
+    }
+
     // Append Element Content
     if (elem.options) {
       let {options} = elem;
@@ -278,21 +288,18 @@ class DOM {
           wrap.className = elem.attrs.className;
         }
 
+        wrap.config = Object.assign({}, elem.config);
+        wrap.className.push = h.get(elem, 'attrs.className');
+
         return this.create(wrap, isPreview);
       }
 
       processed.push('options');
     }
 
-    // check for root className property
-    if (elem.className) {
-      let {className} = elem;
-      elem.attrs = Object.assign({}, elem.attrs, {className});
-      delete elem.className;
-    }
-
     // Set element attributes
     if (elem.attrs) {
+      required = h.inArray('required', Object.keys(elem.attrs));
       _this.processAttrs(elem, element, isPreview);
       processed.push('attrs');
     }
@@ -316,7 +323,16 @@ class DOM {
             label.insertBefore(element, label.firstChild);
             wrap.content.push(label);
           } else {
-            wrap.content.push(label, element);
+            wrap.content.push(label);
+            if (required) {
+              let requiredMark = {
+                tag: 'span',
+                className: 'text-danger',
+                content: '*'
+              };
+              wrap.content.push(requiredMark);
+            }
+            wrap.content.push(element);
           }
         } else if (editablePreview) {
           element.contentEditable = true;
@@ -463,6 +479,7 @@ class DOM {
    * @return {Array} option config objects
    */
   processOptions(options, elem, isPreview) {
+    let {action} = elem;
     let fieldType = h.get(elem, 'attrs.type') || elem.tag;
     let optionMap = (option, i) => {
       const defaultInput = () => {
@@ -474,6 +491,7 @@ class DOM {
             value: option.value || '',
             className: 'form-check-input'
           },
+          action
         };
         let optionLabel = {
           tag: 'label',
@@ -482,7 +500,8 @@ class DOM {
             inputWrap: 'form-check'
           },
           className: 'form-check-label',
-          content: [this.parsedHtml(option.label)]
+          // content: [this.parsedHtml(option.label)]
+          content: [option.label]
         };
         let inputWrap = {
           tag: 'div',
@@ -498,18 +517,21 @@ class DOM {
           inputWrap.className.push('form-check-inline');
         }
 
-        if (!isPreview) {
-          input.attrs.name = elem.id;
-          optionLabel.content.unshift(input);
-        } else {
+        if (option.selected) {
+          input.attrs.checked = true;
+        }
+
+        if (isPreview) {
           input.fMap = `options[${i}].selected`;
           optionLabel.attrs.contenteditable = true;
           optionLabel.fMap = `options[${i}].label`;
           inputWrap.content.unshift(input);
-        }
-
-        if (option.selected) {
-          input.attrs.checked = true;
+        } else {
+          input.attrs.name = elem.id;
+          optionLabel = dom.create(optionLabel);
+          input = dom.create(input);
+          optionLabel.insertBefore(input, optionLabel.firstChild);
+          inputWrap.content = optionLabel;
         }
 
 
@@ -533,7 +555,8 @@ class DOM {
             className,
             id: uuid(),
             options: undefined,
-            content: label
+            content: label,
+            action: elem.action
           });
         },
         checkbox: defaultInput,
@@ -543,8 +566,9 @@ class DOM {
       return optionMarkup[fieldType](option);
     };
 
+    const mappedOptions = options.map(optionMap);
 
-    return options.map(optionMap);
+    return mappedOptions;
   }
 
   /**
@@ -600,7 +624,8 @@ class DOM {
       tag: 'label',
       attrs: {},
       className: [],
-      content: this.parsedHtml(elem.config.label),
+      content: elem.config.label,
+      // content: this.parsedHtml(elem.config.label),
       action: {}
     };
 
@@ -621,7 +646,7 @@ class DOM {
   /**
    * Determine content type
    * @param  {Node | String | Array | Object} content
-   * @return {String}                         contentType for mapping
+   * @return {String}
    */
   contentType(content) {
     let type = typeof content;
@@ -992,6 +1017,7 @@ class DOM {
             options[i].selected = true;
           } else {
             delete options[i].selected;
+            options[options.length-1].selected = true;
           }
         });
       }
@@ -1070,7 +1096,6 @@ class DOM {
       this.loadColumns(row);
       dom.updateColumnPreset(row);
       stage.appendChild(row);
-      // dom.columnWidths(row);
     });
   }
 
@@ -1132,7 +1157,7 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget);
-    let renderData = h.copyObj(data.js);
+    let renderData = data.prepData;
     let renderCount = document.getElementsByClassName('formeo-render').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;
@@ -1161,11 +1186,11 @@ class DOM {
                 e.target.parentElement.classList.remove('will-remove');
               },
               click: e => {
-                let cIGroup = e.target.parentElement;
-                let iGWrap = cIGroup.parentElement;
+                let currentInputGroup = e.target.parentElement;
+                let iGWrap = currentInputGroup.parentElement;
                 let iG = iGWrap.getElementsByClassName('f-input-group');
                 if (iG.length > 1) {
-                  dom.remove(cIGroup);
+                  dom.remove(currentInputGroup);
                 } else {
                   console.log('Need at least 1 group');
                 }
@@ -1178,7 +1203,6 @@ class DOM {
             id: uuid(),
             className: 'f-input-group-wrap'
           };
-          // const inputGroupClass = (row => {
             if (rowData.attrs.className) {
               if (typeof rowData.attrs.className === 'string') {
                 rowData.attrs.className += ' f-input-group';
@@ -1186,22 +1210,21 @@ class DOM {
                 rowData.attrs.className.push('f-input-group');
               }
             }
-          // })(row);
           let addButton = {
             tag: 'button',
-            className: 'add-input-group btn pull-right',
+            attrs: {
+              className: 'add-input-group btn pull-right',
+              type: 'button'
+            },
             content: 'Add +',
             action: {
               click: e => {
-                // inputGroupClass
-                // rowData.content.unshift(removeButton);
                 let fInputGroup = e.target.parentElement;
                 let newRow = dom.create(rowData);
                 fInputGroup.insertBefore(newRow, fInputGroup.lastChild);
               }
             }
           };
-
 
           row.content.unshift(removeButton);
           inputGroupWrap.content = [rowData, addButton];

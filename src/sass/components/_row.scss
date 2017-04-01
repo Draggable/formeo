@@ -1,6 +1,8 @@
 .stage-rows {
   @include clearfix;
 
+  transition: background-color 125ms ease-in-out;
+  display: flex;
   position: relative;
   clear: both;
   margin-left: 0;
@@ -13,6 +15,16 @@
   align-content: stretch;
   align-items: stretch;
   min-height: 34px;
+  box-shadow: 0 0 0 1px $gray-lighter inset;
+
+  &::before {
+    @extend %element-tag;
+
+    border-bottom-right-radius: $border-radius;
+    border: 1px solid $row-outline-color;
+    border-width: 1px 0;
+    left: 0;
+  }
 
   &::after {
     clear: both;
@@ -59,18 +71,6 @@
       transition: none;
     }
   }
-}
-
-.stage-rows {
-  transition: background-color 125ms ease-in-out;
-  display: flex;
-
-  &::before {
-    @extend %element-tag;
-
-    border-bottom-right-radius: $border-radius;
-    left: 0;
-  }
 
   &.editing-row {
     &.hovering-row {
@@ -80,15 +80,34 @@
     }
   }
 
-  &.editing-row,
-  &.hovering-row {
+  &.editing-row {
     box-shadow: 0 0 0 1px $row-outline-color inset;
 
     &::before {
-      border-bottom: 1px solid $row-outline-color;
-      border-right: 1px solid $row-outline-color;
+      border-width: 1px 0 0;
+      width: 80px !important;
+      content: attr(data-editing-hover-tag);
+    }
+  }
+
+  &.hovering-row {
+    box-shadow: 0 0 0 1px $row-outline-color inset;
+
+    &.editing-row {
+      &::before {
+        border-right-width: 0;
+      }
+    }
+
+    &::before {
+      box-shadow: 1px 1px 1px $gray-lighter;
+      border-right-width: 1px;
       width: 80px !important;
     }
+  }
+
+  &.row-moving {
+    box-shadow: 0 0 0 1px $row-outline-color inset, 0 0 30px 0 $gray-light;
   }
 
   &.empty-rows {

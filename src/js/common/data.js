@@ -153,8 +153,20 @@ let data = {
       field: fieldID => {
         return formData.fields.get(fieldID);
       },
-      attrs: fieldID => {
-        return formData.fields.get(fieldID).attrs;
+      attrs: attrUL => {
+        const fieldData = formData.fields.get(attrUL.fieldID);
+        let attrValues = fieldData.attrs;
+        events.formeoUpdated = new CustomEvent('formeoUpdated', {
+          data: {
+            changed: 'field.attrs',
+            updateType: 'update',
+            attrValues
+          }
+        });
+
+        document.dispatchEvent(events.formeoUpdated);
+
+        return attrValues;
       },
       options: optionUL => {
         let oldValue = formData.fields.get(optionUL.fieldID).options;
@@ -305,11 +317,7 @@ let data = {
     return jsData;
   },
 
-  /**
-   * getter method for JSON formData
-   * @return {JSON} formData
-   */
-  get json() {
+  get prepData() {
     let jsData = data.js;
     Object.keys(jsData).forEach(type => {
       Object.keys(jsData[type]).forEach(entKey => {
@@ -321,8 +329,17 @@ let data = {
         }
       });
     });
+    return jsData;
+  },
 
-    return window.JSON.stringify(jsData, null, '\t');
+  /**
+   * getter method for JSON formData
+   * @return {JSON} formData
+   */
+  get json() {
+    let preppedData = data.prepData;
+
+    return window.JSON.stringify(preppedData, null, '\t');
   }
 };
 
