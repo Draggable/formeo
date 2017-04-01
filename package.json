@@ -140,7 +140,5 @@
     }
   },
   "engines": {},
-  "dependencies": {
-    "date-input-polyfill": "^2.13.0"
-  }
+  "dependencies": {}
 }
