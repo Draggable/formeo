@@ -208,15 +208,15 @@ class Formeo {
     delete options.container;
 
     opts = h.merge(defaults, options);
-    dom.setConfig = opts.config;
 
     data.init(opts, userFormData);
     events.init(opts.events);
     actions.init(opts.actions);
-    formeo.render = renderTarget => dom.renderForm.call(dom, renderTarget);
 
     // Load remote resources such as css and svg sprite
     _this.loadResources().then(() => {
+      dom.setConfig = opts.config;
+      formeo.render = renderTarget => dom.renderForm.call(dom, renderTarget);
       if (opts.allowEdit) {
         formeo.edit = _this.init.bind(_this);
         _this.init.call(_this);

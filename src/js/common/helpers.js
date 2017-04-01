@@ -73,7 +73,8 @@ const helpers = {
   insertIcons: response => {
     let iconSpriteWrap = dom.create({
       tag: 'div',
-      content: response.responseText
+      content: response.responseText,
+      id: 'formeo-sprite'
     });
     iconSpriteWrap.style.display = 'none';
     document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
