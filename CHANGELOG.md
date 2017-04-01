@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.2 - setConfig causes icons to be missing from stage [#64](http://github.com/draggable/formeo/pulls/64)
 - v0.7.1 - Feature/keyboard nav [#63](http://github.com/draggable/formeo/pulls/63)
 - v0.7.0 - Configurable action buttons for rows, columns and fields [#62](http://github.com/draggable/formeo/pulls/62)
 - v0.6.1 - Tabbed edit panel, style updates, bugfixes [#60](http://github.com/draggable/formeo/pulls/60)

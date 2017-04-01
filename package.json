@@ -1,6 +1,6 @@
 {
   "name": "formeo",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "main": "dist/formeo.min.js",
   "files": [
     "dist/formeo.min.js",
@@ -77,6 +77,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^6.7.6",
+    "babel-cli": "^6.24.0",
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.3.2",
