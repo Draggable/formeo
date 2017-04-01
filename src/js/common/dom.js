@@ -530,8 +530,6 @@ class DOM {
           input.attrs.name = elem.id;
           optionLabel = dom.create(optionLabel);
           input = dom.create(input);
-          console.log([optionLabel]);
-
           optionLabel.insertBefore(input, optionLabel.firstChild);
           inputWrap.content = optionLabel;
         }
@@ -612,7 +610,6 @@ class DOM {
   parsedHtml(html) {
     let escapeElement = document.createElement('textarea');
     escapeElement.innerHTML = html;
-    console.log([escapeElement]);
     return escapeElement.textContent;
   }
 
