@@ -52,9 +52,11 @@ export class Controls {
         tag: 'input',
         attrs: {
           type: 'text',
+          required: false,
           className: 'form-control'
         },
         config: {
+          disabledAttrs: ['type'],
           label: i18n.get('input.text')
         },
         meta: {
@@ -67,9 +69,11 @@ export class Controls {
         tag: 'input',
         attrs: {
           type: 'date',
+          required: false,
           className: 'form-control'
         },
         config: {
+          disabledAttrs: ['type'],
           label: i18n.get('input.date')
         },
         meta: {
@@ -81,8 +85,8 @@ export class Controls {
         tag: 'button',
         attrs: {
           className: [
-          {label: i18n.get('grouped'), value: 'btn-group'},
-          {label: i18n.get('ungrouped'), value: 'form-group'},
+            {label: i18n.get('grouped'), value: 'btn-group'},
+            {label: i18n.get('ungrouped'), value: 'form-group'},
           ]
         },
         config: {
@@ -110,19 +114,20 @@ export class Controls {
             },
             {
               label: i18n.get('secondary'),
-            value: 'btn-secondary btn'},
+              value: 'btn-secondary btn'},
             {
               label: i18n.get('danger'),
-            value: 'btn-danger btn'},
+              value: 'btn-danger btn'},
             {
               label: i18n.get('success'),
-            value: 'btn-success btn'},
+              value: 'btn-success btn'},
             {
               label: i18n.get('info'),
-            value: 'btn-info btn'},
+              value: 'btn-info btn'},
             {
               label: i18n.get('warning'),
-            value: 'btn-warning btn'}
+              value: 'btn-warning btn'
+            }
           ]
         }]
       }, {
@@ -182,7 +187,7 @@ export class Controls {
           id: 'textarea'
         },
         attrs: {
-          maxlength: 10
+          required: false
         }
       }, {
         tag: 'input',
@@ -284,9 +289,11 @@ export class Controls {
         tag: 'input',
         attrs: {
           type: 'file',
+          required: false,
           className: 'form-control-file'
         },
         config: {
+          disabledAttrs: ['type'],
           label: i18n.get('fileUpload')
         },
         meta: {
@@ -299,6 +306,7 @@ export class Controls {
         tag: 'input',
         attrs: {
           type: 'number',
+          required: false,
           className: 'form-control'
         },
         config: {

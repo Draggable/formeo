@@ -217,19 +217,25 @@ class DOM {
     let contentType;
     let {tag} = elem;
     let processed = [];
-    let required = false;
     let i;
     let wrap = {
       tag: 'div',
+      attrs: {},
       className: [h.get(elem, 'config.inputWrap') || 'form-group'],
       content: [],
       config: {}
+    };
+    let requiredMark = {
+      tag: 'span',
+      className: 'text-danger',
+      content: '*'
     };
     let labelAfter = elem => {
       let type = h.get(elem, 'attrs.type');
       return (type === 'checkbox' || type === 'radio');
     };
     let element = document.createElement(tag);
+    let required = h.get(elem, 'attrs.required');
 
     /**
      * Object for mapping contentType to its function
@@ -291,6 +297,11 @@ class DOM {
         wrap.config = Object.assign({}, elem.config);
         wrap.className.push = h.get(elem, 'attrs.className');
 
+
+        if (required) {
+          wrap.attrs.required = required;
+        }
+
         return this.create(wrap, isPreview);
       }
 
@@ -299,7 +310,6 @@ class DOM {
 
     // Set element attributes
     if (elem.attrs) {
-      required = h.get(elem.attrs, 'required');
       _this.processAttrs(elem, element, isPreview);
       processed.push('attrs');
     }
@@ -322,14 +332,12 @@ class DOM {
             element.classList.add('form-check-input');
             label.insertBefore(element, label.firstChild);
             wrap.content.push(label);
+            if (required) {
+              wrap.content.push(requiredMark);
+            }
           } else {
             wrap.content.push(label);
             if (required) {
-              let requiredMark = {
-                tag: 'span',
-                className: 'text-danger',
-                content: '*'
-              };
               wrap.content.push(requiredMark);
             }
             wrap.content.push(element);
@@ -481,6 +489,7 @@ class DOM {
   processOptions(options, elem, isPreview) {
     let {action} = elem;
     let fieldType = h.get(elem, 'attrs.type') || elem.tag;
+
     let optionMap = (option, i) => {
       const defaultInput = () => {
         let input = {

@@ -1,14 +1,15 @@
 'use strict';
 import '../sass/formeo.scss';
+import i18n from 'mi18n';
 import h from './common/helpers';
 import {data, formData} from './common/data';
 import events from './common/events';
 import actions from './common/actions';
 import dom from './common/dom';
-import i18n from 'mi18n';
 import {Controls} from './components/controls';
 import Stage from './components/stage';
 
+require('date-input-polyfill');
 // Simple object config for the main part of formeo
 const formeo = {
   get formData() {
@@ -118,6 +119,7 @@ class Formeo {
             'meta.label': 'Label',
             'minOptionMessage': 'This field requires a minimum of 2 options',
             'name': 'Name',
+            'number': 'Number',
             'no': 'No',
             'off': 'Off',
             'on': 'On',
@@ -191,9 +193,9 @@ class Formeo {
       }
     };
 
-    let locale = window.sessionStorage.getItem('formeo-locale');
-    if (locale) {
-      defaults.i18n.locale = locale;
+    let formeoLocale = window.sessionStorage.getItem('formeo-locale');
+    if (formeoLocale) {
+      defaults.i18n.locale = formeoLocale;
     }
 
     let _this = this;
@@ -257,9 +259,9 @@ class Formeo {
     formeo.controls = new Controls(opts.controls, _this.formID);
     _this.stages = _this.buildStages();
     formeo.i18n = {
-      setLang: locale => {
-        window.sessionStorage.setItem('formeo-locale', locale);
-        let loadLang = i18n.setCurrent.call(i18n, locale);
+      setLang: formeoLocale => {
+        window.sessionStorage.setItem('formeo-locale', formeoLocale);
+        let loadLang = i18n.setCurrent.call(i18n, formeoLocale);
         loadLang.then(function() {
             _this.stages = _this.buildStages();
             formeo.controls = new Controls(opts.controls, _this.formID);
