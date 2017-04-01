@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.1 - Feature/keyboard nav [#63](http://github.com/draggable/formeo/pulls/63)
 - v0.7.0 - Configurable action buttons for rows, columns and fields [#62](http://github.com/draggable/formeo/pulls/62)
 - v0.6.1 - Tabbed edit panel, style updates, bugfixes [#60](http://github.com/draggable/formeo/pulls/60)
 - v0.6.0 - Add buttons, column style update [#59](http://github.com/draggable/formeo/pulls/59)

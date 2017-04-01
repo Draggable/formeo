@@ -1,6 +1,6 @@
 {
   "name": "formeo",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "main": "dist/formeo.min.js",
   "files": [
     "dist/formeo.min.js",
@@ -72,7 +72,7 @@
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
     "start": "webpack -d | webpack-dev-server -d --hot --inline --progress",
-    "tag": "babel-node tools/run tag",
+    "tag": "node ./node_modules/babel-cli/bin/babel-node.js tools/run tag",
     "deploy": "git push upstream $(git subtree split --prefix demo master):gh-pages --force"
   },
   "devDependencies": {
