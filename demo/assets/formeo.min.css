@@ -3535,7 +3535,6 @@ button[class*='-clone']:hover {
   list-style: none;
   margin: -1px 0 0;
   border: 1px solid #bcbfc1;
-  padding: 10px;
   text-align: left;
   background: #fff;
   -webkit-user-select: none;
@@ -3550,6 +3549,20 @@ button[class*='-clone']:hover {
     font-size: 16px; }
   .field-control:hover {
     background-color: #f2f2f2; }
+  .field-control button {
+    display: block;
+    height: 100%;
+    width: 100%;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    padding: 10px; }
+    .field-control button:focus {
+      background-color: #f2f2f2;
+      outline: 2px solid #66afe9;
+      border: 2px solid #66afe9;
+      border-width: 0 1px;
+      padding: 10px 9px; }
   .field-control svg, .field-control .glyphicon {
     float: left;
     margin-right: 10px; }
@@ -4288,7 +4301,8 @@ button[class*='-clone']:hover {
     z-index: 1; }
     .formeo.formeo-editor .panels-wrap nav .btn:focus {
       outline: none;
-      border: 1px solid #66afe9; }
+      border: 1px solid #66afe9;
+      box-shadow: none; }
     .formeo.formeo-editor .panels-wrap nav .btn .svg-icon {
       width: 20px;
       height: 20px; }
@@ -4431,6 +4445,7 @@ button[class*='-clone']:hover {
   clear: both; }
 
 .formeo .formeo-render .f-row {
+  margin-bottom: 1em;
   -ms-flex-direction: row;
       flex-direction: row;
   -ms-flex-pack: start;

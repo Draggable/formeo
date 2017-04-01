@@ -479,6 +479,7 @@ class DOM {
    * @return {Array} option config objects
    */
   processOptions(options, elem, isPreview) {
+    let {action} = elem;
     let fieldType = h.get(elem, 'attrs.type') || elem.tag;
     let optionMap = (option, i) => {
       const defaultInput = () => {
@@ -490,6 +491,7 @@ class DOM {
             value: option.value || '',
             className: 'form-check-input'
           },
+          action
         };
         let optionLabel = {
           tag: 'label',
@@ -498,7 +500,8 @@ class DOM {
             inputWrap: 'form-check'
           },
           className: 'form-check-label',
-          content: [this.parsedHtml(option.label)]
+          // content: [this.parsedHtml(option.label)]
+          content: [option.label]
         };
         let inputWrap = {
           tag: 'div',
@@ -514,18 +517,23 @@ class DOM {
           inputWrap.className.push('form-check-inline');
         }
 
-        if (!isPreview) {
-          input.attrs.name = elem.id;
-          optionLabel.content.unshift(input);
-        } else {
+        if (option.selected) {
+          input.attrs.checked = true;
+        }
+
+        if (isPreview) {
           input.fMap = `options[${i}].selected`;
           optionLabel.attrs.contenteditable = true;
           optionLabel.fMap = `options[${i}].label`;
           inputWrap.content.unshift(input);
-        }
+        } else {
+          input.attrs.name = elem.id;
+          optionLabel = dom.create(optionLabel);
+          input = dom.create(input);
+          console.log([optionLabel]);
 
-        if (option.selected) {
-          input.attrs.checked = true;
+          optionLabel.insertBefore(input, optionLabel.firstChild);
+          inputWrap.content = optionLabel;
         }
 
 
@@ -549,7 +557,8 @@ class DOM {
             className,
             id: uuid(),
             options: undefined,
-            content: label
+            content: label,
+            action: elem.action
           });
         },
         checkbox: defaultInput,
@@ -559,8 +568,9 @@ class DOM {
       return optionMarkup[fieldType](option);
     };
 
+    const mappedOptions = options.map(optionMap);
 
-    return options.map(optionMap);
+    return mappedOptions;
   }
 
   /**
@@ -602,6 +612,7 @@ class DOM {
   parsedHtml(html) {
     let escapeElement = document.createElement('textarea');
     escapeElement.innerHTML = html;
+    console.log([escapeElement]);
     return escapeElement.textContent;
   }
 
@@ -616,7 +627,8 @@ class DOM {
       tag: 'label',
       attrs: {},
       className: [],
-      content: this.parsedHtml(elem.config.label),
+      content: elem.config.label,
+      // content: this.parsedHtml(elem.config.label),
       action: {}
     };
 
@@ -637,7 +649,7 @@ class DOM {
   /**
    * Determine content type
    * @param  {Node | String | Array | Object} content
-   * @return {String}                         contentType for mapping
+   * @return {String}
    */
   contentType(content) {
     let type = typeof content;
@@ -1148,7 +1160,7 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget);
-    let renderData = h.copyObj(data.js);
+    let renderData = data.prepData;
     let renderCount = document.getElementsByClassName('formeo-render').length;
     let content = Object.values(renderData.stages).map(stageData => {
       let {rows, ...stage} = stageData;
@@ -1216,7 +1228,6 @@ class DOM {
               }
             }
           };
-
 
           row.content.unshift(removeButton);
           inputGroupWrap.content = [rowData, addButton];

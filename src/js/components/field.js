@@ -189,6 +189,7 @@ export default class Field {
       action: {
         click: (evt) => {
           animate.slideUp(document.getElementById(property.id), 250, elem => {
+            let parent = elem.parentElement;
             let fieldData = formData.fields.get(_this.fieldID);
             let fieldPanelData = fieldData[panelType];
             dom.remove(elem);
@@ -197,7 +198,7 @@ export default class Field {
             } else {
               fieldPanelData[dataProp] = undefined;
             }
-            data.save(panelType, _this.fieldID);
+            data.save(panelType, parent);
             dom.empty(_this.preview);
             let newPreview = dom.create(fieldData, true);
             _this.preview.appendChild(newPreview);
@@ -443,17 +444,23 @@ export default class Field {
     let editGroup = field.querySelector('.field-edit-attrs');
     let safeAttr = h.hyphenCase(attr);
     let fieldData = formData.fields.get(_this.fieldID);
+    const labelKey = `attrs.${safeAttr}`;
 
-    i18n.put('attrs' + safeAttr, h.capitalize(attr));
+    if (!i18n.current[labelKey]) {
+      i18n.put(labelKey, h.capitalize(attr));
+    }
+
+    if (typeof val === 'string' && h.inArray(val, ['true', 'false'])) {
+      val = JSON.parse(val);
+    }
 
     fieldData.attrs[safeAttr] = val;
 
     let args = {
-      dataObj: formData.fields.get(_this.fieldID),
+      dataObj: fieldData,
       dataProp: safeAttr,
-      i: Object.keys(formData.fields.get(_this.fieldID).attrs).length,
-      panelType: 'attrs',
-      propType: dom.contentType(val)
+      i: Object.keys(fieldData.attrs).length,
+      panelType: 'attrs'
     };
 
     let existingAttr = editGroup.querySelector(`.attrs-${safeAttr}-wrap`);

@@ -49,7 +49,7 @@ let formeoOpts = {
 //     return options;
 //   })(),
 //   action: {
-//     click: evt => {
+//     mouseover: evt => {
 //       console.log(evt);
 //       const {target} = evt;
 //       if (target.value === 'other') {
@@ -92,16 +92,16 @@ const formeo = new window.Formeo(formeoOpts);
 console.log(formeo);
 let editing = true;
 
-let debugWrap = document.getElementById('debug-wrap');
-let debugBtn = document.getElementById('debug-demo');
+// let debugWrap = document.getElementById('debug-wrap');
+// let debugBtn = document.getElementById('debug-demo');
 let locale = document.getElementById('locale');
 let toggleEdit = document.getElementById('renderForm');
 let viewData = document.getElementById('viewData');
 let reloadBtn = document.getElementById('reloadBtn');
 
-debugBtn.onclick = function() {
-  debugWrap.classList.toggle('open');
-};
+// debugBtn.onclick = function() {
+//   debugWrap.classList.toggle('open');
+// };
 
 reloadBtn.onclick = function() {
   window.sessionStorage.removeItem('formData');
@@ -124,7 +124,14 @@ viewData.onclick = evt => {
   console.log(formeo.formData);
 };
 
+
+let formeoLocale = window.sessionStorage.getItem('formeo-locale');
+if (formeoLocale) {
+  locale.value = formeoLocale;
+}
+
 locale.addEventListener('change', function() {
+  window.sessionStorage.setItem('formeo-locale', locale.value);
   formeo.i18n.setLang(locale.value);
 });
 

@@ -2,6 +2,7 @@
   @include clearfix;
 
   .f-row {
+    margin-bottom: 1em;
     flex-direction: row;
     justify-content: flex-start;
     flex-wrap: nowrap;

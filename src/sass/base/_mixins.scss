@@ -129,6 +129,14 @@
     border: 0;
     text-align: left;
     padding: 10px;
+
+    &:focus {
+      background-color: darken($white, 5%);
+      outline: 2px solid $input-focus;
+      border: 2px solid $input-focus;
+      border-width: 0 1px;
+      padding: 10px 9px;
+    }
   }
 
   svg,

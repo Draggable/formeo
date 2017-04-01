@@ -132,6 +132,7 @@ export class Controls {
           label: i18n.get('select')
         },
         attrs: {
+          required: true,
           className: 'form-control'
         },
         meta: {
@@ -373,7 +374,7 @@ export class Controls {
       mouseup: evt => {
         let position = _this.cPosition;
         if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
-          _this.addElement(evt.target.id);
+          _this.addElement(evt.target.parentElement.id);
         }
       }
     };

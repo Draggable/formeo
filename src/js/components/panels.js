@@ -112,8 +112,8 @@ export default class Panels {
     let groups = panels.getElementsByClassName('field-edit-group');
 
     return h.forEach(groups, (group, index) => {
+      group.fieldID = _this.opts.id;
       if (group.isSortable) {
-        group.fieldID = _this.opts.id;
         Sortable.create(group, {
           animation: 150,
           group: {

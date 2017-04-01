@@ -47,6 +47,7 @@ class Formeo {
         fields: {}
       },
       i18n: {
+        locale: 'en-US',
         langs: [
           'en-US'
         ],
@@ -61,6 +62,7 @@ class Formeo {
             'attributes': 'Attributes',
             'attrs.className': 'Class',
             'attrs.type': 'Type',
+            'attrs.required': 'Required',
             'autocomplete': 'Autocomplete',
             'button': 'Button',
             'cannotBeEmpty': 'This field cannot be empty',
@@ -189,6 +191,11 @@ class Formeo {
       }
     };
 
+    let locale = window.sessionStorage.getItem('formeo-locale');
+    if (locale) {
+      defaults.i18n.locale = locale;
+    }
+
     let _this = this;
 
     _this.container = options.container || defaults.container;
@@ -251,6 +258,7 @@ class Formeo {
     _this.stages = _this.buildStages();
     formeo.i18n = {
       setLang: locale => {
+        window.sessionStorage.setItem('formeo-locale', locale);
         let loadLang = i18n.setCurrent.call(i18n, locale);
         loadLang.then(function() {
             _this.stages = _this.buildStages();

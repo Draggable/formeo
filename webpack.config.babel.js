@@ -98,8 +98,7 @@ const webpackConfig = {
     hot: true,
     inline: true,
     contentBase: 'demo/',
-    noInfo: true,
-    host: '192.168.1.82'
+    noInfo: true
   }
 };
 
