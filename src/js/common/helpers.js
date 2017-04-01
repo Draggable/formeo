@@ -239,13 +239,13 @@ const helpers = {
    */
   toggleElementsByStr: (elems, term) => {
     let filteredElems = [];
-    helpers.forEach(elems, (i) => {
-      let txt = elems[i].textContent.toLowerCase();
+    helpers.forEach(elems, elem => {
+      let txt = elem.textContent.toLowerCase();
       if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elems[i].style.display = 'block';
-        filteredElems.push(elems[i]);
+        elem.style.display = 'block';
+        filteredElems.push(elem);
       } else {
-        elems[i].style.display = 'none';
+        elem.style.display = 'none';
       }
     });
 

@@ -135,6 +135,11 @@ locale.addEventListener('change', function() {
   formeo.i18n.setLang(locale.value);
 });
 
+document.getElementById('control-filter')
+.addEventListener('input', function(e) {
+  formeo.controls.actions.filter(e.target.value);
+});
+
 if (isSite) {
   ((window.gitter = {}).chat = {}).options = {
     room: 'draggable/formeo'
