@@ -1,14 +1,14 @@
 
 // Default options
 let defaults = {
-  formeoLoaded: (evt) => {},
+  formeoLoaded: evt => {},
   onAdd: () => {},
   onUpdate: evt => {
     if (events.opts.debug) {
       console.log(evt);
     }
   },
-  onSave: (evt) => {},
+  onSave: evt => {},
   confirmClearAll: evt => {
     if (window.confirm(evt.confirmationMessage)) {
       evt.clearAllAction(evt);

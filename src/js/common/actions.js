@@ -5,7 +5,7 @@
 // Default options
 const defaultActions = {
   add: {
-    attr: (evt) => {
+    attr: evt => {
       let attr = window.prompt(evt.message.attr);
       let val;
       if (attr) {
@@ -13,16 +13,16 @@ const defaultActions = {
         evt.addAction(attr, val);
       }
     },
-    option: (evt) => {
+    option: evt => {
       evt.addAction();
     }
   },
   click: {
-    btn: (evt) => {
+    btn: evt => {
       evt.action();
     }
   },
-  save: (evt) => {}
+  save: evt => {}
 };
 
 /**
@@ -34,15 +34,15 @@ const actions = {
     return this;
   },
   add: {
-    attrs: (evt) => {
+    attrs: evt => {
       actions.opts.add.attr(evt);
     },
-    options: (evt) => {
+    options: evt => {
       actions.opts.add.option(evt);
     }
   },
   click: {
-    btn: (evt) => {
+    btn: evt => {
       actions.opts.click.btn(evt);
     }
   },
