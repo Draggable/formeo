@@ -92,6 +92,7 @@
     "compression-webpack-plugin": "^0.3.2",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.2",
+    "date-input-polyfill": "^2.13.0",
     "eslint": "^3.16.1",
     "eslint-config-google": "^0.7.1",
     "eslint-loader": "^1.6.3",

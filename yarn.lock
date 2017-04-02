@@ -884,7 +884,7 @@ babel-register@^6.24.0:
     mkdirp "^0.5.1"
     source-map-support "^0.4.2"
 
-babel-runtime@^6.18.0, babel-runtime@^6.22.0:
+babel-runtime@^6.11.6, babel-runtime@^6.18.0, babel-runtime@^6.22.0:
   version "6.23.0"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.23.0.tgz#0a9489f144de70efb3ce4300accdb329e2fc543b"
   dependencies:
@@ -1601,6 +1601,12 @@ dashdash@^1.12.0:
   resolved "https://registry.yarnpkg.com/dashdash/-/dashdash-1.14.1.tgz#853cfa0f7cbe2fed5de20326b8dd581035f6e2f0"
   dependencies:
     assert-plus "^1.0.0"
+
+date-input-polyfill@^2.13.0:
+  version "2.13.0"
+  resolved "https://registry.yarnpkg.com/date-input-polyfill/-/date-input-polyfill-2.13.0.tgz#43cf1f6d21931e0937cd482b90ce546f86634b61"
+  dependencies:
+    babel-runtime "^6.11.6"
 
 date-now@^0.1.4:
   version "0.1.4"
