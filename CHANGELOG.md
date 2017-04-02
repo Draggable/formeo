@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.5 - Hotfix/required [#67](http://github.com/draggable/formeo/pulls/67)
 - v0.7.4 - Fix control filter [#65](http://github.com/draggable/formeo/pulls/65)
 - v0.7.3 - v0.7.2
 - v0.7.2 - setConfig causes icons to be missing from stage [#64](http://github.com/draggable/formeo/pulls/64)
