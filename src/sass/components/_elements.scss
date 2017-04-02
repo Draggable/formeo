@@ -14,3 +14,7 @@ hr {
     margin-left: 10px;
   }
 }
+
+[type='date'].form-control {
+  max-width: 280px;
+}

@@ -7,7 +7,7 @@
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <meta name="description" content="Vanilla Javascript form building module">
   <meta name="theme-color" content="#232323">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous"> -->
   <link rel="stylesheet" type="text/css" href="assets/formeo.min.css">
   <link rel="stylesheet" type="text/css" href="assets/css/demo.css">
   <title>Formeo | Drag &amp; Drop Form Creation</title>
@@ -30,7 +30,7 @@
     </div>
       <nav>
         <ul>
-          <li style="float: left; line-height: 30px;">
+          <li>
           <label for="locale">Language</label>
           <select name="locale" id="locale">
             <option value="ar-TN" dir="rtl">تونسي</option>
@@ -51,14 +51,14 @@
           <label for="control-filter">Control Filter:</label> <input type="text" id="control-filter" placeholder="ex. text" />
             <!-- <a href="#debug" id="debug-demo" title="Debug">Debug</a> -->
           </li>
-          <li>
+          <li style="float: right;">
             <a href="https://github.com/Draggable/formeo" target="_blank" title="View project on GitHub">
               <img src="assets/img/github.png" width="77" alt="GitHub" />
             </a>
           </li>
         </ul>
       </nav>
-      <img src="assets/img/formeo-logo.svg" alt="Formeo" width="350">
+      <img src="assets/img/formeo-logo.svg" alt="Formeo" width="130" id="formeo-logo">
       Demo
     </header>
     <section id="main_content" class="inner">

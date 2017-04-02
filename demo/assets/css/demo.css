@@ -28,20 +28,22 @@ body {
 
 #main_content {
   padding-bottom: 50px;
+  clear: both;
 }
 
-#demo-footer nav, #demo-header nav {
+#demo-footer nav {
   background-color: #666;
   text-align: right;
 }
 
 #demo-header nav {
+  text-align: left;
   background-color: #efefef;
 }
 
 #demo-footer ul, #demo-header ul {
   list-style: none;
-  padding: 0;
+  padding: 7px 5px 0;
   max-width: 1280px;
   margin: auto;
 }

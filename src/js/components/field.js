@@ -471,7 +471,7 @@ export default class Field {
       editGroup.appendChild(newAttr);
     }
 
-    data.save();
+    data.save(args.panelType, editGroup);
     _this.updatePreview();
     _this.resizePanelWrap();
   }

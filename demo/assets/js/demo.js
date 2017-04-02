@@ -94,16 +94,16 @@ let editing = true;
 
 // let debugWrap = document.getElementById('debug-wrap');
 // let debugBtn = document.getElementById('debug-demo');
-let locale = document.getElementById('locale');
+let localeSelect = document.getElementById('locale');
 let toggleEdit = document.getElementById('renderForm');
-let viewData = document.getElementById('viewData');
-let reloadBtn = document.getElementById('reloadBtn');
+let viewDataBtn = document.getElementById('viewData');
+let resetDemo = document.getElementById('reloadBtn');
 
 // debugBtn.onclick = function() {
 //   debugWrap.classList.toggle('open');
 // };
 
-reloadBtn.onclick = function() {
+resetDemo.onclick = function() {
   window.sessionStorage.removeItem('formData');
   location.reload();
 };
@@ -120,19 +120,19 @@ toggleEdit.onclick = evt => {
   return editing = !editing;
 };
 
-viewData.onclick = evt => {
+viewDataBtn.onclick = evt => {
   console.log(formeo.formData);
 };
 
 
 let formeoLocale = window.sessionStorage.getItem('formeo-locale');
 if (formeoLocale) {
-  locale.value = formeoLocale;
+  localeSelect.value = formeoLocale;
 }
 
-locale.addEventListener('change', function() {
-  window.sessionStorage.setItem('formeo-locale', locale.value);
-  formeo.i18n.setLang(locale.value);
+localeSelect.addEventListener('change', function() {
+  window.sessionStorage.setItem('formeo-locale', localeSelect.value);
+  formeo.i18n.setLang(localeSelect.value);
 });
 
 document.getElementById('control-filter')
