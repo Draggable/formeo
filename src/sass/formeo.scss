@@ -8,7 +8,6 @@
     box-sizing: inherit;
   }
 
-  @import '../../node_modules/reset-css/reset';
   @import 'base/bs';
 
   @include clearfix;

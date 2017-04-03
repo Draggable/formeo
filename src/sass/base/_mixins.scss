@@ -208,6 +208,9 @@
   }
 
   button {
+    box-sizing: border-box;
+    font-size: 1em;
+    line-height: 1.8em;
     display: block;
     height: 100%;
     width: 100%;
@@ -217,11 +220,10 @@
     padding: 10px;
 
     &:focus {
+      outline: 0 none;
       background-color: darken($white, 5%);
-      outline: 2px solid $input-focus;
-      border: 2px solid $input-focus;
-      border-width: 0 1px;
-      padding: 10px 9px;
+      box-shadow: 0 0 0 2px $input-focus inset;
+      border-radius: 0 !important;
     }
   }
 

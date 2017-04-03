@@ -3,7 +3,7 @@ import i18n from 'mi18n';
 import {data, formData, registeredFields as rFields} from '../common/data';
 import h from '../common/helpers';
 import events from '../common/events';
-import {match, unique, uuid, clicked} from '../common/utils';
+import {match, unique, uuid, closestFtype} from '../common/utils';
 import dom from '../common/dom';
 import Panels from './panels';
 
@@ -372,17 +372,22 @@ export class Controls {
     opts.elements = opts.elements.concat(defaultElements);
 
     this.controlEvents = {
-      mousedown: evt => {
-        let position = _this.cPosition;
-        position.x = evt.clientX;
-        position.y = evt.clientY;
-      },
-      mouseup: evt => {
-        let position = _this.cPosition;
-        if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
-          _this.addElement(evt.target.parentElement.id);
-        }
-      }
+      focus: evt => {
+          let currentGroup = closestFtype(evt.target);
+          _this.panels.nav.refresh(h.indexOfNode(currentGroup));
+        },
+      click: evt => _this.addElement(evt.target.parentElement.id)
+      // mousedown: evt => {
+      //   let position = _this.cPosition;
+      //   position.x = evt.clientX;
+      //   position.y = evt.clientY;
+      // },
+      // mouseup: evt => {
+      //   let position = _this.cPosition;
+      //   if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
+      //     _this.addElement(evt.target.parentElement.id);
+      //   }
+      // }
     };
 
     this.buildDOM();
@@ -391,14 +396,16 @@ export class Controls {
   /**
    * Dragging form the control bar clears element
    * events lets add them back after drag.
-   * @param  {Object} item dragged control
+   * @param  {Object} evt
    */
-  applyControlEvents(item) {
+  applyControlEvents(evt) {
+    let {item} = evt;
     let control = document.getElementById(item.id);
+    let button = control.querySelector('button');
     let actions = Object.keys(this.controlEvents);
     for (let i = actions.length - 1; i >= 0; i--) {
       let event = actions[i];
-      control.addEventListener(event, this.controlEvents[event]);
+      button.addEventListener(event, this.controlEvents[event]);
     }
   }
 
@@ -415,7 +422,8 @@ export class Controls {
       attrs: {
         type: 'button'
       },
-      content: [elem.config.label]
+      content: [elem.config.label],
+      action: _this.controlEvents,
     };
     let elementControl = {
       tag: 'li',
@@ -426,7 +434,6 @@ export class Controls {
       ],
       id: dataID,
       cPosition: {},
-      action: _this.controlEvents,
       content: button
     };
 
@@ -599,7 +606,7 @@ export class Controls {
     let _this = this;
     let groupedFields = this.groupElements();
     let formActions = this.formActions();
-    let controlPanels = new Panels({panels: groupedFields, type: 'controls'});
+    _this.panels = new Panels({panels: groupedFields, type: 'controls'});
     let groupsWrapClasses = [
       'control-groups',
       'panels-wrap',
@@ -608,7 +615,7 @@ export class Controls {
     let groupsWrap = dom.create({
       tag: 'div',
       className: groupsWrapClasses,
-      content: controlPanels.content
+      content: _this.panels.content
     });
 
     let element = dom.create({
@@ -624,7 +631,7 @@ export class Controls {
 
     this.actions = {
       filter: (term) => {
-        let cpContent = controlPanels.content[1];
+        let cpContent = _this.panels.content[1];
         let filtering = (term !== '');
         let filteredTerm = groupsWrap.querySelector('.filtered-term');
         let fields = cpContent.querySelectorAll('.field-control');
@@ -672,9 +679,7 @@ export class Controls {
           pull: 'clone',
           put: false
         },
-        onRemove: (evt) => {
-          _this.applyControlEvents(evt.item);
-        },
+        onRemove: _this.applyControlEvents.bind(_this),
         sort: opts.sortable,
         store: {
           /**

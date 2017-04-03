@@ -104,7 +104,6 @@
     "node-sass": "^4.5.0",
     "postcss-loader": "^1.3.3",
     "replace-in-file": "^2.4.0",
-    "reset-css": "^2.2.0",
     "sass-loader": "^6.0.2",
     "sortablejs": "1.4.2",
     "style-loader": "^0.13.2",
