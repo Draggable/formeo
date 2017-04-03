@@ -12,8 +12,8 @@ $field-outline-color: #93c54b;
 
 $input-focus: #66afe9;
 
-$prop-btn-width: 31px;
-$field-btn-width: 24px;
+$prop-btn-width: 28px;
+$action-btn-width: 24px;
 
 // Colors
 //
@@ -30,3 +30,9 @@ $gray-lightest: lighten($gray, 60%) !default;
 // Stage
 $stage-background: rgba(255, 255, 255, 0);
 $stage-background-empty: rgba(255, 255, 255, 0.25);
+
+$border-wdith: 1px;
+$border-radius: 0.25em;
+$input-border-radius: 0.2em;
+$input-btn-border-width: 1px;
+$checkbox-character: '✔' !default;

@@ -179,13 +179,19 @@ export default class Field {
       content: []
     };
     let order = {
-      tag: 'span',
-      className: 'btn btn-secondary prop-order prop-control',
+      tag: 'button',
+      attrs: {
+        type: 'button',
+        className: 'prop-order prop-control',
+      },
       content: dom.icon('move-vertical')
     };
     let remove = {
-      tag: 'span',
-      className: 'btn btn-secondary prop-remove prop-control',
+      tag: 'button',
+      attrs: {
+        type: 'button',
+        className: 'prop-remove prop-control',
+      },
       action: {
         click: (evt) => {
           animate.slideUp(document.getElementById(property.id), 250, elem => {
@@ -215,7 +221,7 @@ export default class Field {
     };
 
     if (args.propType === 'array') {
-      inputs.className.push('input-group-sm', 'input-group');
+      inputs.className.push('f-input-group', 'f-input-group-sm');
       controls.content.unshift(order);
     }
 
@@ -256,7 +262,6 @@ export default class Field {
           let placeholder = i18n.get(`placeholder.${key}`) || h.capitalize(key);
           let attrs = {
             string: {
-              className: 'form-control form-control-sm',
               type: 'text',
               value: val,
               placeholder
@@ -279,7 +284,7 @@ export default class Field {
               value: val
             },
             array: {
-              className: 'form-control form-control-sm',
+              className: '',
             }
           };
           return attrs[type];
@@ -638,7 +643,8 @@ export default class Field {
         let field = dom.fields.get(_this.fieldID).field;
         let editToggle = field.querySelector('.item-edit-toggle');
         let fieldActions = field.querySelector('.field-actions');
-        fieldActions.style.maxWidth = '49px';
+        let actionButtons = fieldActions.getElementsByTagName('button');
+        fieldActions.style.maxWidth = `${actionButtons.length * 24}px`;
         dom.remove(editToggle);
       }, 0);
     }

@@ -18,9 +18,8 @@
   }
 
   .prop-controls {
-    display: inline-block;
-    width: 31px;
-    height: 31px;
+    width: $prop-btn-width;
+    height: $prop-btn-width;
     text-align: right;
     position: absolute;
     right: 0;
@@ -35,18 +34,15 @@
   }
 
   .prop-control {
-    display: inline-block;
-    padding: 5px;
-    line-height: 0;
-    text-align: center;
-    position: absolute;
+    width: $prop-btn-width;
+    height: $prop-btn-width;
     right: 0;
     bottom: 0;
-    border-radius: $border-radius;
+    position: absolute;
 
     @for $i from 1 through 4 {
       &:nth-of-type(#{$i}) {
-        right: $i * $prop-btn-width - $prop-btn-width - 1;
+        right: $i * $prop-btn-width - $prop-btn-width;
       }
     }
 
@@ -60,6 +56,12 @@
       }
 
       &:first-child {
+        border-radius: $border-radius;
+      }
+    }
+
+    &:hover {
+      &:first-child {
         border-radius: 0 $border-radius $border-radius 0;
       }
     }
@@ -67,7 +69,7 @@
 
   .prop-wrap {
     position: relative;
-    padding-right: 34px;
+    padding-right: $prop-btn-width + 3;
     margin-bottom: 10px;
   }
 
@@ -79,23 +81,33 @@
   .prop-controls {
     transition: width 150ms;
     will-change: width;
+
+    input,
+    select,
+    textarea {
+      font-size: 0.85em;
+    }
   }
 
   .prop-inputs {
     width: 100%;
 
-    .form-group {
+    .f-field-group {
       margin-bottom: 0;
+    }
+
+    label {
+      display: block;
     }
   }
 
   .control-count-2 {
     .prop-controls {
       &:hover {
-        width: 62px;
+        width: $prop-btn-width * 2;
 
-        & + .prop-inputs {
-          width: calc(100% - 31px);
+        + .prop-inputs {
+          width: calc(100% - #{$prop-btn-width});
         }
       }
     }
@@ -125,17 +137,8 @@
     margin-bottom: 10px;
   }
 
-  .input-group {
-    .form-control {
-      width: 50%;
-    }
-  }
-
   .input-group-addon {
     line-height: 0;
-
-    // min-width: 88px;
-
   }
 
   .prop-labels {

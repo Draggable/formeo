@@ -53,7 +53,7 @@ export class Controls {
         attrs: {
           type: 'text',
           required: false,
-          className: 'form-control'
+          className: ''
         },
         config: {
           disabledAttrs: ['type'],
@@ -70,7 +70,7 @@ export class Controls {
         attrs: {
           type: 'date',
           required: false,
-          className: 'form-control'
+          className: ''
         },
         config: {
           disabledAttrs: ['type'],
@@ -85,8 +85,8 @@ export class Controls {
         tag: 'button',
         attrs: {
           className: [
-            {label: i18n.get('grouped'), value: 'btn-group'},
-            {label: i18n.get('ungrouped'), value: 'form-group'},
+            {label: i18n.get('grouped'), value: 'f-btn-group'},
+            {label: i18n.get('ungrouped'), value: 'f-field-group'},
           ]
         },
         config: {
@@ -109,36 +109,35 @@ export class Controls {
           className: [
             {
               label: i18n.get('primary'),
-              value: 'btn-primary btn',
+              value: 'btn-primary',
               selected: true
             },
             {
               label: i18n.get('secondary'),
-              value: 'btn-secondary btn'},
+              value: 'btn-secondary'},
             {
               label: i18n.get('danger'),
-              value: 'btn-danger btn'},
+              value: 'btn-danger'},
             {
               label: i18n.get('success'),
-              value: 'btn-success btn'},
+              value: 'btn-success'},
             {
               label: i18n.get('info'),
-              value: 'btn-info btn'},
+              value: 'btn-info'},
             {
               label: i18n.get('warning'),
-              value: 'btn-warning btn'
+              value: 'btn-warning'
             }
           ]
         }]
       }, {
         tag: 'select',
-        className: 'form-control',
         config: {
           label: i18n.get('select')
         },
         attrs: {
           required: false,
-          className: 'form-control'
+          className: ''
         },
         meta: {
           group: 'common',
@@ -157,7 +156,7 @@ export class Controls {
         })
       }, {
         tag: 'textarea',
-        className: 'form-control',
+        className: '',
         config: {
           label: i18n.get('textarea')
         },
@@ -289,8 +288,7 @@ export class Controls {
         tag: 'input',
         attrs: {
           type: 'file',
-          required: false,
-          className: 'form-control-file'
+          required: false
         },
         config: {
           disabledAttrs: ['type'],
@@ -307,7 +305,7 @@ export class Controls {
         attrs: {
           type: 'number',
           required: false,
-          className: 'form-control'
+          className: ''
         },
         config: {
           label: i18n.get('number'),
@@ -565,7 +563,7 @@ export class Controls {
       attrs: {
         title: i18n.get('save')
       },
-      className: ['btn', 'btn-secondary', 'save-form'],
+      className: ['btn-secondary', 'save-form'],
       action: {
         click: (evt) => {
           // @todo: complete actions connection

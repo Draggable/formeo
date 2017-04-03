@@ -1,0 +1,87 @@
+.pill-buttons > .btn {
+  border-radius: 50px;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid $gray-lighter;
+}
+
+.f-field-group {
+  flex-wrap: wrap;
+
+  label + .badge {
+    margin-left: 10px;
+  }
+
+  > label {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+}
+
+select {
+  @extend %input-style;
+}
+
+input {
+  @extend %input-style;
+
+  &[type='date'] {
+    max-width: 280px;
+  }
+
+  &[type='checkbox'],
+  &[type='radio'] {
+    @extend %checkbox;
+  }
+
+  &[type='radio'] {
+    + .checkable:before {
+      border-radius: 50%;
+    }
+
+    &:checked + .checkable:after {
+      content: '';
+      background: $gray;
+      transform: scale(0.5) translateY(-100%);
+      border-radius: 50%;
+    }
+  }
+}
+
+textarea {
+  @extend %input-style;
+
+  height: auto;
+}
+
+button {
+  border-radius: $border-radius;
+  border: 0 none;
+}
+
+.f-radio, .f-checkbox {
+  margin-bottom: 5px;
+}
+
+.f-input-group {
+  @extend %display-row;
+
+  input {
+    border-width: 1px 1px 1px 0;
+    border-radius: 0;
+
+    &:last-of-type {
+      border-right-width: 1px;
+      border-radius: 0 $input-border-radius $input-border-radius 0;
+    }
+
+    &:first-of-type {
+      border-radius: $input-border-radius 0 0 $input-border-radius;
+      border-left-width: 1px;
+    }
+  }
+}

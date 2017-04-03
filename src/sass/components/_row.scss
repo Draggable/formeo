@@ -1,19 +1,15 @@
 .stage-rows {
+  @extend %display-row;
+
   @include clearfix;
 
   transition: background-color 125ms ease-in-out;
-  display: flex;
   position: relative;
   clear: both;
   margin-left: 0;
   margin-bottom: 6px;
   background-color: $white;
   padding: 5px;
-  flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  align-content: stretch;
-  align-items: stretch;
   min-height: 34px;
   box-shadow: 0 0 0 1px $gray-lighter inset;
 

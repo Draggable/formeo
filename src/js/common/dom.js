@@ -221,7 +221,7 @@ class DOM {
     let wrap = {
       tag: 'div',
       attrs: {},
-      className: [h.get(elem, 'config.inputWrap') || 'form-group'],
+      className: [h.get(elem, 'config.inputWrap') || 'f-field-group'],
       content: [],
       config: {}
     };
@@ -229,10 +229,6 @@ class DOM {
       tag: 'span',
       className: 'text-danger',
       content: '*'
-    };
-    let labelAfter = elem => {
-      let type = h.get(elem, 'attrs.type');
-      return (type === 'checkbox' || type === 'radio');
     };
     let element = document.createElement(tag);
     let required = h.get(elem, 'attrs.required');
@@ -326,10 +322,10 @@ class DOM {
         }
 
         if (!elem.config.hideLabel) {
-          if (labelAfter(elem)) {
-            label.classList.add('form-check-label');
-            wrap.className = elem.attrs.type;
-            element.classList.add('form-check-input');
+          if (_this.labelAfter(elem)) {
+            // add check for inline checkbox
+            wrap.className = `f-${elem.attrs.type}`;
+
             label.insertBefore(element, label.firstChild);
             wrap.content.push(label);
             if (required) {
@@ -497,10 +493,14 @@ class DOM {
           attrs: {
             id: elem.id,
             type: fieldType,
-            value: option.value || '',
-            className: 'form-check-input'
+            value: option.value || ''
           },
           action
+        };
+        let checkable = {
+          tag: 'span',
+          className: 'checkable',
+          content: option.label
         };
         let optionLabel = {
           tag: 'label',
@@ -508,14 +508,12 @@ class DOM {
           config: {
             inputWrap: 'form-check'
           },
-          className: 'form-check-label',
-          // content: [this.parsedHtml(option.label)]
           content: [option.label]
         };
         let inputWrap = {
           tag: 'div',
-          className: ['form-check'],
-          content: [optionLabel]
+          content: [optionLabel],
+          className: [`f-${fieldType}`]
         };
 
         if (elem.attrs.className) {
@@ -523,7 +521,7 @@ class DOM {
         }
 
         if (elem.config.inline) {
-          inputWrap.className.push('form-check-inline');
+          inputWrap.className.push('f-${fieldType}-inline');
         }
 
         if (option.selected) {
@@ -534,9 +532,16 @@ class DOM {
           input.fMap = `options[${i}].selected`;
           optionLabel.attrs.contenteditable = true;
           optionLabel.fMap = `options[${i}].label`;
-          inputWrap.content.unshift(input);
+          checkable.content = undefined;
+          let checkableLabel = {
+            tag: 'label',
+            content: [input, checkable]
+          };
+          inputWrap.content.unshift(checkableLabel);
+          // inputWrap.content.unshift(input);
         } else {
           input.attrs.name = elem.id;
+          optionLabel.content = checkable;
           optionLabel = dom.create(optionLabel);
           input = dom.create(input);
           optionLabel.insertBefore(input, optionLabel.firstChild);
@@ -623,6 +628,17 @@ class DOM {
   }
 
   /**
+   * Test if label should be display before or after an element
+   * @param  {Object} elem config
+   * @return {Boolean} labelAfter
+   */
+  labelAfter(elem) {
+    let type = h.get(elem, 'attrs.type');
+    let isCB = (type === 'checkbox' || type === 'radio');
+    return isCB || h.get(elem, 'config.labelAfter');
+  }
+
+  /**
    * Generate a label
    * @param  {Object} elem config object
    * @param  {String} fMap map to label's value in formData
@@ -634,9 +650,17 @@ class DOM {
       attrs: {},
       className: [],
       content: elem.config.label,
-      // content: this.parsedHtml(elem.config.label),
       action: {}
     };
+
+    if (this.labelAfter(elem)) {
+      let checkable = {
+        tag: 'span',
+        className: 'checkable',
+        content: elem.config.label
+      };
+      fieldLabel.content = checkable;
+    }
 
     if (elem.id) {
       fieldLabel.attrs.for = elem.id;
@@ -722,6 +746,7 @@ class DOM {
    * @return {Object}      element config object
    */
   actionButtons(id, item = 'column') {
+    let _this = this;
     let tag = (item === 'column' ? 'li' : 'div');
     let btnWrap = {
         tag: 'div',
@@ -737,7 +762,8 @@ class DOM {
           element.classList.add('hovering-' + item);
           evt.target.parentReference = element;
           const buttons = btnGroup.getElementsByTagName('button');
-          const expandedWidth = (buttons.length * 24) + 'px';
+          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
+          const expandedWidth = (buttons.length * btnWidth) + 'px';
           if (item === 'row') {
             btnGroup.style.height = expandedWidth;
           } else {
@@ -961,7 +987,7 @@ class DOM {
   formGroup(content, className = '') {
     return {
       tag: 'div',
-      className: ['form-group', className],
+      className: ['f-field-group', className],
       content: content
     };
   }
@@ -979,7 +1005,7 @@ class DOM {
         tag: 'select',
         attrs: {
           ariaLabel: 'Define a column layout',
-          className: 'form-control column-preset'
+          className: 'column-preset'
         },
         action: {
           change: e => {
@@ -1243,7 +1269,7 @@ class DOM {
       });
       stage.tag = 'div';
       stage.content = rows;
-      stage.className = 'formeo-render';
+      stage.className = 'f-stage';
       return stage;
     });
 

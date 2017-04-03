@@ -1,81 +1,77 @@
-.formeo-render {
+.f-row {
+  margin-bottom: 1em;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  align-content: stretch;
+  align-items: stretch;
+  display: flex;
+  background-color: transparent;
+  border-radius: $border-radius;
+  transition: background-color 200ms;
+
+  &.will-remove {
+    background-color: $remove-bg;
+    box-shadow: 0 0 3px 1px $brand-danger inset;
+  }
+}
+
+.f-input-group-wrap {
   @include clearfix;
+}
 
-  .f-row {
-    margin-bottom: 1em;
-    flex-direction: row;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    align-content: stretch;
-    align-items: stretch;
-    display: flex;
-    background-color: transparent;
-    border-radius: $border-radius;
-    transition: background-color 200ms;
+.f-input-group {
+  position: relative;
 
-    &.will-remove {
-      background-color: $remove-bg;
-      box-shadow: 0 0 3px 1px $brand-danger inset;
+  &:first-child {
+    .remove-input-group {
+      display: none;
     }
   }
+}
 
-  .f-input-group-wrap {
-    @include clearfix;
-  }
+.add-input-group {
+  float: right;
+  margin-top: 10px;
+}
 
-  .f-input-group {
-    position: relative;
+.remove-input-group {
+  position: absolute;
+  left: -32px;
+  transform: translate(0, -50%);
+  width: 32px;
+  height: 32px;
+  top: 50%;
+  border: 0 none;
+  background: transparent;
+  outline: 0 none;
+  line-height: 0;
 
-    &:first-child {
-      .remove-input-group {
-        display: none;
-      }
-    }
-  }
-
-  .add-input-group {
-    float: right;
-    margin-top: 10px;
-  }
-
-  .remove-input-group {
-    position: absolute;
-    left: -32px;
-    transform: translate(0, -50%);
-    width: 32px;
-    height: 32px;
-    top: 50%;
-    border: 0 none;
-    background: transparent;
-    outline: 0 none;
-    line-height: 0;
-
-    &:hover {
-      .svg-icon {
-        fill: $brand-danger;
-      }
-    }
-
+  &:hover {
     .svg-icon {
-      pointer-events: none;
+      fill: $brand-danger;
     }
-  }
-
-  .form-check-input:only-child {
-    position: absolute;
   }
 
   .svg-icon {
-    max-width: 100%;
-    max-height: 100%;
+    pointer-events: none;
   }
+}
 
-  .f-render-column {
-    padding: 0 5px;
-    float: left;
-    display: inline-block;
-    max-width: none;
-    flex-direction: column;
-    flex: auto;
-  }
+.form-check-input:only-child {
+  position: absolute;
+}
+
+.svg-icon {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.f-render-column {
+  padding: 0 5px;
+  float: left;
+  display: inline-block;
+  max-width: none;
+  flex-direction: column;
+  flex: auto;
 }

@@ -145,7 +145,7 @@ export default class Row {
           data.save();
         }
       },
-      className: 'form-control'
+      className: ''
     };
     let fieldsetInputGroup = {
       tag: 'div',

@@ -27,7 +27,7 @@
     transition-duration: 500ms, 333ms;
     border: 0 dashed transparent;
     background-color: $stage-background;
-    padding-left: 25px;
+    padding-left: $action-btn-width - 1;
     padding-bottom: 15px;
     overflow: visible;
 
@@ -53,7 +53,7 @@
     }
   }
 
-  .form-group {
+  .f-field-group {
     margin-bottom: 0;
   }
 }

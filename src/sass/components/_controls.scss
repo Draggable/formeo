@@ -12,7 +12,7 @@
   .filtered-term {
     background-color: $white;
     text-align: center;
-    border-radius: $btn-border-radius $btn-border-radius 0 0;
+    border-radius: $input-border-radius $input-border-radius 0 0;
     border: 1px solid $gray-lighter;
     border-bottom: 0 none;
     width: calc(100% - 2px);
@@ -120,7 +120,7 @@
       &:last-child {
         > li {
           &:last-child {
-            border-radius: 0 0 0 $btn-border-radius;
+            border-radius: 0 0 0 $input-border-radius;
           }
         }
       }
@@ -169,15 +169,15 @@
       }
 
       &:first-child:not(:last-child) {
-        border-bottom-left-radius: $btn-border-radius;
-        border-top-left-radius: $btn-border-radius;
+        border-bottom-left-radius: $input-border-radius;
+        border-top-left-radius: $input-border-radius;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
       }
 
       &:last-child:not(:first-child) {
-        border-bottom-right-radius: $btn-border-radius;
-        border-top-right-radius: $btn-border-radius;
+        border-bottom-right-radius: $input-border-radius;
+        border-top-right-radius: $input-border-radius;
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
       }
@@ -238,15 +238,15 @@
         }
 
         &:first-child:not(:last-child) {
-          border-top-right-radius: $btn-border-radius;
-          border-top-left-radius: $btn-border-radius;
+          border-top-right-radius: $input-border-radius;
+          border-top-left-radius: $input-border-radius;
           border-bottom-right-radius: 0;
           border-bottom-left-radius: 0;
         }
 
         &:last-child:not(:first-child) {
-          border-bottom-left-radius: $btn-border-radius;
-          border-bottom-right-radius: $btn-border-radius;
+          border-bottom-left-radius: $input-border-radius;
+          border-bottom-right-radius: $input-border-radius;
           border-top-right-radius: 0;
           border-top-left-radius: 0;
         }
