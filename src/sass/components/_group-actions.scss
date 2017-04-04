@@ -82,7 +82,7 @@
   right: 0;
   text-align: right;
   transition: width .15s;
-  border-bottom-left-radius: $border-radius;
+  border-bottom-left-radius: $input-border-radius;
   border-bottom-right-radius: 0;
   will-change: width;
 
@@ -150,7 +150,7 @@
 
     &:last-child {
       .hovering-column & {
-        border-bottom-left-radius: $border-radius;
+        border-bottom-left-radius: $input-border-radius;
       }
     }
   }
@@ -162,16 +162,16 @@
     transform: translateX(50%);
     width: auto;
     border-bottom-right-radius: 0;
-    border-bottom-left-radius: $border-radius;
+    border-bottom-left-radius: $input-border-radius;
 
     button {
       &:first-child {
-        border-bottom-right-radius: $border-radius;
+        border-bottom-right-radius: $input-border-radius;
         right: 0;
       }
 
       &:last-child {
-        border-bottom-left-radius: $border-radius;
+        border-bottom-left-radius: $input-border-radius;
       }
     }
   }

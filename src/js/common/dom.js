@@ -476,6 +476,48 @@ class DOM {
   }
 
   /**
+   * Generate a fancy checkbox or radio
+   * @param  {Object}  elem
+   * @param  {Boolean} isPreview
+   * @return {Object} checkable
+   */
+  checkbox(elem, isPreview) {
+    let label = h.get(elem, 'elem.config.label') || '';
+    let checkable = {
+      tag: 'span',
+      className: 'checkable',
+      content: label
+    };
+    let optionLabel = {
+      tag: 'label',
+      attrs: {},
+      content: [elem, checkable]
+    };
+
+    // if (isPreview) {
+    //   input.fMap = `options[${i}].selected`;
+    //   optionLabel.attrs.contenteditable = true;
+    //   optionLabel.fMap = `options[${i}].label`;
+    //   checkable.content = undefined;
+    //   let checkableLabel = {
+    //     tag: 'label',
+    //     content: [input, checkable]
+    //   };
+    //   inputWrap.content.unshift(checkableLabel);
+    //   // inputWrap.content.unshift(input);
+    // } else {
+    //   input.attrs.name = elem.id;
+    //   optionLabel.content = checkable;
+    //   optionLabel = dom.create(optionLabel);
+    //   input = dom.create(input);
+    //   optionLabel.insertBefore(input, optionLabel.firstChild);
+    //   inputWrap.content = optionLabel;
+    // }
+
+    return optionLabel;
+  }
+
+  /**
    * Extend Array of option config objects
    * @param  {Array} options
    * @param  {Object} elem element config object
@@ -547,7 +589,6 @@ class DOM {
           optionLabel.insertBefore(input, optionLabel.firstChild);
           inputWrap.content = optionLabel;
         }
-
 
         return inputWrap;
       };

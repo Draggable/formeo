@@ -5,7 +5,7 @@ import h from '../common/helpers';
 import actions from '../common/actions';
 import dom from '../common/dom';
 import Panels from './panels';
-import {uuid, clone} from '../common/utils';
+import {uuid, clone, cleanObj} from '../common/utils';
 
 /**
  * Element/Field class.
@@ -378,19 +378,19 @@ export default class Field {
               input.attrs.checked = val;
             }
 
-            if (!propIsNum) {
+            if (propIsNum) {
+              let addon = {
+                tag: 'span',
+                className: 'f-addon',
+                content: dom.checkbox(input)
+              };
+              input = addon;
+            } else {
               input.config = {
                 label: inputLabel(key)
               };
             }
 
-            if (propIsNum) {
-              input = {
-                tag: 'span',
-                className: 'input-group-addon',
-                content: input
-              };
-            }
 
             return input;
           },
@@ -490,7 +490,7 @@ export default class Field {
     let fieldData = formData.fields.get(_this.fieldID);
     let optionData = fieldData['options'];
     let editGroup = field.querySelector('.field-edit-options');
-    let propData = Object.assign({}, optionData[optionData.length-1]);
+    let propData = cleanObj(optionData[optionData.length-1]);
     fieldData.options.push(propData);
 
     let args = {
@@ -521,9 +521,10 @@ export default class Field {
     let addBtn = {
         tag: 'button',
         attrs: {
-          type: 'button'
+          type: 'button',
+          className: `add-${type}`
         },
-        content: i18n.get('panelEditButtons.' + type),
+        content: i18n.get(`panelEditButtons.${type}`),
         action: {
           click: (evt) => {
             let addEvt = {
@@ -556,9 +557,9 @@ export default class Field {
     let panelEditButtons = {
         tag: 'div',
         attrs: {
-          className: 'add-remove-attrs'
+          className: 'panel-action-buttons'
         },
-        content: addBtn
+        content: [addBtn]
       };
 
     return panelEditButtons;

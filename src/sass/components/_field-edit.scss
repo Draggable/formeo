@@ -105,6 +105,10 @@
     padding-right: $prop-btn-width + 3;
     margin-bottom: 10px;
     min-height: $prop-btn-width;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   .field-edit-group {
@@ -116,6 +120,7 @@
     transition: width 150ms;
     will-change: width;
 
+    .f-addon,
     input,
     select,
     textarea {
@@ -125,12 +130,19 @@
 
   .prop-inputs {
     width: 100%;
+    display: inline-flex;
+    vertical-align: bottom;
 
     .f-field-group {
       width: 100%;
       margin-bottom: 0;
       display: inline-flex;
       vertical-align: bottom;
+    }
+
+    .f-checkbox {
+      margin-top: 7px;
+      margin-bottom: 0;
     }
 
     label {
@@ -203,7 +215,12 @@
   }
 }
 
-.add-remove-attrs {
-  padding: 10px;
-  float: right;
+.panel-action-buttons {
+  @include clearfix;
+
+  padding: 0 10px 10px;
+
+  [class^='add-'] {
+    float: right;
+  }
 }

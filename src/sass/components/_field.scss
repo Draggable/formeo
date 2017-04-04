@@ -5,22 +5,23 @@
   transition: background-color 125ms ease-in-out;
 
   &.first-field {
-    border-top-right-radius: $border-radius;
+    border-top-right-radius: $input-border-radius;
 
     .field-actions {
-      border-top-right-radius: $border-radius;
+      border-top-right-radius: $input-border-radius;
     }
   }
 
   &.last-field {
-    border-bottom-right-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $input-border-radius;
+    border-bottom-left-radius: $input-border-radius;
   }
 
   [contenteditable] {
     padding: 1px 1px 0;
     transition: border-color 250ms;
     border-bottom: 1px dashed $gray-lighter;
+    user-select: text;
 
     &:focus {
       border: 1px solid $input-focus;
