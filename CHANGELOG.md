@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.6 - Feature/no bs [#68](http://github.com/draggable/formeo/pulls/68)
 - v0.7.5 - Hotfix/required [#67](http://github.com/draggable/formeo/pulls/67)
 - v0.7.4 - Fix control filter [#65](http://github.com/draggable/formeo/pulls/65)
 - v0.7.3 - v0.7.2
