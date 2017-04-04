@@ -40,7 +40,8 @@
         "fonts": "src/fonts/fontello",
         "lang": "src/lang",
         "sass": [
-          "src/sass/formeo.scss"
+          "src/sass/formeo.scss",
+          "src/sass/_render.scss"
         ]
       },
       "site": [
@@ -86,7 +87,6 @@
     "babel-preset-node6": "^11.0.0",
     "babel-preset-stage-0": "^6.22.0",
     "babel-register": "^6.23.0",
-    "bootstrap": "v4-dev",
     "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.15",
     "compression-webpack-plugin": "^0.3.2",

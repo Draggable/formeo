@@ -117,6 +117,8 @@ body {
 
 .render-form {
   display: none;
+  max-width: 800px;
+  margin: auto;
 }
 
 .form-rendered .render-form {
@@ -125,11 +127,6 @@ body {
 
 .render-btn-wrap {
   text-align: center;
-}
-
-.formeo-render {
-  max-width: 800px;
-  margin: auto;
 }
 
 #control-filter {

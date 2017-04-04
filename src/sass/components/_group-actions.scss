@@ -1,7 +1,7 @@
 .group-actions {
-  min-width: $field-btn-width;
-  width: $field-btn-width;
-  height: $field-btn-width;
+  min-width: $action-btn-width;
+  width: $action-btn-width;
+  height: $action-btn-width;
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -9,8 +9,8 @@
   z-index: 1;
 
   button {
-    width: $field-btn-width;
-    height: $field-btn-width;
+    width: $action-btn-width;
+    height: $action-btn-width;
     padding: 6px;
     border: 0 none;
     line-height: 0;
@@ -25,8 +25,8 @@
   }
 
   .svg-icon {
-    width: 12px;
-    height: 12px;
+    width: $action-btn-width / 2;
+    height: $action-btn-width / 2;
   }
 
   .icon-handle {
@@ -82,9 +82,8 @@
   right: 0;
   text-align: right;
   transition: width .15s;
-  border-bottom-left-radius: $border-radius;
+  border-bottom-left-radius: $input-border-radius;
   border-bottom-right-radius: 0;
-  padding-right: 2px;
   will-change: width;
 
   button {
@@ -93,7 +92,7 @@
 
     @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
-        right: $i * $field-btn-width - $field-btn-width;
+        right: $i * $action-btn-width - $action-btn-width;
       }
     }
 
@@ -115,8 +114,8 @@
 }
 
 .column-actions {
-  width: $field-btn-width;
-  height: $field-btn-width;
+  width: $action-btn-width;
+  height: $action-btn-width;
   padding: 0;
   right: 50%;
   transform: translateX(12px);
@@ -135,7 +134,7 @@
 
     @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
-        right: $i * $field-btn-width - $field-btn-width;
+        right: $i * $action-btn-width - $action-btn-width;
       }
     }
 
@@ -151,7 +150,7 @@
 
     &:last-child {
       .hovering-column & {
-        border-bottom-left-radius: $border-radius;
+        border-bottom-left-radius: $input-border-radius;
       }
     }
   }
@@ -163,25 +162,25 @@
     transform: translateX(50%);
     width: auto;
     border-bottom-right-radius: 0;
-    border-bottom-left-radius: $border-radius;
+    border-bottom-left-radius: $input-border-radius;
 
     button {
       &:first-child {
-        border-bottom-right-radius: $border-radius;
+        border-bottom-right-radius: $input-border-radius;
         right: 0;
       }
 
       &:last-child {
-        border-bottom-left-radius: $border-radius;
+        border-bottom-left-radius: $input-border-radius;
       }
     }
   }
 }
 
 .row-actions {
-  width: $field-btn-width + 2;
-  height: $field-btn-width + 2;
-  left: -25px;
+  width: $action-btn-width;
+  height: $action-btn-width;
+  left: -($action-btn-width - 1);
   text-align: right;
   border-top-left-radius: $border-radius;
   border-bottom-left-radius: $border-radius;

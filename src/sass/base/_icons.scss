@@ -1,19 +1,19 @@
 .svg-icon {
   display: inline-block;
-  width: 24px;
-  height: 24px;
+  width: $action-btn-width;
+  height: $action-btn-width;
   pointer-events: none;
 }
 
 .icon-remove {
   &:hover {
-    fill: $brand-danger;
+    fill: $brand-error;
   }
 }
 
 button[class*='-remove'] {
   &:hover {
-    background-color: $brand-danger !important;
+    background-color: $brand-error !important;
 
     .svg-icon {
       fill: $white;

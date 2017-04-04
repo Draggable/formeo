@@ -140,6 +140,23 @@ export const numToPercent = num => num.toString() + '%';
 
 export const numberBetween = (num, min, max) => (num > min && num < max);
 
+/**
+ * Empty an objects contents
+ * @param  {Object} obj
+ * @return {Object} fresh
+ */
+export const cleanObj = obj => {
+  let fresh = Object.assign({}, obj);
+  Object.keys(obj).forEach(key => {
+    if (typeof obj[key] === 'string') {
+      fresh[key] = '';
+    } else if (typeof obj[key] === 'boolean') {
+      fresh[key] = false;
+    }
+  });
+  return fresh;
+};
+
 export const clicked = (x, y, position, button) => {
   let xMin = position.x - 5;
   let xMax = position.x + 5;

@@ -10,11 +10,10 @@
 
   nav {
     position: relative;
-    margin-bottom: 1px;
     padding: 0;
     overflow: hidden;
 
-    .btn {
+    button {
       position: absolute;
       width: 24px;
       color: $black;
@@ -39,9 +38,6 @@
         top: 0;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
-
-        // border-bottom-right-radius: 0;
-
       }
 
       &.prev-group {
@@ -100,7 +96,7 @@
   .panel-nav {
     height: auto;
 
-    .btn {
+    button {
       display: none;
     }
   }
@@ -141,9 +137,10 @@
 
 .options-panel {
   .prop-inputs {
-    .form-group {
-      width: 33%;
-      display: inline-block;
+    .f-field-group {
+      // width: 33%;
+      // display: inline-block;
+
     }
   }
 }

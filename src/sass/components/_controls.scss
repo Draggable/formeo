@@ -12,7 +12,7 @@
   .filtered-term {
     background-color: $white;
     text-align: center;
-    border-radius: $btn-border-radius $btn-border-radius 0 0;
+    border-radius: $input-border-radius $input-border-radius 0 0;
     border: 1px solid $gray-lighter;
     border-bottom: 0 none;
     width: calc(100% - 2px);
@@ -20,43 +20,36 @@
 
   nav {
     position: relative;
-    margin-bottom: 1px;
-    padding: 0 24px;
+    padding: 0 $action-btn-width;
     overflow: hidden;
-    height: 38px;
 
     h5 {
       font-size: 13px;
       line-height: 22px;
     }
 
-    .btn {
+    button {
       position: absolute;
-      width: 24px;
+      width: $action-btn-width;
       color: $black;
-      height: 100%;
+      height: calc(100% - 2px);
       padding: 0;
       line-height: 0;
-
-      .svg-icon {
-        width: 20px;
-        height: 20px;
-      }
+      margin: 0;
+      border-color: $gray-lighter;
 
       &.next-group {
         right: 0;
         top: 0;
         border-top-left-radius: 0;
+        border-top-right-radius: $border-radius;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
       }
 
       &.prev-group {
-        left: 0;
-        top: 0;
-        border-top-right-radius: 0;
+        border-top-left-radius: $border-radius;
         border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
       }
     }
   }
@@ -68,7 +61,9 @@
 
   .panel-labels {
     border-top: 1px solid $gray-lighter;
-    border-radius: $border-radius;
+
+    // border-radius: $border-radius;
+
   }
 
   .panel-count-1 {
@@ -80,7 +75,7 @@
 
     .control-group {
       li:first-child {
-        border-radius: 5px 5px 0 0;
+        border-radius: $border-radius $border-radius 0 0;
       }
     }
   }
@@ -100,7 +95,7 @@
       }
 
       &:last-child {
-        border-radius: 0 0 0 5px;
+        border-radius: 0 0 $border-radius $border-radius;
       }
     }
   }
@@ -120,7 +115,7 @@
       &:last-child {
         > li {
           &:last-child {
-            border-radius: 0 0 0 $btn-border-radius;
+            border-radius: 0 0 0 $input-border-radius;
           }
         }
       }
@@ -159,7 +154,7 @@
       }
     }
 
-    > .btn + .btn {
+    > button + button {
       margin-left: -$input-btn-border-width;
     }
 
@@ -169,15 +164,15 @@
       }
 
       &:first-child:not(:last-child) {
-        border-bottom-left-radius: $btn-border-radius;
-        border-top-left-radius: $btn-border-radius;
+        border-bottom-left-radius: $input-border-radius;
+        border-top-left-radius: $input-border-radius;
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
       }
 
       &:last-child:not(:first-child) {
-        border-bottom-right-radius: $btn-border-radius;
-        border-top-right-radius: $btn-border-radius;
+        border-bottom-right-radius: $input-border-radius;
+        border-top-right-radius: $input-border-radius;
         border-bottom-left-radius: 0;
         border-top-left-radius: 0;
       }
@@ -198,7 +193,7 @@
 
     .clear-form {
       &:hover {
-        background-color: $brand-danger;
+        background-color: $brand-error;
       }
     }
   }
@@ -218,7 +213,7 @@
       float: none;
       margin-top: 10px;
 
-      > .btn + .btn {
+      > button + button {
         margin-top: -$input-btn-border-width;
         margin-left: 0;
       }
@@ -238,15 +233,15 @@
         }
 
         &:first-child:not(:last-child) {
-          border-top-right-radius: $btn-border-radius;
-          border-top-left-radius: $btn-border-radius;
+          border-top-right-radius: $input-border-radius;
+          border-top-left-radius: $input-border-radius;
           border-bottom-right-radius: 0;
           border-bottom-left-radius: 0;
         }
 
         &:last-child:not(:first-child) {
-          border-bottom-left-radius: $btn-border-radius;
-          border-bottom-right-radius: $btn-border-radius;
+          border-bottom-left-radius: $input-border-radius;
+          border-bottom-right-radius: $input-border-radius;
           border-top-right-radius: 0;
           border-top-left-radius: 0;
         }
@@ -257,6 +252,15 @@
         display: inline-block;
         margin-right: 10px;
       }
+    }
+  }
+
+
+  .field-control {
+    @extend %field-control;
+
+    .svg-icon {
+      pointer-events: none;
     }
   }
 }
