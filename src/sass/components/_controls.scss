@@ -20,27 +20,22 @@
 
   nav {
     position: relative;
-    padding: 0 24px;
+    padding: 0 $action-btn-width;
     overflow: hidden;
-    height: 38px;
 
     h5 {
       font-size: 13px;
       line-height: 22px;
     }
 
-    .btn {
+    button {
       position: absolute;
-      width: 24px;
+      width: $action-btn-width;
       color: $black;
-      height: 100%;
+      height: calc(100% - 2px);
       padding: 0;
       line-height: 0;
-
-      .svg-icon {
-        width: 20px;
-        height: 20px;
-      }
+      margin: 0;
 
       &.next-group {
         right: 0;
@@ -51,11 +46,7 @@
       }
 
       &.prev-group {
-        left: 0;
-        top: 0;
-        border-top-right-radius: 0;
         border-bottom-left-radius: 0;
-        border-bottom-right-radius: 0;
       }
     }
   }
@@ -158,7 +149,7 @@
       }
     }
 
-    > .btn + .btn {
+    > button + button {
       margin-left: -$input-btn-border-width;
     }
 
@@ -197,7 +188,7 @@
 
     .clear-form {
       &:hover {
-        background-color: $brand-danger;
+        background-color: $brand-error;
       }
     }
   }
@@ -217,7 +208,7 @@
       float: none;
       margin-top: 10px;
 
-      > .btn + .btn {
+      > button + button {
         margin-top: -$input-btn-border-width;
         margin-left: 0;
       }
@@ -256,6 +247,15 @@
         display: inline-block;
         margin-right: 10px;
       }
+    }
+  }
+
+
+  .field-control {
+    @extend %field-control;
+
+    .svg-icon {
+      pointer-events: none;
     }
   }
 }

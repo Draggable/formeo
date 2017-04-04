@@ -227,7 +227,7 @@ class DOM {
     };
     let requiredMark = {
       tag: 'span',
-      className: 'text-danger',
+      className: 'text-error',
       content: '*'
     };
     let element = document.createElement(tag);

@@ -7,13 +7,13 @@
 
 .icon-remove {
   &:hover {
-    fill: $brand-danger;
+    fill: $brand-error;
   }
 }
 
 button[class*='-remove'] {
   &:hover {
-    background-color: $brand-danger !important;
+    background-color: $brand-error !important;
 
     .svg-icon {
       fill: $white;

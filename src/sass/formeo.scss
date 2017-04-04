@@ -13,8 +13,8 @@
   @include clearfix;
 
   &.formeo-editor {
-    @import 'components/controls';
     @import 'components/stage';
+    @import 'components/controls';
   }
 
   &.formeo-render {

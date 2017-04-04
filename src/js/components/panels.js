@@ -187,7 +187,7 @@ export default class Panels {
     let next = {
         tag: 'button',
         attrs: {
-          className: 'btn next-group',
+          className: 'next-group',
           title: i18n.get('controlGroups.nextGroup'),
           type: 'button'
         },
@@ -203,7 +203,7 @@ export default class Panels {
     let prev = {
         tag: 'button',
         attrs: {
-          className: 'btn prev-group',
+          className: 'prev-group',
           title: i18n.get('controlGroups.prevGroup'),
           type: 'button'
         },
@@ -263,7 +263,7 @@ export default class Panels {
         index = newIndex;
         groupChange(newIndex);
       }
-      // _this.resizePanels();
+      _this.resizePanels();
       offset = {
         nav: firstControlNav.offsetWidth * index,
         panel: groupParent.offsetWidth * index

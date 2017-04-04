@@ -1,8 +1,11 @@
 $brand-primary: #325d88 !default;
+$brand-primary-dark: darken($brand-primary, 10%) !default;
 $brand-success: #93c54b !default;
-$brand-info: #29abe0 !default;
+$brand-success-dark: darken($brand-success, 10%) !default;
 $brand-warning: #f47c3c !default;
-$brand-danger: #d9534f !default;
+$brand-warning-dark: darken($brand-warning, 10%) !default;
+$brand-error: #d9534f !default;
+$brand-error-dark: darken($brand-error, 10%) !default;
 
 $remove-bg: rgba(217, 83, 79, 0.5) !default;
 
@@ -29,10 +32,10 @@ $gray-lightest: lighten($gray, 60%) !default;
 
 // Stage
 $stage-background: rgba(255, 255, 255, 0);
-$stage-background-empty: rgba(255, 255, 255, 0.25);
+$shadow: rgba(255, 255, 255, 0.25);
 
 $border-wdith: 1px;
-$border-radius: 0.25em;
-$input-border-radius: 0.2em;
+$border-radius: 0.35em;
+$input-border-radius: 0.25em;
 $input-btn-border-width: 1px;
 $checkbox-character: '✔' !default;

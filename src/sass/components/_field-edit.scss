@@ -28,8 +28,24 @@
     white-space: nowrap;
 
     .svg-icon {
-      width: 15px;
-      height: 15px;
+      width: $prop-btn-width / 2;
+      height: $prop-btn-width / 2;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    &:hover {
+      .prop-control {
+        &:first-child {
+          border-radius: 0 $input-border-radius $input-border-radius 0;
+        }
+
+        &:last-child {
+          display: inline-block;
+        }
+      }
     }
   }
 
@@ -39,6 +55,7 @@
     right: 0;
     bottom: 0;
     position: absolute;
+    padding: 0;
 
     @for $i from 1 through 4 {
       &:nth-of-type(#{$i}) {
@@ -52,18 +69,34 @@
 
     :not(.control-count-1) & {
       &:last-child {
-        border-radius: $border-radius 0 0 $border-radius;
+        border-radius: $input-border-radius 0 0 $input-border-radius;
+        margin-right: -1px;
+        display: none;
       }
 
       &:first-child {
-        border-radius: $border-radius;
+        border-radius: $input-border-radius;
       }
     }
 
     &:hover {
       &:first-child {
-        border-radius: 0 $border-radius $border-radius 0;
+        border-radius: 0 $input-border-radius $input-border-radius 0;
+
+        &:last-child {
+          border-radius: $input-border-radius;
+        }
       }
+
+      &:last-child {
+        display: inline-block;
+      }
+    }
+
+    &:last-child:first-child {
+      display: inline-block;
+      border-radius: $input-border-radius;
+      margin-right: 0;
     }
   }
 
@@ -71,6 +104,7 @@
     position: relative;
     padding-right: $prop-btn-width + 3;
     margin-bottom: 10px;
+    min-height: $prop-btn-width;
   }
 
   .field-edit-group {
@@ -85,7 +119,7 @@
     input,
     select,
     textarea {
-      font-size: 0.85em;
+      font-size: 0.825em;
     }
   }
 
@@ -93,7 +127,10 @@
     width: 100%;
 
     .f-field-group {
+      width: 100%;
       margin-bottom: 0;
+      display: inline-flex;
+      vertical-align: bottom;
     }
 
     label {
@@ -117,7 +154,7 @@
     .panel-nav {
       border-bottom: 1px solid $gray-light;
 
-      .btn {
+      button {
         display: none;
       }
     }

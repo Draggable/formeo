@@ -108,25 +108,23 @@ export class Controls {
           ],
           className: [
             {
-              label: i18n.get('primary'),
-              value: 'btn-primary',
+              label: i18n.get('default'),
+              value: '',
               selected: true
             },
             {
-              label: i18n.get('secondary'),
-              value: 'btn-secondary'},
+              label: i18n.get('primary'),
+              value: 'primary'
+            },
             {
               label: i18n.get('danger'),
-              value: 'btn-danger'},
+              value: 'error'},
             {
               label: i18n.get('success'),
-              value: 'btn-success'},
-            {
-              label: i18n.get('info'),
-              value: 'btn-info'},
+              value: 'success'},
             {
               label: i18n.get('warning'),
-              value: 'btn-warning'
+              value: 'warning'
             }
           ]
         }]

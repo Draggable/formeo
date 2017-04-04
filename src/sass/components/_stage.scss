@@ -33,7 +33,7 @@
 
     &.empty-stages {
       border: 3px dashed $gray-lighter;
-      background-color: $stage-background-empty;
+      background-color: $shadow;
     }
 
     &.removing-all-fields {
@@ -58,6 +58,7 @@
   }
 }
 
+// element label
 [class*='empty-'] {
   &[class*='editing-'] {
     &::after {
@@ -74,8 +75,6 @@
     color: $gray-light;
     transition: opacity 200ms ease-in-out;
     will-change: opacity;
-
-    // color: $black;
     text-align: center;
     transform: translate(-50%, -50%);
     content: attr(data-hover-tag);

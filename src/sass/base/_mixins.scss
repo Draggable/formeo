@@ -96,6 +96,7 @@
   background-color: $white;
   width: 100%;
   padding: .3em .6em;
+  box-sizing: border-box;
 
   &:focus {
     border: 1px solid $input-focus;
@@ -174,7 +175,8 @@
   top: 0;
   width: 0;
   padding: 0;
-  line-height: 24px;
+  height: $action-btn-width - 2;
+  line-height: $action-btn-width;
   text-align: center;
   overflow: hidden;
   z-index: 100;
@@ -215,15 +217,24 @@
     height: 100%;
     width: 100%;
     background: transparent;
-    border: 0;
+    border: 0 none;
     text-align: left;
     padding: 10px;
+    border-radius: 0;
 
     &:focus {
       outline: 0 none;
       background-color: darken($white, 5%);
-      box-shadow: 0 0 0 2px $input-focus inset;
+      box-shadow: 0 0 0 1px $input-focus inset;
       border-radius: 0 !important;
+    }
+
+    &:active {
+      transform: none;
+    }
+
+    &:hover {
+      filter: none;
     }
   }
 
@@ -242,8 +253,67 @@
   }
 }
 
+%button-style {
+  border-radius: $input-border-radius;
+  border: 1px solid $gray-light;
+  color: $gray;
+  background-color: $white;
+  padding: .5em 1em;
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}
+
+@mixin states {
+  &.primary,
+  &.success,
+  &.warning,
+  &.error {
+    color: $white;
+  }
+
+  &.primary {
+    background-color: $brand-primary;
+    border-color: $brand-primary-dark;
+  }
+
+  &.success {
+    background-color: $brand-success;
+    border-color: $brand-success-dark;
+  }
+
+  &.warning {
+    background-color: $brand-warning;
+    border-color: $brand-warning-dark;
+  }
+
+  &.error {
+    background-color: $brand-error;
+    border-color: $brand-error-dark;
+  }
+
+  &[disabled] {
+    background-color: $gray-lighter;
+    color: $white;
+  }
+
+  &:focus {
+    border: 1px solid $input-focus;
+  }
+
+  &:hover,
+  &:focus {
+    outline: 0 none;
+  }
+}
+
 @mixin clearfix {
-  &:after {
+  &::after {
     content: '';
     display: table;
     clear: both;

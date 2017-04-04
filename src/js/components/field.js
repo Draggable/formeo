@@ -221,7 +221,7 @@ export default class Field {
     };
 
     if (args.propType === 'array') {
-      inputs.className.push('f-input-group', 'f-input-group-sm');
+      inputs.className.push('f-input-group');
       controls.content.unshift(order);
     }
 

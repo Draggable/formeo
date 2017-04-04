@@ -1,4 +1,4 @@
-.pill-buttons > .btn {
+.pill-buttons > button {
   border-radius: 50px;
 }
 
@@ -19,6 +19,10 @@ hr {
   > label {
     display: inline-block;
     margin-bottom: 10px;
+  }
+
+  button {
+    margin-right: 5px;
   }
 }
 
@@ -59,29 +63,86 @@ textarea {
 }
 
 button {
-  border-radius: $border-radius;
-  border: 0 none;
+  @extend %button-style;
+
+  @include states;
 }
 
-.f-radio, .f-checkbox {
+.f-btn-group {
+  display: inline-flex;
+  vertical-align: middle;
+
+  > button {
+    flex: 0 1 auto;
+
+    &:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+      border-radius: 0;
+    }
+
+    &:last-child:not(:first-child):not(.dropdown-toggle) {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:first-child:not(:last-child):not(.dropdown-toggle) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+
+  button + button,
+  button + .f-btn-group,
+  .f-btn-group + button,
+  .f-btn-group + .f-btn-group,
+  .f-btn-group-vertical button + button,
+  .f-btn-group-vertical button + .f-btn-group,
+  .f-btn-group-vertical .f-btn-group + button,
+  .f-btn-group-vertical .f-btn-group + .f-btn-group {
+    margin-left: -1px;
+  }
+}
+
+.f-radio,
+.f-checkbox {
   margin-bottom: 5px;
 }
 
 .f-input-group {
   @extend %display-row;
 
-  input {
-    border-width: 1px 1px 1px 0;
+  display: inline-flex;
+  vertical-align: bottom;
+
+  input + input,
+  input + select,
+  select + select {
+    margin-left: -1px;
+  }
+
+  input,
+  select {
+    // border-width: 1px 1px 1px 0;
     border-radius: 0;
 
-    &:last-of-type {
+    &:last-child {
       border-right-width: 1px;
       border-radius: 0 $input-border-radius $input-border-radius 0;
     }
 
-    &:first-of-type {
+    &:first-child {
       border-radius: $input-border-radius 0 0 $input-border-radius;
       border-left-width: 1px;
+    }
+
+    &:focus {
+      + input,
+      + select {
+        border-left: 1px solid $input-focus;
+      }
     }
   }
 }
