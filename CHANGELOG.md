@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.7 - Fix bug where could not set custom ID to field, make sortables toggleable, handy for editing labels [#69](http://github.com/draggable/formeo/pulls/69)
 - v0.7.6 - Feature/no bs [#68](http://github.com/draggable/formeo/pulls/68)
 - v0.7.5 - Hotfix/required [#67](http://github.com/draggable/formeo/pulls/67)
 - v0.7.4 - Fix control filter [#65](http://github.com/draggable/formeo/pulls/65)
