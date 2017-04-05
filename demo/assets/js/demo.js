@@ -81,7 +81,7 @@ let formeoOpts = {
     // onUpdate: console.log,
     // onSave: console.log
   },
-  // svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
+  svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options']
