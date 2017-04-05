@@ -44,7 +44,7 @@ input {
   }
 
   &[type='radio'] {
-    + .checkable:before {
+    + .checkable::before {
       border-radius: 2em;
     }
 
