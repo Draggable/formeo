@@ -67,7 +67,6 @@ export default class Column {
 
     column = dom.create(column);
     this.processConfig(column);
-    dom.columns.set(columnID, column);
 
     events.columnResized = new CustomEvent('columnResized', {
       detail: {
@@ -76,7 +75,7 @@ export default class Column {
       }
     });
 
-    Sortable.create(column, {
+    let sortable = this.sortable = Sortable.create(column, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
@@ -102,6 +101,8 @@ export default class Column {
       },
       draggable: '.stage-fields'
     });
+
+    dom.columns.set(columnID, {column, sortable});
 
     return column;
   }

@@ -89,7 +89,7 @@ export const uuid = elem => {
   let id;
   if (elem) {
     let {attrs = {}} = elem;
-    id = elem.id || attrs.id || uuidv4();
+    id = attrs.id || elem.id || uuidv4();
     elem.id = id;
   } else {
     id = uuidv4();

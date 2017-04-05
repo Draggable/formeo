@@ -28,8 +28,6 @@ export default class Field {
     formData.fields.set(_this.fieldID, fieldData);
     this.fieldData = fieldData;
 
-    _this.preview = dom.create(_this.fieldPreview());
-
     let field = {
       tag: 'li',
       attrs: {
@@ -38,9 +36,8 @@ export default class Field {
       id: _this.fieldID,
       content: [
         dom.actionButtons(_this.fieldID, 'field'), // fieldEdit window
-        // _this.actionButtons(), // fieldEdit window
         _this.fieldEdit(), // fieldEdit window
-        _this.preview // fieldPreview
+        //_this.preview // fieldPreview
       ],
       panelNav: _this.panelNav,
       dataset: {
@@ -55,6 +52,9 @@ export default class Field {
       field,
       instance: _this
     });
+
+    _this.preview = dom.create(_this.fieldPreview());
+    field.appendChild(_this.preview);
 
     return field;
   }
@@ -660,12 +660,17 @@ export default class Field {
   fieldPreview() {
     let _this = this;
     let fieldData = clone(formData.fields.get(_this.fieldID));
+    const field = dom.fields.get(_this.fieldID).field;
     const togglePreviewEdit = evt => {
+      const column = field.parentElement;
       if (evt.target.contentEditable === 'true') {
-        let field = dom.fields.get(_this.fieldID).field;
-        let column = field.parentElement;
-        let isActive = document.activeElement === evt.target;
-        column.classList.toggle('editing-field-preview', isActive);
+        if (h.inArray(evt.type, ['focus', 'blur'])) {
+          let isActive = document.activeElement === evt.target;
+          column.classList.toggle('editing-field-preview', isActive);
+          dom.toggleSortable(field.parentElement, (evt.type === 'focus'));
+        } else if(h.inArray(evt.type, ['mousedown', 'mouseup'])) {
+          dom.toggleSortable(field.parentElement, (evt.type === 'mousedown'));
+        }
       }
     };
 
@@ -680,6 +685,8 @@ export default class Field {
       action: {
         focus: togglePreviewEdit,
         blur: togglePreviewEdit,
+        mousedown: togglePreviewEdit,
+        mouseup: togglePreviewEdit,
         change: evt => {
           let {target} = evt;
           if (target.fMap) {

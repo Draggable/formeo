@@ -452,27 +452,23 @@ class DOM {
     }
 
     // Set element attributes
-    for (let attr in attrs) {
-      if (attrs.hasOwnProperty(attr)) {
-        if (attrs[attr]) {
-          let name = h.safeAttrName(attr);
-          let value = attrs[attr] || '';
+    Object.keys(attrs).forEach(attr => {
+      let name = h.safeAttrName(attr);
+      let value = attrs[attr] || '';
 
-          if (Array.isArray(value)) {
-            if (typeof value[0] === 'object') {
-              let selected = value.filter(t => (t.selected === true));
-              value = selected.length ? selected[0].value : value[0].value;
-            } else {
-              value = value.join(' ');
-            }
-          }
-
-          if (value) {
-            element.setAttribute(name, value);
-          }
+      if (Array.isArray(value)) {
+        if (typeof value[0] === 'object') {
+          let selected = value.filter(t => (t.selected === true));
+          value = selected.length ? selected[0].value : value[0].value;
+        } else {
+          value = value.join(' ');
         }
       }
-    }
+
+      if (value) {
+        element.setAttribute(name, value);
+      }
+    });
   }
 
   /**
@@ -525,15 +521,16 @@ class DOM {
    * @return {Array} option config objects
    */
   processOptions(options, elem, isPreview) {
-    let {action} = elem;
-    let fieldType = h.get(elem, 'attrs.type') || elem.tag;
+    let {action, attrs} = elem;
+    let fieldType = attrs.type || elem.tag;
+    let id = attrs.id || elem.id;
 
     let optionMap = (option, i) => {
       const defaultInput = () => {
         let input = {
           tag: 'input',
           attrs: {
-            id: elem.id,
+            id: id,
             type: fieldType,
             value: option.value || ''
           },
@@ -582,7 +579,7 @@ class DOM {
           inputWrap.content.unshift(checkableLabel);
           // inputWrap.content.unshift(input);
         } else {
-          input.attrs.name = elem.id;
+          input.attrs.name = id;
           optionLabel.content = checkable;
           optionLabel = dom.create(optionLabel);
           input = dom.create(input);
@@ -602,13 +599,13 @@ class DOM {
           };
         },
         button: option => {
-          let {type, label, className} = option;
+          let {type, label, className, id} = option;
           return Object.assign({}, elem, {
             attrs: {
               type
             },
             className,
-            id: uuid(),
+            id: id || uuid(),
             options: undefined,
             content: label,
             action: elem.action
@@ -1375,7 +1372,7 @@ class DOM {
    */
   addRow(stageID, rowID) {
     let row = new Row(rowID);
-    let stage = stageID ? this.stages.get(stageID) : this.activeStage;
+    let stage = stageID ? this.stages.get(stageID).stage : this.activeStage;
     stage.appendChild(row);
     data.saveRowOrder(stage);
     this.emptyClass(stage);
@@ -1399,8 +1396,7 @@ class DOM {
    */
   addColumn(rowID, columnID) {
     let column = new Column(columnID);
-    let row = this.rows.get(rowID);
-    this.columns.set(column.id, column);
+    let row = this.rows.get(rowID).row;
     row.appendChild(column);
     data.saveColumnOrder(row);
     this.emptyClass(row);
@@ -1417,7 +1413,28 @@ class DOM {
   }
 
   /**
-   * [addField description]
+   * Toggles a sortables `disabled` option.
+   * @param  {Object} elem DOM element
+   * @param  {Boolean} state
+   */
+  toggleSortable(elem, state) {
+    let {fType} = elem;
+    if (!fType) {
+      return;
+    }
+    let pFtype = elem.parentElement.fType;
+    const sortable = dom[fType].get(elem.id).sortable;
+    if (state === undefined) {
+      state = !sortable.option('disabled');
+    }
+    sortable.option('disabled', state);
+    if (pFtype && h.inArray(pFtype, ['rows', 'columns', 'stages'])) {
+      this.toggleSortable(elem.parentElement, state);
+    }
+  }
+
+  /**
+   * Adds a field to a column
    * @param {String} columnID
    * @param {String} fieldID
    * @return {Object} field
@@ -1425,7 +1442,7 @@ class DOM {
   addField(columnID, fieldID) {
     let field = new Field(fieldID);
     if (columnID) {
-      let column = this.columns.get(columnID);
+      let column = this.columns.get(columnID).column;
       column.appendChild(field);
       data.saveFieldOrder(column);
       this.emptyClass(column);
