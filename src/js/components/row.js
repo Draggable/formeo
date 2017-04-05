@@ -52,9 +52,8 @@ export default class Row {
     };
 
     row = dom.create(row);
-    dom.rows.set(rowID, row);
 
-    Sortable.create(row, {
+    const sortable = Sortable.create(row, {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
@@ -67,6 +66,8 @@ export default class Row {
       draggable: '.stage-columns',
       filter: '.resize-x-handle'
     });
+
+    dom.rows.set(rowID, {row, sortable});
 
     return row;
   }

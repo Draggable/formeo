@@ -78,8 +78,38 @@ export default class Stage {
    * @return {Object} DOM element
    */
   loadStage() {
+    const _this = this;
     let stageWrap = this.dom;
-    dom.stages.set(this.stageID, this.stage);
+    const sortable = Sortable.create(stageWrap.firstChild, {
+      animation: 150,
+      fallbackClass: 'row-moving',
+      forceFallback: true,
+      fallbackTolerance: 0,
+      group: {name: 'stages', pull: true, put: [
+        'controls',
+        'rows',
+        'columns'
+      ]},
+      // Element is dropped into the list from another list
+      onAdd: _this.onAdd.bind(_this),
+      onRemove: _this.onRemove.bind(_this),
+      // onDrop: _this.onAdd.bind(_this),
+      sort: true,
+      onStart: evt => {
+        dom.activeStage = _this.stage;
+      },
+      onUpdate: evt => {
+        data.saveRowOrder();
+        data.save();
+      },
+      onSort: _this.onSort,
+      draggable: '.stage-rows',
+      handle: '.item-handle'
+    });
+    dom.stages.set(this.stageID, {
+      stage: this.stage,
+      sortable
+    });
     dom.activeStage = this.stage;
     if (formData.stages.get(this.stageID).rows.length) {
       dom.loadRows(this.stage);
@@ -190,8 +220,7 @@ export default class Stage {
     if (this.stage) {
       return this.stage;
     }
-    let _this = this;
-    let config = this.elementConfigs();
+    const config = this.elementConfigs();
 
     let stageWrap = dom.create({
       tag: 'div',
@@ -204,33 +233,6 @@ export default class Stage {
       ]
     });
     this.stage = stageWrap.firstChild;
-
-    Sortable.create(stageWrap.firstChild, {
-      animation: 150,
-      fallbackClass: 'row-moving',
-      forceFallback: true,
-      fallbackTolerance: 0,
-      group: {name: 'stages', pull: true, put: [
-        'controls',
-        'rows',
-        'columns'
-      ]},
-      // Element is dropped into the list from another list
-      onAdd: _this.onAdd.bind(_this),
-      onRemove: _this.onRemove.bind(_this),
-      // onDrop: _this.onAdd.bind(_this),
-      sort: true,
-      onStart: evt => {
-        dom.activeStage = _this.stage;
-      },
-      onUpdate: evt => {
-        data.saveRowOrder();
-        data.save();
-      },
-      onSort: _this.onSort,
-      draggable: '.stage-rows',
-      handle: '.item-handle'
-    });
 
     return stageWrap;
   }
