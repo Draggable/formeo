@@ -71,13 +71,19 @@ const helpers = {
     });
   },
   insertIcons: response => {
+    const id = 'formeo-sprite';
     let iconSpriteWrap = dom.create({
       tag: 'div',
       content: response.responseText,
-      id: 'formeo-sprite'
+      id
     });
     iconSpriteWrap.style.display = 'none';
-    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+    const existingSprite = document.getElementById(id);
+    if (existingSprite) {
+      existingSprite.parentElement.replaceChild(iconSpriteWrap, existingSprite);
+    } else {
+      document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+    }
   },
   insertStyle: response => {
     let formeoStyle = dom.create({
