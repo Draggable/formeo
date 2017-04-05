@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.8 - replace existing formeo-sprite, control nav button style fix [#70](http://github.com/draggable/formeo/pulls/70)
 - v0.7.7 - Fix bug where could not set custom ID to field, make sortables toggleable, handy for editing labels [#69](http://github.com/draggable/formeo/pulls/69)
 - v0.7.6 - Feature/no bs [#68](http://github.com/draggable/formeo/pulls/68)
 - v0.7.5 - Hotfix/required [#67](http://github.com/draggable/formeo/pulls/67)
