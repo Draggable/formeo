@@ -525,7 +525,7 @@ export class Controls {
 
     let clearBtn = h.merge(btnTemplate, {
       content: [dom.icon('bin'), i18n.get('clear')],
-      className: ['btn', 'btn-secondary', 'clear-form'],
+      className: ['clear-form'],
       attrs: {
         title: i18n.get('clearAll')
       },
@@ -568,7 +568,7 @@ export class Controls {
       attrs: {
         title: i18n.get('save')
       },
-      className: ['btn-secondary', 'save-form'],
+      className: ['save-form'],
       action: {
         click: (evt) => {
           // @todo: complete actions connection
@@ -585,7 +585,7 @@ export class Controls {
     });
     let formActions = {
       tag: 'div',
-      className: 'form-actions',
+      className: 'form-actions f-btn-group',
       // content: [clearBtn, settingsBtn, saveBtn]
       content: [clearBtn, saveBtn]
     };
