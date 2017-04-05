@@ -121,38 +121,36 @@
     padding-left: 1.5em;
     cursor: pointer;
     position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      display: inline-block;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1em;
+      line-height: 1em;
+      color: transparent;
+      font-family: sans;
+      text-align: center;
+      width: 1em;
+      height: 1em;
+      border-radius: 2px;
+    }
   }
 
-  + .checkable:before,
-  .checkable:before,
-  + .checkable:after,
-  .checkable:after {
-    content: '';
-    position: absolute;
-    display: inline-block;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1em;
-    line-height: 1em;
-    color: transparent;
-    font-family: sans;
-    text-align: center;
-    width: 1em;
-    height: 1em;
-    border-radius: 2px;
-  }
-
-  + .checkable:before {
+  + .checkable::before {
     background: $white;
     border: 1px solid $gray;
   }
 
-  &:focus + .checkable:before {
+  &:focus + .checkable::before {
     border: 1px solid $input-focus;
   }
 
-  + .checkable:after {
+  + .checkable::after {
     content: $checkbox-character;
     background: none;
     visibility: hidden;
@@ -161,11 +159,13 @@
     color: $black;
   }
 
-  &:checked + .checkable:after {
-    color: $gray;
-    background: none;
-    visibility: visible;
-    opacity: 1;
+  &:checked + .checkable {
+    &::after {
+      color: $gray;
+      background: none;
+      visibility: visible;
+      opacity: 1;
+    }
   }
 }
 
@@ -200,7 +200,7 @@
     animation: DRAG_GHOST 500ms forwards;
   }
 
-  &:before {
+  &::before {
     margin-right: 10px;
     font-size: 16px;
   }
