@@ -37,13 +37,22 @@ export default class Field {
       content: [
         dom.actionButtons(_this.fieldID, 'field'), // fieldEdit window
         _this.fieldEdit(), // fieldEdit window
-        //_this.preview // fieldPreview
       ],
       panelNav: _this.panelNav,
       dataset: {
         hoverTag: i18n.get('field')
       },
-      fType: 'fields'
+      fType: 'fields',
+      action: {
+        mouseenter: evt => {
+          let field = document.getElementById(_this.fieldID);
+          field.classList.add('hovering-field');
+        },
+        mouseleave: evt => {
+          let field = document.getElementById(_this.fieldID);
+          field.classList.remove('hovering-field');
+        }
+      }
     };
 
     field = dom.create(field);

@@ -127,9 +127,9 @@
       content: '';
       position: absolute;
       display: inline-block;
-      left: 0;
+      left: 50%;
       top: 50%;
-      transform: translateY(-50%);
+      transform: translate(-50%, -50%);
       font-size: 1em;
       line-height: 1em;
       color: transparent;
@@ -255,8 +255,8 @@
 
 %button-style {
   border-radius: $input-border-radius;
-  border: 1px solid $gray-light;
-  color: $gray;
+  border: 1px solid $gray;
+  color: $gray-dark;
   background-color: $white;
   padding: .5em 1em;
 
