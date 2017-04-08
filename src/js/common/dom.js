@@ -25,6 +25,7 @@ class DOM {
     this.styleSheet = (() => {
       const style = document.createElement('style');
       style.setAttribute('media', 'screen');
+      style.setAttribute('type', 'text/css');
       // WebKit hack :(
       style.appendChild(document.createTextNode(''));
       document.head.appendChild(style);
@@ -384,8 +385,16 @@ class DOM {
           'focus',
           'blur'
         ];
-        let useCapture = h.inArray(event, useCaptureEvts);
-        element.addEventListener(event, action, useCapture);
+
+        // dirty hack to handle onRender callback
+        if (event === 'onRender') {
+          setTimeout(() => {
+            action(element);
+          }, 10);
+        } else {
+          let useCapture = h.inArray(event, useCaptureEvts);
+          element.addEventListener(event, action, useCapture);
+        }
       }
       processed.push('action');
     }
@@ -801,23 +810,36 @@ class DOM {
       className: item + '-actions group-actions',
       action: {
         mouseenter: evt => {
-          let btnGroup = evt.target;
+          // let btnGroup = evt.target;
           let element = document.getElementById(id);
           element.classList.add('hovering-' + item);
           evt.target.parentReference = element;
-          const buttons = btnGroup.getElementsByTagName('button');
-          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
-          const expandedWidth = (buttons.length * btnWidth) + 'px';
-          if (item === 'row') {
-            btnGroup.style.height = expandedWidth;
-          } else {
-            btnGroup.style.width = expandedWidth;
-          }
+          // const buttons = btnGroup.getElementsByTagName('button');
+          // let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
+          // const expandedWidth = (buttons.length * btnWidth) + 'px';
+          // if (item === 'row') {
+          //   btnGroup.style.height = expandedWidth;
+          // } else {
+          //   btnGroup.style.width = expandedWidth;
+          // }
         },
         mouseleave: evt => {
           let btnGroup = evt.target;
           evt.target.parentReference.classList.remove('hovering-' + item);
-          btnGroup.removeAttribute('style');
+        },
+        onRender: elem => {
+          const buttons = elem.getElementsByTagName('button');
+          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
+          const expandedWidth = (buttons.length * btnWidth) + 'px';
+          const woh = item === 'row' ? 'height' : 'width';
+          let rules = [
+            [
+              `.hovering-${item} .${item}-actions`,
+              [woh, expandedWidth, true]
+            ]
+          ];
+
+          _this.insertRule(rules);
         }
       }
     };
@@ -1515,11 +1537,13 @@ class DOM {
       for (let pl = rule.length; j < pl; j++) {
         let prop = rule[j];
         let important = (prop[2] ? ' !important' : '');
-        propStr += `${prop[0]}:${prop[1]}${important}};`;
+        propStr += `${prop[0]}:${prop[1]}${important};`;
       }
 
+      console.log(`${selector} {${propStr}}`);
+
       // Insert CSS Rule
-      return styleSheet.insertRule(`${selector} {${propStr}}`, rulesLength);
+      return styleSheet.insertRule(`${selector} { ${propStr} }`, rulesLength);
     }
   }
 

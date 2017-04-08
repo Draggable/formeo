@@ -59,7 +59,8 @@
 
     &::before {
       line-height: 23px !important;
-      width: 68px !important;
+
+      // width: 68px !important;
       border-left: 1px solid $field-outline-color;
       border-bottom: 1px solid $field-outline-color;
     }
