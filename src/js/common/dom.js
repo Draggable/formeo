@@ -810,21 +810,11 @@ class DOM {
       className: item + '-actions group-actions',
       action: {
         mouseenter: evt => {
-          // let btnGroup = evt.target;
           let element = document.getElementById(id);
           element.classList.add('hovering-' + item);
           evt.target.parentReference = element;
-          // const buttons = btnGroup.getElementsByTagName('button');
-          // let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
-          // const expandedWidth = (buttons.length * btnWidth) + 'px';
-          // if (item === 'row') {
-          //   btnGroup.style.height = expandedWidth;
-          // } else {
-          //   btnGroup.style.width = expandedWidth;
-          // }
         },
         mouseleave: evt => {
-          let btnGroup = evt.target;
           evt.target.parentReference.classList.remove('hovering-' + item);
         },
         onRender: elem => {
@@ -1154,7 +1144,6 @@ class DOM {
    * @return {Object} columnPresetConfig
    */
   updateColumnPreset(row) {
-    // console.log('updateColumnPreset');
     let _this = this;
     let oldColumnPreset = row.querySelector('.column-preset');
     let rowEdit = oldColumnPreset.parentElement;

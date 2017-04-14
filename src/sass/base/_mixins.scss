@@ -127,9 +127,9 @@
       content: '';
       position: absolute;
       display: inline-block;
-      left: 50%;
+      left: 0;
       top: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(0, -50%);
       font-size: 1em;
       line-height: 1em;
       color: transparent;
