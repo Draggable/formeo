@@ -48,7 +48,7 @@ input {
       border-radius: 2em;
     }
 
-    &:checked + .checkable:after {
+    &:checked + .checkable::after {
       content: '';
       background: $gray;
       transform: scale(0.5) translate(-100%, -100%);
