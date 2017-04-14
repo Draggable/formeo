@@ -1540,8 +1540,6 @@ class DOM {
         propStr += `${prop[0]}:${prop[1]}${important};`;
       }
 
-      console.log(`${selector} {${propStr}}`);
-
       // Insert CSS Rule
       return styleSheet.insertRule(`${selector} { ${propStr} }`, rulesLength);
     }
