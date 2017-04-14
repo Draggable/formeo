@@ -24,11 +24,13 @@ $action-btn-width: 24px;
 $black: #000;
 $white: #fff;
 $off-white: #fefefe;
-$gray: #55595c !default;
-$gray-dark: #373a3c !default;
-$gray-light: lighten($gray, 20%) !default;
-$gray-lighter: lighten($gray, 40%) !default;
-$gray-lightest: lighten($gray, 60%) !default;
+
+// $gray-dark: #373a3c !default;
+$gray-dark: lighten($black, 20%) !default;
+$gray: lighten($black, 40%) !default;
+$gray-light: lighten($black, 60%) !default;
+$gray-lighter: lighten($black, 80%) !default;
+$gray-lightest: lighten($black, 90%) !default;
 
 // Stage
 $stage-background: rgba(255, 255, 255, 0);

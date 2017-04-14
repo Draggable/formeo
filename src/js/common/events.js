@@ -26,7 +26,6 @@ const events = {
   },
   formeoSaved: new CustomEvent('formeoSaved', {}),
   formeoUpdated: new CustomEvent('formeoUpdated', {})
-
 };
 
 document.addEventListener('formeoUpdated', function(evt) {

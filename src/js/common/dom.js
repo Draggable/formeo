@@ -22,6 +22,15 @@ class DOM {
     this.rows = new Map();
     this.columns = new Map();
     this.fields = new Map();
+    this.styleSheet = (() => {
+      const style = document.createElement('style');
+      style.setAttribute('media', 'screen');
+      style.setAttribute('type', 'text/css');
+      // WebKit hack :(
+      style.appendChild(document.createTextNode(''));
+      document.head.appendChild(style);
+      return style.sheet;
+    })();
   }
 
   /**
@@ -258,9 +267,7 @@ class DOM {
         contentType = _this.contentType(content);
         appendContent[contentType](content);
       },
-      undefined: () => {
-        console.error(elem);
-      }
+      undefined: () => null
     };
 
     processed.push('tag');
@@ -378,8 +385,16 @@ class DOM {
           'focus',
           'blur'
         ];
-        let useCapture = h.inArray(event, useCaptureEvts);
-        element.addEventListener(event, action, useCapture);
+
+        // dirty hack to handle onRender callback
+        if (event === 'onRender') {
+          setTimeout(() => {
+            action(element);
+          }, 10);
+        } else {
+          let useCapture = h.inArray(event, useCaptureEvts);
+          element.addEventListener(event, action, useCapture);
+        }
       }
       processed.push('action');
     }
@@ -795,23 +810,36 @@ class DOM {
       className: item + '-actions group-actions',
       action: {
         mouseenter: evt => {
-          let btnGroup = evt.target;
+          // let btnGroup = evt.target;
           let element = document.getElementById(id);
           element.classList.add('hovering-' + item);
           evt.target.parentReference = element;
-          const buttons = btnGroup.getElementsByTagName('button');
-          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
-          const expandedWidth = (buttons.length * btnWidth) + 'px';
-          if (item === 'row') {
-            btnGroup.style.height = expandedWidth;
-          } else {
-            btnGroup.style.width = expandedWidth;
-          }
+          // const buttons = btnGroup.getElementsByTagName('button');
+          // let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
+          // const expandedWidth = (buttons.length * btnWidth) + 'px';
+          // if (item === 'row') {
+          //   btnGroup.style.height = expandedWidth;
+          // } else {
+          //   btnGroup.style.width = expandedWidth;
+          // }
         },
         mouseleave: evt => {
           let btnGroup = evt.target;
           evt.target.parentReference.classList.remove('hovering-' + item);
-          btnGroup.removeAttribute('style');
+        },
+        onRender: elem => {
+          const buttons = elem.getElementsByTagName('button');
+          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
+          const expandedWidth = (buttons.length * btnWidth) + 'px';
+          const woh = item === 'row' ? 'height' : 'width';
+          let rules = [
+            [
+              `.hovering-${item} .${item}-actions`,
+              [woh, expandedWidth, true]
+            ]
+          ];
+
+          _this.insertRule(rules);
         }
       }
     };
@@ -1472,6 +1500,48 @@ class DOM {
       childMap.set('stages', 'rows');
       let children = elem.getElementsByClassName(`stage-${childMap.get(type)}`);
       elem.classList.toggle(`empty-${type}`, !children.length);
+    }
+  }
+
+  /**
+   * Shorthand expander for dom.create
+   * @param  {String} tag
+   * @param  {Object} attrs
+   * @param  {Object|Array|String} content
+   * @return {Object} DOM node
+   */
+  h(tag, attrs, content) {
+    return this.create({tag, attrs, content});
+  }
+
+  /**
+   * Style Object
+   * @param  {Object} rules
+   * @return {Number} index of added rule
+   */
+  insertRule(rules) {
+    const styleSheet = this.styleSheet;
+    let rulesLength = styleSheet.cssRules.length;
+    for (let i = 0, rl = rules.length; i < rl; i++) {
+      let j = 1;
+      let rule = rules[i];
+      let selector = rules[i][0];
+      let propStr = '';
+      // If the second argument of a rule is an array
+      // of arrays, correct our variables.
+      if (Object.prototype.toString.call(rule[1][0]) === '[object Array]') {
+        rule = rule[1];
+        j = 0;
+      }
+
+      for (let pl = rule.length; j < pl; j++) {
+        let prop = rule[j];
+        let important = (prop[2] ? ' !important' : '');
+        propStr += `${prop[0]}:${prop[1]}${important};`;
+      }
+
+      // Insert CSS Rule
+      return styleSheet.insertRule(`${selector} { ${propStr} }`, rulesLength);
     }
   }
 
