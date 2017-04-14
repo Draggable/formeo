@@ -1055,7 +1055,6 @@ class DOM {
    */
   columnPresetControl(rowID) {
     let _this = this;
-    let row = this.rows.get(rowID);
     let rowData = formData.rows.get(rowID);
     let layoutPreset = {
         tag: 'select',
@@ -1065,7 +1064,8 @@ class DOM {
         },
         action: {
           change: e => {
-            _this.setColumnWidths(row, e.target.value);
+            let dRow = this.rows.get(rowID);
+            _this.setColumnWidths(dRow.row, e.target.value);
             data.save();
           }
         }
@@ -1343,7 +1343,7 @@ class DOM {
    * @param  {Object} evt
    */
   clearForm(evt) {
-    this.stages.forEach(this.clearStage);
+    this.stages.forEach(dStage => this.clearStage(dStage.stage));
   }
 
   /**
