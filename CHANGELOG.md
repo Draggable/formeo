@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.11 - Fix checkbox and radio display bug, resolves #74 [#75](http://github.com/draggable/formeo/pulls/75)
 - v0.7.10 - Add dynamic css for action buttons [#73](http://github.com/draggable/formeo/pulls/73)
 - v0.7.9 - Style fixes [#71](http://github.com/draggable/formeo/pulls/71)
 - v0.7.8 - replace existing formeo-sprite, control nav button style fix [#70](http://github.com/draggable/formeo/pulls/70)
