@@ -39,7 +39,8 @@ const helpers = {
 
     return str.replace(/\s/g, '-').replace(/^-+/g, '');
   },
-  safeAttrName: (name) => {
+
+  safeAttrName: name => {
     let safeAttr = {
       className: 'class'
     };
