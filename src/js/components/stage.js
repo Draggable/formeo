@@ -196,7 +196,7 @@ export default class Stage {
     }
 
     to.insertBefore(row, to.children[newIndex]);
-    dom.columnWidths(to);
+    dom.columnWidths(row);
     data.saveRowOrder(to);
 
     return data.save();
