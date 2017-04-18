@@ -461,7 +461,7 @@ class DOM {
 
     if (!isPreview) {
       if (!attrs.name && this.isInput(elem.tag)) {
-        attrs.name = uuid(elem);
+        element.setAttribute('name', uuid(elem));
       }
     }
 
