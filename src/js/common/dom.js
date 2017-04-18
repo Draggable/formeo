@@ -26,7 +26,6 @@ class DOM {
       const style = document.createElement('style');
       style.setAttribute('media', 'screen');
       style.setAttribute('type', 'text/css');
-      // WebKit hack :(
       style.appendChild(document.createTextNode(''));
       document.head.appendChild(style);
       return style.sheet;
@@ -462,7 +461,7 @@ class DOM {
 
     if (!isPreview) {
       if (!attrs.name && this.isInput(elem.tag)) {
-        attrs.name = uuid(elem);
+        element.setAttribute('name', uuid(elem));
       }
     }
 

@@ -154,7 +154,6 @@ export class Controls {
         })
       }, {
         tag: 'textarea',
-        className: '',
         config: {
           label: i18n.get('textarea')
         },
