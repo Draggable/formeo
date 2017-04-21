@@ -324,6 +324,12 @@ class Formeo {
         },
         content: [_this.stages, controls]
       };
+
+    if (i18n.current.dir) {
+      elemConfig.attrs.dir = i18n.current.dir;
+      dom.dir = i18n.current.dir;
+    }
+
     let formeoElem = dom.create(elemConfig);
 
     _this.container.innerHTML = '';

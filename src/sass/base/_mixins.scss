@@ -251,6 +251,17 @@
     height: 24px;
     line-height: 20px;
   }
+
+  [dir='rtl'] & {
+    button {
+      text-align: right !important;
+    }
+
+    svg {
+      float: right  !important;
+      margin: 0 0 0 10px  !important;
+    }
+  }
 }
 
 %button-style {

@@ -39,6 +39,10 @@ body {
 #demo-header nav {
   text-align: left;
   background-color: #efefef;
+  content: '';
+  display: table;
+  clear: both;
+  width: 100%;
 }
 
 #demo-footer ul, #demo-header ul {
