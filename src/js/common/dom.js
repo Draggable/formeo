@@ -128,7 +128,7 @@ class DOM {
               remove
             ],
             order: [],
-            disabled: ['clone']
+            disabled: []
           }
         },
         columns: {
@@ -139,7 +139,7 @@ class DOM {
               remove
             ],
             order: [],
-            disabled: ['clone']
+            disabled: []
           }
         },
         fields: {
@@ -151,7 +151,7 @@ class DOM {
               remove
             ],
             order: [],
-            disabled: ['clone']
+            disabled: []
           }
         }
       };
@@ -164,6 +164,7 @@ class DOM {
       icon('copy'),
       icon('handle'),
     ];
+
     let mergedConfig = h.merge(defaultConfig, userConfig);
 
     Object.keys(mergedConfig).forEach(key => {
@@ -181,6 +182,11 @@ class DOM {
         });
       }
     });
+
+    // overrides language set dir
+    if (mergedConfig.dir) {
+      this.dir = mergedConfig.dir;
+    }
 
     this.config = mergedConfig;
 
@@ -818,7 +824,7 @@ class DOM {
         },
         onRender: elem => {
           const buttons = elem.getElementsByTagName('button');
-          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width'));
+          let btnWidth = parseInt(_this.getStyle(buttons[0], 'width')) + 1;
           const expandedWidth = (buttons.length * btnWidth) + 'px';
           const woh = item === 'row' ? 'height' : 'width';
           let rules = [

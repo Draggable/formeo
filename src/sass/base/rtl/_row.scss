@@ -1,0 +1,44 @@
+.stage-rows {
+  &::before {
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: 0;
+    right: 0;
+    left: auto;
+  }
+
+  &:first-child {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 0;
+  }
+
+  &:last-child {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+
+  &.hovering-row {
+    &:first-child {
+      border-top-left-radius: 0;
+    }
+  }
+
+  &.hovering-row {
+    &.editing-row {
+      &::before {
+        border-left-width: 0;
+        border-right-width: auto;
+      }
+    }
+
+    &::before {
+      border-left-width: 1px;
+    }
+  }
+
+  &.empty-rows {
+    &::after {
+      left: 0;
+      right: auto;
+    }
+  }
+}

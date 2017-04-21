@@ -1,3 +1,5 @@
+dir = rtl
+
 addOption = اضافه کردن گزینه
 allFieldsRemoved = همه فیلدها حذف شدند.
 allowSelect = اجازه انتخاب

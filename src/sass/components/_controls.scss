@@ -155,30 +155,6 @@
       }
     }
 
-    > button + button {
-      margin-left: -$input-btn-border-width;
-    }
-
-    button {
-      &:not(:first-child):not(:last-child) {
-        border-radius: 0;
-      }
-
-      &:first-child:not(:last-child) {
-        border-bottom-left-radius: $input-border-radius;
-        border-top-left-radius: $input-border-radius;
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
-      }
-
-      &:last-child:not(:first-child) {
-        border-bottom-right-radius: $input-border-radius;
-        border-top-right-radius: $input-border-radius;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-      }
-    }
-
     .save-form,
     .clear-form {
       &:hover {

@@ -1,0 +1,9 @@
+%checkbox {
+  + .checkable {
+    &::before,
+    &::after {
+      right: 0;
+      left: auto;
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import pkg from './package.json';
-import path from 'path';
+import {resolve} from 'path';
 import autoprefixer from 'autoprefixer';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import CompressionPlugin from 'compression-webpack-plugin';
@@ -35,13 +35,18 @@ let plugins = [
     })
 ];
 
+const extractSass = new ExtractTextPlugin({
+    filename: '[name].[contenthash].css',
+    disable: process.env.NODE_ENV === 'development'
+});
+
 const webpackConfig = {
-  context: path.join(__dirname, 'demo/assets/'),
+  context: resolve(__dirname, 'demo/assets/'),
   entry: {
-    formeo: path.join(__dirname, pkg.config.files.formeo.js)
+    formeo: resolve(__dirname, pkg.config.files.formeo.js)
   },
   output: {
-    path: path.join(__dirname, 'demo/assets/'),
+    path: resolve(__dirname, 'demo/assets/'),
     publicPath: '/assets/',
     filename: '[name].min.js'
   },
@@ -65,7 +70,7 @@ const webpackConfig = {
       loader: 'file?name=[path][name].[ext]&context=./src'
     }, {
       test: /\.scss$/,
-      use: ExtractTextPlugin
+      use: extractSass
       .extract({
         fallback: 'style-loader',
         use: [
@@ -89,13 +94,12 @@ const webpackConfig = {
   plugins,
   resolve: {
     modules: [
-      path.join(__dirname, 'src'),
+      resolve(__dirname, 'src'),
       'node_modules'
     ],
     extensions: ['.js', '.scss']
   },
   devServer: {
-    hot: true,
     inline: true,
     contentBase: 'demo/',
     noInfo: true
@@ -103,8 +107,8 @@ const webpackConfig = {
 };
 
 // if (!isDebug) {
-//   webpackConfig.context = path.join(__dirname, 'dist');
-//   webpackConfig.output.path = path.join(__dirname, 'dist');
+//   webpackConfig.context = resolve(__dirname, 'dist');
+//   webpackConfig.output.path = resolve(__dirname, 'dist');
 //   webpackConfig.output.publicPath = 'dist/';
 // }
 
