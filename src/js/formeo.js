@@ -9,8 +9,6 @@ import dom from './common/dom';
 import {Controls} from './components/controls';
 import Stage from './components/stage';
 
-require('date-input-polyfill');
-
 // Simple object config for the main part of formeo
 const formeo = {
   get formData() {
@@ -273,15 +271,15 @@ class Formeo {
       setLang: formeoLocale => {
         window.sessionStorage.setItem('formeo-locale', formeoLocale);
         let loadLang = i18n.setCurrent.call(i18n, formeoLocale);
-        loadLang.then(function() {
-            _this.stages = _this.buildStages();
-            formeo.controls = new Controls(opts.controls, _this.formID);
-            _this.render();
-          },
-          err => {
-            err.message = 'There was an error retrieving the language files';
-            console.error(err);
-          });
+        loadLang.then(() => {
+          _this.stages = _this.buildStages();
+          formeo.controls = new Controls(opts.controls, _this.formID);
+          _this.render();
+        },
+        err => {
+          err.message = 'There was an error retrieving the language files';
+          console.error(err);
+        });
       }
     };
 

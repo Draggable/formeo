@@ -3,16 +3,22 @@
   "version": "0.7.14",
   "main": "dist/formeo.min.js",
   "files": [
-    "dist/formeo.min.js",
-    "dist/formeo.min.css"
+    "dist/formeo.min.js"
   ],
-  "homepage": "http://draggable.github.io/formeo/",
+  "homepage": "https://formeo.io",
   "repository": {
     "url": "http://github.com/draggable/formeo",
     "type": "git"
   },
-  "author": "Kevin Chappell <kevin.b.chappell@gmail.com>",
-  "contributors": [],
+  "author": "Draggable https://draggable.io",
+  "contributors": [
+    {
+      "name": "Kevin Chappell",
+      "email": "kevin.b.chappell@gmail.com",
+      "url": "https://kevin-chappell.com"
+    }
+  ],
+  "private": true,
   "bugs": {
     "url": "https://github.com/draggable/formeo/issues"
   },
@@ -52,27 +58,34 @@
   },
   "babel": {
     "presets": [
-      "node6",
-      "stage-0"
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions"
+            ]
+          },
+          "loose": true,
+          "modules": false
+        }
+      ]
     ],
-    "env": {
-      "test": {
-        "plugins": [
-          "rewire"
-        ]
-      }
-    }
+    "comments": false,
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
   },
   "scripts": {
+    "analyze": "webpack --json | webpack-bundle-size-analyzer",
     "icons": ". ./tools/build-icons.sh",
-    "dev": "webpack -p --progress",
     "clean": "rm -rf dist/*",
-    "build": "npm run clean && npm run dev -f && npm run copy",
+    "build": "npm run clean && webpack -p --progress && npm run copy",
     "lang": "cp -a src/lang demo/assets && cp -a src/lang dist",
     "copy": "npm run icons && npm run lang && cp demo/assets/formeo.min* dist",
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
-    "start": "webpack -d | webpack-dev-server",
+    "start": "webpack -d --progress | webpack-dev-server",
     "tag": "node ./node_modules/babel-cli/bin/babel-node.js tools/run tag",
     "deploy": "git push upstream $(git subtree split --prefix demo master):gh-pages --force"
   },
@@ -81,25 +94,24 @@
     "babel-cli": "^6.24.0",
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
-    "babel-loader": "^6.3.2",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.22.0",
-    "babel-preset-node6": "^11.0.0",
-    "babel-preset-stage-0": "^6.22.0",
-    "babel-register": "^6.23.0",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-regenerator-runtime": "^6.5.0",
+    "babili": "^0.0.12",
+    "babili-webpack-plugin": "^0.0.11",
     "chai": "^3.5.0",
     "clean-webpack-plugin": "^0.1.15",
     "compression-webpack-plugin": "^0.3.2",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.26.2",
-    "date-input-polyfill": "^2.13.0",
-    "eslint": "^3.16.1",
+    "eslint": "^3.19.0",
     "eslint-config-google": "^0.7.1",
-    "eslint-loader": "^1.6.3",
-    "extract-text-webpack-plugin": "^2.0.0",
-    "file-loader": "^0.10.1",
+    "eslint-loader": "^1.7.1",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
     "json-update": "^3.0.0",
-    "mi18n": "^0.3.3",
+    "mi18n": "https://github.com/Draggable/mi18n.git",
     "mocha": "^3.2.0",
     "node-sass": "^4.5.0",
     "postcss-loader": "^1.3.3",

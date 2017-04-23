@@ -1,13 +1,12 @@
-import pkg from './package.json';
-import {resolve} from 'path';
-import autoprefixer from 'autoprefixer';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import CompressionPlugin from 'compression-webpack-plugin';
-import {optimize, BannerPlugin, DefinePlugin} from 'webpack';
+const pkg = require('./package.json');
+const {resolve} = require('path');
+const autoprefixer = require('autoprefixer');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const {BannerPlugin} = require('webpack');
+const BabiliPlugin = require('babili-webpack-plugin');
 
-const isDebug = !process.argv.includes('--release');
-const isVerbose = process.argv.includes('--verbose');
-const isAnalyze = process.argv.includes('--analyze') || process.argv.includes('--analyse');
+const PRODUCTION = process.argv.includes('-p');
 
 const bannerTemplate = [
   `${pkg.name} - ${pkg.homepage}`,
@@ -16,14 +15,13 @@ const bannerTemplate = [
 ].join('\n');
 
 let plugins = [
-  new ExtractTextPlugin('[name].min.css'),
-  new DefinePlugin({
-    'process.env': {
-      'NODE_ENV': JSON.stringify('production')
-    }
+  new ExtractTextPlugin({
+    filename: 'formeo.min.css'
   }),
-  new optimize.UglifyJsPlugin({
-    compress: {warnings: false}
+  new BabiliPlugin({
+    removeDebugger: true
+  }, {
+    comments: false
   }),
   new BannerPlugin(bannerTemplate),
   new CompressionPlugin({
@@ -36,19 +34,21 @@ let plugins = [
 ];
 
 const extractSass = new ExtractTextPlugin({
-    filename: '[name].[contenthash].css',
-    disable: process.env.NODE_ENV === 'development'
+  filename: '[name].[contenthash].css'
 });
+
+const devtool = PRODUCTION ? false : 'source-map';
 
 const webpackConfig = {
   context: resolve(__dirname, 'demo/assets/'),
-  entry: {
-    formeo: resolve(__dirname, pkg.config.files.formeo.js)
-  },
+  entry: [
+    'babel-regenerator-runtime',
+    resolve(__dirname, pkg.config.files.formeo.js)
+  ],
   output: {
     path: resolve(__dirname, 'demo/assets/'),
     publicPath: '/assets/',
-    filename: '[name].min.js'
+    filename: 'formeo.min.js'
   },
   module: {
     rules: [
@@ -60,11 +60,7 @@ const webpackConfig = {
     }, {
       test: /\.js$/,
       exclude: /node_modules/,
-      loader: 'babel-loader',
-      query: {
-        presets: ['es2015'],
-        plugins: ['transform-runtime']
-      }
+      loader: 'babel-loader'
     }, {
       test: /\.lang$/,
       loader: 'file?name=[path][name].[ext]&context=./src'
@@ -76,22 +72,35 @@ const webpackConfig = {
         use: [
           {
             loader: 'css-loader',
-            query: {modules: false, sourceMaps: true}
+            query: {
+              minimize: true,
+              sourceMaps: !PRODUCTION
+            }
           },
           {
             loader: 'postcss-loader',
             options: {
-              plugins: [autoprefixer({browsers: ['last 2 versions']})]
+              plugins: [
+                autoprefixer({
+                  browsers: ['last 2 versions'],
+                  cascade: true,
+                  remove: true
+                })
+              ]
             }
           },
           {
-            loader: 'sass-loader', query: {sourceMaps: true}
+            loader: 'sass-loader',
+            query: {
+              sourceMaps: !PRODUCTION
+            }
           }
         ]
       })
     }]
   },
   plugins,
+  devtool,
   resolve: {
     modules: [
       resolve(__dirname, 'src'),
@@ -105,11 +114,5 @@ const webpackConfig = {
     noInfo: true
   }
 };
-
-// if (!isDebug) {
-//   webpackConfig.context = resolve(__dirname, 'dist');
-//   webpackConfig.output.path = resolve(__dirname, 'dist');
-//   webpackConfig.output.publicPath = 'dist/';
-// }
 
 module.exports = webpackConfig;
