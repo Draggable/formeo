@@ -3272,9 +3272,9 @@ methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"
 
-"mi18n@https://github.com/Draggable/mi18n.git":
-  version "0.3.3"
-  resolved "https://github.com/Draggable/mi18n.git#0edb8382a2872198424df3085f23b3efe297dadd"
+mi18n@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/mi18n/-/mi18n-0.3.4.tgz#743ef4ac5c1809124e144ac6f9c622326257e0f0"
 
 micromatch@^2.1.5, micromatch@^2.3.11:
   version "2.3.11"
