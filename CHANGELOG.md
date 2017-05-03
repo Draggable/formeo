@@ -1,5 +1,6 @@
 # Changelog
 
+- v0.7.15 - Reduce bundle [#80](http://github.com/draggable/formeo/pulls/80)
 - v0.7.14 - Remove css, Add rtl support, style updates for demo, enable clone [#79](http://github.com/draggable/formeo/pulls/79)
 - v0.7.13 - UI Bugs [#78](http://github.com/draggable/formeo/pulls/78)
 - v0.7.12 - Fix column preset, resolves #76 [#77](http://github.com/draggable/formeo/pulls/77)

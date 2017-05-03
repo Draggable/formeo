@@ -1,6 +1,6 @@
 {
   "name": "formeo",
-  "version": "0.7.14",
+  "version": "0.7.15",
   "main": "dist/formeo.min.js",
   "files": [
     "dist/formeo.min.js"
@@ -86,7 +86,7 @@
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
     "start": "webpack -d --progress | webpack-dev-server",
-    "tag": "node ./node_modules/babel-cli/bin/babel-node.js tools/run tag",
+    "tag": "node ./node_modules/babel-cli/bin/babel-node.js --presets es2015 tools/run tag",
     "deploy": "git push upstream $(git subtree split --prefix demo master):gh-pages --force"
   },
   "devDependencies": {
@@ -97,6 +97,7 @@
     "babel-loader": "^7.0.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.4.0",
+    "babel-preset-es2015": "^6.24.1",
     "babel-regenerator-runtime": "^6.5.0",
     "babili": "^0.0.12",
     "babili-webpack-plugin": "^0.0.11",
