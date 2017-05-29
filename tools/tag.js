@@ -12,7 +12,7 @@ import {exec} from 'child_process';
 import json from 'json-update';
 
 /**
- * UpdateS README AND CHANGELOG
+ * Updates README AND CHANGELOG
  * @param  {Object} version current and new version
  * @return {void}
  */
@@ -27,54 +27,65 @@ function updateMd(version) {
         to: `- v${version.new} - ${gitLog}\n${lastLog}`
       }, {
         files: 'README.md',
-        from: `${pkg.name} v${version.current}`,
+        from: new RegExp(`^${pkg.name} v\\d.\\d.\\d`),
         to: `${pkg.name} v${version.new}`
       }
     ];
 
-    for (let i = 0; i < changes.length; i++) {
-      replace(changes[i])
+    changes.forEach(change =>
+      replace(change)
         .then(changedFiles => {
           console.log('Modified files:', changedFiles.join(', '));
         })
         .catch(error => {
           console.error('Error occurred:', error);
-        });
+        })
+    );
+  });
+}
+
+/**
+ * Build, push, tag and npm publish
+ * @param  {String} version [description]
+ * @return {Promise} exec
+ */
+function release(version) {
+  const commands = [
+    'npm run build',
+    'git add --all',
+    `git commit -am "v${version}" -m `,
+    `git tag v${version}`,
+    'git push upstream master --tags',
+    'npm publish'
+  ];
+
+  console.log('commands => ', commands);
+  return;
+  return exec(commands.join(' && '), (err, stdout) => {
+    if (!err) {
+      console.log(stdout);
+      console.log(`Version ${version} successfully released.`);
     }
   });
 }
 
 /**
  * Modifies files, builds and tags the project
- * @return {Promise} json.update
+ * @return {Promise} release
  */
 async function tag() {
-  let releaseType = process.argv[3] || 'patch';
+  const args = process.argv.slice(2);
+  const releaseArg = args[1] || 'patch';
+  const releaseType = releaseArg.replace('--', '');
   let version = {
     current: pkg.version,
     new: semver.inc(pkg.version, releaseType)
   };
 
   await updateMd(version);
-
   await json.update('bower.json', {version: version.new});
-  return json.update('package.json', {version: version.new})
-  .then(() => {
-    const commands = [
-      'npm run build',
-      'git add --all',
-      `git commit -am "v${version.new}"`,
-      `git tag v${version.new}`,
-      'git push upstream master --tags',
-      'npm publish',
-    ];
-    exec(commands.join(' && '), (err, stdout) => {
-      if (!err) {
-        console.log(stdout);
-        console.log(`Version ${version.new} successfully released.`);
-      }
-    });
-  });
+  await json.update('package.json', {version: version.new});
+  return release(version.new);
 }
 
 export default tag;
