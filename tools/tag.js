@@ -27,8 +27,8 @@ function updateMd(version) {
         to: `- v${version.new} - ${gitLog}\n${lastLog}`
       }, {
         files: 'README.md',
-        from: 'Formeo v' + version.current,
-        to: 'Formeo v' + version.new
+        from: `${pkg.name} v${version.current}`,
+        to: `${pkg.name} v${version.new}`
       }
     ];
 
@@ -66,7 +66,7 @@ async function tag() {
       `git commit -am "v${version.new}"`,
       `git tag v${version.new}`,
       'git push upstream master --tags',
-      // 'npm publish',
+      'npm publish',
     ];
     exec(commands.join(' && '), (err, stdout) => {
       if (!err) {
