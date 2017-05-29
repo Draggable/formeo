@@ -90,7 +90,9 @@
     "lint": "eslint ./src/js --ext .js || true",
     "test": "mocha --compilers js:babel-register && webpack -p --bail",
     "start": "webpack -d --progress | webpack-dev-server",
-    "tag": "node ./node_modules/babel-cli/bin/babel-node.js --presets es2015 tools/run tag",
+    "tag": "node ./node_modules/babel-cli/bin/babel-node.js -- tools/run tag",
+    "release:patch": "npm run tag patch && npm run deploy",
+    "release:minor": "npm run tag minor && npm run deploy",
     "deploy": "git push upstream $(git subtree split --prefix demo master):gh-pages --force"
   },
   "devDependencies": {
