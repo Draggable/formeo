@@ -57,14 +57,19 @@
   },
   "babel": {
     "presets": [
+      "es2015",
       [
         "env",
         {
           "targets": {
             "browsers": [
-              "last 2 versions"
+              "last 1 version"
             ]
           },
+          "include": [
+            "es6.promise",
+            "es6.object.assign"
+          ],
           "loose": true,
           "modules": false
         }
