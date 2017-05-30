@@ -1,5 +1,9 @@
 # Changelog
 
+- v0.7.17 - Update Tag script [#83](http://github.com/draggable/formeo/pulls/83)
+* Update tag script
+
+* Improve semver regex, Add full PR gitlog to release description and changelog
 - v0.7.16 - Add release script shortcuts
 - v0.7.15 - Reduce bundle [#80](http://github.com/draggable/formeo/pulls/80)
 - v0.7.14 - Remove css, Add rtl support, style updates for demo, enable clone [#79](http://github.com/draggable/formeo/pulls/79)
