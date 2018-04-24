@@ -141,11 +141,11 @@ const helpers = {
    *
    * @private
    * @param {Object} object The object to query.
-   * @param {String} path The path of the property to get.
+   * @param {String} pathStr   The path of the property to get.
    * @return {String|Array|Object} Returns the resolved value.
    */
-  get: (object, path) => {
-    path = stringToPath(path);
+  get: (object, pathStr) => {
+    let path = stringToPath(pathStr);
 
     let index = 0;
     let length = path.length;
@@ -156,8 +156,8 @@ const helpers = {
 
     return (index && index === length) ? object : undefined;
   },
-  set: (object, path, value, customizer) => {
-    path = stringToPath(path);
+  set: (object, pathStr, value, customizer) => {
+    let path = stringToPath(pathStr);
 
     let index = -1;
     let length = path.length;
