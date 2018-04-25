@@ -353,13 +353,23 @@ export default class Field {
               attrs: typeAttrs(key, val, 'string'),
               action: {
                 change: evt => {
+                  // This is a workaround for options attributes fields.
+                  // Root cause of the problem is that fMap is calculated when the field is created
+                  // but it is not updated when collection of options is changed (e.g removal of the option).
+                  // As the result fMap contains outdated option index pointing to different element or to undefined.
+                  // The workaround replaces initial option index using current position od <li> element in DOM.
+                  // NOTE: The workaround will most likely stop working or produce exceptions when DOM structure changes.
                   if (fMap.startsWith('options')) {
+                    // <li> element of the option
                     const li = evt.target.parentNode.parentNode;
+                    // ul containing all options
                     const ul = li.parentNode;
 
+                    // index of options being modified
                     const idx = Array.from(ul.childNodes).indexOf(li);
-                    const regex = /(options\[)\d(]\.\w+)/;
+                    const regex = /(options\[)\d+(]\.\w+)/;
                     if (fMap.match(regex)) {
+                      // replace initial index with the one obtained from DOM
                       fMap = fMap.replace(regex, '$1' + idx + '$2');
                     }
                   }
