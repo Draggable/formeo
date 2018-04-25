@@ -353,11 +353,22 @@ export default class Field {
               attrs: typeAttrs(key, val, 'string'),
               action: {
                 change: evt => {
+                  if (fMap.startsWith('options')) {
+                    const li = evt.target.parentNode.parentNode;
+                    const ul = li.parentNode;
+
+                    const idx = Array.from(ul.childNodes).indexOf(li);
+                    const regex = /(options\[)\d(]\.\w+)/;
+                    if (fMap.match(regex)) {
+                      fMap = fMap.replace(regex, '$1' + idx + '$2');
+                    }
+                  }
+
                   h.set(fieldData, fMap, evt.target.value);
                   _this.updatePreview();
                   data.save();
                 }
-              },
+              }
             };
 
             if (!propIsNum) {
