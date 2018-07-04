@@ -1,11 +1,11 @@
-import Sortable from 'sortablejs';
-import i18n from 'mi18n';
-import {data, formData, registeredFields as rFields} from '../common/data';
-import h from '../common/helpers';
-import dom from '../common/dom';
-import {uuid} from '../common/utils';
+import Sortable from 'sortablejs'
+import i18n from 'mi18n'
+import { data, formData, registeredFields as rFields } from '../common/data'
+import h from '../common/helpers'
+import dom from '../common/dom'
+import { uuid } from '../common/utils'
 
-let stageOpts = {};
+let stageOpts = {}
 
 /**
  * Stage is where fields and elements are dragged to.
@@ -18,59 +18,64 @@ export default class Stage {
    * @return {Object} DOM element
    */
   constructor(formeoOptions, stageID) {
-    // formData = data.get();
-    this.stageID = stageID || uuid();
-    let defaultOptions = {
-      formSettings: [{
-        tag: 'input',
-        id: 'form-title',
-        attrs: {
-          className: 'form-title',
-          placeholder: i18n.get('Untitled Form'),
-          value: i18n.get('Untitled Form'),
-          type: 'text'
+    this.stageID = stageID || uuid()
+    const defaultOptions = {
+      formSettings: [
+        {
+          tag: 'input',
+          id: 'form-title',
+          attrs: {
+            className: 'form-title',
+            placeholder: i18n.get('Untitled Form'),
+            value: i18n.get('Untitled Form'),
+            type: 'text',
+          },
+          config: {
+            label: i18n.get('Form Title'),
+          },
         },
-        config: {
-          label: i18n.get('Form Title')
-        }
-      }, {
-        tag: 'input',
-        id: 'form-novalidate',
-        attrs: {
-          className: 'form-novalidate',
-          value: false,
-          type: 'checkbox'
+        {
+          tag: 'input',
+          id: 'form-novalidate',
+          attrs: {
+            className: 'form-novalidate',
+            value: false,
+            type: 'checkbox',
+          },
+          config: {
+            label: i18n.get('Form novalidate'),
+          },
         },
-        config: {
-          label: i18n.get('Form novalidate')
-        }
-      }, {
-        tag: 'input',
-        id: 'form-tags',
-        attrs: {
-          className: 'form-tags',
-          type: 'text'
+        {
+          tag: 'input',
+          id: 'form-tags',
+          attrs: {
+            className: 'form-tags',
+            type: 'text',
+          },
+          config: {
+            label: i18n.get('Tags'),
+          },
         },
-        config: {
-          label: i18n.get('Tags')
-        }
-      }]
-    };
-
-    stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions);
-
-    if (!formData.stages.get(this.stageID)) {
-      let defaultStageData = {
-          id: this.stageID,
-          settings: {},
-          rows: []
-        };
-      formData.stages.set(this.stageID, defaultStageData);
+      ],
     }
 
-    const stageWrap = this.loadStage();
+    stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions)
+    console.log(formData)
+    const formDataStages = formData.get('stages')
 
-    return stageWrap;
+    if (!formDataStages.get(this.stageID)) {
+      const defaultStageData = {
+        id: this.stageID,
+        settings: {},
+        rows: [],
+      }
+      formDataStages.set(this.stageID, defaultStageData)
+    }
+
+    const stageWrap = this.loadStage()
+
+    return stageWrap
   }
 
   /**
@@ -78,78 +83,76 @@ export default class Stage {
    * @return {Object} DOM element
    */
   loadStage() {
-    const _this = this;
-    let stageWrap = this.dom;
+    const _this = this
+    const stageWrap = this.dom
     const sortable = Sortable.create(stageWrap.firstChild, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
       fallbackTolerance: 0,
-      group: {name: 'stages', pull: true, put: [
-        'controls',
-        'rows',
-        'columns'
-      ]},
+      group: {
+        name: 'stages',
+        pull: true,
+        put: ['controls', 'rows', 'columns'],
+      },
       // Element is dropped into the list from another list
-      onAdd: _this.onAdd.bind(_this),
-      onRemove: _this.onRemove.bind(_this),
+      onAdd: _this.onAdd,
+      onRemove: _this.onRemove,
       // onDrop: _this.onAdd.bind(_this),
       sort: true,
       onStart: evt => {
-        dom.activeStage = _this.stage;
+        dom.activeStage = _this.stage
       },
       onUpdate: evt => {
-        data.saveRowOrder();
-        data.save();
+        data.saveRowOrder()
+        data.save()
       },
-      onSort: _this.onSort,
+      // onSort: _this.onSort.bind(_this),
       draggable: '.stage-rows',
-      handle: '.item-handle'
-    });
+      handle: '.item-handle',
+    })
+
     dom.stages.set(this.stageID, {
       stage: this.stage,
-      sortable
-    });
-    dom.activeStage = this.stage;
-    if (formData.stages.get(this.stageID).rows.length) {
-      dom.loadRows(this.stage);
+      sortable,
+    })
+
+    dom.activeStage = this.stage
+    if (h.getIn(formData, ['stages', this.stageID]).rows.length) {
+      dom.loadRows(this.stage)
     }
 
-    return stageWrap;
+    return stageWrap
   }
-
 
   /**
    * Generate the elements that make up the Stage
    * @return {Object} stage elements, settings, stage ul
    */
   elementConfigs() {
-    let _this = this;
-    let config = {
-        stage: {
-          tag: 'ul',
-          attrs: {
-            className: [
-              'stage',
-              'empty-stages'
-            ],
-            id: _this.stageID
-          },
-          fType: 'stages'
+    const _this = this
+    const config = {
+      stage: {
+        tag: 'ul',
+        attrs: {
+          className: ['stage', 'empty-stages'],
+          id: _this.stageID,
         },
-        settings: {
-          tag: 'div',
-          attrs: {
-            className: 'formeo-settings',
-            id: `${_this.stageID}-settings`
-          },
-          fType: 'settings'
-        }
-      };
+        fType: 'stages',
+      },
+      settings: {
+        tag: 'div',
+        attrs: {
+          className: 'formeo-settings',
+          id: `${_this.stageID}-settings`,
+        },
+        fType: 'settings',
+      },
+    }
 
-    config.settings.content = stageOpts.formSettings.slice();
+    config.settings.content = stageOpts.formSettings.slice()
 
-    return config;
+    return config
   }
 
   /**
@@ -157,7 +160,8 @@ export default class Stage {
    * @param  {Object} evt
    */
   onSort(evt) {
-    data.save();
+    console.log('stage.js: onSort: \n', evt)
+    data.save()
   }
 
   /**
@@ -166,40 +170,41 @@ export default class Stage {
    * @return {Object} formData
    */
   onAdd(evt) {
-    let _this = this;
-    dom.activeStage = _this.stage;
-    let {from, item, to} = evt;
-    let newIndex = h.indexOfNode(item, to);
-    let row = from.fType === 'stages' ? item : dom.addRow();
-    let fromColumn = from.fType === 'columns';
-    let fromRow = from.fType === 'rows';
-    let column;
+    console.log('stage.js: onAdd: \n', evt)
+    console.log(this)
+    dom.activeStage = this.stage
+    const { from, item, to } = evt
+    const newIndex = h.indexOfNode(item, to)
+    const row = from.fType === 'stages' ? item : dom.addRow()
+    const fromColumn = from.fType === 'columns'
+    const fromRow = from.fType === 'rows'
+    let column
 
     if (from.fType === 'controlGroup') {
-      let meta = rFields[item.id].meta;
+      const meta = rFields[item.id].meta
       if (meta.group !== 'layout') {
-        column = dom.addColumn(row.id);
-        dom.addField(column.id, item.id);
+        column = dom.addColumn(row.id)
+        dom.addField(column.id, item.id)
       } else if (meta.id === 'layout-column') {
-        dom.addColumn(row.id);
+        dom.addColumn(row.id)
       }
-      dom.remove(item);
+      dom.remove(item)
     } else if (fromColumn) {
-      let column = dom.addColumn(row.id);
-      column.appendChild(item);
-      data.saveFieldOrder(column);
-      dom.emptyClass(column);
-    } else if(fromRow) {
-      row.appendChild(item);
-      data.saveColumnOrder(row);
-      dom.emptyClass(row);
+      column = dom.addColumn(row.id)
+      column.appendChild(item)
+      data.saveFieldOrder(column)
+      dom.emptyClass(column)
+    } else if (fromRow) {
+      row.appendChild(item)
+      data.saveColumnOrder(row)
+      dom.emptyClass(row)
     }
 
-    to.insertBefore(row, to.children[newIndex]);
-    dom.columnWidths(row);
-    data.saveRowOrder(to);
+    to.insertBefore(row, to.children[newIndex])
+    dom.columnWidths(row)
+    data.saveRowOrder(to)
 
-    return data.save();
+    return data.save()
   }
 
   /**
@@ -208,7 +213,7 @@ export default class Stage {
    * @return {Object} formData
    */
   onRemove(evt) {
-    return data.save();
+    return data.save()
   }
 
   /**
@@ -218,22 +223,22 @@ export default class Stage {
    */
   get dom() {
     if (this.stage) {
-      return this.stage;
+      return this.stage
     }
-    const config = this.elementConfigs();
+    const config = this.elementConfigs()
 
-    let stageWrap = dom.create({
+    const stageWrap = dom.create({
       tag: 'div',
       attrs: {
-        className: 'stage-wrap'
+        className: 'stage-wrap',
       },
       content: [
         config.stage, // stage items
-        config.settings
-      ]
-    });
-    this.stage = stageWrap.firstChild;
+        config.settings,
+      ],
+    })
+    this.stage = stageWrap.firstChild
 
-    return stageWrap;
+    return stageWrap
   }
 }

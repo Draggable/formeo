@@ -1,10 +1,10 @@
-import i18n from 'mi18n';
-import Sortable from 'sortablejs';
-import {data, formData, registeredFields as rFields} from '../common/data';
-import h from '../common/helpers';
-import events from '../common/events';
-import dom from '../common/dom';
-import {uuid, numToPercent} from '../common/utils';
+import i18n from 'mi18n'
+import Sortable from 'sortablejs'
+import { data, formData, registeredFields as rFields } from '../common/data'
+import h from '../common/helpers'
+import events from '../common/events'
+import dom from '../common/dom'
+import { uuid, numToPercent } from '../common/utils'
 
 /**
  * Setup Column elements
@@ -16,66 +16,64 @@ export default class Column {
    * @return {Object} Column config object
    */
   constructor(dataID) {
-    let _this = this;
-    let columnDefaults;
+    const _this = this
 
-    let columnID = _this.columnID = dataID || uuid();
-    _this.columnData = formData.columns.get(columnID);
-
-    columnDefaults = {
+    const columnId = (_this.columnId = dataID || uuid())
+    const columnDefaults = {
       fields: [],
-      id: columnID,
+      id: columnId,
       config: {},
-      className: []
-    };
+      className: [],
+    }
+    _this.columnData = h.getIn(formData, ['columns', columnId])
 
-    formData.columns.set(columnID, h.merge(columnDefaults, _this.columnData));
+    formData.get('columns').set(columnId, h.merge(columnDefaults, _this.columnData))
 
-    let resizeHandle = {
-        tag: 'li',
-        className: 'resize-x-handle',
-        action: {
-          mousedown: _this.resize,
-          touchstart: _this.resize
-        },
-        content: [dom.icon('triangle-down'), dom.icon('triangle-up')]
-      };
-    let editWindow = {
-        tag: 'li',
-        className: 'column-edit group-config'
-      };
+    const resizeHandle = {
+      tag: 'li',
+      className: 'resize-x-handle',
+      action: {
+        mousedown: _this.resize,
+        touchstart: _this.resize,
+      },
+      content: [dom.icon('triangle-down'), dom.icon('triangle-up')],
+    }
+    const editWindow = {
+      tag: 'li',
+      className: 'column-edit group-config',
+    }
 
-    let column = {
+    const columnConfig = {
       tag: 'ul',
       className: ['stage-columns', 'empty-columns'],
       dataset: {
-        hoverTag: i18n.get('column')
+        hoverTag: i18n.get('column'),
       },
       action: {
-        mouseup: (evt) => {
-          let column = evt.target.parentElement;
+        mouseup: evt => {
+          const column = evt.target.parentElement
           if (column.resizing) {
-            column.resizing = false;
-            column.parentElement.classList.remove('resizing-columns');
+            column.resizing = false
+            column.parentElement.classList.remove('resizing-columns')
           }
-        }
+        },
       },
-      id: _this.columnID,
-      content: [dom.actionButtons(_this.columnID), editWindow, resizeHandle],
-      fType: 'columns'
-    };
+      id: _this.columnId,
+      content: [dom.actionButtons(_this.columnId), editWindow, resizeHandle],
+      fType: 'columns',
+    }
 
-    column = dom.create(column);
-    this.processConfig(column);
+    const column = dom.create(columnConfig)
+    this.processConfig(column)
 
-    events.columnResized = new CustomEvent('columnResized', {
+    events.columnResized = new window.CustomEvent('columnResized', {
       detail: {
         column,
-        instance: _this
-      }
-    });
+        instance: _this,
+      },
+    })
 
-    let sortable = this.sortable = Sortable.create(column, {
+    const sortable = (this.sortable = Sortable.create(column, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
@@ -83,7 +81,7 @@ export default class Column {
         name: 'columns',
         pull: true,
         put: ['columns', 'controls'],
-        revertClone: true
+        revertClone: true,
       },
       sort: true,
       onEnd: _this.onEnd,
@@ -91,20 +89,20 @@ export default class Column {
       onSort: _this.onSort,
       onRemove: _this.onRemove,
       // Attempt to drag a filtered element
-      onMove: (evt) => {
+      onMove: evt => {
         if (evt.from !== evt.to) {
-          evt.from.classList.remove('hovering-column');
+          evt.from.classList.remove('hovering-column')
         }
         if (evt.related.parentElement.fType === 'columns') {
-          evt.related.parentElement.classList.add('hovering-column');
+          evt.related.parentElement.classList.add('hovering-column')
         }
       },
-      draggable: '.stage-fields'
-    });
+      draggable: '.stage-fields',
+    }))
 
-    dom.columns.set(columnID, {column, sortable});
+    dom.columns.set(columnId, { column, sortable })
 
-    return column;
+    return column
   }
 
   /**
@@ -113,7 +111,7 @@ export default class Column {
    * @return {Object} Column order, array of column ids
    */
   onSort(evt) {
-    return data.saveFieldOrder(evt.target);
+    return data.saveFieldOrder(evt.target)
     // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
@@ -123,12 +121,11 @@ export default class Column {
    * @param  {Object} column
    */
   processConfig(column) {
-    let _this = this;
-    let columnData = formData.columns.get(_this.columnID);
+    const columnData = h.getIn(formData, ['columns', this.columnId])
     if (columnData.config.width) {
-      column.dataset.colWidth = columnData.config.width;
-      column.style.width = columnData.config.width;
-      column.style.float = 'left';
+      column.dataset.colWidth = columnData.config.width
+      column.style.width = columnData.config.width
+      column.style.float = 'left'
     }
   }
 
@@ -137,40 +134,40 @@ export default class Column {
    * @param  {Object} evt
    */
   onAdd(evt) {
-    let {from, item, to} = evt;
-    let fromColumn = from.fType === 'columns';
-    let fromControl = from.fType === 'controlGroup';
+    const { from, item, to } = evt
+    const fromColumn = from.fType === 'columns'
+    const fromControl = from.fType === 'controlGroup'
 
     if (fromControl) {
-      let meta = h.get(rFields[item.id], 'meta');
+      const meta = h.get(rFields[item.id], 'meta')
       if (meta.group !== 'layout') {
-        let field = dom.addField(to.id, item.id);
-        to.insertBefore(field, to.childNodes[evt.newIndex]);
-        data.saveFieldOrder(to);
-        data.save('fields', to.id);
+        const field = dom.addField(to.id, item.id)
+        to.insertBefore(field, to.childNodes[evt.newIndex])
+        data.saveFieldOrder(to)
+        data.save('fields', to.id)
       } else {
         if (meta.id === 'layout-column') {
-          let row = to.parentElement;
-          dom.addColumn(row.id);
-          dom.columnWidths(row);
+          const row = to.parentElement
+          dom.addColumn(row.id)
+          dom.columnWidths(row)
         }
       }
 
-      dom.remove(evt.item);
+      dom.remove(evt.item)
       // document.dispatchEvent(events.formeoUpdated);
     }
 
-    dom.fieldOrderClass(to);
+    dom.fieldOrderClass(to)
 
     if (fromColumn) {
-      dom.fieldOrderClass(from);
+      dom.fieldOrderClass(from)
     }
 
-    dom.emptyClass(evt.to);
+    dom.emptyClass(evt.to)
 
-    data.save();
+    data.save()
 
-    to.classList.remove('hovering-column');
+    to.classList.remove('hovering-column')
   }
 
   /**
@@ -179,10 +176,10 @@ export default class Column {
    */
   onRemove(evt) {
     if (evt.from.parent) {
-      dom.columnWidths(evt.from.parentElement);
-      data.saveColumnOrder(evt.from.parentElement);
+      dom.columnWidths(evt.from.parentElement)
+      data.saveColumnOrder(evt.from.parentElement)
     }
-    dom.emptyClass(evt.from);
+    dom.emptyClass(evt.from)
   }
 
   /**
@@ -190,24 +187,24 @@ export default class Column {
    * @param  {Object} evt
    */
   onEnd(evt) {
-    let {to, from} = evt;
+    const { to, from } = evt
 
     if (from.classList.contains('empty-columns')) {
-      dom.removeEmpty(evt.from);
-      return;
+      dom.removeEmpty(evt.from)
+      return
     }
 
-    dom.fieldOrderClass(to);
-    dom.fieldOrderClass(from);
+    dom.fieldOrderClass(to)
+    dom.fieldOrderClass(from)
 
     if (from.parent) {
-      dom.columnWidths(from.parentElement);
+      dom.columnWidths(from.parentElement)
     }
 
-    data.save();
+    data.save()
 
     if (to) {
-      to.classList.remove('hovering-column');
+      to.classList.remove('hovering-column')
     }
   }
 
@@ -216,16 +213,14 @@ export default class Column {
    * @param  {Object} evt resize event
    */
   resize(evt) {
-    let resize = {};
-    let column = evt.target.parentElement;
-    let sibling = column.nextSibling || column.previousSibling;
-    let row = column.parentElement;
-    let rowStyle = dom.getStyle(row);
-    let rowPadding = parseFloat(rowStyle.paddingLeft) +
-    parseFloat(rowStyle.paddingRight);
-    let colWidthPercent;
-    let sibWidthPercent;
-
+    const resize = {}
+    const column = evt.target.parentElement
+    const sibling = column.nextSibling || column.previousSibling
+    const row = column.parentElement
+    const rowStyle = dom.getStyle(row)
+    const rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight)
+    let colWidthPercent
+    let sibWidthPercent
 
     /**
      * Set the width before resizing so the column
@@ -233,74 +228,73 @@ export default class Column {
      * @param  {Object} evt
      */
     function setWidths(evt) {
-      let clientX;
+      let clientX
       if (evt.type === 'touchmove') {
-        clientX = evt.touches[0].clientX;
+        clientX = evt.touches[0].clientX
       } else {
-        clientX = evt.clientX;
+        clientX = evt.clientX
       }
-      let newColWidth = (resize.colStartWidth + clientX - resize.startX);
-      let newSibWidth = (resize.sibStartWidth - clientX + resize.startX);
+      const newColWidth = resize.colStartWidth + clientX - resize.startX
+      const newSibWidth = resize.sibStartWidth - clientX + resize.startX
 
-      const percent = width => (width / resize.rowWidth * 100);
-      colWidthPercent = parseFloat(percent(newColWidth));
-      sibWidthPercent = parseFloat(percent(newSibWidth));
+      const percent = width => (width / resize.rowWidth) * 100
+      colWidthPercent = parseFloat(percent(newColWidth))
+      sibWidthPercent = parseFloat(percent(newSibWidth))
 
-      column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1));
-      sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1));
+      column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1))
+      sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1))
 
-      column.style.width = numToPercent(colWidthPercent);
-      sibling.style.width = numToPercent(sibWidthPercent);
+      column.style.width = numToPercent(colWidthPercent)
+      sibling.style.width = numToPercent(sibWidthPercent)
     }
 
     resize.move = evt => {
-      setWidths(evt);
-      resize.resized = true;
-    };
+      setWidths(evt)
+      resize.resized = true
+    }
 
     resize.stop = function() {
-      window.removeEventListener('mousemove', resize.move);
-      window.removeEventListener('mouseup', resize.stop);
-      window.removeEventListener('touchmove', resize.move);
-      window.removeEventListener('touchend', resize.stop);
+      window.removeEventListener('mousemove', resize.move)
+      window.removeEventListener('mouseup', resize.stop)
+      window.removeEventListener('touchmove', resize.move)
+      window.removeEventListener('touchend', resize.stop)
       if (!resize.resized) {
-        return;
+        return
       }
-      let columnData = formData.columns.get(column.id);
-      let sibColumnData = formData.columns.get(sibling.id);
-      let row = column.parentElement;
-      row.querySelector('.column-preset').value = 'custom';
-      row.classList.remove('resizing-columns');
-      columnData.config.width = column.dataset.colWidth;
-      sibColumnData.config.width = sibling.dataset.colWidth;
-      resize.resized = false;
-      data.save();
-    };
+      const columnData = h.getIn(formData, ['columns', column.id])
+      const sibColumnData = h.getIn(formData, ['columns', sibling.id])
+      const row = column.parentElement
+      row.querySelector('.column-preset').value = 'custom'
+      row.classList.remove('resizing-columns')
+      columnData.config.width = column.dataset.colWidth
+      sibColumnData.config.width = sibling.dataset.colWidth
+      resize.resized = false
+      data.save()
+    }
 
     resize.start = (function(evt) {
       if (evt.type === 'touchstart') {
-        resize.startX = evt.touches[0].clientX;
+        resize.startX = evt.touches[0].clientX
       } else {
-        resize.startX = evt.clientX;
+        resize.startX = evt.clientX
       }
-      row.classList.add('resizing-columns');
+      row.classList.add('resizing-columns')
 
       // remove bootstrap column classes since we are custom sizing
-      let reg = /\bcol-\w+-\d+/g;
-      column.className.replace(reg, '');
-      sibling.className.replace(reg, '');
+      const reg = /\bcol-\w+-\d+/g
+      column.className.replace(reg, '')
+      sibling.className.replace(reg, '')
 
       // eslint-disable-next-line
-      resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width');
+      resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width')
       // eslint-disable-next-line
-      resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width');
-      resize.rowWidth = row.offsetWidth - rowPadding; // compensate for padding
+      resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width')
+      resize.rowWidth = row.offsetWidth - rowPadding // compensate for padding
 
-      window.addEventListener('mouseup', resize.stop, false);
-      window.addEventListener('mousemove', resize.move, false);
-      window.addEventListener('touchend', resize.stop, false);
-      window.addEventListener('touchmove', resize.move, false);
-    })(evt);
+      window.addEventListener('mouseup', resize.stop, false)
+      window.addEventListener('mousemove', resize.move, false)
+      window.addEventListener('touchend', resize.stop, false)
+      window.addEventListener('touchmove', resize.move, false)
+    })(evt)
   }
-
 }

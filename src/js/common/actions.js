@@ -6,7 +6,7 @@
 const defaultActions = {
   add: {
     attr: evt => {
-      let attr = window.prompt(evt.message.attr);
+      const attr = window.prompt(evt.message.attr);
       let val;
       if (attr) {
         val = String(window.prompt(evt.message.value, ''));
