@@ -2,8 +2,8 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import dom from '../common/dom'
 import h from '../common/helpers'
-import { data, formData, registeredFields as rFields } from '../common/data'
-import { uuid } from '../common/utils'
+import { data, registeredFields as rFields } from '../common/data'
+import rowsData from '../data/rows'
 
 /**
  * Editor Row
@@ -14,39 +14,22 @@ export default class Row {
    * @param  {String} dataID
    * @return {Object}
    */
-  constructor(dataID) {
-    let row
+  constructor(rowData) {
+    this.id = rowsData.add(rowData)
 
-    const rowId = (this.rowId = dataID || uuid())
-
-    const defaults = {
-      columns: [],
-      id: this.rowId,
-      config: {
-        fieldset: false, // wrap contents of row in fieldset
-        legend: '', // Legend for fieldset
-        inputGroup: false, // is repeatable input-group?
-      },
-      attrs: {
-        className: 'f-row',
-      },
-    }
-
-    formData.get('rows').set(rowId, h.merge(defaults, this.rowData))
-
-    row = {
+    const rowConfig = {
       tag: 'li',
       className: 'stage-rows empty-rows',
       dataset: {
         hoverTag: i18n.get('row'),
         editingHoverTag: i18n.get('editing.row'),
       },
-      id: rowId,
-      content: [dom.actionButtons(rowId, 'row'), this.editWindow],
+      id: this.id,
+      content: [dom.actionButtons(this.id, 'row'), this.editWindow],
       fType: 'rows',
     }
 
-    row = dom.create(row)
+    const row = dom.create(rowConfig)
 
     const sortable = Sortable.create(row, {
       animation: 150,
@@ -65,13 +48,12 @@ export default class Row {
       filter: '.resize-x-handle',
     })
 
-    dom.rows.set(rowId, { row, sortable })
-
-    return row
+    dom.rows.set(this.id, { row, sortable })
+    this.dom = row
   }
 
   get rowData() {
-    return h.getIn(formData, ['rows', this.rowId])
+    return rowsData.get(this.id)
   }
 
   /**
@@ -81,6 +63,7 @@ export default class Row {
   get editWindow() {
     const _this = this
     const rowData = this.rowData
+    // debugger
 
     const editWindow = {
       tag: 'div',
@@ -92,15 +75,15 @@ export default class Row {
     }
     const fieldsetInput = {
       tag: 'input',
-      id: _this.rowId + '-fieldset',
+      id: _this.id + '-fieldset',
       attrs: {
         type: 'checkbox',
-        checked: rowData.config.fieldset,
+        checked: h.getIn(rowData, ['config', 'fieldset']),
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria'),
       },
       action: {
-        click: e => {
-          rowData.config.fieldset = e.target.checked
+        click: ({ target: { checked } }) => {
+          rowData.setIn(['config', 'fieldset'], checked)
           data.save()
         },
       },
@@ -108,15 +91,16 @@ export default class Row {
 
     const inputGroupInput = {
       tag: 'input',
-      id: _this.rowId + '-inputGroup',
+      id: _this.id + '-inputGroup',
       attrs: {
         type: 'checkbox',
-        checked: rowData.config.inputGroup,
+        checked: h.getIn(rowData, ['config', 'inputGroup']),
         ariaLabel: i18n.get('row.settings.inputGroup.aria'),
       },
       action: {
-        click: e => {
-          rowData.config.inputGroup = e.target.checked
+        click: ({ target: { checked } }) => {
+          h.getIn(rowData, ['config', 'inputGroup'], checked)
+          // rowData.config.inputGroup = e.target.checked
           data.save()
         },
       },
@@ -139,17 +123,18 @@ export default class Row {
       attrs: {
         type: 'text',
         ariaLabel: 'Legend for fieldset',
-        value: rowData.config.legend,
+        value: h.getIn(rowData, ['config', 'legend']),
         placeholder: 'Legend',
       },
       action: {
-        input: e => {
-          rowData.config.legend = e.target.value
+        input: ({ target: { value } }) => {
+          rowData.get('config').set('legend', value)
           data.save()
         },
       },
       className: '',
     }
+
     const fieldsetInputGroup = {
       tag: 'div',
       className: 'input-group',
@@ -165,9 +150,8 @@ export default class Row {
       className: 'col-sm-4 form-control-label',
     })
     const columnSettingsPresetSelect = {
-      tag: 'div',
       className: 'col-sm-8',
-      content: dom.columnPresetControl(_this.rowId),
+      content: dom.columnPresetControl(this.id),
     }
     const formGroupContent = [columnSettingsPresetLabel, columnSettingsPresetSelect]
     const columnSettingsPreset = dom.formGroup(formGroupContent, 'row')

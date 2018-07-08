@@ -4,7 +4,8 @@ import { data, formData, registeredFields as rFields } from '../common/data'
 import h from '../common/helpers'
 import events from '../common/events'
 import dom from '../common/dom'
-import { uuid, numToPercent } from '../common/utils'
+import { numToPercent } from '../common/utils'
+import columnsData from '../data/columns'
 
 /**
  * Setup Column elements
@@ -15,19 +16,9 @@ export default class Column {
    * @param  {String} dataID columnId
    * @return {Object} Column config object
    */
-  constructor(dataID) {
+  constructor(columnData) {
+    this.id = columnsData.add(columnData)
     const _this = this
-
-    const columnId = (_this.columnId = dataID || uuid())
-    const columnDefaults = {
-      fields: [],
-      id: columnId,
-      config: {},
-      className: [],
-    }
-    _this.columnData = h.getIn(formData, ['columns', columnId])
-
-    formData.get('columns').set(columnId, h.merge(columnDefaults, _this.columnData))
 
     const resizeHandle = {
       tag: 'li',
@@ -58,8 +49,8 @@ export default class Column {
           }
         },
       },
-      id: _this.columnId,
-      content: [dom.actionButtons(_this.columnId), editWindow, resizeHandle],
+      id: _this.id,
+      content: [dom.actionButtons(_this.id), editWindow, resizeHandle],
       fType: 'columns',
     }
 
@@ -100,9 +91,12 @@ export default class Column {
       draggable: '.stage-fields',
     }))
 
-    dom.columns.set(columnId, { column, sortable })
+    dom.columns.set(this.id, { column, sortable })
+    this.dom = column
+  }
 
-    return column
+  get columnData() {
+    return columnsData.get(this.id)
   }
 
   /**
@@ -121,10 +115,10 @@ export default class Column {
    * @param  {Object} column
    */
   processConfig(column) {
-    const columnData = h.getIn(formData, ['columns', this.columnId])
-    if (columnData.config.width) {
-      column.dataset.colWidth = columnData.config.width
-      column.style.width = columnData.config.width
+    const columnWidth = h.getIn(this.columnData, ['config', 'width'])
+    if (columnWidth) {
+      column.dataset.colWidth = columnWidth
+      column.style.width = columnWidth
       column.style.float = 'left'
     }
   }

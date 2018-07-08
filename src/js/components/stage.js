@@ -1,11 +1,19 @@
 import Sortable from 'sortablejs'
+// import { fromJS } from 'immutable'
 import i18n from 'mi18n'
-import { data, formData, registeredFields as rFields } from '../common/data'
+import { data, registeredFields as rFields } from '../common/data'
 import h from '../common/helpers'
 import dom from '../common/dom'
-import { uuid } from '../common/utils'
+import stagesData from '../data/stages'
 
 let stageOpts = {}
+
+// const defaultStageData = stageId =>
+//   fromJS({
+//     id: stageId,
+//     settings: {},
+//     rows: [],
+//   })
 
 /**
  * Stage is where fields and elements are dragged to.
@@ -14,11 +22,14 @@ export default class Stage {
   /**
    * Process options and load existing fields from data to the stage
    * @param  {Object} formeoOptions
-   * @param  {String} stageID uuid
+   * @param  {String} stageData uuid
    * @return {Object} DOM element
    */
-  constructor(formeoOptions, stageID) {
-    this.stageID = stageID || uuid()
+  constructor(stageData) {
+    this.stageId = stagesData.add(stageData)
+    // console.log(this.stageId)
+    // this.stageId = stageData && stageData.get('id')
+
     const defaultOptions = {
       formSettings: [
         {
@@ -60,22 +71,18 @@ export default class Stage {
       ],
     }
 
-    stageOpts = Object.assign(stageOpts, defaultOptions, formeoOptions)
-    console.log(formData)
-    const formDataStages = formData.get('stages')
+    stageOpts = Object.assign(stageOpts, defaultOptions)
+    // formData.get('stages').set(this.stageId, defaultStageData(this.stageId))
+    // formData = formData.setIn(['stages', this.stageId], defaultStageData(this.stageId))
 
-    if (!formDataStages.get(this.stageID)) {
-      const defaultStageData = {
-        id: this.stageID,
-        settings: {},
-        rows: [],
-      }
-      formDataStages.set(this.stageID, defaultStageData)
-    }
+    // console.log('this.stageId', this.stageId)
+    // console.log(set.toJS().stages)
 
-    const stageWrap = this.loadStage()
+    return this.loadStage()
+  }
 
-    return stageWrap
+  get stageData() {
+    return stagesData.get(this.stageId)
   }
 
   /**
@@ -112,13 +119,14 @@ export default class Stage {
       handle: '.item-handle',
     })
 
-    dom.stages.set(this.stageID, {
+    dom.stages.set(this.stageId, {
       stage: this.stage,
       sortable,
     })
 
     dom.activeStage = this.stage
-    if (h.getIn(formData, ['stages', this.stageID]).rows.length) {
+
+    if (this.stageData.get('rows').length) {
       dom.loadRows(this.stage)
     }
 
@@ -136,7 +144,7 @@ export default class Stage {
         tag: 'ul',
         attrs: {
           className: ['stage', 'empty-stages'],
-          id: _this.stageID,
+          id: _this.stageId,
         },
         fType: 'stages',
       },
@@ -144,7 +152,7 @@ export default class Stage {
         tag: 'div',
         attrs: {
           className: 'formeo-settings',
-          id: `${_this.stageID}-settings`,
+          id: `${_this.stageId}-settings`,
         },
         fType: 'settings',
       },

@@ -154,7 +154,10 @@ const helpers = {
 
     return index && index === length ? object : undefined
   },
-  getIn: (map, path) => path.reduce((acc, part) => acc.get(part), map),
+  getIn: (map, path, fallback) => {
+    const value = path.reduce((acc, part) => acc.get(part), map)
+    return value || (fallback && typeof fallback === 'function') ? fallback() : fallback
+  },
   set: (object, path, value, customizer) => {
     path = stringToPath(path)
 

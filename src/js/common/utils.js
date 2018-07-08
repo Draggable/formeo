@@ -68,11 +68,19 @@ export const closestFtype = el => {
 export const unique = array => Array.from(new Set(array))
 
 // Convert and Object to a Map
-export const objToMap = obj => new Map(Object.entries(obj))
+export const objToMap = obj => {
+  if (obj instanceof Map) {
+    return obj
+  }
+  return Object.entries(obj).reduce((acc, [key, val]) => {
+    acc.set(key, val instanceof Object && !Array.isArray(val) ? objToMap(val) : val)
+    return acc
+  }, new Map())
+}
 
 // Convert a Map to an Object
-export const mapToObj = strMap =>
-  Array.from(strMap.entries()).reduce((acc, [key, val]) => {
+export const mapToObj = map =>
+  Array.from(map.entries()).reduce((acc, [key, val]) => {
     acc[key] = val instanceof Map ? mapToObj(val) : val
     return acc
   }, Object.create(null))
@@ -89,6 +97,30 @@ export const uuid = elem => {
   }
   return id
 }
+
+// export const merge = (obj1, obj2) => {
+//   const mergedObj = Object.assign({}, obj1, obj2)
+//   for (const prop in obj2) {
+//     if (mergedObj.hasOwnProperty(prop)) {
+//       if (Array.isArray(obj2[prop])) {
+//         if (obj1) {
+//           if (Array.isArray(obj1[prop])) {
+//             mergedObj[prop] = obj1[prop].concat(obj2[prop])
+//           } else {
+//             mergedObj[prop] = obj2[prop]
+//           }
+//         } else {
+//           mergedObj[prop] = obj2[prop]
+//         }
+//       } else if (typeof obj2[prop] === 'object') {
+//         mergedObj[prop] = merge(obj1[prop], obj2[prop])
+//       } else {
+//         mergedObj[prop] = obj2[prop]
+//       }
+//     }
+//   }
+//   return mergedObj
+// }
 
 export const clone = obj => {
   let copy

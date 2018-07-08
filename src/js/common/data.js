@@ -1,11 +1,14 @@
 'use strict'
+// import { fromJS } from 'immutable'
 import events from './events'
 import h from './helpers'
 import dom from './dom'
-import { mapToObj, objToMap, uuid, remove } from './utils'
+import { remove } from './utils'
+import FormeoData, { stages as stagesData, rows as rowsData, columns as columnsData, formData } from '../data'
+
 // Object map of fields on the stage
 const _data = {}
-let formData
+// let formData
 
 // Registered fields are the fields that are configured on init.
 // This variable acts as a data buffer thats contains
@@ -14,50 +17,32 @@ const registeredFields = {}
 
 const sessionFormData = () => {
   if (window.sessionStorage && _data.opts.sessionStorage) {
-    const sessionFormData = window.sessionStorage.getItem('formData')
-    console.log(sessionFormData)
-    return sessionFormData
+    return window.sessionStorage.getItem('formData')
   }
 }
 
 const data = {
   init: (opts, userFormData) => {
-    const defaultFormData = {
-      id: uuid(),
-      settings: new Map(),
-      stages: new Map(),
-      rows: new Map(),
-      columns: new Map(),
-      fields: new Map(),
-    }
     _data.opts = opts
-    const _formData = userFormData || sessionFormData() || defaultFormData
-    const processFormData = data => {
-      if (typeof data === 'string') {
-        data = window.JSON.parse(data)
-      }
 
-      formData = objToMap(Object.assign({}, defaultFormData, data))
-      return formData
-    }
+    const _formData = Object.assign({}, sessionFormData(), userFormData)
+    const formData = FormeoData.load(_formData)
 
-    return processFormData(_formData)
+    return formData
   },
 
   saveColumnOrder: row => {
     const columns = row.getElementsByClassName('stage-columns')
     const columnOrder = h.map(columns, i => columns[i].id)
-    h.getIn(formData, ['rows', row.id]).columns = columnOrder
-
+    rowsData.get(row.id).set('columns, columnOrder')
     return columnOrder
   },
 
   saveFieldOrder: column => {
+    const columnData = columnsData.get(column.id)
     const fields = column.getElementsByClassName('stage-fields')
     const fieldOrder = h.map(fields, i => fields[i].id)
-
-    h.getIn(formData, ['columns', column.id]).fields = fieldOrder
-
+    columnData.set('fields', fieldOrder)
     return fieldOrder
   },
 
@@ -65,21 +50,21 @@ const data = {
     if (!stage) {
       stage = dom.activeStage
     }
-    const stageRows = h.getIn(formData, ['stages', stage.id]).rows
-    const oldValue = stageRows.slice()
     const rows = stage.getElementsByClassName('stage-rows')
-    const rowOrder = h.map(rows, rowId => rows[rowId].id)
-    stageRows.rows = rowOrder
+    const stageData = stagesData.get(stage.id)
+    const oldRowOrder = stageData.get('rows')
+    const newRowOrder = h.map(rows, rowId => rows[rowId].id)
+    stageData.set('rows', newRowOrder)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
         updateType: 'sort',
         changed: 'rows',
-        oldValue,
-        newValue: rowOrder,
+        oldValue: oldRowOrder,
+        newValue: newRowOrder,
       },
     })
     document.dispatchEvent(events.formeoUpdated)
-    return rowOrder
+    return newRowOrder
   },
 
   saveOptionOrder: parent => {
@@ -124,7 +109,7 @@ const data = {
         return formData.get('settings')
       },
       stages: () => {
-        // data.saveRowOrder();
+        return formData.get('stages')
       },
       rows: () => {
         return formData.get('rows')
@@ -135,9 +120,9 @@ const data = {
       fields: columnId => {
         return formData.get('fields')
       },
-      field: fieldId => h.getIn(formData, ['fields', fieldId]),
+      field: fieldId => formData.getIn(['fields', fieldId]),
       attrs: attrUL => {
-        const fieldData = h.getIn(formData, ['fields', attrUL.fieldId])
+        const fieldData = formData.getIn(['fields', attrUL.fieldId])
         const attrValues = fieldData.attrs
         events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
           data: {
@@ -152,7 +137,7 @@ const data = {
         return attrValues
       },
       options: optionUL => {
-        const oldValue = h.getIn(formData, ['fields', optionUL.fieldId]).options
+        const oldValue = formData.getIn(['fields', optionUL.fieldId]).options
         const newValue = data.saveOrder('options', optionUL)
         events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
           data: {
@@ -167,6 +152,8 @@ const data = {
         return newValue
       },
     }
+
+    // console.log(group)
 
     return map[group](id)
   },
@@ -207,7 +194,7 @@ const data = {
         }
       },
       columns: id => {
-        const column = h.getIn(formData, ['columns', id])
+        const column = formData.getIn(['columns', id])
         if (column) {
           let fields = column.fields
           removed.fields = fields.map(fieldId => {
@@ -221,7 +208,7 @@ const data = {
         let field = dom.fields.get(id)
         if (field) {
           field = field.field
-          const column = h.getIn(formData, ['columns', field.parentElement.id])
+          const column = formData.getIn(['columns', field.parentElement.id])
           const oldValue = column.fields.slice()
           remove(column.fields, id)
           events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
@@ -241,80 +228,43 @@ const data = {
     return removed
   },
 
-  saveThrottle: false,
-  saveThrottled: false,
-
   save: (group = 'stages', id, disableThrottle = false) => {
-    if (disableThrottle) {
-      data.saveThrottle = disableThrottle
-    }
-    const doSave = function() {
-      data.saveType(group, id)
-      const storage = window.sessionStorage
-
-      if (storage && _data.opts.sessionStorage) {
-        storage.setItem('formData', data.json)
-      }
-
-      if (_data.opts.debug) {
-        console.log('Saved: ' + group)
-      }
-
-      events.formeoSaved = new window.CustomEvent('formeoSaved', {
-        detail: {
-          formData: data.js,
-        },
-      })
-
-      document.dispatchEvent(events.formeoSaved)
-      return formData
-    }
-
-    if (!data.saveThrottle) {
-      doSave()
-      data.saveThrottle = true
-      setTimeout(() => {
-        if (data.saveThrottled) {
-          doSave()
-          data.saveThrottled = false
-        }
-        data.saveThrottle = false
-      }, 500)
-    } else {
-      data.saveThrottled = true
-    }
-
-    return formData
-  },
-
-  get js() {
-    return mapToObj(formData)
-  },
-
-  get prepData() {
-    const jsData = data.js
-    console.log(data.js)
-    // @todo, remember why I wanted to stringify DOM actions
-    // Object.keys(jsData).forEach(type => {
-    //   Object.keys(jsData[type]).forEach(entKey => {
-    //     const entity = jsData[type][entKey]
-    //     console.log(entity)
-    //     if (entity.action) {
-    //       Object.keys(entity.action).forEach(fn => {
-    //         entity.action[fn] = entity.action[fn].toString()
-    //       })
-    //     }
-    //   })
+    // if (disableThrottle) {
+    //   data.saveThrottle = disableThrottle
+    // }
+    // // const doSave = function() {
+    // const formData = data.saveType(group, id)
+    // console.log(formData)
+    // const storage = window.sessionStorage
+    // // const formData =
+    // if (storage && _data.opts.sessionStorage) {
+    //   storage.setItem('formData', FormeoData.json)
+    // }
+    // if (_data.opts.debug) {
+    //   console.log('Saved: ' + group)
+    // }
+    // events.formeoSaved = new window.CustomEvent('formeoSaved', {
+    //   detail: {
+    //     formData: FormeoData.js, // optimize the multiple calls, dont use get so have to explicitly calll
+    //   },
     // })
-    return jsData
-  },
-
-  /**
-   * getter method for JSON formData
-   * @return {JSON} formData
-   */
-  get json() {
-    return window.JSON.stringify(data.prepData, null, '\t')
+    // document.dispatchEvent(events.formeoSaved)
+    // //   return formData
+    // // }
+    // // if (!data.saveThrottle) {
+    // //   doSave()
+    // //   data.saveThrottle = true
+    // //   setTimeout(() => {
+    // //     if (data.saveThrottled) {
+    // //       doSave()
+    // //       data.saveThrottled = false
+    // //     }
+    // //     data.saveThrottle = false
+    // //   }, 500)
+    // // } else {
+    // //   data.saveThrottled = true
+    // // }
+    // return formData
   },
 }
 

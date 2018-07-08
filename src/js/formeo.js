@@ -2,12 +2,13 @@
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
 import h from './common/helpers'
-import { data, formData } from './common/data'
+import { data } from './common/data'
 import events from './common/events'
 import actions from './common/actions'
 import dom from './common/dom'
 import { Controls } from './components/controls'
 import Stage from './components/stage'
+import {stages as stagesData, formData} from './data'
 
 // Simple object config for the main part of formeo
 const formeo = {
@@ -262,7 +263,7 @@ class Formeo {
   init() {
     const _this = this
     i18n.init(opts.i18n).then(lang => {
-      _this.formID = formData.id
+      _this.formID = formData.get('id')
       formeo.controls = new Controls(opts.controls, _this.formID)
       _this.stages = _this.buildStages()
       formeo.i18n = {
@@ -289,11 +290,10 @@ class Formeo {
    */
   buildStages() {
     const stages = []
-    const createStage = stageID => new Stage(opts, stageID)
-    const formDataStages = formData.get('stages')
-    if (formDataStages.size) {
-      formDataStages.forEach((stageConf, stageID) => {
-        stages.push(createStage(stageID))
+    const createStage = stageData => new Stage(stageData)
+    if (stagesData.size) {
+      stagesData.forEach(stageData => {
+        stages.push(createStage(stageData))
       })
     } else {
       stages.push(createStage())

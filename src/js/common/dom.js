@@ -1,11 +1,13 @@
 import h from './helpers'
+import i18n from 'mi18n'
 import events from './events'
 import Row from '../components/row'
 import Column from '../components/column'
 import Field from '../components/field'
 import animate from './animation'
-import { data, formData } from './data'
-import { uuid, clone, numToPercent, remove, closestFtype } from './utils'
+import { data, formData, registeredFields } from './data'
+import { uuid, clone, numToPercent, remove, closestFtype, mapToObj } from './utils'
+import { columns as columnsData, rows as rowsData } from '../data'
 
 /**
  * General purpose markup utilities and generator.
@@ -206,6 +208,9 @@ class DOM {
    * @return {Object}            DOM Object
    */
   create(elem, isPreview = false) {
+    if (elem instanceof Map) {
+      elem = mapToObj(elem)
+    }
     elem = this.processTagName(elem)
     const _this = this
     let contentType
@@ -276,21 +281,16 @@ class DOM {
         h.forEach(options, option => {
           wrap.content.push(_this.create(option, isPreview))
         })
-
         if (elem.attrs.className) {
           wrap.className = elem.attrs.className
         }
-
         wrap.config = Object.assign({}, elem.config)
         wrap.className.push = h.get(elem, 'attrs.className')
-
         if (required) {
           wrap.attrs.required = required
         }
-
         return this.create(wrap, isPreview)
       }
-
       processed.push('options')
     }
 
@@ -504,6 +504,28 @@ class DOM {
     return optionLabel
   }
 
+
+  generateOption = ({ type = 'option', label, value, i = 0, selected }) => {
+    const isOption = type === 'option'
+    return {
+      tag: isOption ? 'option' : 'input',
+      attrs: {
+        type,
+        value: value || `${type}-${i}`,
+        [type === 'option' ? 'selected' : 'checked']: selected || !i,
+      },
+      config: {
+        label:
+          label ||
+          i18n.get('labelCount', {
+            label: i18n.get('option'),
+            count: i,
+          }),
+      },
+    }
+  }
+
+
   /**
    * Extend Array of option config objects
    * @param  {Array} options
@@ -522,6 +544,7 @@ class DOM {
           tag: 'input',
           attrs: {
             id: id,
+            name: `${id}[${i}]`,
             type: fieldType,
             value: option.value || '',
           },
@@ -541,7 +564,6 @@ class DOM {
           content: [option.label],
         }
         const inputWrap = {
-          tag: 'div',
           content: [optionLabel],
           className: [`f-${fieldType}`],
         }
@@ -559,6 +581,7 @@ class DOM {
         }
 
         if (isPreview) {
+          input.attrs.name = `prev-${input.attrs.name}`
           input.fMap = `options[${i}].selected`
           optionLabel.attrs.contenteditable = true
           optionLabel.fMap = `options[${i}].label`
@@ -568,9 +591,7 @@ class DOM {
             content: [input, checkable],
           }
           inputWrap.content.unshift(checkableLabel)
-          // inputWrap.content.unshift(input);
         } else {
-          input.attrs.name = id
           optionLabel.content = checkable
           optionLabel = dom.create(optionLabel)
           input = dom.create(input)
@@ -964,15 +985,16 @@ class DOM {
     this.removeClasses(columns, bsGridRegEx)
 
     h.forEach(columns, column => {
-      const columnData = h.getIn(formData, ['columns', column.id])
+      const columnData = columnsData.get(column.id)
       fields.push(...columnData.fields)
 
-      const colWidth = numToPercent(width)
+      const newColWidth = numToPercent(width)
+      // const columnWidth =
 
-      column.style.width = colWidth
+      column.style.width = newColWidth
       column.style.float = 'left'
-      columnData.config.width = colWidth
-      column.dataset.colWidth = colWidth
+      columnData.get('config').set('width', newColWidth)
+      column.dataset.colWidth = newColWidth
       document.dispatchEvent(events.columnResized)
     })
 
@@ -1004,22 +1026,21 @@ class DOM {
 
   /**
    * Generates the element config for column layout in row
-   * @param  {String} rowId [description]
-   * @return {Object}       [description]
+   * @return {Object} columnPresetControlConfig
    */
   columnPresetControl(rowId) {
     const _this = this
-    const rowData = h.getIn(formData, ['rows', rowId])
+    const rowData = rowsData.get(rowId)
     const layoutPreset = {
       tag: 'select',
       attrs: {
-        ariaLabel: 'Define a column layout',
+        ariaLabel: 'Define a column layout', // @todo i18n
         className: 'column-preset',
       },
       action: {
-        change: e => {
-          const dRow = this.rows.get(rowId)
-          _this.setColumnWidths(dRow.row, e.target.value)
+        change: ({ target: { value } }) => {
+          const dRow = this.rows.get(this.rowId)
+          _this.setColumnWidths(dRow.row, value)
           data.save()
         },
       },
@@ -1044,14 +1065,14 @@ class DOM {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    if (rowData && rowData.columns.length) {
+    if (rowData && rowData.get('columns').length) {
       const columns = rowData.columns
       const pMapVal = pMap.get(columns.length)
       layoutPreset.options = pMapVal || pMap.get('custom')
       const curVal = columns
         .map((columnId, i) => {
-          const colData = h.getIn(formData, ['columns', columnId])
-          return colData.config.width.replace('%', '')
+          // const colData = formData.getIn(['columns', columnId])
+          // return colData.config.width.replace('%', '')
         })
         .join(',')
       if (pMapVal) {
@@ -1087,7 +1108,7 @@ class DOM {
       const percentWidth = widths[i] + '%'
       column.dataset.colWidth = percentWidth
       column.style.width = percentWidth
-      h.getIn(formData, ['columns', column.id]).config.width = percentWidth
+      formData.getIn(['columns', column.id]).config.width = percentWidth
     })
   }
 
@@ -1132,8 +1153,12 @@ class DOM {
       stage = this.activeStage
     }
 
-    const rows = formData.stages.get(stage.id).rows
-    return rows.forEach(rowId => {
+    // console.log()
+
+    const stageData = formData.getIn(['stages', stage.id])
+    console.log(stageData)
+    const rows = formData.getIn(['stages', stage.id, 'rows'])
+    rows.forEach(rowId => {
       const row = this.addRow(stage.id, rowId)
       this.loadColumns(row)
       dom.updateColumnPreset(row)
@@ -1146,7 +1171,8 @@ class DOM {
    * @param  {Object} row
    */
   loadColumns(row) {
-    const columns = formData.rows.get(row.id).columns
+    console.log(formData.getIn(['rows', row.id]))
+    const columns = formData.getIn(['rows', row.id]).columns
     return columns.map(columnId => {
       const column = this.addColumn(row.id, columnId)
       this.loadFields(column)
@@ -1159,7 +1185,7 @@ class DOM {
    * @param  {Object} column column config object
    */
   loadFields(column) {
-    const fields = h.getIn(formData, ['columns', column.id]).fields
+    const fields = formData.getIn(['columns', column.id]).fields
     fields.forEach(fieldId => this.addField(column.id, fieldId))
     this.fieldOrderClass(column)
   }
@@ -1176,7 +1202,7 @@ class DOM {
 
     field.classList.add('first-field')
     column.appendChild(field)
-    h.getIn(formData, ['columns', column.id]).fields.push(field.id)
+    formData.getIn(['columns', column.id]).fields.push(field.id)
     return column
   }
 
@@ -1202,9 +1228,9 @@ class DOM {
     this.empty(renderTarget)
     const renderData = data.prepData
     const renderCount = document.getElementsByClassName('formeo-render').length
-    console.log(renderData)
     const content = Object.values(renderData.stages).map(stageData => {
       const { rows: rowsData, ...stage } = stageData
+      console.log(stageData)
       const rows = rowsData.map(rowId => {
         const { columns, ...row } = renderData.rows[rowId]
         row.content = columns.map(columnId => {
@@ -1330,14 +1356,14 @@ class DOM {
 
   /**
    * Adds a row to the stage
-   * @param {String} stageID
+   * @param {String} stageId
    * @param {String} rowId
    * @return {Object} DOM element
    */
-  addRow(stageID, rowId) {
-    const row = new Row(rowId)
-    const stage = stageID ? this.stages.get(stageID).stage : this.activeStage
-    stage.appendChild(row)
+  addRow(stageId, rowId) {
+    const row = new Row({ id: rowId })
+    const stage = stageId ? this.stages.get(stageId).stage : this.activeStage
+    stage.appendChild(row.dom)
     data.saveRowOrder(stage)
     this.emptyClass(stage)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
@@ -1345,11 +1371,11 @@ class DOM {
         updateType: 'added',
         changed: 'row',
         oldValue: undefined,
-        newValue: h.getIn(formData, ['rows', row.id]),
+        newValue: row.rowData,
       },
     })
     document.dispatchEvent(events.formeoUpdated)
-    return row
+    return row.dom
   }
 
   /**
@@ -1361,7 +1387,7 @@ class DOM {
   addColumn(rowId, columnId) {
     const column = new Column(columnId)
     const row = this.rows.get(rowId).row
-    row.appendChild(column)
+    row.appendChild(column.dom)
     data.saveColumnOrder(row)
     this.emptyClass(row)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
@@ -1369,7 +1395,7 @@ class DOM {
         updateType: 'added',
         changed: 'column',
         oldValue: undefined,
-        newValue: h.getIn(formData, ['columns', column.id]),
+        newValue: column.columnData,
       },
     })
     document.dispatchEvent(events.formeoUpdated)
@@ -1404,10 +1430,11 @@ class DOM {
    * @return {Object} field
    */
   addField(columnId, fieldId) {
-    const field = new Field(fieldId)
+    const field = new Field(registeredFields[fieldId])
     if (columnId) {
       const column = this.columns.get(columnId).column
-      column.appendChild(field)
+      console.log(field.dom)
+      column.appendChild(field.dom)
       data.saveFieldOrder(column)
       this.emptyClass(column)
     }
@@ -1416,7 +1443,7 @@ class DOM {
         updateType: 'add',
         changed: 'field',
         oldValue: undefined,
-        newValue: h.getIn(formData, ['fields', field.id]),
+        newValue: field.fieldData,
       },
     })
     document.dispatchEvent(events.formeoUpdated)

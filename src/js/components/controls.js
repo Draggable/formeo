@@ -9,6 +9,18 @@ import Panels from './panels'
 
 let opts = {}
 
+const generateOptionConfig = (type, count = 3) =>
+  Array.from({ length: count }, (v, k) => k + 1).map(i => {
+    return {
+      label: i18n.get('labelCount', {
+        label: i18n.get(type),
+        count: i,
+      }),
+      value: `${type}-${i}`,
+      selected: !i,
+    }
+  })
+
 /**
  *
  */
@@ -148,16 +160,7 @@ export class Controls {
           icon: 'select',
           id: 'select',
         },
-        options: [1, 2, 3, 4].map(i => {
-          return {
-            label: i18n.get('labelCount', {
-              label: i18n.get('option'),
-              count: i,
-            }),
-            value: 'option-' + i,
-            selected: false,
-          }
-        }),
+        options: generateOptionConfig('option'),
       },
       {
         tag: 'textarea',
@@ -208,16 +211,7 @@ export class Controls {
           icon: 'checkbox',
           id: 'checkbox',
         },
-        options: [
-          {
-            label: i18n.get('labelCount', {
-              label: i18n.get('checkbox'),
-              count: 1,
-            }),
-            value: 'checkbox-1',
-            selected: true,
-          },
-        ],
+        options: generateOptionConfig('checkbox', 1),
       },
       {
         tag: 'input',
@@ -234,13 +228,7 @@ export class Controls {
           icon: 'radio-group',
           id: 'radio',
         },
-        options: [1, 2, 3].map(i => {
-          return {
-            label: i18n.get('labelCount', { label: i18n.get('radio'), count: i }),
-            value: 'radio-' + i,
-            selected: false,
-          }
-        }),
+        options: generateOptionConfig('radio'),
       },
       {
         tag: 'h1',
