@@ -1,6 +1,6 @@
 import i18n from 'mi18n'
 import dom from '../common/dom'
-import EditPanelItem from './edit-panel-item';
+import EditPanelItem from './edit-panel-item'
 
 /**
  * Element/Field class.
@@ -13,10 +13,9 @@ export default class EditPanel {
    * @return {Object} field object
    */
   constructor(panelData, panelName) {
-    console.log(panelData, panelName)
     // this.id = panelsData.add(panelData)
     this.type = dom.contentType(panelData)
-    this.panelData = panelData
+    this.data = panelData
     this.name = panelName
     const domConfig = {
       tag: 'div',
@@ -50,6 +49,7 @@ export default class EditPanel {
       },
     }
     this.dom = dom.create(domConfig)
+    console.log(this.dom)
   }
 
   /**
@@ -62,11 +62,15 @@ export default class EditPanel {
     const panel = {
       tag: 'ul',
       attrs: {
-        className: ['field-edit-group', 'field-edit-' + this.panelName],
+        className: ['field-edit-group', 'field-edit-' + this.name],
       },
-      editGroup: this.panelName,
-      isSortable: this.panelName === 'options',
-      content: Array.from(this.panelItemData).map(itemData => new EditPanelItem(itemData)),
+      editGroup: this.name,
+      isSortable: this.name === 'options',
+      content: Array.from(this.data).map((itemData, index) => {
+        const itemKey = this.type === 'array' ? `${this.name}-${index}` : itemData[0]
+        const item = new EditPanelItem(itemKey, itemData, this.type)
+        return item.dom
+      }),
     }
     return panel
   }

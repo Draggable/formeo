@@ -7,7 +7,7 @@ import dom from '../common/dom'
 import Panels from './panels'
 import { uuid, cleanObj } from '../common/utils'
 import fieldsData from '../data/fields'
-import EditPanel from './field-edit-panel'
+import EditPanel from './edit-panel'
 // import EditPanel from './field-edit-panel';
 
 /**
@@ -599,7 +599,6 @@ export default class Field {
       const propType = dom.contentType(fieldData.get(panelName))
       if (editable.includes(propType)) {
         const editPanel = new EditPanel(fieldData.get(panelName), panelName)
-        console.log(editPanel)
         panels.push(editPanel.dom)
       }
     })
