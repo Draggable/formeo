@@ -7,7 +7,10 @@ import Field from '../components/field'
 import animate from './animation'
 import { data, formData, registeredFields } from './data'
 import { uuid, clone, numToPercent, remove, closestFtype, mapToObj } from './utils'
-import { columns as columnsData, rows as rowsData } from '../data'
+// import { rows as rowsData } from '../data'
+import columnsData from '../data/columns'
+import rowsData from '../data/rows'
+import FormeoData from '../data'
 
 /**
  * General purpose markup utilities and generator.
@@ -302,7 +305,7 @@ class DOM {
 
     if (elem.config) {
       const editablePreview = elem.config.editable && isPreview
-      if (elem.config.label && tag !== 'button') {
+      if (elem.config.label && tag !== 'button' || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) {
         let label
 
         if (isPreview) {
@@ -434,7 +437,6 @@ class DOM {
    */
   processAttrs(elem, element, isPreview) {
     const { attrs = {} } = elem
-    delete attrs.tag
 
     if (!isPreview) {
       if (!attrs.name && this.isInput(elem.tag)) {
@@ -475,35 +477,12 @@ class DOM {
       className: 'checkable',
       content: label,
     }
-    const optionLabel = {
+
+    return {
       tag: 'label',
-      attrs: {},
       content: [elem, checkable],
     }
-
-    // if (isPreview) {const
-    //   input.fMap = `options[${i}].selected`;
-    //   optionLabel.attrs.contenteditable = true;
-    //   optionLabel.fMap = `options[${i}].label`;
-    //   checkable.content = undefined;
-    //   let checkableLabel = {
-    //     tag: 'label',
-    //     content: [input, checkable]
-    //   };
-    //   inputWrap.content.unshift(checkableLabel);
-    //   // inputWrap.content.unshift(input);
-    // } else {
-    //   input.attrs.name = elem.id;
-    //   optionLabel.content = checkable;
-    //   optionLabel = dom.create(optionLabel);
-    //   input = dom.create(input);
-    //   optionLabel.insertBefore(input, optionLabel.firstChild);
-    //   inputWrap.content = optionLabel;
-    // }
-
-    return optionLabel
   }
-
 
   generateOption = ({ type = 'option', label, value, i = 0, selected }) => {
     const isOption = type === 'option'
@@ -524,7 +503,6 @@ class DOM {
       },
     }
   }
-
 
   /**
    * Extend Array of option config objects
@@ -695,11 +673,17 @@ class DOM {
    * @return {Object}      config object
    */
   label(elem, fMap) {
+    let {
+      config: { label: labelText },
+    } = elem
+    if (typeof labelText === 'function') {
+      labelText = labelText()
+    }
     const fieldLabel = {
       tag: 'label',
       attrs: {},
       className: [],
-      content: elem.config.label,
+      content: labelText,
       action: {},
     }
 
@@ -707,7 +691,7 @@ class DOM {
       const checkable = {
         tag: 'span',
         className: 'checkable',
-        content: elem.config.label,
+        content: labelText,
       }
       fieldLabel.content = checkable
     }
@@ -916,6 +900,8 @@ class DOM {
     const { fType, id } = elem
     if (fType) {
       const parent = elem.parentElement
+      console.log(elem)
+
       const pData = formData[parent.fType].get(parent.id)
       data.empty(fType, id)
       this[fType].delete(id)
@@ -983,17 +969,15 @@ class DOM {
     const bsGridRegEx = /\bcol-\w+-\d+/g
 
     this.removeClasses(columns, bsGridRegEx)
-
     h.forEach(columns, column => {
       const columnData = columnsData.get(column.id)
       fields.push(...columnData.fields)
 
       const newColWidth = numToPercent(width)
-      // const columnWidth =
 
       column.style.width = newColWidth
       column.style.float = 'left'
-      columnData.get('config').set('width', newColWidth)
+      columnsData.set(`${column.id}.config.width`, newColWidth)
       column.dataset.colWidth = newColWidth
       document.dispatchEvent(events.columnResized)
     })
@@ -1065,7 +1049,7 @@ class DOM {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    if (rowData && rowData.get('columns').length) {
+    if (rowData && rowData.columns.length) {
       const columns = rowData.columns
       const pMapVal = pMap.get(columns.length)
       layoutPreset.options = pMapVal || pMap.get('custom')
@@ -1433,7 +1417,7 @@ class DOM {
     const field = new Field(registeredFields[fieldId])
     if (columnId) {
       const column = this.columns.get(columnId).column
-      console.log(field.dom)
+      // console.log(field.dom)
       column.appendChild(field.dom)
       data.saveFieldOrder(column)
       this.emptyClass(column)

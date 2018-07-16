@@ -5,7 +5,7 @@ import h from '../common/helpers'
 import actions from '../common/actions'
 import dom from '../common/dom'
 import Panels from './panels'
-import { uuid, cleanObj } from '../common/utils'
+import { uuid, clone, cleanObj } from '../common/utils'
 import fieldsData from '../data/fields'
 import EditPanel from './edit-panel'
 // import EditPanel from './field-edit-panel';
@@ -106,7 +106,7 @@ export default class Field {
     }
 
     panelWrap.content.push(panel)
-    console.log(panelName)
+    // console.log(panelName)
 
     // let panelArray
     // if (propType === 'array') {
@@ -144,7 +144,7 @@ export default class Field {
 
     // const panelDataKeys = propType === 'array' ? panelData : Array.from(panelData)
     // console.log(panelData)
-    panel.content = new EditPanel(panelData, panelName)
+    panel.content = new EditPanel(panelData, panelName, this.id)
     // panel.content = Array.from(panelData).map((val, i) => {
     //   console.log(val)
     // return _this.panelContent({ i, val, propType })
@@ -587,7 +587,7 @@ export default class Field {
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action']
     const fieldData = this.fieldData
-    const allowedPanels = Array.from(fieldData.keys()).filter(elem => {
+    const allowedPanels = Object.keys(this.fieldData).filter(elem => {
       return !h.inArray(elem, noPanels)
     })
 
@@ -596,10 +596,11 @@ export default class Field {
     }
 
     h.forEach(allowedPanels, (panelName, i) => {
-      const propType = dom.contentType(fieldData.get(panelName))
+      const panelData = fieldData[panelName]
+      const propType = dom.contentType(panelData)
       if (editable.includes(propType)) {
-        const editPanel = new EditPanel(fieldData.get(panelName), panelName)
-        panels.push(editPanel.dom)
+        const editPanel = new EditPanel(panelData, panelName, this.id)
+        panels.push(editPanel)
       }
     })
 
@@ -634,7 +635,8 @@ export default class Field {
    */
   fieldPreview() {
     const _this = this
-    const fieldData = new Map(this.fieldData)
+    const prevData = clone(this.fieldData)
+    prevData.id = `prev-${this.id}`
     const field = dom.fields.get(_this.id).field
     const togglePreviewEdit = evt => {
       const column = field.parentElement
@@ -649,14 +651,12 @@ export default class Field {
       }
     }
 
-    fieldData.set('id', `prev-${_this.id}`)
-
     const fieldPreview = {
       tag: 'div',
       attrs: {
         className: 'field-preview',
       },
-      content: dom.create(fieldData, true),
+      content: dom.create(prevData, true),
       action: {
         focus: togglePreviewEdit,
         blur: togglePreviewEdit,

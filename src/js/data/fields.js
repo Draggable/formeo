@@ -1,30 +1,14 @@
-import { uuid, objToMap, mapToObj } from '../common/utils'
+import Data from './data'
 
-const mergeFieldData = fieldData => {
-  const defaultFieldData = {
-    // config: {},
-    // fields: [],
+export class FieldData extends Data {
+  constructor(data) {
+    super('fields')
+    this.data = data || Object.create(null)
   }
-  return objToMap(Object.assign({}, defaultFieldData, fieldData))
 }
 
-export const fields = new Map()
+const fieldsData = new FieldData()
 
-export default Object.create(null, {
-  js: {
-    get() {
-      return mapToObj(fields)
-    },
-  },
-  add: {
-    value: (fieldData = {}) => {
-      const { id } = fieldData
-      const fieldId = id || uuid()
-      fields.set(fieldId, mergeFieldData(fieldData))
-      return fieldId
-    },
-  },
-  get: {
-    value: fieldId => fields.get(fieldId),
-  },
-})
+export const fields = fieldsData.data
+
+export default fieldsData

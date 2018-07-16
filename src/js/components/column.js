@@ -115,7 +115,7 @@ export default class Column {
    * @param  {Object} column
    */
   processConfig(column) {
-    const columnWidth = h.getIn(this.columnData, ['config', 'width'])
+    const columnWidth = h.get(this.columnData, 'config.width')
     if (columnWidth) {
       column.dataset.colWidth = columnWidth
       column.style.width = columnWidth

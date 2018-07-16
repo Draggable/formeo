@@ -8,13 +8,6 @@ import stagesData from '../data/stages'
 
 let stageOpts = {}
 
-// const defaultStageData = stageId =>
-//   fromJS({
-//     id: stageId,
-//     settings: {},
-//     rows: [],
-//   })
-
 /**
  * Stage is where fields and elements are dragged to.
  */
@@ -26,9 +19,7 @@ export default class Stage {
    * @return {Object} DOM element
    */
   constructor(stageData) {
-    this.stageId = stagesData.add(stageData)
-    // console.log(this.stageId)
-    // this.stageId = stageData && stageData.get('id')
+    this.id = stagesData.add(stageData)
 
     const defaultOptions = {
       formSettings: [
@@ -72,17 +63,17 @@ export default class Stage {
     }
 
     stageOpts = Object.assign(stageOpts, defaultOptions)
-    // formData.get('stages').set(this.stageId, defaultStageData(this.stageId))
-    // formData = formData.setIn(['stages', this.stageId], defaultStageData(this.stageId))
+    // formData.get('stages').set(this.id, defaultStageData(this.id))
+    // formData = formData.setIn(['stages', this.id], defaultStageData(this.id))
 
-    // console.log('this.stageId', this.stageId)
+    // console.log('this.id', this.id)
     // console.log(set.toJS().stages)
 
     return this.loadStage()
   }
 
   get stageData() {
-    return stagesData.get(this.stageId)
+    return stagesData.get(this.id)
   }
 
   /**
@@ -119,14 +110,14 @@ export default class Stage {
       handle: '.item-handle',
     })
 
-    dom.stages.set(this.stageId, {
+    dom.stages.set(this.id, {
       stage: this.stage,
       sortable,
     })
 
     dom.activeStage = this.stage
 
-    if (this.stageData.get('rows').length) {
+    if (this.stageData.children.length) {
       dom.loadRows(this.stage)
     }
 
@@ -144,7 +135,7 @@ export default class Stage {
         tag: 'ul',
         attrs: {
           className: ['stage', 'empty-stages'],
-          id: _this.stageId,
+          id: _this.id,
         },
         fType: 'stages',
       },
@@ -152,7 +143,7 @@ export default class Stage {
         tag: 'div',
         attrs: {
           className: 'formeo-settings',
-          id: `${_this.stageId}-settings`,
+          id: `${_this.id}-settings`,
         },
         fType: 'settings',
       },

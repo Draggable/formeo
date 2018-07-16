@@ -1,30 +1,17 @@
-import { uuid, objToMap, mapToObj } from '../common/utils'
+import Data from './data'
 
-const mergeColumnData = columnData => {
-  const defaultColumnData = {
-    config: {},
-    fields: [],
-  }
-  return objToMap(Object.assign({}, defaultColumnData, columnData))
+const DEFAULT_DATA = {
+  config: {},
+  children: [],
 }
 
-export const columns = new Map()
+export class ColumnData extends Data {
+  constructor(data) {
+    super('columns', DEFAULT_DATA)
+    this.data = data || Object.create(null)
+  }
+}
 
-export default Object.create(null, {
-  js: {
-    get() {
-      return mapToObj(columns)
-    },
-  },
-  add: {
-    value: (columnData = {}) => {
-      const { id } = columnData
-      const columnId = id || uuid()
-      columns.set(columnId, mergeColumnData(columnData))
-      return columnId
-    },
-  },
-  get: {
-    value: columnId => columns.get(columnId),
-  },
-})
+const columnsData = new ColumnData()
+
+export default columnsData

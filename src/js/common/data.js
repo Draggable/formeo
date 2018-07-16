@@ -4,7 +4,10 @@ import events from './events'
 import h from './helpers'
 import dom from './dom'
 import { remove } from './utils'
-import FormeoData, { stages as stagesData, rows as rowsData, columns as columnsData, formData } from '../data'
+import FormeoData from '../data'
+import stagesData from '../data/stages'
+import rowsData from '../data/rows'
+import columnsData from '../data/columns'
 
 // Object map of fields on the stage
 const _data = {}
@@ -25,25 +28,9 @@ const data = {
   init: (opts, userFormData) => {
     _data.opts = opts
 
-    const _formData = Object.assign({}, sessionFormData(), userFormData)
-    const formData = FormeoData.load(_formData)
+    const formData = Object.assign({}, sessionFormData(), userFormData)
 
-    return formData
-  },
-
-  saveColumnOrder: row => {
-    const columns = row.getElementsByClassName('stage-columns')
-    const columnOrder = h.map(columns, i => columns[i].id)
-    rowsData.get(row.id).set('columns, columnOrder')
-    return columnOrder
-  },
-
-  saveFieldOrder: column => {
-    const columnData = columnsData.get(column.id)
-    const fields = column.getElementsByClassName('stage-fields')
-    const fieldOrder = h.map(fields, i => fields[i].id)
-    columnData.set('fields', fieldOrder)
-    return fieldOrder
+    return FormeoData.load(formData)
   },
 
   saveRowOrder: stage => {
@@ -52,9 +39,9 @@ const data = {
     }
     const rows = stage.getElementsByClassName('stage-rows')
     const stageData = stagesData.get(stage.id)
-    const oldRowOrder = stageData.get('rows')
+    const oldRowOrder = stageData.rows
     const newRowOrder = h.map(rows, rowId => rows[rowId].id)
-    stageData.set('rows', newRowOrder)
+    stagesData.set(`${stage.id}.rows`, newRowOrder)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
         updateType: 'sort',
@@ -65,6 +52,20 @@ const data = {
     })
     document.dispatchEvent(events.formeoUpdated)
     return newRowOrder
+  },
+
+  saveColumnOrder: row => {
+    const columns = row.getElementsByClassName('stage-columns')
+    const columnOrder = h.map(columns, i => columns[i].id)
+    rowsData.set(`${row.id}.columns`, columnOrder)
+    return columnOrder
+  },
+
+  saveFieldOrder: column => {
+    const fields = column.getElementsByClassName('stage-fields')
+    const fieldOrder = h.map(fields, i => fields[i].id)
+    columnsData.set(`${column.id}.fields`, fieldOrder)
+    return fieldOrder
   },
 
   saveOptionOrder: parent => {

@@ -78,7 +78,7 @@ export default class Row {
       id: _this.id + '-fieldset',
       attrs: {
         type: 'checkbox',
-        checked: h.getIn(rowData, ['config', 'fieldset']),
+        checked: h.get(rowData, 'config.fieldset'),
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria'),
       },
       action: {
@@ -94,12 +94,12 @@ export default class Row {
       id: _this.id + '-inputGroup',
       attrs: {
         type: 'checkbox',
-        checked: h.getIn(rowData, ['config', 'inputGroup']),
+        checked: h.get(rowData, 'config.inputGroup'),
         ariaLabel: i18n.get('row.settings.inputGroup.aria'),
       },
       action: {
         click: ({ target: { checked } }) => {
-          h.getIn(rowData, ['config', 'inputGroup'], checked)
+          h.get(rowData, ['config', 'inputGroup'], checked)
           // rowData.config.inputGroup = e.target.checked
           data.save()
         },
@@ -123,12 +123,12 @@ export default class Row {
       attrs: {
         type: 'text',
         ariaLabel: 'Legend for fieldset',
-        value: h.getIn(rowData, ['config', 'legend']),
+        value: h.get(rowData, 'config.legend'),
         placeholder: 'Legend',
       },
       action: {
         input: ({ target: { value } }) => {
-          rowData.get('config').set('legend', value)
+          rowData['config'].legend = value
           data.save()
         },
       },

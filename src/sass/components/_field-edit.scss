@@ -4,7 +4,7 @@
   overflow: hidden;
 
   label {
-    font-size: .85em;
+    font-size: 0.825em;
   }
 
   .panel-nav {
@@ -131,6 +131,7 @@
   .prop-inputs {
     width: 100%;
     display: inline-flex;
+    align-items: center;
     vertical-align: bottom;
 
     .f-field-group {
@@ -140,9 +141,10 @@
       vertical-align: bottom;
     }
 
-    .f-checkbox {
-      margin-top: 7px;
-      margin-bottom: 0;
+    .f-checkbox,
+    .f-radio {
+      margin: 0;
+      font-size: 1em;
     }
 
     label {

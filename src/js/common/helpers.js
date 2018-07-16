@@ -1,6 +1,7 @@
 'use strict'
 import dom from './dom'
 import { unique } from './utils'
+import set from 'lodash/set'
 
 // eslint-disable-next-line
 const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g
@@ -142,54 +143,21 @@ const helpers = {
    * @param {String} path The path of the property to get.
    * @return {String|Array|Object} Returns the resolved value.
    */
-  get: (object, path) => {
-    path = stringToPath(path)
-
-    let index = 0
-    const length = path.length
-
-    while (object != null && index < length) {
-      object = object[path[index++]]
-    }
-
-    return index && index === length ? object : undefined
+  get: (obj, path) => {
+    path = Array.isArray(path) ? path : stringToPath(path)
+    const val = path.reduce((acc, part) => {
+      if (typeof acc === 'string') {
+        return acc
+      }
+      return acc && acc[part]
+    }, obj)
+    return val
   },
   getIn: (map, path, fallback) => {
-    const value = path.reduce((acc, part) => acc.get(part), map)
+    const value = path.reduce((acc, part) => acc.get(), map)
     return value || (fallback && typeof fallback === 'function') ? fallback() : fallback
   },
-  set: (object, path, value, customizer) => {
-    path = stringToPath(path)
-
-    let index = -1
-    const length = path.length
-    const lastIndex = length - 1
-    let nested = object
-
-    while (nested !== null && ++index < length) {
-      const key = path[index]
-      if (typeof nested === 'object') {
-        let newValue = value
-        if (index !== lastIndex) {
-          const objValue = nested[key]
-          newValue = customizer ? customizer(objValue, key, nested) : undefined
-          if (newValue === undefined) {
-            newValue = objValue === null ? [] : objValue
-          }
-        }
-
-        if (
-          !(hasOwnProperty.call(nested, key) && nested[key] === newValue) ||
-          (newValue === undefined && !(key in nested))
-        ) {
-          nested[key] = newValue
-        }
-      }
-      nested = nested[key]
-    }
-
-    return object
-  },
+  set, // use lodash set
   /**
    * Merge one object with another.
    * This is expensive, use as little as possible.

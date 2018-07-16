@@ -1,28 +1,39 @@
-// import i18n from 'mi18n'
-// import h from '../common/helpers'
+import i18n from 'mi18n'
+import h from '../common/helpers'
 import dom from '../common/dom'
+import fieldsData from '../data/fields'
+import animate from '../common/animation'
 
-const ITEM_VALUE_MAP = {
-  array: val => val,
-  object: ([key, val]) => ({ [key]: val }),
-}
-
-const INPUT_CONFIG_BASE = (type = 'text') => ({
+const inputConfigBase = (key, type = 'text') => ({
   tag: 'input',
   attrs: {
     type,
+    placeholder: labelHelper(`placeholder.${key}`),
   },
+  config: {},
 })
 
+const labelHelper = key => {
+  const labelText = i18n.get(key)
+  if (labelText) {
+    return labelText
+  }
+  const splitKey = key.split('.')
+  return i18n.get(splitKey[splitKey.length - 1])
+}
+
 const ITEM_INPUT_TYPE_MAP = {
-  string: () => INPUT_CONFIG_BASE(),
+  string: key => inputConfigBase(key),
   boolean: key => {
     const type = key === 'checked' ? 'checkbox' : 'radio'
-    return INPUT_CONFIG_BASE(type)
+    return inputConfigBase(key, type)
   },
-  number: () => INPUT_CONFIG_BASE('number'),
+  number: key => inputConfigBase(key, 'number'),
   array: (key, vals) => ({
     tag: 'select',
+    attrs: {
+      placeholder: labelHelper(`placeholder.${key}`),
+    },
     options: vals.map(val => ({
       label: val,
       value: val,
@@ -30,6 +41,8 @@ const ITEM_INPUT_TYPE_MAP = {
     })),
   }),
 }
+
+const INPUT_ORDER = ['selected', 'checked']
 
 /**
  * Edit Panel Item
@@ -39,42 +52,88 @@ export default class EditPanelItem {
    * Set defaults and load panelData
    * @param  {String} itemKey attribute name or options index
    * @param  {Object} itemData existing field ID
-   * @param  {String} panelType type of data to build inputs for
+   * @param  {String} fieldId
    * @return {Object} field object
    */
-  constructor(itemKey, itemData, panelType) {
-    this.itemData = (itemData && ITEM_VALUE_MAP[panelType](itemData)) || itemData
-    const itemConfig = {
+  constructor(itemKey, itemData, fieldId) {
+    this.itemValues = h.orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
+    this.fieldId = fieldId
+    // this.data = fieldsData.get()
+    this.itemKey = itemKey
+    this.panelName = itemKey.substr(0, itemKey.indexOf('.'))
+    this.dom = dom.create({
       tag: 'li',
-      className: [`${panelType}-${itemKey}`, 'prop-wrap'],
-      // id: id,
-      content: [this.itemInputs],
-    }
-    // console.log(itemData, this.itemInputs, panelType)
-    this.dom = dom.create(itemConfig)
-    console.log(this.dom)
+      className: [`field-${itemKey.replace('.', '-')}`, 'prop-wrap'],
+      content: [this.itemInputs, this.itemControls],
+    })
+    return this.dom
   }
 
   get itemInputs() {
-    const inputs = Object.entries(this.itemData).map(([key, val]) => {
-
-      return this.itemInput(key, val)
-    })
+    const inputs = {
+      className: 'prop-inputs f-input-group',
+      content: this.itemValues.map(([key, val]) => this.itemInput(key, val)),
+    }
     return inputs
   }
 
-  itemInput(key, val) {
-    const inputTypeConfig = ITEM_INPUT_TYPE_MAP[typeof val]
-    return inputTypeConfig(key, val)
-
-    // @todo merge with config options for onclick and other events
-    // const inputConfig = Object.entries(inputTypeConfig(key)).reduce((acc, [key, val]) => {
-    //   console.log(key, val)
-    //   val = typeof val === Object ?
-    //   acc[key] = val
-    //   // acc[key] = Object.assign({})
-    //   return acc
-    // }, {})
+  get itemControls() {
+    const remove = {
+      tag: 'button',
+      attrs: {
+        type: 'button',
+        className: 'prop-remove prop-control',
+      },
+      action: {
+        click: evt => {
+          animate.slideUp(this.dom, 250, elem => {
+            fieldsData.remove(`${this.fieldId}.${this.itemKey}`)
+            console.log(fieldsData.js)
+            dom.remove(elem)
+            // console.log(delPath, delItem)
+            // const fieldsData.get()
+            // console.log(this.itemKey.substr(0, this.itemKey.lastIndexOf('.')))
+            // const parent = elem.parentElement
+            // const fieldData = formData.fields.get(_this.id)
+            // const fieldPanelData = fieldData[panelType]
+            // if (Array.isArray(fieldPanelData)) {
+            //   fieldPanelData.splice(propKey, 1)
+            // } else {
+            //   fieldPanelData[propKey] = undefined
+            // }
+            // data.save(panelType, parent)
+            // dom.empty(_this.preview)
+            // const newPreview = dom.create(fieldData, true)
+            // _this.preview.appendChild(newPreview)
+            // _this.resizePanelWrap()
+          })
+        },
+      },
+      content: dom.icon('remove'),
+    }
+    const controls = {
+      tag: 'div',
+      className: 'prop-controls',
+      content: [remove],
+    }
+    return controls
   }
-  get itemControls() {}
+
+  itemInput(key, val) {
+    const inputTypeConfig = ITEM_INPUT_TYPE_MAP[typeof val](key, val)
+    const labelKey = this.itemKey
+      .split('.')
+      .filter(isNaN)
+      .concat([this.panelName === 'options' && key])
+      .filter(Boolean)
+      .join('.')
+    inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
+      label: this.panelName !== 'options' && labelHelper(labelKey),
+    })
+    inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
+      name: `${this.fieldId}-${this.itemKey}-${key}`,
+    })
+    return inputTypeConfig
+  }
+  // get itemControls() {}
 }

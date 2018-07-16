@@ -1,30 +1,17 @@
-import { uuid, objToMap, mapToObj } from '../common/utils'
+import Data from './data'
 
-const mergeStageData = stageData => {
-  const defaultStageData = {
-    settings: {},
-    rows: [],
-  }
-  return objToMap(Object.assign({}, defaultStageData, stageData))
+const DEFAULT_DATA = {
+  settings: {},
+  children: [],
 }
 
-export const stages = new Map()
+export class StageData extends Data {
+  constructor(data) {
+    super('stages', DEFAULT_DATA)
+    this.data = data || Object.create(null)
+  }
+}
 
-export default Object.create(null, {
-  js: {
-    get() {
-      return mapToObj(stages)
-    },
-  },
-  add: {
-    value: (stageData = {}) => {
-      const { id } = stageData
-      const stageId = id || uuid()
-      stages.set(stageId, mergeStageData(stageData))
-      return stageId
-    },
-  },
-  get: {
-    value: stageId => stages.get(stageId),
-  },
-})
+const stagesData = new StageData()
+
+export default stagesData

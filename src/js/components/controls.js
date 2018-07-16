@@ -1,11 +1,12 @@
 import Sortable from 'sortablejs'
 import i18n from 'mi18n'
-import { data, formData, registeredFields as rFields } from '../common/data'
+import { data, registeredFields as rFields } from '../common/data'
 import h from '../common/helpers'
 import events from '../common/events'
 import { match, unique, uuid, closestFtype } from '../common/utils'
 import dom from '../common/dom'
 import Panels from './panels'
+import rowsData from '../data/rows'
 
 let opts = {}
 
@@ -203,7 +204,7 @@ export class Controls {
           required: false,
         },
         config: {
-          label: i18n.get('checkbox') + '/' + i18n.get('group'),
+          label: `${i18n.get('checkbox')}/${i18n.get('group')}`,
           disabledAttrs: ['type'],
         },
         meta: {
@@ -530,7 +531,7 @@ export class Controls {
       },
       action: {
         click: evt => {
-          if (formData.rows.size) {
+          if (rowsData.size) {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
@@ -542,6 +543,7 @@ export class Controls {
             })
 
             document.dispatchEvent(events.confirmClearAll)
+            rowsData.empty()
           } else {
             window.alert('There are no fields to clear')
           }
@@ -576,9 +578,8 @@ export class Controls {
           //   coords: dom.coords(evt.target),
           //   message: ''
           // };
-
           // actions.click.btn(saveEvt);
-          data.save()
+          // data.save()
         },
       },
     })

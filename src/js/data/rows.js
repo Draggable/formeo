@@ -1,34 +1,20 @@
-import { uuid, objToMap, mapToObj } from '../common/utils'
+import Data from './data'
 
-const mergeRowData = rowData => {
-  const defaultRowData = {
-    columns: [],
-    config: {
-      fieldset: false, // wrap contents of row in fieldset
-      legend: '', // Legend for fieldset
-      inputGroup: false, // is repeatable input-group?
-    }
-  }
-  return objToMap(Object.assign({}, defaultRowData, rowData))
+const DEFAULT_DATA = {
+  config: {
+    fieldset: false, // wrap contents of row in fieldset
+    legend: '', // Legend for fieldset
+    inputGroup: false, // is repeatable input-group?
+  },
+  children: [],
 }
 
-export const rows = new Map()
+export class RowData extends Data {
+  constructor() {
+    super('rows', DEFAULT_DATA)
+  }
+}
 
-export default Object.create(null, {
-  js: {
-    get() {
-      return mapToObj(rows)
-    },
-  },
-  add: {
-    value: (rowData = {}) => {
-      const { id } = rowData
-      const rowId = id || uuid()
-      rows.set(rowId, mergeRowData(rowData))
-      return rowId
-    },
-  },
-  get: {
-    value: rowId => rows.get(rowId),
-  },
-})
+const rowsData = new RowData()
+
+export default rowsData

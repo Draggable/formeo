@@ -1,14 +1,12 @@
-import { mapToObj } from '../common/utils'
-// import { Map } from 'immutable'
-// import { baseHandler } from './index'
+import Data from './data'
 
-export const settings = new Map()
+export class SettingData extends Data {
+  constructor(data) {
+    super('settings')
+    this.data = data || Object.create(null)
+  }
+}
 
-export default Object.create(null, {
-  js: {
-    get() {
-      return mapToObj(settings)
-    },
-  },
-  get: { value: key => settings.get(key) },
-})
+const settingsData = new SettingData()
+
+export default settingsData

@@ -73,7 +73,7 @@ export const objToMap = obj => {
     return obj
   }
   return Object.entries(obj).reduce((acc, [key, val]) => {
-    acc.set(key, val instanceof Object && !Array.isArray(val) ? objToMap(val) : val)
+    acc.set(key, val)
     return acc
   }, new Map())
 }
