@@ -439,7 +439,7 @@ export class Controls {
     }
 
     // Add field to the register by uuid and meta id
-    rFields[dataID] = rFields[elem.meta.id] = elem
+    rFields[elem.meta.id] = elem
     return elementControl
   }
 

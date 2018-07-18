@@ -8,44 +8,32 @@
     @media (max-width: 320px) {
       @content;
     }
-  }
-
-  @else if $point == phone-lrg {
+  } @else if $point == phone-lrg {
     // smartphones, Android phones, landscape iPhone
     @media (max-width: 481px) {
       @content;
     }
-  }
-
-  @else if $point == tablet-sm {
+  } @else if $point == tablet-sm {
     // portrait tablets, portrait iPad, e-readers (Nook/Kindle), smaller landscape Android
     @media (max-width: 641px) {
       @content;
     }
-  }
-
-  @else if $point == tablet-md {
+  } @else if $point == tablet-md {
     // tablet, landscape iPad, lo-res laptops ands desktops
     @media (max-width: 961px) {
       @content;
     }
-  }
-
-  @else if $point == tablet-lrg {
+  } @else if $point == tablet-lrg {
     // big landscape tablets, laptops, and desktops
     @media (max-width: 1025px) {
       @content;
     }
-  }
-
-  @else if $point == tablet-lrg {
+  } @else if $point == tablet-lrg {
     // hi-res laptops and desktops
     @media (max-width: 1281px) {
       @content;
     }
-  }
-
-  @else {
+  } @else {
     @media (max-width: $point) {
       @content;
     }
@@ -108,65 +96,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-%checkbox {
-  opacity: 0;
-  width: 0;
-  position: absolute;
-  display: inline-block;
-  height: auto;
-
-  + .checkable {
-    padding-left: 1.5em;
-    cursor: pointer;
-    position: relative;
-
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      display: inline-block;
-      left: 0;
-      top: 50%;
-      transform: translate(0, -50%);
-      font-size: 1em;
-      line-height: 1em;
-      color: transparent;
-      font-family: sans;
-      text-align: center;
-      width: 1em;
-      height: 1em;
-      border-radius: 2px;
-    }
-  }
-
-  + .checkable::before {
-    background: $white;
-    border: 1px solid $gray;
-  }
-
-  &:focus + .checkable::before {
-    border: 1px solid $input-focus;
-  }
-
-  + .checkable::after {
-    content: $checkbox-character;
-    background: none;
-    visibility: hidden;
-    opacity: 0;
-    font-size: 1.15em;
-    color: $black;
-  }
-
-  &:checked + .checkable {
-    &::after {
-      color: $gray;
-      background: none;
-      visibility: visible;
-      opacity: 1;
-    }
-  }
 }
 
 %element-tag {
@@ -258,8 +187,8 @@
     }
 
     svg {
-      float: right  !important;
-      margin: 0 0 0 10px  !important;
+      float: right !important;
+      margin: 0 0 0 10px !important;
     }
   }
 }
@@ -269,7 +198,7 @@
   border: 1px solid $gray;
   color: $gray-dark;
   background-color: $white;
-  padding: .5em 1em;
+  padding: 0.5em 1em;
 
   &:active {
     transform: scale(0.97);

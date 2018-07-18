@@ -306,7 +306,11 @@ class DOM {
 
     if (elem.config) {
       // const editablePreview = elem.config.editable && isPreview
-      if (((elem.config.label && tag !== 'button') || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) && !isPreview) {
+      if (
+        elem.config.label &&
+        ((elem.config.label && tag !== 'button') || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) &&
+        !isPreview
+      ) {
         const label = _this.label(elem)
 
         if (!elem.config.hideLabel) {
@@ -455,26 +459,6 @@ class DOM {
     })
   }
 
-  /**
-   * Generate a fancy checkbox or radio
-   * @param  {Object}  elem
-   * @param  {Boolean} isPreview
-   * @return {Object} checkable
-   */
-  checkbox(elem, isPreview) {
-    const label = h.get(elem, 'elem.config.label') || ''
-    const checkable = {
-      tag: 'span',
-      className: 'checkable',
-      children: label,
-    }
-
-    return {
-      tag: 'label',
-      children: [elem, checkable],
-    }
-  }
-
   generateOption = ({ type = 'option', label, value, i = 0, selected }) => {
     const isOption = type === 'option'
     return {
@@ -508,7 +492,7 @@ class DOM {
     const id = attrs.id || elem.id
 
     const optionMap = (option, i) => {
-      const {label, ...rest} = option
+      const { label, ...rest } = option
       const defaultInput = () => {
         let input = {
           tag: 'input',
@@ -517,7 +501,7 @@ class DOM {
             name: `${id}[${i}]`,
             type: fieldType,
             value: option.value || '',
-            ...rest
+            ...rest,
           },
           action,
         }
@@ -528,11 +512,6 @@ class DOM {
             inputWrap: 'form-check',
           },
           children: [option.label],
-        }
-        const checkable = {
-          tag: 'span',
-          className: 'checkable',
-          // children: option.label || '',
         }
         const inputWrap = {
           children: [optionLabel],
@@ -556,14 +535,9 @@ class DOM {
           // input.fMap = `options[${i}].selected`
           optionLabel.attrs.contenteditable = true
           // optionLabel.fMap = `options[${i}].label`
-          checkable.content = undefined
-          const checkableLabel = {
-            tag: 'label',
-            children: [input, checkable],
-          }
-          inputWrap.children.unshift(checkableLabel)
+          inputWrap.children.unshift(input)
         } else {
-          optionLabel.content = checkable
+          optionLabel.content = input
           optionLabel = dom.create(optionLabel)
           input = dom.create(input)
           optionLabel.insertBefore(input, optionLabel.firstChild)
@@ -681,12 +655,12 @@ class DOM {
     }
 
     if (this.labelAfter(elem)) {
-      const checkable = {
-        tag: 'span',
-        className: 'checkable',
-        children: labelText,
-      }
-      fieldLabel.content = checkable
+      // const checkable = {
+      //   tag: 'span',
+      //   className: 'checkable',
+      //   children: labelText,
+      // }
+      // fieldLabel.content = checkable
     }
 
     if (elem.id) {
@@ -1398,6 +1372,7 @@ class DOM {
    * @return {Object} field
    */
   addField(columnId, fieldId) {
+    console.log(registeredFields[fieldId])
     const field = new Field(registeredFields[fieldId])
     if (columnId) {
       const column = this.columns.get(columnId).column

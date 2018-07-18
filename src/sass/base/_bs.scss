@@ -32,28 +32,15 @@ select {
 
 input {
   @extend %input-style;
+  &[type='checkbox'],
+  &[type='radio'] {
+    width: auto;
+    height: auto;
+  }
 
   &[type='date'] {
     max-width: 280px;
     display: block;
-  }
-
-  &[type='checkbox'],
-  &[type='radio'] {
-    @extend %checkbox;
-  }
-
-  &[type='radio'] {
-    + .checkable::before {
-      border-radius: 50%;
-    }
-
-    &:checked + .checkable::after {
-      content: '';
-      background: $gray;
-      transform: scale(0.5) translate(0, -100%);
-      border-radius: 50%;
-    }
   }
 }
 
@@ -123,11 +110,6 @@ button {
   }
 }
 
-.f-radio,
-.f-checkbox {
-  margin-bottom: 5px;
-}
-
 .f-input-group {
   @extend %display-row;
 
@@ -168,6 +150,10 @@ button {
     &:first-child {
       border-radius: $input-border-radius 0 0 $input-border-radius;
       border-left-width: 1px;
+      &:last-child {
+        // border-right-width: 1px;
+        border-radius: $input-border-radius;
+      }
     }
 
     &:focus {

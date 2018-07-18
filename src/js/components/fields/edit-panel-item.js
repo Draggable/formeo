@@ -73,7 +73,7 @@ export default class EditPanelItem {
     this.dom = dom.create({
       tag: 'li',
       className: [`field-${itemKey.replace('.', '-')}`, 'prop-wrap'],
-      content: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
+      children: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
     })
     this.isOptions = this.panelName === 'options'
     return this.dom
@@ -82,7 +82,16 @@ export default class EditPanelItem {
   get itemInputs() {
     return {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
-      children: this.itemValues.map(([key, val]) => this.itemInput(key, val)),
+      children: this.itemValues.map(([key, val], index) => {
+        let inputConfig = this.itemInput(key, val)
+        if (!index && ['selected', 'checked'].includes(key)) {
+          inputConfig = {
+            className: 'f-addon',
+            children: inputConfig,
+          }
+        }
+        return inputConfig
+      }),
     }
   }
 

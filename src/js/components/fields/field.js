@@ -403,7 +403,7 @@ export default class Field extends Component {
             const addon = {
               tag: 'span',
               className: 'f-addon',
-              content: dom.checkbox(input),
+              content: input,
             }
             input = addon
           } else {
