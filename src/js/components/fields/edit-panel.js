@@ -1,5 +1,5 @@
 import i18n from 'mi18n'
-import dom from '../common/dom'
+import dom from '../../common/dom'
 import EditPanelItem from './edit-panel-item'
 
 /**
@@ -10,14 +10,14 @@ export default class EditPanel {
    * Set defaults and load panelData
    * @param  {Object} panelData existing field ID
    * @param  {String} panelName name of panel
-   * @param  {String} fieldId
+   * @param  {String} field
    * @return {Object} field object
    */
-  constructor(panelData, panelName, fieldId) {
-    this.type = dom.contentType(panelData)
+  constructor(panelData, panelName, field) {
+    this.type = dom.childType(panelData)
     this.data = this.type === 'object' ? Object.entries(panelData) : panelData
     this.name = panelName
-    this.fieldId = fieldId
+    this.field = field
     this.config = {
       label: i18n.get(`panelLabels.${panelName}`),
     }
@@ -68,9 +68,11 @@ export default class EditPanel {
       editGroup: this.name,
       isSortable: this.name === 'options',
       content: Array.from(this.data).map((data, index) => {
-        const itemKey = [this.name, data[0], this.type === 'array' && String(index)].filter(Boolean).join('.')
-        const itemData = this.type === 'array' ? data : { [data[0]]: data[1] }
-        return new EditPanelItem(itemKey, itemData, this.fieldId)
+        const isArray = this.type === 'array'
+        console.log(isArray)
+        const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
+        const itemData = isArray ? data : { [data[0]]: data[1] }
+        return new EditPanelItem(itemKey, itemData, this.field)
       }),
     }
     return panel

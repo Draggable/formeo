@@ -15,8 +15,10 @@ $field-outline-color: #93c54b;
 
 $input-focus: #66afe9;
 
-$prop-btn-width: 28px;
-$action-btn-width: 24px;
+$icon-size: 24px;
+
+$prop-btn-width: $icon-size;
+$action-btn-width: $icon-size;
 
 // Colors
 //

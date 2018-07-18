@@ -1,9 +1,9 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import dom from '../common/dom'
-import h from '../common/helpers'
-import { data, registeredFields as rFields } from '../common/data'
-import rowsData from '../data/rows'
+import dom from '../../common/dom'
+import h from '../../common/helpers'
+import { data, registeredFields as rFields } from '../../common/data'
+import rowsData from '../../data/rows'
 
 /**
  * Editor Row
@@ -50,6 +50,7 @@ export default class Row {
 
     dom.rows.set(this.id, { row, sortable })
     this.dom = row
+
   }
 
   get rowData() {
@@ -156,7 +157,7 @@ export default class Row {
     const formGroupContent = [columnSettingsPresetLabel, columnSettingsPresetSelect]
     const columnSettingsPreset = dom.formGroup(formGroupContent, 'row')
 
-    editWindow.content = [
+    editWindow.children = [
       inputGroupInput,
       dom.create('hr'),
       fieldSetControls,

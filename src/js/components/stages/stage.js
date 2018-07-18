@@ -1,10 +1,10 @@
 import Sortable from 'sortablejs'
 // import { fromJS } from 'immutable'
 import i18n from 'mi18n'
-import { data, registeredFields as rFields } from '../common/data'
-import h from '../common/helpers'
-import dom from '../common/dom'
-import stagesData from '../data/stages'
+import { data, registeredFields as rFields } from '../../common/data'
+import h from '../../common/helpers'
+import dom from '../../common/dom'
+import stagesData from '../../data/stages'
 
 let stageOpts = {}
 
@@ -149,7 +149,7 @@ export default class Stage {
       },
     }
 
-    config.settings.content = stageOpts.formSettings.slice()
+    config.settings.children = stageOpts.formSettings.slice()
 
     return config
   }

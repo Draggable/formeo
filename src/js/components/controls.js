@@ -12,13 +12,14 @@ let opts = {}
 
 const generateOptionConfig = (type, count = 3) =>
   Array.from({ length: count }, (v, k) => k + 1).map(i => {
+    const selectedKey = type === 'checkbox' ? 'checked' : 'selected'
     return {
       label: i18n.get('labelCount', {
         label: i18n.get(type),
         count: i,
       }),
       value: `${type}-${i}`,
-      selected: !i,
+      [selectedKey]: !i,
     }
   })
 
@@ -244,7 +245,7 @@ export class Controls {
         },
         config: {
           label: i18n.get('header'),
-          editable: true,
+          // editable: true,
           hideLabel: true,
         },
         meta: {
@@ -262,7 +263,7 @@ export class Controls {
         config: {
           label: i18n.get('paragraph'),
           hideLabel: true,
-          editable: true,
+          // editable: true,
         },
         meta: {
           group: 'html',
@@ -609,7 +610,7 @@ export class Controls {
     const groupsWrap = dom.create({
       tag: 'div',
       className: groupsWrapClasses,
-      content: _this.panels.content,
+      content: _this.panels.children,
     })
 
     const element = dom.create({
@@ -625,7 +626,7 @@ export class Controls {
 
     this.actions = {
       filter: term => {
-        const cpContent = _this.panels.content[1]
+        const cpContent = _this.panels.children[1]
         const filtering = term !== ''
         // @todo, use references instead of DOM queries
         const fields = cpContent.querySelectorAll('.field-control')

@@ -1,9 +1,9 @@
 import h from './helpers'
 import i18n from 'mi18n'
 import events from './events'
-import Row from '../components/row'
-import Column from '../components/column'
-import Field from '../components/field'
+import Row from '../components/rows/row'
+import Column from '../components/columns/column'
+import Field from '../components/fields/field'
 import animate from './animation'
 import { data, formData, registeredFields } from './data'
 import { uuid, clone, numToPercent, remove, closestFtype, mapToObj } from './utils'
@@ -11,6 +11,7 @@ import { uuid, clone, numToPercent, remove, closestFtype, mapToObj } from './uti
 import columnsData from '../data/columns'
 import rowsData from '../data/rows'
 import FormeoData from '../data'
+import Fields from '../components/fields'
 
 /**
  * General purpose markup utilities and generator.
@@ -26,7 +27,7 @@ class DOM {
     this.stages = new Map()
     this.rows = new Map()
     this.columns = new Map()
-    this.fields = new Map()
+    // this.fields = new Map()
     this.styleSheet = (() => {
       const style = document.createElement('style')
       style.setAttribute('media', 'screen')
@@ -47,7 +48,7 @@ class DOM {
     const icon = _this.icon
     const btnTemplate = {
       tag: 'button',
-      content: [],
+      children: [],
       attrs: {
         className: ['btn'],
         type: 'button',
@@ -55,7 +56,7 @@ class DOM {
     }
 
     const handle = h.merge(Object.assign({}, btnTemplate), {
-      content: [icon('move'), icon('handle')],
+      children: [icon('move'), icon('handle')],
       attrs: {
         className: ['item-handle'],
       },
@@ -65,7 +66,7 @@ class DOM {
     })
 
     const edit = h.merge(Object.assign({}, btnTemplate), {
-      content: icon('edit'),
+      children: icon('edit'),
       attrs: {
         className: ['item-edit-toggle'],
       },
@@ -90,7 +91,7 @@ class DOM {
     })
 
     const remove = h.merge(Object.assign({}, btnTemplate), {
-      content: icon('remove'),
+      children: icon('remove'),
       attrs: {
         className: ['item-remove'],
       },
@@ -108,7 +109,7 @@ class DOM {
     })
 
     const cloneItem = h.merge(Object.assign({}, btnTemplate), {
-      content: icon('copy'),
+      children: icon('copy'),
       attrs: {
         className: ['item-clone'],
       },
@@ -210,27 +211,27 @@ class DOM {
    * @param  {Boolean} isPreview generating element for preview or render?
    * @return {Object}            DOM Object
    */
-  create(elem, isPreview = false) {
+  create = (elem, isPreview = false) => {
     if (elem instanceof Map) {
       elem = mapToObj(elem)
     }
     elem = this.processTagName(elem)
     const _this = this
-    let contentType
+    let childType
     const { tag } = elem
-    const processed = []
+    const processed = ['children', 'content']
     let i
     const wrap = {
       tag: 'div',
       attrs: {},
       className: [h.get(elem, 'config.inputWrap') || 'f-field-group'],
-      content: [],
+      children: [],
       config: {},
     }
     const requiredMark = {
       tag: 'span',
       className: 'text-error',
-      content: '*',
+      children: '*',
     }
     let element = document.createElement(tag)
     const required = h.get(elem, 'attrs.required')
@@ -239,26 +240,26 @@ class DOM {
      * Object for mapping contentType to its function
      * @type {Object}
      */
-    const appendContent = {
-      string: content => {
-        element.innerHTML += content
+    const appendChildren = {
+      string: children => {
+        element.innerHTML += children
       },
-      object: content => {
-        return element.appendChild(_this.create(content))
+      object: children => {
+        return element.appendChild(_this.create(children, isPreview))
       },
-      node: content => {
-        return element.appendChild(content)
+      node: children => {
+        return element.appendChild(children)
       },
-      array: content => {
-        for (let i = 0; i < content.length; i++) {
-          contentType = _this.contentType(content[i])
-          appendContent[contentType](content[i])
+      array: children => {
+        for (let i = 0; i < children.length; i++) {
+          childType = _this.childType(children[i])
+          appendChildren[childType](children[i])
         }
       },
-      function: content => {
-        content = content()
-        contentType = _this.contentType(content)
-        appendContent[contentType](content)
+      function: children => {
+        children = children()
+        childType = _this.childType(children)
+        appendChildren[childType](children)
       },
       undefined: () => null,
     }
@@ -278,11 +279,11 @@ class DOM {
       options = this.processOptions(options, elem, isPreview)
       if (this.holdsContent(element) && tag !== 'button') {
         // mainly used for <select> tag
-        appendContent.array.call(this, options)
+        appendChildren.array.call(this, options)
         delete elem.content
       } else {
         h.forEach(options, option => {
-          wrap.content.push(_this.create(option, isPreview))
+          wrap.children.push(_this.create(option, isPreview))
         })
         if (elem.attrs.className) {
           wrap.className = elem.attrs.className
@@ -304,15 +305,9 @@ class DOM {
     }
 
     if (elem.config) {
-      const editablePreview = elem.config.editable && isPreview
-      if (elem.config.label && tag !== 'button' || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) {
-        let label
-
-        if (isPreview) {
-          label = _this.label(elem, 'config.label')
-        } else {
-          label = _this.label(elem)
-        }
+      // const editablePreview = elem.config.editable && isPreview
+      if (((elem.config.label && tag !== 'button') || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) && !isPreview) {
+        const label = _this.label(elem)
 
         if (!elem.config.hideLabel) {
           if (_this.labelAfter(elem)) {
@@ -320,32 +315,28 @@ class DOM {
             wrap.className = `f-${elem.attrs.type}`
 
             label.insertBefore(element, label.firstChild)
-            wrap.content.push(label)
+            wrap.children.push(label)
             if (required) {
-              wrap.content.push(requiredMark)
+              wrap.children.push(requiredMark)
             }
           } else {
-            wrap.content.push(label)
+            wrap.children.push(label)
             if (required) {
-              wrap.content.push(requiredMark)
+              wrap.children.push(requiredMark)
             }
-            wrap.content.push(element)
+            wrap.children.push(element)
           }
-        } else if (editablePreview) {
-          element.contentEditable = true
         }
-      } else if (editablePreview) {
-        element.contentEditable = true
       }
 
       processed.push('config')
     }
 
     // Append Element Content
-    if (elem.content) {
-      contentType = _this.contentType(elem.content)
-      appendContent[contentType].call(this, elem.content)
-      processed.push('content')
+    if (elem.content || elem.children) {
+      const children = elem.content || elem.children
+      childType = _this.childType(children)
+      appendChildren[childType].call(this, children)
     }
 
     // Set the new element's dataset
@@ -400,7 +391,7 @@ class DOM {
       element[remaining[i]] = elem[remaining[i]]
     }
 
-    if (wrap.content.length) {
+    if (wrap.children.length) {
       element = this.create(wrap)
     }
 
@@ -475,12 +466,12 @@ class DOM {
     const checkable = {
       tag: 'span',
       className: 'checkable',
-      content: label,
+      children: label,
     }
 
     return {
       tag: 'label',
-      content: [elem, checkable],
+      children: [elem, checkable],
     }
   }
 
@@ -517,21 +508,18 @@ class DOM {
     const id = attrs.id || elem.id
 
     const optionMap = (option, i) => {
+      const {label, ...rest} = option
       const defaultInput = () => {
         let input = {
           tag: 'input',
           attrs: {
-            id: id,
+            id,
             name: `${id}[${i}]`,
             type: fieldType,
             value: option.value || '',
+            ...rest
           },
           action,
-        }
-        const checkable = {
-          tag: 'span',
-          className: 'checkable',
-          content: option.label,
         }
         let optionLabel = {
           tag: 'label',
@@ -539,10 +527,15 @@ class DOM {
           config: {
             inputWrap: 'form-check',
           },
-          content: [option.label],
+          children: [option.label],
+        }
+        const checkable = {
+          tag: 'span',
+          className: 'checkable',
+          // children: option.label || '',
         }
         const inputWrap = {
-          content: [optionLabel],
+          children: [optionLabel],
           className: [`f-${fieldType}`],
         }
 
@@ -560,15 +553,15 @@ class DOM {
 
         if (isPreview) {
           input.attrs.name = `prev-${input.attrs.name}`
-          input.fMap = `options[${i}].selected`
+          // input.fMap = `options[${i}].selected`
           optionLabel.attrs.contenteditable = true
-          optionLabel.fMap = `options[${i}].label`
+          // optionLabel.fMap = `options[${i}].label`
           checkable.content = undefined
           const checkableLabel = {
             tag: 'label',
-            content: [input, checkable],
+            children: [input, checkable],
           }
-          inputWrap.content.unshift(checkableLabel)
+          inputWrap.children.unshift(checkableLabel)
         } else {
           optionLabel.content = checkable
           optionLabel = dom.create(optionLabel)
@@ -585,7 +578,7 @@ class DOM {
           return {
             tag: 'option',
             attrs: option,
-            content: option.label,
+            children: option.label,
           }
         },
         button: option => {
@@ -597,7 +590,7 @@ class DOM {
             className,
             id: id || uuid(),
             options: undefined,
-            content: label,
+            children: label,
             action: elem.action,
           })
         },
@@ -674,7 +667,7 @@ class DOM {
    */
   label(elem, fMap) {
     let {
-      config: { label: labelText },
+      config: { label: labelText = '' },
     } = elem
     if (typeof labelText === 'function') {
       labelText = labelText()
@@ -683,7 +676,7 @@ class DOM {
       tag: 'label',
       attrs: {},
       className: [],
-      content: labelText,
+      children: labelText,
       action: {},
     }
 
@@ -691,7 +684,7 @@ class DOM {
       const checkable = {
         tag: 'span',
         className: 'checkable',
-        content: labelText,
+        children: labelText,
       }
       fieldLabel.content = checkable
     }
@@ -715,7 +708,7 @@ class DOM {
    * @param  {Node | String | Array | Object} content
    * @return {String}
    */
-  contentType(content) {
+  childType(content) {
     let type = typeof content
     if (content instanceof window.Node || content instanceof window.HTMLElement) {
       type = 'node'
@@ -755,7 +748,7 @@ class DOM {
       object: () => document.getElementById(elem.id),
       string: () => document.getElementById(elem),
     }
-    const type = this.contentType(elem)
+    const type = this.childType(elem)
     const element = getElement[type]()
 
     return element
@@ -898,9 +891,9 @@ class DOM {
    */
   remove(elem) {
     const { fType, id } = elem
+
     if (fType) {
       const parent = elem.parentElement
-      console.log(elem)
 
       const pData = formData[parent.fType].get(parent.id)
       data.empty(fType, id)
@@ -908,6 +901,7 @@ class DOM {
       formData[fType].delete(id)
       remove(pData[fType], id)
     }
+    FormeoData.remove()
     return elem.parentElement.removeChild(elem)
   }
 
@@ -923,7 +917,7 @@ class DOM {
       array: elem => className.forEach(name => elem.classList.remove(name)),
     }
     removeClass.object = removeClass.string // handles regex map
-    h.forEach(nodeList, removeClass[this.contentType(className)])
+    h.forEach(nodeList, removeClass[this.childType(className)])
   }
 
   /**
@@ -937,7 +931,7 @@ class DOM {
       string: elem => elem.classList.add(className),
       array: elem => className.forEach(name => elem.classList.add(name)),
     }
-    h.forEach(nodeList, addClass[this.contentType(className)])
+    h.forEach(nodeList, addClass[this.childType(className)])
   }
 
   /**
@@ -982,14 +976,7 @@ class DOM {
       document.dispatchEvent(events.columnResized)
     })
 
-    setTimeout(() => {
-      fields.forEach(fieldId => {
-        const field = dom.fields.get(fieldId)
-        if (field.instance.panels) {
-          field.instance.panels.nav.refresh()
-        }
-      })
-    }, 250)
+    setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
 
     dom.updateColumnPreset(row)
   }
@@ -1004,7 +991,7 @@ class DOM {
     return {
       tag: 'div',
       className: ['f-field-group', className],
-      content: content,
+      children: content,
     }
   }
 
@@ -1049,7 +1036,7 @@ class DOM {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    if (rowData && rowData.columns.length) {
+    if (rowData && rowData.children.length) {
       const columns = rowData.columns
       const pMapVal = pMap.get(columns.length)
       layoutPreset.options = pMapVal || pMap.get('custom')
@@ -1139,8 +1126,7 @@ class DOM {
 
     // console.log()
 
-    const stageData = formData.getIn(['stages', stage.id])
-    console.log(stageData)
+    // const stageData = formData.getIn(['stages', stage.id])
     const rows = formData.getIn(['stages', stage.id, 'rows'])
     rows.forEach(rowId => {
       const row = this.addRow(stage.id, rowId)
@@ -1155,7 +1141,6 @@ class DOM {
    * @param  {Object} row
    */
   loadColumns(row) {
-    console.log(formData.getIn(['rows', row.id]))
     const columns = formData.getIn(['rows', row.id]).columns
     return columns.map(columnId => {
       const column = this.addColumn(row.id, columnId)
@@ -1214,13 +1199,12 @@ class DOM {
     const renderCount = document.getElementsByClassName('formeo-render').length
     const content = Object.values(renderData.stages).map(stageData => {
       const { rows: rowsData, ...stage } = stageData
-      console.log(stageData)
       const rows = rowsData.map(rowId => {
         const { columns, ...row } = renderData.rows[rowId]
         row.content = columns.map(columnId => {
           const processedCol = this.processColumnConfig(renderData.columns[columnId])
           return Object.assign({}, processedCol, {
-            content: processedCol.fields.map(fieldId => renderData.fields[fieldId]),
+            children: processedCol.fields.map(fieldId => renderData.fields[fieldId]),
           })
         })
 
@@ -1229,7 +1213,7 @@ class DOM {
           const removeButton = {
             tag: 'button',
             className: 'remove-input-group',
-            content: dom.icon('remove'),
+            children: dom.icon('remove'),
             action: {
               mouseover: ({ target }) => target.parentElement.classList.add('will-remove'),
               mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
@@ -1245,7 +1229,7 @@ class DOM {
               },
             },
           }
-          rowData.content.unshift(removeButton)
+          rowData.children.unshift(removeButton)
           const inputGroupWrap = {
             tag: 'div',
             id: uuid(),
@@ -1264,7 +1248,7 @@ class DOM {
               className: 'add-input-group btn pull-right',
               type: 'button',
             },
-            content: 'Add +',
+            children: 'Add +',
             action: {
               click: e => {
                 const fInputGroup = e.target.parentElement
@@ -1273,7 +1257,7 @@ class DOM {
             },
           }
 
-          // row.content.unshift(removeButton)
+          // row.children.unshift(removeButton)
           inputGroupWrap.content = [rowData, addButton]
           return inputGroupWrap
         }
@@ -1417,7 +1401,6 @@ class DOM {
     const field = new Field(registeredFields[fieldId])
     if (columnId) {
       const column = this.columns.get(columnId).column
-      // console.log(field.dom)
       column.appendChild(field.dom)
       data.saveFieldOrder(column)
       this.emptyClass(column)
@@ -1427,7 +1410,7 @@ class DOM {
         updateType: 'add',
         changed: 'field',
         oldValue: undefined,
-        newValue: field.fieldData,
+        newValue: field.data,
       },
     })
     document.dispatchEvent(events.formeoUpdated)

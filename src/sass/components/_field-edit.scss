@@ -1,5 +1,4 @@
 .field-edit {
-  margin-top: 23px;
   display: none;
   overflow: hidden;
 
@@ -130,9 +129,11 @@
 
   .prop-inputs {
     width: 100%;
-    display: inline-flex;
     align-items: center;
     vertical-align: bottom;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
 
     .f-field-group {
       width: 100%;

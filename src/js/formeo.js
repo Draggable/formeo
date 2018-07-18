@@ -7,7 +7,7 @@ import events from './common/events'
 import actions from './common/actions'
 import dom from './common/dom'
 import { Controls } from './components/controls'
-import Stage from './components/stage'
+import Stage from './components/stages/stage'
 import formData, {stages as stagesData} from './data'
 
 // Simple object config for the main part of formeo

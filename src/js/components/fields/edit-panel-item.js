@@ -1,8 +1,8 @@
 import i18n from 'mi18n'
-import h from '../common/helpers'
-import dom from '../common/dom'
-import fieldsData from '../data/fields'
-import animate from '../common/animation'
+import h from '../../common/helpers'
+import dom from '../../common/dom'
+// import fieldsData from '../../data/fields'
+import animate from '../../common/animation'
 
 const inputConfigBase = (key, type = 'text') => ({
   tag: 'input',
@@ -25,7 +25,7 @@ const labelHelper = key => {
 const ITEM_INPUT_TYPE_MAP = {
   string: key => inputConfigBase(key),
   boolean: key => {
-    const type = key === 'checked' ? 'checkbox' : 'radio'
+    const type = key === 'selected' ? 'radio' : 'checkbox'
     return inputConfigBase(key, type)
   },
   number: key => inputConfigBase(key, 'number'),
@@ -44,6 +44,15 @@ const ITEM_INPUT_TYPE_MAP = {
 
 const INPUT_ORDER = ['selected', 'checked']
 
+const INPUT_TYPE_ACTION = {
+  boolean: (dataKey, field) => ({
+    click: ({ target: { checked } }) => field.set(dataKey, checked),
+  }),
+  string: (dataKey, field) => ({
+    input: ({ target: { value } }) => field.set(dataKey, value),
+  }),
+}
+
 /**
  * Edit Panel Item
  */
@@ -52,29 +61,29 @@ export default class EditPanelItem {
    * Set defaults and load panelData
    * @param  {String} itemKey attribute name or options index
    * @param  {Object} itemData existing field ID
-   * @param  {String} fieldId
+   * @param  {String} field
    * @return {Object} field object
    */
-  constructor(itemKey, itemData, fieldId) {
+  constructor(itemKey, itemData, field) {
     this.itemValues = h.orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
-    this.fieldId = fieldId
+    this.field = field
     // this.data = fieldsData.get()
     this.itemKey = itemKey
     this.panelName = itemKey.substr(0, itemKey.indexOf('.'))
     this.dom = dom.create({
       tag: 'li',
       className: [`field-${itemKey.replace('.', '-')}`, 'prop-wrap'],
-      content: [this.itemInputs, this.itemControls],
+      content: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
     })
+    this.isOptions = this.panelName === 'options'
     return this.dom
   }
 
   get itemInputs() {
-    const inputs = {
-      className: 'prop-inputs f-input-group',
-      content: this.itemValues.map(([key, val]) => this.itemInput(key, val)),
+    return {
+      className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
+      children: this.itemValues.map(([key, val]) => this.itemInput(key, val)),
     }
-    return inputs
   }
 
   get itemControls() {
@@ -87,8 +96,11 @@ export default class EditPanelItem {
       action: {
         click: evt => {
           animate.slideUp(this.dom, 250, elem => {
-            fieldsData.remove(`${this.fieldId}.${this.itemKey}`)
-            console.log(fieldsData.js)
+            console.log(this.field.data.options.length)
+            console.log(this.field)
+            this.field.remove(this.itemKey)
+            console.log(this.field.data.options.length)
+            // console.log(fieldsData.js)
             dom.remove(elem)
             // console.log(delPath, delItem)
             // const fieldsData.get()
@@ -112,28 +124,56 @@ export default class EditPanelItem {
       content: dom.icon('remove'),
     }
     const controls = {
-      tag: 'div',
-      className: 'prop-controls',
+      className: `${this.panelName}-prop-controls prop-controls`,
       content: [remove],
     }
     return controls
   }
 
   itemInput(key, val) {
-    const inputTypeConfig = ITEM_INPUT_TYPE_MAP[typeof val](key, val)
-    const labelKey = this.itemKey
-      .split('.')
-      .filter(isNaN)
-      .concat([this.panelName === 'options' && key])
+    const valType = dom.childType(val)
+    const inputTypeConfig = ITEM_INPUT_TYPE_MAP[valType](key, val)
+    const { attrs: fieldAttrs = {} } = this.field.data
+    const { multiple } = fieldAttrs
+    if (multiple) {
+      inputConfigBase.attrs.type = 'checkbox'
+    }
+    const dataKey = this.itemKey.replace(/.\d+$/, index => `${index}.${key}`)
+    // const labelKey = this.itemKey
+    //   .split('.')
+    //   .filter(isNaN)
+    //   .concat([key])
+    //   .filter(Boolean)
+    //   .join('.')
+
+    // inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
+    //   label: this.panelName !== 'options' && labelHelper(labelKey),
+    // })
+    // const inputLabel = this.panelName !== 'options' && labelHelper(labelKey)
+    const name = [
+      this.field.id,
+      !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-'),
+      // key,
+      inputTypeConfig.attrs.type === 'checkbox' && '[]',
+    ]
       .filter(Boolean)
-      .join('.')
-    inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
-      label: this.panelName !== 'options' && labelHelper(labelKey),
-    })
+      .join('-')
+    console.log(key)
+    // console.log(name)
+    // console.log(this.field.id + dataKey)
+
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
-      name: `${this.fieldId}-${this.itemKey}-${key}`,
+      name,
     })
+    inputTypeConfig.action = {
+      ...INPUT_TYPE_ACTION[valType](dataKey, this.field),
+    }
+    // const inputRow = {
+    //   tag: 'td',
+    //   content: inputTypeConfig,
+    // }
+    // console.log(this.itemKey)
+
     return inputTypeConfig
   }
-  // get itemControls() {}
 }

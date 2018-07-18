@@ -1,11 +1,11 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import { data, formData, registeredFields as rFields } from '../common/data'
-import h from '../common/helpers'
-import events from '../common/events'
-import dom from '../common/dom'
-import { numToPercent } from '../common/utils'
-import columnsData from '../data/columns'
+import { data, formData, registeredFields as rFields } from '../../common/data'
+import h from '../../common/helpers'
+import events from '../../common/events'
+import dom from '../../common/dom'
+import { numToPercent } from '../../common/utils'
+import columnsData from '../../data/columns'
 
 /**
  * Setup Column elements

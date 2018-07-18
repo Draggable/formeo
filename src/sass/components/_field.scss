@@ -17,6 +17,10 @@
     border-bottom-left-radius: $input-border-radius;
   }
 
+  .prev-label {
+    line-height: $icon-size;
+  }
+
   [contenteditable] {
     padding: 1px 1px 0;
     transition: border-color 250ms;

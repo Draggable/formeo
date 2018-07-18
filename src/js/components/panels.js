@@ -2,7 +2,7 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import h from '../common/helpers'
 import dom from '../common/dom'
-import { data } from '../common/data'
+// import { data } from '../common/data'
 
 const defaults = {
   type: 'field',
@@ -19,22 +19,22 @@ export default class Panels {
    */
   constructor(options) {
     const _this = this
-    _this.opts = Object.assign({}, defaults, options)
+    this.opts = Object.assign({}, defaults, options)
 
-    _this.labels = _this.panelNav()
+    this.labels = _this.panelNav()
     const panels = _this.panelsWrap()
 
-    _this.panels = panels.childNodes
-    _this.currentPanel = _this.panels[0]
-    _this.nav = _this.navActions()
+    this.panels = panels.childNodes
+    this.currentPanel = _this.panels[0]
+    this.nav = _this.navActions()
     if (_this.opts.type === 'field') {
       setTimeout(_this.setPanelsHeight.bind(_this), 100)
     }
 
-    _this.panelDisplay = 'slider'
+    this.panelDisplay = 'slider'
 
     return {
-      content: [_this.labels, panels],
+      children: [_this.labels, panels],
       nav: _this.nav,
       actions: {
         resize: _this.resizePanels.bind(_this),
@@ -138,11 +138,11 @@ export default class Panels {
    * @param  {Object} group property group
    * @return {Object}       DOM node for updated property preview
    */
-  propertySave(group) {
-    const field = dom.fields.get(this.opts.id)
-    data.save(group.editGroup, group, false)
-    return field.instance.updatePreview()
-  }
+  // propertySave(group) {
+  //   const field = dom.fields.get(this.opts.id)
+  //   data.save(group.editGroup, group, false)
+  //   return field.instance.updatePreview()
+  // }
 
   /**
    * Panel navigation, tabs and arrow buttons for slider

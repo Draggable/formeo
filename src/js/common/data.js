@@ -8,6 +8,10 @@ import FormeoData from '../data'
 import stagesData from '../data/stages'
 import rowsData from '../data/rows'
 import columnsData from '../data/columns'
+import Fields from '../components/fields'
+
+
+const formData = {}
 
 // Object map of fields on the stage
 const _data = {}
@@ -206,7 +210,7 @@ const data = {
         }
       },
       fields: id => {
-        let field = dom.fields.get(id)
+        let field = Fields.get(id)
         if (field) {
           field = field.field
           const column = formData.getIn(['columns', field.parentElement.id])
