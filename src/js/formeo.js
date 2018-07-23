@@ -6,9 +6,10 @@ import { data } from './common/data'
 import events from './common/events'
 import actions from './common/actions'
 import dom from './common/dom'
-import { Controls } from './components/controls'
+import Controls from './components/controls'
 import Stage from './components/stages/stage'
-import formData, {stages as stagesData} from './data'
+import formData, { stages as stagesData } from './data'
+import Promise from 'promise-polyfill'
 
 // Simple object config for the main part of formeo
 const formeo = {
@@ -47,6 +48,7 @@ class Formeo {
         columns: {},
         fields: {},
       },
+      polyfills: h.detectIE(),
       i18n: {
         locale: 'en-US',
         langs: ['en-US'],
@@ -79,10 +81,12 @@ class Formeo {
             clearAllMessage: 'Are you sure you want to clear all fields?',
             close: 'Close',
             column: 'Column',
-            commonFields: 'Common Fields',
             confirmClearAll: 'Are you sure you want to remove all fields?',
             content: 'Content',
             control: 'Control',
+            'controls.groups.common.label': 'Common Fields',
+            'controls.groups.html.label': 'HTML Elements',
+            'controls.groups.layout.label': 'Layout',
             'controlGroups.nextGroup': 'Next Group',
             'controlGroups.prevGroup': 'Previous Group',
             copy: 'Copy To Clipboard',
@@ -107,14 +111,12 @@ class Formeo {
             header: 'Header',
             hidden: 'Hidden Input',
             hide: 'Edit',
-            htmlElements: 'HTML Elements',
             info: 'Info',
             'input.date': 'Date',
             'input.text': 'Text',
             label: 'Label',
             labelCount: '{label} {count}',
             labelEmpty: 'Field Label cannot be empty',
-            layout: 'Layout',
             limitRole: 'Limit access to one or more of the following roles:',
             mandatory: 'Mandatory',
             maxlength: 'Max Length',
@@ -243,8 +245,12 @@ class Formeo {
   loadResources() {
     const promises = []
 
+    // if(h.detectIE()){
+
+    // }
+
     if (opts.style) {
-      promises.push(h.ajax(opts.style, h.insertStyle))
+      h.insertStyle(opts.style)
     }
 
     // Ajax load svgSprite and inject into markup.
@@ -252,7 +258,7 @@ class Formeo {
       promises.push(h.ajax(opts.svgSprite, h.insertIcons))
     }
 
-    return window.Promise.all(promises)
+    return Promise.all(promises)
   }
 
   /**
@@ -262,9 +268,9 @@ class Formeo {
    */
   init() {
     const _this = this
-    i18n.init(opts.i18n).then(lang => {
-      _this.formID = formData.get('id')
-      formeo.controls = new Controls(opts.controls, _this.formID)
+    i18n.init(opts.i18n).then(() => {
+      _this.formId = formData.get('id')
+      formeo.controls = Controls.init(opts.controls)
       _this.stages = _this.buildStages()
       formeo.i18n = {
         setLang: formeoLocale => {
@@ -272,7 +278,7 @@ class Formeo {
           const loadLang = i18n.setCurrent(formeoLocale)
           loadLang.then(() => {
             _this.stages = _this.buildStages()
-            formeo.controls = new Controls(opts.controls, _this.formID)
+            formeo.controls = Controls.init(opts.controls)
             _this.render()
           }, console.error)
         },
@@ -308,13 +314,14 @@ class Formeo {
    */
   render() {
     const _this = this
-    const controls = formeo.controls.element
+    const controls = formeo.controls.dom
+    console.log(_this.formId)
 
     const elemConfig = {
       tag: 'div',
       attrs: {
         className: 'formeo formeo-editor',
-        id: _this.formID,
+        id: _this.formId,
       },
       content: [_this.stages, controls],
     }

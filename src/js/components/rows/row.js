@@ -2,8 +2,9 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom'
 import h from '../../common/helpers'
-import { data, registeredFields as rFields } from '../../common/data'
+import { data } from '../../common/data'
 import rowsData from '../../data/rows'
+import Controls from '../controls';
 
 /**
  * Editor Row
@@ -19,7 +20,7 @@ export default class Row {
 
     const rowConfig = {
       tag: 'li',
-      className: 'stage-rows empty-rows',
+      className: 'stage-rows empty',
       dataset: {
         hoverTag: i18n.get('row'),
         editingHoverTag: i18n.get('editing.row'),
@@ -31,26 +32,25 @@ export default class Row {
 
     const row = dom.create(rowConfig)
 
-    const sortable = Sortable.create(row, {
+    Sortable.create(row, {
       animation: 150,
-      fallbackClass: 'column-moving',
-      forceFallback: true,
+      // fallbackClass: 'column-moving',
+      // forceFallback: true,
       group: { name: 'rows', pull: true, put: ['rows', 'controls', 'columns'] },
       sort: true,
       onRemove: this.onRemove,
       onEnd: this.onEnd,
       onAdd: this.onAdd,
       onSort: this.onSort,
-      onMove: evt => {
-        console.log(evt)
-      },
+      // onMove: evt => {
+      //   console.log(evt)
+      // },
       draggable: '.stage-columns',
       filter: '.resize-x-handle',
     })
 
-    dom.rows.set(this.id, { row, sortable })
+    // dom.rows.set(this.id, { row, sortable })
     this.dom = row
-
   }
 
   get rowData() {
@@ -182,9 +182,10 @@ export default class Row {
    * Handler for removing content from a row
    * @param  {Object} evt
    */
-  onRemove(evt) {
+  onRemove = (evt) => {
     dom.columnWidths(evt.from)
     data.saveColumnOrder(evt.target)
+    console.log(evt.to)
     dom.emptyClass(evt.from)
   }
 
@@ -192,9 +193,9 @@ export default class Row {
    * Handler for removing content from a row
    * @param  {Object} evt
    */
-  onEnd(evt) {
+  onEnd = (evt) => {
     console.log('onEnd', evt)
-    if (evt.from.classList.contains('empty-rows')) {
+    if (evt.from.classList.contains('empty')) {
       dom.removeEmpty(evt.from)
     }
 
@@ -216,12 +217,12 @@ export default class Row {
     if (fromRow) {
       column = item
     } else if (fromColumn || fromControls) {
-      const meta = h.get(rFields[item.id], 'meta')
+      const meta = h.get(Controls.get(item.id), 'meta')
       if (meta.group !== 'layout') {
-        column = dom.addColumn(to.id)
-        dom.addField(column.id, item.id)
+        column = dom.addColumn(to)
+        dom.addField(column, item.id)
       } else if (meta.id === 'layout-column') {
-        dom.addColumn(to.id)
+        dom.addColumn(to)
       }
     }
 

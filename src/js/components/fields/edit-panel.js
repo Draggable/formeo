@@ -69,7 +69,6 @@ export default class EditPanel {
       isSortable: this.name === 'options',
       content: Array.from(this.data).map((data, index) => {
         const isArray = this.type === 'array'
-        console.log(isArray)
         const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
         const itemData = isArray ? data : { [data[0]]: data[1] }
         return new EditPanelItem(itemKey, itemData, this.field)

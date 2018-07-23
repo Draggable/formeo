@@ -31,7 +31,7 @@
     padding-bottom: 15px;
     overflow: visible;
 
-    &.empty-stages {
+    &.empty {
       border: 3px dashed $gray-lighter;
       background-color: $shadow;
     }
@@ -59,7 +59,7 @@
 }
 
 // element label
-[class*='empty-'] {
+[class$='empty'] {
   &[class*='editing-'] {
     &::after {
       opacity: 0;

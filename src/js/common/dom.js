@@ -5,13 +5,15 @@ import Row from '../components/rows/row'
 import Column from '../components/columns/column'
 import Field from '../components/fields/field'
 import animate from './animation'
-import { data, formData, registeredFields } from './data'
-import { uuid, clone, numToPercent, remove, closestFtype, mapToObj } from './utils'
+import { data, formData } from './data'
+import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
 // import { rows as rowsData } from '../data'
 import columnsData from '../data/columns'
 import rowsData from '../data/rows'
-import FormeoData from '../data'
+// import FormeoData from '../data'
 import Fields from '../components/fields'
+// import Columns from '../components/columns'
+import Controls from '../components/controls'
 
 /**
  * General purpose markup utilities and generator.
@@ -127,21 +129,21 @@ class DOM {
     const defaultConfig = {
       rows: {
         actionButtons: {
-          buttons: [clone(handle), edit, cloneItem, remove],
+          buttons: [handle, edit, cloneItem, remove].map(button => clone(button)),
           order: [],
           disabled: [],
         },
       },
       columns: {
         actionButtons: {
-          buttons: [clone(cloneItem), clone(handle), remove],
+          buttons: [cloneItem, handle, remove].map(button => clone(button)),
           order: [],
           disabled: [],
         },
       },
       fields: {
         actionButtons: {
-          buttons: [handle, edit, cloneItem, remove],
+          buttons: [handle, edit, cloneItem, remove].map(button => clone(button)),
           order: [],
           disabled: [],
         },
@@ -313,23 +315,30 @@ class DOM {
       ) {
         const label = _this.label(elem)
 
-        if (!elem.config.hideLabel) {
-          if (_this.labelAfter(elem)) {
-            // add check for inline checkbox
-            wrap.className = `f-${elem.attrs.type}`
+        // console.log(label)
 
-            label.insertBefore(element, label.firstChild)
-            wrap.children.push(label)
-            if (required) {
-              wrap.children.push(requiredMark)
-            }
-          } else {
-            wrap.children.push(label)
-            if (required) {
-              wrap.children.push(requiredMark)
-            }
-            wrap.children.push(element)
-          }
+        if (!elem.config.hideLabel) {
+          const wrapContent = [
+            ...(_this.labelAfter(elem) ? [element, label] : [label, element]),
+            required && requiredMark,
+          ]
+          wrap.children.push(wrapContent)
+          // if (_this.labelAfter(elem)) {
+          // add check for inline checkbox
+          // wrap.className = `f-${elem.attrs.type}`
+
+          //   label.insertBefore(element, label.firstChild)
+          //   wrap.children.push(label)
+          //   if (required) {
+          //     wrap.children.push(requiredMark)
+          //   }
+          // } else {
+          //   wrap.children.push(label)
+          //   if (required) {
+          //     wrap.children.push(requiredMark)
+          //   }
+          //   wrap.children.push(element)
+          // }
         }
       }
 
@@ -409,6 +418,7 @@ class DOM {
    *  - it forces the icon to be appended using innerHTML which helps svg render
    * @param  {String} name - icon name
    * @return {String} icon markup
+   * @todo remove document.getElementById
    */
   icon(name) {
     const iconLink = document.getElementById('icon-' + name)
@@ -654,15 +664,6 @@ class DOM {
       action: {},
     }
 
-    if (this.labelAfter(elem)) {
-      // const checkable = {
-      //   tag: 'span',
-      //   className: 'checkable',
-      //   children: labelText,
-      // }
-      // fieldLabel.content = checkable
-    }
-
     if (elem.id) {
       fieldLabel.attrs.for = elem.id
     }
@@ -674,7 +675,7 @@ class DOM {
       fieldLabel.fMap = fMap
     }
 
-    return dom.create(fieldLabel)
+    return fieldLabel
   }
 
   /**
@@ -683,14 +684,15 @@ class DOM {
    * @return {String}
    */
   childType(content) {
-    let type = typeof content
-    if (content instanceof window.Node || content instanceof window.HTMLElement) {
-      type = 'node'
-    } else if (Array.isArray(content)) {
-      type = 'array'
+    if (content === undefined) {
+      return content
     }
 
-    return type
+    return [
+      ['array', content => Array.isArray(content)],
+      ['node', content => content instanceof window.Node || content instanceof window.HTMLElement],
+      [typeof content, () => true],
+    ].find(typeCondition => typeCondition[1](content))[0]
   }
 
   /**
@@ -814,7 +816,7 @@ class DOM {
       },
       columns: () => {
         dataClone.fields = []
-        const newColumn = _this.addColumn(parent.id, dataClone.id)
+        const newColumn = _this.addColumn(parent, dataClone.id)
         parent.insertBefore(newColumn, parent.childNodes[newIndex])
         const fields = elem.getElementsByClassName('stage-fields')
 
@@ -825,7 +827,7 @@ class DOM {
         return newColumn
       },
       fields: () => {
-        const newField = _this.addField(parent.id, dataClone.id)
+        const newField = _this.addField(parent, dataClone.id)
         parent.insertBefore(newField, parent.childNodes[newIndex])
         return newField
       },
@@ -864,18 +866,6 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
-    const { fType, id } = elem
-
-    if (fType) {
-      const parent = elem.parentElement
-
-      const pData = formData[parent.fType].get(parent.id)
-      data.empty(fType, id)
-      this[fType].delete(id)
-      formData[fType].delete(id)
-      remove(pData[fType], id)
-    }
-    FormeoData.remove()
     return elem.parentElement.removeChild(elem)
   }
 
@@ -1117,7 +1107,7 @@ class DOM {
   loadColumns(row) {
     const columns = formData.getIn(['rows', row.id]).columns
     return columns.map(columnId => {
-      const column = this.addColumn(row.id, columnId)
+      const column = this.addColumn(row, columnId)
       this.loadFields(column)
       return column
     })
@@ -1129,7 +1119,7 @@ class DOM {
    */
   loadFields(column) {
     const fields = formData.getIn(['columns', column.id]).fields
-    fields.forEach(fieldId => this.addField(column.id, fieldId))
+    fields.forEach(fieldId => this.addField(column, fieldId))
     this.fieldOrderClass(column)
   }
 
@@ -1322,13 +1312,12 @@ class DOM {
 
   /**
    * Adds a Column to a row
-   * @param {String} rowId
+   * @param {DOM} row
    * @param {String} columnId
    * @return {Object} DOM element
    */
-  addColumn(rowId, columnId) {
-    const column = new Column(columnId)
-    const row = this.rows.get(rowId).row
+  addColumn(row, columnId) {
+    const column = new Column({ id: columnId })
     row.appendChild(column.dom)
     data.saveColumnOrder(row)
     this.emptyClass(row)
@@ -1337,11 +1326,11 @@ class DOM {
         updateType: 'added',
         changed: 'column',
         oldValue: undefined,
-        newValue: column.columnData,
+        newValue: column.data,
       },
     })
     document.dispatchEvent(events.formeoUpdated)
-    return column
+    return column.dom
   }
 
   /**
@@ -1367,15 +1356,14 @@ class DOM {
 
   /**
    * Adds a field to a column
-   * @param {String} columnId
+   * @param {DOM} column
    * @param {String} fieldId
-   * @return {Object} field
    */
-  addField(columnId, fieldId) {
-    console.log(registeredFields[fieldId])
-    const field = new Field(registeredFields[fieldId])
-    if (columnId) {
-      const column = this.columns.get(columnId).column
+  addField(column, fieldId) {
+    const fieldConfig = Controls.get(fieldId)
+    console.log(fieldConfig)
+    const field = new Field(fieldConfig)
+    if (column) {
       column.appendChild(field.dom)
       data.saveFieldOrder(column)
       this.emptyClass(column)
@@ -1397,12 +1385,13 @@ class DOM {
    * @param  {Object} elem
    */
   emptyClass(elem) {
-    const type = elem.fType
-    if (type) {
-      const childMap = new Map([['rows', 'columns'], ['columns', 'fields'], ['stages', 'rows']])
-      const children = elem.getElementsByClassName(`stage-${childMap.get(type)}`)
-      elem.classList.toggle(`empty-${type}`, !children.length)
-    }
+    const childMap = new Map([
+      ['stage', 'stage-rows'],
+      ['stage-rows', 'stage-columns'],
+      ['stage-columns', 'stage-fields'],
+    ])
+    const children = elem.getElementsByClassName(childMap.get(elem.classList.item(0)))
+    elem.classList.toggle('empty', !children.length)
   }
 
   /**

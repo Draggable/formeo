@@ -1,23 +1,25 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import { data, formData, registeredFields as rFields } from '../../common/data'
+import { data, formData } from '../../common/data'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { numToPercent } from '../../common/utils'
-import columnsData from '../../data/columns'
+import Controls from '../controls'
+import columns from './index'
+import Component from '../component'
 
 /**
  * Setup Column elements
  */
-export default class Column {
+export default class Column extends Component {
   /**
    * Set defaults and/or load existing columns
    * @param  {String} dataID columnId
    * @return {Object} Column config object
    */
   constructor(columnData) {
-    this.id = columnsData.add(columnData)
+    super('column', columnData)
     const _this = this
 
     const resizeHandle = {
@@ -36,7 +38,7 @@ export default class Column {
 
     const columnConfig = {
       tag: 'ul',
-      className: ['stage-columns', 'empty-columns'],
+      className: ['stage-columns', 'empty'],
       dataset: {
         hoverTag: i18n.get('column'),
       },
@@ -64,7 +66,7 @@ export default class Column {
       },
     })
 
-    const sortable = (this.sortable = Sortable.create(column, {
+    this.sortable = Sortable.create(column, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
@@ -75,10 +77,10 @@ export default class Column {
         revertClone: true,
       },
       sort: true,
-      onEnd: _this.onEnd,
-      onAdd: _this.onAdd,
-      onSort: _this.onSort,
-      onRemove: _this.onRemove,
+      onEnd: this.onEnd,
+      onAdd: this.onAdd,
+      onSort: this.onSort,
+      onRemove: this.onRemove,
       // Attempt to drag a filtered element
       onMove: evt => {
         if (evt.from !== evt.to) {
@@ -89,14 +91,11 @@ export default class Column {
         }
       },
       draggable: '.stage-fields',
-    }))
+    })
 
-    dom.columns.set(this.id, { column, sortable })
     this.dom = column
-  }
 
-  get columnData() {
-    return columnsData.get(this.id)
+    columns.add(this)
   }
 
   /**
@@ -104,7 +103,7 @@ export default class Column {
    * @param  {Object} evt sort event data
    * @return {Object} Column order, array of column ids
    */
-  onSort(evt) {
+  onSort = evt => {
     return data.saveFieldOrder(evt.target)
     // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
@@ -115,7 +114,7 @@ export default class Column {
    * @param  {Object} column
    */
   processConfig(column) {
-    const columnWidth = h.get(this.columnData, 'config.width')
+    const columnWidth = h.get(this.data, 'config.width')
     if (columnWidth) {
       column.dataset.colWidth = columnWidth
       column.style.width = columnWidth
@@ -127,27 +126,28 @@ export default class Column {
    * Event when column is added
    * @param  {Object} evt
    */
-  onAdd(evt) {
+  onAdd = evt => {
     const { from, item, to } = evt
     const fromColumn = from.fType === 'columns'
-    const fromControl = from.fType === 'controlGroup'
+    const fromControls = from.classList.contains('control-group')
+    console.dir(from)
 
-    if (fromControl) {
-      const meta = h.get(rFields[item.id], 'meta')
+    if (fromControls) {
+      const meta = h.get(Controls.get(item.id), 'meta')
       if (meta.group !== 'layout') {
-        const field = dom.addField(to.id, item.id)
-        to.insertBefore(field, to.childNodes[evt.newIndex])
+        const field = dom.addField(to, item.id)
+        to.insertBefore(field.dom, to.childNodes[evt.newIndex])
         data.saveFieldOrder(to)
         data.save('fields', to.id)
       } else {
         if (meta.id === 'layout-column') {
           const row = to.parentElement
-          dom.addColumn(row.id)
+          dom.addColumn(row)
           dom.columnWidths(row)
         }
       }
 
-      dom.remove(evt.item)
+      dom.remove(item)
       // document.dispatchEvent(events.formeoUpdated);
     }
 
@@ -168,7 +168,7 @@ export default class Column {
    * Event when field is removed from column
    * @param  {Object} evt
    */
-  onRemove(evt) {
+  onRemove = evt => {
     if (evt.from.parent) {
       dom.columnWidths(evt.from.parentElement)
       data.saveColumnOrder(evt.from.parentElement)
@@ -180,10 +180,10 @@ export default class Column {
    * Callback for when dragging ends
    * @param  {Object} evt
    */
-  onEnd(evt) {
+  onEnd = evt => {
     const { to, from } = evt
 
-    if (from.classList.contains('empty-columns')) {
+    if (from.classList.contains('empty')) {
       dom.removeEmpty(evt.from)
       return
     }
@@ -206,7 +206,7 @@ export default class Column {
    * Handle column resizing
    * @param  {Object} evt resize event
    */
-  resize(evt) {
+  resize = evt => {
     const resize = {}
     const column = evt.target.parentElement
     const sibling = column.nextSibling || column.previousSibling
@@ -255,7 +255,8 @@ export default class Column {
       if (!resize.resized) {
         return
       }
-      const columnData = h.getIn(formData, ['columns', column.id])
+      const columnData = this.data
+      // @todo
       const sibColumnData = h.getIn(formData, ['columns', sibling.id])
       const row = column.parentElement
       row.querySelector('.column-preset').value = 'custom'

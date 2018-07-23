@@ -51,6 +51,9 @@ const INPUT_TYPE_ACTION = {
   string: (dataKey, field) => ({
     input: ({ target: { value } }) => field.set(dataKey, value),
   }),
+  array: (dataKey, field) => ({
+    change: ({ target: { value } }) => field.set(dataKey, value),
+  }),
 }
 
 /**
@@ -84,7 +87,7 @@ export default class EditPanelItem {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val], index) => {
         let inputConfig = this.itemInput(key, val)
-        if (!index && ['selected', 'checked'].includes(key)) {
+        if (['selected', 'checked'].includes(key)) {
           inputConfig = {
             className: 'f-addon',
             children: inputConfig,
@@ -105,11 +108,7 @@ export default class EditPanelItem {
       action: {
         click: evt => {
           animate.slideUp(this.dom, 250, elem => {
-            console.log(this.field.data.options.length)
-            console.log(this.field)
             this.field.remove(this.itemKey)
-            console.log(this.field.data.options.length)
-            // console.log(fieldsData.js)
             dom.remove(elem)
             // console.log(delPath, delItem)
             // const fieldsData.get()
@@ -140,7 +139,8 @@ export default class EditPanelItem {
   }
 
   itemInput(key, val) {
-    const valType = dom.childType(val)
+    const valType = dom.childType(val) || 'string'
+
     const inputTypeConfig = ITEM_INPUT_TYPE_MAP[valType](key, val)
     const { attrs: fieldAttrs = {} } = this.field.data
     const { multiple } = fieldAttrs
@@ -148,28 +148,21 @@ export default class EditPanelItem {
       inputConfigBase.attrs.type = 'checkbox'
     }
     const dataKey = this.itemKey.replace(/.\d+$/, index => `${index}.${key}`)
-    // const labelKey = this.itemKey
-    //   .split('.')
-    //   .filter(isNaN)
-    //   .concat([key])
-    //   .filter(Boolean)
-    //   .join('.')
+    const labelKey = dataKey
+      .split('.')
+      .filter(isNaN)
+      .join('.')
 
-    // inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
-    //   label: this.panelName !== 'options' && labelHelper(labelKey),
-    // })
-    // const inputLabel = this.panelName !== 'options' && labelHelper(labelKey)
+    inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
+      label: this.panelName !== 'options' && labelHelper(labelKey),
+    })
     const name = [
       this.field.id,
       !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-'),
-      // key,
       inputTypeConfig.attrs.type === 'checkbox' && '[]',
     ]
       .filter(Boolean)
       .join('-')
-    console.log(key)
-    // console.log(name)
-    // console.log(this.field.id + dataKey)
 
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
       name,
@@ -177,11 +170,6 @@ export default class EditPanelItem {
     inputTypeConfig.action = {
       ...INPUT_TYPE_ACTION[valType](dataKey, this.field),
     }
-    // const inputRow = {
-    //   tag: 'td',
-    //   content: inputTypeConfig,
-    // }
-    // console.log(this.itemKey)
 
     return inputTypeConfig
   }

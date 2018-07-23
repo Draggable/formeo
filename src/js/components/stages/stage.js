@@ -1,10 +1,11 @@
 import Sortable from 'sortablejs'
 // import { fromJS } from 'immutable'
 import i18n from 'mi18n'
-import { data, registeredFields as rFields } from '../../common/data'
+import { data } from '../../common/data'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
 import stagesData from '../../data/stages'
+import Controls from '../controls'
 
 let stageOpts = {}
 
@@ -81,39 +82,42 @@ export default class Stage {
    * @return {Object} DOM element
    */
   loadStage() {
-    const _this = this
+    // const _this = this
     const stageWrap = this.dom
-    const sortable = Sortable.create(stageWrap.firstChild, {
+    Sortable.create(stageWrap.firstChild, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
-      fallbackTolerance: 0,
       group: {
         name: 'stages',
         pull: true,
         put: ['controls', 'rows', 'columns'],
       },
-      // Element is dropped into the list from another list
-      onAdd: _this.onAdd,
-      onRemove: _this.onRemove,
-      // onDrop: _this.onAdd.bind(_this),
       sort: true,
+      // Element is dropped into the list from another list
+      onAdd: this.onAdd,
+      // onRemove: this.onRemove,
+      // onDrop: _this.onAdd.bind(_this),
+      // onClone: evt => {
+      //   console.log(evt)
+      // },
       onStart: evt => {
-        dom.activeStage = _this.stage
+        // console.log(evt)
+        dom.activeStage = this.stage
       },
-      onUpdate: evt => {
-        data.saveRowOrder()
-        data.save()
-      },
-      // onSort: _this.onSort.bind(_this),
-      draggable: '.stage-rows',
+      // onUpdate: evt => {
+      //   data.saveRowOrder()
+      //   data.save()
+      // },
+      // onSort: this.onSort,
+      // draggable: '.stage-rows',
       handle: '.item-handle',
     })
 
-    dom.stages.set(this.id, {
-      stage: this.stage,
-      sortable,
-    })
+    // dom.stages.set(this.id, {
+    //   stage: this.stage,
+    // sortable,
+    // })
 
     dom.activeStage = this.stage
 
@@ -134,7 +138,7 @@ export default class Stage {
       stage: {
         tag: 'ul',
         attrs: {
-          className: ['stage', 'empty-stages'],
+          className: ['stage', 'empty'],
           id: _this.id,
         },
         fType: 'stages',
@@ -158,7 +162,7 @@ export default class Stage {
    * Callback for when a row is sorted
    * @param  {Object} evt
    */
-  onSort(evt) {
+  onSort = evt => {
     console.log('stage.js: onSort: \n', evt)
     data.save()
   }
@@ -168,9 +172,8 @@ export default class Stage {
    * @param  {Object} evt
    * @return {Object} formData
    */
-  onAdd(evt) {
-    console.log('stage.js: onAdd: \n', evt)
-    console.log(this)
+  onAdd = evt => {
+    console.log(evt)
     dom.activeStage = this.stage
     const { from, item, to } = evt
     const newIndex = h.indexOfNode(item, to)
@@ -180,16 +183,16 @@ export default class Stage {
     let column
 
     if (from.fType === 'controlGroup') {
-      const meta = rFields[item.id].meta
+      const { meta } = Controls.get(item.id)
       if (meta.group !== 'layout') {
-        column = dom.addColumn(row.id)
-        dom.addField(column.id, item.id)
+        column = dom.addColumn(row)
+        dom.addField(column, item.id)
       } else if (meta.id === 'layout-column') {
-        dom.addColumn(row.id)
+        dom.addColumn(row)
       }
       dom.remove(item)
     } else if (fromColumn) {
-      column = dom.addColumn(row.id)
+      column = dom.addColumn(row)
       column.appendChild(item)
       data.saveFieldOrder(column)
       dom.emptyClass(column)
@@ -211,7 +214,7 @@ export default class Stage {
    * @param  {Object} evt
    * @return {Object} formData
    */
-  onRemove(evt) {
+  onRemove = evt => {
     return data.save()
   }
 

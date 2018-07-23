@@ -13,7 +13,7 @@ export const columns = ColumnData.data
 export const fields = FieldData.data
 
 const DEFAULT_DATA = {
-  id: uuid,
+  id: uuid(),
   settings,
   stages,
   rows,

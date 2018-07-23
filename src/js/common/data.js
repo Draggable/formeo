@@ -17,11 +17,6 @@ const formData = {}
 const _data = {}
 // let formData
 
-// Registered fields are the fields that are configured on init.
-// This variable acts as a data buffer thats contains
-// the configurations for a field's final view.
-const registeredFields = {}
-
 const sessionFormData = () => {
   if (window.sessionStorage && _data.opts.sessionStorage) {
     return window.sessionStorage.getItem('formData')
@@ -273,4 +268,4 @@ const data = {
   },
 }
 
-export { data, formData, registeredFields }
+export { data, formData }

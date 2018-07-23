@@ -26,9 +26,27 @@ const formeoOpts = {
           className: 'custom-email',
           type: 'email',
         },
-        conditions: {
-          logical: ['AND', 'OR', 'NOT']
-        }
+        conditions: [
+          {
+            if: [
+              { source: 'emailControl.value', comparison: '⊃', target: 'surefyre.com' },
+              'OR',
+              { source: 'emailControl.value', comparison: '!^=', target: 'kevin' },
+            ],
+            then: [
+              {
+                attr: {
+                  required: true,
+                },
+              },
+              {
+                config: {
+                  isVisible: true,
+                },
+              },
+            ],
+          },
+        ],
       },
       //     {
       //   tag: 'input',
@@ -94,6 +112,7 @@ const formeoOpts = {
     // onSave: console.log
   },
   svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
+  style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options'],

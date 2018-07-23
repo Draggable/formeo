@@ -2,10 +2,69 @@
 import dom from './dom'
 import { unique } from './utils'
 import set from 'lodash/set'
+import merge from 'lodash/merge'
 
 // eslint-disable-next-line
 const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g
 const reEscapeChar = /\\(\\)?/g
+
+const loaded = {
+  js: [],
+  css: [],
+}
+
+export const insertScript = src => {
+  return new Promise((resolve, reject) => {
+    if (loaded.js.includes(src)) {
+      return resolve(src)
+    }
+
+    // Create script element and set attributes
+    const script = dom.create({
+      tag: 'script',
+      attrs: {
+        type: 'text/javascript',
+        async: true,
+        src: `//${this.src}`,
+      },
+      action: {
+        load: () => {
+          loaded.js.push(src)
+          resolve(src)
+        },
+        error: () => reject(new Error(`${this.src} failed to load.`)),
+      },
+    })
+
+    // Append the script to the DOM
+    const el = document.getElementsByTagName('script')[0]
+    el.parentNode.insertBefore(script, el)
+
+    // Resolve the promise once the script is loaded
+    // script.addEventListener('load', )
+
+    // Catch any errors while loading the script
+    // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
+  })
+}
+
+export const insertStyle = src => {
+  return new Promise((resolve, reject) => {
+    const formeoStyle = dom.create({
+      tag: 'link',
+      attrs: {
+        rel: 'preload',
+        href: src,
+        as: 'style',
+        onload: "this.onload=null;this.rel='stylesheet'",
+      },
+    })
+
+    document.head.appendChild(formeoStyle)
+
+    resolve(src)
+  })
+}
 
 const stringToPath = function(string) {
   let result = []
@@ -25,7 +84,7 @@ const stringToPath = function(string) {
   return result
 }
 
-const helpers = {
+export const helpers = {
   /**
    * Convert camelCase into lowercase-hyphen
    *
@@ -47,8 +106,43 @@ const helpers = {
 
     return safeAttr[name] || helpers.hyphenCase(name)
   },
+  insertScript: src => {
+    return new Promise((resolve, reject) => {
+      if (loaded.js.includes(src)) {
+        return resolve(src)
+      }
+
+      // Create script element and set attributes
+      const script = dom.create({
+        tag: 'script',
+        attrs: {
+          type: 'text/javascript',
+          async: true,
+          src: `//${this.src}`,
+        },
+        action: {
+          load: () => {
+            loaded.js.push(src)
+            resolve(src)
+          },
+          error: () => reject(new Error(`${this.src} failed to load.`)),
+        },
+      })
+
+      // Append the script to the DOM
+      const el = document.getElementsByTagName('script')[0]
+      el.parentNode.insertBefore(script, el)
+
+      // Resolve the promise once the script is loaded
+      // script.addEventListener('load', )
+
+      // Catch any errors while loading the script
+      // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
+    })
+  },
+  insertStyle,
   ajax: (file, callback) => {
-    return new window.Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
       const xhr = new window.XMLHttpRequest()
       xhr.open('GET', file, true)
       xhr.onload = function() {
@@ -56,17 +150,11 @@ const helpers = {
           callback(xhr)
           resolve(xhr.response)
         } else {
-          reject({
-            status: this.status,
-            statusText: xhr.statusText,
-          })
+          reject(new Error(`status: ${this.status}: ${xhr.statusText}`))
         }
       }
       xhr.onerror = function() {
-        reject({
-          status: this.status,
-          statusText: xhr.statusText,
-        })
+        reject(new Error(`status: ${this.status}: ${xhr.statusText}`))
       }
       xhr.send()
     })
@@ -86,13 +174,6 @@ const helpers = {
       document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
     }
   },
-  insertStyle: response => {
-    const formeoStyle = dom.create({
-      tag: 'style',
-      content: response.responseText,
-    })
-    document.head.appendChild(formeoStyle)
-  },
   capitalize: str => {
     return str.replace(/\b\w/g, function(m) {
       return m.toUpperCase()
@@ -108,7 +189,7 @@ const helpers = {
       callback.call(scope, array[i], i)
     }
   },
-  // Expensive recursive Object.assign
+  // Expensive recursive object copy
   copyObj: obj => {
     return window.JSON.parse(window.JSON.stringify(obj))
   },
@@ -165,30 +246,7 @@ const helpers = {
    * @param  {Object} obj2
    * @return {Object}      merged object
    */
-  merge: (obj1, obj2) => {
-    const mergedObj = Object.assign({}, obj1, obj2)
-    for (const prop in obj2) {
-      if (mergedObj.hasOwnProperty(prop)) {
-        if (Array.isArray(obj2[prop])) {
-          // eslint-disable-next-line
-          if (obj1) {
-            if (Array.isArray(obj1[prop])) {
-              mergedObj[prop] = obj1[prop].concat(obj2[prop])
-            } else {
-              mergedObj[prop] = obj2[prop]
-            }
-          } else {
-            mergedObj[prop] = obj2[prop]
-          }
-        } else if (typeof obj2[prop] === 'object') {
-          mergedObj[prop] = helpers.merge(obj1[prop], obj2[prop])
-        } else {
-          mergedObj[prop] = obj2[prop]
-        }
-      }
-    }
-    return mergedObj
-  },
+  merge,
 
   /**
    * Orders an array of objects by specific attribute
@@ -205,26 +263,16 @@ const helpers = {
 
     return unique(orderedElements)
   },
-
-  /**
-   * Hide or show an Array or HTMLCollection of elements
-   * @param  {Array} elems
-   * @param  {String} term  match textContent to this term
-   * @return {Array}        filtered elements
-   */
-  toggleElementsByStr: (elems, term) => {
-    const filteredElems = []
-    helpers.forEach(elems, elem => {
-      const txt = elem.textContent.toLowerCase()
-      if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elem.style.display = 'block'
-        filteredElems.push(elem)
-      } else {
-        elem.style.display = 'none'
-      }
-    })
-
-    return filteredElems
+  detectIE: () => {
+    let isIE = false // innocent until proven guilty
+    const ua = window.navigator.userAgent
+    const msie = ua.indexOf('MSIE ')
+    if (msie > 0) {
+      // IE 10 or older => return version number
+      isIE = true
+    }
+    // other browser
+    return isIE
   },
 }
 

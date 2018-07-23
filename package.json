@@ -130,6 +130,7 @@
     "mocha": "^5.1.1",
     "node-sass": "^4.9.0",
     "postcss-loader": "^2.1.4",
+    "promise-polyfill": "^8.0.0",
     "replace-in-file": "^3.4.0",
     "sass-loader": "^7.0.1",
     "semver": "^5.5.0",

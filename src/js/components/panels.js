@@ -2,6 +2,7 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import h from '../common/helpers'
 import dom from '../common/dom'
+import Fields from './fields'
 // import { data } from '../common/data'
 
 const defaults = {
@@ -36,7 +37,7 @@ export default class Panels {
     return {
       children: [_this.labels, panels],
       nav: _this.nav,
-      actions: {
+      action: {
         resize: _this.resizePanels.bind(_this),
       },
     }
@@ -63,7 +64,7 @@ export default class Panels {
    * Set panel height so we can animate it with css
    */
   setPanelsHeight() {
-    const field = document.getElementById(this.opts.id)
+    const field = Fields.get(this.opts.id).dom
     this.slideToggle = field.querySelector('.field-edit')
 
     // temp styles
