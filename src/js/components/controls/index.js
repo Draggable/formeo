@@ -143,11 +143,7 @@ const defaultElements = [
  *
  */
 export class Controls {
-  /**
-   * Setup defaults and return Controls DOM
-   * @param  {Object} controlOptions
-   */
-  constructor(controlOptions) {
+  constructor() {
     const _this = this
     this.data = new Map()
     this.defaults = {
@@ -156,17 +152,17 @@ export class Controls {
       groups: [
         {
           id: 'layout',
-          label: 'controls.groups.layout.label',
+          label: 'controls.groups.layout',
           elementOrder: ['row', 'column'],
         },
         {
           id: 'common',
-          label: 'controls.groups.common.label',
+          label: 'controls.groups.common',
           elementOrder: ['button', 'checkbox'],
         },
         {
           id: 'html',
-          label: 'controls.groups.html.label',
+          label: 'controls.groups.html',
           elementOrder: ['header', 'block-text'],
         },
       ],
@@ -222,8 +218,9 @@ export class Controls {
   registerControls() {
     this.controls = this.options.elements.map(Element => {
       const control = typeof Element === 'function' ? new Element() : new Control(Element)
-      const { meta, config } = control
-      // console.log(Element instanceof Control)
+      const {
+        controlData: { meta, config },
+      } = control
       const { id: controlId } = this.add(control)
       const button = {
         tag: 'button',
@@ -244,7 +241,7 @@ export class Controls {
     return this.controls
   }
 
-  controlLabel = key => i18n.get(key) || key || ''
+  groupLabel = key => i18n.get(key) || key || ''
 
   /**
    * Group elements into their respective control group
@@ -273,9 +270,11 @@ export class Controls {
         },
         fType: 'controlGroup',
         config: {
-          label: this.controlLabel(groups[i].label),
+          label: this.groupLabel(groups[i].label),
         },
       }
+
+      console.log(this.groupLabel(groups[i].label))
 
       // Apply order to elements
       if (this.options.elementOrder[groups[i].id]) {
@@ -291,7 +290,7 @@ export class Controls {
        * @return {Array}        Filtered array of Field config objects
        */
       group.content = elements.filter(control => {
-        const field = this.get(control.id)
+        const { controlData: field } = this.get(control.id)
         const fieldId = field.meta.id || ''
         const filters = [
           match(fieldId, this.options.disable.elements),
@@ -331,19 +330,20 @@ export class Controls {
    * @return {Object} form action buttons config
    */
   formActions() {
-    const btnTemplate = {
+    const btnTemplate = ({ content, title }) => ({
       tag: 'button',
       attrs: {
         type: 'button',
+        title,
       },
-    }
+      content,
+    })
 
-    const clearBtn = helpers.merge(btnTemplate, {
-      content: [dom.icon('bin'), i18n.get('clear')],
+    console.log(i18n.get('clear'))
+
+    const clearBtn = {
+      ...btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
-      attrs: {
-        title: i18n.get('clearAll'),
-      },
       action: {
         click: evt => {
           if (rowsData.size) {
@@ -364,7 +364,7 @@ export class Controls {
           }
         },
       },
-    })
+    }
     // let settingsBtn = h.merge(btnTemplate, {
     //   content: [dom.icon('settings'), i18n.get('settings')],
     //   attrs: {
@@ -379,11 +379,8 @@ export class Controls {
     //     }
     //   }
     // });
-    const saveBtn = helpers.merge(btnTemplate, {
-      content: [dom.icon('floppy-disk'), i18n.get('save')],
-      attrs: {
-        title: i18n.get('save'),
-      },
+    const saveBtn = {
+      ...btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
       className: ['save-form'],
       action: {
         click: evt => {
@@ -397,7 +394,7 @@ export class Controls {
           // data.save()
         },
       },
-    })
+    }
     const formActions = {
       tag: 'div',
       className: 'form-actions f-btn-group',
@@ -413,9 +410,9 @@ export class Controls {
    * @return {DOM}
    */
   buildDOM() {
-    if (this.dom) {
-      return this.dom
-    }
+    // if (this.dom) {
+    //   return this.dom
+    // }
     const _this = this
     const groupedFields = this.groupElements()
     const formActions = this.formActions()
@@ -530,7 +527,7 @@ export class Controls {
    */
   addElement(id) {
     const row = dom.addRow()
-    const meta = helpers.get(this.get(id), 'meta')
+    const meta = helpers.get(this.get(id), 'controlData.meta')
     if (meta.group !== 'layout') {
       const column = dom.addColumn(row)
       dom.addField(column, id)

@@ -1,4 +1,3 @@
-import Promise from 'promise-polyfill'
 import { insertScript, insertStyle } from '../../common/loaders'
 
 const LOADER_MAP = {
@@ -7,21 +6,18 @@ const LOADER_MAP = {
 }
 
 export default class Control {
-  constructor(config = {}) {
-    const { events = {}, dependencies = {}, ...restConfig } = config
-    this.config = restConfig
+  constructor({ events = {}, dependencies = {}, ...restConfig } = {}) {
+    // const { events = {}, dependencies = {}, ...restConfig } = config
     this.events = events
+    this.controlData = restConfig
 
-    Object.entries(restConfig).forEach(([key, val]) => {
-      this[key] = val
-    })
+    // Object.entries(restConfig).forEach(([key, val]) => {
+    //   this[key] = val
+    // })
 
-    this.fetchDependencies(dependencies)
+    this.depsLoaded = this.fetchDependencies(dependencies)
   }
 
-  onRender(fld) {
-    this.config.onRender()
-  }
   onRenderPreview() {}
 
   fetchDependencies(dependencies, cache = true) {
@@ -47,19 +43,13 @@ export default class Control {
         // check for a class render event - default to an empty function
         const onRender = () => {
           if (this.onRender) {
-            this.onRender()
+            this.onRender(evt)
           }
         }
 
-        // check for any css & javascript to include
-        // if (this.css) {
-        //   utils.getStyles(this.css)
-        // }
-        // if (this.js && !utils.isCached(this.js)) {
-        //   utils.getScripts(this.js).done(onRender)
-        // } else {
-        //   onRender()
-        // }
+        this.depsLoaded.then(() => {
+          onRender(evt)
+        })
       },
     }
     return eventType ? events[eventType] : events
@@ -73,5 +63,33 @@ export default class Control {
     const escapeElement = document.createElement('textarea')
     escapeElement.innerHTML = html
     return escapeElement.textContent
+  }
+
+  /**
+   * Retrieve a translated string
+   * By default looks for translations defined against the class (for plugin controls)
+   * Expects {locale1: {type: label}, locale2: {type: label}}, or {default: label}, or {local1: label, local2: label2}
+   * @param {String} lookup string to retrieve the label / translated string for
+   * @param {Object|Number|String} args - string or key/val pairs for string lookups with variables
+   * @return {String} the translated label
+   */
+  static i18n(lookup, args) {
+    const def = this.definition
+    let i18n = def.i18n || {}
+    const locale = i18n.locale
+    i18n = i18n[locale] || i18n.default || i18n
+
+    // if translation is defined in the control, return it
+    const value = typeof i18n === 'object' ? i18n[lookup] : i18n
+    if (value) {
+      return value
+    }
+
+    // otherwise check the i18n object - allow for mapping a lookup to a custom mi18n lookup
+    let mapped = def.i18n
+    if (typeof mapped === 'object') {
+      mapped = mapped[lookup]
+    }
+    return i18n.get(mapped, args)
   }
 }

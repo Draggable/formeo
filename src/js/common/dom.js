@@ -1360,9 +1360,8 @@ class DOM {
    * @param {String} fieldId
    */
   addField(column, fieldId) {
-    const fieldConfig = Controls.get(fieldId)
-    console.log(fieldConfig)
-    const field = new Field(fieldConfig)
+    const { controlData } = Controls.get(fieldId)
+    const field = new Field(controlData)
     if (column) {
       column.appendChild(field.dom)
       data.saveFieldOrder(column)

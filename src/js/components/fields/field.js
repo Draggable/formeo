@@ -50,8 +50,6 @@ export default class Field extends Component {
       },
     }
 
-    console.log(this.label)
-
     field = dom.create(field)
 
     this.preview = dom.create(this.fieldPreview())
@@ -61,7 +59,7 @@ export default class Field extends Component {
   }
 
   get label() {
-    console.log(this.data.config)
+    // console.log(this.data.config)
     return {
       tag: 'label',
       attrs: {
@@ -598,6 +596,7 @@ export default class Field extends Component {
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events']
     const fieldData = this.data
+    console.log(fieldData)
     const allowedPanels = Object.keys(this.data).filter(elem => {
       return !h.inArray(elem, noPanels)
     })
@@ -611,7 +610,6 @@ export default class Field extends Component {
       const propType = dom.childType(panelData)
       if (editable.includes(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
-        console.log(panelData, panelName, this)
         panels.push(editPanel)
       }
     })

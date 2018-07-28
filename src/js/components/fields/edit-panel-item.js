@@ -1,7 +1,6 @@
 import i18n from 'mi18n'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
-// import fieldsData from '../../data/fields'
 import animate from '../../common/animation'
 
 const inputConfigBase = (key, type = 'text') => ({
@@ -34,10 +33,10 @@ const ITEM_INPUT_TYPE_MAP = {
     attrs: {
       placeholder: labelHelper(`placeholder.${key}`),
     },
-    options: vals.map(val => ({
-      label: val,
-      value: val,
-      selected: false,
+    options: vals.map(({ label, value, selected }) => ({
+      label,
+      value,
+      selected,
     })),
   }),
 }
@@ -49,6 +48,9 @@ const INPUT_TYPE_ACTION = {
     click: ({ target: { checked } }) => field.set(dataKey, checked),
   }),
   string: (dataKey, field) => ({
+    input: ({ target: { value } }) => field.set(dataKey, value),
+  }),
+  number: (dataKey, field) => ({
     input: ({ target: { value } }) => field.set(dataKey, value),
   }),
   array: (dataKey, field) => ({
@@ -167,6 +169,7 @@ export default class EditPanelItem {
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
       name,
     })
+
     inputTypeConfig.action = {
       ...INPUT_TYPE_ACTION[valType](dataKey, this.field),
     }

@@ -7,7 +7,7 @@ export const checkboxGroup = {
     required: false,
   },
   config: {
-    label: 'controls.checkbox.group',
+    label: 'controls.checkbox-group',
     disabledAttrs: ['type'],
   },
   meta: {

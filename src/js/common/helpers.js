@@ -48,24 +48,6 @@ export const insertScript = src => {
   })
 }
 
-export const insertStyle = src => {
-  return new Promise((resolve, reject) => {
-    const formeoStyle = dom.create({
-      tag: 'link',
-      attrs: {
-        rel: 'preload',
-        href: src,
-        as: 'style',
-        onload: "this.onload=null;this.rel='stylesheet'",
-      },
-    })
-
-    document.head.appendChild(formeoStyle)
-
-    resolve(src)
-  })
-}
-
 const stringToPath = function(string) {
   let result = []
   if (Array.isArray(string)) {
@@ -140,40 +122,6 @@ export const helpers = {
       // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
     })
   },
-  insertStyle,
-  ajax: (file, callback) => {
-    return new Promise(function(resolve, reject) {
-      const xhr = new window.XMLHttpRequest()
-      xhr.open('GET', file, true)
-      xhr.onload = function() {
-        if (this.status >= 200 && this.status < 300) {
-          callback(xhr)
-          resolve(xhr.response)
-        } else {
-          reject(new Error(`status: ${this.status}: ${xhr.statusText}`))
-        }
-      }
-      xhr.onerror = function() {
-        reject(new Error(`status: ${this.status}: ${xhr.statusText}`))
-      }
-      xhr.send()
-    })
-  },
-  insertIcons: response => {
-    const id = 'formeo-sprite'
-    const iconSpriteWrap = dom.create({
-      tag: 'div',
-      content: response.responseText,
-      id,
-    })
-    iconSpriteWrap.style.display = 'none'
-    const existingSprite = document.getElementById(id)
-    if (existingSprite) {
-      existingSprite.parentElement.replaceChild(iconSpriteWrap, existingSprite)
-    } else {
-      document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
-    }
-  },
   capitalize: str => {
     return str.replace(/\b\w/g, function(m) {
       return m.toUpperCase()
@@ -246,7 +194,14 @@ export const helpers = {
    * @param  {Object} obj2
    * @return {Object}      merged object
    */
-  merge,
+  merge: (obj1, obj2) => {
+    const customizer = (objValue, srcValue) => {
+      if (Array.isArray(objValue)) {
+        return unique(objValue.concat(srcValue))
+      }
+    }
+    return merge(obj1, obj2, customizer)
+  },
 
   /**
    * Orders an array of objects by specific attribute

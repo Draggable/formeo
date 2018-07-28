@@ -19,6 +19,7 @@ cannotBeEmpty = This field cannot be empty
 checkbox = Checkbox
 checkboxes = Checkboxes
 checkboxGroup = Checkbox Group
+controls.checkbox-group = Checkbox Group
 class = Class
 clear = Clear
 clearAllMessage = Are you sure you want to clear all fields?

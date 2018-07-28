@@ -1,4 +1,3 @@
-import i18n from 'mi18n'
 import Control from '../control'
 
 const headerTags = Array.from(Array(5).keys())
@@ -26,16 +25,27 @@ export const header = {
     icon: headerKey,
     id: headerKey,
   },
-  content: i18n.get('headerKey'),
+  // content: i18n.get('headerKey'),
 }
 
 class headerControl extends Control {
   constructor() {
-    super('header', header)
-    return header
+    super(header)
   }
-  get content(){
-    return this.attrs.value
+  /**
+   * class configuration
+   */
+  static get definition() {
+    return {
+      // i18n custom mappings (defaults to camelCase type)
+      i18n: {
+        header: 'Header222',
+      },
+    }
+  }
+
+  get content() {
+    return super.i18n('header')
   }
 }
 

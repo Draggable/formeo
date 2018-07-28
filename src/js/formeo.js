@@ -9,7 +9,8 @@ import dom from './common/dom'
 import Controls from './components/controls'
 import Stage from './components/stages/stage'
 import formData, { stages as stagesData } from './data'
-import Promise from 'promise-polyfill'
+import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
+import 'es6-promise/auto'
 
 // Simple object config for the main part of formeo
 const formeo = {
@@ -48,11 +49,11 @@ class Formeo {
         columns: {},
         fields: {},
       },
-      polyfills: h.detectIE(),
+      polyfills: h.detectIE(), // loads csspreloadrel
       i18n: {
         locale: 'en-US',
         langs: ['en-US'],
-        preloaded: {
+        override: {
           'en-US': {
             'action.add.attrs.attr': 'What attribute would you like to add?',
             'action.add.attrs.value': 'Default Value',
@@ -84,9 +85,9 @@ class Formeo {
             confirmClearAll: 'Are you sure you want to remove all fields?',
             content: 'Content',
             control: 'Control',
-            'controls.groups.common.label': 'Common Fields',
-            'controls.groups.html.label': 'HTML Elements',
-            'controls.groups.layout.label': 'Layout',
+            'controls.groups.common': 'Common Fields',
+            'controls.groups.html': 'HTML Elements',
+            'controls.groups.layout': 'Layout',
             'controlGroups.nextGroup': 'Next Group',
             'controlGroups.prevGroup': 'Previous Group',
             copy: 'Copy To Clipboard',
@@ -245,17 +246,17 @@ class Formeo {
   loadResources() {
     const promises = []
 
-    // if(h.detectIE()){
-
-    // }
+    if (opts.polyfills) {
+      loadPolyfills(opts.polysfills)
+    }
 
     if (opts.style) {
-      h.insertStyle(opts.style)
+      promises.push(insertStyle(opts.style))
     }
 
     // Ajax load svgSprite and inject into markup.
     if (opts.svgSprite) {
-      promises.push(h.ajax(opts.svgSprite, h.insertIcons))
+      promises.push(ajax(opts.svgSprite, insertIcons))
     }
 
     return Promise.all(promises)
@@ -271,13 +272,13 @@ class Formeo {
     i18n.init(opts.i18n).then(() => {
       _this.formId = formData.get('id')
       formeo.controls = Controls.init(opts.controls)
-      _this.stages = _this.buildStages()
+      _this.stages = _this.build()
       formeo.i18n = {
         setLang: formeoLocale => {
           window.sessionStorage.setItem('formeo-locale', formeoLocale)
           const loadLang = i18n.setCurrent(formeoLocale)
-          loadLang.then(() => {
-            _this.stages = _this.buildStages()
+          loadLang.then(lang => {
+            _this.stages = _this.build()
             formeo.controls = Controls.init(opts.controls)
             _this.render()
           }, console.error)
@@ -294,7 +295,7 @@ class Formeo {
    * Generate the stages we will drag out elements to
    * @return {Object} stages map
    */
-  buildStages() {
+  build() {
     const stages = []
     const createStage = stageData => new Stage(stageData)
     if (stagesData.size) {
@@ -315,7 +316,6 @@ class Formeo {
   render() {
     const _this = this
     const controls = formeo.controls.dom
-    console.log(_this.formId)
 
     const elemConfig = {
       tag: 'div',
