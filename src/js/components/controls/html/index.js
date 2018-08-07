@@ -1,3 +1,5 @@
-import header from './header'
+import HeaderControl from './header'
+import ParagraphControl from './paragraph'
+import HRControl from './hr'
 
-export default [header]
+export default [HeaderControl, ParagraphControl, HRControl]

@@ -1,5 +1,5 @@
 node_modules
 npm-debug.log
 demo/assets/**/*.map
-dist/**/*.map
+dist/
 yarn-error.log

@@ -7,28 +7,24 @@
 @import 'components/panels';
 
 .stage-wrap {
-  position: relative;
-  float: left;
-  width: calc(74% - 5px);
   box-sizing: border-box;
   transition: width 250ms;
   margin-right: 5px;
+  flex: 1 1 auto;
 
   @include breakpoint('phone-lrg') {
     width: calc(100% - 50px);
   }
 
-
   .stage {
     @extend %no-list-style;
-
-    min-height: 450px;
+    position: relative;
     transition-property: background-color, border-color;
     transition-duration: 500ms, 333ms;
     border: 0 dashed transparent;
     background-color: $stage-background;
     padding-left: $action-btn-width - 1;
-    padding-bottom: 15px;
+    padding-bottom: 0;
     overflow: visible;
 
     &.empty {

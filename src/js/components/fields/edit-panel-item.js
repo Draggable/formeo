@@ -3,10 +3,11 @@ import h from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
 
-const inputConfigBase = (key, type = 'text') => ({
+const inputConfigBase = ({ key, value, type = 'text' }) => ({
   tag: 'input',
   attrs: {
     type,
+    value,
     placeholder: labelHelper(`placeholder.${key}`),
   },
   config: {},
@@ -22,12 +23,12 @@ const labelHelper = key => {
 }
 
 const ITEM_INPUT_TYPE_MAP = {
-  string: key => inputConfigBase(key),
-  boolean: key => {
+  string: (key, val) => inputConfigBase({ key, value: val }),
+  boolean: (key, val) => {
     const type = key === 'selected' ? 'radio' : 'checkbox'
-    return inputConfigBase(key, type)
+    return inputConfigBase({ key, value: val, type })
   },
-  number: key => inputConfigBase(key, 'number'),
+  number: (key, val) => inputConfigBase({ key, value: val, type: 'number' }),
   array: (key, vals) => ({
     tag: 'select',
     attrs: {
@@ -45,16 +46,28 @@ const INPUT_ORDER = ['selected', 'checked']
 
 const INPUT_TYPE_ACTION = {
   boolean: (dataKey, field) => ({
-    click: ({ target: { checked } }) => field.set(dataKey, checked),
+    click: ({ target: { checked } }) => {
+      field.set(dataKey, checked)
+      field.updatePreview()
+    },
   }),
   string: (dataKey, field) => ({
-    input: ({ target: { value } }) => field.set(dataKey, value),
+    input: ({ target: { value } }) => {
+      field.set(dataKey, value)
+      field.updatePreview()
+    },
   }),
   number: (dataKey, field) => ({
-    input: ({ target: { value } }) => field.set(dataKey, value),
+    input: ({ target: { value } }) => {
+      field.set(dataKey, value)
+      field.updatePreview()
+    },
   }),
   array: (dataKey, field) => ({
-    change: ({ target: { value } }) => field.set(dataKey, value),
+    change: ({ target: { value } }) => {
+      field.set(dataKey, value)
+      field.updatePreview()
+    },
   }),
 }
 
@@ -72,7 +85,6 @@ export default class EditPanelItem {
   constructor(itemKey, itemData, field) {
     this.itemValues = h.orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
     this.field = field
-    // this.data = fieldsData.get()
     this.itemKey = itemKey
     this.panelName = itemKey.substr(0, itemKey.indexOf('.'))
     this.dom = dom.create({
@@ -80,7 +92,6 @@ export default class EditPanelItem {
       className: [`field-${itemKey.replace('.', '-')}`, 'prop-wrap'],
       children: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
     })
-    this.isOptions = this.panelName === 'options'
     return this.dom
   }
 

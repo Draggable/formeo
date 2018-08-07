@@ -123,6 +123,7 @@
   text-align: left;
   background: $white;
   user-select: none;
+  overflow: hidden;
 
   &.control-moving {
     border-radius: $border-radius;
@@ -167,18 +168,12 @@
     }
   }
 
-  svg,
-  .glyphicon {
+  .control-icon {
     float: left;
     margin-right: 10px;
-  }
-
-  .glyphicon {
-    display: inline-block;
     text-align: center;
-    width: 24px;
-    height: 24px;
-    line-height: 20px;
+    width: $icon-size;
+    height: $icon-size;
   }
 
   [dir='rtl'] & {

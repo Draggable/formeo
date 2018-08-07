@@ -1,4 +1,4 @@
-import uuidv4 from 'uuid-v4'
+import uuidv4 from 'uuid'
 /**
  * Match the values from a string or array against a str.
  * @param  {String} str    String we are searching

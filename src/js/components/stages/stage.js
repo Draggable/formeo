@@ -141,7 +141,10 @@ export default class Stage {
           className: ['stage', 'empty'],
           id: _this.id,
         },
-        fType: 'stages',
+        dataset: {
+          hoverTag: i18n.get('getStarted'),
+        },
+        // fType: 'stages',
       },
       settings: {
         tag: 'div',
@@ -149,7 +152,7 @@ export default class Stage {
           className: 'formeo-settings',
           id: `${_this.id}-settings`,
         },
-        fType: 'settings',
+        // fType: 'settings',
       },
     }
 

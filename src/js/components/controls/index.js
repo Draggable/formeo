@@ -15,129 +15,7 @@ import merge from 'lodash/merge'
 import Field from '../fields/field'
 import Control from './control'
 
-const defaultElements = [
-  ...formControls,
-  ...htmlControls,
-  ...layoutControls,
-
-  {
-    tag: 'textarea',
-    config: {
-      label: i18n.get('textarea'),
-    },
-    // This is the beginning of actions being supported for render
-    // editor field actions should be in config.action
-    // action: {
-    //   mousedown: function(evt) {
-    //     let {target} = evt;
-    //     let startHeight = target.style.height;
-    //     const onMouseup = evt => {
-    //       let {target} = evt;
-    //       let endHeight = target.style.height;
-    //       if (startHeight !== endHeight) {
-    //         //eslint-disable-next-line
-    //         let fieldId = closest(target, '.stage-fields').id;
-    //         const field = d.fields.get(fieldId).instance;
-    //         field.addAttribute('style', `height: ${endHeight}`);
-    //       }
-    //       target.removeEventListener('mouseup', onMouseup);
-    //     };
-    //     target.addEventListener('mouseup', onMouseup);
-    //   }
-    // },
-    meta: {
-      group: 'common',
-      icon: 'textarea',
-      id: 'textarea',
-    },
-    attrs: {
-      required: false,
-    },
-  },
-  {
-    tag: 'p',
-    attrs: {
-      className: '',
-    },
-    config: {
-      label: i18n.get('paragraph'),
-      hideLabel: true,
-      // editable: true,
-    },
-    meta: {
-      group: 'html',
-      icon: 'paragraph',
-      id: 'paragraph',
-    },
-    // eslint-disable-next-line
-    content:
-      'Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.',
-  },
-  {
-    tag: 'hr',
-    config: {
-      label: i18n.get('separator'),
-      hideLabel: true,
-    },
-    meta: {
-      group: 'html',
-      icon: 'divider',
-      id: 'divider',
-    },
-  },
-  {
-    tag: 'input',
-    attrs: {
-      type: 'file',
-      required: false,
-    },
-    config: {
-      disabledAttrs: ['type'],
-      label: i18n.get('fileUpload'),
-    },
-    meta: {
-      group: 'common',
-      icon: 'upload',
-      id: 'upload',
-    },
-    fMap: 'attrs.value',
-  },
-  {
-    tag: 'input',
-    attrs: {
-      type: 'number',
-      required: false,
-      className: '',
-    },
-    config: {
-      label: i18n.get('number'),
-      disabledAttrs: ['type'],
-    },
-    meta: {
-      group: 'common',
-      icon: 'hash',
-      id: 'number',
-    },
-    fMap: 'attrs.value',
-  },
-  {
-    tag: 'input',
-    attrs: {
-      type: 'hidden',
-      value: '',
-    },
-    config: {
-      label: i18n.get('hidden'),
-      hideLabel: true,
-    },
-    meta: {
-      group: 'common',
-      icon: 'hidden',
-      id: 'hidden',
-    },
-    fMap: 'attrs.value',
-  },
-]
+const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
 /**
  *
@@ -157,7 +35,7 @@ export class Controls {
         },
         {
           id: 'common',
-          label: 'controls.groups.common',
+          label: 'controls.groups.form',
           elementOrder: ['button', 'checkbox'],
         },
         {
@@ -217,17 +95,19 @@ export class Controls {
    */
   registerControls() {
     this.controls = this.options.elements.map(Element => {
-      const control = typeof Element === 'function' ? new Element() : new Control(Element)
+      const isControl = typeof Element === 'function'
+      const control = isControl ? new Element() : new Control(Element)
       const {
         controlData: { meta, config },
       } = control
+      const controlLabel = isControl ? config.label : i18n.get(config.label) || config.label
       const { id: controlId } = this.add(control)
       const button = {
         tag: 'button',
         attrs: {
           type: 'button',
         },
-        content: [dom.icon(meta.icon), config.label],
+        content: [{ tag: 'span', className: 'control-icon', children: dom.icon(meta.icon) }, controlLabel],
         action: this.controlEvents,
       }
       return {
@@ -273,8 +153,6 @@ export class Controls {
           label: this.groupLabel(groups[i].label),
         },
       }
-
-      console.log(this.groupLabel(groups[i].label))
 
       // Apply order to elements
       if (this.options.elementOrder[groups[i].id]) {
@@ -338,8 +216,6 @@ export class Controls {
       },
       content,
     })
-
-    console.log(i18n.get('clear'))
 
     const clearBtn = {
       ...btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),

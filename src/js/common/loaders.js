@@ -1,3 +1,5 @@
+import noop from 'lodash/noop'
+import { get as fetch } from 'axios'
 import dom from './dom'
 import { POLYFILLS } from '../constants'
 
@@ -72,7 +74,6 @@ export const insertStyle = srcs => {
 export const insertIcons = ({ responseText: children }) => {
   const id = 'formeo-sprite'
   const iconSpriteWrap = dom.create({
-    tag: 'div',
     children,
     id,
   })
@@ -89,27 +90,13 @@ export const loadPolyfills = polyfillConfig => {
   const polyfills = Array.isArray(polyfillConfig)
     ? POLYFILLS.filter(({ name }) => polyfillConfig.indexOf(name) !== -1)
     : POLYFILLS
-
-  const promises = polyfills.map(({ src }) => insertScript(src))
-
-  return Promise.all(promises)
+  return Promise.all(polyfills.map(({ src }) => insertScript(src)))
 }
 
-export const ajax = (file, callback) => {
-  return new Promise(function(resolve, reject) {
-    const xhr = new window.XMLHttpRequest()
-    xhr.open('GET', file, true)
-    xhr.onload = function() {
-      if (this.status >= 200 && this.status < 300) {
-        callback(xhr)
-        resolve(xhr.response)
-      } else {
-        reject(new Error(`status: ${this.status}: ${xhr.statusText}`))
-      }
-    }
-    xhr.onerror = function() {
-      reject(new Error(`status: ${this.status}: ${xhr.statusText}`))
-    }
-    xhr.send()
+export const ajax = (file, callback, onError = noop) => {
+  return new Promise(resolve => {
+    return fetch(file)
+      .then(({ data }) => resolve(data))
+      .catch(() => resolve(onError()))
   })
 }

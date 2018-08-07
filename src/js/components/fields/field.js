@@ -60,7 +60,7 @@ export default class Field extends Component {
 
   get label() {
     // console.log(this.data.config)
-    return {
+    return !this.data.config.hideLabel && {
       tag: 'label',
       attrs: {
         contenteditable: true,
@@ -596,7 +596,6 @@ export default class Field extends Component {
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events']
     const fieldData = this.data
-    console.log(fieldData)
     const allowedPanels = Object.keys(this.data).filter(elem => {
       return !h.inArray(elem, noPanels)
     })
@@ -647,31 +646,31 @@ export default class Field extends Component {
     const _this = this
     const prevData = clone(this.data)
     prevData.id = `prev-${this.id}`
-    const field = this.dom
-    const togglePreviewEdit = evt => {
-      const column = field.parentElement
-      if (evt.target.contentEditable === 'true') {
-        if (h.inArray(evt.type, ['focus', 'blur'])) {
-          const isActive = document.activeElement === evt.target
-          column.classList.toggle('editing-field-preview', isActive)
-          dom.toggleSortable(field.parentElement, evt.type === 'focus')
-        } else if (h.inArray(evt.type, ['mousedown', 'mouseup'])) {
-          dom.toggleSortable(field.parentElement, evt.type === 'mousedown')
-        }
-      }
-    }
+    // const field = this.dom
+    // const togglePreviewEdit = evt => {
+    //   console.log(field)
+    //   const column = field.parentElement
+    //   if (evt.target.contentEditable === 'true') {
+    //     if (h.inArray(evt.type, ['focus', 'blur'])) {
+    //       const isActive = document.activeElement === evt.target
+    //       column.classList.toggle('editing-field-preview', isActive)
+    //       dom.toggleSortable(field.parentElement, evt.type === 'focus')
+    //     } else if (h.inArray(evt.type, ['mousedown', 'mouseup'])) {
+    //       dom.toggleSortable(field.parentElement, evt.type === 'mousedown')
+    //     }
+    //   }
+    // }
 
     const fieldPreview = {
-      tag: 'div',
       attrs: {
         className: 'field-preview',
       },
       content: dom.create(prevData, true),
       action: {
-        focus: togglePreviewEdit,
-        blur: togglePreviewEdit,
-        mousedown: togglePreviewEdit,
-        mouseup: togglePreviewEdit,
+        // focus: togglePreviewEdit,
+        // blur: togglePreviewEdit,
+        // mousedown: togglePreviewEdit,
+        // mouseup: togglePreviewEdit,
         change: evt => {
           const { target } = evt
           if (target.fMap) {

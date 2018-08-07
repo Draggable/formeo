@@ -4,9 +4,7 @@ const renderContainer = document.querySelector('.render-form')
 const formeoOpts = {
   container: container,
   i18n: {
-    preloaded: {
-      'en-US': { 'row.makeInputGroup': ' Repeatable Region' },
-    },
+    location: '../assets/lang'
   },
   // allowEdit: false,
   controls: {
@@ -20,7 +18,7 @@ const formeoOpts = {
         },
         meta: {
           group: 'common',
-          icon: 'email',
+          icon: '@',
         },
         attrs: {
           className: 'custom-email',
@@ -111,8 +109,8 @@ const formeoOpts = {
     // onUpdate: console.log,
     // onSave: console.log
   },
-  svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
-  style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
+  svgSprite: 'assets/formeo-sprite.svg',
+  // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options'],

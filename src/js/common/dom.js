@@ -26,6 +26,7 @@ class DOM {
   constructor() {
     // Maintain references to DOM nodes
     // so we don't have to keep doing getElementById
+    this.options = Object.create(null)
     this.stages = new Map()
     this.rows = new Map()
     this.columns = new Map()
@@ -38,6 +39,10 @@ class DOM {
       document.head.appendChild(style)
       return style.sheet
     })()
+  }
+
+  set setOptions(options) {
+    this.options = h.merge(Object.assign({}, this.options, options))
   }
 
   /**
@@ -193,13 +198,16 @@ class DOM {
       elem = { tag: tagName }
     }
     if (elem.attrs) {
-      const tag = elem.attrs.tag
+      const { tag, ...restAttrs } = elem.attrs
       if (tag) {
-        const selectedTag = tag.find(t => t.selected === true)
-        if (selectedTag) {
+        if (typeof tag === 'string') {
+          tagName = tag
+        } else {
+          const selectedTag = tag.find(t => t.selected === true) || tag[0]
           tagName = selectedTag.value
         }
       }
+      elem.attrs = restAttrs
     }
 
     elem.tag = tagName || elem.tag || 'div'
@@ -224,7 +232,6 @@ class DOM {
     const processed = ['children', 'content']
     let i
     const wrap = {
-      tag: 'div',
       attrs: {},
       className: [h.get(elem, 'config.inputWrap') || 'f-field-group'],
       children: [],
@@ -264,6 +271,7 @@ class DOM {
         appendChildren[childType](children)
       },
       undefined: () => null,
+      boolean: () => null,
     }
 
     processed.push('tag')
@@ -420,15 +428,27 @@ class DOM {
    * @return {String} icon markup
    * @todo remove document.getElementById
    */
-  icon(name) {
+  icon(name = null) {
+    if (!name) {
+      return
+    }
     const iconLink = document.getElementById('icon-' + name)
     let icon
+    const iconFontTemplates = {
+      glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
+      'font-awesome': icon => {
+        const [style, name] = icon.split(' ')
+        return `<i class="${style} fa-${name}"></i>`
+      },
+      fontello: icon => `<i class="icon-${icon}">${icon}</i>`,
+    }
 
     if (iconLink) {
       icon = `<svg class="svg-icon icon-${name}"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-${name}"></use></svg>`
+    } else if (dom.options.iconFont) {
+      icon = iconFontTemplates[dom.options.iconFont](name)
     } else {
-      // eslint-disable-next-line
-      icon = `<span class="glyphicon glyphicon-${name}" aria-hidden="true"></span>`
+      icon = name
     }
     return icon
   }

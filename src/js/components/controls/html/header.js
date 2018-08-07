@@ -1,37 +1,38 @@
+import i18n from 'mi18n'
 import Control from '../control'
 
 const headerTags = Array.from(Array(5).keys())
   .slice(1)
   .map(key => `h${key}`)
 
-const headerKey = 'header'
+const headerKey = 'controls.html.header'
 
-export const header = {
-  tag: headerTags[0],
-  attrs: {
-    tag: headerTags.map((tag, index) => ({
-      label: tag.toUpperCase(),
-      value: tag,
-      selected: !index,
-    })),
-    className: '',
-  },
-  config: {
-    label: headerKey,
-    hideLabel: true,
-  },
-  meta: {
-    group: 'html',
-    icon: headerKey,
-    id: headerKey,
-  },
-  // content: i18n.get('headerKey'),
-}
-
-class headerControl extends Control {
+class HeaderControl extends Control {
   constructor() {
+    const header = {
+      tag: headerTags[0],
+      attrs: {
+        tag: headerTags.map((tag, index) => ({
+          label: tag.toUpperCase(),
+          value: tag,
+          selected: !index,
+        })),
+        className: '',
+      },
+      config: {
+        label: i18n.get(headerKey),
+        hideLabel: true,
+      },
+      meta: {
+        group: 'html',
+        icon: 'header',
+        id: 'html.header',
+      },
+      content: i18n.get(headerKey),
+    }
     super(header)
   }
+
   /**
    * class configuration
    */
@@ -45,8 +46,8 @@ class headerControl extends Control {
   }
 
   get content() {
-    return super.i18n('header')
+    return super.i18n(headerKey)
   }
 }
 
-export default headerControl
+export default HeaderControl

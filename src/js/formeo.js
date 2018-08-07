@@ -12,13 +12,16 @@ import formData, { stages as stagesData } from './data'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import 'es6-promise/auto'
 
+const fallbacks = {
+  svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
+}
+
 // Simple object config for the main part of formeo
 const formeo = {
   get formData() {
     return data.json
   },
 }
-let opts = {}
 
 /**
  * Main class
@@ -39,8 +42,8 @@ class Formeo {
       sessionStorage: false,
       container: '.formeo-wrap',
       prefix: 'formeo-',
-      // svgSprite: null, // change to null
-      iconFontFallback: null, // 'glyphicons' || 'font-awesome' || 'fontello'
+      svgSprite: null, // change to null
+      iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
       events: {},
       actions: {},
       controls: {},
@@ -73,7 +76,9 @@ class Formeo {
     // may be Element
     delete options.container
 
-    opts = h.merge(defaults, options)
+    const { iconFont, ...opts } = h.merge(defaults, options)
+    this.opts = opts
+    dom.setOptions = opts
 
     data.init(opts, userFormData)
     events.init(opts.events)
@@ -99,17 +104,17 @@ class Formeo {
   loadResources() {
     const promises = []
 
-    if (opts.polyfills) {
-      loadPolyfills(opts.polysfills)
+    if (this.opts.polyfills) {
+      loadPolyfills(this.opts.polysfills)
     }
 
-    if (opts.style) {
-      promises.push(insertStyle(opts.style))
+    if (this.opts.style) {
+      promises.push(insertStyle(this.opts.style))
     }
 
     // Ajax load svgSprite and inject into markup.
-    if (opts.svgSprite) {
-      promises.push(ajax(opts.svgSprite, insertIcons))
+    if (this.opts.svgSprite) {
+      promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(fallbacks.svgSprite, insertIcons)))
     }
 
     return Promise.all(promises)
@@ -122,9 +127,9 @@ class Formeo {
    */
   init() {
     const _this = this
-    i18n.init(opts.i18n).then(() => {
+    i18n.init(_this.opts.i18n).then(() => {
       _this.formId = formData.get('id')
-      formeo.controls = Controls.init(opts.controls)
+      formeo.controls = Controls.init(_this.opts.controls)
       _this.stages = _this.build()
       formeo.i18n = {
         setLang: formeoLocale => {
@@ -132,7 +137,7 @@ class Formeo {
           const loadLang = i18n.setCurrent(formeoLocale)
           loadLang.then(lang => {
             _this.stages = _this.build()
-            formeo.controls = Controls.init(opts.controls)
+            formeo.controls = Controls.init(_this.opts.controls)
             _this.render()
           }, console.error)
         },

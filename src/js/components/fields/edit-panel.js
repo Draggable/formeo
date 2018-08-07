@@ -19,7 +19,7 @@ export default class EditPanel {
     this.name = panelName
     this.field = field
     this.config = {
-      label: i18n.get(`panelLabels.${panelName}`),
+      label: i18n.get(`panel.label.${panelName}`),
     }
     this.attrs = {
       className: `f-panel ${panelName}-panel`,
