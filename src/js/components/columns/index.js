@@ -8,7 +8,6 @@ const DEFAULT_DATA = {
 export class ColumnData extends Data {
   constructor(data) {
     super('columns', DEFAULT_DATA)
-    this.data = data || Object.create(null)
   }
 }
 

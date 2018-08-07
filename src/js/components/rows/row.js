@@ -3,20 +3,21 @@ import Sortable from 'sortablejs'
 import dom from '../../common/dom'
 import h from '../../common/helpers'
 import { data } from '../../common/data'
-import rowsData from '../../data/rows'
 import Controls from '../controls';
+import rows from './index'
+import Component from '../component'
 
 /**
  * Editor Row
  */
-export default class Row {
+export default class Row extends Component {
   /**
    * Set default and generate dom for row in editor
    * @param  {String} dataID
    * @return {Object}
    */
   constructor(rowData) {
-    this.id = rowsData.add(rowData)
+    super('row', rowData)
 
     const rowConfig = {
       tag: 'li',
@@ -26,13 +27,13 @@ export default class Row {
         editingHoverTag: i18n.get('editing.row'),
       },
       id: this.id,
-      content: [dom.actionButtons(this.id, 'row'), this.editWindow],
+      content: [this.actionButtons(), this.editWindow],
       fType: 'rows',
     }
 
     const row = dom.create(rowConfig)
 
-    Sortable.create(row, {
+    this.sortable = Sortable.create(row, {
       animation: 150,
       // fallbackClass: 'column-moving',
       // forceFallback: true,
@@ -45,16 +46,13 @@ export default class Row {
       // onMove: evt => {
       //   console.log(evt)
       // },
-      draggable: '.stage-columns',
       filter: '.resize-x-handle',
+      draggable: '.stage-columns',
     })
 
-    // dom.rows.set(this.id, { row, sortable })
     this.dom = row
-  }
 
-  get rowData() {
-    return rowsData.get(this.id)
+    rows.add(this)
   }
 
   /**
@@ -63,7 +61,7 @@ export default class Row {
    */
   get editWindow() {
     const _this = this
-    const rowData = this.rowData
+    const rowData = this.data
     // debugger
 
     const editWindow = {
@@ -235,5 +233,11 @@ export default class Row {
     dom.columnWidths(to)
     dom.emptyClass(to)
     data.save()
+  }
+
+  addColumn = (column, index = this.dom.children.length - 1) => {
+    this.dom.insertBefore(column.dom, this.dom.children[index])
+    this.set(`children.${index}`, column.id)
+    this.emptyClass()
   }
 }

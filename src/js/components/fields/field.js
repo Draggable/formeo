@@ -30,7 +30,7 @@ export default class Field extends Component {
       id: this.id,
       children: [
         this.label,
-        dom.actionButtons(this.id, 'field'), // fieldEdit window
+        this.actionButtons(), // fieldEdit window
         this.fieldEdit, // fieldEdit window
       ],
       panelNav: this.panelNav,
@@ -183,7 +183,6 @@ export default class Field extends Component {
    * @return {Object} DOM element
    */
   panelContent(args) {
-    // console.log(args)
     const _this = this
     const { panelType, dataProp } = args
     const propKey = typeof dataProp === 'string' ? dataProp : args.i
@@ -197,23 +196,16 @@ export default class Field extends Component {
     const property = {
       tag: 'li',
       className: [`${panelType}-${propKey}-wrap`, 'prop-wrap'],
-      id: id,
+      id,
       content: [],
     }
     const order = {
-      tag: 'button',
-      attrs: {
-        type: 'button',
-        className: 'prop-order prop-control',
-      },
-      content: dom.icon('move-vertical'),
+      ...dom.btnTemplate({ content: dom.icon('move-vertical'), title: i18n.get('order') }),
+      className: 'prop-order prop-control',
     }
     const remove = {
-      tag: 'button',
-      attrs: {
-        type: 'button',
-        className: 'prop-remove prop-control',
-      },
+      ...dom.btnTemplate({ content: dom.icon('remove'), title: i18n.get('remove') }),
+      className: 'prop-remove prop-control',
       action: {
         click: evt => {
           animate.slideUp(document.getElementById(property.id), 250, elem => {
@@ -230,11 +222,11 @@ export default class Field extends Component {
             dom.empty(_this.preview)
             const newPreview = dom.create(fieldData, true)
             _this.preview.appendChild(newPreview)
+            _this.updatePreview()
             _this.resizePanelWrap()
           })
         },
       },
-      content: dom.icon('remove'),
     }
     const controls = {
       tag: 'div',

@@ -52,7 +52,7 @@ export default class Column extends Component {
         },
       },
       id: _this.id,
-      content: [dom.actionButtons(_this.id), editWindow, resizeHandle],
+      content: [this.actionButtons(), editWindow, resizeHandle],
       fType: 'columns',
     }
 
@@ -291,5 +291,15 @@ export default class Column extends Component {
       window.addEventListener('touchend', resize.stop, false)
       window.addEventListener('touchmove', resize.move, false)
     })(evt)
+  }
+
+  refreshFieldPanels = () => {
+    console.log(this)
+  }
+
+  addField = (field, index = this.dom.children.length - 1) => {
+    this.dom.insertBefore(field.dom, this.dom.children[index])
+    this.set(`children.${index}`, field.id)
+    this.emptyClass()
   }
 }

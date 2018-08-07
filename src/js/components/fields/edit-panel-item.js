@@ -59,7 +59,7 @@ const INPUT_TYPE_ACTION = {
   }),
   number: (dataKey, field) => ({
     input: ({ target: { value } }) => {
-      field.set(dataKey, value)
+      field.set(dataKey, Number(value))
       field.updatePreview()
     },
   }),

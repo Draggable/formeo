@@ -29,6 +29,7 @@ export default class Data {
   remove = path => {
     const delPath = path.split('.')
     const delItem = delPath.pop()
+    console.log(delItem)
     const parent = helpers.get(this.data, delPath)
     if (Array.isArray(parent)) {
       parent.splice(Number(delItem), 1)

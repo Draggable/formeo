@@ -11,7 +11,8 @@ import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
 import columnsData from '../data/columns'
 import rowsData from '../data/rows'
 // import FormeoData from '../data'
-import Fields from '../components/fields'
+// import Fields from '../components/fields'
+import Columns from '../components/columns'
 // import Columns from '../components/columns'
 import Controls from '../components/controls'
 
@@ -53,30 +54,18 @@ class DOM {
   set setConfig(userConfig) {
     const _this = this
     const icon = _this.icon
-    const btnTemplate = {
-      tag: 'button',
-      children: [],
-      attrs: {
-        className: ['btn'],
-        type: 'button',
-      },
-    }
 
-    const handle = h.merge(Object.assign({}, btnTemplate), {
-      children: [icon('move'), icon('handle')],
-      attrs: {
-        className: ['item-handle'],
-      },
+    const handle = {
+      ...dom.btnTemplate({ content: [icon('move'), icon('handle')] }),
+      className: ['item-handle'],
       meta: {
         id: 'handle',
       },
-    })
+    }
 
-    const edit = h.merge(Object.assign({}, btnTemplate), {
-      children: icon('edit'),
-      attrs: {
-        className: ['item-edit-toggle'],
-      },
+    const edit = {
+      ...dom.btnTemplate({ content: icon('edit') }),
+      className: ['item-edit-toggle'],
       meta: {
         id: 'edit',
       },
@@ -95,13 +84,13 @@ class DOM {
           element.classList.toggle(editClass)
         },
       },
-    })
+    }
 
-    const remove = h.merge(Object.assign({}, btnTemplate), {
-      children: icon('remove'),
-      attrs: {
-        className: ['item-remove'],
-      },
+    // console.log(dom.btnTemplate({ content: icon('remove'), title: i18n.get('removeType', { type: this.name }) }))
+
+    const remove = {
+      ...dom.btnTemplate({ content: icon('remove') }),
+      className: ['item-remove'],
       meta: {
         id: 'remove',
       },
@@ -113,13 +102,11 @@ class DOM {
           })
         },
       },
-    })
+    }
 
-    const cloneItem = h.merge(Object.assign({}, btnTemplate), {
-      children: icon('copy'),
-      attrs: {
-        className: ['item-clone'],
-      },
+    const cloneItem = {
+      ...dom.btnTemplate({ content: icon('copy') }),
+      className: ['item-clone'],
       meta: {
         id: 'clone',
       },
@@ -129,19 +116,23 @@ class DOM {
           data.save()
         },
       },
-    })
+    }
 
     const defaultConfig = {
       rows: {
         actionButtons: {
-          buttons: [handle, edit, cloneItem, remove].map(button => clone(button)),
+          buttons: [{ ...handle, content: [icon('move-vertical'), icon('handle')] }, edit, cloneItem, remove].map(
+            button => clone(button)
+          ),
           order: [],
           disabled: [],
         },
       },
       columns: {
         actionButtons: {
-          buttons: [cloneItem, handle, remove].map(button => clone(button)),
+          buttons: [{ ...cloneItem, content: [icon('copy'), icon('handle')] }, handle, remove].map(button =>
+            clone(button)
+          ),
           order: [],
           disabled: [],
         },
@@ -154,9 +145,6 @@ class DOM {
         },
       },
     }
-
-    defaultConfig.rows.actionButtons.buttons[0].content = [icon('move-vertical'), icon('handle')]
-    defaultConfig.columns.actionButtons.buttons[0].content = [icon('copy'), icon('handle')]
 
     const mergedConfig = h.merge(defaultConfig, userConfig)
 
@@ -763,47 +751,6 @@ class DOM {
   }
 
   /**
-   * Move, close, and edit buttons for row, column and field
-   * @param  {String} id   element id
-   * @param  {String} layout type of element eg. row, column, field
-   * @return {Object}      element config object
-   */
-  actionButtons(id, layout = 'column') {
-    const _this = this
-    const tag = layout === 'column' ? 'li' : 'div'
-    const btnWrap = {
-      tag: 'div',
-      className: 'action-btn-wrap',
-    }
-    const actions = {
-      tag,
-      className: layout + '-actions group-actions',
-      action: {
-        mouseenter: ({ target }) => {
-          const element = document.getElementById(id)
-          element.classList.add('hovering-' + layout)
-          target.parentReference = element
-        },
-        mouseleave: ({ target }) => target.parentReference.classList.remove('hovering-' + layout),
-        onRender: elem => {
-          const buttons = elem.getElementsByTagName('button')
-          const cssProp = layout === 'row' ? 'height' : 'width'
-          const btnSize = parseInt(_this.getStyle(buttons[0], cssProp))
-          const expandedSize = `${buttons.length * btnSize + 1}px`
-          const rules = [[`.hovering-${layout} .${layout}-actions`, [cssProp, expandedSize, true]]]
-
-          _this.insertRule(rules)
-        },
-      },
-    }
-
-    btnWrap.content = this.config[`${layout}s`].actionButtons.buttons
-    actions.content = btnWrap
-
-    return actions
-  }
-
-  /**
    * Clones an element, it's data and
    * it's nested elements and data
    * @param {Object} elem element we are cloning
@@ -938,7 +885,6 @@ class DOM {
    * @param  {Object}  row    DOM element
    */
   columnWidths(row) {
-    const fields = []
     const columns = row.getElementsByClassName('stage-columns')
     if (!columns.length) {
       return
@@ -948,8 +894,7 @@ class DOM {
 
     this.removeClasses(columns, bsGridRegEx)
     h.forEach(columns, column => {
-      const columnData = columnsData.get(column.id)
-      fields.push(...columnData.fields)
+      Columns.get(column.id).refreshFieldPanels()
 
       const newColWidth = numToPercent(width)
 
@@ -960,7 +905,9 @@ class DOM {
       document.dispatchEvent(events.columnResized)
     })
 
-    setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
+    // fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh())
+
+    // setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
 
     dom.updateColumnPreset(row)
   }
@@ -973,7 +920,6 @@ class DOM {
    */
   formGroup(content, className = '') {
     return {
-      tag: 'div',
       className: ['f-field-group', className],
       children: content,
     }
@@ -1107,8 +1053,6 @@ class DOM {
     if (!stage) {
       stage = this.activeStage
     }
-
-    // console.log()
 
     // const stageData = formData.getIn(['stages', stage.id])
     const rows = formData.getIn(['stages', stage.id, 'rows'])
@@ -1327,7 +1271,7 @@ class DOM {
       },
     })
     document.dispatchEvent(events.formeoUpdated)
-    return row.dom
+    return row
   }
 
   /**
@@ -1338,9 +1282,11 @@ class DOM {
    */
   addColumn(row, columnId) {
     const column = new Column({ id: columnId })
-    row.appendChild(column.dom)
-    data.saveColumnOrder(row)
-    this.emptyClass(row)
+    console.log(row)
+    row.addColumn(column)
+    // row.appendChild(column.dom)
+    // data.saveColumnOrder(row)
+    // this.emptyClass(row)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
         updateType: 'added',
@@ -1350,7 +1296,34 @@ class DOM {
       },
     })
     document.dispatchEvent(events.formeoUpdated)
-    return column.dom
+    return column
+  }
+
+  /**
+   * Adds a field to a column
+   * @param {DOM} column
+   * @param {String} fieldId
+   */
+  addField(column, fieldId) {
+    const { controlData } = Controls.get(fieldId)
+    const field = new Field(controlData)
+    // console.log(column, field)
+    column.addField(field)
+    // if (column) {
+    // column.appendChild(field.dom)
+    // data.saveFieldOrder(column)
+    // this.emptyClass(column)
+    // }
+    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'add',
+        changed: 'field',
+        oldValue: undefined,
+        newValue: field.data,
+      },
+    })
+    document.dispatchEvent(events.formeoUpdated)
+    return field
   }
 
   /**
@@ -1372,31 +1345,6 @@ class DOM {
     if (pFtype && h.inArray(pFtype, ['rows', 'columns', 'stages'])) {
       this.toggleSortable(elem.parentElement, state)
     }
-  }
-
-  /**
-   * Adds a field to a column
-   * @param {DOM} column
-   * @param {String} fieldId
-   */
-  addField(column, fieldId) {
-    const { controlData } = Controls.get(fieldId)
-    const field = new Field(controlData)
-    if (column) {
-      column.appendChild(field.dom)
-      data.saveFieldOrder(column)
-      this.emptyClass(column)
-    }
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'add',
-        changed: 'field',
-        oldValue: undefined,
-        newValue: field.data,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
-    return field
   }
 
   /**
@@ -1454,6 +1402,14 @@ class DOM {
       return styleSheet.insertRule(`${selector} { ${propStr} }`, rulesLength)
     }
   }
+  btnTemplate = ({ content, title }) => ({
+    tag: 'button',
+    attrs: {
+      type: 'button',
+      title,
+    },
+    content,
+  })
 }
 
 const dom = new DOM()

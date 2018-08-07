@@ -1,6 +1,5 @@
 import Sortable from 'sortablejs'
 import i18n from 'mi18n'
-import { data } from '../../common/data'
 import helpers from '../../common/helpers'
 import events from '../../common/events'
 import { match, unique, uuid, closestFtype } from '../../common/utils'
@@ -411,9 +410,9 @@ export class Controls {
       dom.addColumn(row)
     }
 
-    data.saveColumnOrder(row)
-    dom.columnWidths(row)
-    data.save()
+    // data.saveColumnOrder(row)
+    // dom.columnWidths(row)
+    // data.save()
   }
 
   applyOptions(controlOptions = {}) {
