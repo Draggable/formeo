@@ -38,7 +38,7 @@ export default class Panels {
       children: [_this.labels, panels],
       nav: _this.nav,
       action: {
-        resize: _this.resizePanels.bind(_this),
+        resize: _this.resizePanels,
       },
     }
   }
@@ -47,7 +47,7 @@ export default class Panels {
    * Resize the panel after its contents change in height
    * @return {String} panel's height in pixels
    */
-  resizePanels() {
+  resizePanels = () => {
     const panelsWrap = this.panelsWrap
     const column = panelsWrap.parentElement.parentElement
     const width = parseInt(dom.getStyle(column, 'width'))
@@ -88,10 +88,7 @@ export default class Panels {
    */
   panelsWrap() {
     this.panelsWrap = dom.create({
-      tag: 'div',
-      attrs: {
-        className: 'panels',
-      },
+      className: 'panels',
       content: this.opts.panels,
     })
 
@@ -152,12 +149,8 @@ export default class Panels {
   panelNav() {
     const _this = this
     const panelNavLabels = {
-      tag: 'div',
-      attrs: {
-        className: 'panel-labels',
-      },
+      className: 'panel-labels',
       content: {
-        tag: 'div',
         content: [],
       },
     }

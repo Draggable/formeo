@@ -7,13 +7,9 @@ import Field from '../components/fields/field'
 import animate from './animation'
 import { data, formData } from './data'
 import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
-// import { rows as rowsData } from '../data'
 import columnsData from '../data/columns'
 import rowsData from '../data/rows'
-// import FormeoData from '../data'
-// import Fields from '../components/fields'
 import Columns from '../components/columns'
-// import Columns from '../components/columns'
 import Controls from '../components/controls'
 
 /**
@@ -1285,7 +1281,6 @@ class DOM {
    */
   addColumn(row, columnId) {
     const column = new Column({ id: columnId })
-    console.log(row)
     row.addColumn(column)
     // row.appendChild(column.dom)
     // data.saveColumnOrder(row)
