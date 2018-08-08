@@ -166,19 +166,18 @@ export default class EditPanelItem {
       .filter(isNaN)
       .join('.')
 
+      const id = [this.field.id, !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-')]
+        .filter(Boolean)
+        .join('-')
+
     inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
       label: this.panelName !== 'options' && labelHelper(labelKey),
+      labelAfter: false,
     })
-    const name = [
-      this.field.id,
-      !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-'),
-      inputTypeConfig.attrs.type === 'checkbox' && '[]',
-    ]
-      .filter(Boolean)
-      .join('-')
 
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
-      name,
+      name: inputTypeConfig.attrs.type === 'checkbox' ? `${id}[]` : id,
+      id
     })
 
     inputTypeConfig.action = {

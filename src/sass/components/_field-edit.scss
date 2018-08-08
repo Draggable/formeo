@@ -121,10 +121,12 @@
     will-change: width;
 
     .f-addon,
-    input,
+    input:not([type='checkbox']):not([type='radio']),
     select,
     textarea {
       font-size: 0.825em;
+      flex: 1 1 auto;
+      width: auto;
     }
   }
 
@@ -140,12 +142,13 @@
       width: 100%;
       margin-bottom: 0;
       display: inline-flex;
-      vertical-align: bottom;
+      align-items: center;
     }
 
     .f-addon {
       display: flex;
       align-items: center;
+      flex: 0;
       &:first-child {
         margin-right: -1px;
       }
@@ -155,7 +158,10 @@
     }
 
     label {
-      display: block;
+      padding-right: 1em;
+      margin-bottom: 0;
+      flex: 0 0 16.666667%;
+    max-width: 16.666667%;
     }
   }
 

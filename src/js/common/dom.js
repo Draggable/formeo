@@ -647,8 +647,9 @@ class DOM {
    */
   labelAfter(elem) {
     const type = h.get(elem, 'attrs.type')
+    const labelAfter = h.get(elem, 'config.labelAfter')
     const isCB = type === 'checkbox' || type === 'radio'
-    return isCB || h.get(elem, 'config.labelAfter')
+    return labelAfter !== undefined ? labelAfter : isCB
   }
 
   /**
@@ -661,19 +662,21 @@ class DOM {
     let {
       config: { label: labelText = '' },
     } = elem
+    const {
+      id: elemId,
+      attrs: { id: attrsId },
+    } = elem
     if (typeof labelText === 'function') {
       labelText = labelText()
     }
     const fieldLabel = {
       tag: 'label',
-      attrs: {},
+      attrs: {
+        for: elemId || attrsId,
+      },
       className: [],
       children: labelText,
       action: {},
-    }
-
-    if (elem.id) {
-      fieldLabel.attrs.for = elem.id
     }
 
     if (fMap) {
