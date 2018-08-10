@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditPanelItem should match attribute item snapshot 1`] = `
+EditPanelItem {
+  "dom": <li
+    class="field-attrs-type prop-wrap"
+  >
+    <div
+      class="field-prop"
+    >
+      <div
+        class="attrs-prop-inputs prop-inputs f-input-group"
+      >
+        <input
+          id="attrs-type"
+          name="attrs-type"
+          type="text"
+          value="checkbox"
+        />
+      </div>
+      <div
+        class="attrs-prop-controls prop-controls"
+      >
+        <button
+          class="prop-remove prop-control"
+          type="button"
+        >
+          remove
+        </button>
+      </div>
+    </div>
+  </li>,
+  "field": Object {
+    "data": Object {
+      "attrs": Object {},
+    },
+  },
+  "itemKey": "attrs.type",
+  "itemValues": Array [
+    Array [
+      "type",
+      "checkbox",
+    ],
+  ],
+  "panelName": "attrs",
+}
+`;
+
+exports[`EditPanelItem should match option snapshot 1`] = `
+EditPanelItem {
+  "dom": <li
+    class="field-options-0 prop-wrap"
+  >
+    <div
+      class="field-prop"
+    >
+      <div
+        class="options-prop-inputs prop-inputs f-input-group"
+      >
+        <div
+          class="f-addon"
+        >
+          <input
+            name="[]"
+            type="checkbox"
+          />
+        </div>
+        <input
+          id="options-0"
+          name="options-0"
+          type="text"
+          value="Checkbox 1"
+        />
+        <input
+          id="options-0"
+          name="options-0"
+          type="text"
+          value="checkbox-1"
+        />
+      </div>
+      <div
+        class="options-prop-controls prop-controls"
+      >
+        <button
+          class="prop-remove prop-control"
+          type="button"
+        >
+          remove
+        </button>
+      </div>
+    </div>
+  </li>,
+  "field": Object {
+    "data": Object {
+      "attrs": Object {},
+    },
+  },
+  "itemKey": "options.0",
+  "itemValues": Array [
+    Array [
+      "checked",
+      false,
+    ],
+    Array [
+      "label",
+      "Checkbox 1",
+    ],
+    Array [
+      "value",
+      "checkbox-1",
+    ],
+  ],
+  "panelName": "options",
+}
+`;

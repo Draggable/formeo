@@ -92,7 +92,6 @@ export default class EditPanelItem {
       className: [`field-${itemKey.replace('.', '-')}`, 'prop-wrap'],
       children: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
     })
-    return this.dom
   }
 
   get itemInputs() {
@@ -166,9 +165,9 @@ export default class EditPanelItem {
       .filter(isNaN)
       .join('.')
 
-      const id = [this.field.id, !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-')]
-        .filter(Boolean)
-        .join('-')
+    const id = [this.field.id, !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-')]
+      .filter(Boolean)
+      .join('-')
 
     inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
       label: this.panelName !== 'options' && labelHelper(labelKey),
@@ -177,7 +176,7 @@ export default class EditPanelItem {
 
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
       name: inputTypeConfig.attrs.type === 'checkbox' ? `${id}[]` : id,
-      id
+      id,
     })
 
     inputTypeConfig.action = {

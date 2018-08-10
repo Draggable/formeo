@@ -56,6 +56,31 @@
     "fontServer": "http://fontello.com"
   },
   "babel": {
+    "env": {
+      "test": {
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "browsers": [
+                  ">1%"
+                ]
+              },
+              "include": [
+                "es6.promise",
+                "es6.object.assign"
+              ],
+              "loose": true
+            }
+          ]
+        ],
+        "plugins": [
+          "transform-object-rest-spread",
+          "transform-class-properties"
+        ]
+      }
+    },
     "presets": [
       [
         "env",
@@ -88,12 +113,14 @@
     "lang": "cp -a src/lang dist",
     "copy": "yarn run icons && yarn run lang && cp -a dist/* demo/assets/",
     "lint": "eslint ./src/js --ext .js || true",
-    "test": "mocha --compilers js:babel-register && webpack -p --bail",
+    "test": "jest src/",
+    "test:ci": "yarn test --coverage",
     "start": "yarn clean && yarn copy && webpack-dev-server --mode development --open --config tools/webpack.config",
     "tag": "node ./node_modules/babel-cli/bin/babel-node.js -- tools/run tag",
     "release:patch": "yarn run tag patch && yarn run deploy",
     "release:minor": "yarn run tag minor && yarn run deploy",
-    "deploy": "git push upstream $(git subtree split --prefix demo master):gh-pages --force"
+    "deploy": "git push upstream $(git subtree split --prefix demo master):gh-pages --force",
+    "precommit": "lint-staged"
   },
   "devDependencies": {
     "autoprefixer": "^8.4.1",
@@ -101,6 +128,7 @@
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
+    "babel-jest": "^23.4.2",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -108,6 +136,8 @@
     "babel-regenerator-runtime": "^6.5.0",
     "compression-webpack-plugin": "^1.1.11",
     "css-loader": "^0.28.11",
+    "enzyme": "^3.4.1",
+    "enzyme-to-json": "^3.3.4",
     "es6-promise": "^4.2.4",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^2.9.0",
@@ -115,15 +145,18 @@
     "eslint-loader": "^2.0.0",
     "eslint-plugin-css-modules": "^2.7.5",
     "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jest": "^21.20.2",
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-standard": "^3.1.0",
     "file-loader": "^1.1.11",
+    "husky": "^0.14.3",
     "immutable": "^3.8.2",
     "jest": "^23.4.2",
     "json-update": "^3.0.0",
+    "lint-staged": "^7.2.0",
     "lodash": "^4.17.10",
     "mi18n": "^0.4.1",
     "node-sass": "^4.9.0",
@@ -147,10 +180,12 @@
     "extends": [
       "eslint:recommended",
       "standard",
+      "plugin:jest/recommended",
       "prettier"
     ],
     "plugins": [
       "standard",
+      "jest",
       "prettier"
     ],
     "rules": {
@@ -164,5 +199,37 @@
         }
       ]
     }
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "prettier --config package.json --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "printWidth": 120,
+    "semi": false
+  },
+  "jest": {
+    "browser": true,
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ],
+    "transform": {
+      "^.+\\.(js|jsx|ts|tsx)$": "babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/"
+    ],
+    "coverageReporters": [
+      "text"
+    ],
+    "testRegex": "src/.*\\.spec\\.js$",
+    "testURL": "http://localhost"
   }
 }

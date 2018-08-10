@@ -81,8 +81,9 @@ export default class EditPanel {
         const isArray = this.type === 'array'
         const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
         const itemData = isArray ? data : { [data[0]]: data[1] }
+        const editPanelItem = new EditPanelItem(itemKey, itemData, this.field)
 
-        return new EditPanelItem(itemKey, itemData, this.field)
+        return editPanelItem.dom
       }),
     }
     return [dom.create(editGroup), this.createEditButtons()]
@@ -188,9 +189,9 @@ export default class EditPanel {
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)
     const newAttr = new EditPanelItem(itemKey, { [safeAttr]: val }, this.field)
     if (existingAttr) {
-      this.props.replaceChild(newAttr, existingAttr)
+      this.props.replaceChild(newAttr.dom, existingAttr)
     } else {
-      this.props.appendChild(newAttr)
+      this.props.appendChild(newAttr.dom)
     }
 
     // data.save(args.panelType, editGroup)
