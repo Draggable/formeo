@@ -186,7 +186,7 @@ export default class Stage {
     let column
 
     if (from.fType === 'controlGroup') {
-      const { meta } = Controls.get(item.id)
+      const { meta } = Controls.get(item.id).controlData
       if (meta.group !== 'layout') {
         column = dom.addColumn(row)
         dom.addField(column, item.id)
@@ -195,17 +195,19 @@ export default class Stage {
       }
       dom.remove(item)
     } else if (fromColumn) {
+      console.log({ fromColumn })
       column = dom.addColumn(row)
       column.appendChild(item)
       data.saveFieldOrder(column)
       dom.emptyClass(column)
     } else if (fromRow) {
+      console.log({ fromRow })
       row.appendChild(item)
       data.saveColumnOrder(row)
       dom.emptyClass(row)
     }
 
-    to.insertBefore(row, to.children[newIndex])
+    to.insertBefore(row.dom, to.children[newIndex])
     dom.columnWidths(row)
     data.saveRowOrder(to)
 
