@@ -8,6 +8,13 @@ import { numToPercent } from '../../common/utils'
 import Controls from '../controls'
 import columns from './index'
 import Component from '../component'
+import Fields from '../fields'
+import rows from '../rows'
+
+const DEFAULT_DATA = {
+  config: {},
+  children: [],
+}
 
 /**
  * Setup Column elements
@@ -19,7 +26,7 @@ export default class Column extends Component {
    * @return {Object} Column config object
    */
   constructor(columnData) {
-    super('column', columnData)
+    super('column', Object.assign({}, DEFAULT_DATA, columnData))
     const _this = this
 
     const resizeHandle = {
@@ -130,20 +137,21 @@ export default class Column extends Component {
     const { from, item, to } = evt
     const fromColumn = from.fType === 'columns'
     const fromControls = from.classList.contains('control-group')
-    console.dir(from)
 
     if (fromControls) {
-      const meta = h.get(Controls.get(item.id), 'meta')
+      const meta = h.get(Controls.get(item.id).controlData, 'meta')
       if (meta.group !== 'layout') {
-        const field = dom.addField(to, item.id)
+        const field = this.addField(item.id)
         to.insertBefore(field.dom, to.childNodes[evt.newIndex])
         data.saveFieldOrder(to)
         data.save('fields', to.id)
       } else {
         if (meta.id === 'layout-column') {
           const row = to.parentElement
-          dom.addColumn(row)
-          dom.columnWidths(row)
+          console.log(rows)
+          rows.get(row.id).addColumn(item.id, evt.newIndex)
+          // dom.addColumn(row)
+          // dom.columnWidths(row)
         }
       }
 
@@ -294,12 +302,18 @@ export default class Column extends Component {
   }
 
   refreshFieldPanels = () => {
-    console.log(this)
+    // console.log(this)
   }
 
-  addField = (field, index = this.dom.children.length - 1) => {
+  get fields() {
+    return this.data.children.map(childId => Fields.get(childId))
+  }
+
+  addField = (fieldId, index = this.fields.length) => {
+    const field = Fields.get(fieldId)
     this.dom.insertBefore(field.dom, this.dom.children[index])
     this.set(`children.${index}`, field.id)
     this.emptyClass()
+    return field
   }
 }

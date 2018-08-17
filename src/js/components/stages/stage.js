@@ -188,8 +188,9 @@ export default class Stage {
     if (from.fType === 'controlGroup') {
       const { meta } = Controls.get(item.id).controlData
       if (meta.group !== 'layout') {
-        column = dom.addColumn(row)
-        dom.addField(column, item.id)
+        column = row.addColumn()
+        column.addField(item.id)
+        // dom.addField(column, item.id)
       } else if (meta.id === 'layout-column') {
         dom.addColumn(row)
       }
@@ -208,7 +209,7 @@ export default class Stage {
     }
 
     to.insertBefore(row.dom, to.children[newIndex])
-    dom.columnWidths(row)
+    // dom.columnWidths(row)
     data.saveRowOrder(to)
 
     return data.save()

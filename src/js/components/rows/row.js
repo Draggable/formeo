@@ -1,11 +1,23 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom'
-import h from '../../common/helpers'
+import h, { bsGridRegEx } from '../../common/helpers'
 import { data } from '../../common/data'
-import Controls from '../controls';
+import Controls from '../controls'
 import rows from './index'
 import Component from '../component'
+import Columns from '../columns'
+import { numToPercent } from '../../common/utils'
+import events from '../../common/events'
+
+const DEFAULT_DATA = {
+  config: {
+    fieldset: false, // wrap contents of row in fieldset
+    legend: '', // Legend for fieldset
+    inputGroup: false, // is repeatable input-group?
+  },
+  children: [],
+}
 
 /**
  * Editor Row
@@ -17,7 +29,7 @@ export default class Row extends Component {
    * @return {Object}
    */
   constructor(rowData) {
-    super('row', rowData)
+    super('row', Object.assign({}, DEFAULT_DATA, rowData))
 
     const rowConfig = {
       tag: 'li',
@@ -150,7 +162,7 @@ export default class Row extends Component {
     })
     const columnSettingsPresetSelect = {
       className: 'col-sm-8',
-      content: dom.columnPresetControl(this.id),
+      content: this.columnPresetControl(),
     }
     const formGroupContent = [columnSettingsPresetLabel, columnSettingsPresetSelect]
     const columnSettingsPreset = dom.formGroup(formGroupContent, 'row')
@@ -180,7 +192,7 @@ export default class Row extends Component {
    * Handler for removing content from a row
    * @param  {Object} evt
    */
-  onRemove = (evt) => {
+  onRemove = evt => {
     dom.columnWidths(evt.from)
     data.saveColumnOrder(evt.target)
     console.log(evt.to)
@@ -191,7 +203,7 @@ export default class Row extends Component {
    * Handler for removing content from a row
    * @param  {Object} evt
    */
-  onEnd = (evt) => {
+  onEnd = evt => {
     console.log('onEnd', evt)
     if (evt.from.classList.contains('empty')) {
       dom.removeEmpty(evt.from)
@@ -215,7 +227,7 @@ export default class Row extends Component {
     if (fromRow) {
       column = item
     } else if (fromColumn || fromControls) {
-      const meta = h.get(Controls.get(item.id), 'meta')
+      const meta = h.get(Controls.get(item.id).controlData, 'meta')
       if (meta.group !== 'layout') {
         column = dom.addColumn(to)
         dom.addField(column, item.id)
@@ -232,12 +244,134 @@ export default class Row extends Component {
 
     dom.columnWidths(to)
     dom.emptyClass(to)
-    data.save()
+    // data.save()
   }
 
-  addColumn = (column, index = this.dom.children.length - 1) => {
+  get columns() {
+    return this.data.children.map(childId => Columns.get(childId))
+  }
+
+  addColumn = (columnId, index = this.columns.length) => {
+    const column = Columns.get(columnId)
     this.dom.insertBefore(column.dom, this.dom.children[index])
     this.set(`children.${index}`, column.id)
     this.emptyClass()
+    this.autoColumnWidths()
+
+    return column
+  }
+
+  /**
+   * Read columns and generate bootstrap cols
+   * @param  {Object}  row    DOM element
+   */
+  autoColumnWidths = () => {
+    const columns = this.columns
+    const columnsLength = columns.length
+    if (!columnsLength) {
+      return
+    }
+    const width = parseFloat((100 / columnsLength).toFixed(1)) / 1
+
+    columns.forEach(column => {
+      column.removeClasses(bsGridRegEx)
+      const colDom = column.dom
+      const newColWidth = numToPercent(width)
+      column.set('config.width', newColWidth)
+      colDom.style.width = newColWidth
+      // colDom.style.float = 'left'
+      colDom.dataset.colWidth = newColWidth
+      column.refreshFieldPanels()
+      document.dispatchEvent(events.columnResized)
+    })
+
+    // fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh())
+
+    // setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
+
+    // dom.updateColumnPreset(row)
+  }
+
+  /**
+   * Updates the column preset <select>
+   * @return {Object} columnPresetConfig
+   */
+  updateColumnPreset = () => {
+    const oldColumnPreset = this.dom.querySelector('.column-preset')
+    const rowEdit = oldColumnPreset.parentElement
+    const columnPresetConfig = this.columnPresetControl(this.id)
+    const newColumnPreset = this.create(columnPresetConfig)
+
+    rowEdit.replaceChild(newColumnPreset, oldColumnPreset)
+    return columnPresetConfig
+  }
+
+  /**
+   * Generates the element config for column layout in row
+   * @return {Object} columnPresetControlConfig
+   */
+  columnPresetControl = () => {
+    const _this = this
+    const rowData = this.data
+    const layoutPreset = {
+      tag: 'select',
+      attrs: {
+        ariaLabel: 'Define a column layout', // @todo i18n
+        className: 'column-preset',
+      },
+      action: {
+        change: ({ target: { value } }) => {
+          const dRow = this.rows.get(this.id)
+          _this.setColumnWidths(dRow.row, value)
+          data.save()
+        },
+      },
+    }
+    const pMap = new Map()
+    const custom = { value: 'custom', label: 'Custom' }
+
+    pMap.set(1, [{ value: '100.0', label: '100%' }])
+    pMap.set(2, [
+      { value: '50.0,50.0', label: '50 | 50' },
+      { value: '33.3,66.6', label: '33 | 66' },
+      { value: '66.6,33.3', label: '66 | 33' },
+      custom,
+    ])
+    pMap.set(3, [
+      { value: '33.3,33.3,33.3', label: '33 | 33 | 33' },
+      { value: '25.0,25.0,50.0', label: '25 | 25 | 50' },
+      { value: '50.0,25.0,25.0', label: '50 | 25 | 25' },
+      { value: '25.0,50.0,25.0', label: '25 | 50 | 25' },
+      custom,
+    ])
+    pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
+    pMap.set('custom', [custom])
+
+    if (rowData && rowData.children.length) {
+      const columns = rowData.columns
+      const pMapVal = pMap.get(columns.length)
+      layoutPreset.options = pMapVal || pMap.get('custom')
+      const curVal = columns
+        .map((columnId, i) => {
+          // const colData = formData.getIn(['columns', columnId])
+          // return colData.config.width.replace('%', '')
+        })
+        .join(',')
+      if (pMapVal) {
+        pMapVal.forEach((val, i) => {
+          const options = layoutPreset.options
+          if (val.value === curVal) {
+            options[i].selected = true
+          } else {
+            delete options[i].selected
+            options[options.length - 1].selected = true
+          }
+        })
+      }
+    } else {
+      layoutPreset.options = pMap.get(1)
+    }
+
+    return layoutPreset
   }
 }

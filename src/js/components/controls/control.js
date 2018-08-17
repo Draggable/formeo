@@ -27,6 +27,7 @@ export default class Control {
     // console.log(promises)
     return Promise.all(promises)
   }
+
   /**
    * code to execute for supported events
    * to implement an onRender event in a child class, simply define an onRender method
@@ -52,8 +53,10 @@ export default class Control {
         })
       },
     }
+
     return eventType ? events[eventType] : events
   }
+
   /**
    * Converts escaped HTML into usable HTML
    * @param  {String} html escaped HTML

@@ -100,4 +100,17 @@ export default class Component {
 
     return actions
   }
+
+  /**
+   * Removes a class or classes from nodeList
+   * @param  {String | Array} className
+   */
+  removeClasses = className => {
+    const removeClass = {
+      string: elem => elem.classList.remove(className),
+      array: elem => className.forEach(name => elem.classList.remove(name)),
+    }
+    removeClass.object = removeClass.string // handles regex map
+    return removeClass[dom.childType(className)](this.dom)
+  }
 }

@@ -1,18 +1,12 @@
 import Data from '../../data/data'
-
-const DEFAULT_DATA = {
-  config: {
-    fieldset: false, // wrap contents of row in fieldset
-    legend: '', // Legend for fieldset
-    inputGroup: false, // is repeatable input-group?
-  },
-  children: [],
-}
+import { helpers } from '../../common/helpers'
+import Column from '../columns/column'
 
 export class RowData extends Data {
-  constructor() {
-    super('rows', DEFAULT_DATA)
+  constructor(rowData) {
+    super('rows', rowData)
   }
+  get = path => (path ? helpers.get(this.data, path) : new Column())
 }
 
 const rowsData = new RowData()

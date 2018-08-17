@@ -1,13 +1,14 @@
 import Data from '../../data/data'
-
-const DEFAULT_DATA = {
-  config: {},
-  children: [],
-}
+import { helpers } from '../../common/helpers'
+import Column from './column'
 
 export class ColumnData extends Data {
-  constructor(data) {
-    super('columns', DEFAULT_DATA)
+  constructor(columnData) {
+    super('columns', columnData)
+  }
+  get = path => {
+    const column = path && helpers.get(this.data, path)
+    return column || new Column()
   }
 }
 

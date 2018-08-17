@@ -8,7 +8,6 @@ import animate from './animation'
 import { data, formData } from './data'
 import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
 import columnsData from '../data/columns'
-import rowsData from '../data/rows'
 import Columns from '../components/columns'
 import Controls from '../components/controls'
 
@@ -838,7 +837,7 @@ class DOM {
   /**
    * Removes a class or classes from nodeList
    *
-   * @param  {NodeList} nodeList
+   * @param  {NodeList|Node} nodeList
    * @param  {String | Array} className
    */
   removeClasses(nodeList, className) {
@@ -925,75 +924,6 @@ class DOM {
   }
 
   /**
-   * Generates the element config for column layout in row
-   * @return {Object} columnPresetControlConfig
-   */
-  columnPresetControl(rowId) {
-    const _this = this
-    const rowData = rowsData.get(rowId)
-    const layoutPreset = {
-      tag: 'select',
-      attrs: {
-        ariaLabel: 'Define a column layout', // @todo i18n
-        className: 'column-preset',
-      },
-      action: {
-        change: ({ target: { value } }) => {
-          const dRow = this.rows.get(this.rowId)
-          _this.setColumnWidths(dRow.row, value)
-          data.save()
-        },
-      },
-    }
-    const pMap = new Map()
-    const custom = { value: 'custom', label: 'Custom' }
-
-    pMap.set(1, [{ value: '100.0', label: '100%' }])
-    pMap.set(2, [
-      { value: '50.0,50.0', label: '50 | 50' },
-      { value: '33.3,66.6', label: '33 | 66' },
-      { value: '66.6,33.3', label: '66 | 33' },
-      custom,
-    ])
-    pMap.set(3, [
-      { value: '33.3,33.3,33.3', label: '33 | 33 | 33' },
-      { value: '25.0,25.0,50.0', label: '25 | 25 | 50' },
-      { value: '50.0,25.0,25.0', label: '50 | 25 | 25' },
-      { value: '25.0,50.0,25.0', label: '25 | 50 | 25' },
-      custom,
-    ])
-    pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
-    pMap.set('custom', [custom])
-
-    if (rowData && rowData.children.length) {
-      const columns = rowData.columns
-      const pMapVal = pMap.get(columns.length)
-      layoutPreset.options = pMapVal || pMap.get('custom')
-      const curVal = columns
-        .map((columnId, i) => {
-          // const colData = formData.getIn(['columns', columnId])
-          // return colData.config.width.replace('%', '')
-        })
-        .join(',')
-      if (pMapVal) {
-        pMapVal.forEach((val, i) => {
-          const options = layoutPreset.options
-          if (val.value === curVal) {
-            options[i].selected = true
-          } else {
-            delete options[i].selected
-            options[options.length - 1].selected = true
-          }
-        })
-      }
-    } else {
-      layoutPreset.options = pMap.get(1)
-    }
-
-    return layoutPreset
-  }
-
-  /**
    * Set the widths of columns in a row
    * @param {Object} row DOM element
    * @param {String} widths
@@ -1010,21 +940,6 @@ class DOM {
       column.style.width = percentWidth
       formData.getIn(['columns', column.id]).config.width = percentWidth
     })
-  }
-
-  /**
-   * Updates the column preset <select>
-   * @param  {String} row
-   * @return {Object} columnPresetConfig
-   */
-  updateColumnPreset(row) {
-    const oldColumnPreset = row.querySelector('.column-preset')
-    const rowEdit = oldColumnPreset.parentElement
-    const columnPresetConfig = this.columnPresetControl(row.id)
-    const newColumnPreset = this.create(columnPresetConfig)
-
-    rowEdit.replaceChild(newColumnPreset, oldColumnPreset)
-    return columnPresetConfig
   }
 
   /**

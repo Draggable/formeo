@@ -70,6 +70,10 @@ export class Controls {
     }
   }
 
+  /**
+   * Methods to be called on initialization
+   * @param {Object} controlOptions
+   */
   init(controlOptions) {
     this.applyOptions(controlOptions)
     this.registerControls()
@@ -82,10 +86,10 @@ export class Controls {
    * events lets add them back after drag.
    * @param  {Object} evt
    */
-  applyControlEvents = ({ item }) => {
-    const control = this.dom.getElementById(item.id)
+  applyControlEvents = ({ clone: control }) => {
     const button = control.querySelector('button')
-    Object.keys(this.controlEvents).forEach(action => button.addEventListener(action, this.controlEvents[action]))
+    console.log(control, this.controlEvents)
+    Object.keys(this.controlEvents).map(action => button.addEventListener(action, this.controlEvents[action]))
   }
 
   /**
@@ -109,14 +113,16 @@ export class Controls {
         content: [{ tag: 'span', className: 'control-icon', children: dom.icon(meta.icon) }, controlLabel],
         action: this.controlEvents,
       }
-      return {
+      control.dom = dom.create({
         tag: 'li',
         id: controlId,
         className: ['field-control', `${meta.group}-control`, `${meta.id}-control`],
         content: button,
         meta: meta,
-      }
+      })
+      return control.dom
     })
+
     return this.controls
   }
 

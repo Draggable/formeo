@@ -7,6 +7,7 @@ import merge from 'lodash/merge'
 // eslint-disable-next-line
 const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g
 const reEscapeChar = /\\(\\)?/g
+export const bsGridRegEx = /\bcol-\w+-\d+/g
 
 const loaded = {
   js: [],
