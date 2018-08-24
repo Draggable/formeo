@@ -247,6 +247,19 @@ export default class Row extends Component {
     // data.save()
   }
 
+  /**
+   * Load columns to row
+   * @param  {Object} row
+   */
+  loadColumns(row) {
+    const columns = this.data.children
+    return columns.map(columnId => {
+      const column = this.addColumn(columnId)
+      column.loadFields()
+      return column
+    })
+  }
+
   get columns() {
     return this.data.children.map(childId => Columns.get(childId))
   }
@@ -312,7 +325,6 @@ export default class Row extends Component {
    */
   columnPresetControl = () => {
     const _this = this
-    const rowData = this.data
     const layoutPreset = {
       tag: 'select',
       attrs: {
@@ -347,16 +359,11 @@ export default class Row extends Component {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    if (rowData && rowData.children.length) {
-      const columns = rowData.columns
+    if (this.columns.length) {
+      const columns = this.columns
       const pMapVal = pMap.get(columns.length)
       layoutPreset.options = pMapVal || pMap.get('custom')
-      const curVal = columns
-        .map((columnId, i) => {
-          // const colData = formData.getIn(['columns', columnId])
-          // return colData.config.width.replace('%', '')
-        })
-        .join(',')
+      const curVal = columns.map(({ data }) => data.config.width.replace('%', '')).join(',')
       if (pMapVal) {
         pMapVal.forEach((val, i) => {
           const options = layoutPreset.options

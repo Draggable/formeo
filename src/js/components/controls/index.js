@@ -13,6 +13,7 @@ import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import Field from '../fields/field'
 import Control from './control'
+import stages from '../stages'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -407,13 +408,13 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement(id) {
-    const row = dom.addRow()
+    const row = stages.activeStage.addRow()
     const meta = helpers.get(this.get(id), 'controlData.meta')
+    const column = row.addColumn()
     if (meta.group !== 'layout') {
-      const column = dom.addColumn(row)
-      dom.addField(column, id)
+      column.addField(id)
     } else if (meta.id === 'layout-column') {
-      dom.addColumn(row)
+      column.addColumn()
     }
 
     // data.saveColumnOrder(row)

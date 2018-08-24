@@ -1,18 +1,22 @@
 import Sortable from 'sortablejs'
-// import { fromJS } from 'immutable'
 import i18n from 'mi18n'
 import { data } from '../../common/data'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
-import stagesData from '../../data/stages'
 import Controls from '../controls'
+import Row from '../rows/row'
+import Component from '../component'
+import events from '../../common/events'
+import Rows from '../rows'
+import stages from './index'
 
 let stageOpts = {}
+const DEFAULT_DATA = { children: [] }
 
 /**
  * Stage is where fields and elements are dragged to.
  */
-export default class Stage {
+export default class Stage extends Component {
   /**
    * Process options and load existing fields from data to the stage
    * @param  {Object} formeoOptions
@@ -20,7 +24,7 @@ export default class Stage {
    * @return {Object} DOM element
    */
   constructor(stageData) {
-    this.id = stagesData.add(stageData)
+    super('stage', Object.assign({}, DEFAULT_DATA, stageData))
 
     const defaultOptions = {
       formSettings: [
@@ -64,17 +68,16 @@ export default class Stage {
     }
 
     stageOpts = Object.assign(stageOpts, defaultOptions)
+
+    this.dom = this.stageWrap()
+    stages.activeStage = this
     // formData.get('stages').set(this.id, defaultStageData(this.id))
     // formData = formData.setIn(['stages', this.id], defaultStageData(this.id))
 
     // console.log('this.id', this.id)
     // console.log(set.toJS().stages)
 
-    return this.loadStage()
-  }
-
-  get stageData() {
-    return stagesData.get(this.id)
+    // return this.loadStage()
   }
 
   /**
@@ -83,8 +86,8 @@ export default class Stage {
    */
   loadStage() {
     // const _this = this
-    const stageWrap = this.dom
-    Sortable.create(stageWrap.firstChild, {
+    // const stageWrap = this.dom
+    Sortable.create(this.stage, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
@@ -103,7 +106,7 @@ export default class Stage {
       // },
       onStart: evt => {
         // console.log(evt)
-        dom.activeStage = this.stage
+        stages.activeStage = this.stage
       },
       // onUpdate: evt => {
       //   data.saveRowOrder()
@@ -119,13 +122,31 @@ export default class Stage {
     // sortable,
     // })
 
-    dom.activeStage = this.stage
+    stages.activeStage = this.stage
 
-    if (this.stageData.children.length) {
-      dom.loadRows(this.stage)
+    if (this.data.children.length) {
+      this.loadRows(this.stage)
+    }
+  }
+
+  /**
+   * Loop through the formData and append it to the stage
+   * @param  {Object} stage DOM element
+   * @return {Array}  loaded rows
+   */
+  loadRows(stage) {
+    if (!stage) {
+      stage = stages.activeStage
     }
 
-    return stageWrap
+    // const stageData = formData.getIn(['stages', stage.id])
+    const rows = this.data.children
+    rows.forEach(rowId => {
+      const row = this.addRow(rowId)
+      row.loadColumns()
+      // row.updateColumnPreset(row)
+      stage.stage.appendChild(row.dom)
+    })
   }
 
   /**
@@ -176,11 +197,11 @@ export default class Stage {
    * @return {Object} formData
    */
   onAdd = evt => {
-    console.log(evt)
-    dom.activeStage = this.stage
+    console.log('Stage: onAdd', evt)
+    stages.activeStage = this.stage
     const { from, item, to } = evt
     const newIndex = h.indexOfNode(item, to)
-    const row = from.fType === 'stages' ? item : dom.addRow()
+    const row = from.fType === 'stages' ? item : this.addRow()
     const fromColumn = from.fType === 'columns'
     const fromRow = from.fType === 'rows'
     let column
@@ -229,7 +250,7 @@ export default class Stage {
    *
    * @return {DOM}
    */
-  get dom() {
+  stageWrap() {
     if (this.stage) {
       return this.stage
     }
@@ -248,5 +269,33 @@ export default class Stage {
     this.stage = stageWrap.firstChild
 
     return stageWrap
+  }
+
+  get rows() {
+    return this.data.children.map(childId => Rows.get(childId))
+  }
+
+  /**
+   * Adds a row to the stage
+   * @param {String} stageId
+   * @param {String} rowId
+   * @return {Object} DOM element
+   */
+  addRow = (rowId, index = this.rows.length) => {
+    const row = new Row({ id: rowId })
+    this.stage.appendChild(row.dom)
+    // data.saveRowOrder(stage)
+    this.emptyClass()
+    this.set(`children.${index}`, row.id)
+    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'added',
+        changed: 'row',
+        oldValue: undefined,
+        newValue: row.rowData,
+      },
+    })
+    document.dispatchEvent(events.formeoUpdated)
+    return row
   }
 }

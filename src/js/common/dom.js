@@ -10,6 +10,7 @@ import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
 import columnsData from '../data/columns'
 import Columns from '../components/columns'
 import Controls from '../components/controls'
+import stages from '../components/stages'
 
 /**
  * General purpose markup utilities and generator.
@@ -770,8 +771,8 @@ class DOM {
     const cloneType = {
       rows: () => {
         dataClone.columns = []
-        const stage = _this.activeStage
-        const newRow = _this.addRow(null, dataClone.id)
+        const stage = stages.activeStage
+        const newRow = stage.addRow(null, dataClone.id)
         const columns = elem.getElementsByClassName('stage-columns')
 
         stage.insertBefore(newRow, stage.childNodes[newIndex])
@@ -956,39 +957,6 @@ class DOM {
       pageX: elemPosition.left + elemPosition.width / 2,
       pageY: elemPosition.top - bodyRect.top - elemPosition.height / 2,
     }
-  }
-
-  /**
-   * Loop through the formData and append it to the stage
-   * @param  {Object} stage DOM element
-   * @return {Array}  loaded rows
-   */
-  loadRows(stage) {
-    if (!stage) {
-      stage = this.activeStage
-    }
-
-    // const stageData = formData.getIn(['stages', stage.id])
-    const rows = formData.getIn(['stages', stage.id, 'rows'])
-    rows.forEach(rowId => {
-      const row = this.addRow(stage.id, rowId)
-      this.loadColumns(row)
-      dom.updateColumnPreset(row)
-      stage.appendChild(row)
-    })
-  }
-
-  /**
-   * Load columns to row
-   * @param  {Object} row
-   */
-  loadColumns(row) {
-    const columns = formData.getIn(['rows', row.id]).columns
-    return columns.map(columnId => {
-      const column = this.addColumn(row, columnId)
-      this.loadFields(column)
-      return column
-    })
   }
 
   /**

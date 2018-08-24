@@ -181,7 +181,7 @@ class Formeo {
         className: 'formeo formeo-editor',
         id: _this.formId,
       },
-      content: [_this.stages, controls],
+      content: [_this.stages.map(({ dom }) => dom), controls],
     }
 
     if (i18n.current.dir) {
@@ -194,8 +194,8 @@ class Formeo {
     _this.container.innerHTML = ''
     _this.container.appendChild(formeoElem)
 
-    _this.stages.forEach(stageWrap => {
-      const stage = stageWrap.childNodes[0]
+    _this.stages.forEach(({ stage }) => {
+      // const stage = stageWrap.childNodes[0]
       stage.style.minHeight = dom.getStyle(controls, 'height')
     })
 

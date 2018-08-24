@@ -2,14 +2,12 @@
 // import { fromJS } from 'immutable'
 import events from './events'
 import h from './helpers'
-import dom from './dom'
 import { remove } from './utils'
 import FormeoData from '../data'
-import stagesData from '../data/stages'
 import rowsData from '../data/rows'
 import columnsData from '../data/columns'
 import Fields from '../components/fields'
-
+import stages from '../components/stages'
 
 const formData = {}
 
@@ -32,26 +30,26 @@ const data = {
     return FormeoData.load(formData)
   },
 
-  saveRowOrder: stage => {
-    if (!stage) {
-      stage = dom.activeStage
-    }
-    const rows = stage.getElementsByClassName('stage-rows')
-    const stageData = stagesData.get(stage.id)
-    const oldRowOrder = stageData.rows
-    const newRowOrder = h.map(rows, rowId => rows[rowId].id)
-    stagesData.set(`${stage.id}.rows`, newRowOrder)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'sort',
-        changed: 'rows',
-        oldValue: oldRowOrder,
-        newValue: newRowOrder,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
-    return newRowOrder
-  },
+  // saveRowOrder: stage => {
+  //   if (!stage) {
+  //     stage = stages.activeStage
+  //   }
+  //   const rows = stage.getElementsByClassName('stage-rows')
+  //   const stageData = stagesData.get(stage.id)
+  //   const oldRowOrder = stageData.rows
+  //   const newRowOrder = h.map(rows, rowId => rows[rowId].id)
+  //   stagesData.set(`${stage.id}.rows`, newRowOrder)
+  //   events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
+  //     data: {
+  //       updateType: 'sort',
+  //       changed: 'rows',
+  //       oldValue: oldRowOrder,
+  //       newValue: newRowOrder,
+  //     },
+  //   })
+  //   document.dispatchEvent(events.formeoUpdated)
+  //   return newRowOrder
+  // },
 
   saveColumnOrder: row => {
     const columns = row.getElementsByClassName('stage-columns')
@@ -170,7 +168,7 @@ const data = {
     const emptyType = {
       stages: id => {
         if (!id) {
-          id = dom.activeStage.id
+          id = stages.activeStage.id
         }
         const stageData = formData.stages.get(id)
         const rows = stageData.rows
