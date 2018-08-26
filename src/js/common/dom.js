@@ -1,7 +1,6 @@
 import h from './helpers'
 import i18n from 'mi18n'
 import events from './events'
-import Row from '../components/rows/row'
 import Column from '../components/columns/column'
 import Field from '../components/fields/field'
 import animate from './animation'
@@ -1130,54 +1129,6 @@ class DOM {
 
     animate.slideUp(stage, 600, resetStage)
     // animate.slideUp(stage, 2000);
-  }
-
-  /**
-   * Adds a row to the stage
-   * @param {String} stageId
-   * @param {String} rowId
-   * @return {Object} DOM element
-   */
-  addRow(stageId, rowId) {
-    const row = new Row({ id: rowId })
-    const stage = stageId ? this.stages.get(stageId).stage : this.activeStage
-    stage.appendChild(row.dom)
-    data.saveRowOrder(stage)
-    this.emptyClass(stage)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'added',
-        changed: 'row',
-        oldValue: undefined,
-        newValue: row.rowData,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
-    return row
-  }
-
-  /**
-   * Adds a Column to a row
-   * @param {DOM} row
-   * @param {String} columnId
-   * @return {Object} DOM element
-   */
-  addColumn(row, columnId) {
-    const column = new Column({ id: columnId })
-    row.addColumn(column)
-    // row.appendChild(column.dom)
-    // data.saveColumnOrder(row)
-    // this.emptyClass(row)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'added',
-        changed: 'column',
-        oldValue: undefined,
-        newValue: column.data,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
-    return column
   }
 
   /**

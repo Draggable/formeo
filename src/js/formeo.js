@@ -194,7 +194,7 @@ class Formeo {
     _this.container.innerHTML = ''
     _this.container.appendChild(formeoElem)
 
-    _this.stages.forEach(({ stage }) => {
+    _this.stages.forEach(({ dom: stage }) => {
       // const stage = stageWrap.childNodes[0]
       stage.style.minHeight = dom.getStyle(controls, 'height')
     })

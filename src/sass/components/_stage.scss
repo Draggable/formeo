@@ -6,53 +6,52 @@
 @import 'components/field-edit';
 @import 'components/panels';
 
-.stage-wrap {
+// .stage-wrap {
+
+.stage {
+  @include breakpoint('phone-lrg') {
+    width: calc(100% - 50px);
+  }
   box-sizing: border-box;
   transition: width 250ms;
   margin-right: 5px;
   flex: 1 1 auto;
+  @extend %no-list-style;
+  position: relative;
+  transition-property: background-color, border-color;
+  transition-duration: 500ms, 333ms;
+  border: 0 dashed transparent;
+  background-color: $stage-background;
+  padding-left: $action-btn-width - 1;
+  padding-bottom: 0;
+  overflow: visible;
 
-  @include breakpoint('phone-lrg') {
-    width: calc(100% - 50px);
+  &.empty {
+    border: 3px dashed $gray-lighter;
+    background-color: $shadow;
+  }
+
+  &.removing-all-fields {
+    .stage-rows {
+      transition: margin-top 250ms ease-in;
+    }
+  }
+}
+
+&.editing-stage {
+  .formeo-settings {
+    display: block;
   }
 
   .stage {
-    @extend %no-list-style;
-    position: relative;
-    transition-property: background-color, border-color;
-    transition-duration: 500ms, 333ms;
-    border: 0 dashed transparent;
-    background-color: $stage-background;
-    padding-left: $action-btn-width - 1;
-    padding-bottom: 0;
-    overflow: visible;
-
-    &.empty {
-      border: 3px dashed $gray-lighter;
-      background-color: $shadow;
-    }
-
-    &.removing-all-fields {
-      .stage-rows {
-        transition: margin-top 250ms ease-in;
-      }
-    }
-  }
-
-  &.editing-stage {
-    .formeo-settings {
-      display: block;
-    }
-
-    .stage {
-      display: none;
-    }
-  }
-
-  .f-field-group {
-    margin-bottom: 0;
+    display: none;
   }
 }
+
+.f-field-group {
+  margin-bottom: 0;
+}
+// }
 
 // element label
 [class$='empty'] {

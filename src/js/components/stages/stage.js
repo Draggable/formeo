@@ -69,7 +69,16 @@ export default class Stage extends Component {
 
     stageOpts = Object.assign(stageOpts, defaultOptions)
 
-    this.dom = this.stageWrap()
+    this.dom = dom.create({
+      tag: 'ul',
+      attrs: {
+        className: ['stage', 'empty'],
+        id: this.id,
+      },
+      dataset: {
+        hoverTag: i18n.get('getStarted'),
+      },
+    })
     stages.activeStage = this
     // formData.get('stages').set(this.id, defaultStageData(this.id))
     // formData = formData.setIn(['stages', this.id], defaultStageData(this.id))
@@ -87,7 +96,7 @@ export default class Stage extends Component {
   loadStage() {
     // const _this = this
     // const stageWrap = this.dom
-    Sortable.create(this.stage, {
+    Sortable.create(this.dom, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
@@ -106,7 +115,7 @@ export default class Stage extends Component {
       // },
       onStart: evt => {
         // console.log(evt)
-        stages.activeStage = this.stage
+        stages.activeStage = this
       },
       // onUpdate: evt => {
       //   data.saveRowOrder()
@@ -122,30 +131,26 @@ export default class Stage extends Component {
     // sortable,
     // })
 
-    stages.activeStage = this.stage
+    stages.activeStage = this
 
     if (this.data.children.length) {
-      this.loadRows(this.stage)
+      this.loadRows()
     }
   }
 
   /**
    * Loop through the formData and append it to the stage
-   * @param  {Object} stage DOM element
    * @return {Array}  loaded rows
    */
-  loadRows(stage) {
-    if (!stage) {
-      stage = stages.activeStage
-    }
-
+  loadRows() {
+    const stage = this.dom
     // const stageData = formData.getIn(['stages', stage.id])
     const rows = this.data.children
     rows.forEach(rowId => {
       const row = this.addRow(rowId)
       row.loadColumns()
       // row.updateColumnPreset(row)
-      stage.stage.appendChild(row.dom)
+      stage.appendChild(row.dom)
     })
   }
 
@@ -165,15 +170,12 @@ export default class Stage extends Component {
         dataset: {
           hoverTag: i18n.get('getStarted'),
         },
-        // fType: 'stages',
       },
       settings: {
-        tag: 'div',
         attrs: {
           className: 'formeo-settings',
           id: `${_this.id}-settings`,
         },
-        // fType: 'settings',
       },
     }
 
@@ -198,7 +200,7 @@ export default class Stage extends Component {
    */
   onAdd = evt => {
     console.log('Stage: onAdd', evt)
-    stages.activeStage = this.stage
+    stages.activeStage = this
     const { from, item, to } = evt
     const newIndex = h.indexOfNode(item, to)
     const row = from.fType === 'stages' ? item : this.addRow()
@@ -221,17 +223,16 @@ export default class Stage extends Component {
       column = dom.addColumn(row)
       column.appendChild(item)
       data.saveFieldOrder(column)
-      dom.emptyClass(column)
     } else if (fromRow) {
       console.log({ fromRow })
       row.appendChild(item)
       data.saveColumnOrder(row)
-      dom.emptyClass(row)
     }
 
     to.insertBefore(row.dom, to.children[newIndex])
     // dom.columnWidths(row)
-    data.saveRowOrder(to)
+    // data.saveRowOrder(to)
+    this.emptyClass()
 
     return data.save()
   }
@@ -257,7 +258,6 @@ export default class Stage extends Component {
     const config = this.elementConfigs()
 
     const stageWrap = dom.create({
-      tag: 'div',
       attrs: {
         className: 'stage-wrap',
       },
@@ -283,9 +283,8 @@ export default class Stage extends Component {
    */
   addRow = (rowId, index = this.rows.length) => {
     const row = new Row({ id: rowId })
-    this.stage.appendChild(row.dom)
+    this.dom.appendChild(row.dom)
     // data.saveRowOrder(stage)
-    this.emptyClass()
     this.set(`children.${index}`, row.id)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
@@ -296,6 +295,7 @@ export default class Stage extends Component {
       },
     })
     document.dispatchEvent(events.formeoUpdated)
+    this.emptyClass()
     return row
   }
 }
