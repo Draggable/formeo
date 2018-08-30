@@ -40,11 +40,15 @@
   }
 }
 
+@function space($space: 0.5) {
+  @return $space * $base-space;
+}
+
 @mixin custom-scroll($trackColor, $thumbColor) {
   // Let's get this party started
   &::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: $base-space;
+    height: $base-space;
   }
 
   // Track

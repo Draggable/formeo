@@ -68,9 +68,8 @@
 }
 
 .f-render-column {
-  padding: 0 5px;
+  padding: 0 space();
   float: left;
-  display: inline-block;
   max-width: none;
   flex-direction: column;
   flex: auto;

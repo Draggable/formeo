@@ -12,9 +12,10 @@
   @include breakpoint('phone-lrg') {
     width: calc(100% - 50px);
   }
+  width: 73%;
   box-sizing: border-box;
   transition: width 250ms;
-  margin-right: 5px;
+  margin-right: space();
   flex: 1 1 auto;
   @extend %no-list-style;
   position: relative;

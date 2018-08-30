@@ -14,12 +14,12 @@
   @extend %no-list-style;
 
   &:first-of-type {
-    border-top-right-radius: 5px;
+    border-top-right-radius: $border-radius;
   }
 
   &:last-of-type {
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
 
     .resize-x-handle {
       display: none !important;
@@ -75,8 +75,8 @@
     transform: translate(-50%, -100%);
     width: auto;
     height: 0;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-top-left-radius: $border-radius;
+    border-top-right-radius: $border-radius;
   }
 
   &.hovering-column {
@@ -129,7 +129,7 @@
   .stage-columns,
   .empty {
     display: table-cell;
-    border-radius: 5px;
+    border-radius: $border-radius;
     height: 60px;
     background-color: $gray-lightest;
 

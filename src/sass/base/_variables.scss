@@ -1,3 +1,4 @@
+// Colors
 $brand-primary: #325d88 !default;
 $brand-primary-dark: darken($brand-primary, 10%) !default;
 $brand-success: #93c54b !default;
@@ -15,13 +16,6 @@ $field-outline-color: #93c54b;
 
 $input-focus: #66afe9;
 
-$icon-size: 24px;
-
-$prop-btn-width: $icon-size;
-$action-btn-width: $icon-size;
-
-// Colors
-//
 // Grayscale and brand colors for use across Bootstrap.
 $black: #000;
 $white: #fff;
@@ -38,8 +32,13 @@ $gray-lightest: lighten($black, 90%) !default;
 $stage-background: rgba(255, 255, 255, 0);
 $shadow: rgba(255, 255, 255, 0.25);
 
-$border-radius: 6px;
-$input-border-radius: 3px;
+// Sizing
+$base-space: 8px;
+$icon-size: $base-space * 3;
+$prop-btn-width: $icon-size;
+$action-btn-width: $icon-size;
+$border-radius: $base-space;
+$input-border-radius: $base-space / 2;
 $input-btn-border-width: 1px;
 $input-padding: 0.3em 0.6em;
 $input-border: $input-btn-border-width solid $gray-lighter;
