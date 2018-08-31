@@ -11,8 +11,6 @@ export class FieldData extends Data {
   get = path => helpers.get(this.data, path) || new Field(Controls.get(path).controlData)
 }
 
-const fieldsData = new FieldData()
+const Fields = new FieldData()
 
-export const fields = fieldsData.data
-
-export default fieldsData
+export default Fields

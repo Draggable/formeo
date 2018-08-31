@@ -37,6 +37,10 @@
       transition: margin-top 250ms ease-in;
     }
   }
+
+  & > .stage-fields {
+    background-color: $white;
+  }
 }
 
 &.editing-stage {

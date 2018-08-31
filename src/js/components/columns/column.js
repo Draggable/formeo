@@ -5,11 +5,13 @@ import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { numToPercent } from '../../common/utils'
-import Controls from '../controls'
-import columns from './index'
+// import Controls from '../controls'
+import Columns from './index'
 import Component from '../component'
 import Fields from '../fields'
-import rows from '../rows'
+// import Rows from '../rows'
+import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
+import Controls from '../controls'
 
 const DEFAULT_DATA = {
   config: {},
@@ -40,12 +42,12 @@ export default class Column extends Component {
     }
     const editWindow = {
       tag: 'li',
-      className: 'column-edit group-config',
+      className: `${this.name}-edit group-config`,
     }
 
     const columnConfig = {
       tag: 'ul',
-      className: ['stage-columns', 'empty'],
+      className: [COLUMN_CLASSNAME, 'empty'],
       dataset: {
         hoverTag: i18n.get('column'),
       },
@@ -58,7 +60,7 @@ export default class Column extends Component {
           }
         },
       },
-      id: _this.id,
+      id: this.id,
       content: [this.actionButtons(), editWindow, resizeHandle],
       fType: 'columns',
     }
@@ -102,7 +104,7 @@ export default class Column extends Component {
 
     this.dom = column
 
-    columns.add(this)
+    Columns.add(this)
   }
 
   /**
@@ -134,42 +136,59 @@ export default class Column extends Component {
    * @param  {Object} evt
    */
   onAdd = evt => {
-    const { from, item, to } = evt
-    const fromColumn = from.fType === 'columns'
-    const fromControls = from.classList.contains('control-group')
+    const { from, to, item, newIndex } = evt
+    const fromType = dom.componentType(from)
 
-    if (fromControls) {
-      const meta = h.get(Controls.get(item.id).controlData, 'meta')
-      if (meta.group !== 'layout') {
-        const field = this.addField(item.id)
-        to.insertBefore(field.dom, to.childNodes[evt.newIndex])
-        data.saveFieldOrder(to)
-        data.save('fields', to.id)
-      } else {
-        if (meta.id === 'layout-column') {
-          const row = to.parentElement
-          console.log(rows)
-          rows.get(row.id).addColumn(item.id, evt.newIndex)
-          // dom.addColumn(row)
-          // dom.columnWidths(row)
+    const typeActions = {
+      // from Controls
+      controls: () => {
+        const { meta } = Controls.get(item.id).controlData
+        if (meta.group !== 'layout') {
+          this.addField(item.id, newIndex)
         }
-      }
-
-      dom.remove(item)
-      // document.dispatchEvent(events.formeoUpdated);
+        dom.remove(item)
+      },
+      // from Column
+      column: () => this.addField(item.id, newIndex),
     }
 
-    dom.fieldOrderClass(to)
-
-    if (fromColumn) {
-      dom.fieldOrderClass(from)
-    }
-
-    dom.emptyClass(evt.to)
-
-    data.save()
-
+    typeActions[fromType] && typeActions[fromType]()
     to.classList.remove('hovering-column')
+  }
+
+  /**
+   * Sets classes for legacy browsers to identify first and last fields in a block
+   * consider removing
+   * @param  {DOM} column
+   */
+  fieldOrderClasses = () => {
+    const fields = this.fields.map(({ dom }) => dom)
+
+    if (fields.length) {
+      dom.removeClasses(fields, ['first-field', 'last-field'])
+      fields[0].classList.add('first-field')
+      fields[fields.length - 1].classList.add('last-field')
+    }
+  }
+
+  /**
+   * Updates the field order data for the column
+   */
+  saveFieldOrder = () => {
+    const oldFieldOrder = this.get('children')
+    const newFieldOrder = this.fields.map(({ id }) => id)
+    this.set('children', newFieldOrder)
+    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'updateFieldOrder',
+        changed: `columns.${this.id}.children`,
+        oldValue: oldFieldOrder,
+        newValue: newFieldOrder,
+      },
+    })
+    document.dispatchEvent(events.formeoUpdated)
+    this.fieldOrderClasses()
+    return newFieldOrder
   }
 
   /**
@@ -177,11 +196,15 @@ export default class Column extends Component {
    * @param  {Object} evt
    */
   onRemove = evt => {
-    if (evt.from.parent) {
-      dom.columnWidths(evt.from.parentElement)
-      data.saveColumnOrder(evt.from.parentElement)
+    console.log('column onRemove: ', evt)
+    if (!this.fields.length) {
+      this.remove()
     }
-    dom.emptyClass(evt.from)
+    // if (evt.from.parent) {
+    // dom.columnWidths(evt.from.parentElement)
+    // data.saveColumnOrder(evt.from.parentElement)
+    // }
+    // dom.emptyClass(evt.from)
   }
 
   /**
@@ -189,25 +212,22 @@ export default class Column extends Component {
    * @param  {Object} evt
    */
   onEnd = evt => {
-    const { to, from } = evt
+    console.log('column onEnd')
+    const { to } = evt
 
-    if (from.classList.contains('empty')) {
-      dom.removeEmpty(evt.from)
-      return
-    }
+    // if (from.classList.contains('empty')) {
+    //   dom.removeEmpty(evt.from)
+    //   return
+    // }
 
-    dom.fieldOrderClass(to)
-    dom.fieldOrderClass(from)
+    this.saveFieldOrder()
+    this.emptyClass()
 
-    if (from.parent) {
-      dom.columnWidths(from.parentElement)
-    }
+    // if (from.parent) {
+    //   dom.columnWidths(from.parentElement)
+    // }
 
-    data.save()
-
-    if (to) {
-      to.classList.remove('hovering-column')
-    }
+    to && to.classList.remove('hovering-column')
   }
 
   /**
@@ -306,7 +326,11 @@ export default class Column extends Component {
   }
 
   get fields() {
-    return this.data.children.map(childId => Fields.get(childId))
+    if (!this.dom) {
+      return []
+    }
+    const fields = this.dom.getElementsByClassName(FIELD_CLASSNAME)
+    return h.map(fields, i => Fields.get(fields[i].id))
   }
 
   addField = (fieldId, index = this.fields.length) => {

@@ -10,6 +10,13 @@ import columnsData from '../data/columns'
 import Columns from '../components/columns'
 import Controls from '../components/controls'
 import stages from '../components/stages'
+import {
+  ROW_CLASSNAME,
+  STAGE_CLASSNAME,
+  COLUMN_CLASSNAME,
+  FIELD_CLASSNAME,
+  CONTROL_GROUP_CLASSNAME,
+} from '../constants'
 
 /**
  * General purpose markup utilities and generator.
@@ -864,21 +871,6 @@ class DOM {
   }
 
   /**
-   * Sets classes for legacy browsers to identify first and last fields in a block
-   * consider removing
-   * @param  {DOM} column
-   */
-  fieldOrderClass(column) {
-    const fields = column.querySelectorAll('.stage-fields')
-
-    if (fields.length) {
-      this.removeClasses(fields, ['first-field', 'last-field'])
-      fields[0].classList.add('first-field')
-      fields[fields.length - 1].classList.add('last-field')
-    }
-  }
-
-  /**
    * Read columns and generate bootstrap cols
    * @param  {Object}  row    DOM element
    */
@@ -1242,6 +1234,26 @@ class DOM {
     },
     content,
   })
+
+  componentType = node => {
+    const componentTypes = {
+      controls: CONTROL_GROUP_CLASSNAME,
+      stage: STAGE_CLASSNAME,
+      row: ROW_CLASSNAME,
+      column: COLUMN_CLASSNAME,
+      field: FIELD_CLASSNAME,
+    }
+
+    const type = Object.entries(componentTypes).find(cType => node.classList.contains(cType[1]))
+
+    return type ? type[0] : node.classList
+  }
+
+  isControls = node => dom.componentType(node) === 'control-group'
+  isStage = node => dom.componentType(node) === 'stage'
+  isRow = node => dom.componentType(node) === 'stage-rows'
+  isColumn = node => dom.componentType(node) === 'stage-coluns'
+  isField = node => dom.componentType(node) === 'stage-fields'
 }
 
 const dom = new DOM()

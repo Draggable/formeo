@@ -14,6 +14,7 @@ import merge from 'lodash/merge'
 import Field from '../fields/field'
 import Control from './control'
 import stages from '../stages'
+import { CONTROL_GROUP_CLASSNAME } from '../../constants'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -89,7 +90,6 @@ export class Controls {
    */
   applyControlEvents = ({ clone: control }) => {
     const button = control.querySelector('button')
-    console.log(control, this.controlEvents)
     Object.keys(this.controlEvents).map(action => button.addEventListener(action, this.controlEvents[action]))
   }
 
@@ -151,8 +151,8 @@ export class Controls {
       const group = {
         tag: 'ul',
         attrs: {
-          className: 'control-group',
-          id: `${groups[i].id}-control-group`,
+          className: CONTROL_GROUP_CLASSNAME,
+          id: `${groups[i].id}-${CONTROL_GROUP_CLASSNAME}`,
         },
         fType: 'controlGroup',
         config: {
@@ -368,9 +368,12 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
+        // onMove: evt => console.log(evt),
+        // onUpdate: evt => console.log(evt),
         onRemove: _this.applyControlEvents,
         // onEnd: evt => {console.log(evt)},
         onStart: evt => {
+          console.log(evt)
           if (this.options.ghostPreview) {
             evt.item.innerHTML = ''
             evt.item.appendChild(new Field(this.get(evt.item.id)).preview)
@@ -407,19 +410,18 @@ export class Controls {
    * Append an element to the stage
    * @param {String} id of elements
    */
-  addElement(id) {
-    const row = stages.activeStage.addRow()
-    const meta = helpers.get(this.get(id), 'controlData.meta')
-    const column = row.addColumn()
-    if (meta.group !== 'layout') {
-      column.addField(id)
-    } else if (meta.id === 'layout-column') {
-      column.addColumn()
+  addElement = id => {
+    const {
+      meta: { group, id: metaId },
+    } = helpers.get(this.get(id), 'controlData')
+
+    const layoutTypes = {
+      row: () => stages.activeStage.addRow(),
+      column: () => layoutTypes['row']().addColumn(),
+      field: id => layoutTypes['column']().addField(id),
     }
 
-    // data.saveColumnOrder(row)
-    // dom.columnWidths(row)
-    // data.save()
+    return group !== 'layout' ? layoutTypes['field'](id) : layoutTypes[metaId.replace('layout-', '')]()
   }
 
   applyOptions(controlOptions = {}) {

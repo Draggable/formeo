@@ -1,6 +1,7 @@
 import { uuid } from '../common/utils'
 import helpers from '../common/helpers'
 import dom from '../common/dom'
+import components from './index'
 
 export default class Component {
   constructor(name, data = {}, defaultData = {}) {
@@ -28,15 +29,21 @@ export default class Component {
   //   return elemId
   // }
   remove = path => {
-    const delPath = path.split('.')
-    const delItem = delPath.pop()
-    const parent = helpers.get(this.data, delPath)
-    if (Array.isArray(parent)) {
-      parent.splice(Number(delItem), 1)
-    } else {
-      delete parent[delItem]
+    if (path) {
+      const delPath = path.split('.')
+      const delItem = delPath.pop()
+      const parent = helpers.get(this.data, delPath)
+      if (Array.isArray(parent)) {
+        parent.splice(Number(delItem), 1)
+      } else {
+        delete parent[delItem]
+      }
+      return parent
     }
-    return parent
+
+    console.log(components, this.name)
+
+    components[this.name].remove(this.id)
   }
 
   /**

@@ -7,6 +7,7 @@ import { clone } from '../../common/utils'
 import fields from './index'
 import EditPanel from './edit-panel'
 import Component from '../component'
+import { FIELD_CLASSNAME } from '../../constants'
 
 /**
  * Element/Field class.
@@ -23,7 +24,7 @@ export default class Field extends Component {
     let field = {
       tag: 'li',
       attrs: {
-        className: 'stage-fields',
+        className: FIELD_CLASSNAME,
       },
       id: this.id,
       children: [
@@ -58,19 +59,21 @@ export default class Field extends Component {
 
   get label() {
     // console.log(this.data.config)
-    return !this.data.config.hideLabel && {
-      tag: 'label',
-      attrs: {
-        contenteditable: true,
-        className: 'prev-label',
-      },
-      children: this.data.config.label,
-      action: {
-        input: ({ target: { innerHTML } }) => {
-          this.set('config.label', innerHTML)
+    return (
+      !this.data.config.hideLabel && {
+        tag: 'label',
+        attrs: {
+          contenteditable: true,
+          className: 'prev-label',
         },
-      },
-    }
+        children: this.data.config.label,
+        action: {
+          input: ({ target: { innerHTML } }) => {
+            this.set('config.label', innerHTML)
+          },
+        },
+      }
+    )
   }
 
   /**
@@ -86,8 +89,6 @@ export default class Field extends Component {
 
     return newPreview
   }
-
-
 
   /**
    * Generate the markup for field edit mode

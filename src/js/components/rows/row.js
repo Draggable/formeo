@@ -4,11 +4,12 @@ import dom from '../../common/dom'
 import h, { bsGridRegEx } from '../../common/helpers'
 import { data } from '../../common/data'
 import Controls from '../controls'
-import rows from './index'
+import Rows from './index'
 import Component from '../component'
 import Columns from '../columns'
 import { numToPercent } from '../../common/utils'
 import events from '../../common/events'
+import { ROW_CLASSNAME, COLUMN_CLASSNAME } from '../../constants'
 
 const DEFAULT_DATA = {
   config: {
@@ -33,7 +34,7 @@ export default class Row extends Component {
 
     const rowConfig = {
       tag: 'li',
-      className: 'stage-rows empty',
+      className: `${ROW_CLASSNAME} empty`,
       dataset: {
         hoverTag: i18n.get('row'),
         editingHoverTag: i18n.get('editing.row'),
@@ -47,8 +48,8 @@ export default class Row extends Component {
 
     this.sortable = Sortable.create(row, {
       animation: 150,
-      // fallbackClass: 'column-moving',
-      // forceFallback: true,
+      fallbackClass: 'column-moving',
+      forceFallback: true,
       group: { name: 'rows', pull: true, put: ['rows', 'controls', 'columns'] },
       sort: true,
       onRemove: this.onRemove,
@@ -64,7 +65,7 @@ export default class Row extends Component {
 
     this.dom = row
 
-    rows.add(this)
+    Rows.add(this)
   }
 
   /**
@@ -74,11 +75,8 @@ export default class Row extends Component {
   get editWindow() {
     const _this = this
     const rowData = this.data
-    // debugger
-
     const editWindow = {
-      tag: 'div',
-      className: 'row-edit group-config',
+      className: `${this.name}-edit group-config`,
     }
     const fieldsetLabel = {
       tag: 'label',
@@ -95,14 +93,14 @@ export default class Row extends Component {
       action: {
         click: ({ target: { checked } }) => {
           rowData.setIn(['config', 'fieldset'], checked)
-          data.save()
+          // data.save()
         },
       },
     }
 
     const inputGroupInput = {
       tag: 'input',
-      id: _this.id + '-inputGroup',
+      id: `${this.id}-inputGroup`,
       attrs: {
         type: 'checkbox',
         checked: h.get(rowData, 'config.inputGroup'),
@@ -183,9 +181,8 @@ export default class Row extends Component {
    * Update column order and save
    * @param  {Object} evt
    */
-  onSort(evt) {
-    data.saveColumnOrder(evt.target)
-    data.save()
+  onSort = () => {
+    this.saveColumnOrder()
   }
 
   /**
@@ -193,9 +190,7 @@ export default class Row extends Component {
    * @param  {Object} evt
    */
   onRemove = evt => {
-    dom.columnWidths(evt.from)
-    data.saveColumnOrder(evt.target)
-    console.log(evt.to)
+    this.autoColumnWidths()
     dom.emptyClass(evt.from)
   }
 
@@ -216,35 +211,47 @@ export default class Row extends Component {
    * Handler for adding content to a row
    * @param  {Object} evt
    */
-  onAdd(evt) {
-    const { from, item, to } = evt
-    const fromRow = from.fType === 'rows'
-    const fromColumn = from.fType === 'columns'
-    const fromControls = from.fType === 'controlGroup'
-    let column
+  onAdd = evt => {
+    const { from, item } = evt
+    const fromType = dom.componentType(from)
     console.log('row.js onAdd')
 
-    if (fromRow) {
-      column = item
-    } else if (fromColumn || fromControls) {
-      const meta = h.get(Controls.get(item.id).controlData, 'meta')
-      if (meta.group !== 'layout') {
-        column = dom.addColumn(to)
-        dom.addField(column, item.id)
-      } else if (meta.id === 'layout-column') {
-        dom.addColumn(to)
-      }
+    const typeActions = {
+      // from Controls
+      controls: () => {
+        const { meta } = Controls.get(item.id).controlData
+        if (meta.group !== 'layout') {
+          this.addColumn().addField(item.id)
+        } else if (meta.id === 'layout-column') {
+          this.addColumn()
+        }
+        dom.remove(item)
+      },
+      // from Column
+      row: () => this.addColumn(item.id),
+      column: () => this.addColumn().addField(item.id),
     }
 
-    if (fromColumn || fromControls) {
-      dom.remove(item)
-    }
+    typeActions[fromType] && typeActions[fromType]()
+    this.emptyClass()
+    this.autoColumnWidths()
+    this.saveColumnOrder()
+  }
 
-    data.saveColumnOrder(to)
-
-    dom.columnWidths(to)
-    dom.emptyClass(to)
-    // data.save()
+  saveColumnOrder = () => {
+    const oldColumnOrder = this.get('children')
+    const newColumnOrder = this.columns.map(({ id }) => id)
+    this.set('children', newColumnOrder)
+    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'updateColumnOrder',
+        changed: `rows.${this.id}.children`,
+        oldValue: oldColumnOrder,
+        newValue: newColumnOrder,
+      },
+    })
+    document.dispatchEvent(events.formeoUpdated)
+    return newColumnOrder
   }
 
   /**
@@ -261,7 +268,11 @@ export default class Row extends Component {
   }
 
   get columns() {
-    return this.data.children.map(childId => Columns.get(childId))
+    if (!this.dom) {
+      return []
+    }
+    const columns = this.dom.getElementsByClassName(COLUMN_CLASSNAME)
+    return h.map(columns, i => Columns.get(columns[i].id))
   }
 
   addColumn = (columnId, index = this.columns.length) => {
@@ -280,16 +291,16 @@ export default class Row extends Component {
    */
   autoColumnWidths = () => {
     const columns = this.columns
-    const columnsLength = columns.length
-    if (!columnsLength) {
+    if (!columns) {
       return
     }
-    const width = parseFloat((100 / columnsLength).toFixed(1)) / 1
+    const width = parseFloat((100 / columns.length).toFixed(1)) / 1
 
     columns.forEach(column => {
       column.removeClasses(bsGridRegEx)
       const colDom = column.dom
       const newColWidth = numToPercent(width)
+
       column.set('config.width', newColWidth)
       colDom.style.width = newColWidth
       // colDom.style.float = 'left'
@@ -359,7 +370,7 @@ export default class Row extends Component {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    if (this.columns.length) {
+    if (this.columns) {
       const columns = this.columns
       const pMapVal = pMap.get(columns.length)
       layoutPreset.options = pMapVal || pMap.get('custom')

@@ -9,8 +9,8 @@ import Component from '../component'
 import events from '../../common/events'
 import Rows from '../rows'
 import stages from './index'
+import { STAGE_CLASSNAME, ROW_CLASSNAME } from '../../constants'
 
-let stageOpts = {}
 const DEFAULT_DATA = { children: [] }
 
 /**
@@ -26,53 +26,52 @@ export default class Stage extends Component {
   constructor(stageData) {
     super('stage', Object.assign({}, DEFAULT_DATA, stageData))
 
-    const defaultOptions = {
-      formSettings: [
-        {
-          tag: 'input',
-          id: 'form-title',
-          attrs: {
-            className: 'form-title',
-            placeholder: i18n.get('Untitled Form'),
-            value: i18n.get('Untitled Form'),
-            type: 'text',
-          },
-          config: {
-            label: i18n.get('Form Title'),
-          },
-        },
-        {
-          tag: 'input',
-          id: 'form-novalidate',
-          attrs: {
-            className: 'form-novalidate',
-            value: false,
-            type: 'checkbox',
-          },
-          config: {
-            label: i18n.get('Form novalidate'),
-          },
-        },
-        {
-          tag: 'input',
-          id: 'form-tags',
-          attrs: {
-            className: 'form-tags',
-            type: 'text',
-          },
-          config: {
-            label: i18n.get('Tags'),
-          },
-        },
-      ],
-    }
-
-    stageOpts = Object.assign(stageOpts, defaultOptions)
+    // @todo move formSettings to its own component
+    // const defaultOptions = {
+    //   formSettings: [
+    //     {
+    //       tag: 'input',
+    //       id: 'form-title',
+    //       attrs: {
+    //         className: 'form-title',
+    //         placeholder: i18n.get('Untitled Form'),
+    //         value: i18n.get('Untitled Form'),
+    //         type: 'text',
+    //       },
+    //       config: {
+    //         label: i18n.get('Form Title'),
+    //       },
+    //     },
+    //     {
+    //       tag: 'input',
+    //       id: 'form-novalidate',
+    //       attrs: {
+    //         className: 'form-novalidate',
+    //         value: false,
+    //         type: 'checkbox',
+    //       },
+    //       config: {
+    //         label: i18n.get('Form novalidate'),
+    //       },
+    //     },
+    //     {
+    //       tag: 'input',
+    //       id: 'form-tags',
+    //       attrs: {
+    //         className: 'form-tags',
+    //         type: 'text',
+    //       },
+    //       config: {
+    //         label: i18n.get('Tags'),
+    //       },
+    //     },
+    //   ],
+    // }
 
     this.dom = dom.create({
       tag: 'ul',
       attrs: {
-        className: ['stage', 'empty'],
+        className: [STAGE_CLASSNAME, 'empty'],
         id: this.id,
       },
       dataset: {
@@ -86,7 +85,7 @@ export default class Stage extends Component {
     // console.log('this.id', this.id)
     // console.log(set.toJS().stages)
 
-    // return this.loadStage()
+    this.loadStage()
   }
 
   /**
@@ -94,8 +93,6 @@ export default class Stage extends Component {
    * @return {Object} DOM element
    */
   loadStage() {
-    // const _this = this
-    // const stageWrap = this.dom
     Sortable.create(this.dom, {
       animation: 150,
       fallbackClass: 'row-moving',
@@ -179,8 +176,6 @@ export default class Stage extends Component {
       },
     }
 
-    config.settings.children = stageOpts.formSettings.slice()
-
     return config
   }
 
@@ -199,42 +194,48 @@ export default class Stage extends Component {
    * @return {Object} formData
    */
   onAdd = evt => {
-    console.log('Stage: onAdd', evt)
     stages.activeStage = this
     const { from, item, to } = evt
     const newIndex = h.indexOfNode(item, to)
-    const row = from.fType === 'stages' ? item : this.addRow()
-    const fromColumn = from.fType === 'columns'
-    const fromRow = from.fType === 'rows'
-    let column
+    const row = dom.isStage(from) ? Rows.get(item.id) : this.addRow()
+    const fromType = dom.componentType(from)
 
-    if (from.fType === 'controlGroup') {
-      const { meta } = Controls.get(item.id).controlData
-      if (meta.group !== 'layout') {
-        column = row.addColumn()
-        column.addField(item.id)
-        // dom.addField(column, item.id)
-      } else if (meta.id === 'layout-column') {
-        dom.addColumn(row)
-      }
-      dom.remove(item)
-    } else if (fromColumn) {
-      console.log({ fromColumn })
-      column = dom.addColumn(row)
-      column.appendChild(item)
-      data.saveFieldOrder(column)
-    } else if (fromRow) {
-      console.log({ fromRow })
-      row.appendChild(item)
-      data.saveColumnOrder(row)
+    const onAddConditions = {
+      // from Controls
+      controls: () => {
+        const { meta } = Controls.get(item.id).controlData
+        if (meta.group !== 'layout') {
+          row.addColumn().addField(item.id)
+        } else if (meta.id === 'layout-column') {
+          row.addColumn()
+        }
+        dom.remove(item)
+      },
+      row: () => row.addColumn(item.id),
+      column: () => row.addColumn().addField(item.id),
     }
 
+    onAddConditions[fromType] && onAddConditions[fromType]()
     to.insertBefore(row.dom, to.children[newIndex])
-    // dom.columnWidths(row)
-    // data.saveRowOrder(to)
     this.emptyClass()
+    this.saveRowOrder()
+  }
 
-    return data.save()
+  saveRowOrder = () => {
+    stages.activeStage = this
+    const oldRowOrder = this.get('children')
+    const newRowOrder = this.rows.map(({ id }) => id)
+    this.set('children', newRowOrder)
+    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
+      data: {
+        updateType: 'updateRowOrder',
+        changed: `stages.${this.id}.children`,
+        oldValue: oldRowOrder,
+        newValue: newRowOrder,
+      },
+    })
+    document.dispatchEvent(events.formeoUpdated)
+    return newRowOrder
   }
 
   /**
@@ -272,7 +273,7 @@ export default class Stage extends Component {
   }
 
   get rows() {
-    return this.data.children.map(childId => Rows.get(childId))
+    return h.map(this.dom.getElementsByClassName(ROW_CLASSNAME), ({ id }) => Rows.get(id))
   }
 
   /**

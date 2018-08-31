@@ -4,7 +4,6 @@ import events from './events'
 import h from './helpers'
 import { remove } from './utils'
 import FormeoData from '../data'
-import rowsData from '../data/rows'
 import columnsData from '../data/columns'
 import Fields from '../components/fields'
 import stages from '../components/stages'
@@ -51,12 +50,12 @@ const data = {
   //   return newRowOrder
   // },
 
-  saveColumnOrder: row => {
-    const columns = row.getElementsByClassName('stage-columns')
-    const columnOrder = h.map(columns, i => columns[i].id)
-    rowsData.set(`${row.id}.columns`, columnOrder)
-    return columnOrder
-  },
+  // saveColumnOrder: row => {
+  //   const columns = row.getElementsByClassName('stage-columns')
+  //   const columnOrder = h.map(columns, i => columns[i].id)
+  //   rowsData.set(`${row.id}.columns`, columnOrder)
+  //   return columnOrder
+  // },
 
   saveFieldOrder: column => {
     const fields = column.getElementsByClassName('stage-fields')
