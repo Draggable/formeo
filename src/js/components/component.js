@@ -1,7 +1,7 @@
 import { uuid } from '../common/utils'
 import helpers from '../common/helpers'
 import dom from '../common/dom'
-import components from './index'
+// import components from './index'
 
 export default class Component {
   constructor(name, data = {}, defaultData = {}) {
@@ -41,9 +41,9 @@ export default class Component {
       return parent
     }
 
-    console.log(components, this.name)
+    // console.log(components, this.name)
 
-    components[this.name].remove(this.id)
+    // components[this.name].remove(this.id)
   }
 
   /**

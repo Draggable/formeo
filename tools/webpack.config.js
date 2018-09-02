@@ -15,7 +15,7 @@ try {
 const outputDir = resolve(__dirname, '../', 'dist/')
 const PRODUCTION = process.argv.includes('production')
 const ANALYZE = process.argv.includes('--analyze')
-const devtool = PRODUCTION ? false : 'inline-source-map'
+const devtool = PRODUCTION ? false : 'cheap-module-source-map'
 
 const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
 

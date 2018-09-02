@@ -1,11 +1,63 @@
-import Stages from './stages'
-import Rows from './rows'
-import Columns from './columns'
-import Fields from './fields'
+import Data from './data'
+import { uuid } from '../common/utils'
+import StagesData from './stages'
+import RowsData from './rows'
+import ColumnsData from './columns'
+import FieldsData from './fields'
 
-export const stages = Stages
-export const rows = Rows
-export const columns = Columns
-export const fields = Fields
+export let Stages
+export let Rows
+export let Columns
+export let Fields
 
-export default { stage: stages, row: rows, column: columns, field: fields }
+const DEFAULT_DATA = {
+  id: uuid(),
+}
+export class Components extends Data {
+  constructor(opts) {
+    super('components')
+    this.opts = opts
+    this.data = DEFAULT_DATA
+  }
+
+  sessionFormData = () => {
+    if (this.opts && this.opts.sessionStorage && window.sessionStorage) {
+      return window.sessionStorage.getItem('formData')
+    }
+  }
+
+  load = (formData, opts = Object.create(null)) => {
+    this.opts = opts
+    const { stages, rows, columns, fields } = Object.assign({}, this.sessionFormData(), formData)
+    Stages = new StagesData(stages)
+    Rows = new RowsData(rows)
+    Columns = new ColumnsData(columns)
+    Fields = new FieldsData(fields)
+    this.add('stages', Stages)
+    this.add('rows', Rows)
+    this.add('columns', Columns)
+    this.add('fields', Fields)
+
+    return this.data
+  }
+
+  getData = (data = this.data) => {
+    return Object.entries(data).reduce((acc, [key, val]) => {
+      acc[key] = val.data ? this.getData(val.data) : val
+      return acc
+    }, {})
+  }
+
+  get json() {
+    return window.JSON.stringify(this.getData())
+  }
+
+  get formData() {
+    return this.getData()
+  }
+
+  // init = (opts, userFormData = {}) => {}
+}
+
+const components = new Components()
+export default components

@@ -5,11 +5,10 @@ import Column from '../components/columns/column'
 import Field from '../components/fields/field'
 import animate from './animation'
 import { data, formData } from './data'
-import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
-import columnsData from '../data/columns'
 import Columns from '../components/columns'
 import Controls from '../components/controls'
-import stages from '../components/stages'
+import Stages from '../components/stages'
+import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -354,7 +353,7 @@ class DOM {
     if (elem.dataset) {
       for (const data in elem.dataset) {
         if (elem.dataset.hasOwnProperty(data)) {
-          element.dataset[data] = elem.dataset[data]
+          element.dataset[data] = typeof elem.dataset[data] === 'function' ? elem.dataset[data]() : elem.dataset[data]
         }
       }
       processed.push('dataset')
@@ -777,7 +776,7 @@ class DOM {
     const cloneType = {
       rows: () => {
         dataClone.columns = []
-        const stage = stages.activeStage
+        const stage = Stages.activeStage
         const newRow = stage.addRow(null, dataClone.id)
         const columns = elem.getElementsByClassName('stage-columns')
 
@@ -890,7 +889,7 @@ class DOM {
 
       column.style.width = newColWidth
       column.style.float = 'left'
-      columnsData.set(`${column.id}.config.width`, newColWidth)
+      Columns.set(`${column.id}.config.width`, newColWidth)
       column.dataset.colWidth = newColWidth
       document.dispatchEvent(events.columnResized)
     })

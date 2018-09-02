@@ -1,12 +1,12 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
+import Component from '../component'
 import dom from '../../common/dom'
 import h, { bsGridRegEx } from '../../common/helpers'
 import { data } from '../../common/data'
 import Controls from '../controls'
-import Rows from './index'
-import Component from '../component'
-import Columns from '../columns'
+import { Columns } from '..'
+// import Columns from '../columns'
 import { numToPercent } from '../../common/utils'
 import events from '../../common/events'
 import { ROW_CLASSNAME, COLUMN_CLASSNAME } from '../../constants'
@@ -64,8 +64,6 @@ export default class Row extends Component {
     })
 
     this.dom = row
-
-    Rows.add(this)
   }
 
   /**

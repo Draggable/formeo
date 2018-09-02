@@ -7,14 +7,8 @@ const LOADER_MAP = {
 
 export default class Control {
   constructor({ events = {}, dependencies = {}, ...restConfig } = {}) {
-    // const { events = {}, dependencies = {}, ...restConfig } = config
     this.events = events
     this.controlData = restConfig
-
-    // Object.entries(restConfig).forEach(([key, val]) => {
-    //   this[key] = val
-    // })
-
     this.depsLoaded = this.fetchDependencies(dependencies)
   }
 
@@ -24,7 +18,6 @@ export default class Control {
     const promises = Object.entries(dependencies).map(([type, src]) => {
       return LOADER_MAP[type](src)
     })
-    // console.log(promises)
     return Promise.all(promises)
   }
 

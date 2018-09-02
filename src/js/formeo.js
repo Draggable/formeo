@@ -2,13 +2,14 @@
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
 import h from './common/helpers'
-import { data } from './common/data'
+// import { data } from './common/data'
 import events from './common/events'
 import actions from './common/actions'
 import dom from './common/dom'
 import Controls from './components/controls'
-import Stage from './components/stages/stage'
-import formData, { stages as stagesData } from './data'
+// import Stages from './components/stages'
+import Components, { Stages } from './components'
+// import formData from './data'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import 'es6-promise/auto'
 
@@ -18,9 +19,9 @@ const fallbacks = {
 
 // Simple object config for the main part of formeo
 const formeo = {
-  get formData() {
-    return data.json
-  },
+  // get formData() {
+  //   return data.json
+  // },
 }
 
 /**
@@ -80,7 +81,11 @@ class Formeo {
     this.opts = opts
     dom.setOptions = opts
 
-    data.init(opts, userFormData)
+    // const { stages } = Components.load(userFormData, opts)
+    formeo.formData = Components.formData
+    this.formData = userFormData
+    // this.stages = stages
+
     events.init(opts.events)
     actions.init(opts.actions)
 
@@ -128,15 +133,16 @@ class Formeo {
   init() {
     const _this = this
     i18n.init(_this.opts.i18n).then(() => {
-      _this.formId = formData.get('id')
+      _this.formId = Components.get('id')
       formeo.controls = Controls.init(_this.opts.controls)
-      _this.stages = _this.build()
+      // console.log(_this.stages)
+      // _this.stages = Object.values(Stages.data)
       formeo.i18n = {
         setLang: formeoLocale => {
           window.sessionStorage.setItem('formeo-locale', formeoLocale)
           const loadLang = i18n.setCurrent(formeoLocale)
           loadLang.then(lang => {
-            _this.stages = _this.build()
+            // _this.stages = Object.values(Stages.data)
             formeo.controls = Controls.init(_this.opts.controls)
             _this.render()
           }, console.error)
@@ -150,38 +156,19 @@ class Formeo {
   }
 
   /**
-   * Generate the stages we will drag out elements to
-   * @return {Object} stages map
-   */
-  build() {
-    const stages = []
-    const createStage = stageData => new Stage(stageData)
-    if (stagesData.size) {
-      stagesData.forEach(stageData => {
-        stages.push(createStage(stageData))
-      })
-    } else {
-      stages.push(createStage())
-    }
-
-    return stages
-  }
-
-  /**
    * Render the formeo sections
    * @return {void}
    */
   render() {
     const _this = this
     const controls = formeo.controls.dom
-
+    Components.load(this.formData, this.opts)
     const elemConfig = {
-      tag: 'div',
       attrs: {
         className: 'formeo formeo-editor',
         id: _this.formId,
       },
-      content: [_this.stages.map(({ dom }) => dom), controls],
+      content: [Object.values(Stages.data).map(({ dom }) => dom), controls],
     }
 
     if (i18n.current.dir) {
@@ -194,10 +181,9 @@ class Formeo {
     _this.container.innerHTML = ''
     _this.container.appendChild(formeoElem)
 
-    _this.stages.forEach(({ dom: stage }) => {
-      // const stage = stageWrap.childNodes[0]
-      stage.style.minHeight = dom.getStyle(controls, 'height')
-    })
+    // _this.stages.forEach(({ dom: stage }) => {
+    //   stage.style.minHeight = dom.getStyle(controls, 'height')
+    // })
 
     events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {

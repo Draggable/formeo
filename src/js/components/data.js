@@ -19,9 +19,9 @@ export default class Data {
   toJSON = (data, format) => JSON.stringify(data, null, format)
   get = path => helpers.get(this.data, path)
   set = (path, val) => helpers.set(this.data, path, val)
-  add = (data = Object.create(null)) => {
-    const { id } = data
-    const elemId = id || uuid()
+  add = (id, data = Object.create(null)) => {
+    const { id: dataId } = data
+    const elemId = id || dataId || uuid()
     const mergedData = Object.assign({}, this.defaultData, data)
     this.data[elemId] = mergedData
     return elemId

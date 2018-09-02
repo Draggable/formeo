@@ -1,15 +1,12 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
+import Component from '../component'
 import { data, formData } from '../../common/data'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { numToPercent } from '../../common/utils'
-// import Controls from '../controls'
-import Columns from './index'
-import Component from '../component'
-import Fields from '../fields'
-// import Rows from '../rows'
+import { Fields } from '..'
 import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
 import Controls from '../controls'
 
@@ -103,8 +100,6 @@ export default class Column extends Component {
     })
 
     this.dom = column
-
-    Columns.add(this)
   }
 
   /**

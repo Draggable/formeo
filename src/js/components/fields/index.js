@@ -1,16 +1,9 @@
-import Data from '../../data/data'
+import ComponentData from '../component-data'
 import Field from './field'
-import helpers from '../../common/helpers'
-import Controls from '../controls'
 
-export class FieldData extends Data {
-  constructor(data) {
-    super('fields')
-    // this.data = data || Object.create(null)
+export default class Fields extends ComponentData {
+  constructor(fieldData) {
+    super('fields', fieldData)
   }
-  get = path => helpers.get(this.data, path) || new Field(Controls.get(path).controlData)
+  Component = Field
 }
-
-const Fields = new FieldData()
-
-export default Fields

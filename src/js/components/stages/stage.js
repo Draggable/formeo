@@ -1,14 +1,12 @@
 import Sortable from 'sortablejs'
-import i18n from 'mi18n'
 import { data } from '../../common/data'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
 import Controls from '../controls'
-import Row from '../rows/row'
 import Component from '../component'
 import events from '../../common/events'
-import Rows from '../rows'
-import stages from './index'
+import { Rows } from '..'
+// import Stages from './index'
 import { STAGE_CLASSNAME, ROW_CLASSNAME } from '../../constants'
 
 const DEFAULT_DATA = { children: [] }
@@ -74,11 +72,9 @@ export default class Stage extends Component {
         className: [STAGE_CLASSNAME, 'empty'],
         id: this.id,
       },
-      dataset: {
-        hoverTag: i18n.get('getStarted'),
-      },
     })
-    stages.activeStage = this
+
+    // Stages.activeStage = this
     // formData.get('stages').set(this.id, defaultStageData(this.id))
     // formData = formData.setIn(['stages', this.id], defaultStageData(this.id))
 
@@ -112,7 +108,7 @@ export default class Stage extends Component {
       // },
       onStart: evt => {
         // console.log(evt)
-        stages.activeStage = this
+        // Stages.activeStage = this
       },
       // onUpdate: evt => {
       //   data.saveRowOrder()
@@ -128,7 +124,7 @@ export default class Stage extends Component {
     // sortable,
     // })
 
-    stages.activeStage = this
+    // Stages.activeStage = this
 
     if (this.data.children.length) {
       this.loadRows()
@@ -152,34 +148,6 @@ export default class Stage extends Component {
   }
 
   /**
-   * Generate the elements that make up the Stage
-   * @return {Object} stage elements, settings, stage ul
-   */
-  elementConfigs() {
-    const _this = this
-    const config = {
-      stage: {
-        tag: 'ul',
-        attrs: {
-          className: ['stage', 'empty'],
-          id: _this.id,
-        },
-        dataset: {
-          hoverTag: i18n.get('getStarted'),
-        },
-      },
-      settings: {
-        attrs: {
-          className: 'formeo-settings',
-          id: `${_this.id}-settings`,
-        },
-      },
-    }
-
-    return config
-  }
-
-  /**
    * Callback for when a row is sorted
    * @param  {Object} evt
    */
@@ -194,7 +162,7 @@ export default class Stage extends Component {
    * @return {Object} formData
    */
   onAdd = evt => {
-    stages.activeStage = this
+    // Stages.activeStage = this
     const { from, item, to } = evt
     const newIndex = h.indexOfNode(item, to)
     const row = dom.isStage(from) ? Rows.get(item.id) : this.addRow()
@@ -222,7 +190,7 @@ export default class Stage extends Component {
   }
 
   saveRowOrder = () => {
-    stages.activeStage = this
+    // Stages.activeStage = this
     const oldRowOrder = this.get('children')
     const newRowOrder = this.rows.map(({ id }) => id)
     this.set('children', newRowOrder)
@@ -247,31 +215,6 @@ export default class Stage extends Component {
     return data.save()
   }
 
-  /**
-   * Returns the markup for the stage
-   *
-   * @return {DOM}
-   */
-  stageWrap() {
-    if (this.stage) {
-      return this.stage
-    }
-    const config = this.elementConfigs()
-
-    const stageWrap = dom.create({
-      attrs: {
-        className: 'stage-wrap',
-      },
-      content: [
-        config.stage, // stage items
-        config.settings,
-      ],
-    })
-    this.stage = stageWrap.firstChild
-
-    return stageWrap
-  }
-
   get rows() {
     return h.map(this.dom.getElementsByClassName(ROW_CLASSNAME), ({ id }) => Rows.get(id))
   }
@@ -283,7 +226,8 @@ export default class Stage extends Component {
    * @return {Object} DOM element
    */
   addRow = (rowId, index = this.rows.length) => {
-    const row = new Row({ id: rowId })
+    const row = Rows.add(rowId)
+    console.log(row)
     this.dom.appendChild(row.dom)
     // data.saveRowOrder(stage)
     this.set(`children.${index}`, row.id)

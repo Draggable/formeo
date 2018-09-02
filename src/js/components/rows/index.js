@@ -1,15 +1,9 @@
-import Data from '../../data/data'
-import { helpers } from '../../common/helpers'
-import Column from '../columns/column'
+import ComponentData from '../component-data'
+import Row from './row'
 
-export class RowData extends Data {
+export default class Rows extends ComponentData {
   constructor(rowData) {
     super('rows', rowData)
   }
-  get = path => (path ? helpers.get(this.data, path) : new Column())
+  Component = Row
 }
-
-const rowsData = new RowData()
-export const rows = rowsData.data
-
-export default rowsData

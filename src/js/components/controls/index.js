@@ -5,7 +5,7 @@ import events from '../../common/events'
 import { match, unique, uuid, closestFtype } from '../../common/utils'
 import dom from '../../common/dom'
 import Panels from '../panels'
-import rowsData from '../../data/rows'
+import Rows from '../rows'
 import layoutControls from './layout'
 import formControls from './form'
 import htmlControls from './html'
@@ -13,8 +13,9 @@ import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import Field from '../fields/field'
 import Control from './control'
-import stages from '../stages'
+// import Stages from '../stages'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants'
+import { Stages } from '..'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -228,7 +229,7 @@ export class Controls {
       className: ['clear-form'],
       action: {
         click: evt => {
-          if (rowsData.size) {
+          if (Rows.size) {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
@@ -240,7 +241,7 @@ export class Controls {
             })
 
             document.dispatchEvent(events.confirmClearAll)
-            rowsData.empty()
+            Rows.empty()
           } else {
             window.alert('There are no fields to clear')
           }
@@ -416,12 +417,14 @@ export class Controls {
     } = helpers.get(this.get(id), 'controlData')
 
     const layoutTypes = {
-      row: () => stages.activeStage.addRow(),
-      column: () => layoutTypes['row']().addColumn(),
-      field: id => layoutTypes['column']().addField(id),
+      row: () => Stages.activeStage.addRow(),
+      column: () => layoutTypes.row().addColumn(),
+      field: id => {
+        return layoutTypes.column().addField(id)
+      },
     }
 
-    return group !== 'layout' ? layoutTypes['field'](id) : layoutTypes[metaId.replace('layout-', '')]()
+    return group !== 'layout' ? layoutTypes.column(id) : layoutTypes[metaId.replace('layout-', '')]()
   }
 
   applyOptions(controlOptions = {}) {

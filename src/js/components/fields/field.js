@@ -1,10 +1,9 @@
 import i18n from 'mi18n'
-import { data } from '../../common/data'
+// import { data } from '../../common/data'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
 import { clone } from '../../common/utils'
-import fields from './index'
 import EditPanel from './edit-panel'
 import Component from '../component'
 import { FIELD_CLASSNAME } from '../../constants'
@@ -54,7 +53,6 @@ export default class Field extends Component {
     this.preview = dom.create(this.fieldPreview())
     field.appendChild(this.preview)
     this.dom = field
-    fields.add(this)
   }
 
   get label() {
@@ -147,7 +145,6 @@ export default class Field extends Component {
    * @return {Object} fieldPreview
    */
   fieldPreview() {
-    const _this = this
     const prevData = clone(this.data)
     prevData.id = `prev-${this.id}`
     // const field = this.dom
@@ -195,7 +192,7 @@ export default class Field extends Component {
 
               // h.set(fieldData, fMap, checked)
 
-              data.save()
+              // data.save()
             }
           }
         },
@@ -215,7 +212,7 @@ export default class Field extends Component {
           } else {
             h.set(fieldData, prop, evt.target.value)
           }
-          data.save('field', _this.id)
+          // data.save('field', _this.id)
         },
       },
     }

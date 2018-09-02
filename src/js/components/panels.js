@@ -2,8 +2,7 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import h from '../common/helpers'
 import dom from '../common/dom'
-import Fields from './fields'
-// import { data } from '../common/data'
+// import Fields from './fields'
 
 const defaults = {
   type: 'field',
@@ -28,9 +27,9 @@ export default class Panels {
     this.panels = panels.childNodes
     this.currentPanel = _this.panels[0]
     this.nav = _this.navActions()
-    if (_this.opts.type === 'field') {
-      setTimeout(_this.setPanelsHeight.bind(_this), 100)
-    }
+    // if (_this.opts.type === 'field') {
+    //   setTimeout(_this.setPanelsHeight.bind(_this), 100)
+    // }
 
     this.panelDisplay = 'slider'
 
@@ -63,23 +62,23 @@ export default class Panels {
   /**
    * Set panel height so we can animate it with css
    */
-  setPanelsHeight() {
-    const field = Fields.get(this.opts.id).dom
-    this.slideToggle = field.querySelector('.field-edit')
+  // setPanelsHeight() {
+  //   const field = Fields.get(this.opts.id).dom
+  //   this.slideToggle = field.querySelector('.field-edit')
 
-    // temp styles
-    this.slideToggle.style.display = 'block'
-    this.slideToggle.style.position = 'absolute'
-    this.slideToggle.style.opacity = 0
+  //   // temp styles
+  //   this.slideToggle.style.display = 'block'
+  //   this.slideToggle.style.position = 'absolute'
+  //   this.slideToggle.style.opacity = 0
 
-    this.resizePanels()
+  //   this.resizePanels()
 
-    // reset styles
-    this.slideToggle.style.display = 'none'
-    this.slideToggle.style.position = 'relative'
-    this.slideToggle.style.opacity = 1
-    this.slideToggle.style.height = 'auto'
-  }
+  //   // reset styles
+  //   this.slideToggle.style.display = 'none'
+  //   this.slideToggle.style.position = 'relative'
+  //   this.slideToggle.style.opacity = 1
+  //   this.slideToggle.style.height = 'auto'
+  // }
 
   /**
    * Wrap a panel and make properties sortable

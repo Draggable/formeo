@@ -4,9 +4,9 @@ import events from './events'
 import h from './helpers'
 import { remove } from './utils'
 import FormeoData from '../data'
-import columnsData from '../data/columns'
+import Columns from '../components/columns'
 import Fields from '../components/fields'
-import stages from '../components/stages'
+import Stages from '../components/stages'
 
 const formData = {}
 
@@ -60,7 +60,7 @@ const data = {
   saveFieldOrder: column => {
     const fields = column.getElementsByClassName('stage-fields')
     const fieldOrder = h.map(fields, i => fields[i].id)
-    columnsData.set(`${column.id}.fields`, fieldOrder)
+    Columns.set(`${column.id}.fields`, fieldOrder)
     return fieldOrder
   },
 
@@ -167,7 +167,7 @@ const data = {
     const emptyType = {
       stages: id => {
         if (!id) {
-          id = stages.activeStage.id
+          id = Stages.activeStage.id
         }
         const stageData = formData.stages.get(id)
         const rows = stageData.rows
