@@ -13,6 +13,9 @@ import Stage from './components/stage';
 const formeo = {
   get formData() {
     return data.json;
+  },
+  updateFormData: function(fieldData, path, newValue) {
+    h.set(fieldData, path, newValue);
   }
 };
 let opts = {};
