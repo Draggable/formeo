@@ -703,13 +703,20 @@ class DOM {
    * @return {Object}      config object
    */
   label(elem, fMap) {
-    let fieldLabel = {
-      tag: 'label',
-      attrs: {},
-      className: [],
-      content: elem.config.label,
-      action: {}
-    };
+    let fieldLabel;
+
+    if (typeof elem.config.label === 'string') {
+      fieldLabel = {
+        tag: 'label',
+        attrs: {},
+        className: [],
+        action: {},
+        config: {},
+        content: elem.config.label
+      };
+    } else {
+      fieldLabel = elem.config.label;
+    }
 
     if (this.labelAfter(elem)) {
       let checkable = {
@@ -724,7 +731,9 @@ class DOM {
       fieldLabel.attrs.for = elem.id;
     }
 
-    if (fMap) {
+    if(typeof fieldLabel.config.editable !== 'undefined') {
+      fieldLabel.attrs.contenteditable = fieldLabel.config.editable;
+    }else if (fMap) {
       // for attribute will prevent label focus
       delete fieldLabel.attrs.for;
       fieldLabel.attrs.contenteditable = true;
