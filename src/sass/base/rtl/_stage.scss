@@ -2,7 +2,7 @@
   float: right;
 
   .stage {
-    padding-left: 5px;
-    padding-right: 23px;
+    padding-left: space();
+    padding-right: $icon-size - 1;
   }
 }

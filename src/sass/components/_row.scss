@@ -9,8 +9,8 @@
   margin-left: 0;
   margin-bottom: 6px;
   background-color: $white;
-  padding: 5px;
-  min-height: 34px;
+  padding: space();
+  min-height: space(4);
   box-shadow: 0 0 0 1px $gray-lighter inset;
 
   &::before {
@@ -31,13 +31,13 @@
   }
 
   &:first-child {
-    border-top-right-radius: 5px;
+    border-top-right-radius: $border-radius;
     border-top-left-radius: 0;
   }
 
   &:last-child {
-    border-bottom-right-radius: 5px;
-    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
   }
 
   &.hovering-row {
@@ -106,7 +106,7 @@
     box-shadow: 0 0 0 1px $row-outline-color inset, 0 0 30px 0 $gray-light;
   }
 
-  &.empty-rows {
+  &.empty {
     &::after {
       left: 0;
       transform: translate(10px, -50%);

@@ -13,6 +13,8 @@
   @include clearfix;
 
   &.formeo-editor {
+    display: flex;
+    flex-direction: row;
     @import 'components/stage';
     @import 'components/controls';
 

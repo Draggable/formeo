@@ -6,47 +6,47 @@
 const defaultActions = {
   add: {
     attr: evt => {
-      let attr = window.prompt(evt.message.attr);
-      let val;
+      const attr = window.prompt(evt.message.attr)
+      let val
       if (attr) {
-        val = String(window.prompt(evt.message.value, ''));
-        evt.addAction(attr, val);
+        val = String(window.prompt(evt.message.value, ''))
+        evt.addAction(attr, val)
       }
     },
     option: evt => {
-      evt.addAction();
-    }
+      evt.addAction()
+    },
   },
   click: {
     btn: evt => {
-      evt.action();
-    }
+      evt.action()
+    },
   },
-  save: evt => {}
-};
+  save: evt => {},
+}
 
 /**
  * Events class is used to register actions and throttle their callbacks
  */
 const actions = {
   init: function(options) {
-    this.opts = Object.assign({}, defaultActions, options);
-    return this;
+    this.opts = Object.assign({}, defaultActions, options)
+    return this
   },
   add: {
     attrs: evt => {
-      actions.opts.add.attr(evt);
+      actions.opts.add.attr(evt)
     },
     options: evt => {
-      actions.opts.add.option(evt);
-    }
+      actions.opts.add.option(evt)
+    },
   },
   click: {
     btn: evt => {
-      actions.opts.click.btn(evt);
-    }
+      actions.opts.click.btn(evt)
+    },
   },
-  save: () => {}
-};
+  save: () => {},
+}
 
-export default actions;
+export default actions

@@ -85,7 +85,7 @@ async function tag() {
   const args = process.argv.slice(2);
   const releaseArg = args[1] || 'patch';
   const releaseType = releaseArg.replace('--', '');
-  let version = {
+  const version = {
     current: pkg.version,
     new: semver.inc(pkg.version, releaseType)
   };

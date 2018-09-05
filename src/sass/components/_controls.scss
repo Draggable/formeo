@@ -1,5 +1,4 @@
 .formeo-controls {
-  float: right;
   width: 26%;
   overflow: hidden;
 
@@ -55,7 +54,7 @@
   }
 
   .panels-wrap {
-    font-size: .85em;
+    font-size: 0.85em;
     line-height: 1.8em;
   }
 
@@ -63,7 +62,6 @@
     border-top: 1px solid $gray-lighter;
 
     // border-radius: $border-radius;
-
   }
 
   .panel-count-1 {
@@ -144,7 +142,7 @@
 
   .form-actions {
     float: right;
-    margin-top: 5px;
+    margin-top: space();
 
     .svg-icon {
       fill: $gray;
@@ -224,19 +222,17 @@
         }
       }
 
-      .svg-icon,
-      .glyphicon {
+      .control-icon {
         display: inline-block;
         margin-right: 10px;
       }
     }
   }
 
-
   .field-control {
     @extend %field-control;
 
-    .svg-icon {
+    .control-icon {
       pointer-events: none;
     }
   }

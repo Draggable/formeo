@@ -1,7 +1,7 @@
 .stage-fields {
-  min-height: 26px;
+  min-height: $icon-size;
   position: relative;
-  padding: 5px;
+  padding: space();
   transition: background-color 125ms ease-in-out;
 
   &.first-field {
@@ -15,6 +15,10 @@
   &.last-field {
     border-bottom-right-radius: $input-border-radius;
     border-bottom-left-radius: $input-border-radius;
+  }
+
+  .prev-label {
+    line-height: $icon-size;
   }
 
   [contenteditable] {

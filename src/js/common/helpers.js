@@ -1,140 +1,169 @@
-'use strict';
-import dom from './dom';
-import {unique} from './utils';
+'use strict'
+import dom from './dom'
+import { unique } from './utils'
+import set from 'lodash/set'
+import merge from 'lodash/merge'
 
 // eslint-disable-next-line
-const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g;
-const reEscapeChar = /\\(\\)?/g;
+const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g
+const reEscapeChar = /\\(\\)?/g
+export const bsGridRegEx = /\bcol-\w+-\d+/g
+
+const loaded = {
+  js: [],
+  css: [],
+}
+
+export const insertScript = src => {
+  return new Promise((resolve, reject) => {
+    if (loaded.js.includes(src)) {
+      return resolve(src)
+    }
+
+    // Create script element and set attributes
+    const script = dom.create({
+      tag: 'script',
+      attrs: {
+        type: 'text/javascript',
+        async: true,
+        src: `//${this.src}`,
+      },
+      action: {
+        load: () => {
+          loaded.js.push(src)
+          resolve(src)
+        },
+        error: () => reject(new Error(`${this.src} failed to load.`)),
+      },
+    })
+
+    // Append the script to the DOM
+    const el = document.getElementsByTagName('script')[0]
+    el.parentNode.insertBefore(script, el)
+
+    // Resolve the promise once the script is loaded
+    // script.addEventListener('load', )
+
+    // Catch any errors while loading the script
+    // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
+  })
+}
 
 const stringToPath = function(string) {
-  let result = [];
+  let result = []
   if (Array.isArray(string)) {
-    result = string;
+    result = string
   } else {
     string.replace(rePropName, function(match, number, quote, string) {
-      let segment;
+      let segment
       if (quote) {
-        segment = string.replace(reEscapeChar, '$1');
+        segment = string.replace(reEscapeChar, '$1')
       } else {
-        segment = (number || match);
+        segment = number || match
       }
-      result.push(segment);
-    });
+      result.push(segment)
+    })
   }
-  return result;
-};
+  return result
+}
 
-const helpers = {
-
+export const helpers = {
   /**
    * Convert camelCase into lowercase-hyphen
    *
    * @param  {String} str
    * @return {String}
    */
-  hyphenCase: (str) => {
+  hyphenCase: str => {
     str = str.replace(/([A-Z])/g, function($1) {
-      return '-' + $1.toLowerCase();
-    });
+      return '-' + $1.toLowerCase()
+    })
 
-    return str.replace(/\s/g, '-').replace(/^-+/g, '');
+    return str.replace(/\s/g, '-').replace(/^-+/g, '')
   },
 
   safeAttrName: name => {
-    let safeAttr = {
-      className: 'class'
-    };
-
-    return safeAttr[name] || helpers.hyphenCase(name);
-  },
-  ajax: (file, callback) => {
-    return new window.Promise(function(resolve, reject) {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', file, true);
-      xhr.onload = function() {
-        if (this.status >= 200 && this.status < 300) {
-          callback(xhr);
-          resolve(xhr.response);
-        } else {
-          reject({
-            status: this.status,
-            statusText: xhr.statusText
-          });
-        }
-      };
-      xhr.onerror = function() {
-        reject({
-          status: this.status,
-          statusText: xhr.statusText
-        });
-      };
-      xhr.send();
-    });
-  },
-  insertIcons: response => {
-    const id = 'formeo-sprite';
-    let iconSpriteWrap = dom.create({
-      tag: 'div',
-      content: response.responseText,
-      id
-    });
-    iconSpriteWrap.style.display = 'none';
-    const existingSprite = document.getElementById(id);
-    if (existingSprite) {
-      existingSprite.parentElement.replaceChild(iconSpriteWrap, existingSprite);
-    } else {
-      document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+    const safeAttr = {
+      className: 'class',
     }
+
+    return safeAttr[name] || helpers.hyphenCase(name)
   },
-  insertStyle: response => {
-    let formeoStyle = dom.create({
-      tag: 'style',
-      content: response.responseText
-    });
-    document.head.appendChild(formeoStyle);
+  insertScript: src => {
+    return new Promise((resolve, reject) => {
+      if (loaded.js.includes(src)) {
+        return resolve(src)
+      }
+
+      // Create script element and set attributes
+      const script = dom.create({
+        tag: 'script',
+        attrs: {
+          type: 'text/javascript',
+          async: true,
+          src: `//${this.src}`,
+        },
+        action: {
+          load: () => {
+            loaded.js.push(src)
+            resolve(src)
+          },
+          error: () => reject(new Error(`${this.src} failed to load.`)),
+        },
+      })
+
+      // Append the script to the DOM
+      const el = document.getElementsByTagName('script')[0]
+      el.parentNode.insertBefore(script, el)
+
+      // Resolve the promise once the script is loaded
+      // script.addEventListener('load', )
+
+      // Catch any errors while loading the script
+      // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
+    })
   },
   capitalize: str => {
     return str.replace(/\b\w/g, function(m) {
-      return m.toUpperCase();
-    });
+      return m.toUpperCase()
+    })
   },
   // nicer syntax for checking the existence of an element in an array
   inArray: (needle, haystack) => {
-    return haystack.indexOf(needle) !== -1;
+    return haystack.indexOf(needle) !== -1
   },
   // forEach that can be used on nodeList
   forEach: (array, callback, scope) => {
     for (let i = 0; i < array.length; i++) {
-      callback.call(scope, array[i], i);
+      callback.call(scope, array[i], i)
     }
   },
-  // Added because Object.assign is mutating objects.
-  // Maybe a babel polyfill issue?
+  // Expensive recursive object copy
   copyObj: obj => {
-    return (window.JSON.parse(window.JSON.stringify(obj)));
+    return window.JSON.parse(window.JSON.stringify(obj))
   },
 
   // basic map that can be used on nodeList
   map: (arr, callback, scope) => {
-    let newArray = [];
-    helpers.forEach(arr, (elem, i) => newArray.push(callback(i)));
+    const newArray = []
+    helpers.forEach(arr, (elem, i) => newArray.push(callback(i)))
 
-    return newArray;
+    return newArray
   },
   subtract: (arr, from) => {
     return from.filter(function(a) {
-      return !~this.indexOf(a);
-    }, arr);
+      return !~this.indexOf(a)
+    }, arr)
   },
   // find the index of one node in another
   indexOfNode: (node, parent) => {
-    let parentElement = parent || node.parentElement;
-    let nodeList = Array.prototype.slice.call(parentElement.childNodes);
-    return nodeList.indexOf(node);
+    const parentElement = parent || node.parentElement
+    const nodeList = Array.prototype.slice.call(parentElement.childNodes)
+    return nodeList.indexOf(node)
   },
   // Tests if is whole number. returns false if n is Float
-  isInt: (n) => {
-    return Number(n) === n && n % 1 === 0;
+  isInt: n => {
+    return Number(n) === n && n % 1 === 0
   },
   /**
    * get nested property value in an object
@@ -144,48 +173,21 @@ const helpers = {
    * @param {String} path The path of the property to get.
    * @return {String|Array|Object} Returns the resolved value.
    */
-  get: (object, path) => {
-    path = stringToPath(path);
-
-    let index = 0;
-    let length = path.length;
-
-    while (object != null && index < length) {
-      object = object[path[index++]];
-    }
-
-    return (index && index === length) ? object : undefined;
-  },
-  set: (object, path, value, customizer) => {
-    path = stringToPath(path);
-
-    let index = -1;
-    let length = path.length;
-    let lastIndex = length - 1;
-    let nested = object;
-
-    while (nested !== null && ++index < length) {
-      let key = path[index];
-      if (typeof nested === 'object') {
-        let newValue = value;
-        if (index !== lastIndex) {
-          let objValue = nested[key];
-          newValue = customizer ? customizer(objValue, key, nested) : undefined;
-          if (newValue === undefined) {
-            newValue = objValue === null ? [] : objValue;
-          }
-        }
-
-        if (!(hasOwnProperty.call(nested, key) && (nested[key] === newValue)) ||
-          (newValue === undefined && !(key in nested))) {
-          nested[key] = newValue;
-        }
+  get: (obj, path) => {
+    path = Array.isArray(path) ? path : stringToPath(path)
+    const val = path.reduce((acc, part) => {
+      if (typeof acc === 'string') {
+        return acc
       }
-      nested = nested[key];
-    }
-
-    return object;
+      return acc && acc[part]
+    }, obj)
+    return val
   },
+  getIn: (map, path, fallback) => {
+    const value = path.reduce((acc, part) => acc.get(), map)
+    return value || (fallback && typeof fallback === 'function') ? fallback() : fallback
+  },
+  set, // use lodash set
   /**
    * Merge one object with another.
    * This is expensive, use as little as possible.
@@ -194,28 +196,12 @@ const helpers = {
    * @return {Object}      merged object
    */
   merge: (obj1, obj2) => {
-    let mergedObj = Object.assign({}, obj1, obj2);
-    for (let prop in obj2) {
-      if (mergedObj.hasOwnProperty(prop)) {
-        if (Array.isArray(obj2[prop])) {
-          // eslint-disable-next-line
-          if (obj1) {
-            if (Array.isArray(obj1[prop])) {
-              mergedObj[prop] = obj1[prop].concat(obj2[prop]);
-            } else {
-              mergedObj[prop] = obj2[prop];
-            }
-          } else {
-            mergedObj[prop] = obj2[prop];
-          }
-        } else if (typeof obj2[prop] === 'object') {
-          mergedObj[prop] = helpers.merge(obj1[prop], obj2[prop]);
-        } else {
-          mergedObj[prop] = obj2[prop];
-        }
+    const customizer = (objValue, srcValue) => {
+      if (Array.isArray(objValue)) {
+        return unique(objValue.concat(srcValue))
       }
     }
-    return mergedObj;
+    return merge(obj1, obj2, customizer)
   },
 
   /**
@@ -226,39 +212,24 @@ const helpers = {
    * @return {Array}            Ordered Array of Element Objects
    */
   orderObjectsBy: (elements, order, path) => {
-    let objOrder = unique(order);
-    const newOrder = objOrder.map(key => {
-        return elements.filter(function(elem) {
-          let propVal = helpers.get(elem, path);
-          return propVal === key;
-        })[0];
-      }).filter(Boolean);
-    let orderedElements = newOrder.concat(elements);
+    const newOrder = unique(order)
+      .map(key => elements.find(elem => helpers.get(elem, path) === key))
+      .filter(Boolean)
+    const orderedElements = newOrder.concat(elements)
 
-    return unique(orderedElements);
+    return unique(orderedElements)
   },
+  detectIE: () => {
+    let isIE = false // innocent until proven guilty
+    const ua = window.navigator.userAgent
+    const msie = ua.indexOf('MSIE ')
+    if (msie > 0) {
+      // IE 10 or older => return version number
+      isIE = true
+    }
+    // other browser
+    return isIE
+  },
+}
 
-  /**
-   * Hide or show an Array or HTMLCollection of elements
-   * @param  {Array} elems
-   * @param  {String} term  match textContent to this term
-   * @return {Array}        filtered elements
-   */
-  toggleElementsByStr: (elems, term) => {
-    let filteredElems = [];
-    helpers.forEach(elems, elem => {
-      let txt = elem.textContent.toLowerCase();
-      if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elem.style.display = 'block';
-        filteredElems.push(elem);
-      } else {
-        elem.style.display = 'none';
-      }
-    });
-
-    return filteredElems;
-  }
-
-};
-
-export default helpers;
+export default helpers

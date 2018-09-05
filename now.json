@@ -1,0 +1,8 @@
+{
+  "name": "formeo",
+  "alias": "formeo",
+  "type": "static",
+  "files": [
+    "demo"
+  ]
+}
