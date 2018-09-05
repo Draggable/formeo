@@ -122,7 +122,8 @@
     "deploy:gh": "yarn build && git push upstream $(git subtree split --prefix demo master):gh-pages --force",
     "semantic-release": "semantic-release",
     "travis-deploy-once": "travis-deploy-once",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "prepush": "yarn test"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.0",
