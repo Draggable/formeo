@@ -810,7 +810,7 @@ class DOM {
   removeEmpty(element) {
     const parent = element.parentElement
     const type = this.componentType(element)
-    const children = parent.getElementsByClassName('stage-' + type)
+    const children = parent.getElementsByClassName(`stage-${type}s`)
     this.remove(element)
     if (!children.length) {
       if (!this.isStage(parent)) {
