@@ -415,16 +415,13 @@ export class Controls {
     const {
       meta: { group, id: metaId },
     } = helpers.get(this.get(id), 'controlData')
-
     const layoutTypes = {
       row: () => Stages.activeStage.addRow(),
       column: () => layoutTypes.row().addColumn(),
-      field: id => {
-        return layoutTypes.column().addField(id)
-      },
+      field: id => layoutTypes.column().addField(id),
     }
 
-    return group !== 'layout' ? layoutTypes.column(id) : layoutTypes[metaId.replace('layout-', '')]()
+    return group !== 'layout' ? layoutTypes.field(id) : layoutTypes[metaId.replace('layout-', '')]()
   }
 
   applyOptions(controlOptions = {}) {

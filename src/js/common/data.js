@@ -1,5 +1,3 @@
-'use strict'
-// import { fromJS } from 'immutable'
 import events from './events'
 import h from './helpers'
 import { remove } from './utils'
@@ -8,7 +6,8 @@ import Columns from '../components/columns'
 import Fields from '../components/fields'
 import Stages from '../components/stages'
 
-const formData = {}
+// @todo remove formData
+export const formData = {}
 
 // Object map of fields on the stage
 const _data = {}
@@ -20,7 +19,7 @@ const sessionFormData = () => {
   }
 }
 
-const data = {
+export const data = {
   init: (opts, userFormData) => {
     _data.opts = opts
 
@@ -265,4 +264,4 @@ const data = {
   },
 }
 
-export { data, formData }
+export default { data, formData }

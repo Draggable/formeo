@@ -1,5 +1,4 @@
 import Sortable from 'sortablejs'
-import { data } from '../../common/data'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
 import Controls from '../controls'
@@ -153,7 +152,7 @@ export default class Stage extends Component {
    */
   onSort = evt => {
     console.log('stage.js: onSort: \n', evt)
-    data.save()
+    // data.save()
   }
 
   /**
@@ -212,11 +211,12 @@ export default class Stage extends Component {
    * @return {Object} formData
    */
   onRemove = evt => {
-    return data.save()
+    // return data.save()
   }
 
   get rows() {
-    return h.map(this.dom.getElementsByClassName(ROW_CLASSNAME), ({ id }) => Rows.get(id))
+    const rows = this.dom.getElementsByClassName(ROW_CLASSNAME)
+    return h.map(rows, i => Rows.get(rows[i].id))
   }
 
   /**
@@ -227,7 +227,6 @@ export default class Stage extends Component {
    */
   addRow = (rowId, index = this.rows.length) => {
     const row = Rows.add(rowId)
-    console.log(row)
     this.dom.appendChild(row.dom)
     // data.saveRowOrder(stage)
     this.set(`children.${index}`, row.id)

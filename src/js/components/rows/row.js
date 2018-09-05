@@ -3,7 +3,7 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import h, { bsGridRegEx } from '../../common/helpers'
-import { data } from '../../common/data'
+// import { data } from '../../common/data'
 import Controls from '../controls'
 import { Columns } from '..'
 // import Columns from '../columns'
@@ -105,11 +105,7 @@ export default class Row extends Component {
         ariaLabel: i18n.get('row.settings.inputGroup.aria'),
       },
       action: {
-        click: ({ target: { checked } }) => {
-          h.get(rowData, ['config', 'inputGroup'], checked)
-          // rowData.config.inputGroup = e.target.checked
-          data.save()
-        },
+        click: ({ target: { checked } }) => this.set('config.inputGroup', checked),
       },
       config: {
         label: i18n.get('row.makeInputGroup'),
@@ -130,20 +126,16 @@ export default class Row extends Component {
       attrs: {
         type: 'text',
         ariaLabel: 'Legend for fieldset',
-        value: h.get(rowData, 'config.legend'),
+        value: _this.get('config.legend'),
         placeholder: 'Legend',
       },
       action: {
-        input: ({ target: { value } }) => {
-          rowData['config'].legend = value
-          data.save()
-        },
+        input: ({ target: { value } }) => _this.set('config.legend', value),
       },
       className: '',
     }
 
     const fieldsetInputGroup = {
-      tag: 'div',
       className: 'input-group',
       content: [inputAddon, legendInput],
     }
@@ -202,7 +194,7 @@ export default class Row extends Component {
       dom.removeEmpty(evt.from)
     }
 
-    data.save()
+    // data.save()
   }
 
   /**
@@ -289,7 +281,7 @@ export default class Row extends Component {
    */
   autoColumnWidths = () => {
     const columns = this.columns
-    if (!columns) {
+    if (!columns.length) {
       return
     }
     const width = parseFloat((100 / columns.length).toFixed(1)) / 1
@@ -344,7 +336,6 @@ export default class Row extends Component {
         change: ({ target: { value } }) => {
           const dRow = this.rows.get(this.id)
           _this.setColumnWidths(dRow.row, value)
-          data.save()
         },
       },
     }
@@ -368,25 +359,25 @@ export default class Row extends Component {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    if (this.columns) {
-      const columns = this.columns
-      const pMapVal = pMap.get(columns.length)
-      layoutPreset.options = pMapVal || pMap.get('custom')
-      const curVal = columns.map(({ data }) => data.config.width.replace('%', '')).join(',')
-      if (pMapVal) {
-        pMapVal.forEach((val, i) => {
-          const options = layoutPreset.options
-          if (val.value === curVal) {
-            options[i].selected = true
-          } else {
-            delete options[i].selected
-            options[options.length - 1].selected = true
-          }
-        })
-      }
-    } else {
-      layoutPreset.options = pMap.get(1)
+    // if (this.columns) {
+    const columns = this.columns
+    const pMapVal = pMap.get(columns.length)
+    layoutPreset.options = pMapVal || pMap.get('custom')
+    const curVal = columns.map(({ data }) => data.config.width.replace('%', '')).join(',')
+    if (pMapVal) {
+      pMapVal.forEach((val, i) => {
+        const options = layoutPreset.options
+        if (val.value === curVal) {
+          options[i].selected = true
+        } else {
+          delete options[i].selected
+          options[options.length - 1].selected = true
+        }
+      })
     }
+    // } else {
+    //   layoutPreset.options = pMap.get(1)
+    // }
 
     return layoutPreset
   }

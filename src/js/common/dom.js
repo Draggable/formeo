@@ -1,13 +1,8 @@
 import h from './helpers'
 import i18n from 'mi18n'
 import events from './events'
-import Column from '../components/columns/column'
-import Field from '../components/fields/field'
 import animate from './animation'
-import { data, formData } from './data'
-import Columns from '../components/columns'
-import Controls from '../components/controls'
-import Stages from '../components/stages'
+import Components, { Stages, Columns } from '../components'
 import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
 import {
   ROW_CLASSNAME,
@@ -16,6 +11,9 @@ import {
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
 } from '../constants'
+
+// @todo remove this
+const formData = {}
 
 /**
  * General purpose markup utilities and generator.
@@ -98,9 +96,7 @@ class DOM {
       action: {
         click: (evt, id) => {
           const element = closestFtype(evt.target)
-          animate.slideUp(element, 250, elem => {
-            _this.removeEmpty(elem)
-          })
+          animate.slideUp(element, 250, elem => _this.removeEmpty(elem))
         },
       },
     }
@@ -114,7 +110,6 @@ class DOM {
       action: {
         click: evt => {
           _this.clone(closestFtype(evt.target))
-          data.save()
         },
       },
     }
@@ -782,7 +777,7 @@ class DOM {
 
         stage.insertBefore(newRow, stage.childNodes[newIndex])
         h.forEach(columns, column => _this.clone(column, newRow))
-        data.saveRowOrder()
+        // data.saveRowOrder()
         return newRow
       },
       columns: () => {
@@ -813,22 +808,17 @@ class DOM {
    * @return {Object} formData
    */
   removeEmpty(element) {
-    const _this = this
     const parent = element.parentElement
-    const type = element.fType
+    const type = this.componentType(element)
     const children = parent.getElementsByClassName('stage-' + type)
-    _this.remove(element)
+    this.remove(element)
     if (!children.length) {
-      if (parent.fType !== 'stages') {
-        return _this.removeEmpty(parent)
+      if (!this.isStage(parent)) {
+        return this.removeEmpty(parent)
       } else {
         this.emptyClass(parent)
       }
     }
-    if (type === 'columns') {
-      _this.columnWidths(parent)
-    }
-    return data.save()
   }
 
   /**
@@ -837,6 +827,11 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
+    const type = this.componentType(elem)
+    if (type) {
+      Components.get(`${type}s`).remove(elem.id)
+    }
+
     return elem.parentElement.removeChild(elem)
   }
 
@@ -929,7 +924,7 @@ class DOM {
       const percentWidth = widths[i] + '%'
       column.dataset.colWidth = percentWidth
       column.style.width = percentWidth
-      formData.getIn(['columns', column.id]).config.width = percentWidth
+      // formData.getIn(['columns', column.id]).config.width = percentWidth
     })
   }
 
@@ -954,25 +949,9 @@ class DOM {
    * @param  {Object} column column config object
    */
   loadFields(column) {
-    const fields = formData.getIn(['columns', column.id]).fields
-    fields.forEach(fieldId => this.addField(column, fieldId))
-    this.fieldOrderClass(column)
-  }
-
-  /**
-   * Create or add a field and column then return it.
-   * @param  {Object} evt Drag event data
-   * @return {Object}     column
-   */
-  createColumn(evt) {
-    const fType = evt.from.fType
-    const field = fType === 'columns' ? evt.item : new Field(evt.item.id)
-    const column = new Column()
-
-    field.classList.add('first-field')
-    column.appendChild(field)
-    formData.getIn(['columns', column.id]).fields.push(field.id)
-    return column
+    // const fields = formData.getIn(['columns', column.id]).fields
+    // fields.forEach(fieldId => this.addField(column, fieldId))
+    // this.fieldOrderClass(column)
   }
 
   /**
@@ -995,7 +974,8 @@ class DOM {
    */
   renderForm(renderTarget) {
     this.empty(renderTarget)
-    const renderData = data.prepData
+    const renderData = {}
+    // const renderData = data.prepData
     const renderCount = document.getElementsByClassName('formeo-render').length
     const content = Object.values(renderData.stages).map(stageData => {
       const { rows: rowsData, ...stage } = stageData
@@ -1099,7 +1079,7 @@ class DOM {
       // and everything below it.
       dom.empty(stage)
       stage.classList.remove('removing-all-fields')
-      data.save()
+      // data.save()
       dom.emptyClass(stage)
       animate.slideDown(stage, 300)
     }
@@ -1120,33 +1100,6 @@ class DOM {
 
     animate.slideUp(stage, 600, resetStage)
     // animate.slideUp(stage, 2000);
-  }
-
-  /**
-   * Adds a field to a column
-   * @param {DOM} column
-   * @param {String} fieldId
-   */
-  addField(column, fieldId) {
-    const { controlData } = Controls.get(fieldId)
-    const field = new Field(controlData)
-    // console.log(column, field)
-    column.addField(field)
-    // if (column) {
-    // column.appendChild(field.dom)
-    // data.saveFieldOrder(column)
-    // this.emptyClass(column)
-    // }
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'add',
-        changed: 'field',
-        oldValue: undefined,
-        newValue: field.data,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
-    return field
   }
 
   /**
@@ -1245,7 +1198,7 @@ class DOM {
 
     const type = Object.entries(componentTypes).find(cType => node.classList.contains(cType[1]))
 
-    return type ? type[0] : node.classList
+    return type ? type[0] : null
   }
 
   isControls = node => dom.componentType(node) === 'control-group'

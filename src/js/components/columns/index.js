@@ -6,8 +6,4 @@ export default class Columns extends ComponentData {
     super('columns', columnData)
   }
   Component = Column
-  // get = path => {
-  //   const column = path && helpers.get(this.data, path)
-  //   return column || new Column()
-  // }
 }

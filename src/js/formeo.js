@@ -19,9 +19,9 @@ const fallbacks = {
 
 // Simple object config for the main part of formeo
 const formeo = {
-  // get formData() {
-  //   return data.json
-  // },
+  get formData() {
+    return Components.formData
+  },
 }
 
 /**
@@ -82,7 +82,7 @@ class Formeo {
     dom.setOptions = opts
 
     // const { stages } = Components.load(userFormData, opts)
-    formeo.formData = Components.formData
+    // formeo.formData = Components.formData
     this.formData = userFormData
     // this.stages = stages
 

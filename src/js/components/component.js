@@ -77,7 +77,6 @@ export default class Component {
     const _this = this
     const tag = this.name === 'column' ? 'li' : 'div'
     const btnWrap = {
-      tag: 'div',
       className: 'action-btn-wrap',
     }
     const actions = {

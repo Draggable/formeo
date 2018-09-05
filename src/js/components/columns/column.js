@@ -1,7 +1,7 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import Component from '../component'
-import { data, formData } from '../../common/data'
+// import { data, formData } from '../../common/data'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
@@ -9,6 +9,9 @@ import { numToPercent } from '../../common/utils'
 import { Fields } from '..'
 import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
 import Controls from '../controls'
+
+// @todo remove formData
+const formData = {}
 
 const DEFAULT_DATA = {
   config: {},
@@ -108,7 +111,7 @@ export default class Column extends Component {
    * @return {Object} Column order, array of column ids
    */
   onSort = evt => {
-    return data.saveFieldOrder(evt.target)
+    // return data.saveFieldOrder(evt.target)
     // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
@@ -287,7 +290,7 @@ export default class Column extends Component {
       columnData.config.width = column.dataset.colWidth
       sibColumnData.config.width = sibling.dataset.colWidth
       resize.resized = false
-      data.save()
+      // data.save()
     }
 
     resize.start = (function(evt) {

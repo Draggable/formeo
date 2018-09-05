@@ -238,9 +238,9 @@ export default class Panels {
     const groupChange = newIndex => {
       this.currentPanel = siblingGroups[newIndex]
       this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
-      if (this.opts.type === 'field') {
-        this.slideToggle.style.height = 'auto'
-      }
+      // if (this.opts.type === 'field') {
+      //   this.slideToggle.style.height = 'auto'
+      // }
       return this.currentPanel
     }
 
