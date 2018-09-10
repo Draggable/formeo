@@ -10,7 +10,6 @@ class FileControl extends Control {
         required: false,
       },
       config: {
-        disabledAttrs: ['type'],
         label: i18n.get('fileUpload'),
       },
       meta: {

@@ -3,11 +3,9 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import events from '../../common/events'
-import { bsGridRegEx, indexOfNode } from '../../common/helpers'
-import Controls from '../controls'
-import { Columns } from '..'
-import { numToPercent, componentType } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES } from '../../constants'
+import { bsGridRegEx } from '../../common/helpers'
+import { numToPercent } from '../../common/utils'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE } from '../../constants'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -17,6 +15,7 @@ const DEFAULT_DATA = () =>
       inputGroup: false, // is repeatable input-group?
     },
     children: [],
+    className: ['f-row'],
   })
 
 /**
@@ -39,7 +38,7 @@ export default class Row extends Component {
         editingHoverTag: i18n.get('editing.row'),
       },
       id: this.id,
-      content: [this.actionButtons(), this.editWindow],
+      content: [this.getActionButtons(), this.editWindow],
     }
 
     const row = dom.create(rowConfig)
@@ -55,10 +54,10 @@ export default class Row extends Component {
       },
       sort: true,
       disabled: false,
-      onRemove: this.onRemove,
-      onEnd: this.onEnd,
-      onAdd: this.onAdd,
-      onSort: this.onSort,
+      onRemove: this.onRemove.bind(this),
+      onEnd: this.onEnd.bind(this),
+      onAdd: this.onAdd.bind(this),
+      onSort: this.onSort.bind(this),
       filter: '.resize-x-handle',
       draggable: '.stage-columns',
       handle: '.item-handle',
@@ -69,7 +68,7 @@ export default class Row extends Component {
 
   /**
    * Edit window for Row
-   * @return {Object} [description]
+   * @return {Object} edit window dom config for Row
    */
   get editWindow() {
     const _this = this
@@ -149,7 +148,14 @@ export default class Row extends Component {
     })
     const columnSettingsPresetSelect = {
       className: 'col-sm-8',
-      content: this.columnPresetControl(),
+      content: {
+        className: 'column-preset',
+      },
+      action: {
+        onRender: evt => {
+          this.updateColumnPreset()
+        },
+      },
     }
     const formGroupContent = [columnSettingsPresetLabel, columnSettingsPresetSelect]
     const columnSettingsPreset = dom.formGroup(formGroupContent, 'row')
@@ -166,54 +172,14 @@ export default class Row extends Component {
     return editWindow
   }
 
-  /**
-   * Handler for adding content to a row
-   * @param  {Object} evt
-   */
-  onAdd = evt => {
-    const { from, item, to } = evt
-    const newIndex = indexOfNode(item, to)
-    const fromType = componentType(from)
-
-    const typeActions = {
-      controls: () => {
-        const { meta } = Controls.get(item.id).controlData
-        if (meta.group !== 'layout') {
-          this.addColumn().addField(item.id)
-        } else if (meta.id === 'layout-column') {
-          this.addColumn()
-        }
-        dom.remove(item)
-      },
-      column: () => this.addColumn().addField(item.id, newIndex),
-    }
-
-    typeActions[fromType] && typeActions[fromType]()
-    this.emptyClass()
-    this.saveChildOrder()
+  onAdd(...args) {
+    super.onAdd(...args)
+    this.autoColumnWidths()
   }
 
-  /**
-   * Load columns to row
-   * @param  {Array} columns Column Component
-   */
-  loadColumns = (columns = this.data.children) =>
-    columns.map(columnId => {
-      const column = this.addColumn(columnId)
-      column.loadFields()
-      return column
-    })
-
-  addColumn = (columnId, index = this.children.length) => {
-    const column = Columns.get(columnId)
-    // +2 is to compensate for the settings and action buttons.
-    // @todo this feels frail- improve
-    this.dom.insertBefore(column.dom, this.dom.children[index + 2])
-    this.set(`children.${index}`, column.id)
-    this.emptyClass()
-    // this.autoColumnWidths()
-
-    return column
+  onRemove(...args) {
+    super.onRemove(...args)
+    this.autoColumnWidths()
   }
 
   /**
@@ -234,17 +200,11 @@ export default class Row extends Component {
 
       column.set('config.width', newColWidth)
       colDom.style.width = newColWidth
-      // colDom.style.float = 'left'
       colDom.dataset.colWidth = newColWidth
-      column.refreshFieldPanels()
+      setTimeout(column.refreshFieldPanels, ANIMATION_SPEED_BASE)
       document.dispatchEvent(events.columnResized)
     })
-
-    // fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh())
-
-    // setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
-
-    // dom.updateColumnPreset(row)
+    this.updateColumnPreset()
   }
 
   /**
@@ -255,7 +215,7 @@ export default class Row extends Component {
     const oldColumnPreset = this.dom.querySelector('.column-preset')
     const rowEdit = oldColumnPreset.parentElement
     const columnPresetConfig = this.columnPresetControl(this.id)
-    const newColumnPreset = this.create(columnPresetConfig)
+    const newColumnPreset = dom.create(columnPresetConfig)
 
     rowEdit.replaceChild(newColumnPreset, oldColumnPreset)
     return columnPresetConfig
@@ -271,9 +231,12 @@ export default class Row extends Component {
       return
     }
     if (typeof widths === 'string') {
-      widths.split(',')
+      widths = widths.split(',')
     }
-    return this.children.map((column, i) => column.setWidth(`${widths[i]}%`))
+    this.children.forEach((column, i) => {
+      column.setWidth(`${widths[i]}%`)
+      column.refreshFieldPanels()
+    })
   }
 
   /**
@@ -290,8 +253,9 @@ export default class Row extends Component {
       },
       action: {
         change: ({ target: { value } }) => {
-          const dRow = this.rows.get(this.id)
-          _this.setColumnWidths(dRow.row, value)
+          // @todo FIX!
+          // const dRow = this.rows.get(this.id)
+          _this.setColumnWidths(value)
         },
       },
     }
@@ -299,9 +263,14 @@ export default class Row extends Component {
 
     // if (this.children) {
     const columns = this.children
-    const pMapVal = pMap.get(columns.length)
+    const pMapVal = pMap.get(columns.length - 1)
     layoutPreset.options = pMapVal || pMap.get('custom')
-    const curVal = columns.map(({ data }) => data.config.width.replace('%', '')).join(',')
+    const curVal = columns
+      .map(Column => {
+        const width = Column.get('config.width') || ''
+        return width.replace('%', '')
+      })
+      .join(',')
     if (pMapVal) {
       pMapVal.forEach((val, i) => {
         const options = layoutPreset.options

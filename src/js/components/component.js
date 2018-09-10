@@ -1,16 +1,41 @@
-import { uuid, componentType } from '../common/utils'
-import helpers, { isInt } from '../common/helpers'
+/* global MutationObserver */
+import identity from 'lodash/identity'
+import isEqual from 'lodash/isEqual'
+import { uuid, componentType, closestFtype, clone, merge } from '../common/utils'
+import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
-import { CHILD_TYPE_MAP, TYPE_CHILD_CLASSNAME_MAP, PARENT_TYPE_MAP } from '../constants'
+import {
+  CHILD_TYPE_MAP,
+  TYPE_CHILD_CLASSNAME_MAP,
+  PARENT_TYPE_MAP,
+  ANIMATION_SPEED_BASE,
+  FIELD_PROPERTY_MAP,
+} from '../constants'
 import Components from './index'
 import Data from './data'
+import animate from '../common/animation'
+import Controls from './controls'
 
 export default class Component extends Data {
-  constructor(name, data = {}, defaultData = {}) {
-    super(name, Object.assign({}, defaultData, data, { id: data.id || uuid() }))
+  constructor(name, data = {}) {
+    super(name, Object.assign({}, data, { id: data.id || uuid() }))
     this.id = this.data.id
     this.name = name
+
+    this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
+    this.observer = new MutationObserver(this.mutationHandler)
+  }
+
+  mutationHandler = mutations =>
+    mutations.map(mutation => {
+      // @todo pull handler form config
+      // see dom.create.onRender for implementation pattern
+    })
+
+  observe(container) {
+    this.observer.disconnect()
+    this.observer.observe(container, { childList: true })
   }
   get js() {
     return this.data
@@ -35,27 +60,30 @@ export default class Component extends Data {
       return parent
     }
 
+    if (this.name === 'stage') {
+      return null
+    }
+
     const parent = this.parent
     const children = this.children
 
-    helpers.forEach(children, child => child.remove())
+    forEach(children, child => child.remove())
 
     this.dom.parentElement.removeChild(this.dom)
+    Components.get(`${parent.name}s.${parent.id}`).remove(`children.${this.id}`)
 
-    // removes empty rows and columns
-    // @todo make this optional
-    if (!parent.name === 'stage' && !parent.children.length) {
-      parent.remove()
+    if (!parent.children.length) {
+      parent.emptyClass()
     }
 
-    return Components.data[`${this.name}s`].delete(this.id)
+    return Components[`${this.name}s`].delete(this.id)
   }
 
   /**
    * Removes element from DOM and data
    * @return  {Object} parent element
    */
-  empty = () => {
+  empty() {
     const removed = this.children.map(child => child.remove())
     this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
     this.emptyClass()
@@ -73,33 +101,124 @@ export default class Component extends Data {
    * Move, close, and edit buttons for row, column and field
    * @return {Object} element config object
    */
-  actionButtons() {
+  getActionButtons() {
     const hoverClassname = `hovering-${this.name}`
     const btnWrap = {
       className: 'action-btn-wrap',
     }
+    let expandSize
     const actions = {
       tag: this.name === 'column' ? 'li' : 'div',
       className: `${this.name}-actions group-actions`,
       action: {
-        mouseenter: () => this.dom.classList.add(hoverClassname),
-        mouseleave: () => this.dom.classList.remove(hoverClassname),
+        mouseenter: ({ target }) => {
+          this.dom.classList.add(hoverClassname)
+          target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
+        },
+        mouseleave: ({ target }) => {
+          this.dom.classList.remove(hoverClassname)
+          target.style.width = null
+          target.style.height = null
+        },
         onRender: elem => {
           const buttons = elem.getElementsByTagName('button')
-          const cssProp = this.name === 'row' ? 'height' : 'width'
-          const btnSize = parseInt(dom.getStyle(buttons[0], cssProp))
-          const expandedSize = `${buttons.length * btnSize + 1}px`
-          const rules = [[`.hovering-${this.name} .${this.name}-actions`, [cssProp, expandedSize, true]]]
-
-          dom.insertRule(rules)
+          const btnSize = parseInt(dom.getStyle(buttons[0], 'width'))
+          expandSize = `${buttons.length * btnSize + 1}px`
         },
       },
     }
 
-    btnWrap.content = dom.config[`${this.name}s`].actionButtons.buttons
+    btnWrap.content = this.buttons
     actions.content = btnWrap
 
     return actions
+  }
+
+  /**
+   * Toggles the edit window
+   * @param {Boolean} open whether to open or close the edit window
+   */
+  toggleEdit(open = !this.isEditing) {
+    this.isEditing = open
+    const element = this.dom
+    const editClass = `editing-${this.name}`
+    const editWindow = this.dom.querySelector(`.${this.name}-edit`)
+    animate.slideToggle(editWindow, ANIMATION_SPEED_BASE, open)
+
+    if (this.name === 'field') {
+      animate.slideToggle(this.preview, ANIMATION_SPEED_BASE, !open)
+      element.parentElement.classList.toggle(`column-${editClass}`, open)
+    }
+
+    element.classList.toggle(editClass, open)
+  }
+
+  get buttons() {
+    const _this = this
+    const parseIcons = icons => icons.map(icon => dom.icon(icon))
+    const buttonConfig = {
+      handle: (icons = ['move', 'handle']) => {
+        return {
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          className: ['item-handle'],
+          meta: {
+            id: 'handle',
+          },
+        }
+      },
+      edit: (icons = ['edit']) => {
+        return {
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          className: ['item-edit-toggle'],
+          meta: {
+            id: 'edit',
+          },
+          action: {
+            click: evt => {
+              _this.toggleEdit()
+            },
+          },
+        }
+      },
+      remove: (icons = ['remove']) => {
+        return {
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          className: ['item-remove'],
+          meta: {
+            id: 'remove',
+          },
+          action: {
+            click: (evt, id) => {
+              animate.slideUp(_this.dom, ANIMATION_SPEED_BASE, () => {
+                // _this.parent.emptyClass()
+                _this.remove()
+              })
+              //  @todo add onRemove to Events and Actions
+            },
+          },
+        }
+      },
+      clone: (icons = ['copy']) => {
+        return {
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          className: ['item-clone'],
+          meta: {
+            id: 'clone',
+          },
+          action: {
+            click: evt => {
+              clone(closestFtype(evt.target))
+            },
+          },
+        }
+      },
+    }
+
+    return this.config.actionButtons.buttons.map(btn => {
+      const [key, ...rest] = btn.split('|')
+      const icons = rest.length ? rest : undefined
+      return (buttonConfig[key] && buttonConfig[key](icons)) || btn
+    })
   }
 
   /**
@@ -118,12 +237,12 @@ export default class Component extends Data {
     return PARENT_TYPE_MAP.get(this.name)
   }
   get parent() {
-    const parentType = PARENT_TYPE_MAP.get(this.name)
+    const parentType = this.parentType
     if (!this.dom || !parentType) {
       return null
     }
 
-    return Components.get(`${parentType}s`).get(this.dom.parentElement.id)
+    return this.dom.parentElement && Components.get(`${parentType}s.${this.dom.parentElement.id}`)
   }
   get children() {
     if (!this.dom) {
@@ -131,13 +250,148 @@ export default class Component extends Data {
     }
     const children = this.dom.getElementsByClassName(TYPE_CHILD_CLASSNAME_MAP.get(this.name))
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
-    return helpers.map(children, i => Components.get(childGroup).get(children[i].id))
+    return map(children, i => Components.get(`${childGroup}.${children[i].id}`))
   }
 
+  loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
+
+  /**
+   * Adds a child to the component
+   * @param {Object} childData
+   * @param {Number} index
+   * @return {Object} DOM element
+   */
+  addChild(childData = {}, index = this.dom.children.length) {
+    if (typeof childData !== 'object') {
+      childData = { id: childData }
+    }
+    const { id: childId = uuid() } = childData
+    const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
+    if (!childGroup) {
+      return null
+    }
+
+    const child = Components.get(`${childGroup}.${childId}`) || Components[childGroup].add(childId, childData)
+
+    this.dom.insertBefore(child.dom, this.dom.children[index])
+    this.set(`children.${index}`, child.id)
+    // @todo add event for onAddChild
+    const grandChildren = child.get('children')
+    if (grandChildren && grandChildren.length) {
+      child.loadChildren(grandChildren)
+    }
+
+    this.emptyClass()
+    this.saveChildOrder()
+    return child
+  }
+
+  /**
+   * Updates the children order for the current component
+   */
   saveChildOrder = () => {
     const newChildOrder = this.children.map(({ id }) => id)
     this.set('children', newChildOrder)
     return newChildOrder
+  }
+
+  /**
+   * Method for handling onAdd for all components
+   * @param  {Object} evt
+   * @return {Object} Component
+   */
+  onAdd(evt) {
+    const _this = this
+    const { from, item, to } = evt
+    const newIndex = indexOfNode(item, to)
+    const fromType = componentType(from)
+    const toType = componentType(to)
+    const defaultOnAdd = () => {
+      _this.saveChildOrder()
+      _this.emptyClass()
+    }
+
+    const depthMap = new Map([
+      [
+        -2,
+        () => {
+          const newChild = _this.addChild().addChild()
+          return newChild.addChild.bind(newChild)
+        },
+      ],
+      [
+        -1,
+        () => {
+          const newChild = _this.addChild()
+          return newChild.addChild.bind(newChild)
+        },
+      ],
+      [0, () => _this.addChild.bind(_this)],
+      [
+        1,
+        controlData => {
+          const currentIndex = indexOfNode(_this.dom)
+          return () => _this.parent.addChild(controlData, currentIndex + 1)
+        },
+      ],
+      [2, controlData => () => _this.parent.parent.addChild(controlData)],
+    ])
+
+    const onAddConditions = {
+      controls: () => {
+        const { controlData } = Controls.get(item.id)
+        const {
+          meta: { id: metaId },
+        } = controlData
+
+        const controlType = metaId.startsWith('layout-') ? metaId.replace(/^layout-/, '') : 'field'
+        const targets = {
+          stage: {
+            row: 0,
+            column: -1,
+            field: -2,
+          },
+          row: {
+            row: 1,
+            column: 0,
+            field: -1,
+          },
+          column: {
+            row: 2,
+            column: 1,
+            field: 0,
+          },
+          field: 1,
+        }
+        const depth = get(targets, `${_this.name}.${controlType}`)
+        const action = depthMap.get(depth)()
+        dom.remove(item)
+        const component = action(controlData, newIndex)
+
+        return component
+      },
+      row: () => {
+        const targets = {
+          stage: -1,
+          row: 0,
+          column: 1,
+        }
+        const action = (depthMap.get(targets[toType]) || identity)()
+        return action && action(item.id)
+      },
+      column: () => {
+        const targets = {
+          stage: -2,
+          row: -1,
+        }
+        const action = (depthMap.get(targets[toType]) || identity)()
+        return action && action(item.id)
+      },
+    }
+
+    const condition = onAddConditions[fromType] && onAddConditions[fromType]()
+    defaultOnAdd()
+    return condition
   }
 
   /**
@@ -153,8 +407,12 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Array} updated child order
    */
-  onRemove = () => {
+  onRemove({ from }) {
     this.emptyClass()
+    if (from.classList.contains('stage-columns')) {
+      from.classList.remove('column-editing-field')
+    }
+
     return this.saveChildOrder()
   }
 
@@ -165,5 +423,155 @@ export default class Component extends Data {
   onEnd = ({ to, from }) => {
     to && to.classList.remove(`hovering-${componentType(to)}`)
     from && from.classList.remove(`hovering-${componentType(from)}`)
+  }
+
+  /**
+   * Callback for onRender, executes any defined onRender for component
+   */
+  onRender() {
+    const { events } = this.config
+    if (!events) {
+      return null
+    }
+    events.onRender && dom.onRender(this.dom, events.onRender)
+  }
+
+  set config(config) {
+    const metaId = get(this.data, 'meta.id')
+    const allConfig = get(config, 'all')
+    const typeConfig = metaId && get(config, metaId)
+    const idConfig = get(config, this.id)
+    const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
+      (acc, cur) => (cur ? merge(acc, cur) : acc),
+      this.configVal
+    )
+
+    this.configVal = mergedConfig
+    return this.configVal
+  }
+
+  get config() {
+    return this.configVal
+  }
+
+  runConditions = () => {
+    const conditionsList = this.get('conditions')
+    if (!conditionsList || !conditionsList.length) {
+      return null
+    }
+
+    const processedConditions = conditionsList.map(conditions => {
+      const ifCondition = this.processConditions(conditions.if)
+      const thenResult = this.processResults(conditions.then)
+      // loops through conditions, when one returns true, it executes the result
+      return ifCondition.map(conditions => {
+        return this.evaluateConditions(conditions) && this.execResults(thenResult)
+      })
+    })
+
+    return processedConditions
+  }
+
+  getComponent(path) {
+    const [type, id] = path.split('.')
+    const group = Components[type]
+    return id === this.id ? this : group && group.get(id)
+  }
+
+  value = (path, val) => {
+    const splitPath = path.split('.')
+
+    const component = this.getComponent(path)
+    const property = component && splitPath.slice(2, splitPath.length).join('.')
+
+    if ([!component, !property, !FIELD_PROPERTY_MAP[property]].some(Boolean)) {
+      return path
+    }
+
+    return val ? component.set(FIELD_PROPERTY_MAP[property], val) : component.get(FIELD_PROPERTY_MAP[property])
+  }
+
+  // @todo finish the evaluator
+  evaluateConditions = conditions => {
+    const comparisonMap = {
+      '==': isEqual,
+    }
+    return conditions.some(({ comparison, source, target }) => {
+      const evaluator = comparisonMap[comparison] || false
+      return evaluator && evaluator(this.value(source), this.value(target))
+    })
+  }
+
+  /**
+   * Maps operators to their respective handler
+   * @param {String} operator
+   * @return {Function} action
+   */
+  getResult = operator => {
+    const operatorMap = {
+      '=': (target, propertyPath, value) => target.set(propertyPath, value),
+    }
+    return operatorMap[operator]
+  }
+
+  /**
+   * Group conditions by 'OR' index, maintain order
+   * @param {Array} conditions array of arrays of condition definitions
+   * @return {Array} flattened array of conditions
+   */
+  processConditions = (conditions = this.get('conditions')) => {
+    if (!conditions) {
+      return null
+    }
+    const chunkIndexes = conditions.reduce((acc, val, idx) => {
+      if (val === 'OR') {
+        acc.push(idx)
+      }
+      return acc
+    }, [])
+    // group conditions by 'OR' indexes
+    chunkIndexes.push(conditions.length)
+    return chunkIndexes.reduce((acc, cur, idx) => {
+      const startIndex = chunkIndexes[idx - 1] + 1 || 0
+      acc.push(conditions.slice(startIndex, cur))
+      return acc
+    }, [])
+  }
+
+  processResults = results => {
+    return results.map(({ operator, target, value }) => {
+      const targetComponent = this.getComponent(target)
+      const propertyPath =
+        targetComponent &&
+        target
+          .split('.')
+          .slice(2, target.length)
+          .join('.')
+      const processedResult = {
+        target: targetComponent,
+        propertyPath,
+        action: this.getResult(operator),
+        value: this.value(value),
+      }
+      return processedResult
+    })
+  }
+
+  execResults = results => {
+    const promises = results.map(result => {
+      return this.execResult(result)
+    })
+    return Promise.all(promises)
+  }
+
+  execResult = ({ target, action, value, propertyPath }) => {
+    return new Promise((resolve, reject) => {
+      // we dont know what this will be so try but fail gracefully
+      try {
+        return resolve(action(target, value))
+      } catch (err) {
+        return reject(err)
+      }
+    })
   }
 }

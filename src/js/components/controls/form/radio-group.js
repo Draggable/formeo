@@ -12,7 +12,6 @@ class RadioGroupControl extends Control {
       },
       config: {
         label: i18n.get('controls.form.radio-group'),
-        disabledAttrs: ['type'],
       },
       meta: {
         group: 'common',

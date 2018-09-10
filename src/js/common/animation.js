@@ -137,7 +137,6 @@ const animate = {
     const defMinHeight = style.minHeight
     elem.style.minHeight = 'auto'
     const increment = parseFloat(height / (duration / 60)).toFixed(2)
-
     ;(function slideUp() {
       const curHeight = parseInt(elem.style.height, 10)
       const val = curHeight - increment
@@ -156,8 +155,8 @@ const animate = {
     })()
   },
 
-  slideToggle: (elem, duration = 250) => {
-    if (animate.getStyle(elem, 'display') === 'none') {
+  slideToggle: (elem, duration = 250, open = animate.getStyle(elem, 'display') === 'none') => {
+    if (open) {
       animate.slideDown(elem, duration)
     } else {
       animate.slideUp(elem, duration)

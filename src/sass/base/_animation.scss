@@ -32,3 +32,21 @@
     border-color: lighten($input-focus, 20%);
   }
 }
+
+@keyframes HIDE_CONDITION_FIELD {
+  0% {
+    display: none;
+  }
+  100% {
+    display: none;
+  }
+}
+
+@keyframes COMPONENT_HIGHLIGHT_PULSE {
+  0% {
+    box-shadow: 0 0 1px space(1) $brand-info;
+  }
+  100% {
+    box-shadow: 0 0 0 0 $brand-info;
+  }
+}

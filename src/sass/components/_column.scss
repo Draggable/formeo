@@ -4,8 +4,8 @@
   background-color: $white;
   max-width: none;
   flex-direction: column;
-  flex: 1;
   will-change: width;
+  max-width: 100%;
 
   &[class*='col-'] {
     padding: 0;

@@ -1,7 +1,7 @@
 .panels-wrap {
   h5 {
     margin: 0;
-    padding: .55em 0;
+    padding: 0.55em 0;
     color: $gray;
     font-weight: normal;
     display: inline-block;
@@ -124,23 +124,13 @@
       flex: 1;
       cursor: pointer;
       background-color: $gray-lighter;
-      box-shadow: 0 -1px 6px $gray-light inset;
+      box-shadow: 0 -1px space(1) $gray-light inset;
 
       &.active-tab {
         color: $black;
         box-shadow: none;
         background-color: $white;
       }
-    }
-  }
-}
-
-.options-panel {
-  .prop-inputs {
-    .f-field-group {
-      // width: 33%;
-      // display: inline-block;
-
     }
   }
 }

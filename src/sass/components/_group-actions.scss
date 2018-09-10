@@ -81,10 +81,11 @@
 .field-actions {
   right: 0;
   text-align: right;
-  transition: width .15s;
+  transition: width 0.166s;
   border-bottom-left-radius: $input-border-radius;
   border-bottom-right-radius: 0;
   will-change: width;
+  overflow: hidden;
 
   button {
     border-radius: 0;
@@ -104,7 +105,7 @@
 
 .group-config {
   display: none;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .editing-row {
@@ -120,7 +121,7 @@
   right: 50%;
   transform: translateX(12px);
   z-index: 1;
-  transition: width .15s;
+  transition: width 0.15s;
 
   .action-btn-wrap {
     position: relative;

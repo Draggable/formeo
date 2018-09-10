@@ -10,10 +10,20 @@
     margin-bottom: 0;
     padding: 0;
     overflow: hidden;
+    border-top-left-radius: $input-border-radius;
+    border-top-right-radius: $input-border-radius;
+    button {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
 
   &.field-edit-options {
     list-style: decimal;
+  }
+
+  .active-panel {
+    background-color: $white;
   }
 
   .field-prop {
@@ -36,18 +46,6 @@
       position: absolute;
       top: 50%;
       transform: translate(-50%, -50%);
-    }
-
-    &:hover {
-      .prop-control {
-        &:first-child {
-          border-radius: 0 $input-border-radius $input-border-radius 0;
-        }
-
-        &:last-child {
-          display: inline-block;
-        }
-      }
     }
   }
 
@@ -104,15 +102,15 @@
 
   .prop-wrap {
     position: relative;
-    margin-bottom: 10px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
+    margin-bottom: space(1);
   }
 
   .field-edit-group {
-    padding: 10px;
+    padding: space(1) space(1) 0;
+  }
+
+  [contenteditable] {
+    @extend %input-style;
   }
 
   .prop-inputs,
@@ -123,45 +121,19 @@
     .f-addon,
     input:not([type='checkbox']):not([type='radio']),
     select,
-    textarea {
+    textarea,
+    [contenteditable] {
       font-size: 0.825em;
       flex: 1 1 auto;
       width: auto;
-    }
-  }
-
-  .prop-inputs {
-    width: 100%;
-    align-items: center;
-    vertical-align: bottom;
-    display: flex;
-    flex-direction: row;
-    flex-grow: 1;
-
-    .f-field-group {
-      width: 100%;
-      margin-bottom: 0;
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .f-addon {
-      display: flex;
-      align-items: center;
-      flex: 0;
-      &:first-child {
-        margin-right: -1px;
-      }
-      &:last-child {
-        margin-left: -1px;
+      &:focus {
+        z-index: 1;
       }
     }
 
-    label {
-      padding-right: 1em;
-      margin-bottom: 0;
-      flex: 0 0 16.666667%;
-      max-width: 16.666667%;
+    [class^='condition-'] + select,
+    select + [class^='condition-'] {
+      margin-left: -1px;
     }
   }
 
@@ -192,13 +164,129 @@
   }
 }
 
+.f-condition-row {
+  display: flex;
+  width: 100%;
+  margin-top: -1px;
+  border: 1px solid $gray-lighter;
+  input,
+  select,
+  [contenteditable],
+  > div {
+    border-width: 0;
+    border-radius: 0;
+    width: inherit !important;
+    box-shadow: 0 0 0 1px $gray-lighter;
+    &:focus {
+      box-shadow: 0 0 0 1px $input-focus;
+    }
+  }
+  &:first-child {
+    input:last-child,
+    select:last-child {
+      border-top-right-radius: $input-border-radius;
+    }
+  }
+  &:last-child {
+    input:last-child,
+    select:last-child {
+      border-bottom-right-radius: $input-border-radius;
+    }
+  }
+  &:first-child {
+    border-top-left-radius: $input-border-radius;
+    border-top-right-radius: $input-border-radius;
+  }
+  &:last-child {
+    border-bottom-left-radius: $input-border-radius;
+    border-bottom-right-radius: $input-border-radius;
+  }
+
+  .condition-logical {
+    max-width: space(7);
+    text-transform: uppercase;
+  }
+
+  .condition-source,
+  .condition-target {
+    position: relative;
+  }
+
+  [class^='condition-'] {
+    max-width: 100%;
+    transition: max-width $animation-speed-base;
+    will-change: max-width;
+  }
+
+  &.condition-sourceProperty-isVisible {
+    .condition-comparison,
+    .condition-target,
+    .condition-targetProperty {
+      @include hideConditionField;
+    }
+  }
+
+  &.condition-source {
+    .condition-sourceProperty {
+      @include hideConditionField;
+    }
+  }
+
+  &.condition-target {
+    .condition-targetProperty {
+      @include hideConditionField;
+    }
+  }
+}
+
+.f-autocomplete-display-field + .f-autocomplete-list {
+  &:focus {
+    z-index: 100;
+  }
+}
+
+[class$='-focused'] {
+  z-index: 1;
+  .f-autocomplete-list {
+    z-index: 100;
+  }
+}
+
+.conditions-prop-inputs {
+  label.condition-label {
+    display: inline-flex;
+    flex: 0 0 auto;
+    box-shadow: 0 0 0 1px $gray-lighter;
+    align-items: center;
+    padding: space();
+    border-right: 0;
+    text-transform: uppercase;
+    color: $gray-light;
+    &.if-condition-label {
+      border-top-left-radius: $input-border-radius;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    &.then-condition-label {
+      border-bottom-left-radius: $input-border-radius;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-top: 0;
+    }
+  }
+}
+
 .field-edit-group {
   @extend %no-list-style;
 }
 
+.hidden-property {
+  display: none;
+}
+
 .options-panel {
   .prop-wrap {
-    margin-bottom: 10px;
+    margin-bottom: space(1);
   }
 
   .input-group-addon {
@@ -206,7 +294,7 @@
   }
 
   .prop-labels {
-    padding: 10px 34px 10px 10px;
+    padding: space(1) 34px space(1) space(1);
 
     .input-group-addon {
       font-size: 12px;
@@ -233,9 +321,48 @@
 .panel-action-buttons {
   @include clearfix;
 
-  padding: 0 10px 10px;
+  padding: 0 space(1) space(1);
 
   [class^='add-'] {
     float: right;
+  }
+}
+
+.prop-inputs {
+  width: 100%;
+  align-items: center;
+  vertical-align: bottom;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+
+  &.conditions-prop-inputs {
+    flex-direction: column;
+  }
+
+  .f-field-group {
+    width: 100%;
+    margin-bottom: 0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .f-addon {
+    display: flex;
+    align-items: center;
+    flex: 0;
+    &:first-child {
+      margin-right: -1px;
+    }
+    &:last-child {
+      margin-left: -1px;
+    }
+  }
+
+  label {
+    padding-right: 1em;
+    margin-bottom: 0;
+    flex: 0 0 16.666667%;
+    max-width: 16.666667%;
   }
 }

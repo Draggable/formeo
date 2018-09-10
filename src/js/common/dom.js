@@ -1,9 +1,9 @@
-import h from './helpers'
+import h, { indexOfNode, forEach } from './helpers'
 import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, closestFtype, mapToObj, componentType } from './utils'
+import { uuid, clone, numToPercent, mapToObj, componentType, merge } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -22,11 +22,7 @@ class DOM {
    * like stages, rows, columns etc
    */
   constructor() {
-    // Maintain references to DOM nodes
-    // so we don't have to keep doing getElementById
     this.options = Object.create(null)
-    this.columns = new Map()
-    // this.fields = new Map()
     this.styleSheet = (() => {
       const style = document.createElement('style')
       style.setAttribute('media', 'screen')
@@ -38,130 +34,7 @@ class DOM {
   }
 
   set setOptions(options) {
-    this.options = h.merge(Object.assign({}, this.options, options))
-  }
-
-  /**
-   * Merges a user's configuration with default
-   * @param  {Object} userConfig
-   * @todo this should be handled by Components class now
-   * @return {Object} config
-   */
-  set setConfig(userConfig) {
-    const _this = this
-    const icon = _this.icon
-
-    const handle = {
-      ...dom.btnTemplate({ content: [icon('move'), icon('handle')] }),
-      className: ['item-handle'],
-      meta: {
-        id: 'handle',
-      },
-    }
-
-    const edit = {
-      ...dom.btnTemplate({ content: icon('edit') }),
-      className: ['item-edit-toggle'],
-      meta: {
-        id: 'edit',
-      },
-      action: {
-        click: evt => {
-          const element = closestFtype(evt.target)
-          const fType = componentType(element)
-          const editClass = 'editing-' + fType
-          const editWindow = element.querySelector(`.${fType}-edit`)
-          animate.slideToggle(editWindow, 333)
-          if (fType === 'field') {
-            animate.slideToggle(editWindow.nextSibling, 333)
-            element.parentElement.classList.toggle('column-' + editClass)
-          }
-          element.classList.toggle(editClass)
-        },
-      },
-    }
-
-    const remove = {
-      ...dom.btnTemplate({ content: icon('remove') }),
-      className: ['item-remove'],
-      meta: {
-        id: 'remove',
-      },
-      action: {
-        click: (evt, id) => {
-          const element = closestFtype(evt.target)
-          animate.slideUp(element, 250, elem => _this.removeEmpty(elem))
-        },
-      },
-    }
-
-    const cloneItem = {
-      ...dom.btnTemplate({ content: icon('copy') }),
-      className: ['item-clone'],
-      meta: {
-        id: 'clone',
-      },
-      action: {
-        click: evt => {
-          _this.clone(closestFtype(evt.target))
-        },
-      },
-    }
-
-    const defaultConfig = {
-      rows: {
-        actionButtons: {
-          buttons: [{ ...handle, content: [icon('move-vertical'), icon('handle')] }, edit, cloneItem, remove].map(
-            button => clone(button)
-          ),
-          order: [],
-          disabled: [],
-        },
-      },
-      columns: {
-        actionButtons: {
-          buttons: [{ ...cloneItem, content: [icon('copy'), icon('handle')] }, handle, remove].map(button =>
-            clone(button)
-          ),
-          order: [],
-          disabled: [],
-        },
-      },
-      fields: {
-        actionButtons: {
-          buttons: [handle, edit, cloneItem, remove].map(button => clone(button)),
-          order: [],
-          disabled: [],
-        },
-      },
-    }
-
-    const mergedConfig = h.merge(defaultConfig, userConfig)
-
-    Object.keys(mergedConfig).forEach(key => {
-      if (mergedConfig[key].actionButtons) {
-        const aButtons = mergedConfig[key].actionButtons
-        const disabled = aButtons.disabled
-        const buttons = aButtons.buttons
-
-        // Order buttons
-        aButtons.buttons = h.orderObjectsBy(buttons, aButtons.order, 'meta.id')
-        // filter disabled buttons
-        aButtons.buttons = aButtons.buttons.filter(button => {
-          const metaId = h.get(button, 'meta.id')
-          return !h.inArray(metaId, disabled)
-        })
-      }
-    })
-
-    // overrides language set dir
-    if (mergedConfig.dir) {
-      this.dir = mergedConfig.dir
-    }
-
-    this.config = mergedConfig
-
-    return this.config
+    this.options = merge(Object.assign({}, this.options, options))
   }
 
   /**
@@ -194,12 +67,24 @@ class DOM {
   }
 
   /**
+   * Wraps dom.create to modify data
+   * Used when rendering components in form- not editor
+   */
+  render = elem => {
+    elem.id = `f-${elem.id || uuid()}`
+    return this.create(elem)
+  }
+
+  /**
    * Creates DOM elements
    * @param  {Object}  elem      element config object
    * @param  {Boolean} isPreview generating element for preview or render?
    * @return {Object}            DOM Object
    */
   create = (elem, isPreview = false) => {
+    if (!elem) {
+      return
+    }
     if (elem instanceof Map) {
       elem = mapToObj(elem)
     }
@@ -215,13 +100,8 @@ class DOM {
       children: [],
       config: {},
     }
-    const requiredMark = {
-      tag: 'span',
-      className: 'text-error',
-      children: '*',
-    }
+
     let element = document.createElement(tag)
-    const required = h.get(elem, 'attrs.required')
 
     /**
      * Object for mapping contentType to its function
@@ -236,6 +116,9 @@ class DOM {
       },
       node: children => {
         return element.appendChild(children)
+      },
+      component: children => {
+        return element.appendChild(children.dom)
       },
       array: children => {
         for (let i = 0; i < children.length; i++) {
@@ -278,9 +161,6 @@ class DOM {
         }
         wrap.config = Object.assign({}, elem.config)
         wrap.className.push = h.get(elem, 'attrs.className')
-        if (required) {
-          wrap.attrs.required = required
-        }
         return this.create(wrap, isPreview)
       }
       processed.push('options')
@@ -293,7 +173,6 @@ class DOM {
     }
 
     if (elem.config) {
-      // const editablePreview = elem.config.editable && isPreview
       if (
         elem.config.label &&
         ((elem.config.label && tag !== 'button') || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) &&
@@ -302,27 +181,8 @@ class DOM {
         const label = _this.label(elem)
 
         if (!elem.config.hideLabel) {
-          const wrapContent = [
-            ...(_this.labelAfter(elem) ? [element, label] : [label, element]),
-            required && requiredMark,
-          ]
+          const wrapContent = [...(_this.labelAfter(elem) ? [element, label] : [label, element])]
           wrap.children.push(wrapContent)
-          // if (_this.labelAfter(elem)) {
-          // add check for inline checkbox
-          // wrap.className = `f-${elem.attrs.type}`
-
-          //   label.insertBefore(element, label.firstChild)
-          //   wrap.children.push(label)
-          //   if (required) {
-          //     wrap.children.push(requiredMark)
-          //   }
-          // } else {
-          //   wrap.children.push(label)
-          //   if (required) {
-          //     wrap.children.push(requiredMark)
-          //   }
-          //   wrap.children.push(element)
-          // }
         }
       }
 
@@ -333,6 +193,9 @@ class DOM {
     if (elem.content || elem.children) {
       const children = elem.content || elem.children
       childType = _this.childType(children)
+      if (!appendChildren[childType]) {
+        console.error(`childType: ${childType} is not supported`)
+      }
       appendChildren[childType].call(this, children)
     }
 
@@ -348,26 +211,7 @@ class DOM {
 
     // Add listeners for defined actions
     if (elem.action) {
-      const actions = Object.keys(elem.action)
-      for (i = actions.length - 1; i >= 0; i--) {
-        const event = actions[i]
-        let action = elem.action[event]
-        if (typeof action === 'string') {
-          // eslint-disable-next-line
-          action = window.eval(`(${elem.action[event]})`)
-        }
-        const useCaptureEvts = ['focus', 'blur']
-
-        // dirty hack to handle onRender callback
-        if (event === 'onRender') {
-          setTimeout(() => {
-            action(element)
-          }, 10)
-        } else {
-          const useCapture = h.inArray(event, useCaptureEvts)
-          element.addEventListener(event, action, useCapture)
-        }
-      }
+      this.actionHandler(element, elem.action)
       processed.push('action')
     }
 
@@ -382,6 +226,30 @@ class DOM {
     }
 
     return element
+  }
+
+  onRender = (node, cb) => {
+    if (!node.parentElement) {
+      window.requestAnimationFrame(() => this.onRender(node, cb))
+    } else {
+      cb(node)
+    }
+  }
+
+  /**
+   * Processes element config object actions (click, onRender etc)
+   */
+  actionHandler(node, actions) {
+    const handlers = {
+      onRender: dom.onRender,
+    }
+    const useCaptureEvts = ['focus', 'blur']
+    const defaultHandler = event => (node, cb) => node.addEventListener(event, cb, useCaptureEvts.includes(event))
+
+    return Object.entries(actions).map(([key, cb]) => {
+      const action = handlers[key] || defaultHandler(key)
+      return action(node, cb)
+    })
   }
 
   /**
@@ -454,6 +322,28 @@ class DOM {
     })
   }
 
+  /**
+   * Hide or show an Array or HTMLCollection of elements
+   * @param  {Array} elems
+   * @param  {String} term  match textContent to this term
+   * @return {Array}        filtered elements
+   */
+  toggleElementsByStr = (elems, term) => {
+    const filteredElems = []
+
+    forEach(elems, elem => {
+      const txt = elem.textContent.toLowerCase()
+      if (txt.indexOf(term.toLowerCase()) !== -1) {
+        elem.style.display = 'block'
+        filteredElems.push(elem)
+      } else {
+        elem.style.display = 'none'
+      }
+    })
+
+    return filteredElems
+  }
+
   generateOption = ({ type = 'option', label, value, i = 0, selected }) => {
     const isOption = type === 'option'
     return {
@@ -474,6 +364,17 @@ class DOM {
     }
   }
 
+  makeOption = ([value, label], selected, i18nKey) => {
+    const option = {
+      value,
+      label: i18n.get(`${i18nKey}.${label}`) || label,
+    }
+    if (value === selected) {
+      option.selected = true
+    }
+    return option
+  }
+
   /**
    * Extend Array of option config objects
    * @param  {Array} options
@@ -489,7 +390,7 @@ class DOM {
     const optionMap = (option, i) => {
       const { label, ...rest } = option
       const defaultInput = () => {
-        let input = {
+        const input = {
           tag: 'input',
           attrs: {
             id,
@@ -500,7 +401,7 @@ class DOM {
           },
           action,
         }
-        let optionLabel = {
+        const optionLabel = {
           tag: 'label',
           attrs: {},
           config: {
@@ -527,17 +428,10 @@ class DOM {
 
         if (isPreview) {
           input.attrs.name = `prev-${input.attrs.name}`
-          // input.fMap = `options[${i}].selected`
           optionLabel.attrs.contenteditable = true
-          // optionLabel.fMap = `options[${i}].label`
-          inputWrap.children.unshift(input)
-        } else {
-          optionLabel.content = input
-          optionLabel = dom.create(optionLabel)
-          input = dom.create(input)
-          optionLabel.insertBefore(input, optionLabel.firstChild)
-          inputWrap.content = optionLabel
         }
+
+        inputWrap.children.unshift(input)
 
         return inputWrap
       }
@@ -629,6 +523,12 @@ class DOM {
     return labelAfter !== undefined ? labelAfter : isCB
   }
 
+  requiredMark = () => ({
+    tag: 'span',
+    className: 'text-error',
+    children: '*',
+  })
+
   /**
    * Generate a label
    * @param  {Object} elem config object
@@ -636,6 +536,7 @@ class DOM {
    * @return {Object}      config object
    */
   label(elem, fMap) {
+    const required = h.get(elem, 'attrs.required')
     let {
       config: { label: labelText = '' },
     } = elem
@@ -652,7 +553,7 @@ class DOM {
         for: elemId || attrsId,
       },
       className: [],
-      children: labelText,
+      children: [labelText, required && this.requiredMark()],
       action: {},
     }
 
@@ -679,6 +580,7 @@ class DOM {
     return [
       ['array', content => Array.isArray(content)],
       ['node', content => content instanceof window.Node || content instanceof window.HTMLElement],
+      ['component', () => content && content.dom],
       [typeof content, () => true],
     ].find(typeCondition => typeCondition[1](content))[0]
   }
@@ -744,7 +646,7 @@ class DOM {
     const _this = this
     const { id, fType } = elem
     const dataClone = clone(formData[fType].get(id))
-    const newIndex = h.indexOfNode(elem) + 1
+    const newIndex = indexOfNode(elem) + 1
     let noParent = false
     dataClone.id = uuid()
     formData[fType].set(dataClone.id, dataClone)
@@ -755,7 +657,7 @@ class DOM {
     const cloneType = {
       rows: () => {
         dataClone.columns = []
-        const stage = Stages.activeStage
+        const stage = Stages.active
         const newRow = stage.addRow(null, dataClone.id)
         const columns = elem.getElementsByClassName('stage-columns')
 
@@ -813,7 +715,7 @@ class DOM {
   remove(elem) {
     const type = componentType(elem)
     if (type) {
-      return Components.get(`${type}s`).remove(elem.id)
+      return Components.remove(`${type}s.${elem.id}`)
     }
 
     return elem.parentElement.removeChild(elem)
@@ -910,16 +812,6 @@ class DOM {
   }
 
   /**
-   * Load a columns fields
-   * @param  {Object} column column config object
-   */
-  loadFields(column) {
-    // const fields = formData.getIn(['columns', column.id]).fields
-    // fields.forEach(fieldId => this.addField(column, fieldId))
-    // this.fieldOrderClass(column)
-  }
-
-  /**
    * Removes all fields and resets a stage
    * @param  {DOM} stage DOM element
    */
@@ -985,18 +877,11 @@ class DOM {
   }
 
   /**
-   * Shorthand expander for dom.create
-   * @param  {String} tag
-   * @param  {Object} attrs
-   * @param  {Object|Array|String} content
-   * @return {Object} DOM node
-   */
-  h(tag, attrs, content) {
-    return this.create({ tag, attrs, content })
-  }
-
-  /**
    * Style Object
+   * Usage:
+   *
+      const rules = [['.css-class-selector', ['width', '100%', true]]]
+      dom.insertRule(rules)
    * @param  {Object} rules
    * @return {Number} index of added rule
    */
@@ -1039,6 +924,7 @@ class DOM {
   isRow = node => componentType(node) === ROW_CLASSNAME
   isColumn = node => componentType(node) === COLUMN_CLASSNAME
   isField = node => componentType(node) === FIELD_CLASSNAME
+  asComponent = elem => Components[`${componentType(elem)}s`].get(elem.id)
 }
 
 export const dom = new DOM()
