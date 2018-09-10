@@ -10,6 +10,7 @@ import {
   COLUMN_CLASSNAME,
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
+  CHILD_MAP,
 } from '../constants'
 
 // @todo remove this
@@ -919,7 +920,7 @@ class DOM {
       return
     }
     widths = widths.split(',')
-    const columns = row.getElementsByClassName('stage-columns')
+    const columns = row.getElementsByClassName(COLUMN_CLASSNAME)
     h.forEach(columns, (column, i) => {
       const percentWidth = widths[i] + '%'
       column.dataset.colWidth = percentWidth
@@ -1050,7 +1051,6 @@ class DOM {
     })
 
     const config = {
-      tag: 'div',
       id: `formeo-rendered-${renderCount}`,
       className: 'formeo-render formeo',
       content,
@@ -1128,12 +1128,7 @@ class DOM {
    * @param  {Object} elem
    */
   emptyClass(elem) {
-    const childMap = new Map([
-      ['stage', 'stage-rows'],
-      ['stage-rows', 'stage-columns'],
-      ['stage-columns', 'stage-fields'],
-    ])
-    const children = elem.getElementsByClassName(childMap.get(elem.classList.item(0)))
+    const children = elem.getElementsByClassName(CHILD_MAP.get(elem.classList.item(0)))
     elem.classList.toggle('empty', !children.length)
   }
 
@@ -1201,11 +1196,11 @@ class DOM {
     return type ? type[0] : null
   }
 
-  isControls = node => dom.componentType(node) === 'control-group'
-  isStage = node => dom.componentType(node) === 'stage'
-  isRow = node => dom.componentType(node) === 'stage-rows'
-  isColumn = node => dom.componentType(node) === 'stage-coluns'
-  isField = node => dom.componentType(node) === 'stage-fields'
+  isControls = node => dom.componentType(node) === CONTROL_GROUP_CLASSNAME
+  isStage = node => dom.componentType(node) === STAGE_CLASSNAME
+  isRow = node => dom.componentType(node) === ROW_CLASSNAME
+  isColumn = node => dom.componentType(node) === COLUMN_CLASSNAME
+  isField = node => dom.componentType(node) === FIELD_CLASSNAME
 }
 
 const dom = new DOM()

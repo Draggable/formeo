@@ -1,6 +1,7 @@
 import { uuid } from '../common/utils'
 import helpers from '../common/helpers'
 import dom from '../common/dom'
+import { CHILD_MAP } from '../constants'
 // import components from './index'
 
 export default class Component {
@@ -64,8 +65,7 @@ export default class Component {
    */
   emptyClass() {
     const elem = this.dom
-    const childMap = new Map([['stage', 'stage-rows'], ['row', 'stage-columns'], ['column', 'stage-fields']])
-    const children = elem.getElementsByClassName(childMap.get(this.name))
+    const children = elem.getElementsByClassName(CHILD_MAP.get(elem.classList.item(0)))
     elem.classList.toggle('empty', !children.length)
   }
 
