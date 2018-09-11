@@ -5,7 +5,6 @@ import events from '../../common/events'
 import { match, unique, uuid, closestFtype } from '../../common/utils'
 import dom from '../../common/dom'
 import Panels from '../panels'
-import Rows from '../rows'
 import layoutControls from './layout'
 import formControls from './form'
 import htmlControls from './html'
@@ -13,9 +12,8 @@ import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import Field from '../fields/field'
 import Control from './control'
-// import Stages from '../stages'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants'
-import { Stages } from '..'
+import { Stages, Rows } from '..'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -229,21 +227,19 @@ export class Controls {
       className: ['clear-form'],
       action: {
         click: evt => {
+          console.log(Rows.size)
           if (Rows.size) {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: dom.clearForm.bind(dom),
+                clearAllAction: Stages.clearAll,
                 btnCoords: dom.coords(evt.target),
-                rows: dom.rows,
-                rowCount: dom.rows.size,
               },
             })
 
             document.dispatchEvent(events.confirmClearAll)
-            Rows.empty()
           } else {
-            window.alert('There are no fields to clear')
+            window.alert(i18n.get('cannotClearFields'))
           }
         },
       },

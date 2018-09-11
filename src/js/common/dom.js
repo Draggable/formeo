@@ -10,7 +10,7 @@ import {
   COLUMN_CLASSNAME,
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
-  CHILD_MAP,
+  CHILD_CLASSNAME_MAP,
 } from '../constants'
 
 // @todo remove this
@@ -28,8 +28,6 @@ class DOM {
     // Maintain references to DOM nodes
     // so we don't have to keep doing getElementById
     this.options = Object.create(null)
-    this.stages = new Map()
-    this.rows = new Map()
     this.columns = new Map()
     // this.fields = new Map()
     this.styleSheet = (() => {
@@ -911,25 +909,6 @@ class DOM {
   }
 
   /**
-   * Set the widths of columns in a row
-   * @param {Object} row DOM element
-   * @param {String} widths
-   */
-  setColumnWidths(row, widths) {
-    if (widths === 'custom') {
-      return
-    }
-    widths = widths.split(',')
-    const columns = row.getElementsByClassName(COLUMN_CLASSNAME)
-    h.forEach(columns, (column, i) => {
-      const percentWidth = widths[i] + '%'
-      column.dataset.colWidth = percentWidth
-      column.style.width = percentWidth
-      // formData.getIn(['columns', column.id]).config.width = percentWidth
-    })
-  }
-
-  /**
    * Returns the {x, y} coordinates for the
    * center of a given element
    * @param  {DOM} element
@@ -1060,14 +1039,6 @@ class DOM {
   }
 
   /**
-   * Clears the editor
-   * @param  {Object} evt
-   */
-  clearForm(evt) {
-    this.stages.forEach(dStage => this.clearStage(dStage.stage))
-  }
-
-  /**
    * Removes all fields and resets a stage
    * @param  {DOM} stage DOM element
    */
@@ -1128,7 +1099,7 @@ class DOM {
    * @param  {Object} elem
    */
   emptyClass(elem) {
-    const children = elem.getElementsByClassName(CHILD_MAP.get(elem.classList.item(0)))
+    const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)))
     elem.classList.toggle('empty', !children.length)
   }
 

@@ -2,14 +2,12 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
+import events from '../../common/events'
 import h, { bsGridRegEx } from '../../common/helpers'
-// import { data } from '../../common/data'
 import Controls from '../controls'
 import { Columns } from '..'
-// import Columns from '../columns'
 import { numToPercent } from '../../common/utils'
-import events from '../../common/events'
-import { ROW_CLASSNAME, COLUMN_CLASSNAME } from '../../constants'
+import { ROW_CLASSNAME } from '../../constants'
 
 const DEFAULT_DATA = {
   config: {
@@ -230,7 +228,7 @@ export default class Row extends Component {
 
   saveColumnOrder = () => {
     const oldColumnOrder = this.get('children')
-    const newColumnOrder = this.columns.map(({ id }) => id)
+    const newColumnOrder = this.children.map(({ id }) => id)
     this.set('children', newColumnOrder)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
@@ -257,15 +255,7 @@ export default class Row extends Component {
     })
   }
 
-  get columns() {
-    if (!this.dom) {
-      return []
-    }
-    const columns = this.dom.getElementsByClassName(COLUMN_CLASSNAME)
-    return h.map(columns, i => Columns.get(columns[i].id))
-  }
-
-  addColumn = (columnId, index = this.columns.length) => {
+  addColumn = (columnId, index = this.children.length) => {
     const column = Columns.get(columnId)
     this.dom.insertBefore(column.dom, this.dom.children[index])
     this.set(`children.${index}`, column.id)
@@ -280,7 +270,7 @@ export default class Row extends Component {
    * @param  {Object}  row    DOM element
    */
   autoColumnWidths = () => {
-    const columns = this.columns
+    const columns = this.children
     if (!columns.length) {
       return
     }
@@ -318,6 +308,21 @@ export default class Row extends Component {
 
     rowEdit.replaceChild(newColumnPreset, oldColumnPreset)
     return columnPresetConfig
+  }
+
+  /**
+   * Set the widths of columns in a row
+   * @param {Object} row DOM element
+   * @param {String} widths
+   */
+  setColumnWidths = widths => {
+    if (widths === 'custom') {
+      return
+    }
+    if (typeof widths === 'string') {
+      widths.split(',')
+    }
+    return this.children.map((column, i) => column.setWidth(`${widths[i]}%`))
   }
 
   /**
@@ -359,8 +364,8 @@ export default class Row extends Component {
     pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
     pMap.set('custom', [custom])
 
-    // if (this.columns) {
-    const columns = this.columns
+    // if (this.children) {
+    const columns = this.children
     const pMapVal = pMap.get(columns.length)
     layoutPreset.options = pMapVal || pMap.get('custom')
     const curVal = columns.map(({ data }) => data.config.width.replace('%', '')).join(',')

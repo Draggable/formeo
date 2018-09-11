@@ -6,7 +6,7 @@ import Component from '../component'
 import events from '../../common/events'
 import { Rows } from '..'
 // import Stages from './index'
-import { STAGE_CLASSNAME, ROW_CLASSNAME } from '../../constants'
+import { STAGE_CLASSNAME } from '../../constants'
 
 const DEFAULT_DATA = { children: [] }
 
@@ -191,7 +191,7 @@ export default class Stage extends Component {
   saveRowOrder = () => {
     // Stages.activeStage = this
     const oldRowOrder = this.get('children')
-    const newRowOrder = this.rows.map(({ id }) => id)
+    const newRowOrder = this.children.map(({ id }) => id)
     this.set('children', newRowOrder)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
@@ -214,18 +214,13 @@ export default class Stage extends Component {
     // return data.save()
   }
 
-  get rows() {
-    const rows = this.dom.getElementsByClassName(ROW_CLASSNAME)
-    return h.map(rows, i => Rows.get(rows[i].id))
-  }
-
   /**
    * Adds a row to the stage
    * @param {String} stageId
    * @param {String} rowId
    * @return {Object} DOM element
    */
-  addRow = (rowId, index = this.rows.length) => {
+  addRow = (rowId, index = this.children.length) => {
     const row = Rows.add(rowId)
     this.dom.appendChild(row.dom)
     // data.saveRowOrder(stage)

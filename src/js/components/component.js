@@ -1,8 +1,8 @@
 import { uuid } from '../common/utils'
 import helpers from '../common/helpers'
 import dom from '../common/dom'
-import { CHILD_MAP } from '../constants'
-// import components from './index'
+import { CHILD_TYPE_MAP, TYPE_CHILD_CLASSNAME_MAP } from '../constants'
+import Components from './index'
 
 export default class Component {
   constructor(name, data = {}, defaultData = {}) {
@@ -42,31 +42,31 @@ export default class Component {
       return parent
     }
 
-    // console.log(components, this.name)
+    const children = this.children
 
-    // components[this.name].remove(this.id)
+    helpers.forEach(children, child => child.remove())
+
+    this.dom.parentElement.removeChild(this.dom)
+
+    return Components.data[`${this.name}s`].delete(this.id)
   }
 
   /**
    * Removes element from DOM and data
    * @return  {Object} parent element
    */
-  empty() {
-    const elem = this.dom
-    this.data.children = Object.create(null)
-    while (elem.firstChild) {
-      elem.parentElement.removeChild(elem.firstChild)
-    }
-    return elem.parentElement
+  empty = () => {
+    const removed = this.children.map(child => child.remove())
+    this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
+    this.emptyClass()
+    return removed
   }
 
   /**
    * Apply empty class to element if does not have children
    */
-  emptyClass() {
-    const elem = this.dom
-    const children = elem.getElementsByClassName(CHILD_MAP.get(elem.classList.item(0)))
-    elem.classList.toggle('empty', !children.length)
+  emptyClass = () => {
+    return this.dom.classList.toggle('empty', !this.children.length)
   }
 
   /**
@@ -118,5 +118,14 @@ export default class Component {
     }
     removeClass.object = removeClass.string // handles regex map
     return removeClass[dom.childType(className)](this.dom)
+  }
+
+  get children() {
+    if (!this.dom) {
+      return []
+    }
+    const children = this.dom.getElementsByClassName(TYPE_CHILD_CLASSNAME_MAP.get(this.name))
+    const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
+    return helpers.map(children, i => Components.get(childGroup).get(children[i].id))
   }
 }

@@ -7,7 +7,7 @@ import events from '../../common/events'
 import dom from '../../common/dom'
 import { numToPercent } from '../../common/utils'
 import { Fields } from '..'
-import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
+import { COLUMN_CLASSNAME } from '../../constants'
 import Controls from '../controls'
 
 // @todo remove formData
@@ -160,7 +160,7 @@ export default class Column extends Component {
    * @param  {DOM} column
    */
   fieldOrderClasses = () => {
-    const fields = this.fields.map(({ dom }) => dom)
+    const fields = this.children.map(({ dom }) => dom)
 
     if (fields.length) {
       dom.removeClasses(fields, ['first-field', 'last-field'])
@@ -174,7 +174,7 @@ export default class Column extends Component {
    */
   saveFieldOrder = () => {
     const oldFieldOrder = this.get('children')
-    const newFieldOrder = this.fields.map(({ id }) => id)
+    const newFieldOrder = this.children.map(({ id }) => id)
     this.set('children', newFieldOrder)
     events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
       data: {
@@ -195,7 +195,7 @@ export default class Column extends Component {
    */
   onRemove = evt => {
     console.log('column onRemove: ', evt)
-    if (!this.fields.length) {
+    if (!this.children.length) {
       this.remove()
     }
     // if (evt.from.parent) {
@@ -323,19 +323,21 @@ export default class Column extends Component {
     // console.log(this)
   }
 
-  get fields() {
-    if (!this.dom) {
-      return []
-    }
-    const fields = this.dom.getElementsByClassName(FIELD_CLASSNAME)
-    return h.map(fields, i => Fields.get(fields[i].id))
-  }
-
-  addField = (fieldId, index = this.fields.length) => {
+  addField = (fieldId, index = this.children.length) => {
     const field = Fields.get(fieldId)
     this.dom.insertBefore(field.dom, this.dom.children[index])
     this.set(`children.${index}`, field.id)
     this.emptyClass()
     return field
+  }
+
+  /**
+   * Sets a columns width
+   * @param {String} width percent or pixel
+   */
+  setWidth = width => {
+    this.dom.dataset.colWidth = width
+    this.dom.style.width = width
+    return this.set('config.width', width)
   }
 }

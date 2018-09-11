@@ -32,7 +32,7 @@ export const match = (str = '', filter) => {
 export const remove = (arr, val) => {
   const index = arr.indexOf(val)
 
-  if (index > -1) {
+  if (index !== -1) {
     arr.splice(index, 1)
   }
 }
