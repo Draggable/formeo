@@ -53,7 +53,21 @@ export class Components extends Data {
     return this.getData()
   }
 
-  // init = (opts, userFormData = {}) => {}
+  get stages() {
+    return this.data.stages.getData()
+  }
+
+  get rows() {
+    return this.data.rows.getData()
+  }
+
+  get columns() {
+    return this.data.columns.getData()
+  }
+
+  get fields() {
+    return this.data.fields.getData()
+  }
 }
 
 const components = new Components()

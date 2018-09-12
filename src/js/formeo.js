@@ -2,8 +2,8 @@
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
 import h from './common/helpers'
-import events from './common/events'
-import actions from './common/actions'
+import Events from './common/events'
+import Actions from './common/actions'
 import dom from './common/dom'
 import Controls from './components/controls'
 import Components, { Stages } from './components'
@@ -74,14 +74,14 @@ class Formeo {
     // may be Element
     // delete options.container
 
-    const opts = h.merge(defaults, options)
+    const { actions, events, ...opts } = h.merge(defaults, options)
     this.opts = opts
     dom.setOptions = opts
 
     this.formData = userFormData
 
-    events.init(opts.events)
-    actions.init(opts.actions)
+    Events.init(events)
+    Actions.init(actions)
 
     // Load remote resources such as css and svg sprite
     _this.loadResources().then(() => {
@@ -175,13 +175,13 @@ class Formeo {
     _this.container.innerHTML = ''
     _this.container.appendChild(formeoElem)
 
-    events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
+    Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {
         formeo: formeo,
       },
     })
 
-    document.dispatchEvent(events.formeoLoaded)
+    document.dispatchEvent(Events.formeoLoaded)
   }
 }
 

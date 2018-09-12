@@ -49,6 +49,7 @@ controls.html.header = Header
 controls.html.paragraph = Paragraph
 controls.layout.column = Column
 controls.layout.row = Row
+controls.filteringTerm = Filtering "{term}"
 copy = Copy To Clipboard
 danger = Danger
 description = Help Text
