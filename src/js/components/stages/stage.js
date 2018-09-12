@@ -5,10 +5,9 @@ import Controls from '../controls'
 import Component from '../component'
 import events from '../../common/events'
 import { Rows } from '..'
-// import Stages from './index'
 import { STAGE_CLASSNAME } from '../../constants'
 
-const DEFAULT_DATA = { children: [] }
+const DEFAULT_DATA = () => Object.freeze({ children: [] })
 
 /**
  * Stage is where fields and elements are dragged to.
@@ -21,7 +20,7 @@ export default class Stage extends Component {
    * @return {Object} DOM element
    */
   constructor(stageData) {
-    super('stage', Object.assign({}, DEFAULT_DATA, stageData))
+    super('stage', Object.assign({}, DEFAULT_DATA(), stageData))
 
     // @todo move formSettings to its own component
     // const defaultOptions = {

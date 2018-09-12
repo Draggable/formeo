@@ -158,11 +158,7 @@ export default class EditPanel {
       window.alert(`Attribute "${attr}": not permitted`)
     }
 
-    // const _this = this
-    // const field = document.getElementById(_this.id)
-    // const editGroup = field.querySelector('.field-edit-attrs')
     const safeAttr = helpers.hyphenCase(attr)
-    // const fieldData = formData.fields.get(_this.id)
     const itemKey = `attrs.${safeAttr}`
 
     if (!i18n.current[itemKey]) {
@@ -173,19 +169,6 @@ export default class EditPanel {
       val = JSON.parse(val)
     }
 
-    // console.log(this.props)
-
-    // console.log()
-
-    // fieldData.attrs[safeAttr] = val
-
-    // const args = {
-    //   dataObj: fieldData,
-    //   dataProp: safeAttr,
-    //   i: Object.keys(fieldData.attrs).length,
-    //   panelType: 'attrs',
-    // }
-
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)
     const newAttr = new EditPanelItem(itemKey, { [safeAttr]: val }, this.field)
     if (existingAttr) {
@@ -194,8 +177,6 @@ export default class EditPanel {
       this.props.appendChild(newAttr.dom)
     }
 
-    // data.save(args.panelType, editGroup)
-    // this.field.updatePreview()
     this.field.resizePanelWrap()
   }
 

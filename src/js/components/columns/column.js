@@ -1,7 +1,6 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import Component from '../component'
-// import { data, formData } from '../../common/data'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
@@ -13,10 +12,11 @@ import Controls from '../controls'
 // @todo remove formData
 const formData = {}
 
-const DEFAULT_DATA = {
-  config: {},
-  children: [],
-}
+const DEFAULT_DATA = () =>
+  Object.freeze({
+    config: {},
+    children: [],
+  })
 
 /**
  * Setup Column elements
@@ -28,7 +28,7 @@ export default class Column extends Component {
    * @return {Object} Column config object
    */
   constructor(columnData) {
-    super('column', Object.assign({}, DEFAULT_DATA, columnData))
+    super('column', Object.assign({}, DEFAULT_DATA(), columnData))
     const _this = this
 
     const resizeHandle = {
@@ -163,7 +163,7 @@ export default class Column extends Component {
     const fields = this.children.map(({ dom }) => dom)
 
     if (fields.length) {
-      dom.removeClasses(fields, ['first-field', 'last-field'])
+      this.removeClasses(['first-field', 'last-field'])
       fields[0].classList.add('first-field')
       fields[fields.length - 1].classList.add('last-field')
     }
@@ -193,39 +193,21 @@ export default class Column extends Component {
    * Event when field is removed from column
    * @param  {Object} evt
    */
-  onRemove = evt => {
-    console.log('column onRemove: ', evt)
+  onRemove = ({ from, item }) => {
+    this.remove(`children.${item.id}`)
+
     if (!this.children.length) {
       this.remove()
     }
-    // if (evt.from.parent) {
-    // dom.columnWidths(evt.from.parentElement)
-    // data.saveColumnOrder(evt.from.parentElement)
-    // }
-    // dom.emptyClass(evt.from)
   }
 
   /**
    * Callback for when dragging ends
    * @param  {Object} evt
    */
-  onEnd = evt => {
-    console.log('column onEnd')
-    const { to } = evt
-
-    // if (from.classList.contains('empty')) {
-    //   dom.removeEmpty(evt.from)
-    //   return
-    // }
-
-    this.saveFieldOrder()
-    this.emptyClass()
-
-    // if (from.parent) {
-    //   dom.columnWidths(from.parentElement)
-    // }
-
+  onEnd = ({ to, from }) => {
     to && to.classList.remove('hovering-column')
+    from && from.classList.remove('hovering-column')
   }
 
   /**
@@ -319,6 +301,7 @@ export default class Column extends Component {
     })(evt)
   }
 
+  // @todo loop through children and refresh panels
   refreshFieldPanels = () => {
     // console.log(this)
   }

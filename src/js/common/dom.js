@@ -84,8 +84,6 @@ class DOM {
       },
     }
 
-    // console.log(dom.btnTemplate({ content: icon('remove'), title: i18n.get('removeType', { type: this.name }) }))
-
     const remove = {
       ...dom.btnTemplate({ content: icon('remove') }),
       className: ['item-remove'],
@@ -305,8 +303,6 @@ class DOM {
         !isPreview
       ) {
         const label = _this.label(elem)
-
-        // console.log(label)
 
         if (!elem.config.hideLabel) {
           const wrapContent = [
@@ -806,7 +802,7 @@ class DOM {
    * @param  {Object} element DOM element
    * @return {Object} formData
    */
-  removeEmpty(element) {
+  removeEmpty = element => {
     const parent = element.parentElement
     const type = this.componentType(element)
     const children = parent.getElementsByClassName(`stage-${type}s`)
@@ -828,7 +824,7 @@ class DOM {
   remove(elem) {
     const type = this.componentType(elem)
     if (type) {
-      Components.get(`${type}s`).remove(elem.id)
+      return Components.get(`${type}s`).remove(elem.id)
     }
 
     return elem.parentElement.removeChild(elem)

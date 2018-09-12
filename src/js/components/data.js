@@ -2,9 +2,8 @@ import { uuid } from '../common/utils'
 import helpers from '../common/helpers'
 
 export default class Data {
-  constructor(name, defaultData) {
-    this.data = Object.create(null)
-    this.defaultData = defaultData || Object.create(null)
+  constructor(name, data = Object.create(null)) {
+    this.data = data
     this.name = name
   }
   get size() {
@@ -22,8 +21,7 @@ export default class Data {
   add = (id, data = Object.create(null)) => {
     const { id: dataId } = data
     const elemId = id || dataId || uuid()
-    const mergedData = Object.assign({}, this.defaultData, data)
-    this.data[elemId] = mergedData
+    this.data[elemId] = data
     return elemId
   }
   remove = path => {
@@ -39,5 +37,11 @@ export default class Data {
   }
   empty = () => {
     this.data = Object.create(null)
+  }
+  getData = () => {
+    return Object.entries(this.data).reduce((acc, [key, val]) => {
+      acc[key] = val.data ? val.getData() : val
+      return acc
+    }, {})
   }
 }

@@ -4,7 +4,7 @@ const renderContainer = document.querySelector('.render-form')
 const formeoOpts = {
   container: container,
   i18n: {
-    location: '../assets/lang'
+    location: '../assets/lang',
   },
   // allowEdit: false,
   controls: {
@@ -125,6 +125,7 @@ let editing = true
 const localeSelect = document.getElementById('locale')
 const toggleEdit = document.getElementById('renderForm')
 const viewDataBtn = document.getElementById('viewData')
+const viewRowsDataBtn = document.getElementById('viewRowData')
 const resetDemo = document.getElementById('reloadBtn')
 
 // debugBtn.onclick = function() {
@@ -153,6 +154,11 @@ viewDataBtn.onclick = evt => {
   console.log(formeo.formData)
 }
 
+viewRowsDataBtn.onclick = evt => {
+  const { rows } = formeo.formData
+  Object.values(rows).forEach(row => console.log(`rowId: ${row.id}`, row.children))
+}
+
 const formeoLocale = window.sessionStorage.getItem('formeo-locale')
 if (formeoLocale) {
   localeSelect.value = formeoLocale
@@ -174,8 +180,7 @@ if (isSite) {
 
   // Gitter
   ;(function(d) {
-    let js
-    js = d.createElement('script')
+    const js = d.createElement('script')
     js.src = '//sidecar.gitter.im/dist/sidecar.v1.js'
     d.body.appendChild(js)
   })(document)

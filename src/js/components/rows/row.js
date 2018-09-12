@@ -7,16 +7,17 @@ import h, { bsGridRegEx } from '../../common/helpers'
 import Controls from '../controls'
 import { Columns } from '..'
 import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME } from '../../constants'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES } from '../../constants'
 
-const DEFAULT_DATA = {
-  config: {
-    fieldset: false, // wrap contents of row in fieldset
-    legend: '', // Legend for fieldset
-    inputGroup: false, // is repeatable input-group?
-  },
-  children: [],
-}
+const DEFAULT_DATA = () =>
+  Object.freeze({
+    config: {
+      fieldset: false, // wrap contents of row in fieldset
+      legend: '', // Legend for fieldset
+      inputGroup: false, // is repeatable input-group?
+    },
+    children: [],
+  })
 
 /**
  * Editor Row
@@ -28,7 +29,7 @@ export default class Row extends Component {
    * @return {Object}
    */
   constructor(rowData) {
-    super('row', Object.assign({}, DEFAULT_DATA, rowData))
+    super('row', Object.assign({}, DEFAULT_DATA(), rowData))
 
     const rowConfig = {
       tag: 'li',
@@ -257,7 +258,9 @@ export default class Row extends Component {
 
   addColumn = (columnId, index = this.children.length) => {
     const column = Columns.get(columnId)
-    this.dom.insertBefore(column.dom, this.dom.children[index])
+    // +2 is to compensate for the settings and action buttons.
+    // @todo this feels frail- improve
+    this.dom.insertBefore(column.dom, this.dom.children[index + 2])
     this.set(`children.${index}`, column.id)
     this.emptyClass()
     this.autoColumnWidths()
@@ -344,25 +347,7 @@ export default class Row extends Component {
         },
       },
     }
-    const pMap = new Map()
-    const custom = { value: 'custom', label: 'Custom' }
-
-    pMap.set(1, [{ value: '100.0', label: '100%' }])
-    pMap.set(2, [
-      { value: '50.0,50.0', label: '50 | 50' },
-      { value: '33.3,66.6', label: '33 | 66' },
-      { value: '66.6,33.3', label: '66 | 33' },
-      custom,
-    ])
-    pMap.set(3, [
-      { value: '33.3,33.3,33.3', label: '33 | 33 | 33' },
-      { value: '25.0,25.0,50.0', label: '25 | 25 | 50' },
-      { value: '50.0,25.0,25.0', label: '50 | 25 | 25' },
-      { value: '25.0,50.0,25.0', label: '25 | 50 | 25' },
-      custom,
-    ])
-    pMap.set(4, [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }, custom])
-    pMap.set('custom', [custom])
+    const pMap = COLUMN_TEMPLATES
 
     // if (this.children) {
     const columns = this.children

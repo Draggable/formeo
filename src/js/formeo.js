@@ -2,14 +2,11 @@
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
 import h from './common/helpers'
-// import { data } from './common/data'
 import events from './common/events'
 import actions from './common/actions'
 import dom from './common/dom'
 import Controls from './components/controls'
-// import Stages from './components/stages'
 import Components, { Stages } from './components'
-// import formData from './data'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import 'es6-promise/auto'
 
@@ -75,16 +72,13 @@ class Formeo {
 
     // Remove `container` property before extending because container
     // may be Element
-    delete options.container
+    // delete options.container
 
-    const { iconFont, ...opts } = h.merge(defaults, options)
+    const opts = h.merge(defaults, options)
     this.opts = opts
     dom.setOptions = opts
 
-    // const { stages } = Components.load(userFormData, opts)
-    // formeo.formData = Components.formData
     this.formData = userFormData
-    // this.stages = stages
 
     events.init(opts.events)
     actions.init(opts.actions)
@@ -180,10 +174,6 @@ class Formeo {
 
     _this.container.innerHTML = ''
     _this.container.appendChild(formeoElem)
-
-    // _this.stages.forEach(({ dom: stage }) => {
-    //   stage.style.minHeight = dom.getStyle(controls, 'height')
-    // })
 
     events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {

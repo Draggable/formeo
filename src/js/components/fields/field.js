@@ -1,5 +1,4 @@
 import i18n from 'mi18n'
-// import { data } from '../../common/data'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
@@ -17,7 +16,7 @@ export default class Field extends Component {
    * @param  {Object} fieldData existing field ID
    * @return {Object} field object
    */
-  constructor(fieldData) {
+  constructor(fieldData = Object.create(null)) {
     super('field', fieldData)
 
     let field = {
@@ -56,7 +55,6 @@ export default class Field extends Component {
   }
 
   get label() {
-    // console.log(this.data.config)
     return (
       !this.data.config.hideLabel && {
         tag: 'label',
@@ -189,10 +187,6 @@ export default class Field extends Component {
               console.log(checked)
               console.dir(target)
               // console.log(target, h.indexOfNode(target))
-
-              // h.set(fieldData, fMap, checked)
-
-              // data.save()
             }
           }
         },

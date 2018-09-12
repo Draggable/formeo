@@ -116,19 +116,12 @@
       display: block;
     }
   }
-
-  &.empty {
-    &::after {
-      // margin-top: 11px;
-
-    }
-  }
 }
 
 .editing-row {
   .stage-columns,
   .empty {
-    display: table-cell;
+    display: inline-block;
     border-radius: $border-radius;
     height: 60px;
     background-color: $gray-lightest;
@@ -168,7 +161,6 @@
     //   line-height: 1.5;
     //   background: transparent;
     // }
-
   }
 }
 
