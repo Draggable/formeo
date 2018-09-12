@@ -56,6 +56,7 @@ export default class Field extends Component {
 
   get label() {
     return (
+      this.data.config &&
       !this.data.config.hideLabel && {
         tag: 'label',
         attrs: {

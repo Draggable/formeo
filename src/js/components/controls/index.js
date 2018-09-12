@@ -2,19 +2,21 @@ import Sortable from 'sortablejs'
 import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
+import actions from '../../common/actions'
 import helpers from '../../common/helpers'
 import events from '../../common/events'
-import { match, unique, uuid, closestFtype } from '../../common/utils'
 import dom from '../../common/dom'
+import { match, unique, uuid, closestFtype } from '../../common/utils'
 import Panels from '../panels'
-import layoutControls from './layout'
-import formControls from './form'
-import htmlControls from './html'
 import Field from '../fields/field'
 import Control from './control'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants'
-import Components, { Stages } from '..'
-import actions from '../../common/actions'
+import Components, { Stages, Rows } from '..'
+
+// control configs
+import layoutControls from './layout'
+import formControls from './form'
+import htmlControls from './html'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -217,8 +219,7 @@ export class Controls {
       className: ['clear-form'],
       action: {
         click: evt => {
-          const { rows } = Components
-          if (rows.size) {
+          if (Rows.size) {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
@@ -334,15 +335,12 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
-        // onMove: evt => console.log(evt),
-        // onUpdate: evt => console.log(evt),
         onRemove: _this.applyControlEvents,
-        // onEnd: evt => {console.log(evt)},
-        onStart: evt => {
-          console.log(evt)
+        onStart: ({ item }) => {
+          const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {
-            evt.item.innerHTML = ''
-            evt.item.appendChild(new Field(this.get(evt.item.id)).preview)
+            item.innerHTML = ''
+            item.appendChild(new Field(controlData).preview)
           }
         },
         sort: this.options.sortable,
