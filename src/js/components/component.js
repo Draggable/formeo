@@ -10,6 +10,7 @@ export default class Component extends Data {
     super(name, Object.assign({}, defaultData, data, { id: data.id || uuid() }))
     this.id = this.data.id
     this.name = name
+    this.dataPath = `${this.name}s.${this.id}.`
   }
   get js() {
     return this.data
@@ -17,9 +18,6 @@ export default class Component extends Data {
   get json() {
     return this.data
   }
-  toJSON = (data, format) => JSON.stringify(data, null, format)
-  get = path => helpers.get(this.data, path)
-  set = (path, val) => helpers.set(this.data, path, val)
   remove = path => {
     if (path) {
       const delPath = path.split('.')

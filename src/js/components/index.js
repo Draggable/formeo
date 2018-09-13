@@ -19,6 +19,7 @@ export class Components extends Data {
     super('components')
     this.opts = opts
     this.data = DEFAULT_DATA
+    this.disableEvents = true
   }
 
   sessionFormData = () => {
@@ -71,4 +72,5 @@ export class Components extends Data {
 }
 
 const components = new Components()
+
 export default components

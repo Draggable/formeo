@@ -37,10 +37,17 @@ export default class Field extends Component {
       fType: 'fields',
       action: {
         mouseenter: evt => {
+          // console.log(evt)
+          if (evt.fromElement.classList.contains('stage-rows')) {
+            return
+            // evt.target.style.pointerEvents = 'none'
+          }
           const field = document.getElementById(this.id)
           field.classList.add('hovering-field')
         },
         mouseleave: evt => {
+          // evt.target.style.pointerEvents = 'auto'
+
           const field = document.getElementById(this.id)
           field.classList.remove('hovering-field')
         },
@@ -207,7 +214,6 @@ export default class Field extends Component {
           } else {
             h.set(fieldData, prop, evt.target.value)
           }
-          // data.save('field', _this.id)
         },
       },
     }

@@ -13,9 +13,6 @@ import {
   CHILD_CLASSNAME_MAP,
 } from '../constants'
 
-// @todo remove this
-const formData = {}
-
 /**
  * General purpose markup utilities and generator.
  */
@@ -749,9 +746,12 @@ class DOM {
    * it's nested elements and data
    * @param {Object} elem element we are cloning
    * @param {Object} parent
+   * @todo move to Component
    * @return {Object} cloned element
    */
   clone(elem, parent) {
+    // remove
+    const formData = {}
     const _this = this
     const { id, fType } = elem
     const dataClone = clone(formData[fType].get(id))
@@ -1170,6 +1170,6 @@ class DOM {
   isField = node => dom.componentType(node) === FIELD_CLASSNAME
 }
 
-const dom = new DOM()
+export const dom = new DOM()
 
 export default dom

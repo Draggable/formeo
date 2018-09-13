@@ -1,5 +1,7 @@
 // Default options
 const defaults = {
+  debug: false, // enable debug mode
+  bubbles: false, // bubble events from components
   formeoLoaded: evt => {},
   onAdd: () => {},
   onUpdate: evt => {
@@ -24,17 +26,23 @@ const events = {
     return this
   },
   formeoSaved: new window.CustomEvent('formeoSaved', {}),
-  formeoUpdated: new window.CustomEvent('formeoUpdated', {}),
+  formeoUpdated: ({ src, ...evtData }) => {
+    const evt = new window.CustomEvent('formeoUpdated', {
+      detail: evtData,
+      bubbles: events.opts.debug || events.opts.bubbles,
+    })
+    evt.data = (src || document).dispatchEvent(evt)
+    return evt
+  },
 }
 
 document.addEventListener('formeoUpdated', function(evt) {
-  const { timeStamp, type, data } = evt
-  const evtData = {
+  const { timeStamp, type, detail } = evt
+  events.opts.onUpdate({
     timeStamp,
     type,
-    data,
-  }
-  events.opts.onUpdate(evtData)
+    detail,
+  })
 })
 
 document.addEventListener('confirmClearAll', function(evt) {

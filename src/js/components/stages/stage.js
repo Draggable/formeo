@@ -3,7 +3,6 @@ import h from '../../common/helpers'
 import dom from '../../common/dom'
 import Controls from '../controls'
 import Component from '../component'
-import events from '../../common/events'
 import { Rows } from '..'
 import { STAGE_CLASSNAME } from '../../constants'
 
@@ -79,24 +78,18 @@ export default class Stage extends Component {
     // console.log('this.id', this.id)
     // console.log(set.toJS().stages)
 
-    this.loadStage()
-  }
-
-  /**
-   * Prep stage to receive rows
-   * @return {Object} DOM element
-   */
-  loadStage() {
-    Sortable.create(this.dom, {
+    this.sortable = Sortable.create(this.dom, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
+      // group: 'stage',
       group: {
-        name: 'stages',
+        name: 'stage',
         pull: true,
-        put: ['controls', 'rows', 'columns'],
+        put: ['row', 'column', 'controls'],
       },
       sort: true,
+      disabled: false,
       // Element is dropped into the list from another list
       onAdd: this.onAdd,
       // onRemove: this.onRemove,
@@ -104,25 +97,18 @@ export default class Stage extends Component {
       // onClone: evt => {
       //   console.log(evt)
       // },
-      onStart: evt => {
-        // console.log(evt)
-        // Stages.activeStage = this
-      },
+      // onStart: evt => {
+      // console.log(evt)
+      // Stages.activeStage = this
+      // },
       // onUpdate: evt => {
       //   data.saveRowOrder()
       //   data.save()
       // },
       // onSort: this.onSort,
-      // draggable: '.stage-rows',
+      draggable: '.stage-rows',
       handle: '.item-handle',
     })
-
-    // dom.stages.set(this.id, {
-    //   stage: this.stage,
-    // sortable,
-    // })
-
-    // Stages.activeStage = this
 
     if (this.data.children.length) {
       this.loadRows()
@@ -134,15 +120,16 @@ export default class Stage extends Component {
    * @return {Array}  loaded rows
    */
   loadRows() {
-    const stage = this.dom
+    console.log(this.data.children)
+    // const stage = this.dom
     // const stageData = formData.getIn(['stages', stage.id])
-    const rows = this.data.children
-    rows.forEach(rowId => {
-      const row = this.addRow(rowId)
-      row.loadColumns()
-      // row.updateColumnPreset(row)
-      stage.appendChild(row.dom)
-    })
+    // const rows = this.data.children
+    // rows.forEach(rowId => {
+    //   const row = this.addRow(rowId)
+    //   row.loadColumns()
+    // row.updateColumnPreset(row)
+    //   stage.appendChild(row.dom)
+    // })
   }
 
   /**
@@ -159,9 +146,7 @@ export default class Stage extends Component {
    * @param  {Object} evt
    * @return {Object} formData
    */
-  onAdd = evt => {
-    // Stages.activeStage = this
-    const { from, item, to } = evt
+  onAdd = ({ from, item, to }) => {
     const newIndex = h.indexOfNode(item, to)
     const row = dom.isStage(from) ? Rows.get(item.id) : this.addRow()
     const fromType = dom.componentType(from)
@@ -188,19 +173,8 @@ export default class Stage extends Component {
   }
 
   saveRowOrder = () => {
-    // Stages.activeStage = this
-    const oldRowOrder = this.get('children')
     const newRowOrder = this.children.map(({ id }) => id)
     this.set('children', newRowOrder)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'updateRowOrder',
-        changed: `stages.${this.id}.children`,
-        oldValue: oldRowOrder,
-        newValue: newRowOrder,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
     return newRowOrder
   }
 
@@ -222,17 +196,7 @@ export default class Stage extends Component {
   addRow = (rowId, index = this.children.length) => {
     const row = Rows.add(rowId)
     this.dom.appendChild(row.dom)
-    // data.saveRowOrder(stage)
     this.set(`children.${index}`, row.id)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'added',
-        changed: 'row',
-        oldValue: undefined,
-        newValue: row.rowData,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
     this.emptyClass()
     return row
   }

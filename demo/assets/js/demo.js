@@ -143,7 +143,7 @@ resetDemo.onclick = function() {
 toggleEdit.onclick = evt => {
   document.body.classList.toggle('form-rendered', editing)
   if (editing) {
-    formeo.render(renderContainer)
+    formeo.renderForm(renderContainer)
     evt.target.innerHTML = 'Edit Form'
   } else {
     evt.target.innerHTML = 'Render Form'

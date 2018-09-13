@@ -3,7 +3,7 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import events from '../../common/events'
-import h, { bsGridRegEx } from '../../common/helpers'
+import { bsGridRegEx } from '../../common/helpers'
 import Controls from '../controls'
 import { Columns } from '..'
 import { numToPercent } from '../../common/utils'
@@ -40,7 +40,6 @@ export default class Row extends Component {
       },
       id: this.id,
       content: [this.actionButtons(), this.editWindow],
-      fType: 'rows',
     }
 
     const row = dom.create(rowConfig)
@@ -49,17 +48,21 @@ export default class Row extends Component {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
-      group: { name: 'rows', pull: true, put: ['rows', 'controls', 'columns'] },
+      // group: 'row',
+      group: {
+        name: 'row',
+        pull: true,
+        put: ['row', 'controls'],
+      },
       sort: true,
-      onRemove: this.onRemove,
-      onEnd: this.onEnd,
-      onAdd: this.onAdd,
-      onSort: this.onSort,
-      // onMove: evt => {
-      //   console.log(evt)
-      // },
+      disabled: false,
+      // onRemove: this.onRemove,
+      // onEnd: this.onEnd,
+      // onAdd: this.onAdd,
+      // onSort: this.onSort,
       filter: '.resize-x-handle',
       draggable: '.stage-columns',
+      handle: '.item-handle',
     })
 
     this.dom = row
@@ -71,7 +74,6 @@ export default class Row extends Component {
    */
   get editWindow() {
     const _this = this
-    const rowData = this.data
     const editWindow = {
       className: `${this.name}-edit group-config`,
     }
@@ -84,13 +86,12 @@ export default class Row extends Component {
       id: _this.id + '-fieldset',
       attrs: {
         type: 'checkbox',
-        checked: h.get(rowData, 'config.fieldset'),
+        checked: this.get('config.fieldset'),
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria'),
       },
       action: {
         click: ({ target: { checked } }) => {
-          rowData.setIn(['config', 'fieldset'], checked)
-          // data.save()
+          this.set('config.fieldset', Boolean(checked))
         },
       },
     }
@@ -100,7 +101,7 @@ export default class Row extends Component {
       id: `${this.id}-inputGroup`,
       attrs: {
         type: 'checkbox',
-        checked: h.get(rowData, 'config.inputGroup'),
+        checked: this.get('config.inputGroup'),
         ariaLabel: i18n.get('row.settings.inputGroup.aria'),
       },
       action: {
@@ -228,18 +229,8 @@ export default class Row extends Component {
   }
 
   saveColumnOrder = () => {
-    const oldColumnOrder = this.get('children')
     const newColumnOrder = this.children.map(({ id }) => id)
     this.set('children', newColumnOrder)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'updateColumnOrder',
-        changed: `rows.${this.id}.children`,
-        oldValue: oldColumnOrder,
-        newValue: newColumnOrder,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
     return newColumnOrder
   }
 

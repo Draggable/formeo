@@ -76,3 +76,5 @@ export const COLUMN_TEMPLATES = new Map(
     ]
   )
 )
+
+export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]

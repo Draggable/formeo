@@ -6,7 +6,7 @@ import actions from '../../common/actions'
 import helpers from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { match, unique, uuid, closestFtype } from '../../common/utils'
+import { match, unique, uuid } from '../../common/utils'
 import Panels from '../panels'
 import Field from '../fields/field'
 import Control from './control'
@@ -55,10 +55,8 @@ export class Controls {
     }
 
     this.controlEvents = {
-      focus: ({ target }) => {
-        const currentGroup = closestFtype(target)
-        _this.panels.nav.refresh(helpers.indexOfNode(currentGroup))
-      },
+      focus: ({ target }) =>
+        _this.panels.nav.refresh(helpers.indexOfNode(target.closest(`.${CONTROL_GROUP_CLASSNAME}`))),
       click: ({ target }) => _this.addElement(target.parentElement.id),
     }
   }
@@ -145,7 +143,6 @@ export class Controls {
           className: CONTROL_GROUP_CLASSNAME,
           id: `${groups[i].id}-${CONTROL_GROUP_CLASSNAME}`,
         },
-        fType: 'controlGroup',
         config: {
           label: this.groupLabel(groups[i].label),
         },
@@ -350,7 +347,7 @@ export class Controls {
            * @param   {Sortable}  sortable
            * @return {Array}
            */
-          get: sortable => {
+          get: () => {
             const order = window.localStorage.getItem(storeID)
             return order ? order.split('|') : []
           },

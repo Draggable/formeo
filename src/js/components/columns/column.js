@@ -29,6 +29,7 @@ export default class Column extends Component {
    */
   constructor(columnData) {
     super('column', Object.assign({}, DEFAULT_DATA(), columnData))
+
     const _this = this
 
     const resizeHandle = {
@@ -79,27 +80,29 @@ export default class Column extends Component {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
+      // group: 'column',
       group: {
-        name: 'columns',
+        name: 'column',
         pull: true,
-        put: ['columns', 'controls'],
-        revertClone: true,
+        put: ['column', 'controls'],
       },
       sort: true,
-      onEnd: this.onEnd,
-      onAdd: this.onAdd,
-      onSort: this.onSort,
-      onRemove: this.onRemove,
+      disabled: false,
+      // onEnd: this.onEnd,
+      // onAdd: this.onAdd,
+      // onSort: this.onSort,
+      // onRemove: this.onRemove,
       // Attempt to drag a filtered element
-      onMove: evt => {
-        if (evt.from !== evt.to) {
-          evt.from.classList.remove('hovering-column')
-        }
-        if (evt.related.parentElement.fType === 'columns') {
-          evt.related.parentElement.classList.add('hovering-column')
-        }
-      },
+      // onMove: evt => {
+      //   if (evt.from !== evt.to) {
+      //     evt.from.classList.remove('hovering-column')
+      //   }
+      //   if (evt.related.parentElement.fType === 'columns') {
+      //     evt.related.parentElement.classList.add('hovering-column')
+      //   }
+      // },
       draggable: '.stage-fields',
+      handle: '.item-handle',
     })
 
     this.dom = column
@@ -111,7 +114,8 @@ export default class Column extends Component {
    * @return {Object} Column order, array of column ids
    */
   onSort = evt => {
-    // return data.saveFieldOrder(evt.target)
+    console.log(evt)
+    // return this.saveFieldOrder(id)
     // data.save('column', evt.target.id);
     // document.dispatchEvent(events.formeoUpdated);
   }
@@ -173,18 +177,8 @@ export default class Column extends Component {
    * Updates the field order data for the column
    */
   saveFieldOrder = () => {
-    const oldFieldOrder = this.get('children')
     const newFieldOrder = this.children.map(({ id }) => id)
     this.set('children', newFieldOrder)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'updateFieldOrder',
-        changed: `columns.${this.id}.children`,
-        oldValue: oldFieldOrder,
-        newValue: newFieldOrder,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
     this.fieldOrderClasses()
     return newFieldOrder
   }
