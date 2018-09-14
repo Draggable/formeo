@@ -6,9 +6,9 @@ const formeoOpts = {
   i18n: {
     location: '../assets/lang',
   },
-  // actions: {
-  //   save: console.log
-  // },
+  actions: {
+    save: console.log
+  },
   // allowEdit: false,
   controls: {
     sortable: false,
