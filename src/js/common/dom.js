@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
+import { uuid, clone, numToPercent, closestFtype, mapToObj, componentType } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -44,6 +44,7 @@ class DOM {
   /**
    * Merges a user's configuration with default
    * @param  {Object} userConfig
+   * @todo this should be handled by Components class now
    * @return {Object} config
    */
   set setConfig(userConfig) {
@@ -67,8 +68,7 @@ class DOM {
       action: {
         click: evt => {
           const element = closestFtype(evt.target)
-          let { fType } = element
-          fType = fType.replace(/s$/, '')
+          const fType = componentType(element)
           const editClass = 'editing-' + fType
           const editWindow = element.querySelector(`.${fType}-edit`)
           animate.slideToggle(editWindow, 333)
@@ -369,17 +369,6 @@ class DOM {
         }
       }
       processed.push('action')
-    }
-
-    const fieldDataBindings = ['stage', 'row', 'column', 'field']
-
-    if (h.inArray(elem.fType, fieldDataBindings)) {
-      const dataType = elem.fType + 'Data'
-      element[dataType] = elem
-      if (dataType === 'fieldData') {
-        element.panelNav = elem.panelNav
-      }
-      processed.push(dataType)
     }
 
     // Subtract processed and ignored and attach the rest
@@ -804,7 +793,7 @@ class DOM {
    */
   removeEmpty = element => {
     const parent = element.parentElement
-    const type = this.componentType(element)
+    const type = componentType(element)
     const children = parent.getElementsByClassName(`stage-${type}s`)
     this.remove(element)
     if (!children.length) {
@@ -822,7 +811,7 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
-    const type = this.componentType(elem)
+    const type = componentType(elem)
     if (type) {
       return Components.get(`${type}s`).remove(elem.id)
     }
@@ -931,110 +920,6 @@ class DOM {
   }
 
   /**
-   * Convert sizes, apply styles for render
-   * @param  {Object} columnData
-   * @return {Object} processed column data
-   */
-  processColumnConfig(columnData) {
-    if (columnData.className) {
-      columnData.className.push('f-render-column')
-    }
-    const colWidth = columnData.config.width || '100%'
-    columnData.style = `width: ${colWidth}`
-    return columnData
-  }
-
-  /**
-   * Renders currently loaded formData to the renderTarget
-   * @param {Object} renderTarget
-   */
-  renderForm(renderTarget) {
-    this.empty(renderTarget)
-    const renderData = {}
-    // const renderData = data.prepData
-    const renderCount = document.getElementsByClassName('formeo-render').length
-    const content = Object.values(renderData.stages).map(stageData => {
-      const { rows: rowsData, ...stage } = stageData
-      const rows = rowsData.map(rowId => {
-        const { columns, ...row } = renderData.rows[rowId]
-        row.content = columns.map(columnId => {
-          const processedCol = this.processColumnConfig(renderData.columns[columnId])
-          return Object.assign({}, processedCol, {
-            children: processedCol.fields.map(fieldId => renderData.fields[fieldId]),
-          })
-        })
-
-        if (row.config.inputGroup) {
-          const rowData = clone(row)
-          const removeButton = {
-            tag: 'button',
-            className: 'remove-input-group',
-            children: dom.icon('remove'),
-            action: {
-              mouseover: ({ target }) => target.parentElement.classList.add('will-remove'),
-              mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
-              click: ({ target }) => {
-                const currentInputGroup = target.parentElement
-                const iGWrap = currentInputGroup.parentElement
-                const iG = iGWrap.getElementsByClassName('f-input-group')
-                if (iG.length > 1) {
-                  dom.remove(currentInputGroup)
-                } else {
-                  console.log('Need at least 1 group')
-                }
-              },
-            },
-          }
-          rowData.children.unshift(removeButton)
-          const inputGroupWrap = {
-            tag: 'div',
-            id: uuid(),
-            className: 'f-input-group-wrap',
-          }
-          if (rowData.attrs.className) {
-            if (typeof rowData.attrs.className === 'string') {
-              rowData.attrs.className += ' f-input-group'
-            } else {
-              rowData.attrs.className.push('f-input-group')
-            }
-          }
-          const addButton = {
-            tag: 'button',
-            attrs: {
-              className: 'add-input-group btn pull-right',
-              type: 'button',
-            },
-            children: 'Add +',
-            action: {
-              click: e => {
-                const fInputGroup = e.target.parentElement
-                fInputGroup.insertBefore(dom.create(rowData), fInputGroup.lastChild)
-              },
-            },
-          }
-
-          // row.children.unshift(removeButton)
-          inputGroupWrap.content = [rowData, addButton]
-          return inputGroupWrap
-        }
-        return row
-      })
-      stage.tag = 'div'
-      stage.content = rows
-      stage.className = 'f-stage'
-      return stage
-    })
-
-    const config = {
-      id: `formeo-rendered-${renderCount}`,
-      className: 'formeo-render formeo',
-      content,
-    }
-
-    renderTarget.appendChild(this.create(config))
-  }
-
-  /**
    * Removes all fields and resets a stage
    * @param  {DOM} stage DOM element
    */
@@ -1075,11 +960,11 @@ class DOM {
    * @param  {Boolean} state
    */
   toggleSortable(elem, state) {
-    const { fType } = elem
+    const fType = componentType(elem)
     if (!fType) {
       return
     }
-    const pFtype = elem.parentElement.fType
+    const pFtype = componentType(elem.parentElement)
     const sortable = dom[fType].get(elem.id).sortable
     if (!state) {
       state = !sortable.option('disabled')
@@ -1149,25 +1034,11 @@ class DOM {
     content,
   })
 
-  componentType = node => {
-    const componentTypes = {
-      controls: CONTROL_GROUP_CLASSNAME,
-      stage: STAGE_CLASSNAME,
-      row: ROW_CLASSNAME,
-      column: COLUMN_CLASSNAME,
-      field: FIELD_CLASSNAME,
-    }
-
-    const type = Object.entries(componentTypes).find(cType => node.classList.contains(cType[1]))
-
-    return type ? type[0] : null
-  }
-
-  isControls = node => dom.componentType(node) === CONTROL_GROUP_CLASSNAME
-  isStage = node => dom.componentType(node) === STAGE_CLASSNAME
-  isRow = node => dom.componentType(node) === ROW_CLASSNAME
-  isColumn = node => dom.componentType(node) === COLUMN_CLASSNAME
-  isField = node => dom.componentType(node) === FIELD_CLASSNAME
+  isControls = node => componentType(node) === CONTROL_GROUP_CLASSNAME
+  isStage = node => componentType(node) === STAGE_CLASSNAME
+  isRow = node => componentType(node) === ROW_CLASSNAME
+  isColumn = node => componentType(node) === COLUMN_CLASSNAME
+  isField = node => componentType(node) === FIELD_CLASSNAME
 }
 
 export const dom = new DOM()

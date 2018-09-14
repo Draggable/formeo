@@ -4,7 +4,7 @@ import Component from '../component'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { numToPercent } from '../../common/utils'
+import { numToPercent, componentType } from '../../common/utils'
 import { Fields } from '..'
 import { COLUMN_CLASSNAME } from '../../constants'
 import Controls from '../controls'
@@ -63,7 +63,6 @@ export default class Column extends Component {
       },
       id: this.id,
       content: [this.actionButtons(), editWindow, resizeHandle],
-      fType: 'columns',
     }
 
     const column = dom.create(columnConfig)
@@ -89,35 +88,23 @@ export default class Column extends Component {
       sort: true,
       disabled: false,
       // onEnd: this.onEnd,
-      // onAdd: this.onAdd,
-      // onSort: this.onSort,
-      // onRemove: this.onRemove,
+      onAdd: this.onAdd,
+      onSort: this.onSort,
+      onRemove: this.onRemove,
       // Attempt to drag a filtered element
-      // onMove: evt => {
-      //   if (evt.from !== evt.to) {
-      //     evt.from.classList.remove('hovering-column')
-      //   }
-      //   if (evt.related.parentElement.fType === 'columns') {
-      //     evt.related.parentElement.classList.add('hovering-column')
-      //   }
-      // },
+      onMove: evt => {
+        if (evt.from !== evt.to) {
+          evt.from.classList.remove('hovering-column')
+        }
+        // if (evt.related.parentElement.fType === 'columns') {
+        //   evt.related.parentElement.classList.add('hovering-column')
+        // }
+      },
       draggable: '.stage-fields',
       handle: '.item-handle',
     })
 
     this.dom = column
-  }
-
-  /**
-   * Column sorted event
-   * @param  {Object} evt sort event data
-   * @return {Object} Column order, array of column ids
-   */
-  onSort = evt => {
-    console.log(evt)
-    // return this.saveFieldOrder(id)
-    // data.save('column', evt.target.id);
-    // document.dispatchEvent(events.formeoUpdated);
   }
 
   /**
@@ -139,7 +126,7 @@ export default class Column extends Component {
    */
   onAdd = evt => {
     const { from, to, item, newIndex } = evt
-    const fromType = dom.componentType(from)
+    const fromType = componentType(from)
 
     const typeActions = {
       // from Controls
@@ -177,31 +164,9 @@ export default class Column extends Component {
    * Updates the field order data for the column
    */
   saveFieldOrder = () => {
-    const newFieldOrder = this.children.map(({ id }) => id)
-    this.set('children', newFieldOrder)
+    const newFieldOrder = this.saveChildOrder()
     this.fieldOrderClasses()
     return newFieldOrder
-  }
-
-  /**
-   * Event when field is removed from column
-   * @param  {Object} evt
-   */
-  onRemove = ({ from, item }) => {
-    this.remove(`children.${item.id}`)
-
-    if (!this.children.length) {
-      this.remove()
-    }
-  }
-
-  /**
-   * Callback for when dragging ends
-   * @param  {Object} evt
-   */
-  onEnd = ({ to, from }) => {
-    to && to.classList.remove('hovering-column')
-    from && from.classList.remove('hovering-column')
   }
 
   /**

@@ -1,3 +1,4 @@
+import isEqual from 'lodash/isEqual'
 import { uuid } from '../common/utils'
 import helpers from '../common/helpers'
 import events from '../common/events'
@@ -27,6 +28,11 @@ export default class Data {
   }
   set = (path, newVal) => {
     const oldVal = this.get(path)
+
+    if (isEqual(oldVal, newVal)) {
+      return null
+    }
+
     const data = helpers.set(this.data, path, newVal)
 
     if (!this.disableEvents) {

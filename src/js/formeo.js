@@ -9,6 +9,7 @@ import Controls from './components/controls'
 import Components, { Stages } from './components'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import 'es6-promise/auto'
+import FormeoRender from './formeo-render'
 
 const fallbacks = {
   svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
@@ -19,6 +20,7 @@ const formeo = {
   get formData() {
     return Components.formData
   },
+  render: FormeoRender.render,
 }
 
 /**
@@ -90,8 +92,6 @@ class Formeo {
 
     return formeo
   }
-
-  renderForm = target => dom.renderForm(target)
 
   /**
    * Load remote resources

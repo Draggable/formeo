@@ -34,23 +34,9 @@ export default class Field extends Component {
       dataset: {
         hoverTag: i18n.get('field'),
       },
-      fType: 'fields',
       action: {
-        mouseenter: evt => {
-          // console.log(evt)
-          if (evt.fromElement.classList.contains('stage-rows')) {
-            return
-            // evt.target.style.pointerEvents = 'none'
-          }
-          const field = document.getElementById(this.id)
-          field.classList.add('hovering-field')
-        },
-        mouseleave: evt => {
-          // evt.target.style.pointerEvents = 'auto'
-
-          const field = document.getElementById(this.id)
-          field.classList.remove('hovering-field')
-        },
+        mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
+        mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
       },
     }
 

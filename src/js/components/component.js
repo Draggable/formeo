@@ -1,4 +1,4 @@
-import { uuid } from '../common/utils'
+import { uuid, componentType } from '../common/utils'
 import helpers, { isInt } from '../common/helpers'
 import dom from '../common/dom'
 import { CHILD_TYPE_MAP, TYPE_CHILD_CLASSNAME_MAP, PARENT_TYPE_MAP } from '../constants'
@@ -132,5 +132,38 @@ export default class Component extends Data {
     const children = this.dom.getElementsByClassName(TYPE_CHILD_CLASSNAME_MAP.get(this.name))
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
     return helpers.map(children, i => Components.get(childGroup).get(children[i].id))
+  }
+
+  saveChildOrder = () => {
+    const newChildOrder = this.children.map(({ id }) => id)
+    this.set('children', newChildOrder)
+    return newChildOrder
+  }
+
+  /**
+   * Save updated child order
+   * @return {Array} updated child order
+   */
+  onSort = () => {
+    return this.saveChildOrder()
+  }
+
+  /**
+   * Handler for removing content from a sortable component
+   * @param  {Object} evt
+   * @return {Array} updated child order
+   */
+  onRemove = () => {
+    this.emptyClass()
+    return this.saveChildOrder()
+  }
+
+  /**
+   * Callback for when dragging ends
+   * @param  {Object} evt
+   */
+  onEnd = ({ to, from }) => {
+    to && to.classList.remove(`hovering-${componentType(to)}`)
+    from && from.classList.remove(`hovering-${componentType(from)}`)
   }
 }

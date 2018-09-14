@@ -1,4 +1,5 @@
 import uuidv4 from 'uuid/v4'
+import { COMPONENT_TYPES } from '../constants'
 /**
  * Match the values from a string or array against a str.
  * @param  {String} str    String we are searching
@@ -56,8 +57,18 @@ export const closest = (el, cls) => {
  * @return {Object}     DOM Element
  */
 export const closestFtype = el => {
-  while ((el = el.parentElement) && !el.fType);
+  while ((el = el.parentElement) && !componentType(el));
   return el
+}
+
+/**
+ * Determine component type
+ * @param  {NodeElement} node
+ * @return {String}     component type or undefined
+ */
+export const componentType = node => {
+  const type = COMPONENT_TYPES.find(({ className }) => node.classList.contains(className))
+  return type && type.name
 }
 
 /**

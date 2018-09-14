@@ -3,10 +3,10 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import events from '../../common/events'
-import { bsGridRegEx } from '../../common/helpers'
+import { bsGridRegEx, indexOfNode } from '../../common/helpers'
 import Controls from '../controls'
 import { Columns } from '..'
-import { numToPercent } from '../../common/utils'
+import { numToPercent, componentType } from '../../common/utils'
 import { ROW_CLASSNAME, COLUMN_TEMPLATES } from '../../constants'
 
 const DEFAULT_DATA = () =>
@@ -48,18 +48,17 @@ export default class Row extends Component {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
-      // group: 'row',
       group: {
         name: 'row',
         pull: true,
-        put: ['row', 'controls'],
+        put: ['row', 'column', 'controls'],
       },
       sort: true,
       disabled: false,
-      // onRemove: this.onRemove,
-      // onEnd: this.onEnd,
-      // onAdd: this.onAdd,
-      // onSort: this.onSort,
+      onRemove: this.onRemove,
+      onEnd: this.onEnd,
+      onAdd: this.onAdd,
+      onSort: this.onSort,
       filter: '.resize-x-handle',
       draggable: '.stage-columns',
       handle: '.item-handle',
@@ -168,46 +167,15 @@ export default class Row extends Component {
   }
 
   /**
-   * Update column order and save
-   * @param  {Object} evt
-   */
-  onSort = () => {
-    this.saveColumnOrder()
-  }
-
-  /**
-   * Handler for removing content from a row
-   * @param  {Object} evt
-   */
-  onRemove = evt => {
-    this.autoColumnWidths()
-    dom.emptyClass(evt.from)
-  }
-
-  /**
-   * Handler for removing content from a row
-   * @param  {Object} evt
-   */
-  onEnd = evt => {
-    console.log('onEnd', evt)
-    if (evt.from.classList.contains('empty')) {
-      dom.removeEmpty(evt.from)
-    }
-
-    // data.save()
-  }
-
-  /**
    * Handler for adding content to a row
    * @param  {Object} evt
    */
   onAdd = evt => {
-    const { from, item } = evt
-    const fromType = dom.componentType(from)
-    console.log('row.js onAdd')
+    const { from, item, to } = evt
+    const newIndex = indexOfNode(item, to)
+    const fromType = componentType(from)
 
     const typeActions = {
-      // from Controls
       controls: () => {
         const { meta } = Controls.get(item.id).controlData
         if (meta.group !== 'layout') {
@@ -217,35 +185,24 @@ export default class Row extends Component {
         }
         dom.remove(item)
       },
-      // from Column
-      row: () => this.addColumn(item.id),
-      column: () => this.addColumn().addField(item.id),
+      column: () => this.addColumn().addField(item.id, newIndex),
     }
 
     typeActions[fromType] && typeActions[fromType]()
     this.emptyClass()
-    this.autoColumnWidths()
-    this.saveColumnOrder()
-  }
-
-  saveColumnOrder = () => {
-    const newColumnOrder = this.children.map(({ id }) => id)
-    this.set('children', newColumnOrder)
-    return newColumnOrder
+    this.saveChildOrder()
   }
 
   /**
    * Load columns to row
-   * @param  {Object} row
+   * @param  {Array} columns Column Component
    */
-  loadColumns(row) {
-    const columns = this.data.children
-    return columns.map(columnId => {
+  loadColumns = (columns = this.data.children) =>
+    columns.map(columnId => {
       const column = this.addColumn(columnId)
       column.loadFields()
       return column
     })
-  }
 
   addColumn = (columnId, index = this.children.length) => {
     const column = Columns.get(columnId)
@@ -254,7 +211,7 @@ export default class Row extends Component {
     this.dom.insertBefore(column.dom, this.dom.children[index + 2])
     this.set(`children.${index}`, column.id)
     this.emptyClass()
-    this.autoColumnWidths()
+    // this.autoColumnWidths()
 
     return column
   }

@@ -21,6 +21,17 @@ const loaded = {
 export const isInt = n => Number(n) === n && n % 1 === 0
 
 /**
+ * Finds the index of an element in its parent
+ * @param {NodeElement} node
+ * @param {NodeLement} parent
+ */
+export const indexOfNode = (node, parent) => {
+  const parentElement = parent || node.parentElement
+  const nodeList = Array.prototype.slice.call(parentElement.childNodes)
+  return nodeList.indexOf(node)
+}
+
+/**
  * Orders an array of objects by specific attribute
  * @param  {Array}  elements  Array of element objects
  * @param  {Array}  order     array of keys to order objects by
@@ -177,12 +188,7 @@ export const helpers = {
       return !~this.indexOf(a)
     }, arr)
   },
-  // find the index of one node in another
-  indexOfNode: (node, parent) => {
-    const parentElement = parent || node.parentElement
-    const nodeList = Array.prototype.slice.call(parentElement.childNodes)
-    return nodeList.indexOf(node)
-  },
+  indexOfNode,
   isInt,
   /**
    * get nested property value in an object

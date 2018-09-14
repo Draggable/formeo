@@ -14,19 +14,18 @@ export const CHILD_CLASSNAME_MAP = new Map([
   [COLUMN_CLASSNAME, FIELD_CLASSNAME],
 ])
 
-const componentTypes = [
+export const COMPONENT_TYPES = [
+  { name: 'controls', className: CONTROL_GROUP_CLASSNAME },
   { name: 'stage', className: STAGE_CLASSNAME },
   { name: 'row', className: ROW_CLASSNAME },
   { name: 'column', className: COLUMN_CLASSNAME },
   { name: 'field', className: FIELD_CLASSNAME },
 ]
 
-const childTypeMap = componentTypes
-  .map(({ name }, index, arr) => {
-    const { name: childName } = arr[index + 1] || {}
-    return childName && [name, childName]
-  })
-  .filter(Boolean)
+const childTypeMap = COMPONENT_TYPES.map(({ name }, index, arr) => {
+  const { name: childName } = arr[index + 1] || {}
+  return childName && [name, childName]
+}).filter(Boolean)
 
 const parentTypeMap = childTypeMap
   .slice()
