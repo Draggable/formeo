@@ -6,8 +6,8 @@ import { CHANGE_TYPES } from '../constants'
 
 export default class Data {
   constructor(name, data = Object.create(null)) {
-    this.data = data
     this.name = name
+    this.data = data
     this.dataPath = ''
   }
   get size() {
@@ -27,7 +27,7 @@ export default class Data {
     return change
   }
   set = (path, newVal) => {
-    const oldVal = this.get(path)
+    const oldVal = helpers.get(this.data, path)
 
     if (isEqual(oldVal, newVal)) {
       return null
@@ -79,4 +79,5 @@ export default class Data {
       return acc
     }, {})
   }
+  configVal = Object.create(null)
 }

@@ -7,12 +7,15 @@ const formeoOpts = {
     location: '../assets/lang',
   },
   actions: {
-    save: console.log
+    save: console.log,
   },
   // allowEdit: false,
   controls: {
     sortable: false,
     groupOrder: ['common', 'html'],
+    disable: {
+      elements: ['button'],
+    },
     elements: [
       {
         tag: 'input',
@@ -108,6 +111,20 @@ const formeoOpts = {
       ],
     },
   },
+  config: {
+    fields: {
+      checkbox: {
+        actionButtons: {
+          buttons: ['edit'],
+        },
+      },
+      // all: {
+      //   actionButtons: {
+      //     buttons: ['yeah'],
+      //   },
+      // },
+    },
+  },
   events: {
     // onUpdate: console.log,
     // onSave: console.log
@@ -128,7 +145,6 @@ let editing = true
 const localeSelect = document.getElementById('locale')
 const toggleEdit = document.getElementById('renderForm')
 const viewDataBtn = document.getElementById('viewData')
-const viewRowsDataBtn = document.getElementById('viewRowData')
 const resetDemo = document.getElementById('reloadBtn')
 
 // debugBtn.onclick = function() {
@@ -136,7 +152,7 @@ const resetDemo = document.getElementById('reloadBtn')
 // };
 
 resetDemo.onclick = function() {
-  window.sessionStorage.removeItem('formData')
+  window.sessionStorage.removeItem('formeo-formData')
   window.location.reload()
 }
 
@@ -155,11 +171,6 @@ toggleEdit.onclick = evt => {
 
 viewDataBtn.onclick = evt => {
   console.log(formeo.formData)
-}
-
-viewRowsDataBtn.onclick = evt => {
-  const { rows } = formeo.formData
-  Object.values(rows).forEach(row => console.log(`rowId: ${row.id}`, row.children))
 }
 
 const formeoLocale = window.sessionStorage.getItem('formeo-locale')

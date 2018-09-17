@@ -27,7 +27,7 @@ export default class Field extends Component {
       id: this.id,
       children: [
         this.label,
-        this.actionButtons(), // fieldEdit window
+        this.getActionButtons(), // fieldEdit window
         this.fieldEdit, // fieldEdit window
       ],
       panelNav: this.panelNav,

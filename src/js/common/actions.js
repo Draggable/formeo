@@ -1,4 +1,6 @@
 import { identity } from 'rxjs'
+import { SESSION_FORMDATA_KEY } from '../constants'
+import { sessionStorage } from './utils'
 
 // Actions are the callbacks for things like adding
 // new attributes, options, field removal confirmations etc.
@@ -49,6 +51,10 @@ const actions = {
     },
   },
   save: formData => {
+    if (actions.opts.sessionStorage) {
+      sessionStorage.set(SESSION_FORMDATA_KEY, formData)
+    }
+
     return actions.opts.save(formData)
   },
 }

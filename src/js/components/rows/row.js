@@ -3,10 +3,8 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import events from '../../common/events'
-import { bsGridRegEx, indexOfNode } from '../../common/helpers'
-import Controls from '../controls'
-import { Columns } from '..'
-import { numToPercent, componentType } from '../../common/utils'
+import { bsGridRegEx } from '../../common/helpers'
+import { numToPercent } from '../../common/utils'
 import { ROW_CLASSNAME, COLUMN_TEMPLATES } from '../../constants'
 
 const DEFAULT_DATA = () =>
@@ -39,7 +37,7 @@ export default class Row extends Component {
         editingHoverTag: i18n.get('editing.row'),
       },
       id: this.id,
-      content: [this.actionButtons(), this.editWindow],
+      content: [this.getActionButtons(), this.editWindow],
     }
 
     const row = dom.create(rowConfig)
@@ -69,7 +67,7 @@ export default class Row extends Component {
 
   /**
    * Edit window for Row
-   * @return {Object} [description]
+   * @return {Object} edit window dom config for Row
    */
   get editWindow() {
     const _this = this
@@ -167,56 +165,6 @@ export default class Row extends Component {
   }
 
   /**
-   * Handler for adding content to a row
-   * @param  {Object} evt
-   */
-  onAdd = evt => {
-    const { from, item, to } = evt
-    const newIndex = indexOfNode(item, to)
-    const fromType = componentType(from)
-
-    const typeActions = {
-      controls: () => {
-        const { meta } = Controls.get(item.id).controlData
-        if (meta.group !== 'layout') {
-          this.addColumn().addField(item.id)
-        } else if (meta.id === 'layout-column') {
-          this.addColumn()
-        }
-        dom.remove(item)
-      },
-      column: () => this.addColumn().addField(item.id, newIndex),
-    }
-
-    typeActions[fromType] && typeActions[fromType]()
-    this.emptyClass()
-    this.saveChildOrder()
-  }
-
-  /**
-   * Load columns to row
-   * @param  {Array} columns Column Component
-   */
-  loadColumns = (columns = this.data.children) =>
-    columns.map(columnId => {
-      const column = this.addColumn(columnId)
-      column.loadFields()
-      return column
-    })
-
-  addColumn = (columnId, index = this.children.length) => {
-    const column = Columns.get(columnId)
-    // +2 is to compensate for the settings and action buttons.
-    // @todo this feels frail- improve
-    this.dom.insertBefore(column.dom, this.dom.children[index + 2])
-    this.set(`children.${index}`, column.id)
-    this.emptyClass()
-    // this.autoColumnWidths()
-
-    return column
-  }
-
-  /**
    * Read columns and generate bootstrap cols
    * @param  {Object}  row    DOM element
    */
@@ -290,6 +238,7 @@ export default class Row extends Component {
       },
       action: {
         change: ({ target: { value } }) => {
+          // @todo FIX!
           const dRow = this.rows.get(this.id)
           _this.setColumnWidths(dRow.row, value)
         },

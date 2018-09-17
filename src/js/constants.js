@@ -1,3 +1,5 @@
+import pkg from '../../package.json'
+
 export const POLYFILLS = [
   { name: 'cssPreload', src: 'https://cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
 ]
@@ -77,3 +79,8 @@ export const COLUMN_TEMPLATES = new Map(
 )
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]
+
+export const SESSION_FORMDATA_KEY = `${pkg.name}-formData`
+export const SESSION_LOCALE_KEY = `${pkg.name}-locale`
+
+export const ANIMATION_BASE_SPEED = 333

@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import actions from '../../common/actions'
-import helpers from '../../common/helpers'
+import helpers, { indexOfNode } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { match, unique, uuid } from '../../common/utils'
@@ -55,8 +55,10 @@ export class Controls {
     }
 
     this.controlEvents = {
-      focus: ({ target }) =>
-        _this.panels.nav.refresh(helpers.indexOfNode(target.closest(`.${CONTROL_GROUP_CLASSNAME}`))),
+      focus: ({ target }) => {
+        const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
+        return group && _this.panels.nav.refresh(indexOfNode(group))
+      },
       click: ({ target }) => _this.addElement(target.parentElement.id),
     }
   }
@@ -313,6 +315,7 @@ export class Controls {
         }
       },
       addElement: _this.addElement,
+      // @todo finish th addGroup method
       addGroup: group => console.log(group),
     }
 
@@ -372,20 +375,24 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement = id => {
+    const controlData = helpers.get(this.get(id), 'controlData')
     const {
       meta: { group, id: metaId },
-    } = helpers.get(this.get(id), 'controlData')
+    } = controlData
 
     const layoutTypes = {
-      row: () => Stages.activeStage.addRow(),
-      column: () => layoutTypes.row().addColumn(),
-      field: id => layoutTypes.column().addField(id),
+      row: () => Stages.active.addChild(),
+      column: () => layoutTypes.row().addChild(),
+      field: controlData => {
+        const field = layoutTypes.column().addChild(controlData)
+        return field
+      },
     }
 
-    return group !== 'layout' ? layoutTypes.field(id) : layoutTypes[metaId.replace('layout-', '')]()
+    return group !== 'layout' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]()
   }
 
-  applyOptions(controlOptions = {}) {
+  applyOptions = (controlOptions = {}) => {
     this.options = {}
     const { groupOrder = [], elements = [] } = controlOptions
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))

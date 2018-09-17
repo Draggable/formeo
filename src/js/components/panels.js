@@ -1,6 +1,6 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import h from '../common/helpers'
+import h, { indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 // import Fields from './fields'
 
@@ -160,7 +160,7 @@ export default class Panels {
         tag: 'h5',
         action: {
           click: evt => {
-            const index = h.indexOfNode(evt.target, evt.target.parentElement)
+            const index = indexOfNode(evt.target, evt.target.parentElement)
             _this.currentPanel = _this.panels[index]
             const labels = evt.target.parentElement.childNodes
             _this.nav.refresh(index)
@@ -232,7 +232,7 @@ export default class Panels {
     const groupParent = this.currentPanel.parentElement
     const firstControlNav = this.labels.querySelector('.panel-labels').firstChild
     const siblingGroups = this.currentPanel.parentElement.childNodes
-    let index = h.indexOfNode(this.currentPanel, groupParent)
+    let index = indexOfNode(this.currentPanel, groupParent)
     let offset = {}
 
     const groupChange = newIndex => {

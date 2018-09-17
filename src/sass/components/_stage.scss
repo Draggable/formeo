@@ -24,7 +24,7 @@
   border: 0 dashed transparent;
   background-color: $stage-background;
   padding-left: $action-btn-width - 1;
-  padding-bottom: 0;
+  padding-bottom: space(1);
   overflow: visible;
 
   &.empty {

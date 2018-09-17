@@ -1,13 +1,11 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import Component from '../component'
-import h from '../../common/helpers'
+import h, { get } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { numToPercent, componentType } from '../../common/utils'
-import { Fields } from '..'
+import { numToPercent } from '../../common/utils'
 import { COLUMN_CLASSNAME } from '../../constants'
-import Controls from '../controls'
 
 // @todo remove formData
 const formData = {}
@@ -62,7 +60,7 @@ export default class Column extends Component {
         },
       },
       id: this.id,
-      content: [this.actionButtons(), editWindow, resizeHandle],
+      content: [this.getActionButtons(), editWindow, resizeHandle],
     }
 
     const column = dom.create(columnConfig)
@@ -118,31 +116,6 @@ export default class Column extends Component {
       column.style.width = columnWidth
       column.style.float = 'left'
     }
-  }
-
-  /**
-   * Event when column is added
-   * @param  {Object} evt
-   */
-  onAdd = evt => {
-    const { from, to, item, newIndex } = evt
-    const fromType = componentType(from)
-
-    const typeActions = {
-      // from Controls
-      controls: () => {
-        const { meta } = Controls.get(item.id).controlData
-        if (meta.group !== 'layout') {
-          this.addField(item.id, newIndex)
-        }
-        dom.remove(item)
-      },
-      // from Column
-      column: () => this.addField(item.id, newIndex),
-    }
-
-    typeActions[fromType] && typeActions[fromType]()
-    to.classList.remove('hovering-column')
   }
 
   /**
@@ -223,8 +196,7 @@ export default class Column extends Component {
         return
       }
       const columnData = this.data
-      // @todo
-      const sibColumnData = h.getIn(formData, ['columns', sibling.id])
+      const sibColumnData = get(formData, `columns.${sibling.id}`)
       const row = column.parentElement
       row.querySelector('.column-preset').value = 'custom'
       row.classList.remove('resizing-columns')
@@ -263,14 +235,6 @@ export default class Column extends Component {
   // @todo loop through children and refresh panels
   refreshFieldPanels = () => {
     // console.log(this)
-  }
-
-  addField = (fieldId, index = this.children.length) => {
-    const field = Fields.get(fieldId)
-    this.dom.insertBefore(field.dom, this.dom.children[index])
-    this.set(`children.${index}`, field.id)
-    this.emptyClass()
-    return field
   }
 
   /**

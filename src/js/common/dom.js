@@ -1,9 +1,9 @@
-import h from './helpers'
+import h, { indexOfNode } from './helpers'
 import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, closestFtype, mapToObj, componentType } from './utils'
+import { uuid, clone, numToPercent, closestFtype, mapToObj, componentType, merge } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -25,8 +25,6 @@ class DOM {
     // Maintain references to DOM nodes
     // so we don't have to keep doing getElementById
     this.options = Object.create(null)
-    this.columns = new Map()
-    // this.fields = new Map()
     this.styleSheet = (() => {
       const style = document.createElement('style')
       style.setAttribute('media', 'screen')
@@ -38,7 +36,7 @@ class DOM {
   }
 
   set setOptions(options) {
-    this.options = h.merge(Object.assign({}, this.options, options))
+    this.options = merge(Object.assign({}, this.options, options))
   }
 
   /**
@@ -136,7 +134,7 @@ class DOM {
       },
     }
 
-    const mergedConfig = h.merge(defaultConfig, userConfig)
+    const mergedConfig = merge(defaultConfig, userConfig)
 
     Object.keys(mergedConfig).forEach(key => {
       if (mergedConfig[key].actionButtons) {
@@ -744,7 +742,7 @@ class DOM {
     const _this = this
     const { id, fType } = elem
     const dataClone = clone(formData[fType].get(id))
-    const newIndex = h.indexOfNode(elem) + 1
+    const newIndex = indexOfNode(elem) + 1
     let noParent = false
     dataClone.id = uuid()
     formData[fType].set(dataClone.id, dataClone)
@@ -755,7 +753,7 @@ class DOM {
     const cloneType = {
       rows: () => {
         dataClone.columns = []
-        const stage = Stages.activeStage
+        const stage = Stages.active
         const newRow = stage.addRow(null, dataClone.id)
         const columns = elem.getElementsByClassName('stage-columns')
 
@@ -813,7 +811,7 @@ class DOM {
   remove(elem) {
     const type = componentType(elem)
     if (type) {
-      return Components.get(`${type}s`).remove(elem.id)
+      return Components.remove(`${type}s.${elem.id}`)
     }
 
     return elem.parentElement.removeChild(elem)
@@ -907,16 +905,6 @@ class DOM {
       pageX: elemPosition.left + elemPosition.width / 2,
       pageY: elemPosition.top - bodyRect.top - elemPosition.height / 2,
     }
-  }
-
-  /**
-   * Load a columns fields
-   * @param  {Object} column column config object
-   */
-  loadFields(column) {
-    // const fields = formData.getIn(['columns', column.id]).fields
-    // fields.forEach(fieldId => this.addField(column, fieldId))
-    // this.fieldOrderClass(column)
   }
 
   /**
@@ -1039,6 +1027,7 @@ class DOM {
   isRow = node => componentType(node) === ROW_CLASSNAME
   isColumn = node => componentType(node) === COLUMN_CLASSNAME
   isField = node => componentType(node) === FIELD_CLASSNAME
+  asComponent = elem => Components[`${componentType(elem)}s`].get(elem.id)
 }
 
 export const dom = new DOM()

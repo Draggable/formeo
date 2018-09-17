@@ -2,7 +2,6 @@
 import dom from './dom'
 import { unique } from './utils'
 import set from 'lodash/set'
-import merge from 'lodash/merge'
 
 // eslint-disable-next-line
 const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g
@@ -100,6 +99,48 @@ const stringToPath = function(string) {
   return result
 }
 
+/**
+ * get nested property value in an object
+ *
+ * @private
+ * @param {Object} object The object to query.
+ * @param {String} path The path of the property to get.
+ * @return {String|Array|Object} Returns the resolved value.
+ */
+export const get = (obj, path) => {
+  path = Array.isArray(path) ? path : stringToPath(path)
+  const val = path.reduce((acc, part) => {
+    if (typeof acc === 'string') {
+      return acc
+    }
+    return acc && acc[part]
+  }, obj)
+  return val
+}
+
+/**
+ * @param {Array|NodeList} arr to be iterated
+ * @param {Function} cb
+ * @param {Context}
+ */
+export const forEach = (arr, cb, scope) => {
+  for (let i = 0; i < arr.length; i++) {
+    cb.call(scope, arr[i], i)
+  }
+}
+
+/**
+ * @param {Array|NodeList} arr to be iterated
+ * @param {Function} cb
+ * @return {Array} newArray
+ */
+export const map = (arr, cb) => {
+  const newArray = []
+  forEach(arr, (elem, i) => newArray.push(cb(i)))
+
+  return newArray
+}
+
 export const helpers = {
   /**
    * Convert camelCase into lowercase-hyphen
@@ -165,24 +206,14 @@ export const helpers = {
   inArray: (needle, haystack) => {
     return haystack.indexOf(needle) !== -1
   },
-  // forEach that can be used on nodeList
-  forEach: (array, callback, scope) => {
-    for (let i = 0; i < array.length; i++) {
-      callback.call(scope, array[i], i)
-    }
-  },
+  forEach,
   // Expensive recursive object copy
   copyObj: obj => {
     return window.JSON.parse(window.JSON.stringify(obj))
   },
 
   // basic map that can be used on nodeList
-  map: (arr, callback, scope) => {
-    const newArray = []
-    helpers.forEach(arr, (elem, i) => newArray.push(callback(i)))
-
-    return newArray
-  },
+  map,
   subtract: (arr, from) => {
     return from.filter(function(a) {
       return !~this.indexOf(a)
@@ -190,44 +221,12 @@ export const helpers = {
   },
   indexOfNode,
   isInt,
-  /**
-   * get nested property value in an object
-   *
-   * @private
-   * @param {Object} object The object to query.
-   * @param {String} path The path of the property to get.
-   * @return {String|Array|Object} Returns the resolved value.
-   */
-  get: (obj, path) => {
-    path = Array.isArray(path) ? path : stringToPath(path)
-    const val = path.reduce((acc, part) => {
-      if (typeof acc === 'string') {
-        return acc
-      }
-      return acc && acc[part]
-    }, obj)
-    return val
-  },
+  get,
   getIn: (map, path, fallback) => {
     const value = path.reduce((acc, part) => acc.get(), map)
     return value || (fallback && typeof fallback === 'function') ? fallback() : fallback
   },
   set, // use lodash set
-  /**
-   * Merge one object with another.
-   * This is expensive, use as little as possible.
-   * @param  {Object} obj1
-   * @param  {Object} obj2
-   * @return {Object}      merged object
-   */
-  merge: (obj1, obj2) => {
-    const customizer = (objValue, srcValue) => {
-      if (Array.isArray(objValue)) {
-        return unique(objValue.concat(srcValue))
-      }
-    }
-    return merge(obj1, obj2, customizer)
-  },
 
   orderObjectsBy,
   detectIE: () => {

@@ -1,5 +1,7 @@
 import uuidv4 from 'uuid/v4'
 import { COMPONENT_TYPES } from '../constants'
+import mergeWith from 'lodash/mergeWith'
+
 /**
  * Match the values from a string or array against a str.
  * @param  {String} str    String we are searching
@@ -109,29 +111,21 @@ export const uuid = elem => {
   return id
 }
 
-// export const merge = (obj1, obj2) => {
-//   const mergedObj = Object.assign({}, obj1, obj2)
-//   for (const prop in obj2) {
-//     if (mergedObj.hasOwnProperty(prop)) {
-//       if (Array.isArray(obj2[prop])) {
-//         if (obj1) {
-//           if (Array.isArray(obj1[prop])) {
-//             mergedObj[prop] = obj1[prop].concat(obj2[prop])
-//           } else {
-//             mergedObj[prop] = obj2[prop]
-//           }
-//         } else {
-//           mergedObj[prop] = obj2[prop]
-//         }
-//       } else if (typeof obj2[prop] === 'object') {
-//         mergedObj[prop] = merge(obj1[prop], obj2[prop])
-//       } else {
-//         mergedObj[prop] = obj2[prop]
-//       }
-//     }
-//   }
-//   return mergedObj
-// }
+/**
+ * Merge one object with another.
+ * This is expensive, use as little as possible.
+ * @param  {Object} obj1
+ * @param  {Object} obj2
+ * @return {Object}      merged object
+ */
+export const merge = (obj1, obj2, opts = Object.create(null)) => {
+  const customizer = (objValue, srcValue) => {
+    if (Array.isArray(objValue)) {
+      return unique(opts.mergeArray ? objValue.concat(srcValue) : srcValue)
+    }
+  }
+  return mergeWith(obj1, obj2, customizer)
+}
 
 export const clone = obj => {
   let copy
@@ -239,3 +233,25 @@ export const memoize = (fn, resolver) => {
 
 // Assign cache to `_.memoize`.
 memoize.Cache = Map
+
+export const sessionStorage = Object.create(null, {
+  get: {
+    value: key => {
+      const itemValue = window.sessionStorage && window.sessionStorage.getItem(key)
+      try {
+        return JSON.parse(itemValue)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+  },
+  set: {
+    value: (key, itemValue) => {
+      try {
+        return window.sessionStorage && window.sessionStorage.setItem(key, JSON.stringify(itemValue))
+      } catch (error) {
+        console.error(error)
+      }
+    },
+  },
+})
