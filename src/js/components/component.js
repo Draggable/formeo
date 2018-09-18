@@ -1,4 +1,5 @@
 import identity from 'lodash/identity'
+import isEqual from 'lodash/isEqual'
 import { uuid, componentType, closestFtype, clone, merge } from '../common/utils'
 import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
@@ -16,6 +17,7 @@ export default class Component extends Data {
 
     this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
+    this.runConditions()
   }
   get js() {
     return this.data
@@ -65,7 +67,8 @@ export default class Component extends Data {
    * Removes element from DOM and data
    * @return  {Object} parent element
    */
-  empty = () => {
+  empty() {
+    console.log(this.name, 'wtf')
     const removed = this.children.map(child => child.remove())
     this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
     this.emptyClass()
@@ -109,7 +112,6 @@ export default class Component extends Data {
     //   console.log(this, this.config.all.actionButtons.buttons)
     // }
     btnWrap.content = this.buttons
-    // btnWrap.content = dom.config[`${this.name}s`].actionButtons.buttons
     actions.content = btnWrap
 
     return actions
@@ -141,7 +143,6 @@ export default class Component extends Data {
               const editWindow = _this.dom.querySelector(`.${_this.name}-edit`)
               animate.slideToggle(editWindow, ANIMATION_BASE_SPEED)
               if (_this.name === 'field') {
-                console.log(editWindow.nextSibling)
                 animate.slideToggle(editWindow.nextSibling, ANIMATION_BASE_SPEED)
                 element.parentElement.classList.toggle('column-' + editClass)
               }
@@ -387,5 +388,134 @@ export default class Component extends Data {
 
   get config() {
     return this.configVal
+  }
+
+  runConditions = () => {
+    const conditionsList = this.get('conditions')
+    if (!conditionsList || !conditionsList.length) {
+      return null
+    }
+
+    const processedConditions = conditionsList.map(conditions => {
+      const ifCondition = this.processConditions(conditions.if)
+      const thenResult = this.processResults(conditions.then)
+      // loops through conditions, when one returns true, it executes the result
+      return ifCondition.map(conditions => {
+        return this.evaluateConditions(conditions) && this.execResults(thenResult)
+      })
+    })
+
+    return processedConditions
+  }
+
+  getComponent(path) {
+    const [type, id] = path.split('.')
+    const group = Components[type]
+    return id === this.id ? this : group && group.get(id)
+  }
+
+  value = (path, val) => {
+    const splitPath = path.split('.')
+
+    const component = this.getComponent(path)
+    const property = component && splitPath.slice(2, splitPath.length).join('.')
+    const propertyMap = {
+      value: 'attrs.value',
+    }
+
+    if ([!component, !property, !propertyMap[property]].some(Boolean)) {
+      return path
+    }
+
+    const action = val ? component.set : component.get
+    return action(propertyMap[property], val)
+  }
+
+  // @todo finish the evaluator
+  evaluateConditions = conditions => {
+    const comparisonMap = {
+      '==': isEqual,
+    }
+    return conditions.some(({ comparison, source, target }) => {
+      const evaluator = comparisonMap[comparison] || false
+      return evaluator && evaluator(this.value(source), this.value(target))
+    })
+  }
+
+  /**
+   * Maps operators to their respective handler
+   * @param {String} operator
+   * @return {Function} action
+   */
+  getResult = operator => {
+    const operatorMap = {
+      '=': (target, propertyPath, value) => target.set(propertyPath, value),
+    }
+    return operatorMap[operator]
+  }
+
+  /**
+   * Group conditions by 'OR' index, maintain order
+   * @param {Array} conditions array of arrays of condition definitions
+   * @return {Array} flattened array of conditions
+   */
+  processConditions = (conditions = this.get('conditions')) => {
+    if (!conditions) {
+      return null
+    }
+    const chunkIndexes = conditions.reduce((acc, val, idx) => {
+      if (val === 'OR') {
+        acc.push(idx)
+      }
+      return acc
+    }, [])
+    // group conditions by 'OR' indexes
+    chunkIndexes.push(conditions.length)
+    return chunkIndexes.reduce((acc, cur, idx) => {
+      const startIndex = chunkIndexes[idx - 1] + 1 || 0
+      acc.push(conditions.slice(startIndex, cur))
+      return acc
+    }, [])
+  }
+
+  processResults = results => {
+    return results.map(({ operator, target, value }) => {
+      const targetComponent = this.getComponent(target)
+      const propertyPath =
+        targetComponent &&
+        target
+          .split('.')
+          .slice(2, target.length)
+          .join('.')
+      const processedResult = {
+        target: targetComponent,
+        propertyPath,
+        action: this.getResult(operator),
+        value: this.value(value),
+      }
+      return processedResult
+    })
+  }
+
+  execResults = results => {
+    console.log(results)
+    const promises = results.map(result => {
+      return this.execResult(result)
+    })
+    return Promise.all(promises)
+  }
+
+  execResult = ({ target, action, value, propertyPath }) => {
+    return new Promise((resolve, reject) => {
+      try {
+        console.log('target', target)
+        console.log('action', action)
+        console.log('value', value)
+        console.log('propertyPath', propertyPath)
+        return resolve(action(target, value))
+      } catch (err) {
+        return reject(err)
+      }
+    })
   }
 }

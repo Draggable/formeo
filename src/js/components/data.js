@@ -30,7 +30,7 @@ export default class Data {
     const oldVal = helpers.get(this.data, path)
 
     if (isEqual(oldVal, newVal)) {
-      return null
+      return this.data
     }
 
     const data = helpers.set(this.data, path, newVal)
@@ -70,7 +70,7 @@ export default class Data {
     }
     return parent
   }
-  empty = () => {
+  empty() {
     this.data = Object.create(null)
   }
   getData = () => {

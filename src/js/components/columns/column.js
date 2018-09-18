@@ -14,6 +14,7 @@ const DEFAULT_DATA = () =>
   Object.freeze({
     config: {},
     children: [],
+    className: 'f-column',
   })
 
 /**

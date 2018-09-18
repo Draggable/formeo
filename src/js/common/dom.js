@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, closestFtype, mapToObj, componentType, merge } from './utils'
+import { uuid, clone, numToPercent, mapToObj, componentType, merge } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -37,129 +37,6 @@ class DOM {
 
   set setOptions(options) {
     this.options = merge(Object.assign({}, this.options, options))
-  }
-
-  /**
-   * Merges a user's configuration with default
-   * @param  {Object} userConfig
-   * @todo this should be handled by Components class now
-   * @return {Object} config
-   */
-  set setConfig(userConfig) {
-    const _this = this
-    const icon = _this.icon
-
-    const handle = {
-      ...dom.btnTemplate({ content: [icon('move'), icon('handle')] }),
-      className: ['item-handle'],
-      meta: {
-        id: 'handle',
-      },
-    }
-
-    const edit = {
-      ...dom.btnTemplate({ content: icon('edit') }),
-      className: ['item-edit-toggle'],
-      meta: {
-        id: 'edit',
-      },
-      action: {
-        click: evt => {
-          const element = closestFtype(evt.target)
-          const fType = componentType(element)
-          const editClass = 'editing-' + fType
-          const editWindow = element.querySelector(`.${fType}-edit`)
-          animate.slideToggle(editWindow, 333)
-          if (fType === 'field') {
-            animate.slideToggle(editWindow.nextSibling, 333)
-            element.parentElement.classList.toggle('column-' + editClass)
-          }
-          element.classList.toggle(editClass)
-        },
-      },
-    }
-
-    const remove = {
-      ...dom.btnTemplate({ content: icon('remove') }),
-      className: ['item-remove'],
-      meta: {
-        id: 'remove',
-      },
-      action: {
-        click: (evt, id) => {
-          const element = closestFtype(evt.target)
-          animate.slideUp(element, 250, elem => _this.removeEmpty(elem))
-        },
-      },
-    }
-
-    const cloneItem = {
-      ...dom.btnTemplate({ content: icon('copy') }),
-      className: ['item-clone'],
-      meta: {
-        id: 'clone',
-      },
-      action: {
-        click: evt => {
-          _this.clone(closestFtype(evt.target))
-        },
-      },
-    }
-
-    const defaultConfig = {
-      rows: {
-        actionButtons: {
-          buttons: [{ ...handle, content: [icon('move-vertical'), icon('handle')] }, edit, cloneItem, remove].map(
-            button => clone(button)
-          ),
-          order: [],
-          disabled: [],
-        },
-      },
-      columns: {
-        actionButtons: {
-          buttons: [{ ...cloneItem, content: [icon('copy'), icon('handle')] }, handle, remove].map(button =>
-            clone(button)
-          ),
-          order: [],
-          disabled: [],
-        },
-      },
-      fields: {
-        actionButtons: {
-          buttons: [handle, edit, cloneItem, remove].map(button => clone(button)),
-          order: [],
-          disabled: [],
-        },
-      },
-    }
-
-    const mergedConfig = merge(defaultConfig, userConfig)
-
-    Object.keys(mergedConfig).forEach(key => {
-      if (mergedConfig[key].actionButtons) {
-        const aButtons = mergedConfig[key].actionButtons
-        const disabled = aButtons.disabled
-        const buttons = aButtons.buttons
-
-        // Order buttons
-        aButtons.buttons = h.orderObjectsBy(buttons, aButtons.order, 'meta.id')
-        // filter disabled buttons
-        aButtons.buttons = aButtons.buttons.filter(button => {
-          const metaId = h.get(button, 'meta.id')
-          return !h.inArray(metaId, disabled)
-        })
-      }
-    })
-
-    // overrides language set dir
-    if (mergedConfig.dir) {
-      this.dir = mergedConfig.dir
-    }
-
-    this.config = mergedConfig
-
-    return this.config
   }
 
   /**

@@ -51,11 +51,20 @@ export default class ComponentData extends Data {
    */
   clearAll = () => Object.values(this.data).map(component => component.empty())
 
+  /**
+   * Extends the configVal for a component type,
+   * eventually read by Component
+   * @return {Object} configVal
+   */
   set config(config) {
     this.configVal = merge(this.configVal, clone(config))
     return this.configVal
   }
 
+  /**
+   * Reads configVal for a component type
+   * @return {Object} configVal
+   */
   get config() {
     return this.configVal
   }

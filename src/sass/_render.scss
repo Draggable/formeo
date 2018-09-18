@@ -67,10 +67,16 @@
   max-height: 100%;
 }
 
-.f-render-column {
+.f-column {
   padding: 0 space();
   float: left;
   max-width: none;
   flex-direction: column;
-  flex: auto;
+  flex: 1;
+  &:first-child {
+    padding-left: 0;
+  }
+  &:last-child {
+    padding-left: 0;
+  }
 }

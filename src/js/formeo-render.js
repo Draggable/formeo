@@ -7,6 +7,13 @@ export class FormeoRender {
     this.form = formData
   }
 
+  /**
+   * Duplicate a
+   */
+  duplicate(elem) {
+    console.log(elem.id)
+  }
+
   render = (targetElement, formData = Components.formData) => {
     this.form = formData
 
@@ -17,7 +24,10 @@ export class FormeoRender {
       children: this.processedData,
     }
 
-    targetElement.appendChild(dom.create(config))
+    this.renderedForm = dom.create(config)
+    dom.empty(targetElement)
+
+    targetElement.appendChild(this.renderedForm)
   }
 
   orderChildren = (type, order) =>
@@ -32,9 +42,6 @@ export class FormeoRender {
    * @return {Object} processed column data
    */
   processColumnConfig = columnData => {
-    if (columnData.className) {
-      columnData.className.push('f-render-column')
-    }
     const colWidth = columnData.config.width || '100%'
     columnData.style = `width: ${colWidth}`
     columnData.children = this.orderChildren('fields', columnData.children)

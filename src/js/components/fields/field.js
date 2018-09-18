@@ -68,9 +68,11 @@ export default class Field extends Component {
   }
 
   set(...args) {
+    console.log(args)
+
     const data = super.set(...args)
     this.updateLabel()
-    this.updatePreview(data)
+    this.updatePreview()
 
     return data
   }
@@ -85,10 +87,14 @@ export default class Field extends Component {
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview(fieldData = this.data) {
-    const newPreview = dom.create(h.copyObj(fieldData), true)
-    dom.empty(this.preview)
-    this.preview.appendChild(newPreview)
+  updatePreview(fieldData = this.fieldPreview()) {
+    const newPreview = dom.create(fieldData, true)
+    this.preview.parentElement.replaceChild(newPreview, this.preview)
+    this.preview = newPreview
+
+    // dom.empty(this.preview)
+    // this.preview.appendChild(newPreview)
+    // console.log(newPreview)
 
     return this.preview
   }
@@ -152,20 +158,6 @@ export default class Field extends Component {
   fieldPreview() {
     const prevData = clone(this.data)
     prevData.id = `prev-${this.id}`
-    // const field = this.dom
-    // const togglePreviewEdit = evt => {
-    //   console.log(field)
-    //   const column = field.parentElement
-    //   if (evt.target.contentEditable === 'true') {
-    //     if (h.inArray(evt.type, ['focus', 'blur'])) {
-    //       const isActive = document.activeElement === evt.target
-    //       column.classList.toggle('editing-field-preview', isActive)
-    //       dom.toggleSortable(field.parentElement, evt.type === 'focus')
-    //     } else if (h.inArray(evt.type, ['mousedown', 'mouseup'])) {
-    //       dom.toggleSortable(field.parentElement, evt.type === 'mousedown')
-    //     }
-    //   }
-    // }
 
     const fieldPreview = {
       attrs: {
@@ -173,17 +165,12 @@ export default class Field extends Component {
       },
       content: dom.create(prevData, true),
       action: {
-        // focus: togglePreviewEdit,
-        // blur: togglePreviewEdit,
-        // mousedown: togglePreviewEdit,
-        // mouseup: togglePreviewEdit,
         change: evt => {
           const { target } = evt
           if (target.fMap) {
-            const fieldData = this.data
             const { checked, type, fMap } = target
             if (h.inArray(type, ['checkbox', 'radio'])) {
-              const options = fieldData.get('options')
+              const options = super.get('options')
               // uncheck options if radio
               if (type === 'radio') {
                 options.forEach(({ selected }) => (selected = false))
@@ -203,16 +190,16 @@ export default class Field extends Component {
           }
         },
         input: evt => {
-          const fieldData = this.data
           let prop = 'content'
           if (evt.target.fMap) {
             prop = evt.target.fMap
           }
           if (evt.target.contentEditable === 'true') {
-            h.set(fieldData, prop, evt.target.innerHTML)
+            super.set(prop, evt.target.innerHTML)
           } else {
-            h.set(fieldData, prop, evt.target.value)
+            super.set(prop, evt.target.value)
           }
+          this.processConditions()
         },
       },
     }

@@ -81,7 +81,6 @@ class Formeo {
 
     // Load remote resources such as css and svg sprite
     _this.loadResources().then(() => {
-      dom.setConfig = opts.config
       if (opts.allowEdit) {
         formeo.edit = _this.init.bind(_this)
         _this.init()

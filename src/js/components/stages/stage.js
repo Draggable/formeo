@@ -3,6 +3,7 @@ import dom from '../../common/dom'
 import Component from '../component'
 import { STAGE_CLASSNAME } from '../../constants'
 import Stages from '.'
+import animate from '../../common/animation'
 
 const DEFAULT_DATA = () => Object.freeze({ children: [] })
 
@@ -87,5 +88,15 @@ export default class Stage extends Component {
       draggable: '.stage-rows',
       handle: '.item-handle',
     })
+  }
+  empty() {
+    console.log('wtf')
+    this.dom.classList.add('removing-all-fields')
+    animate.slideUp(this.dom, 600, () => {
+      super.empty()
+      this.dom.classList.remove('removing-all-fields')
+      animate.slideDown(this.dom, 300)
+    })
+    return this
   }
 }
