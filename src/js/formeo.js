@@ -44,6 +44,7 @@ const formeo = {
     return Components.formData
   },
   render: FormeoRender.render,
+  Components,
 }
 
 /**

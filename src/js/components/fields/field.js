@@ -19,6 +19,8 @@ export default class Field extends Component {
   constructor(fieldData = Object.create(null)) {
     super('field', fieldData)
 
+    this.label = dom.create(this.labelConfig)
+
     let field = {
       tag: 'li',
       attrs: {
@@ -41,13 +43,12 @@ export default class Field extends Component {
     }
 
     field = dom.create(field)
-
     this.preview = dom.create(this.fieldPreview())
     field.appendChild(this.preview)
     this.dom = field
   }
 
-  get label() {
+  get labelConfig() {
     return (
       this.data.config &&
       !this.data.config.hideLabel && {
@@ -59,25 +60,37 @@ export default class Field extends Component {
         children: this.data.config.label,
         action: {
           input: ({ target: { innerHTML } }) => {
-            this.set('config.label', innerHTML)
+            super.set('config.label', innerHTML)
           },
         },
       }
     )
   }
 
+  set(...args) {
+    const data = super.set(...args)
+    this.updateLabel()
+    this.updatePreview(data)
+
+    return data
+  }
+
+  updateLabel() {
+    const newLabel = dom.create(this.labelConfig)
+    this.label.parentElement.replaceChild(newLabel, this.label)
+    this.label = newLabel
+  }
+
   /**
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview() {
-    const _this = this
-    const fieldData = h.copyObj(this.data)
-    const newPreview = dom.create(fieldData, true)
-    dom.empty(_this.preview)
-    _this.preview.appendChild(newPreview)
+  updatePreview(fieldData = this.data) {
+    const newPreview = dom.create(h.copyObj(fieldData), true)
+    dom.empty(this.preview)
+    this.preview.appendChild(newPreview)
 
-    return newPreview
+    return this.preview
   }
 
   /**

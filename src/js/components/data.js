@@ -26,7 +26,7 @@ export default class Data {
     change.desc = !change.type === 'added' ? `${oldVal} to ${newVal}` : newVal
     return change
   }
-  set = (path, newVal) => {
+  set(path, newVal) {
     const oldVal = helpers.get(this.data, path)
 
     if (isEqual(oldVal, newVal)) {
