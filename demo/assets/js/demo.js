@@ -171,10 +171,6 @@ logJSON.addEventListener('click', () => {
   console.log(formeo.json)
 })
 
-logJSON.addEventListener('click', () => {
-  console.log(formeo.json)
-})
-
 // debugBtn.onclick = function() {
 //   debugWrap.classList.toggle('open');
 // };
