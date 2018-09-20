@@ -1,3 +1,5 @@
+import { identity } from 'rxjs'
+
 // Actions are the callbacks for things like adding
 // new attributes, options, field removal confirmations etc.
 // Every Action below can be overridden via module options
@@ -22,7 +24,7 @@ const defaultActions = {
       evt.action()
     },
   },
-  save: evt => {},
+  save: identity,
 }
 
 /**
@@ -35,18 +37,20 @@ const actions = {
   },
   add: {
     attrs: evt => {
-      actions.opts.add.attr(evt)
+      return actions.opts.add.attr(evt)
     },
     options: evt => {
-      actions.opts.add.option(evt)
+      return actions.opts.add.option(evt)
     },
   },
   click: {
     btn: evt => {
-      actions.opts.click.btn(evt)
+      return actions.opts.click.btn(evt)
     },
   },
-  save: () => {},
+  save: formData => {
+    return actions.opts.save(formData)
+  },
 }
 
 export default actions

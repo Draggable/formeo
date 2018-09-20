@@ -1,22 +1,22 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import Component from '../component'
-// import { data, formData } from '../../common/data'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { numToPercent } from '../../common/utils'
+import { numToPercent, componentType } from '../../common/utils'
 import { Fields } from '..'
-import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
+import { COLUMN_CLASSNAME } from '../../constants'
 import Controls from '../controls'
 
 // @todo remove formData
 const formData = {}
 
-const DEFAULT_DATA = {
-  config: {},
-  children: [],
-}
+const DEFAULT_DATA = () =>
+  Object.freeze({
+    config: {},
+    children: [],
+  })
 
 /**
  * Setup Column elements
@@ -28,7 +28,8 @@ export default class Column extends Component {
    * @return {Object} Column config object
    */
   constructor(columnData) {
-    super('column', Object.assign({}, DEFAULT_DATA, columnData))
+    super('column', Object.assign({}, DEFAULT_DATA(), columnData))
+
     const _this = this
 
     const resizeHandle = {
@@ -62,7 +63,6 @@ export default class Column extends Component {
       },
       id: this.id,
       content: [this.actionButtons(), editWindow, resizeHandle],
-      fType: 'columns',
     }
 
     const column = dom.create(columnConfig)
@@ -79,14 +79,15 @@ export default class Column extends Component {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
+      // group: 'column',
       group: {
-        name: 'columns',
+        name: 'column',
         pull: true,
-        put: ['columns', 'controls'],
-        revertClone: true,
+        put: ['column', 'controls'],
       },
       sort: true,
-      onEnd: this.onEnd,
+      disabled: false,
+      // onEnd: this.onEnd,
       onAdd: this.onAdd,
       onSort: this.onSort,
       onRemove: this.onRemove,
@@ -95,25 +96,15 @@ export default class Column extends Component {
         if (evt.from !== evt.to) {
           evt.from.classList.remove('hovering-column')
         }
-        if (evt.related.parentElement.fType === 'columns') {
-          evt.related.parentElement.classList.add('hovering-column')
-        }
+        // if (evt.related.parentElement.fType === 'columns') {
+        //   evt.related.parentElement.classList.add('hovering-column')
+        // }
       },
       draggable: '.stage-fields',
+      handle: '.item-handle',
     })
 
     this.dom = column
-  }
-
-  /**
-   * Column sorted event
-   * @param  {Object} evt sort event data
-   * @return {Object} Column order, array of column ids
-   */
-  onSort = evt => {
-    // return data.saveFieldOrder(evt.target)
-    // data.save('column', evt.target.id);
-    // document.dispatchEvent(events.formeoUpdated);
   }
 
   /**
@@ -135,7 +126,7 @@ export default class Column extends Component {
    */
   onAdd = evt => {
     const { from, to, item, newIndex } = evt
-    const fromType = dom.componentType(from)
+    const fromType = componentType(from)
 
     const typeActions = {
       // from Controls
@@ -160,10 +151,10 @@ export default class Column extends Component {
    * @param  {DOM} column
    */
   fieldOrderClasses = () => {
-    const fields = this.fields.map(({ dom }) => dom)
+    const fields = this.children.map(({ dom }) => dom)
 
     if (fields.length) {
-      dom.removeClasses(fields, ['first-field', 'last-field'])
+      this.removeClasses(['first-field', 'last-field'])
       fields[0].classList.add('first-field')
       fields[fields.length - 1].classList.add('last-field')
     }
@@ -173,59 +164,9 @@ export default class Column extends Component {
    * Updates the field order data for the column
    */
   saveFieldOrder = () => {
-    const oldFieldOrder = this.get('children')
-    const newFieldOrder = this.fields.map(({ id }) => id)
-    this.set('children', newFieldOrder)
-    events.formeoUpdated = new window.CustomEvent('formeoUpdated', {
-      data: {
-        updateType: 'updateFieldOrder',
-        changed: `columns.${this.id}.children`,
-        oldValue: oldFieldOrder,
-        newValue: newFieldOrder,
-      },
-    })
-    document.dispatchEvent(events.formeoUpdated)
+    const newFieldOrder = this.saveChildOrder()
     this.fieldOrderClasses()
     return newFieldOrder
-  }
-
-  /**
-   * Event when field is removed from column
-   * @param  {Object} evt
-   */
-  onRemove = evt => {
-    console.log('column onRemove: ', evt)
-    if (!this.fields.length) {
-      this.remove()
-    }
-    // if (evt.from.parent) {
-    // dom.columnWidths(evt.from.parentElement)
-    // data.saveColumnOrder(evt.from.parentElement)
-    // }
-    // dom.emptyClass(evt.from)
-  }
-
-  /**
-   * Callback for when dragging ends
-   * @param  {Object} evt
-   */
-  onEnd = evt => {
-    console.log('column onEnd')
-    const { to } = evt
-
-    // if (from.classList.contains('empty')) {
-    //   dom.removeEmpty(evt.from)
-    //   return
-    // }
-
-    this.saveFieldOrder()
-    this.emptyClass()
-
-    // if (from.parent) {
-    //   dom.columnWidths(from.parentElement)
-    // }
-
-    to && to.classList.remove('hovering-column')
   }
 
   /**
@@ -319,23 +260,26 @@ export default class Column extends Component {
     })(evt)
   }
 
+  // @todo loop through children and refresh panels
   refreshFieldPanels = () => {
     // console.log(this)
   }
 
-  get fields() {
-    if (!this.dom) {
-      return []
-    }
-    const fields = this.dom.getElementsByClassName(FIELD_CLASSNAME)
-    return h.map(fields, i => Fields.get(fields[i].id))
-  }
-
-  addField = (fieldId, index = this.fields.length) => {
+  addField = (fieldId, index = this.children.length) => {
     const field = Fields.get(fieldId)
     this.dom.insertBefore(field.dom, this.dom.children[index])
     this.set(`children.${index}`, field.id)
     this.emptyClass()
     return field
+  }
+
+  /**
+   * Sets a columns width
+   * @param {String} width percent or pixel
+   */
+  setWidth = width => {
+    this.dom.dataset.colWidth = width
+    this.dom.style.width = width
+    return this.set('config.width', width)
   }
 }

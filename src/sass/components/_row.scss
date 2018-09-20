@@ -7,7 +7,7 @@
   position: relative;
   clear: both;
   margin-left: 0;
-  margin-bottom: 6px;
+  margin-bottom: space();
   background-color: $white;
   padding: space();
   min-height: space(4);
@@ -109,7 +109,7 @@
   &.empty {
     &::after {
       left: 0;
-      transform: translate(10px, -50%);
+      transform: translate(space(1), -50%);
     }
   }
 

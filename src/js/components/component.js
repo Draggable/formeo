@@ -1,72 +1,72 @@
-import { uuid } from '../common/utils'
-import helpers from '../common/helpers'
+import { uuid, componentType } from '../common/utils'
+import helpers, { isInt } from '../common/helpers'
 import dom from '../common/dom'
-// import components from './index'
+import { CHILD_TYPE_MAP, TYPE_CHILD_CLASSNAME_MAP, PARENT_TYPE_MAP } from '../constants'
+import Components from './index'
+import Data from './data'
 
-export default class Component {
+export default class Component extends Data {
   constructor(name, data = {}, defaultData = {}) {
-    this.data = Object.assign({}, defaultData, data, { id: data.id || uuid() })
+    super(name, Object.assign({}, defaultData, data, { id: data.id || uuid() }))
     this.id = this.data.id
     this.name = name
+    this.dataPath = `${this.name}s.${this.id}.`
   }
-  // get size() {
-  //   return Object.keys(this.data).length
-  // }
   get js() {
     return this.data
   }
   get json() {
     return this.data
   }
-  toJSON = (data, format) => JSON.stringify(data, null, format)
-  get = path => helpers.get(this.data, path)
-  set = (path, val) => helpers.set(this.data, path, val)
-  // add = (data = Object.create(null)) => {
-  //   const { id } = data
-  //   const elemId = id || uuid()
-  //   const mergedData = Object.assign({}, this.defaultData, data)
-  //   this.data[elemId] = mergedData
-  //   return elemId
-  // }
   remove = path => {
     if (path) {
       const delPath = path.split('.')
       const delItem = delPath.pop()
-      const parent = helpers.get(this.data, delPath)
+      const parent = this.get(delPath)
       if (Array.isArray(parent)) {
-        parent.splice(Number(delItem), 1)
+        if (isInt(delItem)) {
+          parent.splice(Number(delItem), 1)
+        } else {
+          this.set(delPath, parent.filter(item => item !== delItem))
+        }
       } else {
         delete parent[delItem]
       }
       return parent
     }
 
-    // console.log(components, this.name)
+    const parent = this.parent
+    const children = this.children
 
-    // components[this.name].remove(this.id)
+    helpers.forEach(children, child => child.remove())
+
+    this.dom.parentElement.removeChild(this.dom)
+
+    // removes empty rows and columns
+    // @todo make this optional
+    if (!parent.name === 'stage' && !parent.children.length) {
+      parent.remove()
+    }
+
+    return Components.data[`${this.name}s`].delete(this.id)
   }
 
   /**
    * Removes element from DOM and data
    * @return  {Object} parent element
    */
-  empty() {
-    const elem = this.dom
-    this.data.children = Object.create(null)
-    while (elem.firstChild) {
-      elem.parentElement.removeChild(elem.firstChild)
-    }
-    return elem.parentElement
+  empty = () => {
+    const removed = this.children.map(child => child.remove())
+    this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
+    this.emptyClass()
+    return removed
   }
 
   /**
    * Apply empty class to element if does not have children
    */
-  emptyClass() {
-    const elem = this.dom
-    const childMap = new Map([['stage', 'stage-rows'], ['row', 'stage-columns'], ['column', 'stage-fields']])
-    const children = elem.getElementsByClassName(childMap.get(this.name))
-    elem.classList.toggle('empty', !children.length)
+  emptyClass = () => {
+    return this.dom.classList.toggle('empty', !this.children.length)
   }
 
   /**
@@ -74,21 +74,16 @@ export default class Component {
    * @return {Object} element config object
    */
   actionButtons() {
-    const _this = this
-    const tag = this.name === 'column' ? 'li' : 'div'
+    const hoverClassname = `hovering-${this.name}`
     const btnWrap = {
       className: 'action-btn-wrap',
     }
     const actions = {
-      tag,
-      className: this.name + '-actions group-actions',
+      tag: this.name === 'column' ? 'li' : 'div',
+      className: `${this.name}-actions group-actions`,
       action: {
-        mouseenter: ({ target }) => {
-          const element = document.getElementById(_this.id)
-          element.classList.add('hovering-' + this.name)
-          target.parentReference = element
-        },
-        mouseleave: ({ target }) => target.parentReference.classList.remove('hovering-' + this.name),
+        mouseenter: () => this.dom.classList.add(hoverClassname),
+        mouseleave: () => this.dom.classList.remove(hoverClassname),
         onRender: elem => {
           const buttons = elem.getElementsByTagName('button')
           const cssProp = this.name === 'row' ? 'height' : 'width'
@@ -113,10 +108,62 @@ export default class Component {
    */
   removeClasses = className => {
     const removeClass = {
-      string: elem => elem.classList.remove(className),
-      array: elem => className.forEach(name => elem.classList.remove(name)),
+      string: () => this.dom.classList.remove(className),
+      array: () => className.map(name => this.dom.classList.remove(name)),
     }
     removeClass.object = removeClass.string // handles regex map
     return removeClass[dom.childType(className)](this.dom)
+  }
+  get parentType() {
+    return PARENT_TYPE_MAP.get(this.name)
+  }
+  get parent() {
+    const parentType = PARENT_TYPE_MAP.get(this.name)
+    if (!this.dom || !parentType) {
+      return null
+    }
+
+    return Components.get(`${parentType}s`).get(this.dom.parentElement.id)
+  }
+  get children() {
+    if (!this.dom) {
+      return []
+    }
+    const children = this.dom.getElementsByClassName(TYPE_CHILD_CLASSNAME_MAP.get(this.name))
+    const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
+    return helpers.map(children, i => Components.get(childGroup).get(children[i].id))
+  }
+
+  saveChildOrder = () => {
+    const newChildOrder = this.children.map(({ id }) => id)
+    this.set('children', newChildOrder)
+    return newChildOrder
+  }
+
+  /**
+   * Save updated child order
+   * @return {Array} updated child order
+   */
+  onSort = () => {
+    return this.saveChildOrder()
+  }
+
+  /**
+   * Handler for removing content from a sortable component
+   * @param  {Object} evt
+   * @return {Array} updated child order
+   */
+  onRemove = () => {
+    this.emptyClass()
+    return this.saveChildOrder()
+  }
+
+  /**
+   * Callback for when dragging ends
+   * @param  {Object} evt
+   */
+  onEnd = ({ to, from }) => {
+    to && to.classList.remove(`hovering-${componentType(to)}`)
+    from && from.classList.remove(`hovering-${componentType(from)}`)
   }
 }

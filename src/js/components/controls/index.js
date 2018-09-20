@@ -1,21 +1,22 @@
 import Sortable from 'sortablejs'
 import i18n from 'mi18n'
+import cloneDeep from 'lodash/cloneDeep'
+import merge from 'lodash/merge'
+import actions from '../../common/actions'
 import helpers from '../../common/helpers'
 import events from '../../common/events'
-import { match, unique, uuid, closestFtype } from '../../common/utils'
 import dom from '../../common/dom'
+import { match, unique, uuid } from '../../common/utils'
 import Panels from '../panels'
-import Rows from '../rows'
+import Field from '../fields/field'
+import Control from './control'
+import { CONTROL_GROUP_CLASSNAME } from '../../constants'
+import Components, { Stages, Rows } from '..'
+
+// control configs
 import layoutControls from './layout'
 import formControls from './form'
 import htmlControls from './html'
-import cloneDeep from 'lodash/cloneDeep'
-import merge from 'lodash/merge'
-import Field from '../fields/field'
-import Control from './control'
-// import Stages from '../stages'
-import { CONTROL_GROUP_CLASSNAME } from '../../constants'
-import { Stages } from '..'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -54,22 +55,9 @@ export class Controls {
     }
 
     this.controlEvents = {
-      focus: evt => {
-        const currentGroup = closestFtype(evt.target)
-        _this.panels.nav.refresh(helpers.indexOfNode(currentGroup))
-      },
-      click: evt => _this.addElement(evt.target.parentElement.id),
-      // mousedown: evt => {
-      //   let position = _this.cPosition;
-      //   position.x = evt.clientX;
-      //   position.y = evt.clientY;
-      // },
-      // mouseup: evt => {
-      //   let position = _this.cPosition;
-      //   if (clicked(evt.clientX, evt.clientY, position, evt.button)) {
-      //     _this.addElement(evt.target.parentElement.id);
-      //   }
-      // }
+      focus: ({ target }) =>
+        _this.panels.nav.refresh(helpers.indexOfNode(target.closest(`.${CONTROL_GROUP_CLASSNAME}`))),
+      click: ({ target }) => _this.addElement(target.parentElement.id),
     }
   }
 
@@ -155,7 +143,6 @@ export class Controls {
           className: CONTROL_GROUP_CLASSNAME,
           id: `${groups[i].id}-${CONTROL_GROUP_CLASSNAME}`,
         },
-        fType: 'controlGroup',
         config: {
           label: this.groupLabel(groups[i].label),
         },
@@ -233,55 +220,39 @@ export class Controls {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: dom.clearForm.bind(dom),
+                clearAllAction: Stages.clearAll,
                 btnCoords: dom.coords(evt.target),
-                rows: dom.rows,
-                rowCount: dom.rows.size,
               },
             })
 
             document.dispatchEvent(events.confirmClearAll)
-            Rows.empty()
           } else {
-            window.alert('There are no fields to clear')
+            window.alert(i18n.get('cannotClearFields'))
           }
         },
       },
     }
-    // let settingsBtn = h.merge(btnTemplate, {
-    //   content: [dom.icon('settings'), i18n.get('settings')],
-    //   attrs: {
-    //     title: i18n.get('settings')
-    //   },
-    //   className: ['btn', 'btn-secondary', 'edit-settings'],
-    //   action: {
-    //     click: () => {
-    //       console.log('clicked');
-    //       let stage = document.getElementById(_this.formId + '-stage');
-    //       stage.parentElement.classList.toggle('editing-stage');
-    //     }
-    //   }
-    // });
+
     const saveBtn = {
       ...btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
       className: ['save-form'],
       action: {
-        click: evt => {
-          // @todo: complete actions connection
-          // let saveEvt = {
-          //   action: () => {},
-          //   coords: dom.coords(evt.target),
-          //   message: ''
-          // };
-          // actions.click.btn(saveEvt);
-          // data.save()
+        click: ({ target }) => {
+          const { formData } = Components
+          const saveEvt = {
+            action: () => {},
+            coords: dom.coords(target),
+            message: '',
+            button: target,
+          }
+          actions.click.btn(saveEvt)
+
+          return actions.save(formData)
         },
       },
     }
     const formActions = {
-      tag: 'div',
       className: 'form-actions f-btn-group',
-      // content: [clearBtn, settingsBtn, saveBtn]
       content: [clearBtn, saveBtn],
     }
 
@@ -293,22 +264,17 @@ export class Controls {
    * @return {DOM}
    */
   buildDOM() {
-    // if (this.dom) {
-    //   return this.dom
-    // }
     const _this = this
     const groupedFields = this.groupElements()
     const formActions = this.formActions()
     _this.panels = new Panels({ panels: groupedFields, type: 'controls' })
     const groupsWrapClasses = ['control-groups', 'panels-wrap', `panel-count-${groupedFields.length}`]
     const groupsWrap = dom.create({
-      tag: 'div',
       className: groupsWrapClasses,
       content: _this.panels.children,
     })
 
     const element = dom.create({
-      tag: 'div',
       className: 'formeo-controls',
       content: [groupsWrap, formActions],
     })
@@ -320,17 +286,14 @@ export class Controls {
 
     this.actions = {
       filter: term => {
-        const cpContent = _this.panels.children[1]
         const filtering = term !== ''
-        // @todo, use references instead of DOM queries
-        const fields = cpContent.querySelectorAll('.field-control')
+        const fields = this.controls
         let filteredTerm = groupsWrap.querySelector('.filtered-term')
 
         this.toggleElementsByStr(fields, term)
 
         if (filtering) {
-          // @todo change to use language file
-          const filteredStr = `Filtering '${term}'`
+          const filteredStr = i18n.get('controls.filteringTerm', term)
 
           element.classList.add('filtered')
 
@@ -369,15 +332,12 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
-        // onMove: evt => console.log(evt),
-        // onUpdate: evt => console.log(evt),
         onRemove: _this.applyControlEvents,
-        // onEnd: evt => {console.log(evt)},
-        onStart: evt => {
-          console.log(evt)
+        onStart: ({ item }) => {
+          const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {
-            evt.item.innerHTML = ''
-            evt.item.appendChild(new Field(this.get(evt.item.id)).preview)
+            item.innerHTML = ''
+            item.appendChild(new Field(controlData).preview)
           }
         },
         sort: this.options.sortable,
@@ -387,7 +347,7 @@ export class Controls {
            * @param   {Sortable}  sortable
            * @return {Array}
            */
-          get: sortable => {
+          get: () => {
             const order = window.localStorage.getItem(storeID)
             return order ? order.split('|') : []
           },
@@ -415,6 +375,7 @@ export class Controls {
     const {
       meta: { group, id: metaId },
     } = helpers.get(this.get(id), 'controlData')
+
     const layoutTypes = {
       row: () => Stages.activeStage.addRow(),
       column: () => layoutTypes.row().addColumn(),
@@ -454,5 +415,4 @@ export class Controls {
   }
 }
 
-// export const controls = new Controls()
 export default new Controls()

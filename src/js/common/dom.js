@@ -3,17 +3,15 @@ import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, closestFtype, mapToObj } from './utils'
+import { uuid, clone, numToPercent, closestFtype, mapToObj, componentType } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
   COLUMN_CLASSNAME,
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
+  CHILD_CLASSNAME_MAP,
 } from '../constants'
-
-// @todo remove this
-const formData = {}
 
 /**
  * General purpose markup utilities and generator.
@@ -27,8 +25,6 @@ class DOM {
     // Maintain references to DOM nodes
     // so we don't have to keep doing getElementById
     this.options = Object.create(null)
-    this.stages = new Map()
-    this.rows = new Map()
     this.columns = new Map()
     // this.fields = new Map()
     this.styleSheet = (() => {
@@ -48,6 +44,7 @@ class DOM {
   /**
    * Merges a user's configuration with default
    * @param  {Object} userConfig
+   * @todo this should be handled by Components class now
    * @return {Object} config
    */
   set setConfig(userConfig) {
@@ -71,8 +68,7 @@ class DOM {
       action: {
         click: evt => {
           const element = closestFtype(evt.target)
-          let { fType } = element
-          fType = fType.replace(/s$/, '')
+          const fType = componentType(element)
           const editClass = 'editing-' + fType
           const editWindow = element.querySelector(`.${fType}-edit`)
           animate.slideToggle(editWindow, 333)
@@ -84,8 +80,6 @@ class DOM {
         },
       },
     }
-
-    // console.log(dom.btnTemplate({ content: icon('remove'), title: i18n.get('removeType', { type: this.name }) }))
 
     const remove = {
       ...dom.btnTemplate({ content: icon('remove') }),
@@ -307,8 +301,6 @@ class DOM {
       ) {
         const label = _this.label(elem)
 
-        // console.log(label)
-
         if (!elem.config.hideLabel) {
           const wrapContent = [
             ...(_this.labelAfter(elem) ? [element, label] : [label, element]),
@@ -377,17 +369,6 @@ class DOM {
         }
       }
       processed.push('action')
-    }
-
-    const fieldDataBindings = ['stage', 'row', 'column', 'field']
-
-    if (h.inArray(elem.fType, fieldDataBindings)) {
-      const dataType = elem.fType + 'Data'
-      element[dataType] = elem
-      if (dataType === 'fieldData') {
-        element.panelNav = elem.panelNav
-      }
-      processed.push(dataType)
     }
 
     // Subtract processed and ignored and attach the rest
@@ -754,9 +735,12 @@ class DOM {
    * it's nested elements and data
    * @param {Object} elem element we are cloning
    * @param {Object} parent
+   * @todo move to Component
    * @return {Object} cloned element
    */
   clone(elem, parent) {
+    // remove
+    const formData = {}
     const _this = this
     const { id, fType } = elem
     const dataClone = clone(formData[fType].get(id))
@@ -807,9 +791,9 @@ class DOM {
    * @param  {Object} element DOM element
    * @return {Object} formData
    */
-  removeEmpty(element) {
+  removeEmpty = element => {
     const parent = element.parentElement
-    const type = this.componentType(element)
+    const type = componentType(element)
     const children = parent.getElementsByClassName(`stage-${type}s`)
     this.remove(element)
     if (!children.length) {
@@ -827,9 +811,9 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
-    const type = this.componentType(elem)
+    const type = componentType(elem)
     if (type) {
-      Components.get(`${type}s`).remove(elem.id)
+      return Components.get(`${type}s`).remove(elem.id)
     }
 
     return elem.parentElement.removeChild(elem)
@@ -910,25 +894,6 @@ class DOM {
   }
 
   /**
-   * Set the widths of columns in a row
-   * @param {Object} row DOM element
-   * @param {String} widths
-   */
-  setColumnWidths(row, widths) {
-    if (widths === 'custom') {
-      return
-    }
-    widths = widths.split(',')
-    const columns = row.getElementsByClassName('stage-columns')
-    h.forEach(columns, (column, i) => {
-      const percentWidth = widths[i] + '%'
-      column.dataset.colWidth = percentWidth
-      column.style.width = percentWidth
-      // formData.getIn(['columns', column.id]).config.width = percentWidth
-    })
-  }
-
-  /**
    * Returns the {x, y} coordinates for the
    * center of a given element
    * @param  {DOM} element
@@ -952,119 +917,6 @@ class DOM {
     // const fields = formData.getIn(['columns', column.id]).fields
     // fields.forEach(fieldId => this.addField(column, fieldId))
     // this.fieldOrderClass(column)
-  }
-
-  /**
-   * Convert sizes, apply styles for render
-   * @param  {Object} columnData
-   * @return {Object} processed column data
-   */
-  processColumnConfig(columnData) {
-    if (columnData.className) {
-      columnData.className.push('f-render-column')
-    }
-    const colWidth = columnData.config.width || '100%'
-    columnData.style = `width: ${colWidth}`
-    return columnData
-  }
-
-  /**
-   * Renders currently loaded formData to the renderTarget
-   * @param {Object} renderTarget
-   */
-  renderForm(renderTarget) {
-    this.empty(renderTarget)
-    const renderData = {}
-    // const renderData = data.prepData
-    const renderCount = document.getElementsByClassName('formeo-render').length
-    const content = Object.values(renderData.stages).map(stageData => {
-      const { rows: rowsData, ...stage } = stageData
-      const rows = rowsData.map(rowId => {
-        const { columns, ...row } = renderData.rows[rowId]
-        row.content = columns.map(columnId => {
-          const processedCol = this.processColumnConfig(renderData.columns[columnId])
-          return Object.assign({}, processedCol, {
-            children: processedCol.fields.map(fieldId => renderData.fields[fieldId]),
-          })
-        })
-
-        if (row.config.inputGroup) {
-          const rowData = clone(row)
-          const removeButton = {
-            tag: 'button',
-            className: 'remove-input-group',
-            children: dom.icon('remove'),
-            action: {
-              mouseover: ({ target }) => target.parentElement.classList.add('will-remove'),
-              mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
-              click: ({ target }) => {
-                const currentInputGroup = target.parentElement
-                const iGWrap = currentInputGroup.parentElement
-                const iG = iGWrap.getElementsByClassName('f-input-group')
-                if (iG.length > 1) {
-                  dom.remove(currentInputGroup)
-                } else {
-                  console.log('Need at least 1 group')
-                }
-              },
-            },
-          }
-          rowData.children.unshift(removeButton)
-          const inputGroupWrap = {
-            tag: 'div',
-            id: uuid(),
-            className: 'f-input-group-wrap',
-          }
-          if (rowData.attrs.className) {
-            if (typeof rowData.attrs.className === 'string') {
-              rowData.attrs.className += ' f-input-group'
-            } else {
-              rowData.attrs.className.push('f-input-group')
-            }
-          }
-          const addButton = {
-            tag: 'button',
-            attrs: {
-              className: 'add-input-group btn pull-right',
-              type: 'button',
-            },
-            children: 'Add +',
-            action: {
-              click: e => {
-                const fInputGroup = e.target.parentElement
-                fInputGroup.insertBefore(dom.create(rowData), fInputGroup.lastChild)
-              },
-            },
-          }
-
-          // row.children.unshift(removeButton)
-          inputGroupWrap.content = [rowData, addButton]
-          return inputGroupWrap
-        }
-        return row
-      })
-      stage.tag = 'div'
-      stage.content = rows
-      stage.className = 'f-stage'
-      return stage
-    })
-
-    const config = {
-      tag: 'div',
-      id: `formeo-rendered-${renderCount}`,
-      className: 'formeo-render formeo',
-      content,
-    }
-
-    renderTarget.appendChild(this.create(config))
-  }
-
-  /**
-   * Clears the editor
-   * @param  {Object} evt
-   */
-  clearForm(evt) {
-    this.stages.forEach(dStage => this.clearStage(dStage.stage))
   }
 
   /**
@@ -1108,11 +960,11 @@ class DOM {
    * @param  {Boolean} state
    */
   toggleSortable(elem, state) {
-    const { fType } = elem
+    const fType = componentType(elem)
     if (!fType) {
       return
     }
-    const pFtype = elem.parentElement.fType
+    const pFtype = componentType(elem.parentElement)
     const sortable = dom[fType].get(elem.id).sortable
     if (!state) {
       state = !sortable.option('disabled')
@@ -1128,12 +980,7 @@ class DOM {
    * @param  {Object} elem
    */
   emptyClass(elem) {
-    const childMap = new Map([
-      ['stage', 'stage-rows'],
-      ['stage-rows', 'stage-columns'],
-      ['stage-columns', 'stage-fields'],
-    ])
-    const children = elem.getElementsByClassName(childMap.get(elem.classList.item(0)))
+    const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)))
     elem.classList.toggle('empty', !children.length)
   }
 
@@ -1187,27 +1034,13 @@ class DOM {
     content,
   })
 
-  componentType = node => {
-    const componentTypes = {
-      controls: CONTROL_GROUP_CLASSNAME,
-      stage: STAGE_CLASSNAME,
-      row: ROW_CLASSNAME,
-      column: COLUMN_CLASSNAME,
-      field: FIELD_CLASSNAME,
-    }
-
-    const type = Object.entries(componentTypes).find(cType => node.classList.contains(cType[1]))
-
-    return type ? type[0] : null
-  }
-
-  isControls = node => dom.componentType(node) === 'control-group'
-  isStage = node => dom.componentType(node) === 'stage'
-  isRow = node => dom.componentType(node) === 'stage-rows'
-  isColumn = node => dom.componentType(node) === 'stage-coluns'
-  isField = node => dom.componentType(node) === 'stage-fields'
+  isControls = node => componentType(node) === CONTROL_GROUP_CLASSNAME
+  isStage = node => componentType(node) === STAGE_CLASSNAME
+  isRow = node => componentType(node) === ROW_CLASSNAME
+  isColumn = node => componentType(node) === COLUMN_CLASSNAME
+  isField = node => componentType(node) === FIELD_CLASSNAME
 }
 
-const dom = new DOM()
+export const dom = new DOM()
 
 export default dom

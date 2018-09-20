@@ -14,6 +14,39 @@ const loaded = {
   css: [],
 }
 
+/**
+ * Tests if is whole number. returns false if n is Float
+ * @param {String|Number} n
+ */
+export const isInt = n => Number(n) === n && n % 1 === 0
+
+/**
+ * Finds the index of an element in its parent
+ * @param {NodeElement} node
+ * @param {NodeLement} parent
+ */
+export const indexOfNode = (node, parent) => {
+  const parentElement = parent || node.parentElement
+  const nodeList = Array.prototype.slice.call(parentElement.childNodes)
+  return nodeList.indexOf(node)
+}
+
+/**
+ * Orders an array of objects by specific attribute
+ * @param  {Array}  elements  Array of element objects
+ * @param  {Array}  order     array of keys to order objects by
+ * @param  {String} path      string path to property to order by
+ * @return {Array}            Ordered Array of Element Objects
+ */
+export const orderObjectsBy = (elements, order, path) => {
+  const newOrder = unique(order)
+    .map(key => elements.find(elem => helpers.get(elem, path) === key))
+    .filter(Boolean)
+  const orderedElements = newOrder.concat(elements)
+
+  return unique(orderedElements)
+}
+
 export const insertScript = src => {
   return new Promise((resolve, reject) => {
     if (loaded.js.includes(src)) {
@@ -155,16 +188,8 @@ export const helpers = {
       return !~this.indexOf(a)
     }, arr)
   },
-  // find the index of one node in another
-  indexOfNode: (node, parent) => {
-    const parentElement = parent || node.parentElement
-    const nodeList = Array.prototype.slice.call(parentElement.childNodes)
-    return nodeList.indexOf(node)
-  },
-  // Tests if is whole number. returns false if n is Float
-  isInt: n => {
-    return Number(n) === n && n % 1 === 0
-  },
+  indexOfNode,
+  isInt,
   /**
    * get nested property value in an object
    *
@@ -204,21 +229,7 @@ export const helpers = {
     return merge(obj1, obj2, customizer)
   },
 
-  /**
-   * Orders an array of objects by specific attribute
-   * @param  {Array}  elements  Array of element objects
-   * @param  {Array}  order     array of keys to order objects by
-   * @param  {String} path      string path to property to order by
-   * @return {Array}            Ordered Array of Element Objects
-   */
-  orderObjectsBy: (elements, order, path) => {
-    const newOrder = unique(order)
-      .map(key => elements.find(elem => helpers.get(elem, path) === key))
-      .filter(Boolean)
-    const orderedElements = newOrder.concat(elements)
-
-    return unique(orderedElements)
-  },
+  orderObjectsBy,
   detectIE: () => {
     let isIE = false // innocent until proven guilty
     const ua = window.navigator.userAgent

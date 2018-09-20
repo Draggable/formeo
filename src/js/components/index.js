@@ -13,11 +13,13 @@ export let Fields
 const DEFAULT_DATA = {
   id: uuid(),
 }
+
 export class Components extends Data {
   constructor(opts) {
     super('components')
     this.opts = opts
     this.data = DEFAULT_DATA
+    this.disableEvents = true
   }
 
   sessionFormData = () => {
@@ -28,7 +30,7 @@ export class Components extends Data {
 
   load = (formData, opts = Object.create(null)) => {
     this.opts = opts
-    const { stages, rows, columns, fields } = Object.assign({}, this.sessionFormData(), formData)
+    const { stages, rows, columns, fields, id } = Object.assign({}, this.sessionFormData(), formData)
     Stages = new StagesData(stages)
     Rows = new RowsData(rows)
     Columns = new ColumnsData(columns)
@@ -37,15 +39,11 @@ export class Components extends Data {
     this.add('rows', Rows)
     this.add('columns', Columns)
     this.add('fields', Fields)
+    if (id) {
+      this.set('id', id)
+    }
 
     return this.data
-  }
-
-  getData = (data = this.data) => {
-    return Object.entries(data).reduce((acc, [key, val]) => {
-      acc[key] = val.data ? this.getData(val.data) : val
-      return acc
-    }, {})
   }
 
   get json() {
@@ -56,8 +54,23 @@ export class Components extends Data {
     return this.getData()
   }
 
-  // init = (opts, userFormData = {}) => {}
+  get stages() {
+    return this.data.stages.getData()
+  }
+
+  get rows() {
+    return this.data.rows.getData()
+  }
+
+  get columns() {
+    return this.data.columns.getData()
+  }
+
+  get fields() {
+    return this.data.fields.getData()
+  }
 }
 
 const components = new Components()
+
 export default components
