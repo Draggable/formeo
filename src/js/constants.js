@@ -1,7 +1,8 @@
 import pkg from '../../package.json'
 
 export const POLYFILLS = [
-  { name: 'cssPreload', src: 'https://cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
+  { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
+  { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
 ]
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
@@ -84,3 +85,6 @@ export const SESSION_FORMDATA_KEY = `${pkg.name}-formData`
 export const SESSION_LOCALE_KEY = `${pkg.name}-locale`
 
 export const ANIMATION_BASE_SPEED = 333
+
+//  Event constants
+export const EVENT_FORMEO_UPDATED = 'formeoUpdated'

@@ -1,7 +1,9 @@
+import { EVENT_FORMEO_UPDATED } from '../constants'
+
 // Default options
 const defaults = {
   debug: false, // enable debug mode
-  bubbles: false, // bubble events from components
+  bubbles: true, // bubble events from components
   formeoLoaded: evt => {},
   onAdd: () => {},
   onUpdate: evt => {
@@ -27,7 +29,7 @@ const events = {
   },
   formeoSaved: new window.CustomEvent('formeoSaved', {}),
   formeoUpdated: ({ src, ...evtData }) => {
-    const evt = new window.CustomEvent('formeoUpdated', {
+    const evt = new window.CustomEvent(EVENT_FORMEO_UPDATED, {
       detail: evtData,
       bubbles: events.opts.debug || events.opts.bubbles,
     })
@@ -36,7 +38,7 @@ const events = {
   },
 }
 
-document.addEventListener('formeoUpdated', function(evt) {
+document.addEventListener(EVENT_FORMEO_UPDATED, function(evt) {
   const { timeStamp, type, detail } = evt
   events.opts.onUpdate({
     timeStamp,

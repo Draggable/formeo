@@ -43,7 +43,9 @@ const formeo = {
   get formData() {
     return Components.formData
   },
-  render: FormeoRender.render,
+  get json() {
+    return Components.json
+  },
   Components,
 }
 
@@ -122,6 +124,16 @@ class Formeo {
     const _this = this
     i18n.init(_this.opts.i18n).then(() => {
       Components.load(this.formData, _this.opts)
+      const formRender = new FormeoRender(this.formData)
+      formeo.render = formRender.render
+
+      formeo.load = (formData, opts = _this.opts) => {
+        let data = formData
+        if (typeof formData === 'string') {
+          data = JSON.parse(formData)
+        }
+        Components.load(data, (opts = _this.opts))
+      }
       formeo.controls = Controls.init(_this.opts.controls)
       _this.formId = Components.get('id')
       formeo.i18n = {
@@ -148,7 +160,7 @@ class Formeo {
   render() {
     const _this = this
     const controls = formeo.controls.dom
-    console.log()
+    // console.log()
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',
@@ -163,10 +175,10 @@ class Formeo {
       dom.dir = i18n.current.dir
     }
 
-    const formeoElem = dom.create(elemConfig)
+    const formeoEditor = dom.create(elemConfig)
 
     _this.container.innerHTML = ''
-    _this.container.appendChild(formeoElem)
+    _this.container.appendChild(formeoEditor)
 
     Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {

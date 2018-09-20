@@ -22,8 +22,6 @@ class DOM {
    * like stages, rows, columns etc
    */
   constructor() {
-    // Maintain references to DOM nodes
-    // so we don't have to keep doing getElementById
     this.options = Object.create(null)
     this.styleSheet = (() => {
       const style = document.createElement('style')
@@ -66,6 +64,15 @@ class DOM {
     elem.tag = tagName || elem.tag || 'div'
 
     return elem
+  }
+
+  /**
+   * Wraps dom.create to modify data
+   * Used when rendering components in form- not editor
+   */
+  render = elem => {
+    elem.id = `f-${elem.id || uuid()}`
+    return this.create(elem)
   }
 
   /**
@@ -223,26 +230,7 @@ class DOM {
 
     // Add listeners for defined actions
     if (elem.action) {
-      const actions = Object.keys(elem.action)
-      for (i = actions.length - 1; i >= 0; i--) {
-        const event = actions[i]
-        let action = elem.action[event]
-        if (typeof action === 'string') {
-          // eslint-disable-next-line
-          action = window.eval(`(${elem.action[event]})`)
-        }
-        const useCaptureEvts = ['focus', 'blur']
-
-        // dirty hack to handle onRender callback
-        if (event === 'onRender') {
-          setTimeout(() => {
-            action(element)
-          }, 10)
-        } else {
-          const useCapture = h.inArray(event, useCaptureEvts)
-          element.addEventListener(event, action, useCapture)
-        }
-      }
+      this.actionHandler(element, elem.action)
       processed.push('action')
     }
 
@@ -257,6 +245,30 @@ class DOM {
     }
 
     return element
+  }
+
+  onRender = (node, cb) => {
+    if (!node.parentElement) {
+      window.requestAnimationFrame(() => this.onRender(node, cb))
+    } else {
+      cb(node)
+    }
+  }
+
+  /**
+   * Processes element config object actions (click, onRender etc)
+   */
+  actionHandler(node, actions) {
+    const handlers = {
+      onRender: dom.onRender,
+    }
+    const useCaptureEvts = ['focus', 'blur']
+    const defaultHandler = event => (node, cb) => node.addEventListener(event, cb, useCaptureEvts.includes(event))
+
+    return Object.entries(actions).map(([key, cb]) => {
+      const action = handlers[key] || defaultHandler(key)
+      return action(node, cb)
+    })
   }
 
   /**
@@ -862,6 +874,10 @@ class DOM {
 
   /**
    * Style Object
+   * Usage:
+   *
+      const rules = [['.css-class-selector', ['width', '100%', true]]]
+      dom.insertRule(rules)
    * @param  {Object} rules
    * @return {Number} index of added rule
    */

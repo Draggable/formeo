@@ -105,6 +105,7 @@ export class Controls {
         content: [{ tag: 'span', className: 'control-icon', children: dom.icon(meta.icon) }, controlLabel],
         action: this.controlEvents,
       }
+
       control.dom = dom.create({
         tag: 'li',
         id: controlId,
@@ -112,6 +113,7 @@ export class Controls {
         content: button,
         meta: meta,
       })
+
       return control.dom
     })
 

@@ -2,7 +2,6 @@ import ComponentData from '../component-data'
 import Field from './field'
 import { helpers } from '../../common/helpers'
 import Controls from '../controls'
-// import { clone } from '../../common/utils'
 
 const DEFAULT_CONFIG = {
   actionButtons: {

@@ -1,3 +1,4 @@
+/* global MutationObserver */
 import identity from 'lodash/identity'
 import isEqual from 'lodash/isEqual'
 import { uuid, componentType, closestFtype, clone, merge } from '../common/utils'
@@ -18,6 +19,18 @@ export default class Component extends Data {
     this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
     this.runConditions()
+    this.observer = new MutationObserver(this.mutationHandler)
+  }
+
+  mutationHandler = mutations =>
+    mutations.map(mutation => {
+      // @todo pull handler form config
+      // see dom.create.onRender for implementation pattern
+    })
+
+  observe(container) {
+    this.observer.disconnect()
+    this.observer.observe(container, { childList: true })
   }
   get js() {
     return this.data
@@ -91,26 +104,28 @@ export default class Component extends Data {
     const btnWrap = {
       className: 'action-btn-wrap',
     }
+    let expandSize
     const actions = {
       tag: this.name === 'column' ? 'li' : 'div',
       className: `${this.name}-actions group-actions`,
       action: {
-        mouseenter: () => this.dom.classList.add(hoverClassname),
-        mouseleave: () => this.dom.classList.remove(hoverClassname),
+        mouseenter: ({ target }) => {
+          this.dom.classList.add(hoverClassname)
+          target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
+        },
+        mouseleave: ({ target }) => {
+          this.dom.classList.remove(hoverClassname)
+          target.style.width = null
+          target.style.height = null
+        },
         onRender: elem => {
           const buttons = elem.getElementsByTagName('button')
-          const cssProp = this.name === 'row' ? 'height' : 'width'
-          const btnSize = parseInt(dom.getStyle(buttons[0], cssProp))
-          const expandedSize = `${buttons.length * btnSize + 1}px`
-          const rules = [[`.hovering-${this.name} .${this.name}-actions`, [cssProp, expandedSize, true]]]
-
-          dom.insertRule(rules)
+          const btnSize = parseInt(dom.getStyle(buttons[0], 'width'))
+          expandSize = `${buttons.length * btnSize + 1}px`
         },
       },
     }
-    // if (this.name === 'field') {
-    //   console.log(this, this.config.all.actionButtons.buttons)
-    // }
+
     btnWrap.content = this.buttons
     actions.content = btnWrap
 
@@ -138,10 +153,12 @@ export default class Component extends Data {
           },
           action: {
             click: evt => {
+              _this.isEditing = !_this.isEditing
               const element = closestFtype(evt.target)
               const editClass = `editing-${_this.name}`
               const editWindow = _this.dom.querySelector(`.${_this.name}-edit`)
               animate.slideToggle(editWindow, ANIMATION_BASE_SPEED)
+
               if (_this.name === 'field') {
                 animate.slideToggle(editWindow.nextSibling, ANIMATION_BASE_SPEED)
                 element.parentElement.classList.toggle('column-' + editClass)
@@ -244,6 +261,7 @@ export default class Component extends Data {
 
     this.dom.insertBefore(child.dom, this.dom.children[index])
     this.set(`children.${index}`, child.id)
+    // @todo add event for onAddChild
     const grandChildren = child.get('children')
     if (grandChildren && grandChildren.length) {
       child.loadChildren(grandChildren)
@@ -267,7 +285,7 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd = evt => {
+  onAdd(evt) {
     const _this = this
     const { from, item, to } = evt
     const newIndex = indexOfNode(item, to)
@@ -295,7 +313,7 @@ export default class Component extends Data {
 
     const onAddConditions = {
       controls: () => {
-        const controlData = Controls.get(item.id).controlData
+        const { controlData, ...control } = Controls.get(item.id)
         const {
           meta: { id: metaId },
         } = controlData
@@ -322,7 +340,10 @@ export default class Component extends Data {
         const depth = get(targets, `${_this.name}.${controlType}`)
         const action = depthMap.get(depth)()
         dom.remove(item)
-        return action(controlData, newIndex)
+        const component = action(controlData, newIndex)
+        control.on.renderComponent(component)
+
+        return component
       },
       row: () => {
         const targets = {
@@ -382,6 +403,7 @@ export default class Component extends Data {
       (acc, cur) => (cur ? merge(acc, cur) : acc),
       this.configVal
     )
+
     this.configVal = mergedConfig
     return this.configVal
   }

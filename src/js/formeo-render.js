@@ -2,11 +2,7 @@ import dom from './common/dom'
 import { uuid, clone } from './common/utils'
 import Components from './components'
 
-export class FormeoRender {
-  constructor(formData = Components.formData) {
-    this.form = formData
-  }
-
+export default class FormeoRender {
   /**
    * Duplicate a
    */
@@ -14,6 +10,11 @@ export class FormeoRender {
     console.log(elem.id)
   }
 
+  /**
+   * Renders the formData to a target Element
+   * @param {DOM} targetElement
+   * @param {Object} formData
+   */
   render = (targetElement, formData = Components.formData) => {
     this.form = formData
 
@@ -24,7 +25,7 @@ export class FormeoRender {
       children: this.processedData,
     }
 
-    this.renderedForm = dom.create(config)
+    this.renderedForm = dom.render(config)
     dom.empty(targetElement)
 
     targetElement.appendChild(this.renderedForm)
@@ -44,8 +45,8 @@ export class FormeoRender {
   processColumnConfig = columnData => {
     const colWidth = columnData.config.width || '100%'
     columnData.style = `width: ${colWidth}`
-    columnData.children = this.orderChildren('fields', columnData.children)
-    return columnData
+    columnData.children = this.orderChildren('fields', columnData.children).map(dom.render)
+    return dom.render(columnData)
   }
 
   processColumns = rowId => {
@@ -101,7 +102,7 @@ export class FormeoRender {
       action: {
         click: e => {
           const fInputGroup = e.target.parentElement
-          fInputGroup.insertBefore(dom.create(data), fInputGroup.lastChild)
+          fInputGroup.insertBefore(dom.render(data), fInputGroup.lastChild)
         },
       },
     }
@@ -118,18 +119,18 @@ export class FormeoRender {
       if (row.config.inputGroup) {
         return this.makeInputGroup()
       }
-      return row
+      return dom.render(row)
     })
 
   get processedData() {
     return Object.values(this.form.stages).map(stage => {
       stage.children = this.processRows(stage.id)
       stage.className = 'f-stage'
-      return stage
+      return dom.render(stage)
     })
   }
 }
 
-export const renderForm = new FormeoRender(Components.formData)
+// export const renderForm = new FormeoRender(Components.formData)
 
-export default renderForm
+// export default renderForm

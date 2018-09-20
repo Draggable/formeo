@@ -20,6 +20,7 @@ export default class Field extends Component {
     super('field', fieldData)
 
     this.label = dom.create(this.labelConfig)
+    this.preview = dom.create(this.fieldPreview())
 
     let field = {
       tag: 'li',
@@ -30,7 +31,8 @@ export default class Field extends Component {
       children: [
         this.label,
         this.getActionButtons(), // fieldEdit window
-        this.fieldEdit, // fieldEdit window
+        this.fieldEdit, // fieldEdit window,
+        this.preview, // preview
       ],
       panelNav: this.panelNav,
       dataset: {
@@ -43,9 +45,10 @@ export default class Field extends Component {
     }
 
     field = dom.create(field)
-    this.preview = dom.create(this.fieldPreview())
-    field.appendChild(this.preview)
+    this.observe(field)
+
     this.dom = field
+    this.isEditing = false
   }
 
   get labelConfig() {
@@ -68,8 +71,6 @@ export default class Field extends Component {
   }
 
   set(...args) {
-    console.log(args)
-
     const data = super.set(...args)
     this.updateLabel()
     this.updatePreview()
@@ -162,6 +163,7 @@ export default class Field extends Component {
     const fieldPreview = {
       attrs: {
         className: 'field-preview',
+        style: this.isEditing && 'display: none;',
       },
       content: dom.create(prevData, true),
       action: {

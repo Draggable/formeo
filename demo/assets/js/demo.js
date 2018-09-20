@@ -118,6 +118,16 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
+      'text-input': {
+        actionButtons: {
+          buttons: ['handle', 'edit'],
+        },
+        // events: {
+        //   onRender: () => {
+        //     console.log('woooooppeeeeeeeee')
+        //   }
+        // }
+      },
       // all: {
       //   actionButtons: {
       //     buttons: ['yeah'],
@@ -137,6 +147,15 @@ const formeoOpts = {
 }
 
 const formeo = new window.Formeo(formeoOpts)
+
+document.addEventListener(
+  'formeoUpdated',
+  evt => {
+    // console.log(evt)
+    formeo.render && formeo.render(renderContainer)
+  },
+  false
+)
 console.log(formeo)
 let editing = true
 
@@ -146,6 +165,15 @@ const localeSelect = document.getElementById('locale')
 const toggleEdit = document.getElementById('renderForm')
 const viewDataBtn = document.getElementById('viewData')
 const resetDemo = document.getElementById('reloadBtn')
+const logJSON = document.getElementById('logJSON')
+
+logJSON.addEventListener('click', () => {
+  console.log(formeo.json)
+})
+
+logJSON.addEventListener('click', () => {
+  console.log(formeo.json)
+})
 
 // debugBtn.onclick = function() {
 //   debugWrap.classList.toggle('open');
