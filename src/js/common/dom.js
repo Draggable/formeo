@@ -376,7 +376,7 @@ class DOM {
     const optionMap = (option, i) => {
       const { label, ...rest } = option
       const defaultInput = () => {
-        let input = {
+        const input = {
           tag: 'input',
           attrs: {
             id,
@@ -387,7 +387,7 @@ class DOM {
           },
           action,
         }
-        let optionLabel = {
+        const optionLabel = {
           tag: 'label',
           attrs: {},
           config: {
@@ -414,17 +414,10 @@ class DOM {
 
         if (isPreview) {
           input.attrs.name = `prev-${input.attrs.name}`
-          // input.fMap = `options[${i}].selected`
           optionLabel.attrs.contenteditable = true
-          // optionLabel.fMap = `options[${i}].label`
-          inputWrap.children.unshift(input)
-        } else {
-          optionLabel.content = input
-          optionLabel = dom.create(optionLabel)
-          input = dom.create(input)
-          optionLabel.insertBefore(input, optionLabel.firstChild)
-          inputWrap.content = optionLabel
         }
+
+        inputWrap.children.unshift(input)
 
         return inputWrap
       }

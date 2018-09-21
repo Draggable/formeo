@@ -1,5 +1,5 @@
 import i18n from 'mi18n'
-import h from '../../common/helpers'
+import h, { indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
 import { clone } from '../../common/utils'
@@ -170,15 +170,16 @@ export default class Field extends Component {
       action: {
         change: evt => {
           const { target } = evt
-          if (target.fMap) {
-            const { checked, type, fMap } = target
-            if (h.inArray(type, ['checkbox', 'radio'])) {
-              const options = super.get('options')
-              // uncheck options if radio
-              if (type === 'radio') {
-                options.forEach(({ selected }) => (selected = false))
-              }
+          const { checked, type } = target
+          if (h.inArray(type, ['checkbox', 'radio'])) {
+            const optionIndex = indexOfNode(target)
+            const options = this.get('options')
+            // uncheck options if radio
+            if (type === 'radio') {
+              options.forEach(({ selected }) => (selected = false))
             }
+            const checkType = type === 'checkbox' ? 'checked' : 'selected'
+            this.set(`options.${optionIndex}.${checkType}`, checked)
           }
         },
         click: evt => {
