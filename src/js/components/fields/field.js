@@ -49,6 +49,7 @@ export default class Field extends Component {
 
     this.dom = field
     this.isEditing = false
+    this.onRender()
   }
 
   get labelConfig() {
@@ -108,7 +109,7 @@ export default class Field extends Component {
     const _this = this
     const panels = []
     const editable = ['object', 'array']
-    const noPanels = ['config', 'meta', 'action', 'events']
+    const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
     const fieldData = this.data
     const allowedPanels = Object.keys(this.data).filter(elem => {
       return !h.inArray(elem, noPanels)
@@ -127,13 +128,13 @@ export default class Field extends Component {
       }
     })
 
-    const panelsConfig = {
+    const panelsData = {
       panels,
       id: _this.id,
     }
 
     if (panels.length) {
-      const editPanels = (_this.panels = new Panels(panelsConfig))
+      const editPanels = (_this.panels = new Panels(panelsData))
       fieldEdit.className.push('panel-count-' + panels.length)
       fieldEdit.content = editPanels.children
       _this.panelNav = editPanels.nav

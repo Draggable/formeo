@@ -118,15 +118,18 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      'text-input': {
-        actionButtons: {
-          buttons: ['handle', 'edit'],
+      'a42d0117-e0b0-4fcb-b447-abf2c9076b21': {
+        events: {
+          onRender: element => {
+            formeo.Components.fields.get(element.id).toggleEdit(true)
+            element.querySelector('.next-group').click()
+          },
         },
-        // events: {
-        //   onRender: () => {
-        //     console.log('woooooppeeeeeeeee')
-        //   }
-        // }
+        panels: {
+          disabled: [
+            // 'conditions'
+          ]
+        }
       },
       // all: {
       //   actionButtons: {

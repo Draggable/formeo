@@ -88,3 +88,8 @@ export const ANIMATION_BASE_SPEED = 333
 
 //  Event constants
 export const EVENT_FORMEO_UPDATED = 'formeoUpdated'
+export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
+export const COMPARISON_TYPES = {
+  '==': 'EQUALS',
+  '!=': 'NOT EQUALS',
+}

@@ -2,6 +2,7 @@ import i18n from 'mi18n'
 import h from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
+import { COMPARISON_TYPES } from '../../constants'
 
 const inputConfigBase = ({ key, value, type = 'text' }) => ({
   tag: 'input',
@@ -22,6 +23,53 @@ const labelHelper = key => {
   return i18n.get(splitKey[splitKey.length - 1])
 }
 
+const generateConditionFields = (key, vals) => {
+  const label = i18n.get(key) || key
+  const conditions = [label]
+  // console.log(condition, vals)
+  vals.forEach(condition => {
+    if (typeof condition === 'object') {
+      const row = {
+        children: Object.entries(condition).map(([key, val]) => conditionInput(key, val)),
+      }
+
+      conditions.push(row)
+    }
+    console.log(condition)
+  })
+  console.log(conditions)
+  // [label, vals.map(val => {
+  //   // console.log(val)
+  //   const valType = dom.childType(val) || 'string'
+  //   console.log(val, valType)
+  // })
+  return {
+    children: conditions,
+    config: {},
+  }
+  // const inputs = [label]
+}
+
+const conditionInput = (key, val) => {
+  const segmentTypes = {
+    comparison: val => {
+      const comparisons = Object.entries(COMPARISON_TYPES).map(([value, label]) => {
+        const option = {
+          value,
+          label,
+        }
+        if (value === val) {
+          option.selected = true
+        }
+        return option
+      })
+
+      return ITEM_INPUT_TYPE_MAP['array']('comparison', comparisons)
+    },
+  }
+  return segmentTypes[key] && segmentTypes[key](val)
+}
+
 const ITEM_INPUT_TYPE_MAP = {
   string: (key, val) => inputConfigBase({ key, value: val }),
   boolean: (key, val) => {
@@ -29,17 +77,27 @@ const ITEM_INPUT_TYPE_MAP = {
     return inputConfigBase({ key, value: val, type })
   },
   number: (key, val) => inputConfigBase({ key, value: val, type: 'number' }),
-  array: (key, vals) => ({
-    tag: 'select',
-    attrs: {
-      placeholder: labelHelper(`placeholder.${key}`),
-    },
-    options: vals.map(({ label, value, selected }) => ({
-      label,
-      value,
-      selected,
-    })),
-  }),
+  array: (key, vals) => {
+    if (['if', 'then'].includes(key)) {
+      return generateConditionFields(key, vals)
+    }
+    return {
+      tag: 'select',
+      attrs: {
+        placeholder: labelHelper(`placeholder.${key}`),
+      },
+      options: vals.map(({ label, value, selected }) => ({
+        label,
+        value,
+        selected,
+      })),
+    }
+  },
+  object: val => {
+    return Object.entries(val).map(([key, val]) => {
+      return ITEM_INPUT_TYPE_MAP[dom.childType(val)](key, val)
+    })
+  },
 }
 
 const INPUT_ORDER = ['selected', 'checked']
@@ -95,9 +153,26 @@ export default class EditPanelItem {
   }
 
   get itemInputs() {
+    // const processItemInput = val => {
+
+    // }
+    // const processChildren = children =>
+    // this.itemValues.map(([key, val]) => {
+    //     let inputConfig = this.itemInput(key, val)
+    //     if (['selected', 'checked'].includes(key)) {
+    //       inputConfig = {
+    //         className: 'f-addon',
+    //         children: inputConfig,
+    //       }
+    //     }
+    //     return inputConfig
+    //   })
+    // const children =
+    //   this.panelName === 'conditions' ? this.itemValues.map(([key, val]) => processChildren(val)) : this.itemValues
+    // const children = this.itemValues
     return {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
-      children: this.itemValues.map(([key, val], index) => {
+      children: this.itemValues.map(([key, val]) => {
         let inputConfig = this.itemInput(key, val)
         if (['selected', 'checked'].includes(key)) {
           inputConfig = {
@@ -151,9 +226,11 @@ export default class EditPanelItem {
   }
 
   itemInput(key, val) {
+    // if (this.panelName === 'conditions') {
+    // }
     const valType = dom.childType(val) || 'string'
 
-    const inputTypeConfig = ITEM_INPUT_TYPE_MAP[valType](key, val)
+    const inputTypeConfig = Object.assign({}, { config: {}, attrs: {} }, ITEM_INPUT_TYPE_MAP[valType](key, val))
     const { attrs: fieldAttrs = {} } = this.field.data
     const { multiple } = fieldAttrs
     if (multiple) {

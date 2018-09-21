@@ -8,6 +8,9 @@ const DEFAULT_CONFIG = {
     buttons: ['handle', 'edit', 'clone', 'remove'],
     disabled: [],
   },
+  panels: {
+    disabled: [],
+  },
 }
 
 export class Fields extends ComponentData {

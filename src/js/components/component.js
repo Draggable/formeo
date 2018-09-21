@@ -132,6 +132,25 @@ export default class Component extends Data {
     return actions
   }
 
+  /**
+   * Toggles the edit window
+   * @param {Boolean} open whether to open or close the edit window
+   */
+  toggleEdit(open = !this.isEditing) {
+    this.isEditing = open
+    const element = this.dom
+    const editClass = `editing-${this.name}`
+    const editWindow = this.dom.querySelector(`.${this.name}-edit`)
+    animate.slideToggle(editWindow, ANIMATION_BASE_SPEED, open)
+
+    if (this.name === 'field') {
+      animate.slideToggle(this.preview, ANIMATION_BASE_SPEED, !open)
+      element.parentElement.classList.toggle('column-' + editClass, open)
+    }
+
+    element.classList.toggle(editClass, open)
+  }
+
   get buttons() {
     const _this = this
     const buttonConfig = {
@@ -153,17 +172,7 @@ export default class Component extends Data {
           },
           action: {
             click: evt => {
-              _this.isEditing = !_this.isEditing
-              const element = closestFtype(evt.target)
-              const editClass = `editing-${_this.name}`
-              const editWindow = _this.dom.querySelector(`.${_this.name}-edit`)
-              animate.slideToggle(editWindow, ANIMATION_BASE_SPEED)
-
-              if (_this.name === 'field') {
-                animate.slideToggle(editWindow.nextSibling, ANIMATION_BASE_SPEED)
-                element.parentElement.classList.toggle('column-' + editClass)
-              }
-              element.classList.toggle(editClass)
+              _this.toggleEdit()
             },
           },
         }
@@ -392,6 +401,17 @@ export default class Component extends Data {
   onEnd = ({ to, from }) => {
     to && to.classList.remove(`hovering-${componentType(to)}`)
     from && from.classList.remove(`hovering-${componentType(from)}`)
+  }
+
+  /**
+   * Callback for onRender, executes any defined onRender for component
+   */
+  onRender() {
+    const { events } = this.config
+    if (!events) {
+      return null
+    }
+    events.onRender && dom.onRender(this.dom, events.onRender)
   }
 
   set config(config) {
