@@ -584,6 +584,12 @@ export default class Field {
     let editable = ['object', 'array'];
     let noPanels = ['config', 'meta', 'action'];
     let fieldData = formData.fields.get(_this.fieldID);
+
+    let disabledPanels = fieldData.meta.disabledPanels;
+    if (disabledPanels) {
+      noPanels = noPanels.concat(noPanels, disabledPanels);
+    }
+
     let allowedPanels = Object.keys(fieldData).filter(elem => {
         return !h.inArray(elem, noPanels);
       });
