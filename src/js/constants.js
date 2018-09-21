@@ -100,3 +100,8 @@ export const LOGICAL_OPERATORS = {
 }
 
 export const CONDITION_INPUT_ORDER = ['label', 'logical', 'source', 'property', 'comparison', 'target']
+
+export const FIELD_PROPERTY_MAP = {
+  value: 'attrs.value',
+  label: 'config.label',
+}

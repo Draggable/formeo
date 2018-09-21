@@ -113,7 +113,7 @@ export default class EditPanel {
               value: i18n.get('action.add.attrs.value'),
             }
           } else if (type === 'options') {
-            addEvt.addAction = _this.addOption.bind(_this)
+            addEvt.addAction = _this.addOption
           }
 
           const eventType = startCase(type)
@@ -142,9 +142,9 @@ export default class EditPanel {
    * @param  {String}  attr
    * @return {Boolean}      [description]
    */
-  isDisabledAttr = attr => {
+  isDisabledAttr(attr) {
     // @todo fix meta id
-    const disabledAttrs = this.field.get('config.disabledAttrs') || []
+    const disabledAttrs = this.field.config.panels.attrs.disabled.concat(this.field.get('config.disabledAttrs'))
     return disabledAttrs.includes(attr)
   }
 
@@ -168,6 +168,8 @@ export default class EditPanel {
     if (typeof val === 'string' && ['true', 'false'].includes(val)) {
       val = JSON.parse(val)
     }
+
+    this.field.set(`attrs.${attr}`, val)
 
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)
     const newAttr = new EditPanelItem(itemKey, { [safeAttr]: val }, this.field)

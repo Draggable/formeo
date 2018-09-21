@@ -10,6 +10,9 @@ const DEFAULT_CONFIG = {
   },
   panels: {
     disabled: [],
+    attrs: {
+      disabled: [],
+    },
   },
 }
 

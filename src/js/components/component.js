@@ -4,7 +4,13 @@ import isEqual from 'lodash/isEqual'
 import { uuid, componentType, closestFtype, clone, merge } from '../common/utils'
 import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
-import { CHILD_TYPE_MAP, TYPE_CHILD_CLASSNAME_MAP, PARENT_TYPE_MAP, ANIMATION_BASE_SPEED } from '../constants'
+import {
+  CHILD_TYPE_MAP,
+  TYPE_CHILD_CLASSNAME_MAP,
+  PARENT_TYPE_MAP,
+  ANIMATION_BASE_SPEED,
+  FIELD_PROPERTY_MAP,
+} from '../constants'
 import Components from './index'
 import Data from './data'
 import animate from '../common/animation'
@@ -18,7 +24,7 @@ export default class Component extends Data {
 
     this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
-    this.runConditions()
+    // this.runConditions()
     this.observer = new MutationObserver(this.mutationHandler)
   }
 
@@ -461,16 +467,12 @@ export default class Component extends Data {
 
     const component = this.getComponent(path)
     const property = component && splitPath.slice(2, splitPath.length).join('.')
-    const propertyMap = {
-      value: 'attrs.value',
-    }
 
-    if ([!component, !property, !propertyMap[property]].some(Boolean)) {
+    if ([!component, !property, !FIELD_PROPERTY_MAP[property]].some(Boolean)) {
       return path
     }
 
-    const action = val ? component.set : component.get
-    return action(propertyMap[property], val)
+    return val ? component.set(FIELD_PROPERTY_MAP[property], val) : component.get(FIELD_PROPERTY_MAP[property])
   }
 
   // @todo finish the evaluator

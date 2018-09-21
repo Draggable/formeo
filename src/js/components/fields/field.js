@@ -188,14 +188,10 @@ export default class Field extends Component {
           }
         },
         input: evt => {
-          let prop = 'content'
-          if (evt.target.fMap) {
-            prop = evt.target.fMap
-          }
           if (evt.target.contentEditable === 'true') {
-            super.set(prop, evt.target.innerHTML)
+            super.set('attrs.value', evt.target.innerHTML)
           } else {
-            super.set(prop, evt.target.value)
+            super.set('attrs.value', evt.target.value)
           }
           this.processConditions()
         },
