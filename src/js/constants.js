@@ -89,7 +89,14 @@ export const ANIMATION_BASE_SPEED = 333
 //  Event constants
 export const EVENT_FORMEO_UPDATED = 'formeoUpdated'
 export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
-export const COMPARISON_TYPES = {
+export const COMPARISON_OPERATORS = {
   '==': 'EQUALS',
   '!=': 'NOT EQUALS',
 }
+export const LOGICAL_OPERATORS = {
+  '&&': 'AND',
+  '||': 'OR',
+  '!': 'NOT',
+}
+
+export const CONDITION_INPUT_ORDER = ['label', 'logical', 'source', 'property', 'comparison', 'target']

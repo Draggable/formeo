@@ -3,6 +3,10 @@
   position: relative;
   padding: space();
   transition: background-color 125ms ease-in-out;
+  &:last-child {
+    border-bottom-right-radius: $input-border-radius;
+    border-bottom-left-radius: $input-border-radius;
+  }
 
   &.first-field {
     border-top-right-radius: $input-border-radius;

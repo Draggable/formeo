@@ -178,12 +178,6 @@ export default class Field extends Component {
               if (type === 'radio') {
                 options.forEach(({ selected }) => (selected = false))
               }
-              // dom.fields.get(_this.id).field
-              console.log(options)
-              console.log(fMap)
-              console.log(checked)
-              console.dir(target)
-              // console.log(target, h.indexOfNode(target))
             }
           }
         },

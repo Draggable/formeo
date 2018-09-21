@@ -10,6 +10,12 @@
     margin-bottom: 0;
     padding: 0;
     overflow: hidden;
+    border-top-left-radius: $input-border-radius;
+    border-top-right-radius: $input-border-radius;
+    button {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
 
   &.field-edit-options {
@@ -138,6 +144,10 @@
     flex-direction: row;
     flex-grow: 1;
 
+    &.conditions-prop-inputs {
+      flex-direction: column;
+    }
+
     .f-field-group {
       width: 100%;
       margin-bottom: 0;
@@ -188,6 +198,51 @@
 
     .panel-labels {
       background-color: transparent;
+    }
+  }
+}
+
+.condition-row {
+  display: flex;
+  width: 100%;
+  margin-top: -1px;
+  input,
+  select {
+    border-radius: 0;
+  }
+  &:first-child {
+    input:last-child,
+    select:last-child {
+      border-top-right-radius: $input-border-radius;
+    }
+  }
+  &:last-child {
+    input:last-child,
+    select:last-child {
+      border-bottom-right-radius: $input-border-radius;
+    }
+  }
+}
+
+.conditions-prop-inputs {
+  label.condition-label {
+    display: inline-flex;
+    border: $input-border;
+    align-items: center;
+    padding: space();
+    border-right: 0;
+    text-transform: uppercase;
+    color: $gray-light;
+    &.if-condition-label {
+      border-top-left-radius: $input-border-radius;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    &.then-condition-label {
+      border-bottom-left-radius: $input-border-radius;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      border-top: 0;
     }
   }
 }

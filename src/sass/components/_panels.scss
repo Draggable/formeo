@@ -1,7 +1,7 @@
 .panels-wrap {
   h5 {
     margin: 0;
-    padding: .55em 0;
+    padding: 0.55em 0;
     color: $gray;
     font-weight: normal;
     display: inline-block;
@@ -49,6 +49,10 @@
         border-bottom-right-radius: 0;
       }
     }
+  }
+
+  .active-panel {
+    background-color: $white;
   }
 
   ul {
@@ -140,7 +144,6 @@
     .f-field-group {
       // width: 33%;
       // display: inline-block;
-
     }
   }
 }

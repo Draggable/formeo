@@ -81,7 +81,6 @@ export default class Component extends Data {
    * @return  {Object} parent element
    */
   empty() {
-    console.log(this.name, 'wtf')
     const removed = this.children.map(child => child.remove())
     this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
     this.emptyClass()
@@ -256,7 +255,7 @@ export default class Component extends Data {
    * @param {Number} index
    * @return {Object} DOM element
    */
-  addChild = (childData = {}, index = this.children.length) => {
+  addChild(childData = {}, index = this.children.length) {
     if (typeof childData !== 'object') {
       childData = { id: childData }
     }
@@ -277,6 +276,7 @@ export default class Component extends Data {
     }
 
     this.emptyClass()
+    this.saveChildOrder()
     return child
   }
 
@@ -540,7 +540,6 @@ export default class Component extends Data {
   }
 
   execResults = results => {
-    console.log(results)
     const promises = results.map(result => {
       return this.execResult(result)
     })
@@ -549,11 +548,8 @@ export default class Component extends Data {
 
   execResult = ({ target, action, value, propertyPath }) => {
     return new Promise((resolve, reject) => {
+      // we dont know what this will be so try but fail gracefully
       try {
-        console.log('target', target)
-        console.log('action', action)
-        console.log('value', value)
-        console.log('propertyPath', propertyPath)
         return resolve(action(target, value))
       } catch (err) {
         return reject(err)

@@ -1,8 +1,8 @@
 import i18n from 'mi18n'
-import h from '../../common/helpers'
+import h, { orderObjectsBy } from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
-import { COMPARISON_TYPES } from '../../constants'
+import { COMPARISON_OPERATORS, LOGICAL_OPERATORS, CONDITION_INPUT_ORDER } from '../../constants'
 
 const inputConfigBase = ({ key, value, type = 'text' }) => ({
   tag: 'input',
@@ -24,47 +24,61 @@ const labelHelper = key => {
 }
 
 const generateConditionFields = (key, vals) => {
-  const label = i18n.get(key) || key
-  const conditions = [label]
-  // console.log(condition, vals)
-  vals.forEach(condition => {
-    if (typeof condition === 'object') {
-      const row = {
-        children: Object.entries(condition).map(([key, val]) => conditionInput(key, val)),
-      }
-
-      conditions.push(row)
-    }
-    console.log(condition)
-  })
-  console.log(conditions)
-  // [label, vals.map(val => {
-  //   // console.log(val)
-  //   const valType = dom.childType(val) || 'string'
-  //   console.log(val, valType)
-  // })
-  return {
-    children: conditions,
-    config: {},
+  const conditions = []
+  const label = {
+    tag: 'label',
+    className: `condition-label ${key}-condition-label`,
+    content: i18n.get(key) || key,
   }
-  // const inputs = [label]
+  vals.forEach((condition, i) => {
+    const fields = Object.entries(condition)
+      .map(([key, val]) => {
+        const field = conditionInput(key, val)
+        if (field) {
+          field.className = `condition-${key}`
+        }
+        return field
+      })
+      .filter(Boolean)
+    const orderedFields = orderObjectsBy(
+      fields,
+      CONDITION_INPUT_ORDER.map(fieldName => `condition-${fieldName}`),
+      'className'
+    )
+    if (!i) {
+      orderedFields.unshift(label)
+    }
+    const row = {
+      children: orderedFields,
+      className: 'condition-row',
+    }
+
+    conditions.push(row)
+  })
+  return conditions
 }
 
 const conditionInput = (key, val) => {
+  const makeOptions = ([value, label]) => {
+    const option = {
+      value,
+      label,
+    }
+    if (value === val) {
+      option.selected = true
+    }
+    return option
+  }
+
   const segmentTypes = {
     comparison: val => {
-      const comparisons = Object.entries(COMPARISON_TYPES).map(([value, label]) => {
-        const option = {
-          value,
-          label,
-        }
-        if (value === val) {
-          option.selected = true
-        }
-        return option
-      })
+      const comparisons = Object.entries(COMPARISON_OPERATORS).map(makeOptions)
 
       return ITEM_INPUT_TYPE_MAP['array']('comparison', comparisons)
+    },
+    logical: val => {
+      const logicalOperators = Object.entries(LOGICAL_OPERATORS).map(makeOptions)
+      return ITEM_INPUT_TYPE_MAP['array']('logical', logicalOperators)
     },
   }
   return segmentTypes[key] && segmentTypes[key](val)
@@ -78,9 +92,6 @@ const ITEM_INPUT_TYPE_MAP = {
   },
   number: (key, val) => inputConfigBase({ key, value: val, type: 'number' }),
   array: (key, vals) => {
-    if (['if', 'then'].includes(key)) {
-      return generateConditionFields(key, vals)
-    }
     return {
       tag: 'select',
       attrs: {
@@ -226,8 +237,9 @@ export default class EditPanelItem {
   }
 
   itemInput(key, val) {
-    // if (this.panelName === 'conditions') {
-    // }
+    if (this.panelName === 'conditions') {
+      return generateConditionFields(key, val)
+    }
     const valType = dom.childType(val) || 'string'
 
     const inputTypeConfig = Object.assign({}, { config: {}, attrs: {} }, ITEM_INPUT_TYPE_MAP[valType](key, val))

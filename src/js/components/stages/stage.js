@@ -90,7 +90,6 @@ export default class Stage extends Component {
     })
   }
   empty() {
-    console.log('wtf')
     this.dom.classList.add('removing-all-fields')
     animate.slideUp(this.dom, 600, () => {
       super.empty()

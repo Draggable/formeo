@@ -134,13 +134,9 @@ export default class Column extends Component {
     }
   }
 
-  /**
-   * Updates the field order data for the column
-   */
-  saveFieldOrder = () => {
-    const newFieldOrder = this.saveChildOrder()
+  addChild(...args) {
+    super.addChild(...args)
     this.fieldOrderClasses()
-    return newFieldOrder
   }
 
   /**
@@ -204,7 +200,6 @@ export default class Column extends Component {
       columnData.config.width = column.dataset.colWidth
       sibColumnData.config.width = sibling.dataset.colWidth
       resize.resized = false
-      // data.save()
     }
 
     resize.start = (function(evt) {
@@ -234,9 +229,7 @@ export default class Column extends Component {
   }
 
   // @todo loop through children and refresh panels
-  refreshFieldPanels = () => {
-    // console.log(this)
-  }
+  refreshFieldPanels = () => {}
 
   /**
    * Sets a columns width

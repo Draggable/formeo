@@ -236,7 +236,9 @@ export default class Panels {
     let offset = {}
 
     const groupChange = newIndex => {
+      dom.removeClasses(siblingGroups, 'active-panel')
       this.currentPanel = siblingGroups[newIndex]
+      this.currentPanel.classList.add('active-panel')
       this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
       // if (this.opts.type === 'field') {
       //   this.slideToggle.style.height = 'auto'

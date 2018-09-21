@@ -160,13 +160,11 @@ class Formeo {
   render() {
     const _this = this
     const controls = formeo.controls.dom
-    // console.log()
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',
         id: _this.formId,
       },
-      // content: [Components.get, controls],
       content: [Object.values(Components.get('stages')).map(({ dom }) => dom), controls],
     }
 
