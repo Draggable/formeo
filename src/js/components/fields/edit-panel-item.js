@@ -103,23 +103,6 @@ export default class EditPanelItem {
   }
 
   get itemInputs() {
-    // const processItemInput = val => {
-
-    // }
-    // const processChildren = children =>
-    // this.itemValues.map(([key, val]) => {
-    //     let inputConfig = this.itemInput(key, val)
-    //     if (['selected', 'checked'].includes(key)) {
-    //       inputConfig = {
-    //         className: 'f-addon',
-    //         children: inputConfig,
-    //       }
-    //     }
-    //     return inputConfig
-    //   })
-    // const children =
-    //   this.panelName === 'conditions' ? this.itemValues.map(([key, val]) => processChildren(val)) : this.itemValues
-    // const children = this.itemValues
     return {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val]) => {
@@ -196,9 +179,11 @@ export default class EditPanelItem {
         const splitPath = path.split('.')
         const component = this.field.getComponent(path)
         const property = component && splitPath.slice(2, splitPath.length).join('.')
+        const label = component.get(FIELD_PROPERTY_MAP['label'])
         const value = component.get(FIELD_PROPERTY_MAP[property])
 
-        console.log(property, value)
+        console.log(property, value, label)
+        return [ITEM_INPUT_TYPE_MAP['string']('test', 'val'), ITEM_INPUT_TYPE_MAP['string']('test', 'val')]
 
         // const logicalOperators = Object.entries(LOGICAL_OPERATORS).map(makeOptions)
         // return ITEM_INPUT_TYPE_MAP['array']('logical', logicalOperators)

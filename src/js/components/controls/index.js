@@ -294,7 +294,7 @@ export class Controls {
         const fields = this.controls
         let filteredTerm = groupsWrap.querySelector('.filtered-term')
 
-        this.toggleElementsByStr(fields, term)
+        dom.toggleElementsByStr(fields, term)
 
         if (filtering) {
           const filteredStr = i18n.get('controls.filteringTerm', term)
@@ -400,27 +400,6 @@ export class Controls {
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.options = merge(this.defaults, controlOptions)
     this.options.elements = elements.concat(defaultElements)
-  }
-
-  /**
-   * Hide or show an Array or HTMLCollection of elements
-   * @param  {Array} elems
-   * @param  {String} term  match textContent to this term
-   * @return {Array}        filtered elements
-   */
-  toggleElementsByStr = (elems, term) => {
-    const filteredElems = []
-    helpers.forEach(elems, elem => {
-      const txt = elem.textContent.toLowerCase()
-      if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elem.style.display = 'block'
-        filteredElems.push(elem)
-      } else {
-        elem.style.display = 'none'
-      }
-    })
-
-    return filteredElems
   }
 }
 

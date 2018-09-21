@@ -1,4 +1,4 @@
-import h, { indexOfNode } from './helpers'
+import h, { indexOfNode, forEach } from './helpers'
 import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
@@ -339,6 +339,28 @@ class DOM {
         element.setAttribute(name, value)
       }
     })
+  }
+
+  /**
+   * Hide or show an Array or HTMLCollection of elements
+   * @param  {Array} elems
+   * @param  {String} term  match textContent to this term
+   * @return {Array}        filtered elements
+   */
+  toggleElementsByStr = (elems, term) => {
+    const filteredElems = []
+
+    forEach(elems, elem => {
+      const txt = elem.textContent.toLowerCase()
+      if (txt.indexOf(term.toLowerCase()) !== -1) {
+        elem.style.display = 'block'
+        filteredElems.push(elem)
+      } else {
+        elem.style.display = 'none'
+      }
+    })
+
+    return filteredElems
   }
 
   generateOption = ({ type = 'option', label, value, i = 0, selected }) => {
