@@ -1,8 +1,10 @@
 import i18n from 'mi18n'
-import h, { orderObjectsBy } from '../../common/helpers'
+import h, { orderObjectsBy, hyphenCase } from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
-import { COMPARISON_OPERATORS, LOGICAL_OPERATORS, CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP } from '../../constants'
+import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS } from '../../constants'
+import events from '../../common/events'
+import Components from '../index'
 
 const inputConfigBase = ({ key, value, type = 'text' }) => ({
   tag: 'input',
@@ -38,7 +40,7 @@ const ITEM_INPUT_TYPE_MAP = {
       },
       options: vals.map(({ label, value, selected }) => ({
         label,
-        value,
+        value: hyphenCase(value),
         selected,
       })),
     }
@@ -118,17 +120,17 @@ export default class EditPanelItem {
     }
   }
 
-  generateConditionFields = (key, vals) => {
+  generateConditionFields = (type, vals) => {
     const conditions = []
     const label = {
       tag: 'label',
-      className: `condition-label ${key}-condition-label`,
-      content: i18n.get(key) || key,
+      className: `condition-label ${type}-condition-label`,
+      content: i18n.get(type) || type,
     }
     vals.forEach((condition, i) => {
       const fields = Object.entries(condition)
-        .map(([key, val]) => {
-          const field = this.conditionInput(key, val)
+        .map(([key, val], i) => {
+          const field = this.conditionInput(key, val, type, i)
           if (field) {
             field.className = `condition-${key}`
           }
@@ -145,7 +147,7 @@ export default class EditPanelItem {
       }
       const row = {
         children: orderedFields,
-        className: 'condition-row',
+        className: `condition-row ${type}-condition-row`,
       }
 
       conditions.push(row)
@@ -153,11 +155,13 @@ export default class EditPanelItem {
     return conditions
   }
 
-  conditionInput = (key, val) => {
-    const makeOptions = ([value, label]) => {
+  conditionInput = (key, val, type, i) => {
+    const field = this.field
+    const conditionPath = `${this.field.id}.${this.itemKey}.${type}.${i}`
+    const makeOptions = ([value, label], i18nKey) => {
       const option = {
         value,
-        label,
+        label: i18n.get(`${i18nKey}.${label}`) || label,
       }
       if (value === val) {
         option.selected = true
@@ -165,29 +169,90 @@ export default class EditPanelItem {
       return option
     }
 
-    const segmentTypes = {
-      comparison: val => {
-        const comparisons = Object.entries(COMPARISON_OPERATORS).map(makeOptions)
+    const getPath = path => {
+      const splitPath = path.split('.')
+      const component = field.getComponent(path)
+      const property = component && splitPath.slice(2, splitPath.length).join('.')
+      const label = (component && component.get(FIELD_PROPERTY_MAP['label'])) || ''
+      const value = field.value(path)
+      return { label, value, property, component }
+    }
 
-        return ITEM_INPUT_TYPE_MAP['array']('comparison', comparisons)
+    const getOperatorField = operator => {
+      const operatorOptions = Object.entries(OPERATORS[operator]).map(entry => makeOptions(entry, 'operator'))
+      const operatorField = ITEM_INPUT_TYPE_MAP['array'](operator, operatorOptions)
+
+      operatorField.action = {
+        change: conditionChangeAction,
+      }
+      return operatorField
+    }
+
+    const getPropertyField = () => {
+      const options = Object.keys(FIELD_PROPERTY_MAP).map(value => {
+        return makeOptions([value, value], 'field.property')
+      })
+      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array']('property', options)
+
+      propertyFieldConfig.action = {
+        change: conditionChangeAction,
+      }
+
+      return propertyFieldConfig
+    }
+
+    const conditionChangeAction = ({ target }) => {
+      console.log(target.value, target.parentElement)
+
+      const dataPath = `${field.name}s.${conditionPath}.${key}`
+      const evtData = {
+        dataPath,
+        value: target.value,
+        src: target,
+      }
+      events.formeoUpdated(evtData)
+    }
+
+    const segmentTypes = {
+      comparison: () => {
+        console.log(`${field.name}s`)
+        console.log(conditionPath, Components[`${field.name}s`].get(`${conditionPath}`))
+        // console.log(`.${key}`)
+        // if (field.get(`${conditionPath}`)) {
+
+        // }
+        const comparisonField = getOperatorField('comparison')
+        return comparisonField
       },
-      logical: val => {
-        const logicalOperators = Object.entries(LOGICAL_OPERATORS).map(makeOptions)
-        return ITEM_INPUT_TYPE_MAP['array']('logical', logicalOperators)
+      logical: () => {
+        const logicalField = getOperatorField('logical')
+        logicalField.action = {
+          change: conditionChangeAction,
+        }
+        return logicalField
       },
       source: path => {
-        const splitPath = path.split('.')
-        const component = this.field.getComponent(path)
-        const property = component && splitPath.slice(2, splitPath.length).join('.')
-        const label = component.get(FIELD_PROPERTY_MAP['label'])
-        const value = component.get(FIELD_PROPERTY_MAP[property])
+        const { label, property, component } = getPath(path)
+        const labelInput = ITEM_INPUT_TYPE_MAP['string']('sourceComponent', label)
+        const propertyInput = property && getPropertyField(property)
 
-        console.log(property, value, label)
-        return [ITEM_INPUT_TYPE_MAP['string']('test', 'val'), ITEM_INPUT_TYPE_MAP['string']('test', 'val')]
+        // @todo move this to an action since it needs to be evaluated when the field changes
+        component && Components[`${field.name}s`].conditionMap.set(component.id, field)
 
-        // const logicalOperators = Object.entries(LOGICAL_OPERATORS).map(makeOptions)
-        // return ITEM_INPUT_TYPE_MAP['array']('logical', logicalOperators)
+        return [labelInput, propertyInput]
       },
+      target: path => {
+        const { label, value, property } = getPath(path)
+        const labelInput = ITEM_INPUT_TYPE_MAP['string']('targetComponent', label)
+        const propertyInput = property && getPropertyField(property)
+        const valueInput = type !== 'if' && value && ITEM_INPUT_TYPE_MAP['string']('targetValue', value)
+
+        return [labelInput, propertyInput, valueInput]
+      },
+      value: val => {
+        return val && ITEM_INPUT_TYPE_MAP['string']('targetValue', val)
+      },
+      assignment: () => getOperatorField('comparison'),
     }
     return segmentTypes[key] && segmentTypes[key](val)
   }
@@ -219,7 +284,7 @@ export default class EditPanelItem {
             // dom.empty(_this.preview)
             // const newPreview = dom.create(fieldData, true)
             // _this.preview.appendChild(newPreview)
-            // _this.resizePanelWrap()
+            this.field.resizePanelWrap()
           })
         },
       },

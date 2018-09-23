@@ -55,6 +55,9 @@ export default class Panels {
     panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed)
     const panelStyle = panelsWrap.style
     const activePanelHeight = dom.getStyle(this.currentPanel, 'height')
+    if (isTabbed) {
+      column.querySelector('.panel-labels div').removeAttribute('style')
+    }
     panelStyle.height = activePanelHeight
     return activePanelHeight
   }
@@ -236,9 +239,13 @@ export default class Panels {
     let offset = {}
 
     const groupChange = newIndex => {
+      const labels = this.labels.querySelector('.panel-labels div').children
       dom.removeClasses(siblingGroups, 'active-panel')
+      dom.removeClasses(labels, 'active-tab')
       this.currentPanel = siblingGroups[newIndex]
       this.currentPanel.classList.add('active-panel')
+
+      labels[newIndex].classList.add('active-tab')
       this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
       // if (this.opts.type === 'field') {
       //   this.slideToggle.style.height = 'auto'

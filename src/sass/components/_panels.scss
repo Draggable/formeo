@@ -128,7 +128,7 @@
       flex: 1;
       cursor: pointer;
       background-color: $gray-lighter;
-      box-shadow: 0 -1px 6px $gray-light inset;
+      box-shadow: 0 -1px space(1) $gray-light inset;
 
       &.active-tab {
         color: $black;

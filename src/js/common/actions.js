@@ -20,6 +20,9 @@ const defaultActions = {
     option: evt => {
       evt.addAction()
     },
+    condition: evt => {
+      evt.addAction(evt)
+    },
   },
   click: {
     btn: evt => {
@@ -43,6 +46,27 @@ const actions = {
     },
     options: evt => {
       return actions.opts.add.option(evt)
+    },
+    conditions: evt => {
+      const conditionsTemplate = {
+        if: [
+          {
+            source: '',
+            comparison: '',
+            target: '',
+          },
+        ],
+        then: [
+          {
+            target: '',
+            assignment: '',
+            value: '',
+          },
+        ],
+      }
+      evt.template = conditionsTemplate
+      // @todo add logging
+      return actions.opts.add.condition(evt)
     },
   },
   click: {

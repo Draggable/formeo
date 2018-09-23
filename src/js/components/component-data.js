@@ -68,4 +68,6 @@ export default class ComponentData extends Data {
   get config() {
     return this.configVal
   }
+
+  conditionMap = new Map()
 }

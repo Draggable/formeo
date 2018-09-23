@@ -118,7 +118,8 @@ button {
 
   input + input,
   input + select,
-  select + select {
+  select + select,
+  select + input {
     margin-left: -1px;
   }
 

@@ -47,7 +47,7 @@ export default class EditPanel {
     //   },
     // }
     const [props, editButtons] = this.content()
-    const panelConfig = {
+    this.panelConfig = {
       config: {
         label: i18n.get(`panel.label.${panelName}`),
       },
@@ -60,7 +60,7 @@ export default class EditPanel {
     this.props = props
     this.editButtons = editButtons
 
-    return panelConfig
+    // return panelConfig
   }
 
   /**
@@ -97,6 +97,11 @@ export default class EditPanel {
     const _this = this
     const type = this.name
     const btnTitle = i18n.get(`panelEditButtons.${type}`)
+    const addActions = {
+      attrs: _this.addAttribute,
+      options: _this.addOption,
+      conditions: _this.addCondition,
+    }
     const addBtn = {
       ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
       className: `add-${type}`,
@@ -104,16 +109,11 @@ export default class EditPanel {
         click: evt => {
           const addEvt = {
             btnCoords: dom.coords(evt.target),
-          }
-
-          if (type === 'attrs') {
-            addEvt.addAction = _this.addAttribute
-            addEvt.message = {
-              attr: i18n.get('action.add.attrs.attr'),
-              value: i18n.get('action.add.attrs.value'),
-            }
-          } else if (type === 'options') {
-            addEvt.addAction = _this.addOption
+            addAction: addActions[type],
+            message: {
+              attr: i18n.get(`action.add.${type}.attr`),
+              value: i18n.get(`action.add.${type}.value`),
+            },
           }
 
           const eventType = startCase(type)
@@ -173,6 +173,7 @@ export default class EditPanel {
 
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)
     const newAttr = new EditPanelItem(itemKey, { [safeAttr]: val }, this.field)
+
     if (existingAttr) {
       this.props.replaceChild(newAttr.dom, existingAttr)
     } else {
@@ -207,5 +208,19 @@ export default class EditPanel {
     // dom.empty(_this.preview)
     // const newPreview = dom.create(this.data, true)
     // _this.preview.appendChild(newPreview)
+  }
+  addCondition = evt => {
+    const currentConditions = this.field.get('conditions')
+    const itemKey = `conditions.${currentConditions.length}`
+    const existingCondition = this.props.querySelector(`.field-${itemKey.replace('.', '-')}`)
+    const newCondition = new EditPanelItem(itemKey, evt.template, this.field)
+
+    if (existingCondition) {
+      this.props.replaceChild(newCondition.dom, existingCondition)
+    } else {
+      this.props.appendChild(newCondition.dom)
+    }
+
+    this.field.resizePanelWrap()
   }
 }

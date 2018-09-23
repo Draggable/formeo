@@ -130,6 +130,18 @@ export const forEach = (arr, cb, scope) => {
 }
 
 /**
+ * Convert camelCase into lowercase-hyphen
+ *
+ * @param  {String} str
+ * @return {String}
+ */
+export const hyphenCase = str => {
+  str = str.replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`)
+
+  return str.replace(/\s/g, '-').replace(/^-+/g, '')
+}
+
+/**
  * @param {Array|NodeList} arr to be iterated
  * @param {Function} cb
  * @return {Array} newArray
@@ -142,27 +154,16 @@ export const map = (arr, cb) => {
 }
 
 export const helpers = {
-  /**
-   * Convert camelCase into lowercase-hyphen
-   *
-   * @param  {String} str
-   * @return {String}
-   */
-  hyphenCase: str => {
-    str = str.replace(/([A-Z])/g, function($1) {
-      return '-' + $1.toLowerCase()
-    })
-
-    return str.replace(/\s/g, '-').replace(/^-+/g, '')
-  },
+  hyphenCase,
 
   safeAttrName: name => {
     const safeAttr = {
       className: 'class',
     }
 
-    return safeAttr[name] || helpers.hyphenCase(name)
+    return safeAttr[name] || hyphenCase(name)
   },
+
   insertScript: src => {
     return new Promise((resolve, reject) => {
       if (loaded.js.includes(src)) {

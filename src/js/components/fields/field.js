@@ -6,6 +6,7 @@ import { clone } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
 import { FIELD_CLASSNAME } from '../../constants'
+import Components from '..'
 
 /**
  * Element/Field class.
@@ -21,6 +22,7 @@ export default class Field extends Component {
 
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create(this.fieldPreview())
+    this.editPanels = []
 
     let field = {
       tag: 'li',
@@ -65,6 +67,20 @@ export default class Field extends Component {
         action: {
           input: ({ target: { innerHTML } }) => {
             super.set('config.label', innerHTML)
+            const reverseConditionField = Components['fields'].conditionMap.get(this.id)
+            if (reverseConditionField) {
+              return reverseConditionField.updateConditionsPanel()
+            }
+
+            const conditions = this.get('conditions')
+            if (conditions && conditions.length) {
+              this.updateConditionsPanel()
+            }
+
+            // if (reverseConditionField) {
+            //   debounce(reverseConditionField.updateConditionsPanel, ANIMATION_BASE_SPEED)()
+            // }
+            // console.log(reverseConditionField)
           },
         },
       }
@@ -85,6 +101,16 @@ export default class Field extends Component {
     this.label = newLabel
   }
 
+  updateConditionsPanel = () => {
+    const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
+    if (!newConditionsPanel) {
+      return null
+    }
+    const [newProps] = newConditionsPanel.content()
+    const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
+    currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
+  }
+
   /**
    * Updates a field's preview
    * @return {Object} fresh preview
@@ -93,11 +119,6 @@ export default class Field extends Component {
     const newPreview = dom.create(fieldData, true)
     this.preview.parentElement.replaceChild(newPreview, this.preview)
     this.preview = newPreview
-
-    // dom.empty(this.preview)
-    // this.preview.appendChild(newPreview)
-    // console.log(newPreview)
-
     return this.preview
   }
 
@@ -107,10 +128,9 @@ export default class Field extends Component {
    */
   get fieldEdit() {
     const _this = this
-    const panels = []
+    this.editPanels = []
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
-    const fieldData = this.data
     const allowedPanels = Object.keys(this.data).filter(elem => {
       return !h.inArray(elem, noPanels)
     })
@@ -120,25 +140,30 @@ export default class Field extends Component {
     }
 
     h.forEach(allowedPanels, (panelName, i) => {
-      const panelData = fieldData[panelName]
+      const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.includes(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
-        panels.push(editPanel)
+        this.editPanels.push(editPanel)
       }
     })
 
     const panelsData = {
-      panels,
+      panels: this.editPanels.map(({ panelConfig }) => panelConfig),
       id: _this.id,
     }
 
-    if (panels.length) {
+    const editPanelLength = this.editPanels.length
+
+    if (editPanelLength) {
       const editPanels = (_this.panels = new Panels(panelsData))
-      fieldEdit.className.push('panel-count-' + panels.length)
+      fieldEdit.className.push('panel-count-' + editPanelLength)
       fieldEdit.content = editPanels.children
       _this.panelNav = editPanels.nav
       _this.resizePanelWrap = editPanels.action.resize
+      fieldEdit.action = {
+        onRender: _this.resizePanelWrap,
+      }
     } else {
       setTimeout(() => {
         const field = this.dom

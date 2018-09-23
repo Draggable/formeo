@@ -209,6 +209,7 @@
   input,
   select {
     border-radius: 0;
+    width: inherit !important;
   }
   &:first-child {
     input:last-child,
@@ -222,11 +223,16 @@
       border-bottom-right-radius: $input-border-radius;
     }
   }
+  .condition-logical {
+    max-width: 60px;
+    text-transform: uppercase;
+  }
 }
 
 .conditions-prop-inputs {
   label.condition-label {
     display: inline-flex;
+    flex: 0 0 auto;
     border: $input-border;
     align-items: center;
     padding: space();

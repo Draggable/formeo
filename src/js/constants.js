@@ -90,13 +90,20 @@ export const ANIMATION_BASE_SPEED = 333
 export const EVENT_FORMEO_UPDATED = 'formeoUpdated'
 export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
 export const COMPARISON_OPERATORS = {
-  '==': 'EQUALS',
-  '!=': 'NOT EQUALS',
+  '==': 'equals',
+  '!=': 'notEquals',
+  vis: 'visible',
+  '!vis': 'notVisible',
+  '⊃': 'contains',
+  '!⊃': 'notContains',
 }
 export const LOGICAL_OPERATORS = {
-  '&&': 'AND',
-  '||': 'OR',
-  '!': 'NOT',
+  '&&': 'and',
+  '||': 'or',
+}
+
+export const ASSIGNMENT_OPERATORS = {
+  '=': null,
 }
 
 export const CONDITION_INPUT_ORDER = ['label', 'logical', 'source', 'property', 'comparison', 'target']
@@ -104,4 +111,12 @@ export const CONDITION_INPUT_ORDER = ['label', 'logical', 'source', 'property', 
 export const FIELD_PROPERTY_MAP = {
   value: 'attrs.value',
   label: 'config.label',
+  isVisible: 'config.isVisible',
+}
+
+export const OPERATORS = {
+  comparison: COMPARISON_OPERATORS,
+  assignment: ASSIGNMENT_OPERATORS,
+  logical: LOGICAL_OPERATORS,
+  property: FIELD_PROPERTY_MAP,
 }

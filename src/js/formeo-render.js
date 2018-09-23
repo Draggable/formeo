@@ -45,7 +45,7 @@ export default class FormeoRender {
   processColumnConfig = columnData => {
     const colWidth = columnData.config.width || '100%'
     columnData.style = `width: ${colWidth}`
-    columnData.children = this.orderChildren('fields', columnData.children).map(dom.render)
+    columnData.children = this.orderChildren('fields', columnData.children).map(child => child && dom.render(child))
     return dom.render(columnData)
   }
 

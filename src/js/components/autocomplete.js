@@ -241,5 +241,3 @@ export default class Autocomplete {
     return validValue
   }
 }
-
-control.register('autocomplete', controlAutocomplete)

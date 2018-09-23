@@ -24,7 +24,6 @@ export default class Component extends Data {
 
     this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
-    // this.runConditions()
     this.observer = new MutationObserver(this.mutationHandler)
   }
 
@@ -300,7 +299,7 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd(evt) {
+  onAdd = evt => {
     const _this = this
     const { from, item, to } = evt
     const newIndex = indexOfNode(item, to)
