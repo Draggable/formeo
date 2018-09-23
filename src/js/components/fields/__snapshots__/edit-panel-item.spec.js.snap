@@ -2,6 +2,7 @@
 
 exports[`EditPanelItem should match attribute item snapshot 1`] = `
 EditPanelItem {
+  "conditionInput": [Function],
   "dom": <li
     class="field-attrs-type prop-wrap"
   >
@@ -35,6 +36,7 @@ EditPanelItem {
       "attrs": Object {},
     },
   },
+  "generateConditionFields": [Function],
   "itemKey": "attrs.type",
   "itemValues": Array [
     Array [
@@ -48,6 +50,7 @@ EditPanelItem {
 
 exports[`EditPanelItem should match option snapshot 1`] = `
 EditPanelItem {
+  "conditionInput": [Function],
   "dom": <li
     class="field-options-0 prop-wrap"
   >
@@ -95,6 +98,7 @@ EditPanelItem {
       "attrs": Object {},
     },
   },
+  "generateConditionFields": [Function],
   "itemKey": "options.0",
   "itemValues": Array [
     Array [
