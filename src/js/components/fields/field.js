@@ -8,6 +8,10 @@ import Component from '../component'
 import { FIELD_CLASSNAME } from '../../constants'
 import Components from '..'
 
+const DEFAULT_DATA = {
+  conditions: [],
+}
+
 /**
  * Element/Field class.
  */
@@ -18,7 +22,7 @@ export default class Field extends Component {
    * @return {Object} field object
    */
   constructor(fieldData = Object.create(null)) {
-    super('field', fieldData)
+    super('field', Object.assign({}, DEFAULT_DATA, fieldData))
 
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create(this.fieldPreview())
