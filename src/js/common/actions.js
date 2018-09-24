@@ -1,4 +1,5 @@
-import { identity } from 'rxjs'
+import identity from 'lodash/identity'
+import i18n from 'mi18n'
 import { SESSION_FORMDATA_KEY } from '../constants'
 import { sessionStorage } from './utils'
 
@@ -11,6 +12,10 @@ const defaultActions = {
   add: {
     attr: evt => {
       const attr = window.prompt(evt.message.attr)
+      if (attr && evt.isDisabled(attr) && false) {
+        window.alert(i18n.get('attributeNotPermitted', attr || ''))
+        return actions.add.attrs(evt)
+      }
       let val
       if (attr) {
         val = String(window.prompt(evt.message.value, ''))

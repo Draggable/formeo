@@ -7,8 +7,8 @@ class TextControl extends Control {
     const textInput = {
       tag: 'input',
       attrs: {
-        type: 'text',
         required: false,
+        type: 'text',
         className: '',
       },
       config: {

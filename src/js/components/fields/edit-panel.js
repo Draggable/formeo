@@ -46,7 +46,10 @@ export default class EditPanel {
     // }
     //   },
     // }
-    const [props, editButtons] = this.content()
+    // console.log(panelData, panelName, field)
+
+    this.props = this.createProps()
+    this.editButtons = this.createEditButtons()
     this.panelConfig = {
       config: {
         label: i18n.get(`panel.label.${panelName}`),
@@ -54,14 +57,30 @@ export default class EditPanel {
       attrs: {
         className: `f-panel ${panelName}-panel`,
       },
-      children: [props, editButtons],
+      children: [this.props, this.editButtons],
     }
-
-    this.props = props
-    this.editButtons = editButtons
-
-    // return panelConfig
   }
+
+  // content = () => {
+  //   const editGroup = {
+  //     tag: 'ul',
+  //     attrs: {
+  //       className: ['field-edit-group', `field-edit-${this.name}`],
+  //     },
+  //     editGroup: this.name,
+  //     isSortable: this.name === 'options',
+  //     content: Array.from(this.data).map((data, index) => {
+  //       const isArray = this.type === 'array'
+  //       const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
+  //       const itemData = isArray ? data : { [data[0]]: data[1] }
+  //       const editPanelItem = new EditPanelItem(itemKey, itemData, this.field)
+
+  //       return editPanelItem.dom
+  //     }),
+  //   }
+  //   console.log(editGroup)
+  //   // return [dom.create(editGroup), this.createEditButtons()]
+  // }
 
   /**
    * Generates the edit panel for attrs, meta and options for a fields(s)
@@ -69,24 +88,25 @@ export default class EditPanel {
    * @param  {Object} dataObj   field config object
    * @return {Object}           formeo DOM config object
    */
-  content = () => {
-    const editGroup = {
+  createProps() {
+    const editPanelItems = Array.from(this.data).map((data, index) => {
+      const isArray = this.type === 'array'
+      const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
+      const itemData = isArray ? data : { [data[0]]: data[1] }
+
+      return new EditPanelItem(itemKey, itemData, this.field)
+    })
+    const editGroupConfig = {
       tag: 'ul',
       attrs: {
         className: ['field-edit-group', `field-edit-${this.name}`],
       },
       editGroup: this.name,
       isSortable: this.name === 'options',
-      content: Array.from(this.data).map((data, index) => {
-        const isArray = this.type === 'array'
-        const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
-        const itemData = isArray ? data : { [data[0]]: data[1] }
-        const editPanelItem = new EditPanelItem(itemKey, itemData, this.field)
-
-        return editPanelItem.dom
-      }),
+      content: editPanelItems,
     }
-    return [dom.create(editGroup), this.createEditButtons()]
+
+    return dom.create(editGroupConfig)
   }
 
   /**
@@ -110,6 +130,7 @@ export default class EditPanel {
           const addEvt = {
             btnCoords: dom.coords(evt.target),
             addAction: addActions[type],
+            isDisabled: _this.isDisabledAttr,
             message: {
               attr: i18n.get(`action.add.${type}.attr`),
               value: i18n.get(`action.add.${type}.value`),
@@ -154,10 +175,6 @@ export default class EditPanel {
    * @param {String|Array} val
    */
   addAttribute = (attr, val) => {
-    if (this.isDisabledAttr(attr)) {
-      window.alert(`Attribute "${attr}": not permitted`)
-    }
-
     const safeAttr = helpers.hyphenCase(attr)
     const itemKey = `attrs.${safeAttr}`
 
@@ -220,6 +237,8 @@ export default class EditPanel {
     } else {
       this.props.appendChild(newCondition.dom)
     }
+
+    this.field.set(itemKey, evt.template)
 
     this.field.resizePanelWrap()
   }

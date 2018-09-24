@@ -109,25 +109,35 @@ export default class Field extends Component {
   }
 
   set(...args) {
-    const data = super.set(...args)
-    this.updateLabel()
-    this.updatePreview()
-
-    return data
+    const [path, propData] = args
+    const [property] = path.match(/(\w*)$/)
+    const value = propData[property] ? propData[property] : propData
+    console.log(value)
+    return super.set(path, value)
   }
 
+  /**
+   * Update the label dom when label data changes
+   */
   updateLabel() {
+    if (!this.label.parentElement) {
+      return null
+    }
     const newLabel = dom.create(this.labelConfig)
     this.label.parentElement.replaceChild(newLabel, this.label)
     this.label = newLabel
   }
 
+  /**
+   * Updates the conditions panel when linked field data changes
+   */
   updateConditionsPanel = () => {
     const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
     if (!newConditionsPanel) {
       return null
     }
-    const [newProps] = newConditionsPanel.content()
+    const newProps = newConditionsPanel.createProps()
+    // console.log(newConditionsPanel.createProps())
     const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
     currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
   }
@@ -137,6 +147,9 @@ export default class Field extends Component {
    * @return {Object} fresh preview
    */
   updatePreview(fieldData = this.fieldPreview()) {
+    if (!this.preview.parentElement) {
+      return null
+    }
     const newPreview = dom.create(fieldData, true)
     this.preview.parentElement.replaceChild(newPreview, this.preview)
     this.preview = newPreview

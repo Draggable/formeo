@@ -79,6 +79,7 @@ const INPUT_TYPE_ACTION = {
       field.updatePreview()
     },
   }),
+  object: () => ({}),
 }
 
 /**
@@ -108,7 +109,8 @@ export default class EditPanelItem {
     return {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val]) => {
-        let inputConfig = this.itemInput(key, val)
+        let inputConfig =
+          this.panelName === 'conditions' ? this.generateConditionFields(key, val) : this.itemInput(key, val)
         if (['selected', 'checked'].includes(key)) {
           inputConfig = {
             className: 'f-addon',
@@ -215,8 +217,8 @@ export default class EditPanelItem {
 
     const segmentTypes = {
       comparison: () => {
-        console.log(`${field.name}s`)
-        console.log(conditionPath, Components[`${field.name}s`].get(`${conditionPath}`))
+        // console.log(`${field.name}s`)
+        // console.log(conditionPath, Components[`${field.name}s`].get(`${conditionPath}`))
         // console.log(`.${key}`)
         // if (field.get(`${conditionPath}`)) {
 
@@ -298,10 +300,8 @@ export default class EditPanelItem {
   }
 
   itemInput(key, val) {
-    if (this.panelName === 'conditions') {
-      return this.generateConditionFields(key, val)
-    }
     const valType = dom.childType(val) || 'string'
+    const field = this.field
 
     const inputTypeConfig = Object.assign({}, { config: {}, attrs: {} }, ITEM_INPUT_TYPE_MAP[valType](key, val))
     const { attrs: fieldAttrs = {} } = this.field.data
@@ -327,6 +327,7 @@ export default class EditPanelItem {
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
       name: inputTypeConfig.attrs.type === 'checkbox' ? `${id}[]` : id,
       id,
+      disabled: field.isDisabledAttr.call(field, 'type'),
     })
 
     inputTypeConfig.action = {

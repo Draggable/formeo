@@ -172,3 +172,4 @@ operator.contains = contains
 operator.notContains = not contains
 placeholder.targetComponent = target / value
 placeholder.sourceComponent = source
+attributeNotPermitted = Attribute "{attribute}" is not permitted, please choose another.

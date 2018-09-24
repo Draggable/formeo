@@ -119,6 +119,9 @@ class DOM {
       node: children => {
         return element.appendChild(children)
       },
+      component: children => {
+        return element.appendChild(children.dom)
+      },
       array: children => {
         for (let i = 0; i < children.length; i++) {
           childType = _this.childType(children[i])
@@ -581,6 +584,7 @@ class DOM {
     return [
       ['array', content => Array.isArray(content)],
       ['node', content => content instanceof window.Node || content instanceof window.HTMLElement],
+      ['component', () => content && content.dom],
       [typeof content, () => true],
     ].find(typeCondition => typeCondition[1](content))[0]
   }
