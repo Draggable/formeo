@@ -2,14 +2,31 @@ import i18n from 'mi18n'
 import h, { indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
-import { clone } from '../../common/utils'
+import { clone, unique } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
 import { FIELD_CLASSNAME } from '../../constants'
 import Components from '..'
 
 const DEFAULT_DATA = {
-  conditions: [],
+  conditions: [
+    {
+      if: [
+        {
+          source: '',
+          comparison: '',
+          target: '',
+        },
+      ],
+      then: [
+        {
+          target: '',
+          assignment: '',
+          value: '',
+        },
+      ],
+    },
+  ],
 }
 
 /**
@@ -135,9 +152,8 @@ export default class Field extends Component {
     this.editPanels = []
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
-    const allowedPanels = Object.keys(this.data).filter(elem => {
-      return !h.inArray(elem, noPanels)
-    })
+    const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
+    const allowedPanels = panelOrder.filter(elem => !h.inArray(elem, noPanels))
 
     const fieldEdit = {
       className: ['field-edit', 'slide-toggle', 'panels-wrap'],
@@ -161,7 +177,7 @@ export default class Field extends Component {
 
     if (editPanelLength) {
       const editPanels = (_this.panels = new Panels(panelsData))
-      fieldEdit.className.push('panel-count-' + editPanelLength)
+      fieldEdit.className.push(`panel-count-${editPanelLength}`)
       fieldEdit.content = editPanels.children
       _this.panelNav = editPanels.nav
       _this.resizePanelWrap = editPanels.action.resize
