@@ -11,6 +11,7 @@ hr {
 
 .f-field-group {
   flex-wrap: wrap;
+  margin-top: 10px;
 
   label + .badge {
     margin-left: 10px;
@@ -18,7 +19,7 @@ hr {
 
   > label {
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: 3px;
   }
 
   button {
