@@ -138,19 +138,14 @@ export default class EditPanelItem {
     vals.forEach((condition, i) => {
       const conditionState = []
       const fields = Object.entries(condition).map(([key, val], i) => {
-        console.log(key, val, type, i)
         const fieldConfigs = this.conditionInput(key, val, type, i)
-        // const fields = Array.isArray(fieldData) ? fieldData : [fieldData]
         fieldConfigs.forEach(field => {
           if (field) {
-            console.log(field.className)
-            // field.className = `condition-${key}`
-            conditionState.push(`${field.className}-${val}`)
+            conditionState.push([field.className, val].join('-'))
           }
         })
         return fieldConfigs.filter(Boolean)
       })
-      // console.log(fields)
       const orderedFields = orderObjectsBy(
         fields,
         CONDITION_INPUT_ORDER.map(fieldName => `condition-${fieldName}`),
@@ -159,8 +154,6 @@ export default class EditPanelItem {
       if (!i) {
         orderedFields.unshift(label)
       }
-
-      // const conditionState =
 
       const row = {
         children: orderedFields,
@@ -198,7 +191,7 @@ export default class EditPanelItem {
 
     const getOperatorField = operator => {
       const operatorOptions = Object.entries(OPERATORS[operator]).map(entry => makeOptions(entry, 'operator'))
-      const operatorField = ITEM_INPUT_TYPE_MAP['array'](`condition.operator.${operator}`, operatorOptions)
+      const operatorField = ITEM_INPUT_TYPE_MAP['array'](`condition.${operator}`, operatorOptions)
       operatorField.action = {
         change: conditionChangeAction,
       }
@@ -221,7 +214,6 @@ export default class EditPanelItem {
             setTimeout(() => {
               const source = field.get(`${conditionPath}.source`).split('.')
               source.splice(-1, 1, target.value)
-              // field.remove(`${this.itemKey}.${type}.${i}.comparison`)
               field.set(`${this.itemKey}.${type}.${i}.source`, source.join('.'))
               field.set(`${this.itemKey}.${type}.${i}.target`, true)
               field.updateConditionsPanel()
@@ -238,26 +230,32 @@ export default class EditPanelItem {
         new RegExp(`${target.className}-([^\\s]+)`),
         ''
       )
-      // dom.removeClasses(target.parentElement, )
       target.parentElement.classList.add(`${target.className}-${target.value}`)
-
       const dataPath = `${field.name}s.${conditionAddress}.${key}`
+      // console.log(dataPath)
+      // const [componentType, componentId, ...path] = dataPath.split('.')
       const evtData = {
         dataPath,
         value: target.value,
         src: target,
       }
       events.formeoUpdated(evtData)
+
+      // console.log(target.value, target.className)
+      // @todo implement autocomplete so we can safely set value to source
+      // Components[componentType].get(componentId).set(path.join('.'))
+
+      setTimeout(() => {
+        const source = field.get(`${conditionPath}.source`).split('.')
+        source.splice(-1, 1, target.value)
+        // field.set(`${this.itemKey}.${type}.${i}.source`, source.join('.'))
+        // field.set(`${this.itemKey}.${type}.${i}.target`, true)
+        field.updateConditionsPanel()
+      }, ANIMATION_BASE_SPEED)
     }
 
     const segmentTypes = {
       comparison: () => {
-        // console.log(`${field.name}s`)
-        // console.log(conditionPath, Components[`${field.name}s`].get(`${conditionPath}`))
-        // console.log(`.${key}`)
-        // if (field.get(`${conditionPath}`)) {
-
-        // }
         const comparisonField = getOperatorField('comparison')
         return [comparisonField]
       },
@@ -269,10 +267,12 @@ export default class EditPanelItem {
         return [logicalField]
       },
       source: path => {
-        console.log(path)
-        const { label, property, component } = getPath(path)
+        const { label, property, component } = typeof path === 'string' ? getPath(path) : {}
         const componentInput = ITEM_INPUT_TYPE_MAP['string']('condition.source', label)
-        const propertyInput = getPropertyField(property)
+        const propertyInput = property && getPropertyField(property)
+        // componentInput.action = {
+        //   input: conditionChangeAction,
+        // }
 
         // @todo move this to an action since it needs to be evaluated when the field changes
         component && Components[`${field.name}s`].conditionMap.set(component.id, field)
@@ -283,12 +283,14 @@ export default class EditPanelItem {
         const { label, value, property } = typeof path === 'string' ? getPath(path) : {}
         const componentInput = ITEM_INPUT_TYPE_MAP['string']('condition.target', label)
         const propertyInput = property && getPropertyField(property)
+        componentInput.action = {
+          input: conditionChangeAction,
+        }
         const valueInput = type !== 'if' && value && segmentTypes.val(value)
 
         return [componentInput, propertyInput, valueInput]
       },
       value: val => {
-        console.log(val, ' typeof: ', dom.childType(val))
         return [val && ITEM_INPUT_TYPE_MAP['string']('condition.value', val)]
       },
       assignment: () => [getOperatorField('assignment')],

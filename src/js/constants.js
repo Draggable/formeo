@@ -92,8 +92,6 @@ export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
 export const COMPARISON_OPERATORS = {
   '==': 'equals',
   '!=': 'notEquals',
-  vis: 'visible',
-  '!vis': 'notVisible',
   '⊃': 'contains',
   '!⊃': 'notContains',
 }

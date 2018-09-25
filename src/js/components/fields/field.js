@@ -145,7 +145,6 @@ export default class Field extends Component {
       return null
     }
     const newProps = newConditionsPanel.createProps()
-    console.log(newProps)
     const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
     currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
   }
