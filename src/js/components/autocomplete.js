@@ -1,16 +1,53 @@
 import { dom } from '../common/dom'
+import startCase from 'lodash/startCase'
+// import Data from './data'
+import Components from '.'
+
+const labelCount = (arr, elem) => arr.reduce((n, x) => n + (x === elem), 0)
+
+const componentOptions = selected => {
+  const labels = []
+  const options = Object.entries(Components.flatList()).map(([id, component]) => {
+    const label = component.get('config.label') || component.get('attrs.id') || component.get('meta.id')
+    if (label) {
+      const type = {
+        tag: 'span',
+        content: ` ${startCase(component.name)}`,
+        className: 'component-type',
+      }
+      const labelKey = `${component.name}.${label}`
+      labels.push(labelKey)
+      let count = labelCount(labels, labelKey)
+      count = {
+        tag: 'span',
+        content: count > 1 && `(${count})`,
+        className: 'component-label-count',
+      }
+      return dom.makeOption([id, [`${label} `, count, type]], selected)
+    }
+  })
+
+  return options.filter(Boolean)
+}
 
 /**
  * Autocomplete class
  * Output an autocomplete form element
  */
 export default class Autocomplete {
+  constructor(key, value) {
+    this.key = key
+    this.value = value
+    this.build()
+  }
+
   /**
    * build a text DOM element, supporting other jquery text form-control's
    * @return {Object} DOM Element to be injected into the form.
    */
   build() {
-    const { values, type, ...data } = this.config
+    // console.log(this.options)
+    // const { values, type, ...data } = this.config
     const keyboardNav = e => {
       const list = e.target.nextSibling.nextSibling
       const hiddenField = e.target.nextSibling
@@ -41,8 +78,8 @@ export default class Autocomplete {
           13,
           () => {
             if (activeOption) {
-              e.target.value = activeOption.innerHTML
-              hiddenField.value = activeOption.getAttribute('value')
+              e.target.value = activeOption.dataset.label
+              hiddenField.value = activeOption.dataset.value
               if (list.style.display === 'none') {
                 this.showList(list, activeOption)
               } else {
@@ -50,12 +87,10 @@ export default class Autocomplete {
               }
             } else {
               // Don't allow a value not in the list
-              if (this.config.requireValidOption) {
-                if (!this.isOptionValid(list, e.target.value)) {
-                  e.target.value = ''
-                  e.target.nextSibling.value = ''
-                }
-              }
+              // if (!this.isOptionValid(list, activeOption.dataset.l)) {
+              //   e.target.value = ''
+              //   e.target.nextSibling.value = ''
+              // }
             }
             e.preventDefault()
           },
@@ -76,8 +111,9 @@ export default class Autocomplete {
 
       return direction()
     }
-    const fauxEvents = {
+    const autoCompleteInputActions = {
       focus: evt => {
+        console.dir(evt.target)
         const list = evt.target.nextSibling.nextSibling
         const filteredOptions = dom.toggleElementsByStr(list.querySelectorAll('li'), evt.target.value)
         evt.target.addEventListener('keydown', keyboardNav)
@@ -92,13 +128,11 @@ export default class Autocomplete {
           evt.target.nextSibling.nextSibling.style.display = 'none'
         }, 200)
         // Validate the option entered exists
-        if (this.config.requireValidOption) {
-          const list = evt.target.nextSibling.nextSibling
-          if (!this.isOptionValid(list, evt.target.value)) {
-            evt.target.value = ''
-            evt.target.nextSibling.value = ''
-          }
-        }
+        // const list = evt.target.nextSibling.nextSibling
+        // if (!this.isOptionValid(list, evt.target.dataset.value)) {
+        //   evt.target.value = ''
+        //   evt.target.nextSibling.value = ''
+        // }
       },
       input: evt => {
         const list = evt.target.nextSibling.nextSibling
@@ -117,19 +151,60 @@ export default class Autocomplete {
         }
       },
     }
-    const fauxAttrs = Object.assign({}, data, {
-      id: `${data.id}-input`,
+    const autoCompleteInputConfig = {
+      tag: 'input',
       autocomplete: 'off',
-      events: fauxEvents,
+      action: autoCompleteInputActions,
+      attrs: { type: 'text' },
+    }
+    // const autoCompleteInput = dom.create({
+    //   tag: 'input',
+    //   ...autoCompleteInputConfig,
+    // })
+    const hiddenInput = dom.create({
+      tag: 'input',
+      attrs: { type: 'hidden' },
     })
-    const hiddenAttrs = Object.assign({}, data, { type: 'hidden' })
-    delete fauxAttrs.name
-    const field = [this.markup('input', null, fauxAttrs), this.markup('input', null, hiddenAttrs)]
 
-    const options = values.map(optionData => {
-      const label = optionData.label
-      const config = {
-        events: {
+    const fields = [autoCompleteInputConfig, hiddenInput]
+
+    const listConfig = {
+      tag: 'ul',
+      attrs: { className: 'fb-autocomplete-list' },
+    }
+
+    fields.push(dom.create(listConfig))
+
+    this.dom = dom.create({
+      children: fields,
+      className: this.key.replace(/\./g, '-'),
+      action: {
+        onRender: elem => {
+          const list = elem.querySelector('.fb-autocomplete-list')
+          const options = this.generateOptions()
+          options.forEach(option => list.appendChild(option))
+
+          console.log(elem, list)
+        },
+      },
+    })
+
+    return this.dom
+  }
+
+  generateOptions() {
+    const options = componentOptions()
+
+    return options.map(optionData => {
+      console.log(optionData)
+      const optionConfig = {
+        tag: 'li',
+        children: optionData.label,
+        dataset: {
+          value: optionData.value,
+          label: optionData.label[0].trim(),
+        },
+        action: {
           click: evt => {
             const list = evt.target.parentElement
             const field = list.previousSibling.previousSibling
@@ -138,14 +213,12 @@ export default class Autocomplete {
             this.hideList(list)
           },
         },
-        value: optionData.value,
       }
-      return this.markup('li', label, config)
+      return dom.create(optionConfig)
     })
-
-    field.push(this.markup('ul', options, { id: `${data.id}-list`, className: `fb-${type}-list` }))
-    return field
   }
+
+  // setOptions(options, selected)
 
   /**
    * Hides autocomplete list and deselects all the options
@@ -230,10 +303,11 @@ export default class Autocomplete {
    * @return {Object} - is the option in the pre defined list
    */
   isOptionValid(list, value) {
+    console.log(value)
     const options = list.querySelectorAll('li')
     let validValue = false
     for (let i = 0; i < options.length; i++) {
-      if (options[i].innerHTML === value) {
+      if (options[i].dataset.value === value) {
         validValue = true
         break
       }

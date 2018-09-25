@@ -218,6 +218,9 @@ class DOM {
     if (elem.content || elem.children) {
       const children = elem.content || elem.children
       childType = _this.childType(children)
+      if (!appendChildren[childType]) {
+        console.log(childType)
+      }
       appendChildren[childType].call(this, children)
     }
 
@@ -384,6 +387,17 @@ class DOM {
           }),
       },
     }
+  }
+
+  makeOption = ([value, label], selected, i18nKey) => {
+    const option = {
+      value,
+      label: i18nKey ? i18n.get(`${i18nKey}.${label}`) : label,
+    }
+    if (value === selected) {
+      option.selected = true
+    }
+    return option
   }
 
   /**
@@ -878,17 +892,6 @@ class DOM {
   emptyClass(elem) {
     const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)))
     elem.classList.toggle('empty', !children.length)
-  }
-
-  /**
-   * Shorthand expander for dom.create
-   * @param  {String} tag
-   * @param  {Object} attrs
-   * @param  {Object|Array|String} content
-   * @return {Object} DOM node
-   */
-  h(tag, attrs, content) {
-    return this.create({ tag, attrs, content })
   }
 
   /**

@@ -5,6 +5,7 @@ import animate from '../../common/animation'
 import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_BASE_SPEED } from '../../constants'
 import events from '../../common/events'
 import Components from '../index'
+import Autocomplete from '../autocomplete'
 
 const inputConfigBase = ({ key, value, type = 'text' }) => ({
   tag: 'input',
@@ -27,6 +28,10 @@ const labelHelper = key => {
 }
 
 const ITEM_INPUT_TYPE_MAP = {
+  autocomplete: (key, vals) => {
+    // const baseConfig =
+    return new Autocomplete(key)
+  },
   string: (key, val) => inputConfigBase({ key, value: val }),
   boolean: (key, val) => {
     const type = key === 'selected' ? 'radio' : 'checkbox'
@@ -169,16 +174,6 @@ export default class EditPanelItem {
     const field = this.field
     const conditionPath = `${this.itemKey}.${type}.${i}`
     const conditionAddress = `${this.field.id}.${conditionPath}`
-    const makeOptions = ([value, label], i18nKey, selected = val) => {
-      const option = {
-        value,
-        label: i18n.get(`${i18nKey}.${label}`) || label,
-      }
-      if (value === selected) {
-        option.selected = true
-      }
-      return option
-    }
 
     const getPath = path => {
       // const splitPath = path.split('.')
@@ -190,7 +185,9 @@ export default class EditPanelItem {
     }
 
     const getOperatorField = operator => {
-      const operatorOptions = Object.entries(OPERATORS[operator]).map(entry => makeOptions(entry, 'operator'))
+      const operatorOptions = Object.entries(OPERATORS[operator]).map(entry =>
+        dom.makeOption(entry, operator, 'operator')
+      )
       const operatorField = ITEM_INPUT_TYPE_MAP['array'](`condition.${operator}`, operatorOptions)
       operatorField.action = {
         change: conditionChangeAction,
@@ -200,7 +197,7 @@ export default class EditPanelItem {
 
     const getPropertyField = property => {
       const options = Object.keys(FIELD_PROPERTY_MAP).map(value => {
-        return makeOptions([value, value], 'field.property', property)
+        return dom.makeOption([value, value], property, 'field.property')
       })
       const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array']('condition.property', options)
 
@@ -239,6 +236,7 @@ export default class EditPanelItem {
         value: target.value,
         src: target,
       }
+
       events.formeoUpdated(evtData)
 
       // console.log(target.value, target.className)
@@ -266,9 +264,17 @@ export default class EditPanelItem {
         }
         return [logicalField]
       },
-      source: path => {
-        const { label, property, component } = typeof path === 'string' ? getPath(path) : {}
-        const componentInput = ITEM_INPUT_TYPE_MAP['string']('condition.source', label)
+      source: value => {
+        const { property, component } = typeof value === 'string' ? getPath(value) : {}
+        // ([value, label], i18nKey, selected) => {
+        const somethingInteresting = Components.flatList()
+
+        console.log(somethingInteresting)
+        // console.log(value)
+        // new Autocomplete(testArr)
+        // ([value, label], i18nKey, selected = val) => {
+        const componentInput = ITEM_INPUT_TYPE_MAP['autocomplete']('condition.source', component)
+        // const componentInput = ITEM_INPUT_TYPE_MAP['string']('condition.source', label)
         const propertyInput = property && getPropertyField(property)
         // componentInput.action = {
         //   input: conditionChangeAction,
@@ -286,7 +292,7 @@ export default class EditPanelItem {
         componentInput.action = {
           input: conditionChangeAction,
         }
-        const valueInput = type !== 'if' && value && segmentTypes.val(value)
+        const valueInput = type !== 'if' && value && segmentTypes.value(value)
 
         return [componentInput, propertyInput, valueInput]
       },

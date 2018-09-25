@@ -121,6 +121,10 @@
     padding: space(1) space(1) 0;
   }
 
+  [contenteditable] {
+    @extend %input-style;
+  }
+
   .prop-inputs,
   .prop-controls {
     transition: width 150ms;
@@ -129,13 +133,18 @@
     .f-addon,
     input:not([type='checkbox']):not([type='radio']),
     select,
-    textarea {
+    textarea,
+    [contenteditable] {
       font-size: 0.825em;
       flex: 1 1 auto;
       width: auto;
       &:focus {
         z-index: 1;
       }
+    }
+
+    .condition-source + select {
+      margin-left: -1px;
     }
   }
 
@@ -171,7 +180,8 @@
   width: 100%;
   margin-top: -1px;
   input,
-  select {
+  select,
+  [contenteditable] {
     border-radius: 0;
     width: inherit !important;
   }
@@ -190,6 +200,9 @@
   .condition-logical {
     max-width: 60px;
     text-transform: uppercase;
+  }
+  .condition-source {
+    z-index: 1;
   }
 }
 

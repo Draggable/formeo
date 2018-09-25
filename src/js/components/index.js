@@ -53,6 +53,21 @@ export class Components extends Data {
     return this.data
   }
 
+  /**
+   * flattens the component tree
+   * @returns {Object} where keys contains component type
+   */
+  flatList(data = this.data, acculumator = Object.create(null)) {
+    return Object.entries(data).reduce((acc, [type, components]) => {
+      if (typeof components === 'object') {
+        Object.entries(components).forEach(([id, component]) => {
+          acc[`${type}.${id}`] = component
+        })
+      }
+      return acc
+    }, acculumator)
+  }
+
   get json() {
     return window.JSON.stringify(this.formData)
   }
