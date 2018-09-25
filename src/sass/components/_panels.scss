@@ -51,10 +51,6 @@
     }
   }
 
-  .active-panel {
-    background-color: $white;
-  }
-
   ul {
     @extend %no-list-style;
   }
@@ -135,15 +131,6 @@
         box-shadow: none;
         background-color: $white;
       }
-    }
-  }
-}
-
-.options-panel {
-  .prop-inputs {
-    .f-field-group {
-      // width: 33%;
-      // display: inline-block;
     }
   }
 }

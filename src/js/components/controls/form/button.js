@@ -11,7 +11,6 @@ class ButtonControl extends Control {
       config: {
         label: i18n.get('controls.form.button'),
         hideLabel: true,
-        disabledAttrs: ['type'],
       },
       meta: {
         group: 'common',

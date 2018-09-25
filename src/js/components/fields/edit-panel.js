@@ -159,17 +159,6 @@ export default class EditPanel {
   }
 
   /**
-   * Checks if attribute is allowed to be edited
-   * @param  {String}  attr
-   * @return {Boolean}      [description]
-   */
-  isDisabledAttr(attr) {
-    // @todo fix meta id
-    const disabledAttrs = this.field.config.panels.attrs.disabled.concat(this.field.get('config.disabledAttrs'))
-    return disabledAttrs.includes(attr)
-  }
-
-  /**
    * Add a new attribute to the attrs panels
    * @param {String} attr
    * @param {String|Array} val

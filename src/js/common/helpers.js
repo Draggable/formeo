@@ -17,7 +17,7 @@ const loaded = {
  * Tests if is whole number. returns false if n is Float
  * @param {String|Number} n
  */
-export const isInt = n => Number(n) === n && n % 1 === 0
+export const isInt = n => (Number(n) === n && n % 1 === 0) || n === '0'
 
 /**
  * Finds the index of an element in its parent

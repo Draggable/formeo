@@ -12,7 +12,6 @@ class TextControl extends Control {
         className: '',
       },
       config: {
-        disabledAttrs: ['type'],
         label: i18n.get('controls.form.input.text'),
       },
       meta: {

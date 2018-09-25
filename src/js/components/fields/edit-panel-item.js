@@ -1,8 +1,8 @@
 import i18n from 'mi18n'
-import h, { orderObjectsBy, hyphenCase } from '../../common/helpers'
+import h, { orderObjectsBy } from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
-import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS } from '../../constants'
+import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_BASE_SPEED } from '../../constants'
 import events from '../../common/events'
 import Components from '../index'
 
@@ -11,8 +11,9 @@ const inputConfigBase = ({ key, value, type = 'text' }) => ({
   attrs: {
     type,
     value,
-    placeholder: labelHelper(`placeholder.${key}`),
+    placeholder: labelHelper(`${key}.placeholder`),
   },
+  className: key.replace(/\./g, '-'),
   config: {},
 })
 
@@ -38,9 +39,10 @@ const ITEM_INPUT_TYPE_MAP = {
       attrs: {
         placeholder: labelHelper(`placeholder.${key}`),
       },
+      className: key.replace(/\./g, '-'),
       options: vals.map(({ label, value, selected }) => ({
         label,
-        value: hyphenCase(value),
+        value,
         selected,
       })),
     }
@@ -97,10 +99,14 @@ export default class EditPanelItem {
     this.itemValues = h.orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
     this.field = field
     this.itemKey = itemKey
-    this.panelName = itemKey.substr(0, itemKey.indexOf('.'))
+    const [panelName, item] = itemKey.split('.')
+    this.panelName = panelName
+    this.isDisabled = field.isDisabledProp(item, panelName)
+    this.isHidden = this.isDisabled && field.config.panels[panelName].hideDisabled
+
     this.dom = dom.create({
       tag: 'li',
-      className: [`field-${itemKey.replace('.', '-')}`, 'prop-wrap'],
+      className: [`field-${itemKey.replace(/\./g, '-')}`, 'prop-wrap', this.isHidden && 'hidden-property'],
       children: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
     })
   }
@@ -130,15 +136,21 @@ export default class EditPanelItem {
       content: i18n.get(type) || type,
     }
     vals.forEach((condition, i) => {
-      const fields = Object.entries(condition)
-        .map(([key, val], i) => {
-          const field = this.conditionInput(key, val, type, i)
+      const conditionState = []
+      const fields = Object.entries(condition).map(([key, val], i) => {
+        console.log(key, val, type, i)
+        const fieldConfigs = this.conditionInput(key, val, type, i)
+        // const fields = Array.isArray(fieldData) ? fieldData : [fieldData]
+        fieldConfigs.forEach(field => {
           if (field) {
-            field.className = `condition-${key}`
+            console.log(field.className)
+            // field.className = `condition-${key}`
+            conditionState.push(`${field.className}-${val}`)
           }
-          return field
         })
-        .filter(Boolean)
+        return fieldConfigs.filter(Boolean)
+      })
+      // console.log(fields)
       const orderedFields = orderObjectsBy(
         fields,
         CONDITION_INPUT_ORDER.map(fieldName => `condition-${fieldName}`),
@@ -147,9 +159,12 @@ export default class EditPanelItem {
       if (!i) {
         orderedFields.unshift(label)
       }
+
+      // const conditionState =
+
       const row = {
         children: orderedFields,
-        className: `condition-row ${type}-condition-row`,
+        className: `condition-row ${type}-condition-row ${conditionState.join(' ')}`,
       }
 
       conditions.push(row)
@@ -159,22 +174,23 @@ export default class EditPanelItem {
 
   conditionInput = (key, val, type, i) => {
     const field = this.field
-    const conditionPath = `${this.field.id}.${this.itemKey}.${type}.${i}`
-    const makeOptions = ([value, label], i18nKey) => {
+    const conditionPath = `${this.itemKey}.${type}.${i}`
+    const conditionAddress = `${this.field.id}.${conditionPath}`
+    const makeOptions = ([value, label], i18nKey, selected = val) => {
       const option = {
         value,
         label: i18n.get(`${i18nKey}.${label}`) || label,
       }
-      if (value === val) {
+      if (value === selected) {
         option.selected = true
       }
       return option
     }
 
     const getPath = path => {
-      const splitPath = path.split('.')
+      // const splitPath = path.split('.')
       const component = field.getComponent(path)
-      const property = component && splitPath.slice(2, splitPath.length).join('.')
+      const property = component && path.property
       const label = (component && component.get(FIELD_PROPERTY_MAP['label'])) || ''
       const value = field.value(path)
       return { label, value, property, component }
@@ -182,31 +198,50 @@ export default class EditPanelItem {
 
     const getOperatorField = operator => {
       const operatorOptions = Object.entries(OPERATORS[operator]).map(entry => makeOptions(entry, 'operator'))
-      const operatorField = ITEM_INPUT_TYPE_MAP['array'](operator, operatorOptions)
-
+      const operatorField = ITEM_INPUT_TYPE_MAP['array'](`condition.operator.${operator}`, operatorOptions)
       operatorField.action = {
         change: conditionChangeAction,
       }
       return operatorField
     }
 
-    const getPropertyField = () => {
+    const getPropertyField = property => {
       const options = Object.keys(FIELD_PROPERTY_MAP).map(value => {
-        return makeOptions([value, value], 'field.property')
+        return makeOptions([value, value], 'field.property', property)
       })
-      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array']('property', options)
+      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array']('condition.property', options)
 
       propertyFieldConfig.action = {
-        change: conditionChangeAction,
+        change: evt => {
+          const { target } = evt
+          conditionChangeAction(evt)
+          if (target.value === 'isVisible') {
+            // this is getting ridiculous, rethink this whole pattern.
+            // maybe time for state management
+            setTimeout(() => {
+              const source = field.get(`${conditionPath}.source`).split('.')
+              source.splice(-1, 1, target.value)
+              // field.remove(`${this.itemKey}.${type}.${i}.comparison`)
+              field.set(`${this.itemKey}.${type}.${i}.source`, source.join('.'))
+              field.set(`${this.itemKey}.${type}.${i}.target`, true)
+              field.updateConditionsPanel()
+            }, ANIMATION_BASE_SPEED)
+          }
+        },
       }
 
       return propertyFieldConfig
     }
 
     const conditionChangeAction = ({ target }) => {
-      console.log(target.value, target.parentElement)
+      target.parentElement.className = target.parentElement.className.replace(
+        new RegExp(`${target.className}-([^\\s]+)`),
+        ''
+      )
+      // dom.removeClasses(target.parentElement, )
+      target.parentElement.classList.add(`${target.className}-${target.value}`)
 
-      const dataPath = `${field.name}s.${conditionPath}.${key}`
+      const dataPath = `${field.name}s.${conditionAddress}.${key}`
       const evtData = {
         dataPath,
         value: target.value,
@@ -224,37 +259,39 @@ export default class EditPanelItem {
 
         // }
         const comparisonField = getOperatorField('comparison')
-        return comparisonField
+        return [comparisonField]
       },
       logical: () => {
         const logicalField = getOperatorField('logical')
         logicalField.action = {
           change: conditionChangeAction,
         }
-        return logicalField
+        return [logicalField]
       },
       source: path => {
+        console.log(path)
         const { label, property, component } = getPath(path)
-        const labelInput = ITEM_INPUT_TYPE_MAP['string']('sourceComponent', label)
-        const propertyInput = property && getPropertyField(property)
+        const componentInput = ITEM_INPUT_TYPE_MAP['string']('condition.source', label)
+        const propertyInput = getPropertyField(property)
 
         // @todo move this to an action since it needs to be evaluated when the field changes
         component && Components[`${field.name}s`].conditionMap.set(component.id, field)
 
-        return [labelInput, propertyInput]
+        return [componentInput, propertyInput]
       },
       target: path => {
-        const { label, value, property } = getPath(path)
-        const labelInput = ITEM_INPUT_TYPE_MAP['string']('targetComponent', label)
+        const { label, value, property } = typeof path === 'string' ? getPath(path) : {}
+        const componentInput = ITEM_INPUT_TYPE_MAP['string']('condition.target', label)
         const propertyInput = property && getPropertyField(property)
-        const valueInput = type !== 'if' && value && ITEM_INPUT_TYPE_MAP['string']('targetValue', value)
+        const valueInput = type !== 'if' && value && segmentTypes.val(value)
 
-        return [labelInput, propertyInput, valueInput]
+        return [componentInput, propertyInput, valueInput]
       },
       value: val => {
-        return val && ITEM_INPUT_TYPE_MAP['string']('targetValue', val)
+        console.log(val, ' typeof: ', dom.childType(val))
+        return [val && ITEM_INPUT_TYPE_MAP['string']('condition.value', val)]
       },
-      assignment: () => getOperatorField('comparison'),
+      assignment: () => [getOperatorField('assignment')],
     }
     return segmentTypes[key] && segmentTypes[key](val)
   }
@@ -301,7 +338,6 @@ export default class EditPanelItem {
 
   itemInput(key, val) {
     const valType = dom.childType(val) || 'string'
-    const field = this.field
 
     const inputTypeConfig = Object.assign({}, { config: {}, attrs: {} }, ITEM_INPUT_TYPE_MAP[valType](key, val))
     const { attrs: fieldAttrs = {} } = this.field.data
@@ -315,7 +351,7 @@ export default class EditPanelItem {
       .filter(isNaN)
       .join('.')
 
-    const id = [this.field.id, !['selected', 'checked'].includes(key) && this.itemKey.replace('.', '-')]
+    const id = [this.field.id, !['selected', 'checked'].includes(key) && this.itemKey.replace(/\./g, '-')]
       .filter(Boolean)
       .join('-')
 
@@ -327,7 +363,7 @@ export default class EditPanelItem {
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
       name: inputTypeConfig.attrs.type === 'checkbox' ? `${id}[]` : id,
       id,
-      disabled: field.isDisabledAttr.call(field, 'type'),
+      disabled: this.isDisabled,
     })
 
     inputTypeConfig.action = {

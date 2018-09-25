@@ -118,7 +118,7 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      'a42d0117-e0b0-4fcb-b447-abf2c9076b21': {
+      'b6715d58-5a86-4f4b-8310-057387b5f66a': {
         events: {
           onRender: element => {
             formeo.Components.fields.get(element.id).toggleEdit(true)
@@ -126,16 +126,14 @@ const formeoOpts = {
           },
         },
         panels: {
+          attrs: {
+            hideDisabled: true,
+          },
           disabled: [
             // 'conditions'
-          ]
-        }
+          ],
+        },
       },
-      // all: {
-      //   actionButtons: {
-      //     buttons: ['yeah'],
-      //   },
-      // },
     },
   },
   events: {

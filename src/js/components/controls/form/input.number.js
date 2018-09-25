@@ -12,7 +12,6 @@ class NumberControl extends Control {
       },
       config: {
         label: i18n.get('number'),
-        disabledAttrs: ['type'],
       },
       meta: {
         group: 'common',

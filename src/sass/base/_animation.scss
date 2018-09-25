@@ -32,3 +32,13 @@
     border-color: lighten($input-focus, 20%);
   }
 }
+
+@keyframes HIDE_CONDITION_SEGMENT {
+  0% {
+    max-width: 100%;
+  }
+  100% {
+    max-width: 0;
+    padding: 0.3em 0;
+  }
+}

@@ -1,4 +1,5 @@
 import i18n from 'mi18n'
+import startCase from 'lodash/startCase'
 import h, { indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
@@ -108,12 +109,19 @@ export default class Field extends Component {
     )
   }
 
+  /**
+   * wrapper for Data.set
+   */
   set(...args) {
     const [path, propData] = args
     const [property] = path.match(/(\w*)$/)
     const value = propData[property] ? propData[property] : propData
-    console.log(value)
-    return super.set(path, value)
+
+    const data = super.set(path, value)
+    this.updateLabel()
+    this.updatePreview()
+
+    return data
   }
 
   /**
@@ -137,7 +145,7 @@ export default class Field extends Component {
       return null
     }
     const newProps = newConditionsPanel.createProps()
-    // console.log(newConditionsPanel.createProps())
+    console.log(newProps)
     const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
     currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
   }
@@ -257,5 +265,19 @@ export default class Field extends Component {
     }
 
     return fieldPreview
+  }
+
+  /**
+   * Checks if attribute is allowed to be edited
+   * @param  {String}  propName
+   * @return {Boolean}
+   */
+  isDisabledProp = (propName, kind = 'attrs') => {
+    const propKind = this.config.panels[kind]
+    if (!propKind) {
+      return false
+    }
+    const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${startCase(kind)}`))
+    return disabledAttrs.includes(propName)
   }
 }

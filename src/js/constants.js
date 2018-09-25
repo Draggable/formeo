@@ -103,7 +103,7 @@ export const LOGICAL_OPERATORS = {
 }
 
 export const ASSIGNMENT_OPERATORS = {
-  '=': null,
+  '=': '=',
 }
 
 export const CONDITION_INPUT_ORDER = ['label', 'logical', 'source', 'property', 'comparison', 'target']

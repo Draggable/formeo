@@ -12,7 +12,7 @@ const defaultActions = {
   add: {
     attr: evt => {
       const attr = window.prompt(evt.message.attr)
-      if (attr && evt.isDisabled(attr) && false) {
+      if (attr && evt.isDisabled(attr)) {
         window.alert(i18n.get('attributeNotPermitted', attr || ''))
         return actions.add.attrs(evt)
       }

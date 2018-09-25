@@ -12,6 +12,7 @@ const DEFAULT_CONFIG = {
     disabled: [],
     attrs: {
       disabled: [],
+      hideDisabled: true,
     },
     order: ['attrs', 'options', 'conditions'],
   },
