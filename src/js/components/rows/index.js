@@ -1,9 +1,23 @@
 import ComponentData from '../component-data'
 import Row from './row'
 
-export default class Rows extends ComponentData {
+const DEFAULT_CONFIG = {
+  actionButtons: {
+    buttons: ['handle', 'edit', 'clone', 'remove'],
+    disabled: [],
+  },
+}
+
+export class Rows extends ComponentData {
   constructor(rowData) {
     super('rows', rowData)
+    this.config = { all: DEFAULT_CONFIG }
   }
-  Component = Row
+  Component(data) {
+    return new Row(data)
+  }
 }
+
+const rows = new Rows()
+
+export default rows

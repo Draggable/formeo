@@ -1,11 +1,17 @@
 import i18n from 'mi18n'
-import h from '../../common/helpers'
+import startCase from 'lodash/startCase'
+import h, { indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
-import { clone } from '../../common/utils'
+import { clone, unique } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
-import { FIELD_CLASSNAME } from '../../constants'
+import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants'
+import Components from '..'
+
+const DEFAULT_DATA = {
+  conditions: [CONDITION_TEMPLATE],
+}
 
 /**
  * Element/Field class.
@@ -17,7 +23,11 @@ export default class Field extends Component {
    * @return {Object} field object
    */
   constructor(fieldData = Object.create(null)) {
-    super('field', fieldData)
+    super('field', Object.assign({}, DEFAULT_DATA, fieldData))
+
+    this.label = dom.create(this.labelConfig)
+    this.preview = dom.create(this.fieldPreview())
+    this.editPanels = []
 
     let field = {
       tag: 'li',
@@ -27,8 +37,9 @@ export default class Field extends Component {
       id: this.id,
       children: [
         this.label,
-        this.actionButtons(), // fieldEdit window
-        this.fieldEdit, // fieldEdit window
+        this.getActionButtons(), // fieldEdit window
+        this.fieldEdit, // fieldEdit window,
+        this.preview, // preview
       ],
       panelNav: this.panelNav,
       dataset: {
@@ -41,43 +52,119 @@ export default class Field extends Component {
     }
 
     field = dom.create(field)
+    this.observe(field)
 
-    this.preview = dom.create(this.fieldPreview())
-    field.appendChild(this.preview)
     this.dom = field
+    this.isEditing = false
+    this.onRender()
   }
 
-  get label() {
-    return (
-      this.data.config &&
-      !this.data.config.hideLabel && {
-        tag: 'label',
-        attrs: {
-          contenteditable: true,
-          className: 'prev-label',
+  get labelConfig() {
+    const hideLabel = !!this.get('config.hideLabel')
+
+    if (hideLabel) {
+      return
+    }
+
+    const labelVal = this.get('config.label')
+    const required = this.get('attrs.required')
+
+    const label = {
+      tag: 'label',
+      attrs: {
+        contenteditable: true,
+      },
+      children: labelVal,
+      action: {
+        input: ({ target: { innerHTML, innerText } }) => {
+          super.set('config.label', innerHTML)
+          const reverseConditionField = Components['fields'].conditionMap.get(this.id)
+          if (reverseConditionField) {
+            return reverseConditionField.updateConditionSourceLabel(`${this.name}s.${this.id}`, innerText)
+          }
         },
-        children: this.data.config.label,
-        action: {
-          input: ({ target: { innerHTML } }) => {
-            this.set('config.label', innerHTML)
-          },
-        },
+      },
+    }
+
+    const labelWrap = {
+      className: 'prev-label',
+      children: [label, required && dom.requiredMark()],
+    }
+
+    return labelWrap
+  }
+
+  /**
+   * Updates a source field's label without recreating conditions dom
+   */
+  updateConditionSourceLabel(value, label) {
+    const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
+    if (!newConditionsPanel) {
+      return null
+    }
+
+    newConditionsPanel.editPanelItems.forEach(({ itemFieldGroups }) => {
+      itemFieldGroups.forEach(fields => {
+        const autocomplete = fields.find(field => field.value === value)
+        if (autocomplete) {
+          autocomplete.displayField.value = label
+        }
+      })
+    })
+  }
+
+  /**
+   * wrapper for Data.set
+   */
+  set(...args) {
+    const [path, value] = args
+
+    const data = super.set(path, value)
+    this.updateLabel()
+    this.updatePreview()
+
+    return data
+  }
+
+  /**
+   * Update the label dom when label data changes
+   */
+  updateLabel() {
+    if (!this.label.parentElement) {
+      return null
+    }
+    const newLabel = dom.create(this.labelConfig)
+    this.label.parentElement.replaceChild(newLabel, this.label)
+    this.label = newLabel
+  }
+
+  /**
+   * Updates the conditions panel when linked field data changes
+   */
+  updateConditionsPanel = () => {
+    setTimeout(() => {
+      const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
+      if (!newConditionsPanel) {
+        return null
       }
-    )
+      const newProps = newConditionsPanel.createProps()
+      const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
+      currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
+    }, ANIMATION_SPEED_BASE)
   }
 
   /**
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview() {
-    const _this = this
-    const fieldData = h.copyObj(this.data)
+  updatePreview(fieldData = this.fieldPreview()) {
+    if (!this.preview.parentElement) {
+      return null
+    }
     const newPreview = dom.create(fieldData, true)
-    dom.empty(_this.preview)
-    _this.preview.appendChild(newPreview)
-
-    return newPreview
+    this.preview.parentElement.replaceChild(newPreview, this.preview)
+    this.preview = newPreview
+    return this.preview
   }
 
   /**
@@ -86,38 +173,41 @@ export default class Field extends Component {
    */
   get fieldEdit() {
     const _this = this
-    const panels = []
+    this.editPanels = []
     const editable = ['object', 'array']
-    const noPanels = ['config', 'meta', 'action', 'events']
-    const fieldData = this.data
-    const allowedPanels = Object.keys(this.data).filter(elem => {
-      return !h.inArray(elem, noPanels)
-    })
+    const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
+    const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
+    const allowedPanels = panelOrder.filter(elem => !h.inArray(elem, noPanels))
 
     const fieldEdit = {
       className: ['field-edit', 'slide-toggle', 'panels-wrap'],
     }
 
     h.forEach(allowedPanels, (panelName, i) => {
-      const panelData = fieldData[panelName]
+      const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.includes(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
-        panels.push(editPanel)
+        this.editPanels.push(editPanel)
       }
     })
 
-    const panelsConfig = {
-      panels,
+    const panelsData = {
+      panels: this.editPanels.map(({ panelConfig }) => panelConfig),
       id: _this.id,
     }
 
-    if (panels.length) {
-      const editPanels = (_this.panels = new Panels(panelsConfig))
-      fieldEdit.className.push('panel-count-' + panels.length)
+    const editPanelLength = this.editPanels.length
+
+    if (editPanelLength) {
+      const editPanels = (_this.panels = new Panels(panelsData))
+      fieldEdit.className.push(`panel-count-${editPanelLength}`)
       fieldEdit.content = editPanels.children
       _this.panelNav = editPanels.nav
       _this.resizePanelWrap = editPanels.action.resize
+      fieldEdit.action = {
+        onRender: _this.resizePanelWrap,
+      }
     } else {
       setTimeout(() => {
         const field = this.dom
@@ -139,49 +229,26 @@ export default class Field extends Component {
   fieldPreview() {
     const prevData = clone(this.data)
     prevData.id = `prev-${this.id}`
-    // const field = this.dom
-    // const togglePreviewEdit = evt => {
-    //   console.log(field)
-    //   const column = field.parentElement
-    //   if (evt.target.contentEditable === 'true') {
-    //     if (h.inArray(evt.type, ['focus', 'blur'])) {
-    //       const isActive = document.activeElement === evt.target
-    //       column.classList.toggle('editing-field-preview', isActive)
-    //       dom.toggleSortable(field.parentElement, evt.type === 'focus')
-    //     } else if (h.inArray(evt.type, ['mousedown', 'mouseup'])) {
-    //       dom.toggleSortable(field.parentElement, evt.type === 'mousedown')
-    //     }
-    //   }
-    // }
 
     const fieldPreview = {
       attrs: {
         className: 'field-preview',
+        style: this.isEditing && 'display: none;',
       },
       content: dom.create(prevData, true),
       action: {
-        // focus: togglePreviewEdit,
-        // blur: togglePreviewEdit,
-        // mousedown: togglePreviewEdit,
-        // mouseup: togglePreviewEdit,
         change: evt => {
           const { target } = evt
-          if (target.fMap) {
-            const fieldData = this.data
-            const { checked, type, fMap } = target
-            if (h.inArray(type, ['checkbox', 'radio'])) {
-              const options = fieldData.get('options')
-              // uncheck options if radio
-              if (type === 'radio') {
-                options.forEach(({ selected }) => (selected = false))
-              }
-              // dom.fields.get(_this.id).field
-              console.log(options)
-              console.log(fMap)
-              console.log(checked)
-              console.dir(target)
-              // console.log(target, h.indexOfNode(target))
+          const { checked, type } = target
+          if (h.inArray(type, ['checkbox', 'radio'])) {
+            const optionIndex = indexOfNode(target)
+            const options = this.get('options')
+            // uncheck options if radio
+            if (type === 'radio') {
+              options.forEach(({ selected }) => (selected = false))
             }
+            const checkType = type === 'checkbox' ? 'checked' : 'selected'
+            this.set(`options.${optionIndex}.${checkType}`, checked)
           }
         },
         click: evt => {
@@ -190,20 +257,30 @@ export default class Field extends Component {
           }
         },
         input: evt => {
-          const fieldData = this.data
-          let prop = 'content'
-          if (evt.target.fMap) {
-            prop = evt.target.fMap
-          }
           if (evt.target.contentEditable === 'true') {
-            h.set(fieldData, prop, evt.target.innerHTML)
+            super.set('attrs.value', evt.target.innerHTML)
           } else {
-            h.set(fieldData, prop, evt.target.value)
+            super.set('attrs.value', evt.target.value)
           }
+          this.processConditions()
         },
       },
     }
 
     return fieldPreview
+  }
+
+  /**
+   * Checks if attribute is allowed to be edited
+   * @param  {String}  propName
+   * @return {Boolean}
+   */
+  isDisabledProp = (propName, kind = 'attrs') => {
+    const propKind = this.config.panels[kind]
+    if (!propKind) {
+      return false
+    }
+    const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${startCase(kind)}`))
+    return disabledAttrs.includes(propName)
   }
 }

@@ -120,7 +120,7 @@ body {
 }
 
 .render-form {
-  display: none;
+  /* display: none; */
   max-width: 800px;
   margin: auto;
 }

@@ -1,0 +1,40 @@
+.f-autocomplete-list {
+  background-color: $white;
+  display: none;
+  list-style: none;
+  padding: 0;
+  position: absolute;
+  z-index: 20;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  margin: 0 -1px;
+  border: 1px solid $gray-light;
+  border-width: 1px 1px 0;
+  box-shadow: 0 1px space() 0 rgba(0, 0, 0, 0.5);
+
+  li {
+    border: 1px solid $gray-light;
+    display: none;
+    cursor: default;
+    padding: space();
+    margin: -1px 0 0;
+    border-width: 1px 0;
+    transition: background-color $animation-speed-fast ease-in-out;
+    will-change: background-color;
+    font-size: 0.85em;
+
+    &.active-option {
+      background-color: lighten($brand-info, 33%);
+    }
+    &:hover {
+      background-color: lighten($brand-info, 16.6%);
+    }
+  }
+
+  .component-type {
+    color: $gray-light;
+    font-style: italic;
+    font-size: 0.75em;
+  }
+}

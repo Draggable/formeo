@@ -1,5 +1,8 @@
+import pkg from '../../package.json'
+
 export const POLYFILLS = [
-  { name: 'cssPreload', src: 'https://cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
+  { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
+  { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
 ]
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
@@ -77,3 +80,73 @@ export const COLUMN_TEMPLATES = new Map(
 )
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]
+
+export const SESSION_FORMDATA_KEY = `${pkg.name}-formData`
+export const SESSION_LOCALE_KEY = `${pkg.name}-locale`
+
+export const ANIMATION_SPEED_BASE = 333
+export const ANIMATION_SPEED_FAST = Math.round(ANIMATION_SPEED_BASE / 2)
+export const ANIMATION_SPEED_SLOW = Math.round(ANIMATION_SPEED_BASE * 2)
+
+//  Event constants
+export const EVENT_FORMEO_SAVED = 'formeoSaved'
+export const EVENT_FORMEO_UPDATED = 'formeoUpdated'
+export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
+export const EVENT_FORMEO_CONDITION_UPDATED = 'formeoConditionUpdated'
+export const COMPARISON_OPERATORS = {
+  '==': 'equals',
+  '!=': 'notEquals',
+  '⊃': 'contains',
+  '!⊃': 'notContains',
+}
+export const LOGICAL_OPERATORS = {
+  '&&': 'and',
+  '||': 'or',
+}
+
+export const ASSIGNMENT_OPERATORS = {
+  '=': '=',
+}
+
+export const CONDITION_INPUT_ORDER = [
+  'label',
+  'logical',
+  'source',
+  'sourceProperty',
+  'comparison',
+  'target',
+  'targetProperty',
+]
+
+export const FIELD_PROPERTY_MAP = {
+  value: 'attrs.value',
+  label: 'config.label',
+  isVisible: 'config.isVisible',
+}
+
+export const OPERATORS = {
+  comparison: COMPARISON_OPERATORS,
+  assignment: ASSIGNMENT_OPERATORS,
+  logical: LOGICAL_OPERATORS,
+  property: FIELD_PROPERTY_MAP,
+}
+
+export const CONDITION_TEMPLATE = {
+  if: [
+    {
+      source: '',
+      sourceProperty: '',
+      comparison: '',
+      target: '',
+      targetProperty: '',
+    },
+  ],
+  then: [
+    {
+      target: '',
+      property: '',
+      assignment: '',
+      value: '',
+    },
+  ],
+}

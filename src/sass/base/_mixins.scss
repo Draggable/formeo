@@ -135,7 +135,7 @@
   }
 
   &::before {
-    margin-right: 10px;
+    margin-right: space(1);
     font-size: 16px;
   }
 
@@ -153,7 +153,7 @@
     background: transparent;
     border: 0 none;
     text-align: left;
-    padding: 10px;
+    padding: space(1);
     border-radius: 0;
 
     &:focus {
@@ -174,7 +174,7 @@
 
   .control-icon {
     float: left;
-    margin-right: 10px;
+    margin-right: space(1);
     text-align: center;
     width: $icon-size;
     height: $icon-size;
@@ -187,7 +187,7 @@
 
     svg {
       float: right !important;
-      margin: 0 0 0 10px !important;
+      margin: 0 0 0 space(1) !important;
     }
   }
 }
@@ -197,7 +197,7 @@
   border: 1px solid $gray;
   color: $gray-dark;
   background-color: $white;
-  padding: 0.5em 1em;
+  padding: space() space(1);
 
   &:active {
     transform: scale(0.97);
@@ -257,4 +257,11 @@
     display: table;
     clear: both;
   }
+}
+
+@mixin hideConditionField {
+  max-width: 0%;
+  padding: 0;
+  border: 0 none;
+  overflow: hidden;
 }

@@ -4,18 +4,17 @@ import Component from '../component'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { numToPercent, componentType } from '../../common/utils'
-import { Fields } from '..'
+import { numToPercent } from '../../common/utils'
 import { COLUMN_CLASSNAME } from '../../constants'
-import Controls from '../controls'
-
-// @todo remove formData
-const formData = {}
+import Components from '..'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
-    config: {},
+    config: {
+      width: '100%',
+    },
     children: [],
+    className: 'f-column',
   })
 
 /**
@@ -24,7 +23,7 @@ const DEFAULT_DATA = () =>
 export default class Column extends Component {
   /**
    * Set defaults and/or load existing columns
-   * @param  {String} dataID columnId
+   * @param  {Object} columnData
    * @return {Object} Column config object
    */
   constructor(columnData) {
@@ -62,7 +61,7 @@ export default class Column extends Component {
         },
       },
       id: this.id,
-      content: [this.actionButtons(), editWindow, resizeHandle],
+      content: [this.getActionButtons(), editWindow, resizeHandle],
     }
 
     const column = dom.create(columnConfig)
@@ -79,7 +78,6 @@ export default class Column extends Component {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
-      // group: 'column',
       group: {
         name: 'column',
         pull: true,
@@ -87,10 +85,10 @@ export default class Column extends Component {
       },
       sort: true,
       disabled: false,
-      // onEnd: this.onEnd,
-      onAdd: this.onAdd,
-      onSort: this.onSort,
-      onRemove: this.onRemove,
+      onEnd: this.onEnd.bind(this),
+      onAdd: this.onAdd.bind(this),
+      onSort: this.onSort.bind(this),
+      onRemove: this.onRemove.bind(this),
       // Attempt to drag a filtered element
       onMove: evt => {
         if (evt.from !== evt.to) {
@@ -121,31 +119,6 @@ export default class Column extends Component {
   }
 
   /**
-   * Event when column is added
-   * @param  {Object} evt
-   */
-  onAdd = evt => {
-    const { from, to, item, newIndex } = evt
-    const fromType = componentType(from)
-
-    const typeActions = {
-      // from Controls
-      controls: () => {
-        const { meta } = Controls.get(item.id).controlData
-        if (meta.group !== 'layout') {
-          this.addField(item.id, newIndex)
-        }
-        dom.remove(item)
-      },
-      // from Column
-      column: () => this.addField(item.id, newIndex),
-    }
-
-    typeActions[fromType] && typeActions[fromType]()
-    to.classList.remove('hovering-column')
-  }
-
-  /**
    * Sets classes for legacy browsers to identify first and last fields in a block
    * consider removing
    * @param  {DOM} column
@@ -160,13 +133,9 @@ export default class Column extends Component {
     }
   }
 
-  /**
-   * Updates the field order data for the column
-   */
-  saveFieldOrder = () => {
-    const newFieldOrder = this.saveChildOrder()
+  addChild(...args) {
+    super.addChild(...args)
     this.fieldOrderClasses()
-    return newFieldOrder
   }
 
   /**
@@ -174,6 +143,7 @@ export default class Column extends Component {
    * @param  {Object} evt resize event
    */
   resize = evt => {
+    const _this = this
     const resize = {}
     const column = evt.target.parentElement
     const sibling = column.nextSibling || column.previousSibling
@@ -222,16 +192,14 @@ export default class Column extends Component {
       if (!resize.resized) {
         return
       }
-      const columnData = this.data
-      // @todo
-      const sibColumnData = h.getIn(formData, ['columns', sibling.id])
+
       const row = column.parentElement
       row.querySelector('.column-preset').value = 'custom'
       row.classList.remove('resizing-columns')
-      columnData.config.width = column.dataset.colWidth
-      sibColumnData.config.width = sibling.dataset.colWidth
+
+      _this.set('config.width', column.dataset.colWidth)
+      Components.setAddress(`columns.${sibling.id}`, sibling.dataset.colWidth)
       resize.resized = false
-      // data.save()
     }
 
     resize.start = (function(evt) {
@@ -260,17 +228,9 @@ export default class Column extends Component {
     })(evt)
   }
 
-  // @todo loop through children and refresh panels
+  // loops through children and refresh their edit panels
   refreshFieldPanels = () => {
-    // console.log(this)
-  }
-
-  addField = (fieldId, index = this.children.length) => {
-    const field = Fields.get(fieldId)
-    this.dom.insertBefore(field.dom, this.dom.children[index])
-    this.set(`children.${index}`, field.id)
-    this.emptyClass()
-    return field
+    this.children.forEach(field => field.panels.nav.refresh())
   }
 
   /**

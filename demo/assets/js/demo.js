@@ -7,12 +7,15 @@ const formeoOpts = {
     location: '../assets/lang',
   },
   actions: {
-    save: console.log
+    save: console.log,
   },
   // allowEdit: false,
   controls: {
     sortable: false,
     groupOrder: ['common', 'html'],
+    disable: {
+      // elements: ['button'],
+    },
     elements: [
       {
         tag: 'input',
@@ -27,27 +30,6 @@ const formeoOpts = {
           className: 'custom-email',
           type: 'email',
         },
-        conditions: [
-          {
-            if: [
-              { source: 'emailControl.value', comparison: '⊃', target: 'surefyre.com' },
-              'OR',
-              { source: 'emailControl.value', comparison: '!^=', target: 'kevin' },
-            ],
-            then: [
-              {
-                attr: {
-                  required: true,
-                },
-              },
-              {
-                config: {
-                  isVisible: true,
-                },
-              },
-            ],
-          },
-        ],
       },
       //     {
       //   tag: 'input',
@@ -108,10 +90,35 @@ const formeoOpts = {
       ],
     },
   },
-  events: {
-    // onUpdate: console.log,
-    // onSave: console.log
+  config: {
+    fields: {
+      checkbox: {
+        actionButtons: {
+          buttons: ['edit'],
+        },
+      },
+      '67aa618b-4838-4382-a14e-76e8a7ae3ed7': {
+        events: {
+          onRender: element => {
+            formeo.Components.fields.get(element.id).toggleEdit(true)
+            element.querySelector('.next-group').click()
+          },
+        },
+        panels: {
+          attrs: {
+            hideDisabled: true,
+          },
+          disabled: [
+            // 'conditions'
+          ],
+        },
+      },
+    },
   },
+  // events: {
+  // onUpdate: console.log,
+  // onSave: console.log
+  // },
   svgSprite: 'assets/formeo-sprite.svg',
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
@@ -120,6 +127,15 @@ const formeoOpts = {
 }
 
 const formeo = new window.Formeo(formeoOpts)
+
+document.addEventListener(
+  'formeoUpdated',
+  evt => {
+    // console.log(evt)
+    formeo.render && formeo.render(renderContainer)
+  },
+  false
+)
 console.log(formeo)
 let editing = true
 
@@ -128,15 +144,19 @@ let editing = true
 const localeSelect = document.getElementById('locale')
 const toggleEdit = document.getElementById('renderForm')
 const viewDataBtn = document.getElementById('viewData')
-const viewRowsDataBtn = document.getElementById('viewRowData')
 const resetDemo = document.getElementById('reloadBtn')
+const logJSON = document.getElementById('logJSON')
+
+logJSON.addEventListener('click', () => {
+  console.log(formeo.json)
+})
 
 // debugBtn.onclick = function() {
 //   debugWrap.classList.toggle('open');
 // };
 
 resetDemo.onclick = function() {
-  window.sessionStorage.removeItem('formData')
+  window.sessionStorage.removeItem('formeo-formData')
   window.location.reload()
 }
 
@@ -155,11 +175,6 @@ toggleEdit.onclick = evt => {
 
 viewDataBtn.onclick = evt => {
   console.log(formeo.formData)
-}
-
-viewRowsDataBtn.onclick = evt => {
-  const { rows } = formeo.formData
-  Object.values(rows).forEach(row => console.log(`rowId: ${row.id}`, row.children))
 }
 
 const formeoLocale = window.sessionStorage.getItem('formeo-locale')

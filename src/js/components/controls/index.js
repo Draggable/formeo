@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import actions from '../../common/actions'
-import helpers from '../../common/helpers'
+import helpers, { indexOfNode } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { match, unique, uuid } from '../../common/utils'
@@ -55,8 +55,10 @@ export class Controls {
     }
 
     this.controlEvents = {
-      focus: ({ target }) =>
-        _this.panels.nav.refresh(helpers.indexOfNode(target.closest(`.${CONTROL_GROUP_CLASSNAME}`))),
+      focus: ({ target }) => {
+        const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
+        return group && _this.panels.nav.refresh(indexOfNode(group))
+      },
       click: ({ target }) => _this.addElement(target.parentElement.id),
     }
   }
@@ -103,6 +105,7 @@ export class Controls {
         content: [{ tag: 'span', className: 'control-icon', children: dom.icon(meta.icon) }, controlLabel],
         action: this.controlEvents,
       }
+
       control.dom = dom.create({
         tag: 'li',
         id: controlId,
@@ -110,6 +113,7 @@ export class Controls {
         content: button,
         meta: meta,
       })
+
       return control.dom
     })
 
@@ -290,7 +294,7 @@ export class Controls {
         const fields = this.controls
         let filteredTerm = groupsWrap.querySelector('.filtered-term')
 
-        this.toggleElementsByStr(fields, term)
+        dom.toggleElementsByStr(fields, term)
 
         if (filtering) {
           const filteredStr = i18n.get('controls.filteringTerm', term)
@@ -313,6 +317,7 @@ export class Controls {
         }
       },
       addElement: _this.addElement,
+      // @todo finish th addGroup method
       addGroup: group => console.log(group),
     }
 
@@ -372,46 +377,26 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement = id => {
+    const controlData = helpers.get(this.get(id), 'controlData')
     const {
       meta: { group, id: metaId },
-    } = helpers.get(this.get(id), 'controlData')
+    } = controlData
 
     const layoutTypes = {
-      row: () => Stages.activeStage.addRow(),
-      column: () => layoutTypes.row().addColumn(),
-      field: id => layoutTypes.column().addField(id),
+      row: () => Stages.active.addChild(),
+      column: () => layoutTypes.row().addChild(),
+      field: controlData => layoutTypes.column().addChild(controlData),
     }
 
-    return group !== 'layout' ? layoutTypes.field(id) : layoutTypes[metaId.replace('layout-', '')]()
+    return group !== 'layout' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]()
   }
 
-  applyOptions(controlOptions = {}) {
+  applyOptions = (controlOptions = {}) => {
     this.options = {}
     const { groupOrder = [], elements = [] } = controlOptions
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.options = merge(this.defaults, controlOptions)
     this.options.elements = elements.concat(defaultElements)
-  }
-
-  /**
-   * Hide or show an Array or HTMLCollection of elements
-   * @param  {Array} elems
-   * @param  {String} term  match textContent to this term
-   * @return {Array}        filtered elements
-   */
-  toggleElementsByStr = (elems, term) => {
-    const filteredElems = []
-    helpers.forEach(elems, elem => {
-      const txt = elem.textContent.toLowerCase()
-      if (txt.indexOf(term.toLowerCase()) !== -1) {
-        elem.style.display = 'block'
-        filteredElems.push(elem)
-      } else {
-        elem.style.display = 'none'
-      }
-    })
-
-    return filteredElems
   }
 }
 

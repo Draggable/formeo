@@ -1,20 +1,33 @@
+import {
+  EVENT_FORMEO_UPDATED,
+  EVENT_FORMEO_ON_RENDER,
+  EVENT_FORMEO_CONDITION_UPDATED,
+  EVENT_FORMEO_SAVED,
+} from '../constants'
+
 // Default options
 const defaults = {
   debug: false, // enable debug mode
-  bubbles: false, // bubble events from components
+  bubbles: true, // bubble events from components
   formeoLoaded: evt => {},
   onAdd: () => {},
-  onUpdate: evt => {
-    if (events.opts.debug) {
-      console.log(evt)
-    }
-  },
+  onUpdate: evt => events.opts.debug && console.log(evt),
+  onRender: evt => events.opts.debug && console.log(evt),
   onSave: evt => {},
   confirmClearAll: evt => {
     if (window.confirm(evt.confirmationMessage)) {
       evt.clearAllAction(evt)
     }
   },
+}
+
+const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
+  const evt = new window.CustomEvent(EVENT_FORMEO_UPDATED, {
+    detail: evtData,
+    bubbles: events.opts.debug || events.opts.bubbles,
+  })
+  evt.data = (src || document).dispatchEvent(evt)
+  return evt
 }
 
 /**
@@ -25,18 +38,13 @@ const events = {
     this.opts = Object.assign({}, defaults, options)
     return this
   },
-  formeoSaved: new window.CustomEvent('formeoSaved', {}),
-  formeoUpdated: ({ src, ...evtData }) => {
-    const evt = new window.CustomEvent('formeoUpdated', {
-      detail: evtData,
-      bubbles: events.opts.debug || events.opts.bubbles,
-    })
-    evt.data = (src || document).dispatchEvent(evt)
-    return evt
-  },
+  formeoSaved: evt => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
+  formeoUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
+  formeoOnRender: evt => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
+  formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
 }
 
-document.addEventListener('formeoUpdated', function(evt) {
+document.addEventListener(EVENT_FORMEO_UPDATED, evt => {
   const { timeStamp, type, detail } = evt
   events.opts.onUpdate({
     timeStamp,
@@ -45,7 +53,16 @@ document.addEventListener('formeoUpdated', function(evt) {
   })
 })
 
-document.addEventListener('confirmClearAll', function(evt) {
+document.addEventListener(EVENT_FORMEO_UPDATED, evt => {
+  const { timeStamp, type, detail } = evt
+  events.opts.onRender({
+    timeStamp,
+    type,
+    detail,
+  })
+})
+
+document.addEventListener('confirmClearAll', evt => {
   evt = {
     timeStamp: evt.timeStamp,
     type: evt.type,
@@ -57,7 +74,7 @@ document.addEventListener('confirmClearAll', function(evt) {
   events.opts.confirmClearAll(evt)
 })
 
-document.addEventListener('formeoSaved', ({ timeStamp, type, detail: { formData } }) => {
+document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { formData } }) => {
   const evt = {
     timeStamp,
     type,
@@ -66,7 +83,7 @@ document.addEventListener('formeoSaved', ({ timeStamp, type, detail: { formData 
   events.opts.onSave(evt)
 })
 
-document.addEventListener('formeoLoaded', function(evt) {
+document.addEventListener('formeoLoaded', evt => {
   events.opts.formeoLoaded(evt.detail.formeo)
 })
 

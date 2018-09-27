@@ -1,6 +1,6 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import h from '../common/helpers'
+import h, { indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 // import Fields from './fields'
 
@@ -55,6 +55,9 @@ export default class Panels {
     panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed)
     const panelStyle = panelsWrap.style
     const activePanelHeight = dom.getStyle(this.currentPanel, 'height')
+    if (isTabbed) {
+      column.querySelector('.panel-labels div').removeAttribute('style')
+    }
     panelStyle.height = activePanelHeight
     return activePanelHeight
   }
@@ -160,7 +163,7 @@ export default class Panels {
         tag: 'h5',
         action: {
           click: evt => {
-            const index = h.indexOfNode(evt.target, evt.target.parentElement)
+            const index = indexOfNode(evt.target, evt.target.parentElement)
             _this.currentPanel = _this.panels[index]
             const labels = evt.target.parentElement.childNodes
             _this.nav.refresh(index)
@@ -232,11 +235,17 @@ export default class Panels {
     const groupParent = this.currentPanel.parentElement
     const firstControlNav = this.labels.querySelector('.panel-labels').firstChild
     const siblingGroups = this.currentPanel.parentElement.childNodes
-    let index = h.indexOfNode(this.currentPanel, groupParent)
+    let index = indexOfNode(this.currentPanel, groupParent)
     let offset = {}
 
     const groupChange = newIndex => {
+      const labels = this.labels.querySelector('.panel-labels div').children
+      dom.removeClasses(siblingGroups, 'active-panel')
+      dom.removeClasses(labels, 'active-tab')
       this.currentPanel = siblingGroups[newIndex]
+      this.currentPanel.classList.add('active-panel')
+
+      labels[newIndex].classList.add('active-tab')
       this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
       // if (this.opts.type === 'field') {
       //   this.slideToggle.style.height = 'auto'

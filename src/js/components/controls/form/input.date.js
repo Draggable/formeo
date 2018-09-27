@@ -11,7 +11,6 @@ class DateControl extends Control {
         className: '',
       },
       config: {
-        disabledAttrs: ['type'],
         label: i18n.get('controls.form.input.date'),
       },
       meta: {

@@ -1,4 +1,7 @@
-import { identity } from 'rxjs'
+import identity from 'lodash/identity'
+import i18n from 'mi18n'
+import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants'
+import { sessionStorage } from './utils'
 
 // Actions are the callbacks for things like adding
 // new attributes, options, field removal confirmations etc.
@@ -9,6 +12,10 @@ const defaultActions = {
   add: {
     attr: evt => {
       const attr = window.prompt(evt.message.attr)
+      if (attr && evt.isDisabled(attr)) {
+        window.alert(i18n.get('attributeNotPermitted', attr || ''))
+        return actions.add.attrs(evt)
+      }
       let val
       if (attr) {
         val = String(window.prompt(evt.message.value, ''))
@@ -17,6 +24,9 @@ const defaultActions = {
     },
     option: evt => {
       evt.addAction()
+    },
+    condition: evt => {
+      evt.addAction(evt)
     },
   },
   click: {
@@ -42,6 +52,11 @@ const actions = {
     options: evt => {
       return actions.opts.add.option(evt)
     },
+    conditions: evt => {
+      evt.template = CONDITION_TEMPLATE
+      // @todo add logging
+      return actions.opts.add.condition(evt)
+    },
   },
   click: {
     btn: evt => {
@@ -49,6 +64,10 @@ const actions = {
     },
   },
   save: formData => {
+    if (actions.opts.sessionStorage) {
+      sessionStorage.set(SESSION_FORMDATA_KEY, formData)
+    }
+
     return actions.opts.save(formData)
   },
 }

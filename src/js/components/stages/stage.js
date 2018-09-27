@@ -1,12 +1,9 @@
 import Sortable from 'sortablejs'
 import dom from '../../common/dom'
-import Controls from '../controls'
 import Component from '../component'
-import { Rows } from '..'
 import { STAGE_CLASSNAME } from '../../constants'
-import helpers from '../../common/helpers'
-import { componentType } from '../../common/utils'
 import Stages from '.'
+import animate from '../../common/animation'
 
 const DEFAULT_DATA = () => Object.freeze({ children: [] })
 
@@ -84,79 +81,28 @@ export default class Stage extends Component {
       },
       sort: true,
       disabled: false,
-      onAdd: this.onAdd,
-      onRemove: this.onRemove,
-      onStart: () => (Stages.activeStage = this),
-      onSort: this.onSort,
+      onAdd: this.onAdd.bind(this),
+      onRemove: this.onRemove.bind(this),
+      onStart: () => (Stages.active = this),
+      onSort: this.onSort.bind(this),
       draggable: '.stage-rows',
       handle: '.item-handle',
     })
-
-    if (this.data.children.length) {
-      this.loadRows()
-    }
   }
-
-  /**
-   * Loop through the formData and append it to the stage
-   * @return {Array}  loaded rows
-   */
-  loadRows() {
-    const rows = this.data.children
-    rows.forEach(rowId => {
-      const row = this.addRow(rowId)
-      row.loadColumns()
+  empty() {
+    this.dom.classList.add('removing-all-fields')
+    animate.slideUp(this.dom, 600, () => {
+      super.empty()
+      this.dom.classList.remove('removing-all-fields')
+      animate.slideDown(this.dom, 300)
     })
+    return this
   }
 
-  /**
-   * Method for handling stage drop
-   * @param  {Object} evt
-   * @return {Object} formData
-   */
-  onAdd = evt => {
-    const { from, item, to } = evt
-    const newIndex = helpers.indexOfNode(item, to)
-    const row = dom.isStage(from) ? Rows.get(item.id) : this.addRow()
-    const fromType = componentType(from)
-
-    const onAddConditions = {
-      controls: () => {
-        const { meta } = Controls.get(item.id).controlData
-        if (meta.group !== 'layout') {
-          row.addColumn().addField(item.id)
-        } else if (meta.id === 'layout-column') {
-          row.addColumn()
-        }
-        dom.remove(item)
-      },
-      row: () => row.addColumn(item.id),
-      column: () => row.addColumn().addField(item.id),
+  onAdd(...args) {
+    const component = super.onAdd(...args)
+    if (component.name === 'column') {
+      component.parent.autoColumnWidths()
     }
-
-    onAddConditions[fromType] && onAddConditions[fromType]()
-    to.insertBefore(row.dom, to.children[newIndex])
-    this.emptyClass()
-    this.saveRowOrder()
-  }
-
-  saveRowOrder = () => {
-    const newRowOrder = this.children.map(({ id }) => id)
-    this.set('children', newRowOrder)
-    return newRowOrder
-  }
-
-  /**
-   * Adds a row to the stage
-   * @param {String} stageId
-   * @param {String} rowId
-   * @return {Object} DOM element
-   */
-  addRow = (rowId, index = this.children.length) => {
-    const row = Rows.add(rowId)
-    this.dom.appendChild(row.dom)
-    this.set(`children.${index}`, row.id)
-    this.emptyClass()
-    return row
   }
 }

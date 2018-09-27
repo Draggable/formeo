@@ -1,4 +1,5 @@
 import { insertScript, insertStyle } from '../../common/loaders'
+import { identity } from 'lodash/identity'
 
 const LOADER_MAP = {
   js: insertScript,
@@ -30,7 +31,9 @@ export default class Control {
   on(eventType) {
     const events = {
       // executed just prior to the row being returned by the layout class. Receives the DOMelement about to be passed back
-      prerender: element => {},
+      prerender: identity,
+
+      renderComponent: identity,
 
       // onRender event to execute code each time an instance of this control is injected into the DOM
       render: evt => {

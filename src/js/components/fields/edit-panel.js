@@ -21,46 +21,18 @@ export default class EditPanel {
     this.data = this.type === 'object' ? Object.entries(panelData) : panelData
     this.name = panelName
     this.field = field
-    // const domConfig = {
-    // ,
-    // content: [this.editPanelContent],
-    // action: {
-    //   // change: evt => {
-    // let fieldData = formData.fields.get(_this.id);
-    //   if (evt.target.fMap) {
-    //     let value = evt.target.value;
-    //     let targetType = evt.target.type;
-    //     if (targetType === 'checkbox' || targetType === 'radio') {
-    //       let options = fieldData.options;
-    //       value = evt.target.checked;
-    //       // uncheck options if radio
-    //       if (evt.target.type === 'radio') {
-    //         options.forEach(option => option.selected = false);
-    //       }
-    //     }
-    //     h.set(fieldData, evt.target.fMap, value);
-    //     data.save(panelType, _this.id);
-    //     // throttle this for sure
-    //     _this.updatePreview();
-    //   }
-    // }
-    //   },
-    // }
-    const [props, editButtons] = this.content()
-    const panelConfig = {
+
+    this.props = this.createProps()
+    this.editButtons = this.createEditButtons()
+    this.panelConfig = {
       config: {
         label: i18n.get(`panel.label.${panelName}`),
       },
       attrs: {
         className: `f-panel ${panelName}-panel`,
       },
-      children: [props, editButtons],
+      children: [this.props, this.editButtons],
     }
-
-    this.props = props
-    this.editButtons = editButtons
-
-    return panelConfig
   }
 
   /**
@@ -69,24 +41,25 @@ export default class EditPanel {
    * @param  {Object} dataObj   field config object
    * @return {Object}           formeo DOM config object
    */
-  content = () => {
-    const editGroup = {
+  createProps() {
+    this.editPanelItems = Array.from(this.data).map((data, index) => {
+      const isArray = this.type === 'array'
+      const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
+      const itemData = isArray ? data : { [data[0]]: data[1] }
+
+      return new EditPanelItem(itemKey, itemData, this.field)
+    })
+    const editGroupConfig = {
       tag: 'ul',
       attrs: {
         className: ['field-edit-group', `field-edit-${this.name}`],
       },
       editGroup: this.name,
       isSortable: this.name === 'options',
-      content: Array.from(this.data).map((data, index) => {
-        const isArray = this.type === 'array'
-        const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
-        const itemData = isArray ? data : { [data[0]]: data[1] }
-        const editPanelItem = new EditPanelItem(itemKey, itemData, this.field)
-
-        return editPanelItem.dom
-      }),
+      content: this.editPanelItems,
     }
-    return [dom.create(editGroup), this.createEditButtons()]
+
+    return dom.create(editGroupConfig)
   }
 
   /**
@@ -97,6 +70,11 @@ export default class EditPanel {
     const _this = this
     const type = this.name
     const btnTitle = i18n.get(`panelEditButtons.${type}`)
+    const addActions = {
+      attrs: _this.addAttribute,
+      options: _this.addOption,
+      conditions: _this.addCondition,
+    }
     const addBtn = {
       ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
       className: `add-${type}`,
@@ -104,16 +82,15 @@ export default class EditPanel {
         click: evt => {
           const addEvt = {
             btnCoords: dom.coords(evt.target),
+            addAction: addActions[type],
           }
 
           if (type === 'attrs') {
-            addEvt.addAction = _this.addAttribute
+            addEvt.isDisabled = _this.field.isDisabledProp
             addEvt.message = {
-              attr: i18n.get('action.add.attrs.attr'),
-              value: i18n.get('action.add.attrs.value'),
+              attr: i18n.get(`action.add.${type}.attr`),
+              value: i18n.get(`action.add.${type}.value`),
             }
-          } else if (type === 'options') {
-            addEvt.addAction = _this.addOption.bind(_this)
           }
 
           const eventType = startCase(type)
@@ -129,6 +106,7 @@ export default class EditPanel {
         },
       },
     }
+
     const panelEditButtons = {
       className: 'panel-action-buttons',
       content: [addBtn],
@@ -138,26 +116,11 @@ export default class EditPanel {
   }
 
   /**
-   * Checks if attribute is allowed to be edited
-   * @param  {String}  attr
-   * @return {Boolean}      [description]
-   */
-  isDisabledAttr = attr => {
-    // @todo fix meta id
-    const disabledAttrs = this.field.get('config.disabledAttrs') || []
-    return disabledAttrs.includes(attr)
-  }
-
-  /**
    * Add a new attribute to the attrs panels
    * @param {String} attr
    * @param {String|Array} val
    */
   addAttribute = (attr, val) => {
-    if (this.isDisabledAttr(attr)) {
-      window.alert(`Attribute "${attr}": not permitted`)
-    }
-
     const safeAttr = helpers.hyphenCase(attr)
     const itemKey = `attrs.${safeAttr}`
 
@@ -169,8 +132,11 @@ export default class EditPanel {
       val = JSON.parse(val)
     }
 
+    this.field.set(`attrs.${attr}`, val)
+
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)
     const newAttr = new EditPanelItem(itemKey, { [safeAttr]: val }, this.field)
+
     if (existingAttr) {
       this.props.replaceChild(newAttr.dom, existingAttr)
     } else {
@@ -205,5 +171,22 @@ export default class EditPanel {
     // dom.empty(_this.preview)
     // const newPreview = dom.create(this.data, true)
     // _this.preview.appendChild(newPreview)
+  }
+
+  addCondition = evt => {
+    const currentConditions = this.field.get('conditions')
+    const itemKey = `conditions.${currentConditions.length}`
+    const existingCondition = this.props.querySelector(`.field-${itemKey.replace('.', '-')}`)
+    const newCondition = new EditPanelItem(itemKey, evt.template, this.field)
+
+    if (existingCondition) {
+      this.props.replaceChild(newCondition.dom, existingCondition)
+    } else {
+      this.props.appendChild(newCondition.dom)
+    }
+
+    this.field.set(itemKey, evt.template)
+
+    this.field.resizePanelWrap()
   }
 }
