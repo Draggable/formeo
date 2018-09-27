@@ -1,14 +1,21 @@
-import { dom } from '../common/dom'
+import i18n from 'mi18n'
 import startCase from 'lodash/startCase'
-// import Data from './data'
+import animate from '../common/animation'
+import dom from '../common/dom'
 import Components from '.'
+import { ANIMATION_SPEED_FAST } from '../constants'
 
+const BASE_NAME = 'f-autocomplete'
+const HIGHLIGHT_CLASS_NAME = 'highlight-component'
 const labelCount = (arr, elem) => arr.reduce((n, x) => n + (x === elem), 0)
+
+const getComponentLabel = component =>
+  component.get('config.label') || component.get('attrs.id') || component.get('meta.id')
 
 const componentOptions = selected => {
   const labels = []
   const options = Object.entries(Components.flatList()).map(([id, component]) => {
-    const label = component.get('config.label') || component.get('attrs.id') || component.get('meta.id')
+    const label = getComponentLabel(component)
     if (label) {
       const type = {
         tag: 'span',
@@ -35,9 +42,13 @@ const componentOptions = selected => {
  * Output an autocomplete form element
  */
 export default class Autocomplete {
-  constructor(key, value) {
+  constructor(key, value, i18nKey) {
     this.key = key
+    this.className = key.replace(/\./g, '-')
     this.value = value
+    this.events = []
+    this.i18nKey = i18nKey
+
     this.build()
   }
 
@@ -46,60 +57,50 @@ export default class Autocomplete {
    * @return {Object} DOM Element to be injected into the form.
    */
   build() {
-    // console.log(this.options)
-    // const { values, type, ...data } = this.config
     const keyboardNav = e => {
-      const list = e.target.nextSibling.nextSibling
-      const hiddenField = e.target.nextSibling
-      const activeOption = this.getActiveOption(list)
+      const list = this.list
+      const activeOption = this.getActiveOption()
       const keyCodeMap = new Map([
-        // up
         [
-          38,
+          38, // up arrow
           () => {
             const previous = this.getPreviousOption(activeOption)
             if (previous) {
-              this.selectOption(list, previous)
+              this.selectOption(previous)
             }
           },
         ],
-        // down
+
         [
-          40,
+          40, // down arrow
           () => {
             const next = this.getNextOption(activeOption)
             if (next) {
-              this.selectOption(list, next)
+              this.selectOption(next)
             }
           },
         ],
-        // enter
+
         [
-          13,
+          13, // enter
           () => {
             if (activeOption) {
-              e.target.value = activeOption.dataset.label
-              hiddenField.value = activeOption.dataset.value
+              this.selectOption(activeOption)
+              this.setValue(activeOption)
               if (list.style.display === 'none') {
-                this.showList(list, activeOption)
+                this.showList(activeOption)
               } else {
-                this.hideList(list)
+                this.hideList()
               }
-            } else {
-              // Don't allow a value not in the list
-              // if (!this.isOptionValid(list, activeOption.dataset.l)) {
-              //   e.target.value = ''
-              //   e.target.nextSibling.value = ''
-              // }
             }
             e.preventDefault()
           },
         ],
-        // escape
+
         [
-          27,
+          27, // escape
           () => {
-            this.hideList(list)
+            this.hideList()
           },
         ],
       ])
@@ -112,79 +113,67 @@ export default class Autocomplete {
       return direction()
     }
     const autoCompleteInputActions = {
-      focus: evt => {
-        console.dir(evt.target)
-        const list = evt.target.nextSibling.nextSibling
-        const filteredOptions = dom.toggleElementsByStr(list.querySelectorAll('li'), evt.target.value)
-        evt.target.addEventListener('keydown', keyboardNav)
-        if (evt.target.value.length > 0) {
-          const selectedOption = filteredOptions.length > 0 ? filteredOptions[filteredOptions.length - 1] : null
-          this.showList(list, selectedOption)
-        }
+      focus: ({ target }) => {
+        this.updateOptions()
+        target.parentElement.classList.add(`${this.className}-focused`)
+        const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll('li'), target.value)
+        target.addEventListener('keydown', keyboardNav)
+        const selectedOption = this.list.querySelector('.active-option') || filteredOptions[0]
+        this.showList(selectedOption)
       },
-      blur: evt => {
-        evt.target.removeEventListener('keydown', keyboardNav)
-        setTimeout(() => {
-          evt.target.nextSibling.nextSibling.style.display = 'none'
-        }, 200)
-        // Validate the option entered exists
-        // const list = evt.target.nextSibling.nextSibling
-        // if (!this.isOptionValid(list, evt.target.dataset.value)) {
-        //   evt.target.value = ''
-        //   evt.target.nextSibling.value = ''
-        // }
+      blur: ({ target }) => {
+        target.parentElement.classList.remove(`${this.className}-focused`)
+        target.removeEventListener('keydown', keyboardNav)
+        this.hideList()
       },
       input: evt => {
-        const list = evt.target.nextSibling.nextSibling
-        const hiddenField = evt.target.nextSibling
-        hiddenField.value = evt.target.value
-        const filteredOptions = dom.toggleElementsByStr(list.querySelectorAll('li'), evt.target.value)
+        const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll('li'), evt.target.value)
+
+        if (evt.target.value.length === 0) {
+          this.clearValue()
+        }
 
         if (filteredOptions.length === 0) {
-          this.hideList(list)
+          this.hideList()
         } else {
-          let activeOption = this.getActiveOption(list)
-          if (!activeOption) {
-            activeOption = filteredOptions[filteredOptions.length - 1]
-          }
-          this.showList(list, activeOption)
+          const activeOption = this.getActiveOption() || filteredOptions[0]
+          this.showList(activeOption)
         }
       },
     }
-    const autoCompleteInputConfig = {
+
+    this.displayField = dom.create({
       tag: 'input',
       autocomplete: 'off',
       action: autoCompleteInputActions,
-      attrs: { type: 'text' },
-    }
-    // const autoCompleteInput = dom.create({
-    //   tag: 'input',
-    //   ...autoCompleteInputConfig,
-    // })
-    const hiddenInput = dom.create({
+      attrs: {
+        type: 'text',
+        className: `${BASE_NAME}-display-field`,
+        value: this.label,
+        placeholder: i18n.get(`${this.i18nKey}.${this.key}.placeholder`),
+      },
+    })
+    this.hiddenField = dom.create({
       tag: 'input',
-      attrs: { type: 'hidden' },
+      attrs: { type: 'hidden', className: this.className, value: this.value },
     })
 
-    const fields = [autoCompleteInputConfig, hiddenInput]
-
-    const listConfig = {
+    this.list = dom.create({
       tag: 'ul',
-      attrs: { className: 'fb-autocomplete-list' },
-    }
-
-    fields.push(dom.create(listConfig))
+      attrs: { className: `${BASE_NAME}-list` },
+    })
 
     this.dom = dom.create({
-      children: fields,
-      className: this.key.replace(/\./g, '-'),
+      children: [this.displayField, this.hiddenField, this.list],
+      className: this.className,
       action: {
-        onRender: elem => {
-          const list = elem.querySelector('.fb-autocomplete-list')
-          const options = this.generateOptions()
-          options.forEach(option => list.appendChild(option))
-
-          console.log(elem, list)
+        onRender: () => {
+          const component = this.value && Components.getAddress(this.value)
+          this.label = component && getComponentLabel(component)
+          if (this.label) {
+            this.displayField.value = this.label
+          }
+          this.updateOptions()
         },
       },
     })
@@ -192,25 +181,47 @@ export default class Autocomplete {
     return this.dom
   }
 
+  updateOptions() {
+    dom.empty(this.list)
+    this.generateOptions().forEach(option => this.list.appendChild(option))
+  }
+
   generateOptions() {
     const options = componentOptions()
+    const realTarget = target => {
+      const targetClass = `${BASE_NAME}-list-item`
+      if (!target.classList.contains(targetClass)) {
+        target = target.parentElement
+      }
+      return target
+    }
 
     return options.map(optionData => {
-      console.log(optionData)
+      const value = optionData.value
+      let [label] = optionData.label
+      label = label.trim()
       const optionConfig = {
         tag: 'li',
         children: optionData.label,
         dataset: {
-          value: optionData.value,
-          label: optionData.label[0].trim(),
+          value,
+          label,
         },
+        className: `${BASE_NAME}-list-item`,
         action: {
-          click: evt => {
-            const list = evt.target.parentElement
-            const field = list.previousSibling.previousSibling
-            field.value = optionData.label
-            field.nextSibling.value = optionData.value
-            this.hideList(list)
+          mousedown: ({ target }) => {
+            target = realTarget(target)
+            this.setValue(target)
+            this.selectOption(target)
+            this.hideList()
+          },
+          mouseover: ({ target }) => {
+            target = realTarget(target)
+            this.removeHighlight()
+            this.highlightComponent(target)
+            // this.setValue(target)
+            // this.selectOption(target)
+            // this.hideList()
           },
         },
       }
@@ -224,9 +235,9 @@ export default class Autocomplete {
    * Hides autocomplete list and deselects all the options
    * @param {Object} list - list of autocomplete options
    */
-  hideList(list) {
-    this.selectOption(list, null)
-    list.style.display = 'none'
+  hideList(list = this.list) {
+    animate.slideUp(list, ANIMATION_SPEED_FAST)
+    this.removeHighlight()
   }
 
   /**
@@ -234,10 +245,9 @@ export default class Autocomplete {
    * @param {Object} list - list of autocomplete options
    * @param {Object} selectedOption - option to be selected
    */
-  showList(list, selectedOption) {
-    this.selectOption(list, selectedOption)
-    list.style.display = 'block'
-    list.style.width = list.parentElement.offsetWidth + 'px'
+  showList(selectedOption, list = this.list) {
+    this.selectOption(selectedOption)
+    animate.slideDown(list, ANIMATION_SPEED_FAST)
   }
 
   /**
@@ -245,7 +255,7 @@ export default class Autocomplete {
    * @param {Object} list - list of autocomplete options
    * @return {Object} first list option with 'active-option' class
    */
-  getActiveOption(list) {
+  getActiveOption(list = this.list) {
     const activeOption = list.getElementsByClassName('active-option')[0]
     if (activeOption && activeOption.style.display !== 'none') {
       return activeOption
@@ -285,33 +295,86 @@ export default class Autocomplete {
    * @param {Object} list - list of autocomplete options
    * @param {Object} selectedOption - option - 'li' element - to be selected in autocomplete list
    */
-  selectOption(list, selectedOption) {
+  selectOption(selectedOption, list = this.list) {
     const options = list.querySelectorAll('li')
-    // --Fix for IE11
     for (let i = 0; i < options.length; i++) {
+      const {
+        dataset: { value },
+      } = options[i]
       options[i].classList.remove('active-option')
+
+      if (value) {
+        const component = Components.getAddress(value)
+        component.dom.classList.remove(HIGHLIGHT_CLASS_NAME)
+      }
     }
     if (selectedOption) {
       selectedOption.classList.add('active-option')
+      this.highlightComponent(selectedOption)
     }
   }
 
   /**
-   * Is the value in the autocomplete field in the pre-defined Options list?
-   * @param {Object} list - list of autocomplete options
-   * @param {Object} value -value trying to be set
-   * @return {Object} - is the option in the pre defined list
+   * removes the highlight from
    */
-  isOptionValid(list, value) {
-    console.log(value)
-    const options = list.querySelectorAll('li')
-    let validValue = false
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].dataset.value === value) {
-        validValue = true
-        break
-      }
+  removeHighlight() {
+    const highlightedComponents = document.getElementsByClassName(HIGHLIGHT_CLASS_NAME)
+    for (let i = 0; i < highlightedComponents.length; i++) {
+      highlightedComponents[i].classList.remove(HIGHLIGHT_CLASS_NAME)
     }
-    return validValue
+  }
+
+  /**
+   * Highlight a component that maps to the option
+   */
+  highlightComponent(option) {
+    const {
+      dataset: { value },
+    } = option
+
+    if (value) {
+      const component = Components.getAddress(value)
+      component.dom.classList.add(HIGHLIGHT_CLASS_NAME)
+    }
+  }
+
+  /**
+   * Clears the autocomplete values and fires onChange event
+   */
+  clearValue() {
+    this.selectOption(null)
+
+    this.displayField.value = ''
+    this.hiddenField.value = ''
+    this.value = ''
+
+    this.runEvent('onChange', { target: this.hiddenField })
+  }
+
+  /**
+   * Sets the hidden and display values
+   * @param {String} label display text
+   * @param {String} value display text
+   */
+  setValue(target) {
+    const { label, value } = target.dataset
+
+    this.displayField.value = label
+    this.hiddenField.value = value
+    this.value = value
+
+    this.runEvent('onChange', { target: this.hiddenField })
+  }
+
+  addEvent(key, event) {
+    this.events.push([key, event])
+  }
+
+  runEvent(eventName, evt) {
+    this.events.forEach(([key, event]) => {
+      if (key === eventName) {
+        event(evt)
+      }
+    })
   }
 }

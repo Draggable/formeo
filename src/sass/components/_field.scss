@@ -2,7 +2,10 @@
   min-height: $icon-size;
   position: relative;
   padding: space();
-  transition: background-color 125ms ease-in-out;
+  transition: background-color $animation-speed-base ease-in-out, box-shadow $animation-speed-base ease-in-out;
+
+  will-change: box-shadow; // for highlight
+
   &:last-child {
     border-bottom-right-radius: $input-border-radius;
     border-bottom-left-radius: $input-border-radius;
@@ -61,32 +64,32 @@
     border-bottom-left-radius: $border-radius;
   }
 
-  &.editing-field,
-  &.hovering-field {
-    box-shadow: 0 0 0 1px $field-outline-color inset;
-
-    &::before {
-      line-height: 23px !important;
-
-      // width: 68px !important;
-      border-left: 1px solid $field-outline-color;
-      border-bottom: 1px solid $field-outline-color;
-    }
-  }
-
-  &.field-moving {
-    box-shadow: 0 0 0 1px $field-outline-color inset, 0 0 30px 0 $gray-light;
-    background-color: $white;
-  }
-
-  &.editing-field {
-    background-color: $gray-lightest;
-    z-index: 1;
-  }
-
   &.field-type-hidden {
     border: 1px dashed $gray-lighter;
   }
+}
+
+.editing-field,
+.hovering-field {
+  box-shadow: 0 0 0 1px $field-outline-color inset;
+
+  &::before {
+    line-height: 23px !important;
+
+    // width: 68px !important;
+    border-left: 1px solid $field-outline-color;
+    border-bottom: 1px solid $field-outline-color;
+  }
+}
+
+.field-moving {
+  box-shadow: 0 0 0 1px $field-outline-color inset, 0 0 30px 0 $gray-light;
+  background-color: $white;
+}
+
+.editing-field {
+  background-color: $gray-lightest;
+  z-index: 1;
 }
 
 .editing-field-preview {

@@ -4,6 +4,7 @@ const mockField = {
   data: {
     attrs: {},
   },
+  isDisabledProp: () => null,
 }
 
 describe('EditPanelItem', () => {

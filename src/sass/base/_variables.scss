@@ -7,6 +7,7 @@ $brand-warning: #f47c3c !default;
 $brand-warning-dark: darken($brand-warning, 10%) !default;
 $brand-error: #d9534f !default;
 $brand-error-dark: darken($brand-error, 10%) !default;
+$brand-info: #9954bb !default;
 
 $remove-bg: rgba(217, 83, 79, 0.5) !default;
 
@@ -43,4 +44,6 @@ $input-btn-border-width: 1px;
 $input-padding: 0.3em 0.6em;
 $input-border: $input-btn-border-width solid $gray-lighter;
 $checkbox-character: '✔' !default;
-$base-animation-speed: 333ms;
+$animation-speed-base: 333ms;
+$animation-speed-slow: $animation-speed-base * 2;
+$animation-speed-fast: $animation-speed-base / 2;

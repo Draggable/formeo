@@ -1,4 +1,9 @@
-import { EVENT_FORMEO_UPDATED, EVENT_FORMEO_ON_RENDER } from '../constants'
+import {
+  EVENT_FORMEO_UPDATED,
+  EVENT_FORMEO_ON_RENDER,
+  EVENT_FORMEO_CONDITION_UPDATED,
+  EVENT_FORMEO_SAVED,
+} from '../constants'
 
 // Default options
 const defaults = {
@@ -16,6 +21,15 @@ const defaults = {
   },
 }
 
+const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
+  const evt = new window.CustomEvent(EVENT_FORMEO_UPDATED, {
+    detail: evtData,
+    bubbles: events.opts.debug || events.opts.bubbles,
+  })
+  evt.data = (src || document).dispatchEvent(evt)
+  return evt
+}
+
 /**
  * Events class is used to register events and throttle their callbacks
  */
@@ -24,23 +38,10 @@ const events = {
     this.opts = Object.assign({}, defaults, options)
     return this
   },
-  formeoSaved: new window.CustomEvent('formeoSaved', {}),
-  formeoUpdated: ({ src, ...evtData }) => {
-    const evt = new window.CustomEvent(EVENT_FORMEO_UPDATED, {
-      detail: evtData,
-      bubbles: events.opts.debug || events.opts.bubbles,
-    })
-    evt.data = (src || document).dispatchEvent(evt)
-    return evt
-  },
-  formeoOnRender: ({ src, ...evtData }) => {
-    const evt = new window.CustomEvent(EVENT_FORMEO_ON_RENDER, {
-      detail: evtData,
-      bubbles: events.opts.debug || events.opts.bubbles,
-    })
-    evt.data = (src || document).dispatchEvent(evt)
-    return evt
-  },
+  formeoSaved: evt => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
+  formeoUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
+  formeoOnRender: evt => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
+  formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
 }
 
 document.addEventListener(EVENT_FORMEO_UPDATED, evt => {
@@ -73,7 +74,7 @@ document.addEventListener('confirmClearAll', evt => {
   events.opts.confirmClearAll(evt)
 })
 
-document.addEventListener('formeoSaved', ({ timeStamp, type, detail: { formData } }) => {
+document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { formData } }) => {
   const evt = {
     timeStamp,
     type,

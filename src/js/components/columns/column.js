@@ -1,18 +1,18 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import Component from '../component'
-import h, { get } from '../../common/helpers'
+import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { numToPercent } from '../../common/utils'
 import { COLUMN_CLASSNAME } from '../../constants'
-
-// @todo remove formData
-const formData = {}
+import Components from '..'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
-    config: {},
+    config: {
+      width: '100%',
+    },
     children: [],
     className: 'f-column',
   })
@@ -78,7 +78,6 @@ export default class Column extends Component {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
-      // group: 'column',
       group: {
         name: 'column',
         pull: true,
@@ -86,10 +85,10 @@ export default class Column extends Component {
       },
       sort: true,
       disabled: false,
-      // onEnd: this.onEnd,
-      onAdd: this.onAdd,
-      onSort: this.onSort,
-      onRemove: this.onRemove,
+      onEnd: this.onEnd.bind(this),
+      onAdd: this.onAdd.bind(this),
+      onSort: this.onSort.bind(this),
+      onRemove: this.onRemove.bind(this),
       // Attempt to drag a filtered element
       onMove: evt => {
         if (evt.from !== evt.to) {
@@ -144,6 +143,7 @@ export default class Column extends Component {
    * @param  {Object} evt resize event
    */
   resize = evt => {
+    const _this = this
     const resize = {}
     const column = evt.target.parentElement
     const sibling = column.nextSibling || column.previousSibling
@@ -192,13 +192,13 @@ export default class Column extends Component {
       if (!resize.resized) {
         return
       }
-      const columnData = this.data
-      const sibColumnData = get(formData, `columns.${sibling.id}`)
+
       const row = column.parentElement
       row.querySelector('.column-preset').value = 'custom'
       row.classList.remove('resizing-columns')
-      columnData.config.width = column.dataset.colWidth
-      sibColumnData.config.width = sibling.dataset.colWidth
+
+      _this.set('config.width', column.dataset.colWidth)
+      Components.setAddress(`columns.${sibling.id}`, sibling.dataset.colWidth)
       resize.resized = false
     }
 
@@ -228,8 +228,10 @@ export default class Column extends Component {
     })(evt)
   }
 
-  // @todo loop through children and refresh panels
-  refreshFieldPanels = () => {}
+  // loops through children and refresh their edit panels
+  refreshFieldPanels = () => {
+    this.children.forEach(field => field.panels.nav.refresh())
+  }
 
   /**
    * Sets a columns width

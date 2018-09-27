@@ -258,3 +258,10 @@
     clear: both;
   }
 }
+
+@mixin hideConditionField {
+  max-width: 0%;
+  padding: 0;
+  border: 0 none;
+  overflow: hidden;
+}

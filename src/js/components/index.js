@@ -88,6 +88,24 @@ export class Components extends Data {
     Columns.config = columns
     Fields.config = fields
   }
+
+  /**
+   * call `set` on a component in memory
+   */
+  setAddress(address, value) {
+    const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
+    const componentType = type.replace(/s?$/, 's')
+    components[componentType].get(id).set(path, value)
+  }
+  /**
+   * Fetch a component from memory by address
+   */
+  getAddress(address) {
+    const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
+    const componentType = type.replace(/s?$/, 's')
+    const component = components[componentType].get(id)
+    return path.length ? component.get(path) : component
+  }
 }
 
 const components = new Components()

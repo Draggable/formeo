@@ -5,7 +5,7 @@ import dom from '../../common/dom'
 import events from '../../common/events'
 import { bsGridRegEx } from '../../common/helpers'
 import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES } from '../../constants'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE } from '../../constants'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -54,10 +54,10 @@ export default class Row extends Component {
       },
       sort: true,
       disabled: false,
-      onRemove: this.onRemove,
-      onEnd: this.onEnd,
-      onAdd: this.onAdd,
-      onSort: this.onSort,
+      onRemove: this.onRemove.bind(this),
+      onEnd: this.onEnd.bind(this),
+      onAdd: this.onAdd.bind(this),
+      onSort: this.onSort.bind(this),
       filter: '.resize-x-handle',
       draggable: '.stage-columns',
       handle: '.item-handle',
@@ -148,7 +148,14 @@ export default class Row extends Component {
     })
     const columnSettingsPresetSelect = {
       className: 'col-sm-8',
-      content: this.columnPresetControl(),
+      content: {
+        className: 'column-preset',
+      },
+      action: {
+        onRender: evt => {
+          this.updateColumnPreset()
+        },
+      },
     }
     const formGroupContent = [columnSettingsPresetLabel, columnSettingsPresetSelect]
     const columnSettingsPreset = dom.formGroup(formGroupContent, 'row')
@@ -163,6 +170,16 @@ export default class Row extends Component {
     ]
 
     return editWindow
+  }
+
+  onAdd(...args) {
+    super.onAdd(...args)
+    this.autoColumnWidths()
+  }
+
+  onRemove(...args) {
+    super.onRemove(...args)
+    this.autoColumnWidths()
   }
 
   /**
@@ -183,17 +200,11 @@ export default class Row extends Component {
 
       column.set('config.width', newColWidth)
       colDom.style.width = newColWidth
-      // colDom.style.float = 'left'
       colDom.dataset.colWidth = newColWidth
-      column.refreshFieldPanels()
+      setTimeout(column.refreshFieldPanels, ANIMATION_SPEED_BASE)
       document.dispatchEvent(events.columnResized)
     })
-
-    // fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh())
-
-    // setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
-
-    // dom.updateColumnPreset(row)
+    this.updateColumnPreset()
   }
 
   /**
@@ -204,7 +215,7 @@ export default class Row extends Component {
     const oldColumnPreset = this.dom.querySelector('.column-preset')
     const rowEdit = oldColumnPreset.parentElement
     const columnPresetConfig = this.columnPresetControl(this.id)
-    const newColumnPreset = this.create(columnPresetConfig)
+    const newColumnPreset = dom.create(columnPresetConfig)
 
     rowEdit.replaceChild(newColumnPreset, oldColumnPreset)
     return columnPresetConfig
@@ -220,9 +231,12 @@ export default class Row extends Component {
       return
     }
     if (typeof widths === 'string') {
-      widths.split(',')
+      widths = widths.split(',')
     }
-    return this.children.map((column, i) => column.setWidth(`${widths[i]}%`))
+    this.children.forEach((column, i) => {
+      column.setWidth(`${widths[i]}%`)
+      column.refreshFieldPanels()
+    })
   }
 
   /**
@@ -240,8 +254,8 @@ export default class Row extends Component {
       action: {
         change: ({ target: { value } }) => {
           // @todo FIX!
-          const dRow = this.rows.get(this.id)
-          _this.setColumnWidths(dRow.row, value)
+          // const dRow = this.rows.get(this.id)
+          _this.setColumnWidths(value)
         },
       },
     }
@@ -249,9 +263,14 @@ export default class Row extends Component {
 
     // if (this.children) {
     const columns = this.children
-    const pMapVal = pMap.get(columns.length)
+    const pMapVal = pMap.get(columns.length - 1)
     layoutPreset.options = pMapVal || pMap.get('custom')
-    const curVal = columns.map(({ data }) => data.config.width.replace('%', '')).join(',')
+    const curVal = columns
+      .map(Column => {
+        const width = Column.get('config.width') || ''
+        return width.replace('%', '')
+      })
+      .join(',')
     if (pMapVal) {
       pMapVal.forEach((val, i) => {
         const options = layoutPreset.options

@@ -8,7 +8,7 @@ import {
   CHILD_TYPE_MAP,
   TYPE_CHILD_CLASSNAME_MAP,
   PARENT_TYPE_MAP,
-  ANIMATION_BASE_SPEED,
+  ANIMATION_SPEED_BASE,
   FIELD_PROPERTY_MAP,
 } from '../constants'
 import Components from './index'
@@ -74,8 +74,6 @@ export default class Component extends Data {
 
     if (!parent.children.length) {
       parent.emptyClass()
-      // @todo make this optional
-      // parent.remove()
     }
 
     return Components[`${this.name}s`].delete(this.id)
@@ -145,11 +143,11 @@ export default class Component extends Data {
     const element = this.dom
     const editClass = `editing-${this.name}`
     const editWindow = this.dom.querySelector(`.${this.name}-edit`)
-    animate.slideToggle(editWindow, ANIMATION_BASE_SPEED, open)
+    animate.slideToggle(editWindow, ANIMATION_SPEED_BASE, open)
 
     if (this.name === 'field') {
-      animate.slideToggle(this.preview, ANIMATION_BASE_SPEED, !open)
-      element.parentElement.classList.toggle('column-' + editClass, open)
+      animate.slideToggle(this.preview, ANIMATION_SPEED_BASE, !open)
+      element.parentElement.classList.toggle(`column-${editClass}`, open)
     }
 
     element.classList.toggle(editClass, open)
@@ -157,19 +155,20 @@ export default class Component extends Data {
 
   get buttons() {
     const _this = this
+    const parseIcons = icons => icons.map(icon => dom.icon(icon))
     const buttonConfig = {
-      get handle() {
+      handle: (icons = ['move', 'handle']) => {
         return {
-          ...dom.btnTemplate({ content: [dom.icon('move'), dom.icon('handle')] }),
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
           className: ['item-handle'],
           meta: {
             id: 'handle',
           },
         }
       },
-      get edit() {
+      edit: (icons = ['edit']) => {
         return {
-          ...dom.btnTemplate({ content: dom.icon('edit') }),
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
           className: ['item-edit-toggle'],
           meta: {
             id: 'edit',
@@ -181,16 +180,16 @@ export default class Component extends Data {
           },
         }
       },
-      get remove() {
+      remove: (icons = ['remove']) => {
         return {
-          ...dom.btnTemplate({ content: dom.icon('remove') }),
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
           className: ['item-remove'],
           meta: {
             id: 'remove',
           },
           action: {
             click: (evt, id) => {
-              animate.slideUp(_this.dom, ANIMATION_BASE_SPEED, () => {
+              animate.slideUp(_this.dom, ANIMATION_SPEED_BASE, () => {
                 // _this.parent.emptyClass()
                 _this.remove()
               })
@@ -199,9 +198,9 @@ export default class Component extends Data {
           },
         }
       },
-      get clone() {
+      clone: (icons = ['copy']) => {
         return {
-          ...dom.btnTemplate({ content: dom.icon('copy') }),
+          ...dom.btnTemplate({ content: parseIcons(icons) }),
           className: ['item-clone'],
           meta: {
             id: 'clone',
@@ -216,7 +215,9 @@ export default class Component extends Data {
     }
 
     return this.config.actionButtons.buttons.map(btn => {
-      return (typeof btn === 'string' && buttonConfig[btn]) || btn
+      const [key, ...rest] = btn.split('|')
+      const icons = rest.length ? rest : undefined
+      return (buttonConfig[key] && buttonConfig[key](icons)) || btn
     })
   }
 
@@ -260,7 +261,7 @@ export default class Component extends Data {
    * @param {Number} index
    * @return {Object} DOM element
    */
-  addChild(childData = {}, index = this.children.length) {
+  addChild(childData = {}, index = this.dom.children.length) {
     if (typeof childData !== 'object') {
       childData = { id: childData }
     }
@@ -299,22 +300,33 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd = evt => {
+  onAdd(evt) {
     const _this = this
     const { from, item, to } = evt
     const newIndex = indexOfNode(item, to)
     const fromType = componentType(from)
     const toType = componentType(to)
-    const itemType = componentType(item)
     const defaultOnAdd = () => {
       _this.saveChildOrder()
       _this.emptyClass()
     }
 
     const depthMap = new Map([
-      [-2, () => _this.addChild().addChild().addChild],
-      [-1, () => _this.addChild().addChild],
-      [0, () => _this.addChild],
+      [
+        -2,
+        () => {
+          const newChild = _this.addChild().addChild()
+          return newChild.addChild.bind(newChild)
+        },
+      ],
+      [
+        -1,
+        () => {
+          const newChild = _this.addChild()
+          return newChild.addChild.bind(newChild)
+        },
+      ],
+      [0, () => _this.addChild.bind(_this)],
       [
         1,
         controlData => {
@@ -327,7 +339,7 @@ export default class Component extends Data {
 
     const onAddConditions = {
       controls: () => {
-        const { controlData, ...control } = Controls.get(item.id)
+        const { controlData } = Controls.get(item.id)
         const {
           meta: { id: metaId },
         } = controlData
@@ -355,20 +367,21 @@ export default class Component extends Data {
         const action = depthMap.get(depth)()
         dom.remove(item)
         const component = action(controlData, newIndex)
-        control.on.renderComponent(component)
 
         return component
       },
       row: () => {
         const targets = {
-          row: 1,
-          field: -1,
+          stage: -1,
+          row: 0,
+          column: 1,
         }
-        targets[itemType] && depthMap.get(targets[itemType])()
-        return dom.asComponent(item)
+        const action = (depthMap.get(targets[toType]) || identity)()
+        return action && action(item.id)
       },
       column: () => {
         const targets = {
+          stage: -2,
           row: -1,
         }
         const action = (depthMap.get(targets[toType]) || identity)()
@@ -394,8 +407,12 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Array} updated child order
    */
-  onRemove = () => {
+  onRemove({ from }) {
     this.emptyClass()
+    if (from.classList.contains('stage-columns')) {
+      from.classList.remove('column-editing-field')
+    }
+
     return this.saveChildOrder()
   }
 

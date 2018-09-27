@@ -81,10 +81,10 @@ export default class Stage extends Component {
       },
       sort: true,
       disabled: false,
-      onAdd: this.onAdd,
-      onRemove: this.onRemove,
+      onAdd: this.onAdd.bind(this),
+      onRemove: this.onRemove.bind(this),
       onStart: () => (Stages.active = this),
-      onSort: this.onSort,
+      onSort: this.onSort.bind(this),
       draggable: '.stage-rows',
       handle: '.item-handle',
     })
@@ -97,5 +97,12 @@ export default class Stage extends Component {
       animate.slideDown(this.dom, 300)
     })
     return this
+  }
+
+  onAdd(...args) {
+    const component = super.onAdd(...args)
+    if (component.name === 'column') {
+      component.parent.autoColumnWidths()
+    }
   }
 }

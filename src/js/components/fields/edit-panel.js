@@ -21,32 +21,6 @@ export default class EditPanel {
     this.data = this.type === 'object' ? Object.entries(panelData) : panelData
     this.name = panelName
     this.field = field
-    // const domConfig = {
-    // ,
-    // content: [this.editPanelContent],
-    // action: {
-    //   // change: evt => {
-    // let fieldData = formData.fields.get(_this.id);
-    //   if (evt.target.fMap) {
-    //     let value = evt.target.value;
-    //     let targetType = evt.target.type;
-    //     if (targetType === 'checkbox' || targetType === 'radio') {
-    //       let options = fieldData.options;
-    //       value = evt.target.checked;
-    //       // uncheck options if radio
-    //       if (evt.target.type === 'radio') {
-    //         options.forEach(option => option.selected = false);
-    //       }
-    //     }
-    //     h.set(fieldData, evt.target.fMap, value);
-    //     data.save(panelType, _this.id);
-    //     // throttle this for sure
-    //     _this.updatePreview();
-    //   }
-    // }
-    //   },
-    // }
-    // console.log(panelData, panelName, field)
 
     this.props = this.createProps()
     this.editButtons = this.createEditButtons()
@@ -61,27 +35,6 @@ export default class EditPanel {
     }
   }
 
-  // content = () => {
-  //   const editGroup = {
-  //     tag: 'ul',
-  //     attrs: {
-  //       className: ['field-edit-group', `field-edit-${this.name}`],
-  //     },
-  //     editGroup: this.name,
-  //     isSortable: this.name === 'options',
-  //     content: Array.from(this.data).map((data, index) => {
-  //       const isArray = this.type === 'array'
-  //       const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
-  //       const itemData = isArray ? data : { [data[0]]: data[1] }
-  //       const editPanelItem = new EditPanelItem(itemKey, itemData, this.field)
-
-  //       return editPanelItem.dom
-  //     }),
-  //   }
-  //   console.log(editGroup)
-  //   // return [dom.create(editGroup), this.createEditButtons()]
-  // }
-
   /**
    * Generates the edit panel for attrs, meta and options for a fields(s)
    * @param  {String} panelName
@@ -89,7 +42,7 @@ export default class EditPanel {
    * @return {Object}           formeo DOM config object
    */
   createProps() {
-    const editPanelItems = Array.from(this.data).map((data, index) => {
+    this.editPanelItems = Array.from(this.data).map((data, index) => {
       const isArray = this.type === 'array'
       const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
       const itemData = isArray ? data : { [data[0]]: data[1] }
@@ -103,7 +56,7 @@ export default class EditPanel {
       },
       editGroup: this.name,
       isSortable: this.name === 'options',
-      content: editPanelItems,
+      content: this.editPanelItems,
     }
 
     return dom.create(editGroupConfig)
@@ -130,11 +83,14 @@ export default class EditPanel {
           const addEvt = {
             btnCoords: dom.coords(evt.target),
             addAction: addActions[type],
-            isDisabled: _this.isDisabledAttr,
-            message: {
+          }
+
+          if (type === 'attrs') {
+            addEvt.isDisabled = _this.field.isDisabledProp
+            addEvt.message = {
               attr: i18n.get(`action.add.${type}.attr`),
               value: i18n.get(`action.add.${type}.value`),
-            },
+            }
           }
 
           const eventType = startCase(type)
@@ -150,6 +106,7 @@ export default class EditPanel {
         },
       },
     }
+
     const panelEditButtons = {
       className: 'panel-action-buttons',
       content: [addBtn],
@@ -215,6 +172,7 @@ export default class EditPanel {
     // const newPreview = dom.create(this.data, true)
     // _this.preview.appendChild(newPreview)
   }
+
   addCondition = evt => {
     const currentConditions = this.field.get('conditions')
     const itemKey = `conditions.${currentConditions.length}`

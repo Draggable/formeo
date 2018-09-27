@@ -47,18 +47,6 @@
       top: 50%;
       transform: translate(-50%, -50%);
     }
-
-    &:hover {
-      .prop-control {
-        &:first-child {
-          border-radius: 0 $input-border-radius $input-border-radius 0;
-        }
-
-        &:last-child {
-          display: inline-block;
-        }
-      }
-    }
   }
 
   .prop-control {
@@ -143,7 +131,8 @@
       }
     }
 
-    .condition-source + select {
+    [class^='condition-'] + select,
+    select + [class^='condition-'] {
       margin-left: -1px;
     }
   }
@@ -175,15 +164,22 @@
   }
 }
 
-.condition-row {
+.f-condition-row {
   display: flex;
   width: 100%;
   margin-top: -1px;
+  border: 1px solid $gray-lighter;
   input,
   select,
-  [contenteditable] {
+  [contenteditable],
+  > div {
+    border-width: 0;
     border-radius: 0;
     width: inherit !important;
+    box-shadow: 0 0 0 1px $gray-lighter;
+    &:focus {
+      box-shadow: 0 0 0 1px $input-focus;
+    }
   }
   &:first-child {
     input:last-child,
@@ -197,12 +193,62 @@
       border-bottom-right-radius: $input-border-radius;
     }
   }
+  &:first-child {
+    border-top-left-radius: $input-border-radius;
+    border-top-right-radius: $input-border-radius;
+  }
+  &:last-child {
+    border-bottom-left-radius: $input-border-radius;
+    border-bottom-right-radius: $input-border-radius;
+  }
+
   .condition-logical {
-    max-width: 60px;
+    max-width: space(7);
     text-transform: uppercase;
   }
-  .condition-source {
-    z-index: 1;
+
+  .condition-source,
+  .condition-target {
+    position: relative;
+  }
+
+  [class^='condition-'] {
+    max-width: 100%;
+    transition: max-width $animation-speed-base;
+    will-change: max-width;
+  }
+
+  &.condition-sourceProperty-isVisible {
+    .condition-comparison,
+    .condition-target,
+    .condition-targetProperty {
+      @include hideConditionField;
+    }
+  }
+
+  &.condition-source {
+    .condition-sourceProperty {
+      @include hideConditionField;
+    }
+  }
+
+  &.condition-target {
+    .condition-targetProperty {
+      @include hideConditionField;
+    }
+  }
+}
+
+.f-autocomplete-display-field + .f-autocomplete-list {
+  &:focus {
+    z-index: 100;
+  }
+}
+
+[class$='-focused'] {
+  z-index: 1;
+  .f-autocomplete-list {
+    z-index: 100;
   }
 }
 
@@ -210,7 +256,7 @@
   label.condition-label {
     display: inline-flex;
     flex: 0 0 auto;
-    border: $input-border;
+    box-shadow: 0 0 0 1px $gray-lighter;
     align-items: center;
     padding: space();
     border-right: 0;
@@ -226,19 +272,6 @@
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       border-top: 0;
-    }
-  }
-
-  .condition-comparison {
-    max-width: 100%;
-    transition: max-width $base-animation-speed, padding $base-animation-speed;
-  }
-
-  .condition-property-isVisible {
-    .condition-comparison {
-      max-width: 0;
-      padding: 0.3em 0;
-      border: 0 none;
     }
   }
 }

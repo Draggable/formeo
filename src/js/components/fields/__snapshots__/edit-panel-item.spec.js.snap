@@ -4,7 +4,7 @@ exports[`EditPanelItem should match attribute item snapshot 1`] = `
 EditPanelItem {
   "conditionInput": [Function],
   "dom": <li
-    class="field-attrs-type prop-wrap"
+    class="field-attrs-type prop-wrap "
   >
     <div
       class="field-prop"
@@ -13,8 +13,10 @@ EditPanelItem {
         class="attrs-prop-inputs prop-inputs f-input-group"
       >
         <input
+          class="type"
           id="attrs-type"
           name="attrs-type"
+          placeholder="Type"
           type="text"
           value="checkbox"
         />
@@ -35,8 +37,12 @@ EditPanelItem {
     "data": Object {
       "attrs": Object {},
     },
+    "isDisabledProp": [Function],
   },
   "generateConditionFields": [Function],
+  "isDisabled": null,
+  "isHidden": null,
+  "itemFieldGroups": Array [],
   "itemKey": "attrs.type",
   "itemValues": Array [
     Array [
@@ -45,6 +51,7 @@ EditPanelItem {
     ],
   ],
   "panelName": "attrs",
+  "processConditionUIState": [Function],
 }
 `;
 
@@ -52,7 +59,7 @@ exports[`EditPanelItem should match option snapshot 1`] = `
 EditPanelItem {
   "conditionInput": [Function],
   "dom": <li
-    class="field-options-0 prop-wrap"
+    class="field-options-0 prop-wrap "
   >
     <div
       class="field-prop"
@@ -64,19 +71,25 @@ EditPanelItem {
           class="f-addon"
         >
           <input
+            class="checked"
             name="[]"
+            placeholder="Checked"
             type="checkbox"
           />
         </div>
         <input
+          class="label"
           id="options-0"
           name="options-0"
+          placeholder="Label"
           type="text"
           value="Checkbox 1"
         />
         <input
+          class="value"
           id="options-0"
           name="options-0"
+          placeholder="Value"
           type="text"
           value="checkbox-1"
         />
@@ -97,8 +110,12 @@ EditPanelItem {
     "data": Object {
       "attrs": Object {},
     },
+    "isDisabledProp": [Function],
   },
   "generateConditionFields": [Function],
+  "isDisabled": null,
+  "isHidden": null,
+  "itemFieldGroups": Array [],
   "itemKey": "options.0",
   "itemValues": Array [
     Array [
@@ -115,5 +132,6 @@ EditPanelItem {
     ],
   ],
   "panelName": "options",
+  "processConditionUIState": [Function],
 }
 `;

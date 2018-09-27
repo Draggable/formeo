@@ -6,28 +6,11 @@ import Panels from '../panels'
 import { clone, unique } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
-import { FIELD_CLASSNAME } from '../../constants'
+import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants'
 import Components from '..'
 
 const DEFAULT_DATA = {
-  conditions: [
-    {
-      if: [
-        {
-          source: '',
-          comparison: '',
-          target: '',
-        },
-      ],
-      then: [
-        {
-          target: '',
-          assignment: '',
-          value: '',
-        },
-      ],
-    },
-  ],
+  conditions: [CONDITION_TEMPLATE],
 }
 
 /**
@@ -77,45 +60,64 @@ export default class Field extends Component {
   }
 
   get labelConfig() {
-    return (
-      this.data.config &&
-      !this.data.config.hideLabel && {
-        tag: 'label',
-        attrs: {
-          contenteditable: true,
-          className: 'prev-label',
-        },
-        children: this.data.config.label,
-        action: {
-          input: ({ target: { innerHTML } }) => {
-            super.set('config.label', innerHTML)
-            const reverseConditionField = Components['fields'].conditionMap.get(this.id)
-            if (reverseConditionField) {
-              return reverseConditionField.updateConditionsPanel()
-            }
+    const hideLabel = !!this.get('config.hideLabel')
 
-            const conditions = this.get('conditions')
-            if (conditions && conditions.length) {
-              this.updateConditionsPanel()
-            }
+    if (hideLabel) {
+      return
+    }
 
-            // if (reverseConditionField) {
-            //   debounce(reverseConditionField.updateConditionsPanel, ANIMATION_BASE_SPEED)()
-            // }
-            // console.log(reverseConditionField)
-          },
+    const labelVal = this.get('config.label')
+    const required = this.get('attrs.required')
+
+    const label = {
+      tag: 'label',
+      attrs: {
+        contenteditable: true,
+      },
+      children: labelVal,
+      action: {
+        input: ({ target: { innerHTML, innerText } }) => {
+          super.set('config.label', innerHTML)
+          const reverseConditionField = Components['fields'].conditionMap.get(this.id)
+          if (reverseConditionField) {
+            return reverseConditionField.updateConditionSourceLabel(`${this.name}s.${this.id}`, innerText)
+          }
         },
-      }
-    )
+      },
+    }
+
+    const labelWrap = {
+      className: 'prev-label',
+      children: [label, required && dom.requiredMark()],
+    }
+
+    return labelWrap
+  }
+
+  /**
+   * Updates a source field's label without recreating conditions dom
+   */
+  updateConditionSourceLabel(value, label) {
+    const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
+    if (!newConditionsPanel) {
+      return null
+    }
+
+    newConditionsPanel.editPanelItems.forEach(({ itemFieldGroups }) => {
+      itemFieldGroups.forEach(fields => {
+        const autocomplete = fields.find(field => field.value === value)
+        if (autocomplete) {
+          autocomplete.displayField.value = label
+        }
+      })
+    })
   }
 
   /**
    * wrapper for Data.set
    */
   set(...args) {
-    const [path, propData] = args
-    const [property] = path.match(/(\w*)$/)
-    const value = propData[property] ? propData[property] : propData
+    const [path, value] = args
 
     const data = super.set(path, value)
     this.updateLabel()
@@ -140,13 +142,15 @@ export default class Field extends Component {
    * Updates the conditions panel when linked field data changes
    */
   updateConditionsPanel = () => {
-    const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
-    if (!newConditionsPanel) {
-      return null
-    }
-    const newProps = newConditionsPanel.createProps()
-    const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
-    currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
+    setTimeout(() => {
+      const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
+      if (!newConditionsPanel) {
+        return null
+      }
+      const newProps = newConditionsPanel.createProps()
+      const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
+      currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
+    }, ANIMATION_SPEED_BASE)
   }
 
   /**

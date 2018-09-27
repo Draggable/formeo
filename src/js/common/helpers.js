@@ -1,11 +1,9 @@
 'use strict'
 import dom from './dom'
 import { unique } from './utils'
-import set from 'lodash/set'
+import lodashSet from 'lodash/set'
+import lodashGet from 'lodash/get'
 
-// eslint-disable-next-line
-const rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(\.|\[\])(?:\4|$))/g
-const reEscapeChar = /\\(\\)?/g
 export const bsGridRegEx = /\bcol-\w+-\d+/g
 
 const loaded = {
@@ -17,7 +15,7 @@ const loaded = {
  * Tests if is whole number. returns false if n is Float
  * @param {String|Number} n
  */
-export const isInt = n => (Number(n) === n && n % 1 === 0) || n === '0'
+export const isInt = n => Number.isInteger(Number(n))
 
 /**
  * Finds the index of an element in its parent
@@ -31,15 +29,22 @@ export const indexOfNode = (node, parent) => {
 }
 
 /**
- * Orders an array of objects by specific attribute
+ * Orders an array of objects by specific attributes
  * @param  {Array}  elements  Array of element objects
  * @param  {Array}  order     array of keys to order objects by
  * @param  {String} path      string path to property to order by
  * @return {Array}            Ordered Array of Element Objects
  */
 export const orderObjectsBy = (elements, order, path) => {
+  // OR operator for path
+  const splitPath = path.split('||')
   const newOrder = unique(order)
-    .map(key => elements.find(elem => helpers.get(elem, path) === key))
+    .map(key =>
+      elements.find(elem => {
+        const newPath = splitPath.find(p => !!helpers.get(elem, p))
+        return newPath && helpers.get(elem, newPath) === key
+      })
+    )
     .filter(Boolean)
   const orderedElements = newOrder.concat(elements)
 
@@ -72,51 +77,11 @@ export const insertScript = src => {
     // Append the script to the DOM
     const el = document.getElementsByTagName('script')[0]
     el.parentNode.insertBefore(script, el)
-
-    // Resolve the promise once the script is loaded
-    // script.addEventListener('load', )
-
-    // Catch any errors while loading the script
-    // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
   })
 }
 
-const stringToPath = function(string) {
-  let result = []
-  if (Array.isArray(string)) {
-    result = string
-  } else {
-    string.replace(rePropName, function(match, number, quote, string) {
-      let segment
-      if (quote) {
-        segment = string.replace(reEscapeChar, '$1')
-      } else {
-        segment = number || match
-      }
-      result.push(segment)
-    })
-  }
-  return result
-}
-
-/**
- * get nested property value in an object
- *
- * @private
- * @param {Object} object The object to query.
- * @param {String} path The path of the property to get.
- * @return {String|Array|Object} Returns the resolved value.
- */
-export const get = (obj, path) => {
-  path = Array.isArray(path) ? path : stringToPath(path)
-  const val = path.reduce((acc, part) => {
-    if (typeof acc === 'string') {
-      return acc
-    }
-    return acc && acc[part]
-  }, obj)
-  return val
-}
+export const get = lodashGet
+export const set = lodashSet
 
 /**
  * @param {Array|NodeList} arr to be iterated
@@ -164,40 +129,7 @@ export const helpers = {
     return safeAttr[name] || hyphenCase(name)
   },
 
-  insertScript: src => {
-    return new Promise((resolve, reject) => {
-      if (loaded.js.includes(src)) {
-        return resolve(src)
-      }
-
-      // Create script element and set attributes
-      const script = dom.create({
-        tag: 'script',
-        attrs: {
-          type: 'text/javascript',
-          async: true,
-          src: `//${this.src}`,
-        },
-        action: {
-          load: () => {
-            loaded.js.push(src)
-            resolve(src)
-          },
-          error: () => reject(new Error(`${this.src} failed to load.`)),
-        },
-      })
-
-      // Append the script to the DOM
-      const el = document.getElementsByTagName('script')[0]
-      el.parentNode.insertBefore(script, el)
-
-      // Resolve the promise once the script is loaded
-      // script.addEventListener('load', )
-
-      // Catch any errors while loading the script
-      // script.addEventListener('error', () => reject(new Error(`${this.src} failed to load.`)))
-    })
-  },
+  insertScript,
   capitalize: str => {
     return str.replace(/\b\w/g, function(m) {
       return m.toUpperCase()
@@ -223,11 +155,7 @@ export const helpers = {
   indexOfNode,
   isInt,
   get,
-  getIn: (map, path, fallback) => {
-    const value = path.reduce((acc, part) => acc.get(), map)
-    return value || (fallback && typeof fallback === 'function') ? fallback() : fallback
-  },
-  set, // use lodash set
+  set,
 
   orderObjectsBy,
   detectIE: () => {

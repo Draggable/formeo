@@ -255,3 +255,14 @@ export const sessionStorage = Object.create(null, {
     },
   },
 })
+
+/**
+ * Escape markup so it can be displayed rather than rendered
+ * @param  {String} html markup
+ * @return {String}      escaped html
+ */
+export const escapeHtml = html => {
+  const escapeElement = document.createElement('textarea')
+  escapeElement.textContent = html
+  return escapeElement.innerHTML
+}

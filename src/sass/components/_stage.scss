@@ -8,6 +8,10 @@
 
 // .stage-wrap {
 
+.highlight-component {
+  box-shadow: 0 0 space() 2px $brand-info;
+}
+
 .stage {
   @include breakpoint('phone-lrg') {
     width: calc(100% - 50px);

@@ -7,8 +7,6 @@ const headerTags = Array.from(Array(5).keys())
 
 const headerKey = 'controls.html.header'
 
-console.log(headerTags[0])
-
 class HeaderControl extends Control {
   constructor() {
     const header = {

@@ -14,7 +14,7 @@ const formeoOpts = {
     sortable: false,
     groupOrder: ['common', 'html'],
     disable: {
-      elements: ['button'],
+      // elements: ['button'],
     },
     elements: [
       {
@@ -30,27 +30,6 @@ const formeoOpts = {
           className: 'custom-email',
           type: 'email',
         },
-        conditions: [
-          {
-            if: [
-              { source: 'emailControl.value', comparison: '⊃', target: 'surefyre.com' },
-              'OR',
-              { source: 'emailControl.value', comparison: '!^=', target: 'kevin' },
-            ],
-            then: [
-              {
-                attr: {
-                  required: true,
-                },
-              },
-              {
-                config: {
-                  isVisible: true,
-                },
-              },
-            ],
-          },
-        ],
       },
       //     {
       //   tag: 'input',
@@ -118,7 +97,7 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      'b6715d58-5a86-4f4b-8310-057387b5f66a': {
+      '67aa618b-4838-4382-a14e-76e8a7ae3ed7': {
         events: {
           onRender: element => {
             formeo.Components.fields.get(element.id).toggleEdit(true)
@@ -136,10 +115,10 @@ const formeoOpts = {
       },
     },
   },
-  events: {
-    // onUpdate: console.log,
-    // onSave: console.log
-  },
+  // events: {
+  // onUpdate: console.log,
+  // onSave: console.log
+  // },
   svgSprite: 'assets/formeo-sprite.svg',
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,

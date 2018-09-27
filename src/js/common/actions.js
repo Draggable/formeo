@@ -1,6 +1,6 @@
 import identity from 'lodash/identity'
 import i18n from 'mi18n'
-import { SESSION_FORMDATA_KEY } from '../constants'
+import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants'
 import { sessionStorage } from './utils'
 
 // Actions are the callbacks for things like adding
@@ -53,23 +53,7 @@ const actions = {
       return actions.opts.add.option(evt)
     },
     conditions: evt => {
-      const conditionsTemplate = {
-        if: [
-          {
-            source: '',
-            comparison: '',
-            target: '',
-          },
-        ],
-        then: [
-          {
-            target: '',
-            assignment: '',
-            value: '',
-          },
-        ],
-      }
-      evt.template = conditionsTemplate
+      evt.template = CONDITION_TEMPLATE
       // @todo add logging
       return actions.opts.add.condition(evt)
     },

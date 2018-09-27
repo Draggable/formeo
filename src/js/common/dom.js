@@ -82,6 +82,9 @@ class DOM {
    * @return {Object}            DOM Object
    */
   create = (elem, isPreview = false) => {
+    if (!elem) {
+      return
+    }
     if (elem instanceof Map) {
       elem = mapToObj(elem)
     }
@@ -97,13 +100,8 @@ class DOM {
       children: [],
       config: {},
     }
-    const requiredMark = {
-      tag: 'span',
-      className: 'text-error',
-      children: '*',
-    }
+
     let element = document.createElement(tag)
-    const required = h.get(elem, 'attrs.required')
 
     /**
      * Object for mapping contentType to its function
@@ -163,9 +161,6 @@ class DOM {
         }
         wrap.config = Object.assign({}, elem.config)
         wrap.className.push = h.get(elem, 'attrs.className')
-        if (required) {
-          wrap.attrs.required = required
-        }
         return this.create(wrap, isPreview)
       }
       processed.push('options')
@@ -178,7 +173,6 @@ class DOM {
     }
 
     if (elem.config) {
-      // const editablePreview = elem.config.editable && isPreview
       if (
         elem.config.label &&
         ((elem.config.label && tag !== 'button') || ['radio', 'checkbox'].includes(h.get(elem, 'attrs.type'))) &&
@@ -187,27 +181,8 @@ class DOM {
         const label = _this.label(elem)
 
         if (!elem.config.hideLabel) {
-          const wrapContent = [
-            ...(_this.labelAfter(elem) ? [element, label] : [label, element]),
-            required && requiredMark,
-          ]
+          const wrapContent = [...(_this.labelAfter(elem) ? [element, label] : [label, element])]
           wrap.children.push(wrapContent)
-          // if (_this.labelAfter(elem)) {
-          // add check for inline checkbox
-          // wrap.className = `f-${elem.attrs.type}`
-
-          //   label.insertBefore(element, label.firstChild)
-          //   wrap.children.push(label)
-          //   if (required) {
-          //     wrap.children.push(requiredMark)
-          //   }
-          // } else {
-          //   wrap.children.push(label)
-          //   if (required) {
-          //     wrap.children.push(requiredMark)
-          //   }
-          //   wrap.children.push(element)
-          // }
         }
       }
 
@@ -219,7 +194,7 @@ class DOM {
       const children = elem.content || elem.children
       childType = _this.childType(children)
       if (!appendChildren[childType]) {
-        console.log(childType)
+        console.error(`childType: ${childType} is not supported`)
       }
       appendChildren[childType].call(this, children)
     }
@@ -392,7 +367,7 @@ class DOM {
   makeOption = ([value, label], selected, i18nKey) => {
     const option = {
       value,
-      label: i18nKey ? i18n.get(`${i18nKey}.${label}`) : label,
+      label: i18n.get(`${i18nKey}.${label}`) || label,
     }
     if (value === selected) {
       option.selected = true
@@ -548,6 +523,12 @@ class DOM {
     return labelAfter !== undefined ? labelAfter : isCB
   }
 
+  requiredMark = () => ({
+    tag: 'span',
+    className: 'text-error',
+    children: '*',
+  })
+
   /**
    * Generate a label
    * @param  {Object} elem config object
@@ -555,6 +536,7 @@ class DOM {
    * @return {Object}      config object
    */
   label(elem, fMap) {
+    const required = h.get(elem, 'attrs.required')
     let {
       config: { label: labelText = '' },
     } = elem
@@ -571,7 +553,7 @@ class DOM {
         for: elemId || attrsId,
       },
       className: [],
-      children: labelText,
+      children: [labelText, required && this.requiredMark()],
       action: {},
     }
 

@@ -385,10 +385,7 @@ export class Controls {
     const layoutTypes = {
       row: () => Stages.active.addChild(),
       column: () => layoutTypes.row().addChild(),
-      field: controlData => {
-        const field = layoutTypes.column().addChild(controlData)
-        return field
-      },
+      field: controlData => layoutTypes.column().addChild(controlData),
     }
 
     return group !== 'layout' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]()

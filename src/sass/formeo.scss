@@ -2,6 +2,7 @@
 @import 'base/animation';
 @import 'base/mixins';
 @import 'base/icons';
+@import 'components/autocomplete';
 
 .formeo {
   * {
@@ -11,7 +12,6 @@
   @import 'base/bs';
 
   @include clearfix;
-  @import 'components/autocomplete';
 
   &.formeo-editor {
     display: flex;
