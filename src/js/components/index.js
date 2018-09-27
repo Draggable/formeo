@@ -106,6 +106,27 @@ export class Components extends Data {
     const component = components[componentType].get(id)
     return path.length ? component.get(path) : component
   }
+
+  getConditionMap(address) {
+    const splitAddress = address.split('.')
+
+    return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.get(splitAddress[1])
+  }
+
+  setConditionMap(address, component) {
+    const splitAddress = address.split('.')
+
+    return (
+      splitAddress.every(segment => Boolean(segment)) &&
+      this[splitAddress[0]].conditionMap.set(splitAddress[1], component)
+    )
+  }
+
+  removeConditionMap(address, component) {
+    const splitAddress = address.split('.')
+
+    return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.delete(splitAddress[1])
+  }
 }
 
 const components = new Components()
