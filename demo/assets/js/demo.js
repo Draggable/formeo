@@ -90,31 +90,31 @@ const formeoOpts = {
       ],
     },
   },
-  config: {
-    fields: {
-      checkbox: {
-        actionButtons: {
-          buttons: ['edit'],
-        },
-      },
-      '202217ce-c991-43d9-8512-e3f6ddb84e16': {
-        events: {
-          onRender: element => {
-            formeo.Components.fields.get(element.id).toggleEdit(true)
-            element.querySelector('.next-group').click()
-          },
-        },
-        panels: {
-          attrs: {
-            hideDisabled: true,
-          },
-          disabled: [
-            // 'conditions'
-          ],
-        },
-      },
-    },
-  },
+  // config: {
+  //   fields: {
+  //     checkbox: {
+  //       actionButtons: {
+  //         buttons: ['edit'],
+  //       },
+  //     },
+  //     '202217ce-c991-43d9-8512-e3f6ddb84e16': {
+  //       events: {
+  //         onRender: element => {
+  //           formeo.Components.fields.get(element.id).toggleEdit(true)
+  //           element.querySelector('.next-group').click()
+  //         },
+  //       },
+  //       panels: {
+  //         attrs: {
+  //           hideDisabled: true,
+  //         },
+  //         disabled: [
+  //           // 'conditions'
+  //         ],
+  //       },
+  //     },
+  //   },
+  // },
   // events: {
   // onUpdate: console.log,
   // onSave: console.log

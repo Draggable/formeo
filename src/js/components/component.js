@@ -190,8 +190,11 @@ export default class Component extends Data {
           action: {
             click: (evt, id) => {
               animate.slideUp(_this.dom, ANIMATION_SPEED_BASE, () => {
-                // _this.parent.emptyClass()
-                _this.remove()
+                if (_this.name === 'column') {
+                  const row = _this.parent
+                  _this.remove()
+                  row.autoColumnWidths()
+                }
               })
               //  @todo add onRemove to Events and Actions
             },
