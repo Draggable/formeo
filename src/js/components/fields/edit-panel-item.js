@@ -51,11 +51,7 @@ const ITEM_INPUT_TYPE_MAP = {
         placeholder: labelHelper(`placeholder.${key}`),
       },
       className: key.replace(/\./g, '-'),
-      options: vals.map(({ label, value, selected }) => ({
-        label,
-        value,
-        selected,
-      })),
+      options: vals,
     }
   },
   object: val => {
@@ -125,7 +121,7 @@ export default class EditPanelItem {
   get itemInputs() {
     this.itemFieldGroups = []
 
-    return {
+    const inputs = {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val]) => {
         let inputConfig =
@@ -139,6 +135,8 @@ export default class EditPanelItem {
         return inputConfig
       }),
     }
+
+    return inputs
   }
 
   generateConditionFields = (type, vals) => {
@@ -243,6 +241,9 @@ export default class EditPanelItem {
 
   conditionInput = (key, val, conditionType, i) => {
     const field = this.field
+    const conditionPath = `${this.itemKey}.${conditionType}.${i}`
+    const conditionAddress = `${this.field.id}.${conditionPath}`
+    const dataPath = `${field.name}s.${conditionAddress}.${key}`
 
     const getOperatorField = operator => {
       const operatorOptions = Object.entries(OPERATORS[operator]).map(entry =>
@@ -256,9 +257,9 @@ export default class EditPanelItem {
     }
 
     const getPropertyField = (key, propertyValue) => {
-      const options = Object.keys(FIELD_PROPERTY_MAP).map(value => {
-        return dom.makeOption([value, value], propertyValue, `field.property`)
-      })
+      const options = Object.keys(FIELD_PROPERTY_MAP).map(value =>
+        dom.makeOption([value, value], propertyValue, `field.property`)
+      )
       const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array'](`condition.${key}`, options)
 
       propertyFieldConfig.action = {
@@ -269,13 +270,10 @@ export default class EditPanelItem {
     }
 
     const conditionChangeAction = ({ target }) => {
-      const conditionPath = `${this.itemKey}.${conditionType}.${i}`
-      const conditionAddress = `${this.field.id}.${conditionPath}`
       const row = target.closest('.f-condition-row')
       const regex = new RegExp(`${target.className}(?:\\S?)+`, 'gm')
       row.className = row.className.replace(regex, '')
       row.classList.add([target.className, target.value].filter(Boolean).join('-'))
-      const dataPath = `${field.name}s.${conditionAddress}.${key}`
       const evtData = {
         dataPath,
         value: target.value,
@@ -303,15 +301,18 @@ export default class EditPanelItem {
         return logicalField
       },
       source: (value, type = 'source') => {
-        const id = value.split('.').pop()
         const componentInput = ITEM_INPUT_TYPE_MAP['autocomplete'](`condition.${type}`, value, conditionType)
         // add to condition map for the type so we can perform reverse lookup when editing a field connected to this condition
-        id && Components[`${field.name}s`].conditionMap.set(id, field)
-        componentInput.addEvent('onChange', conditionChangeAction)
+        Components.setConditionMap(value, field)
+
+        componentInput.addEvent('onChange', evt => {
+          Components.removeConditionMap(Components.getAddress(dataPath))
+          conditionChangeAction(evt)
+          Components.setConditionMap(evt.target.value, field)
+        })
 
         return componentInput
       },
-      property: value => dom.create(getPropertyField('property', value)),
       sourceProperty: value => dom.create(getPropertyField('sourceProperty', value)),
       targetProperty: value => dom.create(getPropertyField('targetProperty', value)),
       target: value => segmentTypes.source(value, 'target'),

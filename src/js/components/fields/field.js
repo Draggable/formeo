@@ -78,7 +78,7 @@ export default class Field extends Component {
       action: {
         input: ({ target: { innerHTML, innerText } }) => {
           super.set('config.label', innerHTML)
-          const reverseConditionField = Components['fields'].conditionMap.get(this.id)
+          const reverseConditionField = Components.getConditionMap(`fields.${this.id}`)
           if (reverseConditionField) {
             return reverseConditionField.updateConditionSourceLabel(`${this.name}s.${this.id}`, innerText)
           }

@@ -1,6 +1,6 @@
 import Data from './data'
 import { uuid, sessionStorage } from '../common/utils'
-import './controls'
+import ControlsData from './controls'
 
 import StagesData from './stages'
 import RowsData from './rows'
@@ -12,6 +12,7 @@ export const Stages = StagesData
 export const Rows = RowsData
 export const Columns = ColumnsData
 export const Fields = FieldsData
+export const Controls = ControlsData
 
 const DEFAULT_DATA = {
   id: uuid(),
@@ -27,6 +28,7 @@ export class Components extends Data {
     this.rows = Rows
     this.columns = Columns
     this.fields = Fields
+    this.controls = Controls
   }
 
   sessionFormData = () => {
@@ -105,6 +107,27 @@ export class Components extends Data {
     const componentType = type.replace(/s?$/, 's')
     const component = components[componentType].get(id)
     return path.length ? component.get(path) : component
+  }
+
+  getConditionMap(address) {
+    const splitAddress = address.split('.')
+
+    return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.get(splitAddress[1])
+  }
+
+  setConditionMap(address, component) {
+    const splitAddress = address.split('.')
+
+    return (
+      splitAddress.every(segment => Boolean(segment)) &&
+      this[splitAddress[0]].conditionMap.set(splitAddress[1], component)
+    )
+  }
+
+  removeConditionMap(address, component) {
+    const splitAddress = address.split('.')
+
+    return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.delete(splitAddress[1])
   }
 }
 

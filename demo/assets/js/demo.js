@@ -97,7 +97,7 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      '67aa618b-4838-4382-a14e-76e8a7ae3ed7': {
+      '202217ce-c991-43d9-8512-e3f6ddb84e16': {
         events: {
           onRender: element => {
             formeo.Components.fields.get(element.id).toggleEdit(true)

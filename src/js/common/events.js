@@ -1,9 +1,13 @@
+import throttle from 'lodash/throttle'
 import {
   EVENT_FORMEO_UPDATED,
   EVENT_FORMEO_ON_RENDER,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_SAVED,
 } from '../constants'
+import { Columns, Controls } from '../components'
+
+const NO_TRANSITION_CLASS_NAME = 'no-transition'
 
 // Default options
 const defaults = {
@@ -86,5 +90,32 @@ document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { form
 document.addEventListener('formeoLoaded', evt => {
   events.opts.formeoLoaded(evt.detail.formeo)
 })
+
+let throttling
+
+function onResizeWindow() {
+  throttling =
+    throttling ||
+    window.requestAnimationFrame(() => {
+      throttling = false
+      Object.values(Columns.data).forEach(column => {
+        column.dom.classList.add(NO_TRANSITION_CLASS_NAME)
+        Controls.dom.classList.add(NO_TRANSITION_CLASS_NAME)
+        Controls.panels.nav.refresh()
+        column.refreshFieldPanels()
+        throttle(
+          () => {
+            column.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
+            Controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
+          },
+          1000,
+          { leading: false }
+        )
+      })
+    })
+}
+
+// handle event
+window.addEventListener('resize', onResizeWindow)
 
 export default events

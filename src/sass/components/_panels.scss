@@ -134,3 +134,8 @@
     }
   }
 }
+
+.no-transition .panels,
+.no-transition .panel-labels div {
+  transition: none;
+}

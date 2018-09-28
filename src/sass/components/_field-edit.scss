@@ -125,7 +125,6 @@
     [contenteditable] {
       font-size: 0.825em;
       flex: 1 1 auto;
-      width: auto;
       &:focus {
         z-index: 1;
       }
@@ -171,11 +170,10 @@
   border: 1px solid $gray-lighter;
   input,
   select,
-  [contenteditable],
-  > div {
+  [contenteditable] {
     border-width: 0;
     border-radius: 0;
-    width: inherit !important;
+    width: inherit;
     box-shadow: 0 0 0 1px $gray-lighter;
     &:focus {
       box-shadow: 0 0 0 1px $input-focus;
@@ -207,9 +205,10 @@
     text-transform: uppercase;
   }
 
-  .condition-source,
-  .condition-target {
+  div.condition-source,
+  div.condition-target {
     position: relative;
+    width: 100%;
   }
 
   [class^='condition-'] {
@@ -218,9 +217,29 @@
     will-change: max-width;
   }
 
-  &.condition-sourceProperty-isVisible {
-    .condition-comparison,
-    .condition-target,
+  &.if-condition-row {
+    &.condition-sourceProperty-isVisible {
+      .condition-comparison,
+      .condition-target,
+      .condition-assignment,
+      .condition-value,
+      .condition-targetProperty {
+        @include hideConditionField;
+      }
+    }
+  }
+
+  &.then-condition-row {
+    &.condition-targetProperty-isVisible {
+      .condition-comparison,
+      .condition-assignment,
+      .condition-value {
+        @include hideConditionField;
+      }
+    }
+  }
+
+  &.condition-target {
     .condition-targetProperty {
       @include hideConditionField;
     }
@@ -228,12 +247,6 @@
 
   &.condition-source {
     .condition-sourceProperty {
-      @include hideConditionField;
-    }
-  }
-
-  &.condition-target {
-    .condition-targetProperty {
       @include hideConditionField;
     }
   }
@@ -362,7 +375,15 @@
   label {
     padding-right: 1em;
     margin-bottom: 0;
-    flex: 0 0 16.666667%;
-    max-width: 16.666667%;
+  }
+
+  &.attrs-prop-inputs {
+    .f-addon,
+    input:not([type='checkbox']):not([type='radio']),
+    select,
+    textarea,
+    [contenteditable] {
+      flex: 2;
+    }
   }
 }

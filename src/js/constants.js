@@ -112,10 +112,13 @@ export const CONDITION_INPUT_ORDER = [
   'label',
   'logical',
   'source',
+  'thenTarget',
   'sourceProperty',
   'comparison',
   'target',
   'targetProperty',
+  'assignment',
+  'value',
 ]
 
 export const FIELD_PROPERTY_MAP = {
@@ -144,7 +147,7 @@ export const CONDITION_TEMPLATE = {
   then: [
     {
       target: '',
-      property: '',
+      targetProperty: '',
       assignment: '',
       value: '',
     },
