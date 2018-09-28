@@ -121,7 +121,7 @@ export default class EditPanelItem {
   get itemInputs() {
     this.itemFieldGroups = []
 
-    return {
+    const inputs = {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val]) => {
         let inputConfig =
@@ -135,6 +135,8 @@ export default class EditPanelItem {
         return inputConfig
       }),
     }
+
+    return inputs
   }
 
   generateConditionFields = (type, vals) => {
@@ -311,7 +313,6 @@ export default class EditPanelItem {
 
         return componentInput
       },
-      property: value => dom.create(getPropertyField('property', value)),
       sourceProperty: value => dom.create(getPropertyField('sourceProperty', value)),
       targetProperty: value => dom.create(getPropertyField('targetProperty', value)),
       target: value => segmentTypes.source(value, 'target'),

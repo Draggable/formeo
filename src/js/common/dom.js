@@ -540,17 +540,14 @@ class DOM {
     let {
       config: { label: labelText = '' },
     } = elem
-    const {
-      id: elemId,
-      attrs: { id: attrsId },
-    } = elem
+    const { id: elemId, attrs } = elem
     if (typeof labelText === 'function') {
       labelText = labelText()
     }
     const fieldLabel = {
       tag: 'label',
       attrs: {
-        for: elemId || attrsId,
+        for: elemId || (attrs && attrs.id),
       },
       className: [],
       children: [labelText, required && this.requiredMark()],
