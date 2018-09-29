@@ -39,15 +39,14 @@
       "test": [
         "test/**/*.spec.js"
       ],
-      "formeo": {
-        "js": "src/js/formeo.js",
+      "formeo-editor": {
+        "js": "src/js/editor.js",
         "icons": "src/icons/**/*.svg",
         "fonts": "src/fonts/fontello",
-        "lang": "src/lang",
-        "sass": [
-          "src/sass/formeo.scss",
-          "src/sass/_render.scss"
-        ]
+        "lang": "src/lang"
+      },
+      "formeo-renderer": {
+        "js": "src/js/renderer.js"
       },
       "site": [
         "demo/assets/sass/site.scss"
@@ -115,7 +114,10 @@
     "lint": "eslint ./src/js --ext .js || true",
     "test": "jest src/",
     "test:ci": "yarn test --coverage",
-    "start": "yarn clean && yarn copy && webpack-dev-server --mode development --open --config tools/webpack.config",
+    "prestart": "yarn clean && yarn copy",
+    "start": "webpack-dev-server --mode development --open --config tools/webpack.config",
+    "start:edit": "webpack-dev-server --mode development --open --config tools/webpack.config --module=editor",
+    "start:render": "webpack-dev-server --mode development --open --config tools/webpack.config --module=renderer",
     "tag": "node ./node_modules/babel-cli/bin/babel-node.js -- tools/run tag",
     "release:patch": "yarn run tag patch && yarn run deploy",
     "release:minor": "yarn run tag minor && yarn run deploy",

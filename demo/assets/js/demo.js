@@ -2,7 +2,7 @@ const isSite = window.location.href.indexOf('draggable.github.io') !== -1
 const container = document.querySelector('.build-form')
 const renderContainer = document.querySelector('.render-form')
 const formeoOpts = {
-  container: container,
+  editorContainer: container,
   i18n: {
     location: '../assets/lang',
   },
@@ -131,7 +131,6 @@ const formeo = new window.Formeo(formeoOpts)
 document.addEventListener(
   'formeoUpdated',
   evt => {
-    // console.log(evt)
     formeo.render && formeo.render(renderContainer)
   },
   false

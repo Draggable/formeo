@@ -1,6 +1,6 @@
 import isEqual from 'lodash/isEqual'
 import { uuid } from '../common/utils'
-import helpers from '../common/helpers'
+import { get, set } from '../common/helpers'
 import events from '../common/events'
 import { CHANGE_TYPES } from '../constants'
 
@@ -20,20 +20,20 @@ export default class Data {
     return this.data
   }
   toJSON = (data, format) => JSON.stringify(data, null, format)
-  get = path => helpers.get(this.data, path)
+  get = path => get(this.data, path)
   getChangeType = (oldVal, newVal) => {
     const change = CHANGE_TYPES.find(({ condition }) => condition(oldVal, newVal)) || { type: 'unknown' }
     change.desc = !change.type === 'added' ? `${oldVal} to ${newVal}` : newVal
     return change
   }
   set(path, newVal) {
-    const oldVal = helpers.get(this.data, path)
+    const oldVal = get(this.data, path)
 
     if (isEqual(oldVal, newVal)) {
       return this.data
     }
 
-    const data = helpers.set(this.data, path, newVal)
+    const data = set(this.data, path, newVal)
 
     if (!this.disableEvents) {
       const change = this.getChangeType(oldVal, newVal)

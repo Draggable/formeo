@@ -1,5 +1,5 @@
 import Data from './data'
-import { helpers } from '../common/helpers'
+import { get } from '../common/helpers'
 import { uuid, clone, merge } from '../common/utils'
 
 export default class ComponentData extends Data {
@@ -12,7 +12,7 @@ export default class ComponentData extends Data {
     return this.data
   }
 
-  get = path => (path ? helpers.get(this.data, path) : this.add())
+  get = path => (path ? get(this.data, path) : this.add())
 
   add = (id, data = Object.create(null)) => {
     const elemId = id || uuid()

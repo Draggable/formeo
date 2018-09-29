@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import actions from '../../common/actions'
-import helpers, { indexOfNode } from '../../common/helpers'
+import { indexOfNode, map, orderObjectsBy, get } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { match, unique, uuid } from '../../common/utils'
@@ -134,13 +134,13 @@ export class Controls {
     const usedElementIds = []
 
     // Apply order to Groups
-    groups = helpers.orderObjectsBy(groups, this.groupOrder, 'id')
+    groups = orderObjectsBy(groups, this.groupOrder, 'id')
 
     // remove disabled groups
     groups = groups.filter(group => match(group.id, this.options.disable.groups))
 
     // create group config
-    allGroups = helpers.map(groups, i => {
+    allGroups = map(groups, i => {
       const group = {
         tag: 'ul',
         attrs: {
@@ -158,7 +158,7 @@ export class Controls {
         const newOrder = unique(userOrder.concat(groups[i].elementOrder))
         groups[i].elementOrder = newOrder
       }
-      elements = helpers.orderObjectsBy(elements, groups[i].elementOrder, 'meta.id')
+      elements = orderObjectsBy(elements, groups[i].elementOrder, 'meta.id')
 
       /**
        * Fill control groups with their fields
@@ -171,7 +171,7 @@ export class Controls {
         const filters = [
           match(fieldId, this.options.disable.elements),
           field.meta.group === groups[i].id,
-          !helpers.inArray(field.meta.id, usedElementIds),
+          !usedElementIds.includes(field.meta.id),
         ]
 
         let shouldFilter = true
@@ -377,7 +377,7 @@ export class Controls {
    * @param {String} id of elements
    */
   addElement = id => {
-    const controlData = helpers.get(this.get(id), 'controlData')
+    const controlData = get(this.get(id), 'controlData')
     const {
       meta: { group, id: metaId },
     } = controlData

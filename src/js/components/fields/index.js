@@ -1,6 +1,6 @@
+import { get } from '../../common/helpers'
 import ComponentData from '../component-data'
 import Field from './field'
-import { helpers } from '../../common/helpers'
 import Controls from '../controls'
 
 const DEFAULT_CONFIG = {
@@ -27,7 +27,7 @@ export class Fields extends ComponentData {
     return new Field(data)
   }
   get = path => {
-    let found = path && helpers.get(this.data, path)
+    let found = path && get(this.data, path)
     if (!found) {
       const control = Controls.get(path)
       if (control) {

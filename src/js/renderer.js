@@ -2,7 +2,7 @@ import dom from './common/dom'
 import { uuid, clone } from './common/utils'
 import Components from './components'
 
-export default class FormeoRender {
+export default class FormeoRenderer {
   /**
    * Duplicate a
    */
@@ -130,7 +130,3 @@ export default class FormeoRender {
     })
   }
 }
-
-// export const renderForm = new FormeoRender(Components.formData)
-
-// export default renderForm

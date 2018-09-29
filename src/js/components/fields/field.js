@@ -177,7 +177,7 @@ export default class Field extends Component {
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
     const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
-    const allowedPanels = panelOrder.filter(elem => !h.inArray(elem, noPanels))
+    const allowedPanels = panelOrder.filter(panelName => !noPanels.includes(panelName))
 
     const fieldEdit = {
       className: ['field-edit', 'slide-toggle', 'panels-wrap'],
@@ -240,7 +240,7 @@ export default class Field extends Component {
         change: evt => {
           const { target } = evt
           const { checked, type } = target
-          if (h.inArray(type, ['checkbox', 'radio'])) {
+          if (['checkbox', 'radio'].includes(type)) {
             const optionIndex = indexOfNode(target)
             const options = this.get('options')
             // uncheck options if radio

@@ -38,6 +38,9 @@ export class Components extends Data {
   }
 
   load = (formData, opts = Object.create(null)) => {
+    if (typeof formData === 'string') {
+      formData = JSON.parse(formData)
+    }
     this.opts = opts
     const { stages = { [uuid()]: {} }, rows, columns, fields, id = uuid() } = Object.assign(
       {},

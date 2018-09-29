@@ -859,7 +859,7 @@ class DOM {
       state = !sortable.option('disabled')
     }
     sortable.option('disabled', state)
-    if (pFtype && h.inArray(pFtype, ['rows', 'columns', 'stages'])) {
+    if (pFtype && ['rows', 'columns', 'stages'].includes(pFtype)) {
       this.toggleSortable(elem.parentElement, state)
     }
   }

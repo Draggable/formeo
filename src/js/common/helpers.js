@@ -41,8 +41,8 @@ export const orderObjectsBy = (elements, order, path) => {
   const newOrder = unique(order)
     .map(key =>
       elements.find(elem => {
-        const newPath = splitPath.find(p => !!helpers.get(elem, p))
-        return newPath && helpers.get(elem, newPath) === key
+        const newPath = splitPath.find(p => !!get(elem, p))
+        return newPath && get(elem, newPath) === key
       })
     )
     .filter(Boolean)
@@ -118,57 +118,56 @@ export const map = (arr, cb) => {
   return newArray
 }
 
+export const safeAttrName = name => {
+  const safeAttr = {
+    className: 'class',
+  }
+
+  return safeAttr[name] || hyphenCase(name)
+}
+
+export const capitalize = str => str.replace(/\b\w/g, m => m.toUpperCase())
+
+// Expensive recursive object copy
+export const copyObj = obj => window.JSON.parse(window.JSON.stringify(obj))
+
+// subtract the contents of 1 array from another
+export const subtract = (arr, from) => {
+  return from.filter(function(a) {
+    return !~this.indexOf(a)
+  }, arr)
+}
+
+export const detectIE = () => {
+  let isIE = false // innocent until proven guilty
+  const ua = window.navigator.userAgent
+  const msie = ua.indexOf('MSIE ')
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    isIE = true
+  }
+  // other browser
+  return isIE
+}
+
 export const helpers = {
   hyphenCase,
-
-  safeAttrName: name => {
-    const safeAttr = {
-      className: 'class',
-    }
-
-    return safeAttr[name] || hyphenCase(name)
-  },
-
+  capitalize,
+  safeAttrName,
   insertScript,
-  capitalize: str => {
-    return str.replace(/\b\w/g, function(m) {
-      return m.toUpperCase()
-    })
-  },
-  // nicer syntax for checking the existence of an element in an array
-  inArray: (needle, haystack) => {
-    return haystack.indexOf(needle) !== -1
-  },
   forEach,
-  // Expensive recursive object copy
-  copyObj: obj => {
-    return window.JSON.parse(window.JSON.stringify(obj))
-  },
+  copyObj,
 
   // basic map that can be used on nodeList
   map,
-  subtract: (arr, from) => {
-    return from.filter(function(a) {
-      return !~this.indexOf(a)
-    }, arr)
-  },
+  subtract,
   indexOfNode,
   isInt,
   get,
   set,
 
   orderObjectsBy,
-  detectIE: () => {
-    let isIE = false // innocent until proven guilty
-    const ua = window.navigator.userAgent
-    const msie = ua.indexOf('MSIE ')
-    if (msie > 0) {
-      // IE 10 or older => return version number
-      isIE = true
-    }
-    // other browser
-    return isIE
-  },
+  detectIE,
 }
 
 export default helpers
