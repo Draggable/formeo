@@ -134,7 +134,7 @@ export const OPERATORS = {
   property: FIELD_PROPERTY_MAP,
 }
 
-export const CONDITION_TEMPLATE = {
+export const CONDITION_TEMPLATE = () => ({
   if: [
     {
       source: '',
@@ -152,4 +152,4 @@ export const CONDITION_TEMPLATE = {
       value: '',
     },
   ],
-}
+})

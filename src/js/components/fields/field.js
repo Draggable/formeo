@@ -9,9 +9,9 @@ import Component from '../component'
 import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants'
 import Components from '..'
 
-const DEFAULT_DATA = {
-  conditions: [CONDITION_TEMPLATE],
-}
+const DEFAULT_DATA = () => ({
+  conditions: [CONDITION_TEMPLATE()],
+})
 
 /**
  * Element/Field class.
@@ -23,7 +23,7 @@ export default class Field extends Component {
    * @return {Object} field object
    */
   constructor(fieldData = Object.create(null)) {
-    super('field', Object.assign({}, DEFAULT_DATA, fieldData))
+    super('field', Object.assign({}, DEFAULT_DATA(), fieldData))
 
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create(this.fieldPreview())

@@ -192,8 +192,10 @@ export default class Component extends Data {
               animate.slideUp(_this.dom, ANIMATION_SPEED_BASE, () => {
                 if (_this.name === 'column') {
                   const row = _this.parent
-                  _this.remove()
                   row.autoColumnWidths()
+                  _this.remove()
+                } else {
+                  _this.remove()
                 }
               })
               //  @todo add onRemove to Events and Actions
