@@ -71,17 +71,17 @@ export const insertStyle = srcs => {
   return Promise.all(promises)
 }
 
-export const insertIcons = ({ responseText: children }) => {
+export const insertIcons = iconSvgStr => {
   const id = 'formeo-sprite'
-  const iconSpriteWrap = dom.create({
-    children,
-    id,
-  })
-  iconSpriteWrap.style.display = 'none'
   const existingSprite = document.getElementById(id)
-  if (existingSprite) {
-    existingSprite.parentElement.replaceChild(iconSpriteWrap, existingSprite)
-  } else {
+  if (!existingSprite) {
+    const iconSpriteWrap = dom.create({
+      children: iconSvgStr,
+      id,
+      attrs: {
+        style: 'display: none;',
+      },
+    })
     document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
   }
 }
@@ -96,7 +96,9 @@ export const loadPolyfills = polyfillConfig => {
 export const ajax = (file, callback, onError = noop) => {
   return new Promise(resolve => {
     return fetch(file)
-      .then(({ data }) => resolve(data))
+      .then(({ data }) => {
+        resolve(callback(data))
+      })
       .catch(() => resolve(onError()))
   })
 }

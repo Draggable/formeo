@@ -119,7 +119,7 @@ const formeoOpts = {
   // onUpdate: console.log,
   // onSave: console.log
   // },
-  svgSprite: 'assets/formeo-sprite.svg',
+  svgSprite: './assets/formeo-sprite.svg',
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,

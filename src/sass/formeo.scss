@@ -4,6 +4,9 @@
 @import 'base/icons';
 @import 'components/autocomplete';
 
+.formeo-sprite {
+  display: none !important;
+}
 .formeo {
   * {
     box-sizing: inherit;

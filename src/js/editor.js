@@ -118,7 +118,6 @@ class FormeoEditor {
    */
   init() {
     const _this = this
-    // i18n.init(_this.opts.i18n).then(() => {
     Components.load(this.formData, _this.opts)
     const formRender = new FormeoRenderer(this.formData)
     formeo.render = formRender.render
@@ -136,9 +135,6 @@ class FormeoEditor {
     }
 
     _this.render()
-    // })
-
-    // return formeo
   }
 
   load(formData, opts) {

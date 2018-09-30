@@ -12,10 +12,10 @@ export default class FormeoRenderer {
 
   /**
    * Renders the formData to a target Element
-   * @param {DOM} targetElement
+   * @param {DOM} rendererContainer
    * @param {Object} formData
    */
-  render = (targetElement, formData = Components.formData) => {
+  render = (rendererContainer, formData = Components.formData) => {
     this.form = formData
 
     const renderCount = document.getElementsByClassName('formeo-render').length
@@ -26,9 +26,9 @@ export default class FormeoRenderer {
     }
 
     this.renderedForm = dom.render(config)
-    dom.empty(targetElement)
+    dom.empty(rendererContainer)
 
-    targetElement.appendChild(this.renderedForm)
+    rendererContainer.appendChild(this.renderedForm)
   }
 
   orderChildren = (type, order) =>
