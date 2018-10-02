@@ -126,7 +126,7 @@ const formeoOpts = {
   editPanelOrder: ['attrs', 'options'],
 }
 
-const formeo = new window.Formeo(formeoOpts)
+const formeo = new window.FormeoEditor(formeoOpts)
 
 document.addEventListener(
   'formeoUpdated',

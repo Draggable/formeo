@@ -4,7 +4,6 @@ const autoprefixer = require('autoprefixer')
 const CompressionPlugin = require('compression-webpack-plugin')
 const { BannerPlugin } = require('webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const argv = require('yargs').argv
 
 // hack for Ubuntu on Windows
 try {
@@ -17,15 +16,6 @@ const outputDir = resolve(__dirname, '../', 'dist/')
 const PRODUCTION = process.argv.includes('production')
 const ANALYZE = process.argv.includes('--analyze')
 const devtool = PRODUCTION ? false : 'cheap-module-source-map'
-
-const entries = {
-  editor: {
-    formeo: resolve(__dirname, '../', pkg.config.files['formeo-editor'].js),
-  },
-  renderer: {
-    formeo: resolve(__dirname, '../', pkg.config.files['formeo-renderer'].js),
-  },
-}
 
 const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
 
@@ -44,11 +34,11 @@ const webpackConfig = {
   mode: PRODUCTION ? 'production' : 'development',
   target: 'web',
   context: outputDir,
-  entry: argv.module ? entries[argv.module] : entries.both,
+  entry: resolve(__dirname, '../src/js/index.js'),
   output: {
     path: outputDir,
     publicPath: '/dist',
-    filename: '[name].min.js',
+    filename: `${pkg.name}.min.js`,
   },
   module: {
     rules: [

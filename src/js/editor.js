@@ -175,8 +175,4 @@ class FormeoEditor {
   }
 }
 
-if (window !== undefined) {
-  window.Formeo = FormeoEditor
-}
-
 export default FormeoEditor

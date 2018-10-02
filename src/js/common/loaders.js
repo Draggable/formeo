@@ -78,10 +78,8 @@ export const insertIcons = iconSvgStr => {
     const iconSpriteWrap = dom.create({
       children: iconSvgStr,
       id,
-      attrs: {
-        style: 'display: none;',
-      },
     })
+    iconSpriteWrap.style.display = 'none'
     document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
   }
 }

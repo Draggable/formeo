@@ -461,7 +461,7 @@ class DOM {
         radio: defaultInput,
       }
 
-      return optionMarkup[fieldType](option)
+      return optionMarkup[fieldType] && optionMarkup[fieldType](option)
     }
 
     const mappedOptions = options.map(optionMap)
