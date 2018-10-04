@@ -33,8 +33,6 @@ const animate = {
   slideDown: (elem, duration = 250, cb = false) => {
     elem.style.display = 'block'
     const style = animate.getStyle(elem)
-    const overFlowBack = style.overflow
-    elem.style.overflow = 'hidden'
     const height = parseInt(style.height, 10)
     const increment = height / (duration / 60)
     elem.style.height = '0px'
@@ -45,7 +43,6 @@ const animate = {
         elem.style.height = val + 'px'
         window.requestAnimationFrame(slideDown)
       } else {
-        elem.style.overflow = overFlowBack
         // reset height to be used by slideUp
         // elem.style.height = height + 'px';
         elem.style.height = 'auto'

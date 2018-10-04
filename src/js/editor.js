@@ -1,4 +1,5 @@
 'use strict'
+import 'es6-promise/auto'
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
 import h from './common/helpers'
@@ -8,8 +9,6 @@ import Actions from './common/actions'
 import Controls from './components/controls'
 import Components from './components'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
-import 'es6-promise/auto'
-import FormeoRender from './formeo-render'
 import { SESSION_LOCALE_KEY } from './constants'
 import { sessionStorage, merge } from './common/utils'
 import pkg from '../../package.json'
@@ -18,12 +17,12 @@ const fallbacks = {
   svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
 }
 
-const DEFAULT_OPTIONS = {
+const DEFAULT_OPTIONS = () => ({
   allowEdit: true,
   dataType: 'json',
   debug: false,
   sessionStorage: false,
-  container: `.${pkg.name}-wrap`,
+  editorContainer: `.${pkg.name}-wrap`,
   svgSprite: null, // change to null
   iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
   config: {}, // stages, rows, columns, fields
@@ -36,7 +35,7 @@ const DEFAULT_OPTIONS = {
     locale: 'en-US',
     langs: ['en-US'],
   },
-}
+})
 
 // Simple object config for the main part of formeo
 const formeo = {
@@ -52,26 +51,20 @@ const formeo = {
 /**
  * Main class
  */
-class Formeo {
+class FormeoEditor {
   /**
    * @param  {Object} options  formeo options
    * @param  {String|Object}   userFormData [description]
    * @return {Object}          formeo references and actions
    */
   constructor(options, userFormData) {
-    const formeoLocale = sessionStorage.get(SESSION_LOCALE_KEY)
-    if (formeoLocale) {
-      DEFAULT_OPTIONS.i18n.locale = formeoLocale
-    }
-
     const _this = this
 
-    _this.container = options.container || DEFAULT_OPTIONS.container
-    if (typeof _this.container === 'string') {
-      _this.container = document.querySelector(_this.container)
-    }
+    const mergedOptions = merge(DEFAULT_OPTIONS(), options)
 
-    const { actions, events, debug, config, ...opts } = merge(DEFAULT_OPTIONS, options)
+    const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
+    this.editorContainer =
+      typeof _this.editorContainer === 'string' ? document.querySelector(_this.editorContainer) : editorContainer
     this.opts = opts
     dom.setOptions = opts
     Components.config = config
@@ -112,6 +105,8 @@ class Formeo {
       promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(fallbacks.svgSprite, insertIcons)))
     }
 
+    promises.push(i18n.init(Object.assign({}, this.opts.i18n, { locale: sessionStorage.get(SESSION_LOCALE_KEY) })))
+
     return Promise.all(promises)
   }
 
@@ -122,35 +117,25 @@ class Formeo {
    */
   init() {
     const _this = this
-    i18n.init(_this.opts.i18n).then(() => {
-      Components.load(this.formData, _this.opts)
-      const formRender = new FormeoRender(this.formData)
-      formeo.render = formRender.render
+    this.load(this.formData, _this.opts)
+    formeo.controls = Controls.init(_this.opts.controls)
+    _this.formId = Components.get('id')
+    formeo.i18n = {
+      setLang: formeoLocale => {
+        sessionStorage.set(SESSION_LOCALE_KEY, formeoLocale)
+        const loadLang = i18n.setCurrent(formeoLocale)
+        loadLang.then(lang => {
+          formeo.controls = Controls.init(_this.opts.controls)
+          _this.render()
+        }, console.error)
+      },
+    }
 
-      formeo.load = (formData, opts = _this.opts) => {
-        let data = formData
-        if (typeof formData === 'string') {
-          data = JSON.parse(formData)
-        }
-        Components.load(data, (opts = _this.opts))
-      }
-      formeo.controls = Controls.init(_this.opts.controls)
-      _this.formId = Components.get('id')
-      formeo.i18n = {
-        setLang: formeoLocale => {
-          sessionStorage.set(SESSION_LOCALE_KEY, formeoLocale)
-          const loadLang = i18n.setCurrent(formeoLocale)
-          loadLang.then(lang => {
-            formeo.controls = Controls.init(_this.opts.controls)
-            _this.render()
-          }, console.error)
-        },
-      }
+    _this.render()
+  }
 
-      _this.render()
-    })
-
-    return formeo
+  load(formData, opts = this.opts) {
+    return Components.load(formData, opts)
   }
 
   /**
@@ -174,9 +159,8 @@ class Formeo {
     }
 
     const formeoEditor = dom.create(elemConfig)
-
-    _this.container.innerHTML = ''
-    _this.container.appendChild(formeoEditor)
+    dom.empty(_this.editorContainer)
+    _this.editorContainer.appendChild(formeoEditor)
 
     Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {
@@ -188,8 +172,4 @@ class Formeo {
   }
 }
 
-if (window !== undefined) {
-  window.Formeo = Formeo
-}
-
-export default Formeo
+export default FormeoEditor

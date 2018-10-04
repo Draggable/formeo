@@ -9,9 +9,9 @@ import Component from '../component'
 import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants'
 import Components from '..'
 
-const DEFAULT_DATA = {
-  conditions: [CONDITION_TEMPLATE],
-}
+const DEFAULT_DATA = () => ({
+  conditions: [CONDITION_TEMPLATE()],
+})
 
 /**
  * Element/Field class.
@@ -23,7 +23,7 @@ export default class Field extends Component {
    * @return {Object} field object
    */
   constructor(fieldData = Object.create(null)) {
-    super('field', Object.assign({}, DEFAULT_DATA, fieldData))
+    super('field', Object.assign({}, DEFAULT_DATA(), fieldData))
 
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create(this.fieldPreview())
@@ -177,7 +177,7 @@ export default class Field extends Component {
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
     const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
-    const allowedPanels = panelOrder.filter(elem => !h.inArray(elem, noPanels))
+    const allowedPanels = panelOrder.filter(panelName => !noPanels.includes(panelName))
 
     const fieldEdit = {
       className: ['field-edit', 'slide-toggle', 'panels-wrap'],
@@ -240,7 +240,7 @@ export default class Field extends Component {
         change: evt => {
           const { target } = evt
           const { checked, type } = target
-          if (h.inArray(type, ['checkbox', 'radio'])) {
+          if (['checkbox', 'radio'].includes(type)) {
             const optionIndex = indexOfNode(target)
             const options = this.get('options')
             // uncheck options if radio
@@ -262,7 +262,6 @@ export default class Field extends Component {
           } else {
             super.set('attrs.value', evt.target.value)
           }
-          this.processConditions()
         },
       },
     }

@@ -74,12 +74,14 @@
   box-shadow: 0 0 0 1px $field-outline-color inset;
 
   &::before {
-    line-height: 23px !important;
-
-    // width: 68px !important;
     border-left: 1px solid $field-outline-color;
     border-bottom: 1px solid $field-outline-color;
   }
+}
+.field-actions {
+  border-color: transparent;
+  border-width: 1px 1px 0 0;
+  border-style: solid;
 }
 
 .field-moving {

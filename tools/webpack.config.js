@@ -34,13 +34,11 @@ const webpackConfig = {
   mode: PRODUCTION ? 'production' : 'development',
   target: 'web',
   context: outputDir,
-  entry: {
-    formeo: resolve(__dirname, '../', pkg.config.files.formeo.js),
-  },
+  entry: resolve(__dirname, '../src/js/index.js'),
   output: {
     path: outputDir,
     publicPath: '/dist',
-    filename: '[name].min.js',
+    filename: `${pkg.name}.min.js`,
   },
   module: {
     rules: [

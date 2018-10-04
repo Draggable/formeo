@@ -218,7 +218,8 @@
   }
 
   &.if-condition-row {
-    &.condition-sourceProperty-isVisible {
+    &.condition-sourceProperty-isVisible,
+    &.condition-sourceProperty-isNotVisible {
       .condition-comparison,
       .condition-target,
       .condition-assignment,
@@ -230,7 +231,8 @@
   }
 
   &.then-condition-row {
-    &.condition-targetProperty-isVisible {
+    &.condition-targetProperty-isVisible,
+    &.condition-targetProperty-isNotVisible {
       .condition-comparison,
       .condition-assignment,
       .condition-value {

@@ -3,7 +3,7 @@ import startCase from 'lodash/startCase'
 import dom from '../../common/dom'
 import actions from '../../common/actions'
 import EditPanelItem from './edit-panel-item'
-import { helpers } from '../../common/helpers'
+import { hyphenCase, capitalize } from '../../common/helpers'
 
 /**
  * Element/Field class.
@@ -121,11 +121,11 @@ export default class EditPanel {
    * @param {String|Array} val
    */
   addAttribute = (attr, val) => {
-    const safeAttr = helpers.hyphenCase(attr)
+    const safeAttr = hyphenCase(attr)
     const itemKey = `attrs.${safeAttr}`
 
     if (!i18n.current[itemKey]) {
-      i18n.put(itemKey, helpers.capitalize(attr))
+      i18n.put(itemKey, capitalize(attr))
     }
 
     if (typeof val === 'string' && ['true', 'false'].includes(val)) {

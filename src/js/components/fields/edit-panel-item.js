@@ -2,7 +2,13 @@ import i18n from 'mi18n'
 import h, { orderObjectsBy, indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
-import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_SPEED_BASE } from '../../constants'
+import {
+  CONDITION_INPUT_ORDER,
+  FIELD_PROPERTY_MAP,
+  OPERATORS,
+  ANIMATION_SPEED_BASE,
+  COMPONENT_INDEX_TYPES,
+} from '../../constants'
 import events from '../../common/events'
 import Components from '../index'
 import Autocomplete from '../autocomplete'
@@ -220,12 +226,25 @@ export default class EditPanelItem {
         },
       ],
       [
+        'condition-target',
+        field => {
+          const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(field.value))
+          const foundFields = findFields('condition-targetProperty')
+          if (isAddress && field.value) {
+            return showFields(foundFields)
+          }
+          return hideFields(foundFields)
+        },
+      ],
+      [
         'condition-sourceProperty',
         field => {
-          const foundFields = findFields('condition-comparison|condition-target|condition-targetProperty')
+          const foundFields = findFields('condition-comparison|condition-targetProperty')
           if (!/^is/.test(field.value)) {
             return showFields(foundFields)
           }
+          // const targetField = findFields('condition-target')
+
           return hideFields(foundFields)
         },
       ],
@@ -245,13 +264,16 @@ export default class EditPanelItem {
     const conditionAddress = `${this.field.id}.${conditionPath}`
     const dataPath = `${field.name}s.${conditionAddress}.${key}`
 
-    const getOperatorField = operator => {
+    const getOperatorField = (operator, operatorValue) => {
       const operatorOptions = Object.entries(OPERATORS[operator]).map(entry =>
-        dom.makeOption(entry, operator, 'operator')
+        dom.makeOption(entry, operatorValue, 'operator')
       )
       const operatorField = ITEM_INPUT_TYPE_MAP['array'](`condition.${operator}`, operatorOptions)
       operatorField.action = {
         change: conditionChangeAction,
+        onRender: elem => {
+          conditionChangeAction({ target: elem })
+        },
       }
       return operatorField
     }
@@ -264,6 +286,7 @@ export default class EditPanelItem {
 
       propertyFieldConfig.action = {
         change: conditionChangeAction,
+        onRender: elem => conditionChangeAction({ target: elem }),
       }
 
       return propertyFieldConfig
@@ -289,17 +312,8 @@ export default class EditPanelItem {
     }
 
     const segmentTypes = {
-      comparison: () => {
-        const comparisonField = dom.create(getOperatorField('comparison'))
-        return comparisonField
-      },
-      logical: () => {
-        const logicalField = dom.create(getOperatorField('logical'))
-        logicalField.action = {
-          change: conditionChangeAction,
-        }
-        return logicalField
-      },
+      comparison: value => dom.create(getOperatorField('comparison', value)),
+      logical: value => dom.create(getOperatorField('logical', value)),
       source: (value, type = 'source') => {
         const componentInput = ITEM_INPUT_TYPE_MAP['autocomplete'](`condition.${type}`, value, conditionType)
         // add to condition map for the type so we can perform reverse lookup when editing a field connected to this condition
@@ -316,7 +330,13 @@ export default class EditPanelItem {
       sourceProperty: value => dom.create(getPropertyField('sourceProperty', value)),
       targetProperty: value => dom.create(getPropertyField('targetProperty', value)),
       target: value => segmentTypes.source(value, 'target'),
-      value: value => dom.create(ITEM_INPUT_TYPE_MAP['string']('condition.value', value)),
+      value: value => {
+        const valueField = ITEM_INPUT_TYPE_MAP['string']('condition.value', value)
+        valueField.action = {
+          input: conditionChangeAction,
+        }
+        return dom.create(valueField)
+      },
       assignment: () => dom.create(getOperatorField('assignment')),
     }
 

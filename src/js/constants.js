@@ -17,6 +17,8 @@ export const CHILD_CLASSNAME_MAP = new Map([
   [COLUMN_CLASSNAME, FIELD_CLASSNAME],
 ])
 
+export const COMPONENT_INDEX_TYPES = ['stages', 'rows', 'columns', 'fields']
+
 export const COMPONENT_TYPES = [
   { name: 'controls', className: CONTROL_GROUP_CLASSNAME },
   { name: 'stage', className: STAGE_CLASSNAME },
@@ -123,8 +125,8 @@ export const CONDITION_INPUT_ORDER = [
 
 export const FIELD_PROPERTY_MAP = {
   value: 'attrs.value',
-  label: 'config.label',
   isVisible: 'config.isVisible',
+  isNotVisible: 'config.isNotVisible',
 }
 
 export const OPERATORS = {
@@ -134,7 +136,7 @@ export const OPERATORS = {
   property: FIELD_PROPERTY_MAP,
 }
 
-export const CONDITION_TEMPLATE = {
+export const CONDITION_TEMPLATE = () => ({
   if: [
     {
       source: '',
@@ -152,4 +154,4 @@ export const CONDITION_TEMPLATE = {
       value: '',
     },
   ],
-}
+})

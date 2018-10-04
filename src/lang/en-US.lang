@@ -164,6 +164,7 @@ field.property.label = label
 field.property.valid = valid
 field.property.invalid = not valid
 field.property.isVisible = is visible
+field.property.isNotVisible = is not visible
 operator.visible = visible
 operator.notVisible = not visible
 operator.equals = equals

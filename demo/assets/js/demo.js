@@ -2,7 +2,7 @@ const isSite = window.location.href.indexOf('draggable.github.io') !== -1
 const container = document.querySelector('.build-form')
 const renderContainer = document.querySelector('.render-form')
 const formeoOpts = {
-  container: container,
+  editorContainer: container,
   i18n: {
     location: '../assets/lang',
   },
@@ -97,7 +97,7 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      '202217ce-c991-43d9-8512-e3f6ddb84e16': {
+      '87dd9ad7-a854-4632-a12e-898ffc113d6e': {
         events: {
           onRender: element => {
             formeo.Components.fields.get(element.id).toggleEdit(true)
@@ -119,20 +119,24 @@ const formeoOpts = {
   // onUpdate: console.log,
   // onSave: console.log
   // },
-  svgSprite: 'assets/formeo-sprite.svg',
+  svgSprite: './assets/formeo-sprite.svg',
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options'],
 }
 
-const formeo = new window.Formeo(formeoOpts)
+const formeo = new window.FormeoEditor(formeoOpts)
+const renderOptions = {
+  container: renderContainer,
+}
+
+const renderer = new window.FormeoRenderer(renderOptions)
 
 document.addEventListener(
   'formeoUpdated',
   evt => {
-    // console.log(evt)
-    formeo.render && formeo.render(renderContainer)
+    renderer.render(formeo.formData)
   },
   false
 )
@@ -163,7 +167,7 @@ resetDemo.onclick = function() {
 toggleEdit.onclick = evt => {
   document.body.classList.toggle('form-rendered', editing)
   if (editing) {
-    formeo.render(renderContainer)
+    renderer.render(formeo.formData)
     evt.target.innerHTML = 'Edit Form'
   } else {
     evt.target.innerHTML = 'Render Form'

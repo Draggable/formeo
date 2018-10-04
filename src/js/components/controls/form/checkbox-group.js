@@ -12,6 +12,7 @@ class CheckboxGroupControl extends Control {
       },
       config: {
         label: i18n.get('controls.form.checkbox-group'),
+        disabledAttrs: ['type'],
       },
       meta: {
         group: 'common',
