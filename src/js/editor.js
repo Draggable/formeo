@@ -9,7 +9,6 @@ import Actions from './common/actions'
 import Controls from './components/controls'
 import Components from './components'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
-import FormeoRenderer from './renderer'
 import { SESSION_LOCALE_KEY } from './constants'
 import { sessionStorage, merge } from './common/utils'
 import pkg from '../../package.json'
@@ -118,9 +117,7 @@ class FormeoEditor {
    */
   init() {
     const _this = this
-    Components.load(this.formData, _this.opts)
-    const formRender = new FormeoRenderer(this.formData)
-    formeo.render = formRender.render
+    this.load(this.formData, _this.opts)
     formeo.controls = Controls.init(_this.opts.controls)
     _this.formId = Components.get('id')
     formeo.i18n = {
@@ -137,8 +134,8 @@ class FormeoEditor {
     _this.render()
   }
 
-  load(formData, opts) {
-    return Components.load(formData, (opts = this.opts))
+  load(formData, opts = this.opts) {
+    return Components.load(formData, opts)
   }
 
   /**

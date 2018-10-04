@@ -116,8 +116,6 @@
     "test:ci": "yarn test --coverage",
     "prestart": "yarn clean && yarn copy",
     "start": "webpack-dev-server --mode development --open --config tools/webpack.config",
-    "start:edit": "webpack-dev-server --mode development --open --config tools/webpack.config --module=editor",
-    "start:render": "webpack-dev-server --mode development --open --config tools/webpack.config --module=renderer",
     "tag": "node ./node_modules/babel-cli/bin/babel-node.js -- tools/run tag",
     "release:patch": "yarn run tag patch && yarn run deploy",
     "release:minor": "yarn run tag minor && yarn run deploy",

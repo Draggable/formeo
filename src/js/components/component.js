@@ -1,7 +1,6 @@
 /* global MutationObserver */
 import identity from 'lodash/identity'
-import isEqual from 'lodash/isEqual'
-import { uuid, componentType, closestFtype, clone, merge } from '../common/utils'
+import { uuid, componentType, merge } from '../common/utils'
 import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 import {
@@ -17,7 +16,7 @@ import animate from '../common/animation'
 import Controls from './controls'
 
 export default class Component extends Data {
-  constructor(name, data = {}) {
+  constructor(name, data = {}, render) {
     super(name, Object.assign({}, data, { id: data.id || uuid() }))
     this.id = this.data.id
     this.name = name
@@ -25,6 +24,7 @@ export default class Component extends Data {
     this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
     this.observer = new MutationObserver(this.mutationHandler)
+    this.render = render
   }
 
   mutationHandler = mutations =>
@@ -74,6 +74,10 @@ export default class Component extends Data {
 
     if (!parent.children.length) {
       parent.emptyClass()
+    }
+
+    if (parent.name === 'row') {
+      parent.autoColumnWidths()
     }
 
     return Components[`${this.name}s`].delete(this.id)
@@ -211,9 +215,7 @@ export default class Component extends Data {
             id: 'clone',
           },
           action: {
-            click: evt => {
-              clone(closestFtype(evt.target))
-            },
+            click: ({ target }) => dom.cloneComponent(target),
           },
         }
       },
@@ -276,10 +278,10 @@ export default class Component extends Data {
       return null
     }
 
-    const child = Components.get(`${childGroup}.${childId}`) || Components[childGroup].add(childId, childData)
+    const child = Components.getAddress(`${childGroup}.${childId}`) || Components[childGroup].add(childId, childData)
 
     this.dom.insertBefore(child.dom, this.dom.children[index])
-    this.set(`children.${index}`, child.id)
+
     // @todo add event for onAddChild
     const grandChildren = child.get('children')
     if (grandChildren && grandChildren.length) {
@@ -295,6 +297,9 @@ export default class Component extends Data {
    * Updates the children order for the current component
    */
   saveChildOrder = () => {
+    if (this.render) {
+      return
+    }
     const newChildOrder = this.children.map(({ id }) => id)
     this.set('children', newChildOrder)
     return newChildOrder
@@ -496,17 +501,6 @@ export default class Component extends Data {
     return val ? component.set(FIELD_PROPERTY_MAP[property], val) : component.get(FIELD_PROPERTY_MAP[property])
   }
 
-  // @todo finish the evaluator
-  evaluateConditions = conditions => {
-    const comparisonMap = {
-      '==': isEqual,
-    }
-    return conditions.some(({ comparison, source, target }) => {
-      const evaluator = comparisonMap[comparison] || false
-      return evaluator && evaluator(this.value(source), this.value(target))
-    })
-  }
-
   /**
    * Maps operators to their respective handler
    * @param {String} operator
@@ -517,30 +511,6 @@ export default class Component extends Data {
       '=': (target, propertyPath, value) => target.set(propertyPath, value),
     }
     return operatorMap[operator]
-  }
-
-  /**
-   * Group conditions by 'OR' index, maintain order
-   * @param {Array} conditions array of arrays of condition definitions
-   * @return {Array} flattened array of conditions
-   */
-  processConditions = (conditions = this.get('conditions')) => {
-    if (!conditions) {
-      return null
-    }
-    const chunkIndexes = conditions.reduce((acc, val, idx) => {
-      if (val === 'OR') {
-        acc.push(idx)
-      }
-      return acc
-    }, [])
-    // group conditions by 'OR' indexes
-    chunkIndexes.push(conditions.length)
-    return chunkIndexes.reduce((acc, cur, idx) => {
-      const startIndex = chunkIndexes[idx - 1] + 1 || 0
-      acc.push(conditions.slice(startIndex, cur))
-      return acc
-    }, [])
   }
 
   processResults = results => {

@@ -6,7 +6,7 @@ import StagesData from './stages'
 import RowsData from './rows'
 import ColumnsData from './columns'
 import FieldsData from './fields'
-import { SESSION_FORMDATA_KEY } from '../constants'
+import { SESSION_FORMDATA_KEY, COMPONENT_INDEX_TYPES } from '../constants'
 
 export const Stages = StagesData
 export const Rows = RowsData
@@ -100,37 +100,51 @@ export class Components extends Data {
   setAddress(address, value) {
     const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
     const componentType = type.replace(/s?$/, 's')
-    components[componentType].get(id).set(path, value)
+    this[componentType].get(id).set(path, value)
   }
   /**
    * Fetch a component from memory by address
    */
   getAddress(address) {
+    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
+    if (!isAddress) {
+      return
+    }
     const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
     const componentType = type.replace(/s?$/, 's')
-    const component = components[componentType].get(id)
+    const component = this[componentType].get(id)
     return path.length ? component.get(path) : component
   }
 
   getConditionMap(address) {
-    const splitAddress = address.split('.')
+    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
+    if (isAddress) {
+      const splitAddress = address.split('.')
 
-    return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.get(splitAddress[1])
+      return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.get(splitAddress[1])
+    }
   }
 
   setConditionMap(address, component) {
-    const splitAddress = address.split('.')
-
-    return (
-      splitAddress.every(segment => Boolean(segment)) &&
-      this[splitAddress[0]].conditionMap.set(splitAddress[1], component)
-    )
+    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
+    if (isAddress) {
+      const splitAddress = address.split('.')
+      return (
+        splitAddress.every(segment => Boolean(segment)) &&
+        this[splitAddress[0]].conditionMap.set(splitAddress[1], component)
+      )
+    }
   }
 
-  removeConditionMap(address, component) {
-    const splitAddress = address.split('.')
+  removeConditionMap(address) {
+    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
+    if (isAddress) {
+      const splitAddress = address.split('.')
 
-    return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.delete(splitAddress[1])
+      return (
+        splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.delete(splitAddress[1])
+      )
+    }
   }
 }
 

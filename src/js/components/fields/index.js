@@ -11,7 +11,7 @@ const DEFAULT_CONFIG = {
   panels: {
     disabled: [],
     attrs: {
-      disabled: [],
+      disabled: ['type'],
       hideDisabled: true,
     },
     order: ['attrs', 'options', 'conditions'],

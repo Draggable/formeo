@@ -76,10 +76,13 @@ export const insertIcons = iconSvgStr => {
   const existingSprite = document.getElementById(id)
   if (!existingSprite) {
     const iconSpriteWrap = dom.create({
-      children: iconSvgStr,
       id,
+      children: iconSvgStr,
+      attrs: {
+        hidden: true,
+        style: 'display: none;',
+      },
     })
-    iconSpriteWrap.style.display = 'none'
     document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
   }
 }
@@ -94,9 +97,7 @@ export const loadPolyfills = polyfillConfig => {
 export const ajax = (file, callback, onError = noop) => {
   return new Promise(resolve => {
     return fetch(file)
-      .then(({ data }) => {
-        resolve(callback(data))
-      })
+      .then(({ data }) => resolve(callback(data)))
       .catch(() => resolve(onError()))
   })
 }

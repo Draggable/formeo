@@ -139,6 +139,10 @@ export default class Autocomplete {
           const activeOption = this.getActiveOption() || filteredOptions[0]
           this.showList(activeOption)
         }
+
+        this.hiddenField.value = evt.target.value
+        this.value = evt.target.value
+        this.runEvent('onChange', { target: this.hiddenField })
       },
     }
 
@@ -149,7 +153,7 @@ export default class Autocomplete {
       attrs: {
         type: 'text',
         className: `${BASE_NAME}-display-field`,
-        value: this.label,
+        value: this.label || this.value,
         placeholder: i18n.get(`${this.i18nKey}.${this.key}.placeholder`),
       },
     })
@@ -219,9 +223,6 @@ export default class Autocomplete {
             target = realTarget(target)
             this.removeHighlight()
             this.highlightComponent(target)
-            // this.setValue(target)
-            // this.selectOption(target)
-            // this.hideList()
           },
         },
       }

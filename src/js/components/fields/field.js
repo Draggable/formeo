@@ -262,7 +262,6 @@ export default class Field extends Component {
           } else {
             super.set('attrs.value', evt.target.value)
           }
-          this.processConditions()
         },
       },
     }

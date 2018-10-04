@@ -17,8 +17,8 @@ export default class Stage extends Component {
    * @param  {String} stageData uuid
    * @return {Object} DOM element
    */
-  constructor(stageData) {
-    super('stage', Object.assign({}, DEFAULT_DATA(), stageData))
+  constructor(stageData, render) {
+    super('stage', Object.assign({}, DEFAULT_DATA(), stageData), render)
 
     // @todo move formSettings to its own component
     // const defaultOptions = {

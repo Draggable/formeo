@@ -97,7 +97,7 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      '202217ce-c991-43d9-8512-e3f6ddb84e16': {
+      '87dd9ad7-a854-4632-a12e-898ffc113d6e': {
         events: {
           onRender: element => {
             formeo.Components.fields.get(element.id).toggleEdit(true)
@@ -127,11 +127,16 @@ const formeoOpts = {
 }
 
 const formeo = new window.FormeoEditor(formeoOpts)
+const renderOptions = {
+  container: renderContainer,
+}
+
+const renderer = new window.FormeoRenderer(renderOptions)
 
 document.addEventListener(
   'formeoUpdated',
   evt => {
-    formeo.render && formeo.render(renderContainer)
+    renderer.render(formeo.formData)
   },
   false
 )
@@ -162,7 +167,7 @@ resetDemo.onclick = function() {
 toggleEdit.onclick = evt => {
   document.body.classList.toggle('form-rendered', editing)
   if (editing) {
-    formeo.render(renderContainer)
+    renderer.render(formeo.formData)
     evt.target.innerHTML = 'Edit Form'
   } else {
     evt.target.innerHTML = 'Render Form'
