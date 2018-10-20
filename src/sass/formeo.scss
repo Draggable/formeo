@@ -20,6 +20,7 @@
   &.formeo-editor {
     display: flex;
     flex-direction: row;
+    @import 'components/component';
     @import 'components/stage';
     @import 'components/controls';
 

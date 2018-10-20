@@ -62,15 +62,17 @@ export default class Stage extends Component {
     //   ],
     // }
 
+    const children = this.createChildWrap()
+
     this.dom = dom.create({
-      tag: 'ul',
       attrs: {
-        className: [STAGE_CLASSNAME, 'empty'],
+        className: STAGE_CLASSNAME,
         id: this.id,
       },
+      children,
     })
 
-    this.sortable = Sortable.create(this.dom, {
+    this.sortable = Sortable.create(children, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,

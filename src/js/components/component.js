@@ -5,10 +5,10 @@ import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 import {
   CHILD_TYPE_MAP,
-  TYPE_CHILD_CLASSNAME_MAP,
   PARENT_TYPE_MAP,
   ANIMATION_SPEED_BASE,
   FIELD_PROPERTY_MAP,
+  COMPONENT_TYPE_CLASSNAMES,
 } from '../constants'
 import Components from './index'
 import Data from './data'
@@ -112,7 +112,6 @@ export default class Component extends Data {
     }
     let expandSize
     const actions = {
-      tag: this.name === 'column' ? 'li' : 'div',
       className: `${this.name}-actions group-actions`,
       action: {
         mouseenter: ({ target }) => {
@@ -255,19 +254,24 @@ export default class Component extends Data {
     if (!this.dom || !parentType) {
       return null
     }
-
-    return this.dom.parentElement && Components.get(`${parentType}s.${this.dom.parentElement.id}`)
+    const parentDom = this.dom.closest(`.${COMPONENT_TYPE_CLASSNAMES[parentType]}`)
+    return parentDom && dom.asComponent(parentDom)
   }
   get children() {
     if (!this.dom) {
       return []
     }
-    const children = this.dom.getElementsByClassName(TYPE_CHILD_CLASSNAME_MAP.get(this.name))
+    const children = this.domChildren
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
     return map(children, i => Components.get(`${childGroup}.${children[i].id}`))
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
+
+  get domChildren() {
+    const childWrap = this.dom.querySelector('.children')
+    return childWrap ? childWrap.children : []
+  }
 
   /**
    * Adds a child to the component
@@ -275,11 +279,12 @@ export default class Component extends Data {
    * @param {Number} index
    * @return {Object} child DOM element
    */
-  addChild(childData = {}, index = this.dom.querySelector('.children').length) {
+  addChild(childData = {}, index = this.domChildren.length) {
     if (typeof childData !== 'object') {
       childData = { id: childData }
     }
-    const childrenWrap = this.dom.querySelector('.children')
+
+    const childWrap = this.dom.querySelector('.children')
     const { id: childId = uuid() } = childData
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
     if (!childGroup) {
@@ -288,7 +293,7 @@ export default class Component extends Data {
 
     const child = Components.getAddress(`${childGroup}.${childId}`) || Components[childGroup].add(childId, childData)
 
-    this.dom.insertBefore(child.dom, this.dom.children[index])
+    childWrap.insertBefore(child.dom, childWrap.children[index])
 
     // @todo add event for onAddChild
     const grandChildren = child.get('children')
@@ -573,4 +578,12 @@ export default class Component extends Data {
   cloneChildren = toParent => {
     this.children.forEach(child => child && child.clone(toParent))
   }
+
+  createChildWrap = () =>
+    dom.create({
+      tag: 'ul',
+      attrs: {
+        className: ['children', 'empty'],
+      },
+    })
 }

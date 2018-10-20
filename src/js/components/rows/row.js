@@ -30,20 +30,20 @@ export default class Row extends Component {
   constructor(rowData) {
     super('row', Object.assign({}, DEFAULT_DATA(), rowData))
 
-    const rowConfig = {
+    const children = this.createChildWrap()
+
+    this.dom = dom.create({
       tag: 'li',
-      className: `${ROW_CLASSNAME} empty`,
+      className: ROW_CLASSNAME,
       dataset: {
         hoverTag: i18n.get('row'),
         editingHoverTag: i18n.get('editing.row'),
       },
       id: this.id,
-      content: [this.getActionButtons(), this.editWindow],
-    }
+      content: [this.getActionButtons(), this.editWindow, children],
+    })
 
-    const row = dom.create(rowConfig)
-
-    this.sortable = Sortable.create(row, {
+    this.sortable = Sortable.create(children, {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
@@ -63,7 +63,7 @@ export default class Row extends Component {
       handle: '.item-handle',
     })
 
-    this.dom = row
+    this.onRender()
   }
 
   /**
@@ -184,13 +184,15 @@ export default class Row extends Component {
 
   /**
    * Read columns and generate bootstrap cols
-   * @param  {Object}  row    DOM element
+   * @param {Object} row DOM element
    */
   autoColumnWidths = () => {
     const columns = this.children
+
     if (!columns.length) {
       return
     }
+
     const width = parseFloat((100 / columns.length).toFixed(1)) / 1
 
     columns.forEach(column => {
@@ -264,16 +266,18 @@ export default class Row extends Component {
     // if (this.children) {
     const columns = this.children
     const pMapVal = pMap.get(columns.length - 1)
+    console.log(pMapVal)
     layoutPreset.options = pMapVal || pMap.get('custom')
     const curVal = columns
       .map(Column => {
         const width = Column.get('config.width') || ''
-        return width.replace('%', '')
+        return Number(width.replace('%', '')).toFixed(1)
       })
       .join(',')
     if (pMapVal) {
       pMapVal.forEach((val, i) => {
         const options = layoutPreset.options
+        console.log(val.value, curVal)
         if (val.value === curVal) {
           options[i].selected = true
         } else {

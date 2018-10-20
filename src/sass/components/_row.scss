@@ -1,5 +1,7 @@
 .stage-rows {
-  @extend %display-row;
+  > .children {
+    @extend %display-row;
+  }
 
   @include clearfix;
 

@@ -130,7 +130,7 @@ export default class Field extends Component {
    * Update the label dom when label data changes
    */
   updateLabel() {
-    if (!this.label.parentElement) {
+    if (!this.label) {
       return null
     }
     const newLabel = dom.create(this.labelConfig)

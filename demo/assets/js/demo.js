@@ -91,6 +91,16 @@ const formeoOpts = {
     },
   },
   config: {
+    rows: {
+      '9ac1dd4e-ef1d-4dc9-84c0-68e765aa33ed': {
+        events: {
+          onRender: element => {
+            console.log(element)
+            element.querySelector('.item-edit-toggle').click()
+          },
+        },
+      },
+    },
     fields: {
       checkbox: {
         actionButtons: {

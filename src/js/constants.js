@@ -27,6 +27,14 @@ export const COMPONENT_TYPES = [
   { name: 'field', className: FIELD_CLASSNAME },
 ]
 
+export const COMPONENT_TYPE_CLASSNAMES = {
+  controls: CONTROL_GROUP_CLASSNAME,
+  stage: STAGE_CLASSNAME,
+  row: ROW_CLASSNAME,
+  column: COLUMN_CLASSNAME,
+  field: FIELD_CLASSNAME,
+}
+
 const childTypeMap = COMPONENT_TYPES.map(({ name }, index, arr) => {
   const { name: childName } = arr[index + 1] || {}
   return childName && [name, childName]
@@ -66,6 +74,7 @@ const columnTemplates = [
 export const COLUMN_TEMPLATES = new Map(
   columnTemplates.reduce(
     (acc, cur, idx) => {
+      // console.log(cur.push())
       acc.push([idx, cur])
       return acc
     },
