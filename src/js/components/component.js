@@ -1,6 +1,6 @@
 /* global MutationObserver */
 import identity from 'lodash/identity'
-import { uuid, componentType, merge } from '../common/utils'
+import { uuid, componentType, merge, clone } from '../common/utils'
 import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 import {
@@ -215,7 +215,7 @@ export default class Component extends Data {
             id: 'clone',
           },
           action: {
-            click: ({ target }) => dom.cloneComponent(target),
+            click: () => this.clone(),
           },
         }
       },
@@ -226,6 +226,13 @@ export default class Component extends Data {
       const icons = rest.length ? rest : undefined
       return (buttonConfig[key] && buttonConfig[key](icons)) || btn
     })
+  }
+
+  /**
+   * helper that returns the index of the node minus the offset.
+   */
+  get index() {
+    return indexOfNode(this.dom)
   }
 
   /**
@@ -266,12 +273,13 @@ export default class Component extends Data {
    * Adds a child to the component
    * @param {Object} childData
    * @param {Number} index
-   * @return {Object} DOM element
+   * @return {Object} child DOM element
    */
-  addChild(childData = {}, index = this.dom.children.length) {
+  addChild(childData = {}, index = this.dom.querySelector('.children').length) {
     if (typeof childData !== 'object') {
       childData = { id: childData }
     }
+    const childrenWrap = this.dom.querySelector('.children')
     const { id: childId = uuid() } = childData
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
     if (!childGroup) {
@@ -548,5 +556,21 @@ export default class Component extends Data {
         return reject(err)
       }
     })
+  }
+
+  cloneData = () => ({ ...clone(this.data), children: [], id: uuid() })
+
+  clone = (parent = this.parent) => {
+    const newClone = parent.addChild(this.cloneData(), this.index + 1)
+    if (this.name !== 'field') {
+      this.cloneChildren(newClone)
+    }
+    if (this.name === 'column') {
+      parent.autoColumnWidths()
+    }
+  }
+
+  cloneChildren = toParent => {
+    this.children.forEach(child => child && child.clone(toParent))
   }
 }
