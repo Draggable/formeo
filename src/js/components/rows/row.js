@@ -6,6 +6,7 @@ import events from '../../common/events'
 import { bsGridRegEx } from '../../common/helpers'
 import { numToPercent } from '../../common/utils'
 import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE } from '../../constants'
+import { removeCustomOption } from '../columns/events'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -34,7 +35,7 @@ export default class Row extends Component {
 
     this.dom = dom.create({
       tag: 'li',
-      className: ROW_CLASSNAME,
+      className: [ROW_CLASSNAME, 'empty'],
       dataset: {
         hoverTag: i18n.get('row'),
         editingHoverTag: i18n.get('editing.row'),
@@ -139,13 +140,11 @@ export default class Row extends Component {
     }
 
     const fieldSetControls = dom.formGroup([fieldsetLabel, fieldsetInputGroup])
-    const columnSettingsLabel = Object.assign({}, fieldsetLabel, {
-      content: 'Define column widths',
-    })
-    const columnSettingsPresetLabel = Object.assign({}, fieldsetLabel, {
-      content: 'Layout Preset',
+    const columnSettingsPresetLabel = {
+      tag: 'label',
+      content: i18n.get('defineColumnWidths'),
       className: 'col-sm-4 form-control-label',
-    })
+    }
     const columnSettingsPresetSelect = {
       className: 'col-sm-8',
       content: {
@@ -157,17 +156,9 @@ export default class Row extends Component {
         },
       },
     }
-    const formGroupContent = [columnSettingsPresetLabel, columnSettingsPresetSelect]
-    const columnSettingsPreset = dom.formGroup(formGroupContent, 'row')
+    const columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row')
 
-    editWindow.children = [
-      inputGroupInput,
-      dom.create('hr'),
-      fieldSetControls,
-      dom.create('hr'),
-      columnSettingsLabel,
-      columnSettingsPreset,
-    ]
+    editWindow.children = [inputGroupInput, dom.create('hr'), fieldSetControls, dom.create('hr'), columnSettingsPreset]
 
     return editWindow
   }
@@ -250,45 +241,47 @@ export default class Row extends Component {
     const layoutPreset = {
       tag: 'select',
       attrs: {
-        ariaLabel: 'Define a column layout', // @todo i18n
+        ariaLabel: i18n.get('defineColumnLayout'),
         className: 'column-preset',
       },
       action: {
         change: ({ target: { value } }) => {
-          // @todo FIX!
-          // const dRow = this.rows.get(this.id)
-          _this.setColumnWidths(value)
+          if (value !== 'custom') {
+            removeCustomOption(this.dom)
+            _this.setColumnWidths(value)
+          }
         },
       },
+      options: [],
     }
     const pMap = COLUMN_TEMPLATES
 
-    // if (this.children) {
     const columns = this.children
-    const pMapVal = pMap.get(columns.length - 1)
-    console.log(pMapVal)
-    layoutPreset.options = pMapVal || pMap.get('custom')
+    const pMapVal = pMap.get(columns.length - 1) || []
     const curVal = columns
       .map(Column => {
         const width = Column.get('config.width') || ''
         return Number(width.replace('%', '')).toFixed(1)
       })
       .join(',')
-    if (pMapVal) {
-      pMapVal.forEach((val, i) => {
-        const options = layoutPreset.options
-        console.log(val.value, curVal)
+    if (pMapVal.length) {
+      const options = pMapVal.slice()
+      const isCustomVal = !options.find(val => val.value === curVal)
+      if (isCustomVal) {
+        options.push({
+          value: curVal,
+          label: curVal.replace(/,/g, ' | '),
+          className: 'custom-column-widths',
+        })
+      }
+      layoutPreset.options = options.map(val => {
+        const option = Object.assign({}, val)
         if (val.value === curVal) {
-          options[i].selected = true
-        } else {
-          delete options[i].selected
-          options[options.length - 1].selected = true
+          option.selected = true
         }
+        return option
       })
     }
-    // } else {
-    //   layoutPreset.options = pMap.get(1)
-    // }
 
     return layoutPreset
   }

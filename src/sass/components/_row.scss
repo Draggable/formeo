@@ -1,6 +1,7 @@
 .stage-rows {
   > .children {
     @extend %display-row;
+    min-height: space(4);
   }
 
   @include clearfix;
@@ -12,7 +13,6 @@
   margin-bottom: space();
   background-color: $white;
   padding: space();
-  min-height: space(4);
   box-shadow: 0 0 0 1px $gray-lighter inset;
 
   &::before {

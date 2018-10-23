@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import actions from '../../common/actions'
-import { indexOfNode, map, orderObjectsBy, get } from '../../common/helpers'
+import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { match, unique, uuid } from '../../common/utils'
@@ -140,37 +140,37 @@ export class Controls {
     groups = groups.filter(group => match(group.id, this.options.disable.groups))
 
     // create group config
-    allGroups = map(groups, i => {
-      const group = {
+    allGroups = groups.map(group => {
+      const groupConfig = {
         tag: 'ul',
         attrs: {
           className: CONTROL_GROUP_CLASSNAME,
-          id: `${groups[i].id}-${CONTROL_GROUP_CLASSNAME}`,
+          id: `${group.id}-${CONTROL_GROUP_CLASSNAME}`,
         },
         config: {
-          label: this.groupLabel(groups[i].label),
+          label: this.groupLabel(group.label),
         },
       }
 
-      // Apply order to elements
-      if (this.options.elementOrder[groups[i].id]) {
-        const userOrder = this.options.elementOrder[groups[i].id]
-        const newOrder = unique(userOrder.concat(groups[i].elementOrder))
-        groups[i].elementOrder = newOrder
+      // Apply order to elements/fields
+      if (this.options.elementOrder[group.id]) {
+        const userOrder = this.options.elementOrder[group.id]
+        const newOrder = unique(userOrder.concat(group.elementOrder))
+        group.elementOrder = newOrder
       }
-      elements = orderObjectsBy(elements, groups[i].elementOrder, 'meta.id')
+      elements = orderObjectsBy(elements, group.elementOrder, 'meta.id')
 
       /**
        * Fill control groups with their fields
        * @param  {Object} field Field configuration object.
        * @return {Array}        Filtered array of Field config objects
        */
-      group.content = elements.filter(control => {
+      groupConfig.content = elements.filter(control => {
         const { controlData: field } = this.get(control.id)
         const fieldId = field.meta.id || ''
         const filters = [
           match(fieldId, this.options.disable.elements),
-          field.meta.group === groups[i].id,
+          field.meta.group === group.id,
           !usedElementIds.includes(field.meta.id),
         ]
 
@@ -183,7 +183,7 @@ export class Controls {
         return shouldFilter
       })
 
-      return group
+      return groupConfig
     })
 
     return allGroups

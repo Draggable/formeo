@@ -1,7 +1,11 @@
 import dom from '../../common/dom'
 import Components from '..'
-import { numToPercent } from '../../common/utils'
+import { percent, numToPercent } from '../../common/utils'
 import { ROW_CLASSNAME } from '../../constants'
+import { map } from '../../common/helpers'
+
+const CUSTOM_COLUMN_OPTION_CLASSNAME = 'custom-column-widths'
+const COLUMN_PRESET_CLASSNAME = 'column-preset'
 
 /**
  * Handle column resizing
@@ -30,9 +34,8 @@ export function resize(evt) {
     const newColWidth = resize.colStartWidth + clientX - resize.startX
     const newSibWidth = resize.sibStartWidth - clientX + resize.startX
 
-    const percent = width => (width / resize.rowWidth) * 100
-    const colWidthPercent = parseFloat(percent(newColWidth))
-    const sibWidthPercent = parseFloat(percent(newSibWidth))
+    const colWidthPercent = parseFloat(percent(newColWidth, resize.rowWidth))
+    const sibWidthPercent = parseFloat(percent(newSibWidth, resize.rowWidth))
 
     column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1))
     sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1))
@@ -51,7 +54,7 @@ export function resize(evt) {
       return
     }
 
-    row.querySelector('.column-preset').value = 'custom'
+    setCustomWidthValue(row, resize.rowWidth)
     row.classList.remove('resizing-columns')
 
     Components.setAddress(`columns.${column.id}.config.width`, column.dataset.colWidth)
@@ -83,4 +86,45 @@ export function resize(evt) {
     window.addEventListener('touchend', resize.stop, false)
     window.addEventListener('touchmove', resize.move, false)
   })(evt)
+}
+
+/**
+ * Removes a custom option from the column width present selecy
+ * @param {Node} row
+ * @return {Node} columnPreset input || null
+ */
+export const removeCustomOption = (row, columnPreset = row.querySelector(`.${COLUMN_PRESET_CLASSNAME}`)) => {
+  const customOption = columnPreset.querySelector(`.${CUSTOM_COLUMN_OPTION_CLASSNAME}`)
+  return customOption && columnPreset.removeChild(customOption)
+}
+
+/**
+ * Adds a custom option from the column width present selecy
+ * @param {Node} row
+ */
+export const setCustomWidthValue = (row, rowWidth) => {
+  const columnPreset = row.querySelector(`.${COLUMN_PRESET_CLASSNAME}`)
+  const customOption = columnPreset.querySelector(`.${CUSTOM_COLUMN_OPTION_CLASSNAME}`)
+  const cols = row.querySelector('.children').children
+  const widths = map(cols, col => percent(col.clientWidth, rowWidth).toFixed(1))
+  const value = widths.join(',')
+  const content = widths.join(' | ')
+
+  if (customOption) {
+    removeCustomOption(row, columnPreset)
+  }
+
+  const newCustomOption = dom.create({
+    tag: 'option',
+    attrs: {
+      className: CUSTOM_COLUMN_OPTION_CLASSNAME,
+      value,
+    },
+    content,
+  })
+
+  columnPreset.add(newCustomOption)
+  columnPreset.value = value
+
+  return value
 }

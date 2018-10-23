@@ -113,7 +113,7 @@ export const hyphenCase = str => {
  */
 export const map = (arr, cb) => {
   const newArray = []
-  forEach(arr, (elem, i) => newArray.push(cb(i)))
+  forEach(arr, (elem, i) => newArray.push(cb(elem, i)))
 
   return newArray
 }

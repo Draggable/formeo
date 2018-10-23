@@ -165,6 +165,8 @@ export const clone = obj => {
   throw new Error('Unable to copy Object, type not supported.')
 }
 
+export const percent = (val, total) => (val / total) * 100
+
 export const numToPercent = num => num.toString() + '%'
 
 export const numberBetween = (num, min, max) => num > min && num < max

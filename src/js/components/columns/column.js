@@ -48,7 +48,7 @@ export default class Column extends Component {
 
     this.dom = dom.create({
       tag: 'li',
-      className: COLUMN_CLASSNAME,
+      className: [COLUMN_CLASSNAME, 'empty'],
       dataset: {
         hoverTag: i18n.get('column'),
       },
@@ -65,7 +65,6 @@ export default class Column extends Component {
       content: [this.getActionButtons(), DOM_CONFIGS.editWindow(), DOM_CONFIGS.resizeHandle(), children],
     })
 
-    // const column = dom.create(this.dom)
     this.processConfig(this.dom)
 
     events.columnResized = new window.CustomEvent('columnResized', {

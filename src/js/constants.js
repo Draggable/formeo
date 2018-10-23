@@ -69,25 +69,15 @@ const columnTemplates = [
     { value: '25.0,50.0,25.0', label: '25 | 50 | 25' },
   ],
   [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }],
+  [{ value: '20.0,20.0,20.0,20.0,20.0', label: '20 | 20 | 20 | 20 | 20' }],
+  [{ value: '16.66,16.66,16.66,16.66,16.66,16.66', label: '16.66 | 16.66 | 16.66 | 16.66 | 16.66 | 16.66' }],
 ]
 
 export const COLUMN_TEMPLATES = new Map(
-  columnTemplates.reduce(
-    (acc, cur, idx) => {
-      // console.log(cur.push())
-      acc.push([idx, cur])
-      return acc
-    },
-    [
-      [
-        'custom',
-        {
-          value: 'custom',
-          label: 'Custom',
-        },
-      ],
-    ]
-  )
+  columnTemplates.reduce((acc, cur, idx) => {
+    acc.push([idx, cur])
+    return acc
+  })
 )
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]

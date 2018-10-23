@@ -330,18 +330,29 @@ class DOM {
    */
   toggleElementsByStr = (elems, term) => {
     const filteredElems = []
-
-    forEach(elems, elem => {
-      const txt = elem.textContent.toLowerCase()
-      if (txt.indexOf(term.toLowerCase()) !== -1) {
+    const containsTextCb = (elem, contains) => {
+      if (contains) {
         elem.style.display = 'block'
         filteredElems.push(elem)
       } else {
         elem.style.display = 'none'
       }
-    })
+    }
+
+    dom.elementsContainText(elems, term, containsTextCb)
 
     return filteredElems
+  }
+
+  elementsContainText = (collection, term, cb) => {
+    const elementsContainingText = []
+    forEach(collection, elem => {
+      const txt = elem.textContent.toLowerCase()
+      const contains = txt.indexOf(term.toLowerCase()) !== -1
+      cb && cb(elem, contains)
+      contains && elementsContainingText.push(elem)
+    })
+    return elementsContainingText
   }
 
   generateOption = ({ type = 'option', label, value, i = 0, selected }) => {

@@ -97,9 +97,7 @@ export default class Component extends Data {
   /**
    * Apply empty class to element if does not have children
    */
-  emptyClass = () => {
-    return this.dom.classList.toggle('empty', !this.children.length)
-  }
+  emptyClass = () => this.dom.classList.toggle('empty', !this.children.length)
 
   /**
    * Move, close, and edit buttons for row, column and field
@@ -263,7 +261,7 @@ export default class Component extends Data {
     }
     const children = this.domChildren
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
-    return map(children, i => Components.get(`${childGroup}.${children[i].id}`))
+    return map(children, child => Components.get(`${childGroup}.${child.id}`))
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
@@ -301,7 +299,7 @@ export default class Component extends Data {
       child.loadChildren(grandChildren)
     }
 
-    this.emptyClass()
+    this.removeClasses('empty')
     this.saveChildOrder()
     return child
   }
@@ -331,7 +329,7 @@ export default class Component extends Data {
     const toType = componentType(to)
     const defaultOnAdd = () => {
       _this.saveChildOrder()
-      _this.emptyClass()
+      _this.removeClasses('empty')
     }
 
     const depthMap = new Map([
@@ -431,10 +429,10 @@ export default class Component extends Data {
    * @return {Array} updated child order
    */
   onRemove({ from }) {
-    this.emptyClass()
     if (from.classList.contains('stage-columns')) {
       from.classList.remove('column-editing-field')
     }
+    this.emptyClass()
 
     return this.saveChildOrder()
   }
@@ -583,7 +581,7 @@ export default class Component extends Data {
     dom.create({
       tag: 'ul',
       attrs: {
-        className: ['children', 'empty'],
+        className: 'children',
       },
     })
 }

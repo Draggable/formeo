@@ -66,7 +66,7 @@ export default class Stage extends Component {
 
     this.dom = dom.create({
       attrs: {
-        className: STAGE_CLASSNAME,
+        className: [STAGE_CLASSNAME, 'empty'],
         id: this.id,
       },
       children,
