@@ -104,35 +104,30 @@ export default class Component extends Data {
    * @return {Object} element config object
    */
   getActionButtons() {
-    const hoverClassname = `hovering-${this.name}`
-    const btnWrap = {
-      className: 'action-btn-wrap',
-    }
     let expandSize
-    const actions = {
+    const hoverClassname = `hovering-${this.name}`
+    return {
       className: `${this.name}-actions group-actions`,
       action: {
+        onRender: elem => {
+          const buttons = elem.getElementsByTagName('button')
+          const btnSize = parseInt(dom.getStyle(buttons[0], 'width'))
+          expandSize = `${buttons.length * btnSize + 1}px`
+        },
         mouseenter: ({ target }) => {
           this.dom.classList.add(hoverClassname)
           target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
         },
         mouseleave: ({ target }) => {
           this.dom.classList.remove(hoverClassname)
-          target.style.width = null
-          target.style.height = null
-        },
-        onRender: elem => {
-          const buttons = elem.getElementsByTagName('button')
-          const btnSize = parseInt(dom.getStyle(buttons[0], 'width'))
-          expandSize = `${buttons.length * btnSize + 1}px`
+          target.removeAttribute('style')
         },
       },
+      children: {
+        className: 'action-btn-wrap',
+        children: this.buttons,
+      },
     }
-
-    btnWrap.content = this.buttons
-    actions.content = btnWrap
-
-    return actions
   }
 
   /**
@@ -259,9 +254,9 @@ export default class Component extends Data {
     if (!this.dom) {
       return []
     }
-    const children = this.domChildren
+    const domChildren = this.domChildren
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
-    return map(children, child => Components.get(`${childGroup}.${child.id}`))
+    return map(domChildren, child => Components.getAddress(`${childGroup}.${child.id}`)).filter(Boolean)
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
