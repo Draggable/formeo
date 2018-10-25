@@ -70,6 +70,7 @@ export default class EditPanel {
     const _this = this
     const type = this.name
     const btnTitle = i18n.get(`panelEditButtons.${type}`)
+    console.log(btnTitle)
     const addActions = {
       attrs: _this.addAttribute,
       options: _this.addOption,
@@ -150,27 +151,16 @@ export default class EditPanel {
    * Add option to options panel
    */
   addOption = () => {
-    // const _this = this
-    // const field = this.dom
-    // const fieldData = this.data
-    // const optionData = fieldData.options
-    // const editGroup = field.querySelector('.field-edit-options')
-    // const propData = cleanObj(optionData[optionData.length - 1])
-    // fieldData.options.push(propData)
-    // const args = {
-    //   i: editGroup.childNodes.length,
-    //   dataProp: propData,
-    //   dataObj: fieldData,
-    //   panelType: 'options',
-    //   propType: 'array',
-    // }
-    // editGroup.appendChild(dom.create(_this.panelContent(args)))
-    // _this.resizePanelWrap()
-    // // Save Fields Attrs
-    // // data.save()
-    // dom.empty(_this.preview)
-    // const newPreview = dom.create(this.data, true)
-    // _this.preview.appendChild(newPreview)
+    const metaId = this.field.data.meta.id
+    const type = metaId === 'select' ? 'option' : metaId
+    const newOptionLabel = i18n.get(`newOptionLabel`, { type }) || 'New Option'
+    const itemKey = `options.${this.data.length - 1}`
+    const itemData = { label: newOptionLabel, value: hyphenCase(newOptionLabel), selected: false }
+    const newOption = new EditPanelItem(itemKey, itemData, this.field)
+
+    this.editPanelItems.push(newOption)
+    this.props.appendChild(newOption.dom)
+    this.field.resizePanelWrap()
   }
 
   addCondition = evt => {

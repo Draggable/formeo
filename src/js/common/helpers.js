@@ -98,13 +98,13 @@ export const forEach = (arr, cb, scope) => {
  * Convert camelCase into lowercase-hyphen
  *
  * @param  {String} str
- * @return {String}
+ * @return {String} lowercase hyphenated string
  */
-export const hyphenCase = str => {
-  str = str.replace(/([A-Z])/g, $1 => `-${$1.toLowerCase()}`)
-
-  return str.replace(/\s/g, '-').replace(/^-+/g, '')
-}
+export const hyphenCase = str =>
+  str
+    .toLowerCase()
+    .replace(/\s/g, '-')
+    .replace(/^-+/g, '')
 
 /**
  * @param {Array|NodeList} arr to be iterated

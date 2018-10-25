@@ -91,23 +91,13 @@ const formeoOpts = {
     },
   },
   config: {
-    rows: {
-      '9ac1dd4e-ef1d-4dc9-84c0-68e765aa33ed': {
-        events: {
-          onRender: element => {
-            console.log(element)
-            element.querySelector('.item-edit-toggle').click()
-          },
-        },
-      },
-    },
     fields: {
       checkbox: {
         actionButtons: {
           buttons: ['edit'],
         },
       },
-      '87dd9ad7-a854-4632-a12e-898ffc113d6e': {
+      '1ecc1c67-72ee-4af2-b56c-ca5723998269': {
         events: {
           onRender: element => {
             formeo.Components.fields.get(element.id).toggleEdit(true)

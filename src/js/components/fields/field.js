@@ -1,6 +1,6 @@
 import i18n from 'mi18n'
 import startCase from 'lodash/startCase'
-import h, { indexOfNode } from '../../common/helpers'
+import { indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import Panels from '../panels'
 import { clone, unique } from '../../common/utils'
@@ -183,7 +183,7 @@ export default class Field extends Component {
       className: ['field-edit', 'slide-toggle', 'panels-wrap'],
     }
 
-    h.forEach(allowedPanels, (panelName, i) => {
+    allowedPanels.forEach(panelName => {
       const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.includes(propType)) {
@@ -206,17 +206,18 @@ export default class Field extends Component {
       _this.panelNav = editPanels.nav
       _this.resizePanelWrap = editPanels.action.resize
       fieldEdit.action = {
-        onRender: _this.resizePanelWrap,
+        onRender: () => {
+          _this.resizePanelWrap()
+          if (!editPanelLength) {
+            const field = this.dom
+            const editToggle = field.querySelector('.item-edit-toggle')
+            const fieldActions = field.querySelector('.field-actions')
+            const actionButtons = fieldActions.getElementsByTagName('button')
+            fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
+            dom.remove(editToggle)
+          }
+        },
       }
-    } else {
-      setTimeout(() => {
-        const field = this.dom
-        const editToggle = field.querySelector('.item-edit-toggle')
-        const fieldActions = field.querySelector('.field-actions')
-        const actionButtons = fieldActions.getElementsByTagName('button')
-        fieldActions.style.maxWidth = `${actionButtons.length * 24}px`
-        dom.remove(editToggle)
-      }, 0)
     }
 
     return fieldEdit
