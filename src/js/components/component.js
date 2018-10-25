@@ -104,23 +104,30 @@ export default class Component extends Data {
    * @return {Object} element config object
    */
   getActionButtons() {
-    let expandSize
-    const hoverClassname = `hovering-${this.name}`
     return {
       className: `${this.name}-actions group-actions`,
       action: {
         onRender: elem => {
           const buttons = elem.getElementsByTagName('button')
           const btnSize = parseInt(dom.getStyle(buttons[0], 'width'))
-          expandSize = `${buttons.length * btnSize + 1}px`
-        },
-        mouseenter: ({ target }) => {
-          this.dom.classList.add(hoverClassname)
-          target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
-        },
-        mouseleave: ({ target }) => {
-          this.dom.classList.remove(hoverClassname)
-          target.removeAttribute('style')
+          const expandSize = `${buttons.length * btnSize + 1}px`
+          const hoverClassname = `hovering-${this.name}`
+          elem.addEventListener(
+            'mouseenter',
+            ({ target }) => {
+              this.dom.classList.add(hoverClassname)
+              target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
+            },
+            false
+          )
+          elem.addEventListener(
+            'mouseleave',
+            ({ target }) => {
+              this.dom.classList.remove(hoverClassname)
+              target.removeAttribute('style')
+            },
+            false
+          )
         },
       },
       children: {
