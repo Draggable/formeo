@@ -29,17 +29,17 @@
   .resize-x-handle {
     display: none;
     position: absolute;
-    right: -8px;
+    right: - space(1);
     top: 0;
     bottom: 0;
-    width: 16px;
+    width: space(2);
     z-index: 2;
     cursor: ew-resize;
 
     &::before {
       width: 0;
       right: 6px;
-      border: 1px dashed $column-outline-color;
+      border: 1px dashed lighten($column-outline-color, 15%);
       border-width: 0 2px;
       display: block;
       top: 0;
@@ -49,7 +49,7 @@
     }
 
     svg {
-      fill: $column-outline-color;
+      fill: lighten($column-outline-color, 15%);
       position: absolute;
       right: 1px;
       width: 14px;
@@ -60,6 +60,14 @@
 
       &.icon-triangle-up {
         bottom: -14px;
+      }
+    }
+    &:hover {
+      &::before {
+        border-color: $column-outline-color;
+      }
+      svg {
+        fill: $column-outline-color;
       }
     }
   }
