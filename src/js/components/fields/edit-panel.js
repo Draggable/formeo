@@ -70,7 +70,6 @@ export default class EditPanel {
     const _this = this
     const type = this.name
     const btnTitle = i18n.get(`panelEditButtons.${type}`)
-    console.log(btnTitle)
     const addActions = {
       attrs: _this.addAttribute,
       options: _this.addOption,
@@ -133,6 +132,7 @@ export default class EditPanel {
       val = JSON.parse(val)
     }
 
+    // @todo may need to camelCase `attr` here
     this.field.set(`attrs.${attr}`, val)
 
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)

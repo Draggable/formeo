@@ -3,6 +3,7 @@ import dom from './dom'
 import { unique } from './utils'
 import lodashSet from 'lodash/set'
 import lodashGet from 'lodash/get'
+import lodashCamelCase from 'lodash/camelCase'
 
 export const bsGridRegEx = /\bcol-\w+-\d+/g
 
@@ -93,6 +94,13 @@ export const forEach = (arr, cb, scope) => {
     cb.call(scope, arr[i], i)
   }
 }
+
+/**
+ * convert a hyphenated string to camelCase
+ * @param  {String} str
+ * @return {String} camelCase string
+ */
+export const camelCase = lodashCamelCase
 
 /**
  * Convert camelCase into lowercase-hyphen

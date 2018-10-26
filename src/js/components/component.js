@@ -563,7 +563,13 @@ export default class Component extends Data {
     })
   }
 
-  cloneData = () => ({ ...clone(this.data), children: [], id: uuid() })
+  cloneData = () => {
+    const clonedData = { ...clone(this.data), id: uuid() }
+    if (this.name !== 'field') {
+      clonedData.children = []
+    }
+    return clonedData
+  }
 
   clone = (parent = this.parent) => {
     const newClone = parent.addChild(this.cloneData(), this.index + 1)

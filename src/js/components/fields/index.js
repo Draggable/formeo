@@ -16,6 +16,9 @@ const DEFAULT_CONFIG = {
     },
     order: ['attrs', 'options', 'conditions'],
   },
+  label: {
+    disableHTML: true,
+  },
 }
 
 export class Fields extends ComponentData {

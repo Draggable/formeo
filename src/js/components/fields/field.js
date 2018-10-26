@@ -1,8 +1,9 @@
 import i18n from 'mi18n'
 import startCase from 'lodash/startCase'
-import { indexOfNode } from '../../common/helpers'
+import throttle from 'lodash/throttle'
 import dom from '../../common/dom'
 import Panels from '../panels'
+import { indexOfNode } from '../../common/helpers'
 import { clone, unique } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
@@ -68,19 +69,35 @@ export default class Field extends Component {
 
     const labelVal = this.get('config.label')
     const required = this.get('attrs.required')
+    const disableHTML = this.config.label.disableHTML
+
+    const labelConfig = () => {
+      const config = {
+        tag: 'label',
+        attrs: {},
+      }
+      if (disableHTML) {
+        config.tag = 'input'
+        config.attrs.value = labelVal
+        return config
+      } else {
+        config.attrs.contenteditable = true
+        config.children = labelVal
+        return config
+      }
+    }
 
     const label = {
-      tag: 'label',
-      attrs: {
-        contenteditable: true,
-      },
-      children: labelVal,
+      ...labelConfig(),
       action: {
-        input: ({ target: { innerHTML, innerText } }) => {
-          super.set('config.label', innerHTML)
+        input: ({ target: { innerHTML, innerText, value } }) => {
+          super.set('config.label', disableHTML ? value : innerHTML)
           const reverseConditionField = Components.getConditionMap(`fields.${this.id}`)
           if (reverseConditionField) {
-            return reverseConditionField.updateConditionSourceLabel(`${this.name}s.${this.id}`, innerText)
+            return reverseConditionField.updateConditionSourceLabel(
+              `${this.name}s.${this.id}`,
+              disableHTML ? value : innerText
+            )
           }
         },
       },
@@ -120,8 +137,8 @@ export default class Field extends Component {
     const [path, value] = args
 
     const data = super.set(path, value)
-    this.updateLabel()
-    this.updatePreview()
+
+    throttle(this.updatePreview, ANIMATION_SPEED_BASE, { leading: false })
 
     return data
   }
@@ -161,6 +178,7 @@ export default class Field extends Component {
     if (!this.preview.parentElement) {
       return null
     }
+    this.updateLabel()
     const newPreview = dom.create(fieldData, true)
     this.preview.parentElement.replaceChild(newPreview, this.preview)
     this.preview = newPreview
@@ -241,6 +259,7 @@ export default class Field extends Component {
         change: evt => {
           const { target } = evt
           const { checked, type } = target
+          // @todo these kind of events should be added to control definitions
           if (['checkbox', 'radio'].includes(type)) {
             const optionIndex = indexOfNode(target)
             const options = this.get('options')
