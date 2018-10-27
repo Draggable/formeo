@@ -4,6 +4,7 @@ import {
   EVENT_FORMEO_ON_RENDER,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_SAVED,
+  EVENT_FORMEO_CLEARED,
 } from '../constants'
 import { Columns, Controls } from '../components'
 
@@ -44,6 +45,7 @@ const events = {
   },
   formeoSaved: evt => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
   formeoUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
+  formeoCleared: evt => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
   formeoOnRender: evt => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
   formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
 }

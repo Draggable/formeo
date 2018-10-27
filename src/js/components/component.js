@@ -1,6 +1,6 @@
 /* global MutationObserver */
 import identity from 'lodash/identity'
-import { uuid, componentType, merge, clone } from '../common/utils'
+import { uuid, componentType, merge, clone, remove } from '../common/utils'
 import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 import {
@@ -70,7 +70,7 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.parentElement.removeChild(this.dom)
-    Components.get(`${parent.name}s.${parent.id}`).remove(`children.${this.id}`)
+    remove(Components.getAddress(`${parent.name}s.${parent.id}.children`), this.id)
 
     if (!parent.children.length) {
       parent.emptyClass()
@@ -90,7 +90,7 @@ export default class Component extends Data {
   empty() {
     const removed = this.children.map(child => child.remove())
     this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
-    this.emptyClass()
+    this.dom.classList.add('empty')
     return removed
   }
 
@@ -109,10 +109,7 @@ export default class Component extends Data {
     return {
       className: `${this.name}-actions group-actions`,
       action: {
-        onRender: elem => {
-          const buttons = elem.getElementsByTagName('button')
-          expandSize = `${buttons.length * 24 + 1}px`
-        },
+        onRender: elem => (expandSize = `${elem.getElementsByTagName('button').length * 24 + 1}px`),
         mouseenter: ({ target }) => {
           this.dom.classList.add(hoverClassname)
           target.style[this.name === 'row' ? 'height' : 'width'] = expandSize

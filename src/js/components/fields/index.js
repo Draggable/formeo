@@ -17,7 +17,7 @@ const DEFAULT_CONFIG = {
     order: ['attrs', 'options', 'conditions'],
   },
   label: {
-    disableHTML: true,
+    disableHTML: false,
   },
 }
 

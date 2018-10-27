@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs'
 import dom from '../../common/dom'
 import Component from '../component'
-import { STAGE_CLASSNAME } from '../../constants'
+import { STAGE_CLASSNAME, ANIMATION_SPEED_SLOW } from '../../constants'
 import Stages from '.'
 import animate from '../../common/animation'
 
@@ -91,14 +91,19 @@ export default class Stage extends Component {
       handle: '.item-handle',
     })
   }
-  empty() {
-    this.dom.classList.add('removing-all-fields')
-    animate.slideUp(this.dom, 600, () => {
-      super.empty()
-      this.dom.classList.remove('removing-all-fields')
-      animate.slideDown(this.dom, 300)
+  empty(isAnimated = true) {
+    return new Promise(resolve => {
+      if (isAnimated) {
+        this.dom.classList.add('removing-all-fields')
+        animate.slideUp(this.dom, ANIMATION_SPEED_SLOW, () => {
+          resolve(super.empty(isAnimated))
+          this.dom.classList.remove('removing-all-fields')
+          animate.slideDown(this.dom, 300)
+        })
+      } else {
+        resolve(super.empty())
+      }
     })
-    return this
   }
 
   onAdd(...args) {

@@ -206,17 +206,8 @@ export class Controls {
    * @return {Object} form action buttons config
    */
   formActions() {
-    const btnTemplate = ({ content, title }) => ({
-      tag: 'button',
-      attrs: {
-        type: 'button',
-        title,
-      },
-      content,
-    })
-
     const clearBtn = {
-      ...btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
+      ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
       action: {
         click: evt => {
@@ -224,7 +215,14 @@ export class Controls {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: Stages.clearAll,
+                clearAllAction: () => {
+                  Stages.clearAll().then(() => {
+                    const evtData = {
+                      src: evt.target,
+                    }
+                    events.formeoCleared(evtData)
+                  })
+                },
                 btnCoords: dom.coords(evt.target),
               },
             })
@@ -238,7 +236,7 @@ export class Controls {
     }
 
     const saveBtn = {
-      ...btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
+      ...dom.btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
       className: ['save-form'],
       action: {
         click: ({ target }) => {

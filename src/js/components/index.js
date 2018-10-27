@@ -102,6 +102,7 @@ export class Components extends Data {
     const componentType = type.replace(/s?$/, 's')
     this[componentType].get(id).set(path, value)
   }
+
   /**
    * Fetch a component from memory by address
    */
