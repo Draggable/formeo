@@ -57,7 +57,7 @@ export default class Field extends Component {
 
     this.dom = field
     this.isEditing = false
-    this.onRender()
+    this.onRender(field)
   }
 
   get labelConfig() {

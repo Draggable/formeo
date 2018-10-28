@@ -315,7 +315,7 @@ export class Controls {
         }
       },
       addElement: _this.addElement,
-      // @todo finish th addGroup method
+      // @todo finish the addGroup method
       addGroup: group => console.log(group),
     }
 
