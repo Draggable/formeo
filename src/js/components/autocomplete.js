@@ -7,12 +7,23 @@ import { ANIMATION_SPEED_FAST } from '../constants'
 
 const BASE_NAME = 'f-autocomplete'
 const HIGHLIGHT_CLASS_NAME = 'highlight-component'
-const labelCount = (arr, elem) => arr.reduce((n, x) => n + (x === elem), 0)
+
+/**
+ * Counts the number of occurences of a string in an array of strings
+ * @param {Array} arr labels
+ * @param {String} label
+ */
+export const labelCount = (arr, label) => arr.reduce((n, x) => n + (x === label), 0)
 
 const getComponentLabel = component =>
   component.get('config.label') || component.get('attrs.id') || component.get('meta.id')
 
-const componentOptions = selected => {
+/**
+ * Generate options for the autolinker component
+ * @param {String} selected option value
+ * @return {Array} option config objects
+ */
+export const componentOptions = selected => {
   const labels = []
   const options = Object.entries(Components.flatList()).map(([id, component]) => {
     const label = getComponentLabel(component)
@@ -24,13 +35,13 @@ const componentOptions = selected => {
       }
       const labelKey = `${component.name}.${label}`
       labels.push(labelKey)
-      let count = labelCount(labels, labelKey)
-      count = {
+      const count = labelCount(labels, labelKey)
+      const countConfig = {
         tag: 'span',
         content: count > 1 && `(${count})`,
         className: 'component-label-count',
       }
-      return dom.makeOption([id, [`${label} `, count, type]], selected)
+      return dom.makeOption([id, [`${label} `, countConfig, type]], selected)
     }
   })
 
@@ -229,8 +240,6 @@ export default class Autocomplete {
       return dom.create(optionConfig)
     })
   }
-
-  // setOptions(options, selected)
 
   /**
    * Hides autocomplete list and deselects all the options

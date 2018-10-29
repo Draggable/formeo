@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Autolinker componentOptions utility should generate an array of dom options 1`] = `
+Array [
+  Object {
+    "label": Array [
+      "config.label ",
+      Object {
+        "className": "component-label-count",
+        "content": false,
+        "tag": "span",
+      },
+      Object {
+        "className": "component-type",
+        "content": " ",
+        "tag": "span",
+      },
+    ],
+    "selected": true,
+    "value": "test.id",
+  },
+]
+`;

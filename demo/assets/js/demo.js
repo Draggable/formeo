@@ -5,9 +5,19 @@ const formeoOpts = {
   editorContainer: container,
   i18n: {
     location: '../assets/lang',
+    override: {
+      'en-US': {
+        userLoggedIn: 'Authenticated User',
+      },
+    },
   },
   actions: {
     save: console.log,
+  },
+  external: {
+    conditions: {
+      userLoggedIn: true,
+    },
   },
   // allowEdit: false,
   controls: {
@@ -146,40 +156,35 @@ let editing = true
 // let debugWrap = document.getElementById('debug-wrap');
 // let debugBtn = document.getElementById('debug-demo');
 const localeSelect = document.getElementById('locale')
-const toggleEdit = document.getElementById('renderForm')
-const viewDataBtn = document.getElementById('viewData')
-const resetDemo = document.getElementById('reloadBtn')
-const logJSON = document.getElementById('logJSON')
 
-logJSON.addEventListener('click', () => {
-  console.log(formeo.json)
+const buttonActions = {
+  logJSON: () => console.log(formeo.json),
+  reloadBtn: () => {
+    window.sessionStorage.removeItem('formeo-formData')
+    window.location.reload()
+  },
+  renderForm: evt => {
+    document.body.classList.toggle('form-rendered', editing)
+    if (editing) {
+      renderer.render(formeo.formData)
+      evt.target.innerHTML = 'Edit Form'
+    } else {
+      evt.target.innerHTML = 'Render Form'
+    }
+    editing = !editing
+
+    return editing
+  },
+  viewData: () => {
+    const formData = formeo.formData
+    Object.entries(formData).forEach(([key, val]) => console.log(key, val))
+  },
+}
+
+Object.entries(buttonActions).forEach(([key, val]) => {
+  const button = document.getElementById(key)
+  button.addEventListener('click', val, false)
 })
-
-// debugBtn.onclick = function() {
-//   debugWrap.classList.toggle('open');
-// };
-
-resetDemo.onclick = function() {
-  window.sessionStorage.removeItem('formeo-formData')
-  window.location.reload()
-}
-
-toggleEdit.onclick = evt => {
-  document.body.classList.toggle('form-rendered', editing)
-  if (editing) {
-    renderer.render(formeo.formData)
-    evt.target.innerHTML = 'Edit Form'
-  } else {
-    evt.target.innerHTML = 'Render Form'
-  }
-  editing = !editing
-
-  return editing
-}
-
-viewDataBtn.onclick = evt => {
-  console.log(formeo.formData)
-}
 
 const formeoLocale = window.sessionStorage.getItem('formeo-locale')
 if (formeoLocale) {
