@@ -3,10 +3,13 @@ import startCase from 'lodash/startCase'
 import animate from '../common/animation'
 import dom from '../common/dom'
 import Components from '.'
-import { ANIMATION_SPEED_FAST } from '../constants'
+import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../constants'
 
 const BASE_NAME = 'f-autocomplete'
 const HIGHLIGHT_CLASS_NAME = 'highlight-component'
+
+let lastCache = Date.now()
+let optionsCache
 
 /**
  * Counts the number of occurences of a string in an array of strings
@@ -197,8 +200,15 @@ export default class Autocomplete {
   }
 
   updateOptions() {
-    dom.empty(this.list)
-    this.generateOptions().forEach(option => this.list.appendChild(option))
+    const now = Date.now()
+    if (now - lastCache > ANIMATION_SPEED_SLOW) {
+      dom.empty(this.list)
+      this.generateOptions()
+      lastCache = now
+    }
+    const options = optionsCache || this.generateOptions()
+
+    options.forEach(option => this.list.appendChild(option))
   }
 
   generateOptions() {
@@ -211,7 +221,7 @@ export default class Autocomplete {
       return target
     }
 
-    return options.map(optionData => {
+    optionsCache = options.map(optionData => {
       const value = optionData.value
       let [label] = optionData.label
       label = label.trim()
@@ -239,6 +249,8 @@ export default class Autocomplete {
       }
       return dom.create(optionConfig)
     })
+
+    return optionsCache
   }
 
   /**

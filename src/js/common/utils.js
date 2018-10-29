@@ -229,12 +229,9 @@ export const memoize = (fn, resolver) => {
     memoized.cache = cache.set(key, result)
     return result
   }
-  memoized.cache = new memoize.Cache()
+  memoized.cache = new Map()
   return memoized
 }
-
-// Assign cache to `_.memoize`.
-memoize.Cache = Map
 
 export const sessionStorage = Object.create(null, {
   get: {

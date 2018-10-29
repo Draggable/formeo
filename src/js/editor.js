@@ -23,6 +23,9 @@ const DEFAULT_OPTIONS = () => ({
   debug: false,
   sessionStorage: false,
   editorContainer: `.${pkg.name}-wrap`,
+  external: {
+    conditions: {}, // assign external data to be used in conditions autolinker
+  },
   svgSprite: null, // change to null
   iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
   config: {}, // stages, rows, columns, fields
@@ -54,7 +57,7 @@ const formeo = {
 class FormeoEditor {
   /**
    * @param  {Object} options  formeo options
-   * @param  {String|Object}   userFormData [description]
+   * @param  {String|Object}   userFormData loaded formData
    * @return {Object}          formeo references and actions
    */
   constructor(options, userFormData) {
@@ -62,12 +65,13 @@ class FormeoEditor {
 
     const mergedOptions = merge(DEFAULT_OPTIONS(), options)
 
-    const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
+    const { actions, events, debug, config, external, editorContainer, ...opts } = mergedOptions
     this.editorContainer =
       typeof _this.editorContainer === 'string' ? document.querySelector(_this.editorContainer) : editorContainer
     this.opts = opts
     dom.setOptions = opts
     Components.config = config
+    Components.external = external
 
     this.formData = userFormData
 
