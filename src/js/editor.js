@@ -2,7 +2,7 @@
 import 'es6-promise/auto'
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
-import h from './common/helpers'
+import { isIE } from './common/helpers'
 import dom from './common/dom'
 import Events from './common/events'
 import Actions from './common/actions'
@@ -23,13 +23,14 @@ const DEFAULT_OPTIONS = () => ({
   debug: false,
   sessionStorage: false,
   editorContainer: `.${pkg.name}-wrap`,
+  external: {}, // assign external data to be used in conditions autolinker
   svgSprite: null, // change to null
   iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
   config: {}, // stages, rows, columns, fields
   events: {},
   actions: {},
   controls: {},
-  polyfills: h.detectIE(), // loads csspreloadrel
+  polyfills: isIE(), // loads csspreloadrel
   i18n: {
     location: 'https://draggable.github.io/formeo/assets/lang/',
     locale: 'en-US',
@@ -54,7 +55,7 @@ const formeo = {
 class FormeoEditor {
   /**
    * @param  {Object} options  formeo options
-   * @param  {String|Object}   userFormData [description]
+   * @param  {String|Object}   userFormData loaded formData
    * @return {Object}          formeo references and actions
    */
   constructor(options, userFormData) {

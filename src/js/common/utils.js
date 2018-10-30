@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4'
-import { COMPONENT_TYPES } from '../constants'
+import { COMPONENT_TYPES, COMPONENT_INDEX_TYPES } from '../constants'
 import mergeWith from 'lodash/mergeWith'
 
 /**
@@ -165,6 +165,8 @@ export const clone = obj => {
   throw new Error('Unable to copy Object, type not supported.')
 }
 
+export const percent = (val, total) => (val / total) * 100
+
 export const numToPercent = num => num.toString() + '%'
 
 export const numberBetween = (num, min, max) => num > min && num < max
@@ -227,12 +229,9 @@ export const memoize = (fn, resolver) => {
     memoized.cache = cache.set(key, result)
     return result
   }
-  memoized.cache = new memoize.Cache()
+  memoized.cache = new Map()
   return memoized
 }
-
-// Assign cache to `_.memoize`.
-memoize.Cache = Map
 
 export const sessionStorage = Object.create(null, {
   get: {
@@ -266,3 +265,15 @@ export const escapeHtml = html => {
   escapeElement.textContent = html
   return escapeElement.innerHTML
 }
+
+/**
+ * Test if a string is a formeo address
+ * @param {String} str
+ */
+export const isAddress = str => COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(str))
+
+/**
+ * Test if a string is an external address
+ * @param {String} str
+ */
+export const isExternalAddress = str => /^external/.test(str)

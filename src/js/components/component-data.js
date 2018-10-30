@@ -48,7 +48,10 @@ export default class ComponentData extends Data {
    * Clears all instances from the store
    * @param {Object} evt
    */
-  clearAll = () => Object.values(this.data).map(component => component.empty())
+  clearAll = (isAnimated = true) => {
+    const promises = Object.values(this.data).map(component => component.empty(isAnimated))
+    return Promise.all(promises)
+  }
 
   /**
    * Extends the configVal for a component type,

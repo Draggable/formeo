@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
 import actions from '../../common/actions'
-import { indexOfNode, map, orderObjectsBy, get } from '../../common/helpers'
+import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
 import { match, unique, uuid } from '../../common/utils'
@@ -140,37 +140,37 @@ export class Controls {
     groups = groups.filter(group => match(group.id, this.options.disable.groups))
 
     // create group config
-    allGroups = map(groups, i => {
-      const group = {
+    allGroups = groups.map(group => {
+      const groupConfig = {
         tag: 'ul',
         attrs: {
           className: CONTROL_GROUP_CLASSNAME,
-          id: `${groups[i].id}-${CONTROL_GROUP_CLASSNAME}`,
+          id: `${group.id}-${CONTROL_GROUP_CLASSNAME}`,
         },
         config: {
-          label: this.groupLabel(groups[i].label),
+          label: this.groupLabel(group.label),
         },
       }
 
-      // Apply order to elements
-      if (this.options.elementOrder[groups[i].id]) {
-        const userOrder = this.options.elementOrder[groups[i].id]
-        const newOrder = unique(userOrder.concat(groups[i].elementOrder))
-        groups[i].elementOrder = newOrder
+      // Apply order to elements/fields
+      if (this.options.elementOrder[group.id]) {
+        const userOrder = this.options.elementOrder[group.id]
+        const newOrder = unique(userOrder.concat(group.elementOrder))
+        group.elementOrder = newOrder
       }
-      elements = orderObjectsBy(elements, groups[i].elementOrder, 'meta.id')
+      elements = orderObjectsBy(elements, group.elementOrder, 'meta.id')
 
       /**
        * Fill control groups with their fields
        * @param  {Object} field Field configuration object.
        * @return {Array}        Filtered array of Field config objects
        */
-      group.content = elements.filter(control => {
+      groupConfig.content = elements.filter(control => {
         const { controlData: field } = this.get(control.id)
         const fieldId = field.meta.id || ''
         const filters = [
           match(fieldId, this.options.disable.elements),
-          field.meta.group === groups[i].id,
+          field.meta.group === group.id,
           !usedElementIds.includes(field.meta.id),
         ]
 
@@ -183,7 +183,7 @@ export class Controls {
         return shouldFilter
       })
 
-      return group
+      return groupConfig
     })
 
     return allGroups
@@ -206,17 +206,8 @@ export class Controls {
    * @return {Object} form action buttons config
    */
   formActions() {
-    const btnTemplate = ({ content, title }) => ({
-      tag: 'button',
-      attrs: {
-        type: 'button',
-        title,
-      },
-      content,
-    })
-
     const clearBtn = {
-      ...btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
+      ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
       action: {
         click: evt => {
@@ -224,7 +215,14 @@ export class Controls {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: Stages.clearAll,
+                clearAllAction: () => {
+                  Stages.clearAll().then(() => {
+                    const evtData = {
+                      src: evt.target,
+                    }
+                    events.formeoCleared(evtData)
+                  })
+                },
                 btnCoords: dom.coords(evt.target),
               },
             })
@@ -238,7 +236,7 @@ export class Controls {
     }
 
     const saveBtn = {
-      ...btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
+      ...dom.btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
       className: ['save-form'],
       action: {
         click: ({ target }) => {
@@ -317,7 +315,7 @@ export class Controls {
         }
       },
       addElement: _this.addElement,
-      // @todo finish th addGroup method
+      // @todo finish the addGroup method
       addGroup: group => console.log(group),
     }
 

@@ -17,7 +17,7 @@ export const CHILD_CLASSNAME_MAP = new Map([
   [COLUMN_CLASSNAME, FIELD_CLASSNAME],
 ])
 
-export const COMPONENT_INDEX_TYPES = ['stages', 'rows', 'columns', 'fields']
+export const COMPONENT_INDEX_TYPES = ['external', 'stages', 'rows', 'columns', 'fields']
 
 export const COMPONENT_TYPES = [
   { name: 'controls', className: CONTROL_GROUP_CLASSNAME },
@@ -26,6 +26,14 @@ export const COMPONENT_TYPES = [
   { name: 'column', className: COLUMN_CLASSNAME },
   { name: 'field', className: FIELD_CLASSNAME },
 ]
+
+export const COMPONENT_TYPE_CLASSNAMES = {
+  controls: CONTROL_GROUP_CLASSNAME,
+  stage: STAGE_CLASSNAME,
+  row: ROW_CLASSNAME,
+  column: COLUMN_CLASSNAME,
+  field: FIELD_CLASSNAME,
+}
 
 const childTypeMap = COMPONENT_TYPES.map(({ name }, index, arr) => {
   const { name: childName } = arr[index + 1] || {}
@@ -61,24 +69,15 @@ const columnTemplates = [
     { value: '25.0,50.0,25.0', label: '25 | 50 | 25' },
   ],
   [{ value: '25.0,25.0,25.0,25.0', label: '25 | 25 | 25 | 25' }],
+  [{ value: '20.0,20.0,20.0,20.0,20.0', label: '20 | 20 | 20 | 20 | 20' }],
+  [{ value: '16.66,16.66,16.66,16.66,16.66,16.66', label: '16.66 | 16.66 | 16.66 | 16.66 | 16.66 | 16.66' }],
 ]
 
 export const COLUMN_TEMPLATES = new Map(
-  columnTemplates.reduce(
-    (acc, cur, idx) => {
-      acc.push([idx, cur])
-      return acc
-    },
-    [
-      [
-        'custom',
-        {
-          value: 'custom',
-          label: 'Custom',
-        },
-      ],
-    ]
-  )
+  columnTemplates.reduce((acc, cur, idx) => {
+    acc.push([idx, cur])
+    return acc
+  })
 )
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]
@@ -93,6 +92,7 @@ export const ANIMATION_SPEED_SLOW = Math.round(ANIMATION_SPEED_BASE * 2)
 //  Event constants
 export const EVENT_FORMEO_SAVED = 'formeoSaved'
 export const EVENT_FORMEO_UPDATED = 'formeoUpdated'
+export const EVENT_FORMEO_CLEARED = 'formeoCleared'
 export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
 export const EVENT_FORMEO_CONDITION_UPDATED = 'formeoConditionUpdated'
 export const COMPARISON_OPERATORS = {

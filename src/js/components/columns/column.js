@@ -4,9 +4,8 @@ import Component from '../component'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { numToPercent } from '../../common/utils'
 import { COLUMN_CLASSNAME } from '../../constants'
-import Components from '..'
+import { resize } from './events'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -16,6 +15,20 @@ const DEFAULT_DATA = () =>
     children: [],
     className: 'f-column',
   })
+
+const DOM_CONFIGS = {
+  resizeHandle: () => ({
+    className: 'resize-x-handle',
+    action: {
+      mousedown: resize,
+      touchstart: resize,
+    },
+    content: [dom.icon('triangle-down'), dom.icon('triangle-up')],
+  }),
+  editWindow: () => ({
+    className: 'column-edit group-config',
+  }),
+}
 
 /**
  * Setup Column elements
@@ -31,22 +44,10 @@ export default class Column extends Component {
 
     const _this = this
 
-    const resizeHandle = {
-      tag: 'li',
-      className: 'resize-x-handle',
-      action: {
-        mousedown: _this.resize,
-        touchstart: _this.resize,
-      },
-      content: [dom.icon('triangle-down'), dom.icon('triangle-up')],
-    }
-    const editWindow = {
-      tag: 'li',
-      className: `${this.name}-edit group-config`,
-    }
+    const children = this.createChildWrap()
 
-    const columnConfig = {
-      tag: 'ul',
+    this.dom = dom.create({
+      tag: 'li',
       className: [COLUMN_CLASSNAME, 'empty'],
       dataset: {
         hoverTag: i18n.get('column'),
@@ -61,20 +62,19 @@ export default class Column extends Component {
         },
       },
       id: this.id,
-      content: [this.getActionButtons(), editWindow, resizeHandle],
-    }
+      content: [this.getActionButtons(), DOM_CONFIGS.editWindow(), DOM_CONFIGS.resizeHandle(), children],
+    })
 
-    const column = dom.create(columnConfig)
-    this.processConfig(column)
+    this.processConfig(this.dom)
 
     events.columnResized = new window.CustomEvent('columnResized', {
       detail: {
-        column,
+        column: this.dom,
         instance: _this,
       },
     })
 
-    this.sortable = Sortable.create(column, {
+    this.sortable = Sortable.create(children, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
@@ -101,8 +101,6 @@ export default class Column extends Component {
       draggable: '.stage-fields',
       handle: '.item-handle',
     })
-
-    this.dom = column
   }
 
   /**
@@ -136,96 +134,6 @@ export default class Column extends Component {
   addChild(...args) {
     super.addChild(...args)
     this.fieldOrderClasses()
-  }
-
-  /**
-   * Handle column resizing
-   * @param  {Object} evt resize event
-   */
-  resize = evt => {
-    const _this = this
-    const resize = {}
-    const column = evt.target.parentElement
-    const sibling = column.nextSibling || column.previousSibling
-    const row = column.parentElement
-    const rowStyle = dom.getStyle(row)
-    const rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight)
-    let colWidthPercent
-    let sibWidthPercent
-
-    /**
-     * Set the width before resizing so the column
-     * does not resize near window edges
-     * @param  {Object} evt
-     */
-    function setWidths(evt) {
-      let clientX
-      if (evt.type === 'touchmove') {
-        clientX = evt.touches[0].clientX
-      } else {
-        clientX = evt.clientX
-      }
-      const newColWidth = resize.colStartWidth + clientX - resize.startX
-      const newSibWidth = resize.sibStartWidth - clientX + resize.startX
-
-      const percent = width => (width / resize.rowWidth) * 100
-      colWidthPercent = parseFloat(percent(newColWidth))
-      sibWidthPercent = parseFloat(percent(newSibWidth))
-
-      column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1))
-      sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1))
-
-      column.style.width = numToPercent(colWidthPercent)
-      sibling.style.width = numToPercent(sibWidthPercent)
-    }
-
-    resize.move = evt => {
-      setWidths(evt)
-      resize.resized = true
-    }
-
-    resize.stop = function() {
-      window.removeEventListener('mousemove', resize.move)
-      window.removeEventListener('mouseup', resize.stop)
-      window.removeEventListener('touchmove', resize.move)
-      window.removeEventListener('touchend', resize.stop)
-      if (!resize.resized) {
-        return
-      }
-
-      const row = column.parentElement
-      row.querySelector('.column-preset').value = 'custom'
-      row.classList.remove('resizing-columns')
-
-      _this.set('config.width', column.dataset.colWidth)
-      Components.setAddress(`columns.${sibling.id}`, sibling.dataset.colWidth)
-      resize.resized = false
-    }
-
-    resize.start = (function(evt) {
-      if (evt.type === 'touchstart') {
-        resize.startX = evt.touches[0].clientX
-      } else {
-        resize.startX = evt.clientX
-      }
-      row.classList.add('resizing-columns')
-
-      // remove bootstrap column classes since we are custom sizing
-      const reg = /\bcol-\w+-\d+/g
-      column.className.replace(reg, '')
-      sibling.className.replace(reg, '')
-
-      // eslint-disable-next-line
-      resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width')
-      // eslint-disable-next-line
-      resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width')
-      resize.rowWidth = row.offsetWidth - rowPadding // compensate for padding
-
-      window.addEventListener('mouseup', resize.stop, false)
-      window.addEventListener('mousemove', resize.move, false)
-      window.addEventListener('touchend', resize.stop, false)
-      window.addEventListener('touchmove', resize.move, false)
-    })(evt)
   }
 
   // loops through children and refresh their edit panels

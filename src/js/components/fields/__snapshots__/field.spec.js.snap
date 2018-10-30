@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Field should have data property matching snapshot 1`] = `
+Object {
+  "conditions": Array [
+    Object {
+      "if": Array [
+        Object {
+          "comparison": "",
+          "source": "",
+          "sourceProperty": "",
+          "target": "",
+          "targetProperty": "",
+        },
+      ],
+      "then": Array [
+        Object {
+          "assignment": "",
+          "target": "",
+          "targetProperty": "",
+          "value": "",
+        },
+      ],
+    },
+  ],
+  "id": "test-id",
+}
+`;

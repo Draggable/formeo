@@ -1,6 +1,12 @@
 const isSite = window.location.href.indexOf('draggable.github.io') !== -1
 const container = document.querySelector('.build-form')
 const renderContainer = document.querySelector('.render-form')
+const external = {
+  user: {
+    isAuthenticated: true,
+    userName: 'Kevin',
+  },
+}
 const formeoOpts = {
   editorContainer: container,
   i18n: {
@@ -9,6 +15,7 @@ const formeoOpts = {
   actions: {
     save: console.log,
   },
+  external,
   // allowEdit: false,
   controls: {
     sortable: false,
@@ -97,11 +104,13 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      '87dd9ad7-a854-4632-a12e-898ffc113d6e': {
+      'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': {
         events: {
           onRender: element => {
-            formeo.Components.fields.get(element.id).toggleEdit(true)
-            element.querySelector('.next-group').click()
+            setTimeout(() => {
+              formeo.Components.fields.get(element.id).toggleEdit(true)
+              element.querySelector('.next-group').click()
+            }, 333)
           },
         },
         panels: {
@@ -129,6 +138,7 @@ const formeoOpts = {
 const formeo = new window.FormeoEditor(formeoOpts)
 const renderOptions = {
   container: renderContainer,
+  external,
 }
 
 const renderer = new window.FormeoRenderer(renderOptions)
@@ -143,43 +153,36 @@ document.addEventListener(
 console.log(formeo)
 let editing = true
 
-// let debugWrap = document.getElementById('debug-wrap');
-// let debugBtn = document.getElementById('debug-demo');
 const localeSelect = document.getElementById('locale')
-const toggleEdit = document.getElementById('renderForm')
-const viewDataBtn = document.getElementById('viewData')
-const resetDemo = document.getElementById('reloadBtn')
-const logJSON = document.getElementById('logJSON')
 
-logJSON.addEventListener('click', () => {
-  console.log(formeo.json)
+const buttonActions = {
+  logJSON: () => console.log(formeo.json),
+  reloadBtn: () => {
+    window.sessionStorage.removeItem('formeo-formData')
+    window.location.reload()
+  },
+  renderForm: evt => {
+    document.body.classList.toggle('form-rendered', editing)
+    if (editing) {
+      renderer.render(formeo.formData)
+      evt.target.innerHTML = 'Edit Form'
+    } else {
+      evt.target.innerHTML = 'Render Form'
+    }
+    editing = !editing
+
+    return editing
+  },
+  viewData: () => {
+    const formData = formeo.formData
+    Object.entries(formData).forEach(([key, val]) => console.log(key, val))
+  },
+}
+
+Object.entries(buttonActions).forEach(([key, val]) => {
+  const button = document.getElementById(key)
+  button.addEventListener('click', val, false)
 })
-
-// debugBtn.onclick = function() {
-//   debugWrap.classList.toggle('open');
-// };
-
-resetDemo.onclick = function() {
-  window.sessionStorage.removeItem('formeo-formData')
-  window.location.reload()
-}
-
-toggleEdit.onclick = evt => {
-  document.body.classList.toggle('form-rendered', editing)
-  if (editing) {
-    renderer.render(formeo.formData)
-    evt.target.innerHTML = 'Edit Form'
-  } else {
-    evt.target.innerHTML = 'Render Form'
-  }
-  editing = !editing
-
-  return editing
-}
-
-viewDataBtn.onclick = evt => {
-  console.log(formeo.formData)
-}
 
 const formeoLocale = window.sessionStorage.getItem('formeo-locale')
 if (formeoLocale) {

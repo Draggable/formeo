@@ -1,14 +1,14 @@
 /* global MutationObserver */
 import identity from 'lodash/identity'
-import { uuid, componentType, merge } from '../common/utils'
+import { uuid, componentType, merge, clone, remove } from '../common/utils'
 import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
 import {
   CHILD_TYPE_MAP,
-  TYPE_CHILD_CLASSNAME_MAP,
   PARENT_TYPE_MAP,
   ANIMATION_SPEED_BASE,
   FIELD_PROPERTY_MAP,
+  COMPONENT_TYPE_CLASSNAMES,
 } from '../constants'
 import Components from './index'
 import Data from './data'
@@ -70,7 +70,7 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.parentElement.removeChild(this.dom)
-    Components.get(`${parent.name}s.${parent.id}`).remove(`children.${this.id}`)
+    remove(Components.getAddress(`${parent.name}s.${parent.id}.children`), this.id)
 
     if (!parent.children.length) {
       parent.emptyClass()
@@ -90,52 +90,40 @@ export default class Component extends Data {
   empty() {
     const removed = this.children.map(child => child.remove())
     this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
-    this.emptyClass()
+    this.dom.classList.add('empty')
     return removed
   }
 
   /**
    * Apply empty class to element if does not have children
    */
-  emptyClass = () => {
-    return this.dom.classList.toggle('empty', !this.children.length)
-  }
+  emptyClass = () => this.dom.classList.toggle('empty', !this.children.length)
 
   /**
    * Move, close, and edit buttons for row, column and field
    * @return {Object} element config object
    */
   getActionButtons() {
+    let expandSize = '97px'
     const hoverClassname = `hovering-${this.name}`
-    const btnWrap = {
-      className: 'action-btn-wrap',
-    }
-    let expandSize
-    const actions = {
-      tag: this.name === 'column' ? 'li' : 'div',
+    return {
       className: `${this.name}-actions group-actions`,
       action: {
+        onRender: elem => (expandSize = `${elem.getElementsByTagName('button').length * 24 + 1}px`),
         mouseenter: ({ target }) => {
           this.dom.classList.add(hoverClassname)
           target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
         },
         mouseleave: ({ target }) => {
           this.dom.classList.remove(hoverClassname)
-          target.style.width = null
-          target.style.height = null
-        },
-        onRender: elem => {
-          const buttons = elem.getElementsByTagName('button')
-          const btnSize = parseInt(dom.getStyle(buttons[0], 'width'))
-          expandSize = `${buttons.length * btnSize + 1}px`
+          target.removeAttribute('style')
         },
       },
+      children: {
+        className: 'action-btn-wrap',
+        children: this.buttons,
+      },
     }
-
-    btnWrap.content = this.buttons
-    actions.content = btnWrap
-
-    return actions
   }
 
   /**
@@ -215,7 +203,7 @@ export default class Component extends Data {
             id: 'clone',
           },
           action: {
-            click: ({ target }) => dom.cloneComponent(target),
+            click: () => this.clone(),
           },
         }
       },
@@ -226,6 +214,13 @@ export default class Component extends Data {
       const icons = rest.length ? rest : undefined
       return (buttonConfig[key] && buttonConfig[key](icons)) || btn
     })
+  }
+
+  /**
+   * helper that returns the index of the node minus the offset.
+   */
+  get index() {
+    return indexOfNode(this.dom)
   }
 
   /**
@@ -248,30 +243,37 @@ export default class Component extends Data {
     if (!this.dom || !parentType) {
       return null
     }
-
-    return this.dom.parentElement && Components.get(`${parentType}s.${this.dom.parentElement.id}`)
+    const parentDom = this.dom.closest(`.${COMPONENT_TYPE_CLASSNAMES[parentType]}`)
+    return parentDom && dom.asComponent(parentDom)
   }
   get children() {
     if (!this.dom) {
       return []
     }
-    const children = this.dom.getElementsByClassName(TYPE_CHILD_CLASSNAME_MAP.get(this.name))
+    const domChildren = this.domChildren
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
-    return map(children, i => Components.get(`${childGroup}.${children[i].id}`))
+    return map(domChildren, child => Components.getAddress(`${childGroup}.${child.id}`)).filter(Boolean)
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
+
+  get domChildren() {
+    const childWrap = this.dom.querySelector('.children')
+    return childWrap ? childWrap.children : []
+  }
 
   /**
    * Adds a child to the component
    * @param {Object} childData
    * @param {Number} index
-   * @return {Object} DOM element
+   * @return {Object} child DOM element
    */
-  addChild(childData = {}, index = this.dom.children.length) {
+  addChild(childData = {}, index = this.domChildren.length) {
     if (typeof childData !== 'object') {
       childData = { id: childData }
     }
+
+    const childWrap = this.dom.querySelector('.children')
     const { id: childId = uuid() } = childData
     const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
     if (!childGroup) {
@@ -280,7 +282,7 @@ export default class Component extends Data {
 
     const child = Components.getAddress(`${childGroup}.${childId}`) || Components[childGroup].add(childId, childData)
 
-    this.dom.insertBefore(child.dom, this.dom.children[index])
+    childWrap.insertBefore(child.dom, childWrap.children[index])
 
     // @todo add event for onAddChild
     const grandChildren = child.get('children')
@@ -288,7 +290,7 @@ export default class Component extends Data {
       child.loadChildren(grandChildren)
     }
 
-    this.emptyClass()
+    this.removeClasses('empty')
     this.saveChildOrder()
     return child
   }
@@ -318,7 +320,7 @@ export default class Component extends Data {
     const toType = componentType(to)
     const defaultOnAdd = () => {
       _this.saveChildOrder()
-      _this.emptyClass()
+      _this.removeClasses('empty')
     }
 
     const depthMap = new Map([
@@ -418,10 +420,10 @@ export default class Component extends Data {
    * @return {Array} updated child order
    */
   onRemove({ from }) {
-    this.emptyClass()
     if (from.classList.contains('stage-columns')) {
       from.classList.remove('column-editing-field')
     }
+    this.emptyClass()
 
     return this.saveChildOrder()
   }
@@ -549,4 +551,34 @@ export default class Component extends Data {
       }
     })
   }
+
+  cloneData = () => {
+    const clonedData = { ...clone(this.data), id: uuid() }
+    if (this.name !== 'field') {
+      clonedData.children = []
+    }
+    return clonedData
+  }
+
+  clone = (parent = this.parent) => {
+    const newClone = parent.addChild(this.cloneData(), this.index + 1)
+    if (this.name !== 'field') {
+      this.cloneChildren(newClone)
+    }
+    if (this.name === 'column') {
+      parent.autoColumnWidths()
+    }
+  }
+
+  cloneChildren = toParent => {
+    this.children.forEach(child => child && child.clone(toParent))
+  }
+
+  createChildWrap = () =>
+    dom.create({
+      tag: 'ul',
+      attrs: {
+        className: 'children',
+      },
+    })
 }

@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, mapToObj, componentType, merge, closestFtype } from './utils'
+import { uuid, clone, numToPercent, mapToObj, componentType, merge } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -330,18 +330,29 @@ class DOM {
    */
   toggleElementsByStr = (elems, term) => {
     const filteredElems = []
-
-    forEach(elems, elem => {
-      const txt = elem.textContent.toLowerCase()
-      if (txt.indexOf(term.toLowerCase()) !== -1) {
+    const containsTextCb = (elem, contains) => {
+      if (contains) {
         elem.style.display = 'block'
         filteredElems.push(elem)
       } else {
         elem.style.display = 'none'
       }
-    })
+    }
+
+    dom.elementsContainText(elems, term, containsTextCb)
 
     return filteredElems
+  }
+
+  elementsContainText = (collection, term, cb) => {
+    const elementsContainingText = []
+    forEach(collection, elem => {
+      const txt = elem.textContent.toLowerCase()
+      const contains = txt.indexOf(term.toLowerCase()) !== -1
+      cb && cb(elem, contains)
+      contains && elementsContainingText.push(elem)
+    })
+    return elementsContainingText
   }
 
   generateOption = ({ type = 'option', label, value, i = 0, selected }) => {
@@ -922,36 +933,6 @@ class DOM {
   isColumn = node => componentType(node) === COLUMN_CLASSNAME
   isField = node => componentType(node) === FIELD_CLASSNAME
   asComponent = elem => Components[`${componentType(elem)}s`].get(elem.id)
-
-  cloneChildren = (component, toParent) => {
-    component.children.forEach(child => {
-      const childData = { ...clone(child.data), children: [], id: uuid() }
-      const newChild = toParent.addChild(childData)
-      if (newChild && newChild.name !== 'field') {
-        dom.cloneChildren(child, newChild)
-      }
-    })
-  }
-
-  cloneComponent = elem => {
-    const indexOffset = {
-      row: 0,
-      column: 3,
-      field: 2,
-    }
-
-    const component = dom.asComponent(closestFtype(elem))
-    const index = indexOfNode(elem) + indexOffset[component.name]
-    const parent = component.parent
-    const cloneData = { ...clone(component.data), children: [], id: uuid() }
-    const newClone = parent.addChild(cloneData, index)
-    if (component.name !== 'field') {
-      this.cloneChildren(component, newClone)
-    }
-    if (component.name === 'column') {
-      parent.autoColumnWidths()
-    }
-  }
 }
 
 export const dom = new DOM()

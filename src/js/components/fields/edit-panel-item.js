@@ -1,18 +1,34 @@
+import startCase from 'lodash/startCase'
+import lowerCase from 'lodash/lowerCase'
 import i18n from 'mi18n'
-import h, { orderObjectsBy, indexOfNode } from '../../common/helpers'
+import { orderObjectsBy, indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
-import {
-  CONDITION_INPUT_ORDER,
-  FIELD_PROPERTY_MAP,
-  OPERATORS,
-  ANIMATION_SPEED_BASE,
-  COMPONENT_INDEX_TYPES,
-} from '../../constants'
+import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_SPEED_BASE } from '../../constants'
 import events from '../../common/events'
 import Components from '../index'
 import Autocomplete from '../autocomplete'
-import startCase from 'lodash/startCase'
+import { isExternalAddress, isAddress } from '../../common/utils'
+
+const externalDataOptions = (fieldVal, external, selected) =>
+  Object.entries(external).reduce((acc, [key, value]) => {
+    if (key !== 'id') {
+      const option = {
+        tag: 'option',
+        content: i18n.get(`${fieldVal}.${key}`) || lowerCase(key),
+        attrs: {
+          value,
+        },
+      }
+
+      if (selected === value) {
+        option.attrs.selected = true
+      }
+
+      acc.push(dom.create(option))
+    }
+    return acc
+  }, [])
 
 const inputConfigBase = ({ key, value, type = 'text', checked }) => {
   const config = {
@@ -109,7 +125,7 @@ export default class EditPanelItem {
    * @return {Object} field object
    */
   constructor(itemKey, itemData, field) {
-    this.itemValues = h.orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
+    this.itemValues = orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
     this.field = field
     this.itemKey = itemKey
     const [panelName, item] = itemKey.split('.')
@@ -219,6 +235,17 @@ export default class EditPanelItem {
         'condition-source',
         field => {
           const foundFields = findFields('condition-sourceProperty')
+          const sourceProperty = foundFields[0]
+          if (isExternalAddress(field.value)) {
+            const externalProperties = externalDataOptions(
+              field.value,
+              Components.getAddress(field.value).getData(),
+              sourceProperty.value
+            )
+            dom.empty(sourceProperty)
+            externalProperties.forEach(option => sourceProperty.add(option))
+          }
+
           if (field.value) {
             return showFields(foundFields)
           }
@@ -228,9 +255,8 @@ export default class EditPanelItem {
       [
         'condition-target',
         field => {
-          const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(field.value))
           const foundFields = findFields('condition-targetProperty')
-          if (isAddress && field.value) {
+          if (isAddress(field.value) && field.value) {
             return showFields(foundFields)
           }
           return hideFields(foundFields)
@@ -243,7 +269,6 @@ export default class EditPanelItem {
           if (!/^is/.test(field.value)) {
             return showFields(foundFields)
           }
-          // const targetField = findFields('condition-target')
 
           return hideFields(foundFields)
         },
@@ -280,7 +305,7 @@ export default class EditPanelItem {
 
     const getPropertyField = (key, propertyValue) => {
       const options = Object.keys(FIELD_PROPERTY_MAP).map(value =>
-        dom.makeOption([value, value], propertyValue, `field.property`)
+        dom.makeOption([value, value], propertyValue, 'field.property')
       )
       const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array'](`condition.${key}`, options)
 

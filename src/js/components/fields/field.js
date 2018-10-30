@@ -1,8 +1,9 @@
 import i18n from 'mi18n'
 import startCase from 'lodash/startCase'
-import h, { indexOfNode } from '../../common/helpers'
+import throttle from 'lodash/throttle'
 import dom from '../../common/dom'
 import Panels from '../panels'
+import { indexOfNode } from '../../common/helpers'
 import { clone, unique } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
@@ -56,7 +57,7 @@ export default class Field extends Component {
 
     this.dom = field
     this.isEditing = false
-    this.onRender()
+    this.onRender(field)
   }
 
   get labelConfig() {
@@ -68,19 +69,35 @@ export default class Field extends Component {
 
     const labelVal = this.get('config.label')
     const required = this.get('attrs.required')
+    const disableHTML = this.config.label.disableHTML
+
+    const labelConfig = () => {
+      const config = {
+        tag: 'label',
+        attrs: {},
+      }
+      if (disableHTML) {
+        config.tag = 'input'
+        config.attrs.value = labelVal
+        return config
+      } else {
+        config.attrs.contenteditable = true
+        config.children = labelVal
+        return config
+      }
+    }
 
     const label = {
-      tag: 'label',
-      attrs: {
-        contenteditable: true,
-      },
-      children: labelVal,
+      ...labelConfig(),
       action: {
-        input: ({ target: { innerHTML, innerText } }) => {
-          super.set('config.label', innerHTML)
+        input: ({ target: { innerHTML, innerText, value } }) => {
+          super.set('config.label', disableHTML ? value : innerHTML)
           const reverseConditionField = Components.getConditionMap(`fields.${this.id}`)
           if (reverseConditionField) {
-            return reverseConditionField.updateConditionSourceLabel(`${this.name}s.${this.id}`, innerText)
+            return reverseConditionField.updateConditionSourceLabel(
+              `${this.name}s.${this.id}`,
+              disableHTML ? value : innerText
+            )
           }
         },
       },
@@ -120,7 +137,6 @@ export default class Field extends Component {
     const [path, value] = args
 
     const data = super.set(path, value)
-    this.updateLabel()
     this.updatePreview()
 
     return data
@@ -130,7 +146,7 @@ export default class Field extends Component {
    * Update the label dom when label data changes
    */
   updateLabel() {
-    if (!this.label.parentElement) {
+    if (!this.label) {
       return null
     }
     const newLabel = dom.create(this.labelConfig)
@@ -157,15 +173,19 @@ export default class Field extends Component {
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview(fieldData = this.fieldPreview()) {
-    if (!this.preview.parentElement) {
-      return null
-    }
-    const newPreview = dom.create(fieldData, true)
-    this.preview.parentElement.replaceChild(newPreview, this.preview)
-    this.preview = newPreview
-    return this.preview
-  }
+  updatePreview = throttle(
+    () => {
+      if (!this.preview.parentElement) {
+        return null
+      }
+      this.updateLabel()
+      const newPreview = dom.create(this.fieldPreview(), true)
+      this.preview.parentElement.replaceChild(newPreview, this.preview)
+      this.preview = newPreview
+    },
+    ANIMATION_SPEED_BASE,
+    { leading: false }
+  )
 
   /**
    * Generate the markup for field edit mode
@@ -183,7 +203,7 @@ export default class Field extends Component {
       className: ['field-edit', 'slide-toggle', 'panels-wrap'],
     }
 
-    h.forEach(allowedPanels, (panelName, i) => {
+    allowedPanels.forEach(panelName => {
       const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.includes(propType)) {
@@ -206,17 +226,18 @@ export default class Field extends Component {
       _this.panelNav = editPanels.nav
       _this.resizePanelWrap = editPanels.action.resize
       fieldEdit.action = {
-        onRender: _this.resizePanelWrap,
+        onRender: () => {
+          _this.resizePanelWrap()
+          if (!editPanelLength) {
+            const field = this.dom
+            const editToggle = field.querySelector('.item-edit-toggle')
+            const fieldActions = field.querySelector('.field-actions')
+            const actionButtons = fieldActions.getElementsByTagName('button')
+            fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
+            dom.remove(editToggle)
+          }
+        },
       }
-    } else {
-      setTimeout(() => {
-        const field = this.dom
-        const editToggle = field.querySelector('.item-edit-toggle')
-        const fieldActions = field.querySelector('.field-actions')
-        const actionButtons = fieldActions.getElementsByTagName('button')
-        fieldActions.style.maxWidth = `${actionButtons.length * 24}px`
-        dom.remove(editToggle)
-      }, 0)
     }
 
     return fieldEdit
@@ -240,6 +261,7 @@ export default class Field extends Component {
         change: evt => {
           const { target } = evt
           const { checked, type } = target
+          // @todo these kind of events should be added to control definitions
           if (['checkbox', 'radio'].includes(type)) {
             const optionIndex = indexOfNode(target)
             const options = this.get('options')

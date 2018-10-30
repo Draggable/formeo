@@ -1,14 +1,14 @@
 import isEqual from 'lodash/isEqual'
 import dom from './common/dom'
-import { uuid } from './common/utils'
-import { COMPONENT_INDEX_TYPES } from './constants'
+import { uuid, isAddress, isExternalAddress } from './common/utils'
 
-const processOptions = opts => {
-  const container = typeof opts.container === 'string' ? document.querySelector(opts.container) : opts.container
-  return { container }
+const processOptions = ({ container, ...opts }) => {
+  const processedOptions = {
+    container: typeof container === 'string' ? document.querySelector(container) : container,
+  }
+
+  return Object.assign({}, opts, processedOptions)
 }
-
-const isAddress = value => COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(value))
 
 const baseId = id => id.replace(/^f-/, '')
 
@@ -62,9 +62,10 @@ const removeButton = () =>
 
 export default class FormeoRenderer {
   constructor(opts, formData) {
-    const { container } = processOptions(opts)
+    const { container, external } = processOptions(opts)
     this.container = container
     this.form = formData
+    this.external = external
     this.components = Object.create(null)
   }
 
@@ -240,7 +241,10 @@ export default class FormeoRenderer {
 
   getComponent = address => {
     const componentId = address.slice(address.indexOf('.') + 1)
-    return this.components[componentId].querySelector(`#f-${componentId}`)
+    const component = isExternalAddress(address)
+      ? this.external[componentId]
+      : this.components[componentId].querySelector(`#f-${componentId}`)
+    return component
   }
 }
 

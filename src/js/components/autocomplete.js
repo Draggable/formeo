@@ -3,18 +3,50 @@ import startCase from 'lodash/startCase'
 import animate from '../common/animation'
 import dom from '../common/dom'
 import Components from '.'
-import { ANIMATION_SPEED_FAST } from '../constants'
+import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../constants'
 
 const BASE_NAME = 'f-autocomplete'
 const HIGHLIGHT_CLASS_NAME = 'highlight-component'
-const labelCount = (arr, elem) => arr.reduce((n, x) => n + (x === elem), 0)
 
-const getComponentLabel = component =>
-  component.get('config.label') || component.get('attrs.id') || component.get('meta.id')
+let lastCache = Date.now()
+let optionsCache
 
-const componentOptions = selected => {
+/**
+ * Counts the number of occurences of a string in an array of strings
+ * @param {Array} arr labels
+ * @param {String} label
+ */
+export const labelCount = (arr, label) => arr.reduce((n, x) => n + (x === label), 0)
+
+/**
+ * Find or generate a label for components and external data
+ * @param {Object} Component
+ * @return {String} component label
+ */
+const getComponentLabel = ({ name, id, ...component }) => {
+  const labelPaths = ['config.label', 'attrs.id', 'meta.id']
+  const label = labelPaths.reduce((acc, cur) => {
+    if (!acc) {
+      acc = component.get(cur)
+    }
+    return acc
+  }, null)
+
+  const externalLabel = (...externalAddress) =>
+    i18n.get(externalAddress.join('.')) || startCase(externalAddress.join(' '))
+
+  return label || (name === 'external' && externalLabel(name, id))
+}
+
+/**
+ * Generate options for the autolinker component
+ * @param {String} selected option value
+ * @return {Array} option config objects
+ */
+export const componentOptions = selected => {
   const labels = []
-  const options = Object.entries(Components.flatList()).map(([id, component]) => {
+  const flatList = Components.flatList()
+  const options = Object.entries(flatList).map(([id, component]) => {
     const label = getComponentLabel(component)
     if (label) {
       const type = {
@@ -24,13 +56,13 @@ const componentOptions = selected => {
       }
       const labelKey = `${component.name}.${label}`
       labels.push(labelKey)
-      let count = labelCount(labels, labelKey)
-      count = {
+      const count = labelCount(labels, labelKey)
+      const countConfig = {
         tag: 'span',
         content: count > 1 && `(${count})`,
         className: 'component-label-count',
       }
-      return dom.makeOption([id, [`${label} `, count, type]], selected)
+      return dom.makeOption([id, [`${label} `, countConfig, type]], selected)
     }
   })
 
@@ -186,8 +218,15 @@ export default class Autocomplete {
   }
 
   updateOptions() {
-    dom.empty(this.list)
-    this.generateOptions().forEach(option => this.list.appendChild(option))
+    const now = Date.now()
+    if (now - lastCache > ANIMATION_SPEED_SLOW) {
+      dom.empty(this.list)
+      this.generateOptions()
+      lastCache = now
+    }
+    const options = optionsCache || this.generateOptions()
+
+    options.forEach(option => this.list.appendChild(option))
   }
 
   generateOptions() {
@@ -200,7 +239,7 @@ export default class Autocomplete {
       return target
     }
 
-    return options.map(optionData => {
+    optionsCache = options.map(optionData => {
       const value = optionData.value
       let [label] = optionData.label
       label = label.trim()
@@ -228,9 +267,9 @@ export default class Autocomplete {
       }
       return dom.create(optionConfig)
     })
-  }
 
-  // setOptions(options, selected)
+    return optionsCache
+  }
 
   /**
    * Hides autocomplete list and deselects all the options
@@ -306,7 +345,7 @@ export default class Autocomplete {
 
       if (value) {
         const component = Components.getAddress(value)
-        component.dom.classList.remove(HIGHLIGHT_CLASS_NAME)
+        component.dom && component.dom.classList.remove(HIGHLIGHT_CLASS_NAME)
       }
     }
     if (selectedOption) {
@@ -335,7 +374,7 @@ export default class Autocomplete {
 
     if (value) {
       const component = Components.getAddress(value)
-      component.dom.classList.add(HIGHLIGHT_CLASS_NAME)
+      component.dom && component.dom.classList.add(HIGHLIGHT_CLASS_NAME)
     }
   }
 

@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs'
 import dom from '../../common/dom'
 import Component from '../component'
-import { STAGE_CLASSNAME } from '../../constants'
+import { STAGE_CLASSNAME, ANIMATION_SPEED_BASE } from '../../constants'
 import Stages from '.'
 import animate from '../../common/animation'
 
@@ -62,15 +62,17 @@ export default class Stage extends Component {
     //   ],
     // }
 
+    const children = this.createChildWrap()
+
     this.dom = dom.create({
-      tag: 'ul',
       attrs: {
         className: [STAGE_CLASSNAME, 'empty'],
         id: this.id,
       },
+      children,
     })
 
-    this.sortable = Sortable.create(this.dom, {
+    this.sortable = Sortable.create(children, {
       animation: 150,
       fallbackClass: 'row-moving',
       forceFallback: true,
@@ -89,19 +91,24 @@ export default class Stage extends Component {
       handle: '.item-handle',
     })
   }
-  empty() {
-    this.dom.classList.add('removing-all-fields')
-    animate.slideUp(this.dom, 600, () => {
-      super.empty()
-      this.dom.classList.remove('removing-all-fields')
-      animate.slideDown(this.dom, 300)
+  empty(isAnimated = true) {
+    return new Promise(resolve => {
+      if (isAnimated) {
+        this.dom.classList.add('removing-all-fields')
+        animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
+          resolve(super.empty(isAnimated))
+          this.dom.classList.remove('removing-all-fields')
+          animate.slideDown(this.dom, ANIMATION_SPEED_BASE)
+        })
+      } else {
+        resolve(super.empty())
+      }
     })
-    return this
   }
 
   onAdd(...args) {
     const component = super.onAdd(...args)
-    if (component.name === 'column') {
+    if (component && component.name === 'column') {
       component.parent.autoColumnWidths()
     }
   }
