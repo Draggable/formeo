@@ -1,18 +1,20 @@
 import Data from './data'
-import { uuid, sessionStorage } from '../common/utils'
+import { uuid, sessionStorage, isAddress } from '../common/utils'
 import ControlsData from './controls'
 
 import StagesData from './stages'
 import RowsData from './rows'
 import ColumnsData from './columns'
 import FieldsData from './fields'
-import { SESSION_FORMDATA_KEY, COMPONENT_INDEX_TYPES } from '../constants'
+import ExternalsData from './externals'
+import { SESSION_FORMDATA_KEY } from '../constants'
 
 export const Stages = StagesData
 export const Rows = RowsData
 export const Columns = ColumnsData
 export const Fields = FieldsData
 export const Controls = ControlsData
+export const Externals = ExternalsData
 
 const DEFAULT_DATA = {
   id: uuid(),
@@ -29,6 +31,7 @@ export class Components extends Data {
     this.columns = Columns
     this.fields = Fields
     this.controls = Controls
+    this.externals = Externals
   }
 
   sessionFormData = () => {
@@ -52,6 +55,7 @@ export class Components extends Data {
     this.add('rows', Rows.load(rows))
     this.add('columns', Columns.load(columns))
     this.add('fields', Fields.load(fields))
+    this.add('externals', Externals.load(opts.external))
 
     Object.values(this.get('stages')).forEach(stage => stage.loadChildren())
 
@@ -86,6 +90,7 @@ export class Components extends Data {
       fields: FieldsData.getData(),
     }
   }
+
   set config(config) {
     const { stages, rows, columns, fields } = config
     Stages.config = stages
@@ -107,8 +112,7 @@ export class Components extends Data {
    * Fetch a component from memory by address
    */
   getAddress(address) {
-    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
-    if (!isAddress) {
+    if (!isAddress(address)) {
       return
     }
     const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
@@ -118,8 +122,7 @@ export class Components extends Data {
   }
 
   getConditionMap(address) {
-    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
-    if (isAddress) {
+    if (isAddress(address)) {
       const splitAddress = address.split('.')
 
       return splitAddress.every(segment => Boolean(segment)) && this[splitAddress[0]].conditionMap.get(splitAddress[1])
@@ -127,8 +130,7 @@ export class Components extends Data {
   }
 
   setConditionMap(address, component) {
-    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
-    if (isAddress) {
+    if (isAddress(address)) {
       const splitAddress = address.split('.')
       return (
         splitAddress.every(segment => Boolean(segment)) &&
@@ -138,8 +140,7 @@ export class Components extends Data {
   }
 
   removeConditionMap(address) {
-    const isAddress = COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(address))
-    if (isAddress) {
+    if (isAddress(address)) {
       const splitAddress = address.split('.')
 
       return (

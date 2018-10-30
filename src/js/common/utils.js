@@ -1,5 +1,5 @@
 import uuidv4 from 'uuid/v4'
-import { COMPONENT_TYPES } from '../constants'
+import { COMPONENT_TYPES, COMPONENT_INDEX_TYPES } from '../constants'
 import mergeWith from 'lodash/mergeWith'
 
 /**
@@ -265,3 +265,15 @@ export const escapeHtml = html => {
   escapeElement.textContent = html
   return escapeElement.innerHTML
 }
+
+/**
+ * Test if a string is a formeo address
+ * @param {String} str
+ */
+export const isAddress = str => COMPONENT_INDEX_TYPES.some(indexType => new RegExp(`^${indexType}.`).test(str))
+
+/**
+ * Test if a string is an external address
+ * @param {String} str
+ */
+export const isExternalAddress = str => /^external/.test(str)

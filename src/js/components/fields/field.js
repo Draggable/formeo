@@ -137,8 +137,7 @@ export default class Field extends Component {
     const [path, value] = args
 
     const data = super.set(path, value)
-
-    throttle(this.updatePreview, ANIMATION_SPEED_BASE, { leading: false })
+    this.updatePreview()
 
     return data
   }
@@ -174,16 +173,19 @@ export default class Field extends Component {
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview(fieldData = this.fieldPreview()) {
-    if (!this.preview.parentElement) {
-      return null
-    }
-    this.updateLabel()
-    const newPreview = dom.create(fieldData, true)
-    this.preview.parentElement.replaceChild(newPreview, this.preview)
-    this.preview = newPreview
-    return this.preview
-  }
+  updatePreview = throttle(
+    () => {
+      if (!this.preview.parentElement) {
+        return null
+      }
+      this.updateLabel()
+      const newPreview = dom.create(this.fieldPreview(), true)
+      this.preview.parentElement.replaceChild(newPreview, this.preview)
+      this.preview = newPreview
+    },
+    ANIMATION_SPEED_BASE,
+    { leading: false }
+  )
 
   /**
    * Generate the markup for field edit mode

@@ -17,7 +17,7 @@ export const CHILD_CLASSNAME_MAP = new Map([
   [COLUMN_CLASSNAME, FIELD_CLASSNAME],
 ])
 
-export const COMPONENT_INDEX_TYPES = ['stages', 'rows', 'columns', 'fields']
+export const COMPONENT_INDEX_TYPES = ['external', 'stages', 'rows', 'columns', 'fields']
 
 export const COMPONENT_TYPES = [
   { name: 'controls', className: CONTROL_GROUP_CLASSNAME },

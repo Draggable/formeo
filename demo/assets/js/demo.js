@@ -1,24 +1,21 @@
 const isSite = window.location.href.indexOf('draggable.github.io') !== -1
 const container = document.querySelector('.build-form')
 const renderContainer = document.querySelector('.render-form')
+const external = {
+  user: {
+    isAuthenticated: true,
+    userName: 'Kevin',
+  },
+}
 const formeoOpts = {
   editorContainer: container,
   i18n: {
     location: '../assets/lang',
-    override: {
-      'en-US': {
-        userLoggedIn: 'Authenticated User',
-      },
-    },
   },
   actions: {
     save: console.log,
   },
-  external: {
-    conditions: {
-      userLoggedIn: true,
-    },
-  },
+  external,
   // allowEdit: false,
   controls: {
     sortable: false,
@@ -107,11 +104,13 @@ const formeoOpts = {
           buttons: ['edit'],
         },
       },
-      '1ecc1c67-72ee-4af2-b56c-ca5723998269': {
+      'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': {
         events: {
           onRender: element => {
-            formeo.Components.fields.get(element.id).toggleEdit(true)
-            element.querySelector('.next-group').click()
+            setTimeout(() => {
+              formeo.Components.fields.get(element.id).toggleEdit(true)
+              element.querySelector('.next-group').click()
+            }, 333)
           },
         },
         panels: {
@@ -139,6 +138,7 @@ const formeoOpts = {
 const formeo = new window.FormeoEditor(formeoOpts)
 const renderOptions = {
   container: renderContainer,
+  external,
 }
 
 const renderer = new window.FormeoRenderer(renderOptions)
@@ -153,8 +153,6 @@ document.addEventListener(
 console.log(formeo)
 let editing = true
 
-// let debugWrap = document.getElementById('debug-wrap');
-// let debugBtn = document.getElementById('debug-demo');
 const localeSelect = document.getElementById('locale')
 
 const buttonActions = {

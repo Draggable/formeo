@@ -2,7 +2,7 @@
 import 'es6-promise/auto'
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
-import h from './common/helpers'
+import { isIE } from './common/helpers'
 import dom from './common/dom'
 import Events from './common/events'
 import Actions from './common/actions'
@@ -23,16 +23,14 @@ const DEFAULT_OPTIONS = () => ({
   debug: false,
   sessionStorage: false,
   editorContainer: `.${pkg.name}-wrap`,
-  external: {
-    conditions: {}, // assign external data to be used in conditions autolinker
-  },
+  external: {}, // assign external data to be used in conditions autolinker
   svgSprite: null, // change to null
   iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
   config: {}, // stages, rows, columns, fields
   events: {},
   actions: {},
   controls: {},
-  polyfills: h.detectIE(), // loads csspreloadrel
+  polyfills: isIE(), // loads csspreloadrel
   i18n: {
     location: 'https://draggable.github.io/formeo/assets/lang/',
     locale: 'en-US',
@@ -65,13 +63,12 @@ class FormeoEditor {
 
     const mergedOptions = merge(DEFAULT_OPTIONS(), options)
 
-    const { actions, events, debug, config, external, editorContainer, ...opts } = mergedOptions
+    const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
     this.editorContainer =
       typeof _this.editorContainer === 'string' ? document.querySelector(_this.editorContainer) : editorContainer
     this.opts = opts
     dom.setOptions = opts
     Components.config = config
-    Components.external = external
 
     this.formData = userFormData
 

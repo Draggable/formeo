@@ -18,8 +18,25 @@ let optionsCache
  */
 export const labelCount = (arr, label) => arr.reduce((n, x) => n + (x === label), 0)
 
-const getComponentLabel = component =>
-  component.get('config.label') || component.get('attrs.id') || component.get('meta.id')
+/**
+ * Find or generate a label for components and external data
+ * @param {Object} Component
+ * @return {String} component label
+ */
+const getComponentLabel = ({ name, id, ...component }) => {
+  const labelPaths = ['config.label', 'attrs.id', 'meta.id']
+  const label = labelPaths.reduce((acc, cur) => {
+    if (!acc) {
+      acc = component.get(cur)
+    }
+    return acc
+  }, null)
+
+  const externalLabel = (...externalAddress) =>
+    i18n.get(externalAddress.join('.')) || startCase(externalAddress.join(' '))
+
+  return label || (name === 'external' && externalLabel(name, id))
+}
 
 /**
  * Generate options for the autolinker component
@@ -28,7 +45,8 @@ const getComponentLabel = component =>
  */
 export const componentOptions = selected => {
   const labels = []
-  const options = Object.entries(Components.flatList()).map(([id, component]) => {
+  const flatList = Components.flatList()
+  const options = Object.entries(flatList).map(([id, component]) => {
     const label = getComponentLabel(component)
     if (label) {
       const type = {
@@ -327,7 +345,7 @@ export default class Autocomplete {
 
       if (value) {
         const component = Components.getAddress(value)
-        component.dom.classList.remove(HIGHLIGHT_CLASS_NAME)
+        component.dom && component.dom.classList.remove(HIGHLIGHT_CLASS_NAME)
       }
     }
     if (selectedOption) {
@@ -356,7 +374,7 @@ export default class Autocomplete {
 
     if (value) {
       const component = Components.getAddress(value)
-      component.dom.classList.add(HIGHLIGHT_CLASS_NAME)
+      component.dom && component.dom.classList.add(HIGHLIGHT_CLASS_NAME)
     }
   }
 

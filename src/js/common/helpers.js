@@ -1,16 +1,11 @@
 'use strict'
-import dom from './dom'
 import { unique } from './utils'
 import lodashSet from 'lodash/set'
 import lodashGet from 'lodash/get'
 import lodashCamelCase from 'lodash/camelCase'
+import lodashLowerCase from 'lodash/lowerCase'
 
 export const bsGridRegEx = /\bcol-\w+-\d+/g
-
-const loaded = {
-  js: [],
-  css: [],
-}
 
 /**
  * Tests if is whole number. returns false if n is Float
@@ -52,35 +47,6 @@ export const orderObjectsBy = (elements, order, path) => {
   return unique(orderedElements)
 }
 
-export const insertScript = src => {
-  return new Promise((resolve, reject) => {
-    if (loaded.js.includes(src)) {
-      return resolve(src)
-    }
-
-    // Create script element and set attributes
-    const script = dom.create({
-      tag: 'script',
-      attrs: {
-        type: 'text/javascript',
-        async: true,
-        src: `//${this.src}`,
-      },
-      action: {
-        load: () => {
-          loaded.js.push(src)
-          resolve(src)
-        },
-        error: () => reject(new Error(`${this.src} failed to load.`)),
-      },
-    })
-
-    // Append the script to the DOM
-    const el = document.getElementsByTagName('script')[0]
-    el.parentNode.insertBefore(script, el)
-  })
-}
-
 export const get = lodashGet
 export const set = lodashSet
 
@@ -108,11 +74,7 @@ export const camelCase = lodashCamelCase
  * @param  {String} str
  * @return {String} lowercase hyphenated string
  */
-export const hyphenCase = str =>
-  str
-    .toLowerCase()
-    .replace(/\s/g, '-')
-    .replace(/^-+/g, '')
+export const hyphenCase = str => lodashLowerCase(str).replace(/\s/g, '-')
 
 /**
  * @param {Array|NodeList} arr to be iterated
@@ -140,29 +102,14 @@ export const capitalize = str => str.replace(/\b\w/g, m => m.toUpperCase())
 export const copyObj = obj => window.JSON.parse(window.JSON.stringify(obj))
 
 // subtract the contents of 1 array from another
-export const subtract = (arr, from) => {
-  return from.filter(function(a) {
-    return !~this.indexOf(a)
-  }, arr)
-}
+export const subtract = (arr, from) => from.filter(a => !~arr.indexOf(a))
 
-export const detectIE = () => {
-  let isIE = false // innocent until proven guilty
-  const ua = window.navigator.userAgent
-  const msie = ua.indexOf('MSIE ')
-  if (msie > 0) {
-    // IE 10 or older => return version number
-    isIE = true
-  }
-  // other browser
-  return isIE
-}
+export const isIE = () => window.navigator.userAgent.indexOf('MSIE ') !== -1
 
 export const helpers = {
   hyphenCase,
   capitalize,
   safeAttrName,
-  insertScript,
   forEach,
   copyObj,
 
@@ -175,7 +122,7 @@ export const helpers = {
   set,
 
   orderObjectsBy,
-  detectIE,
+  isIE,
 }
 
 export default helpers
