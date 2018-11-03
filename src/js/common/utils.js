@@ -277,3 +277,10 @@ export const isAddress = str => COMPONENT_INDEX_TYPES.some(indexType => new RegE
  * @param {String} str
  */
 export const isExternalAddress = str => /^external/.test(str)
+
+/**
+ * Tests if key is for a boolean property
+ * assumes property starts with is or has
+ * @param {String} key
+ */
+export const isBoolKey = key => /^is|^has/.test(key)
