@@ -96,18 +96,23 @@ export const EVENT_FORMEO_CLEARED = 'formeoCleared'
 export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
 export const EVENT_FORMEO_CONDITION_UPDATED = 'formeoConditionUpdated'
 export const COMPARISON_OPERATORS = {
-  '==': 'equals',
-  '!=': 'notEquals',
-  '⊃': 'contains',
-  '!⊃': 'notContains',
+  equals: '==',
+  notEquals: '!=',
+  contains: '⊃',
+  notContains: '!⊃',
 }
 export const LOGICAL_OPERATORS = {
-  '&&': 'and',
-  '||': 'or',
+  and: '&&',
+  or: '||',
+}
+
+const visiblityConfigs = {
+  isVisible: 'config.isVisible',
+  isNotVisible: 'config.isNotVisible',
 }
 
 export const ASSIGNMENT_OPERATORS = {
-  '=': '=',
+  equals: '=',
 }
 
 export const CONDITION_INPUT_ORDER = [
@@ -125,8 +130,7 @@ export const CONDITION_INPUT_ORDER = [
 
 export const FIELD_PROPERTY_MAP = {
   value: 'attrs.value',
-  isVisible: 'config.isVisible',
-  isNotVisible: 'config.isNotVisible',
+  ...visiblityConfigs,
 }
 
 export const OPERATORS = {
