@@ -133,7 +133,6 @@ export default class EditPanelItem {
     this.isDisabled = field.isDisabledProp(item, panelName)
     this.isHidden = this.isDisabled && field.config.panels[panelName].hideDisabled
     this.isLocked = field.isLockedProp(item, panelName)
-
     this.dom = dom.create({
       tag: 'li',
       className: [`field-${itemKey.replace(/\./g, '-')}`, 'prop-wrap', this.isHidden && 'hidden-property'],
