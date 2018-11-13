@@ -315,7 +315,7 @@ export default class Field extends Component {
     if (!propKind) {
       return false
     }
-    const lockedAttrs = propKind.disabled.concat(this.get(`config.locked${startCase(kind)}`))
+    const lockedAttrs = propKind.locked.concat(this.get(`config.locked${startCase(kind)}`))
     return lockedAttrs.includes(propName)
   }
 }
