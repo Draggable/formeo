@@ -304,4 +304,18 @@ export default class Field extends Component {
     const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${startCase(kind)}`))
     return disabledAttrs.includes(propName)
   }
+
+  /**
+   * Checks if attribute is allowed to be removed
+   * @param  {String}  propName
+   * @return {Boolean}
+   */
+  isLockedProp = (propName, kind = 'attrs') => {
+    const propKind = this.config.panels[kind]
+    if (!propKind) {
+      return false
+    }
+    const lockedAttrs = propKind.disabled.concat(this.get(`config.locked${startCase(kind)}`))
+    return lockedAttrs.includes(propName)
+  }
 }

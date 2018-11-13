@@ -87,6 +87,7 @@ export default class EditPanel {
 
           if (type === 'attrs') {
             addEvt.isDisabled = _this.field.isDisabledProp
+            addEvt.isLocked = _this.field.isLockedProp
             addEvt.message = {
               attr: i18n.get(`action.add.${type}.attr`),
               value: i18n.get(`action.add.${type}.value`),

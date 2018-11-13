@@ -28,14 +28,18 @@ const formeoOpts = {
         tag: 'input',
         config: {
           label: 'Email',
+          disabledAttrs: ['type'],
+          lockedAttrs: ['required', 'className']
         },
         meta: {
           group: 'common',
+          id:'email',
           icon: '@',
         },
         attrs: {
           className: 'custom-email',
           type: 'email',
+          required: true,
         },
       },
       //     {
