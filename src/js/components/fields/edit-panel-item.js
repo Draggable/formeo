@@ -132,7 +132,7 @@ export default class EditPanelItem {
     this.panelName = panelName
     this.isDisabled = field.isDisabledProp(item, panelName)
     this.isHidden = this.isDisabled && field.config.panels[panelName].hideDisabled
-
+    this.isLocked = field.isLockedProp(item, panelName)
     this.dom = dom.create({
       tag: 'li',
       className: [`field-${itemKey.replace(/\./g, '-')}`, 'prop-wrap', this.isHidden && 'hidden-property'],
@@ -374,6 +374,14 @@ export default class EditPanelItem {
   }
 
   get itemControls() {
+    if (this.isLocked) {
+      const controls = {
+        className: `${this.panelName}-prop-controls prop-controls`,
+        content: [],
+      }
+      return controls
+    }
+
     const remove = {
       tag: 'button',
       attrs: {
@@ -426,6 +434,7 @@ export default class EditPanelItem {
       name: inputTypeConfig.attrs.type === 'checkbox' ? `${id}[]` : id,
       id,
       disabled: this.isDisabled,
+      locked: this.isLocked,
     })
 
     inputTypeConfig.action = {
