@@ -210,10 +210,10 @@ export default class FormeoRenderer {
    */
   evaluateCondition = ({ sourceProperty, targetProperty, comparison, target }, evt) => {
     const comparisonMap = {
-      '==': isEqual,
-      '!=': (source, target) => !isEqual(source, target),
-      '⊃': (source, target) => source.includes(target),
-      '!⊃': (source, target) => !source.includes(target),
+      equals: isEqual,
+      notEquals: (source, target) => !isEqual(source, target),
+      contains: (source, target) => source.includes(target),
+      notContains: (source, target) => !source.includes(target),
     }
 
     const sourceValue = evt.target[sourceProperty]
@@ -224,7 +224,7 @@ export default class FormeoRenderer {
 
   execResult = ({ assignment, target, targetProperty, value }) => {
     const assignMap = {
-      '=': elem => {
+      equals: elem => {
         const propMap = {
           value: () => (elem[targetProperty] = value),
           isNotVisible: () => elem.parentElement.setAttribute('hidden', true),

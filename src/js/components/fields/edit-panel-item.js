@@ -8,10 +8,28 @@ import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_SPEED_B
 import events from '../../common/events'
 import Components from '../index'
 import Autocomplete from '../autocomplete'
-import { isExternalAddress, isAddress } from '../../common/utils'
+import { isExternalAddress, isAddress, isBoolKey } from '../../common/utils'
 
-const externalDataOptions = (fieldVal, external, selected) =>
-  Object.entries(external).reduce((acc, [key, value]) => {
+const getOptionData = key => {
+  const isExternal = isExternalAddress(key)
+  const optionDataMap = {
+    'field.property': FIELD_PROPERTY_MAP,
+    ...OPERATORS,
+  }
+
+  const externalOptionData = address => Components.getAddress(address).getData()
+
+  const data = isExternal ? externalOptionData(key) : optionDataMap[key]
+  return Object.keys(data).reduce((acc, cur) => {
+    acc[cur] = cur
+    return acc
+  }, {})
+}
+
+const createOptions = (fieldVal, selected) => {
+  const data = getOptionData(fieldVal)
+
+  return Object.entries(data).reduce((acc, [key, value]) => {
     if (key !== 'id') {
       const option = {
         tag: 'option',
@@ -29,6 +47,12 @@ const externalDataOptions = (fieldVal, external, selected) =>
     }
     return acc
   }, [])
+}
+
+const addOptions = (select, options) => {
+  dom.empty(select)
+  options.forEach(option => select.add(option))
+}
 
 const inputConfigBase = ({ key, value, type = 'text', checked }) => {
   const config = {
@@ -66,7 +90,7 @@ const ITEM_INPUT_TYPE_MAP = {
     return inputConfigBase({ key, value: val, type, checked: val })
   },
   number: (key, val) => inputConfigBase({ key, value: val, type: 'number' }),
-  array: (key, vals) => {
+  array: (key, vals = []) => {
     return {
       tag: 'select',
       attrs: {
@@ -236,15 +260,9 @@ export default class EditPanelItem {
         field => {
           const foundFields = findFields('condition-sourceProperty')
           const sourceProperty = foundFields[0]
-          if (isExternalAddress(field.value)) {
-            const externalProperties = externalDataOptions(
-              field.value,
-              Components.getAddress(field.value).getData(),
-              sourceProperty.value
-            )
-            dom.empty(sourceProperty)
-            externalProperties.forEach(option => sourceProperty.add(option))
-          }
+          const key = isExternalAddress(field.value) ? field.value : 'field.property'
+          const externalProperties = createOptions(key, sourceProperty.value)
+          addOptions(sourceProperty, externalProperties)
 
           if (field.value) {
             return showFields(foundFields)
@@ -265,8 +283,11 @@ export default class EditPanelItem {
       [
         'condition-sourceProperty',
         field => {
-          const foundFields = findFields('condition-comparison|condition-targetProperty')
-          if (!/^is/.test(field.value)) {
+          const foundFields = findFields('condition-comparison|condition-targetProperty|condition-target')
+          const val = field.value
+          const key = val.substring(val.lastIndexOf('.') + 1, val.length)
+
+          if (!isBoolKey(key)) {
             return showFields(foundFields)
           }
 
@@ -289,32 +310,19 @@ export default class EditPanelItem {
     const conditionAddress = `${this.field.id}.${conditionPath}`
     const dataPath = `${field.name}s.${conditionAddress}.${key}`
 
-    const getOperatorField = (operator, operatorValue) => {
-      const operatorOptions = Object.entries(OPERATORS[operator]).map(entry =>
-        dom.makeOption(entry, operatorValue, 'operator')
-      )
-      const operatorField = ITEM_INPUT_TYPE_MAP['array'](`condition.${operator}`, operatorOptions)
-      operatorField.action = {
-        change: conditionChangeAction,
-        onRender: elem => {
-          conditionChangeAction({ target: elem })
-        },
-      }
-      return operatorField
-    }
-
-    const getPropertyField = (key, propertyValue) => {
-      const options = Object.keys(FIELD_PROPERTY_MAP).map(value =>
-        dom.makeOption([value, value], propertyValue, 'field.property')
-      )
-      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array'](`condition.${key}`, options)
+    const createConditionSelect = (key, propertyValue, i18nKey) => {
+      const options = createOptions(i18nKey || key, propertyValue)
+      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array'](`condition.${key}`)
 
       propertyFieldConfig.action = {
         change: conditionChangeAction,
         onRender: elem => conditionChangeAction({ target: elem }),
       }
 
-      return propertyFieldConfig
+      const field = dom.create(propertyFieldConfig)
+      addOptions(field, options)
+
+      return field
     }
 
     const conditionChangeAction = ({ target }) => {
@@ -337,8 +345,8 @@ export default class EditPanelItem {
     }
 
     const segmentTypes = {
-      comparison: value => dom.create(getOperatorField('comparison', value)),
-      logical: value => dom.create(getOperatorField('logical', value)),
+      comparison: value => createConditionSelect('comparison', value),
+      logical: value => createConditionSelect('logical', value),
       source: (value, type = 'source') => {
         const componentInput = ITEM_INPUT_TYPE_MAP['autocomplete'](`condition.${type}`, value, conditionType)
         // add to condition map for the type so we can perform reverse lookup when editing a field connected to this condition
@@ -352,8 +360,8 @@ export default class EditPanelItem {
 
         return componentInput
       },
-      sourceProperty: value => dom.create(getPropertyField('sourceProperty', value)),
-      targetProperty: value => dom.create(getPropertyField('targetProperty', value)),
+      sourceProperty: value => createConditionSelect('sourceProperty', value, 'field.property'),
+      targetProperty: value => createConditionSelect('targetProperty', value, 'field.property'),
       target: value => segmentTypes.source(value, 'target'),
       value: value => {
         const valueField = ITEM_INPUT_TYPE_MAP['string']('condition.value', value)
@@ -362,7 +370,7 @@ export default class EditPanelItem {
         }
         return dom.create(valueField)
       },
-      assignment: () => dom.create(getOperatorField('assignment')),
+      assignment: value => createConditionSelect('assignment', value),
     }
 
     const conditionField = segmentTypes[key]
