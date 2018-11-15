@@ -22,6 +22,7 @@ export default class Component extends Data {
     this.name = name
 
     this.config = Components[`${this.name}s`].config
+    merge(this.config, data.config)
     this.dataPath = `${this.name}s.${this.id}.`
     this.observer = new MutationObserver(this.mutationHandler)
     this.render = render
