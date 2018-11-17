@@ -3,7 +3,7 @@ import i18n from 'mi18n'
 import events from './events'
 import animate from './animation'
 import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, mapToObj, componentType, merge } from './utils'
+import { uuid, clone, numToPercent, componentType, merge } from './utils'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -85,9 +85,7 @@ class DOM {
     if (!elem) {
       return
     }
-    if (elem instanceof Map) {
-      elem = mapToObj(elem)
-    }
+
     elem = this.processTagName(elem)
     const _this = this
     let childType

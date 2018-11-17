@@ -20,7 +20,6 @@ export default class Component extends Data {
     super(name, Object.assign({}, data, { id: data.id || uuid() }))
     this.id = this.data.id
     this.name = name
-
     this.config = Components[`${this.name}s`].config
     this.dataPath = `${this.name}s.${this.id}.`
     this.observer = new MutationObserver(this.mutationHandler)

@@ -16,7 +16,7 @@ export const isInt = n => Number.isInteger(Number(n))
 /**
  * Finds the index of an element in its parent
  * @param {NodeElement} node
- * @param {NodeLement} parent
+ * @param {NodeElement} parent
  */
 export const indexOfNode = (node, parent) => {
   const parentElement = parent || node.parentElement

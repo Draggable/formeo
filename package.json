@@ -40,10 +40,7 @@
         "test/**/*.spec.js"
       ],
       "formeo-editor": {
-        "js": "src/js/editor.js",
-        "icons": "src/icons/**/*.svg",
-        "fonts": "src/fonts/fontello",
-        "lang": "src/lang"
+        "js": "src/js/editor.js"
       },
       "formeo-renderer": {
         "js": "src/js/renderer.js"
@@ -144,7 +141,6 @@
     "css-loader": "0.28.11",
     "enzyme": "3.4.1",
     "enzyme-to-json": "3.3.4",
-    "es6-promise": "4.2.4",
     "eslint": "4.19.1",
     "eslint-config-prettier": "2.9.0",
     "eslint-config-standard": "11.0.0",
@@ -158,6 +154,7 @@
     "eslint-plugin-react": "7.7.0",
     "eslint-plugin-standard": "3.1.0",
     "file-loader": "1.1.11",
+    "formeo-i18n": "^1.0.0",
     "husky": "0.14.3",
     "immutable": "3.8.2",
     "jest": "23.4.2",
