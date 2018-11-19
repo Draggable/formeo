@@ -5,6 +5,8 @@ export const POLYFILLS = [
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
 ]
 
+export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg'
+
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
 export const STAGE_CLASSNAME = 'stage'
 export const ROW_CLASSNAME = `${STAGE_CLASSNAME}-rows`

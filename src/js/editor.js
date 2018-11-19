@@ -1,53 +1,15 @@
 'use strict'
-import 'es6-promise/auto'
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
-import { isIE } from './common/helpers'
 import dom from './common/dom'
 import Events from './common/events'
 import Actions from './common/actions'
 import Controls from './components/controls'
 import Components from './components'
 import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
-import { SESSION_LOCALE_KEY } from './constants'
+import { SESSION_LOCALE_KEY, FALLBACK_SVG_SPRITE } from './constants'
 import { sessionStorage, merge } from './common/utils'
-import pkg from '../../package.json'
-
-const fallbacks = {
-  svgSprite: 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg',
-}
-
-const DEFAULT_OPTIONS = () => ({
-  allowEdit: true,
-  dataType: 'json',
-  debug: false,
-  sessionStorage: false,
-  editorContainer: `.${pkg.name}-wrap`,
-  external: {}, // assign external data to be used in conditions autolinker
-  svgSprite: null, // change to null
-  iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
-  config: {}, // stages, rows, columns, fields
-  events: {},
-  actions: {},
-  controls: {},
-  polyfills: isIE(), // loads csspreloadrel
-  i18n: {
-    location: 'https://draggable.github.io/formeo/assets/lang/',
-    locale: 'en-US',
-    langs: ['en-US'],
-  },
-})
-
-// Simple object config for the main part of formeo
-const formeo = {
-  get formData() {
-    return Components.formData
-  },
-  get json() {
-    return Components.json
-  },
-  Components,
-}
+import { defaults } from './config'
 
 /**
  * Main class
@@ -60,30 +22,35 @@ class FormeoEditor {
    */
   constructor(options, userFormData) {
     const _this = this
-
-    const mergedOptions = merge(DEFAULT_OPTIONS(), options)
+    const mergedOptions = merge(defaults.editor, options)
 
     const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
     this.editorContainer =
-      typeof _this.editorContainer === 'string' ? document.querySelector(_this.editorContainer) : editorContainer
+      typeof editorContainer === 'string' ? document.querySelector(editorContainer) : editorContainer
     this.opts = opts
     dom.setOptions = opts
     Components.config = config
 
-    this.formData = userFormData
+    this.userFormData = userFormData
 
+    this.Components = Components
     Events.init({ debug, ...events })
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
 
     // Load remote resources such as css and svg sprite
     _this.loadResources().then(() => {
       if (opts.allowEdit) {
-        formeo.edit = _this.init.bind(_this)
+        _this.edit = _this.init.bind(_this)
         _this.init()
       }
     })
+  }
 
-    return formeo
+  get formData() {
+    return this.Components.formData
+  }
+  get json() {
+    return this.Components.json
   }
 
   /**
@@ -94,7 +61,7 @@ class FormeoEditor {
     const promises = []
 
     if (this.opts.polyfills) {
-      loadPolyfills(this.opts.polysfills)
+      loadPolyfills(this.opts.polyfills)
     }
 
     if (this.opts.style) {
@@ -103,7 +70,7 @@ class FormeoEditor {
 
     // Ajax load svgSprite and inject into markup.
     if (this.opts.svgSprite) {
-      promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(fallbacks.svgSprite, insertIcons)))
+      promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(FALLBACK_SVG_SPRITE, insertIcons)))
     }
 
     promises.push(i18n.init(Object.assign({}, this.opts.i18n, { locale: sessionStorage.get(SESSION_LOCALE_KEY) })))
@@ -118,15 +85,15 @@ class FormeoEditor {
    */
   init() {
     const _this = this
-    this.load(this.formData, _this.opts)
-    formeo.controls = Controls.init(_this.opts.controls)
+    this.load(this.userFormData, _this.opts)
+    this.controls = Controls.init(_this.opts.controls)
     _this.formId = Components.get('id')
-    formeo.i18n = {
+    this.i18n = {
       setLang: formeoLocale => {
         sessionStorage.set(SESSION_LOCALE_KEY, formeoLocale)
         const loadLang = i18n.setCurrent(formeoLocale)
-        loadLang.then(lang => {
-          formeo.controls = Controls.init(_this.opts.controls)
+        loadLang.then(() => {
+          this.controls = Controls.init(_this.opts.controls)
           _this.render()
         }, console.error)
       },
@@ -136,7 +103,7 @@ class FormeoEditor {
   }
 
   load(formData, opts = this.opts) {
-    return Components.load(formData, opts)
+    return this.Components.load(formData, opts)
   }
 
   /**
@@ -145,7 +112,7 @@ class FormeoEditor {
    */
   render() {
     const _this = this
-    const controls = formeo.controls.dom
+    const controls = this.controls.dom
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',
@@ -160,12 +127,13 @@ class FormeoEditor {
     }
 
     const formeoEditor = dom.create(elemConfig)
+
     dom.empty(_this.editorContainer)
     _this.editorContainer.appendChild(formeoEditor)
 
     Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {
-        formeo: formeo,
+        formeo: _this,
       },
     })
 

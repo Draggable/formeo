@@ -8,7 +8,7 @@ const external = {
   },
 }
 const formeoOpts = {
-  editorContainer: container,
+  editorContainer: '.build-form',
   i18n: {
     location: '../assets/lang',
   },
@@ -29,11 +29,11 @@ const formeoOpts = {
         config: {
           label: 'Email',
           disabledAttrs: ['type'],
-          lockedAttrs: ['required', 'className']
+          lockedAttrs: ['required', 'className'],
         },
         meta: {
           group: 'common',
-          id:'email',
+          id: 'email',
           icon: '@',
         },
         attrs: {

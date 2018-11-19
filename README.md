@@ -1,4 +1,4 @@
-Formeo v0.7.17
+Formeo
 ===========
 
 A zero dependency JavaScript module for drag and drop form creation.
@@ -50,7 +50,7 @@ evt => {
     evt.addAction(attr, val);
   }
 }
-``` 
+```
 By replacing the default callback you could use your own modal or prompt dialog and do some additional validation before calling `evt.addAction()`.
 
 | Option  | Type | Value(s) | Default | Description |

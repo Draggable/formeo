@@ -80,24 +80,6 @@ export const componentType = node => {
  */
 export const unique = array => Array.from(new Set(array))
 
-// Convert and Object to a Map
-export const objToMap = obj => {
-  if (obj instanceof Map) {
-    return obj
-  }
-  return Object.entries(obj).reduce((acc, [key, val]) => {
-    acc.set(key, val)
-    return acc
-  }, new Map())
-}
-
-// Convert a Map to an Object
-export const mapToObj = map =>
-  Array.from(map.entries()).reduce((acc, [key, val]) => {
-    acc[key] = val instanceof Map ? mapToObj(val) : val
-    return acc
-  }, Object.create(null))
-
 // Get or generate a uuid
 export const uuid = elem => {
   let id
@@ -124,7 +106,7 @@ export const merge = (obj1, obj2, opts = Object.create(null)) => {
       return unique(opts.mergeArray ? objValue.concat(srcValue) : srcValue)
     }
   }
-  return mergeWith(obj1, obj2, customizer)
+  return mergeWith({}, obj1, obj2, customizer)
 }
 
 export const clone = obj => {

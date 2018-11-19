@@ -54,10 +54,6 @@ const webpackConfig = {
         loader: 'babel-loader',
       },
       {
-        test: /\.lang$/,
-        loader: 'file-loader?name=[path][name].[ext]&context=./src',
-      },
-      {
         test: /\.scss$/,
         use: [
           {
