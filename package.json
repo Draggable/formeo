@@ -104,14 +104,13 @@
   "scripts": {
     "analyze": "webpack --mode production -p --progress --config tools/webpack.config --analyze",
     "icons": ". ./tools/build-icons.sh",
-    "clean": "rm -rf dist/* demo/assets/formeo*",
-    "build": "yarn clean && webpack --mode production -p --progress --config tools/webpack.config && yarn copy",
+    "build": "webpack --mode production -p --progress --config tools/webpack.config && yarn copy",
     "lang": "cp -a src/lang dist",
     "copy": "yarn run icons && yarn run lang && cp -a dist/* demo/assets/",
     "lint": "eslint ./src/js --ext .js || true",
     "test": "jest src/",
     "test:ci": "yarn test --coverage",
-    "prestart": "yarn clean && yarn copy",
+    "prestart": "yarn copy",
     "start": "webpack-dev-server --mode development --open --config tools/webpack.config",
     "tag": "node ./node_modules/babel-cli/bin/babel-node.js -- tools/run tag",
     "release:patch": "yarn run tag patch && yarn run deploy",
@@ -137,6 +136,7 @@
     "babel-plugin-transform-object-rest-spread": "6.26.0",
     "babel-preset-env": "1.6.1",
     "babel-regenerator-runtime": "6.5.0",
+    "clean-webpack-plugin": "^1.0.0",
     "compression-webpack-plugin": "1.1.11",
     "css-loader": "0.28.11",
     "enzyme": "3.4.1",
@@ -154,7 +154,7 @@
     "eslint-plugin-react": "7.7.0",
     "eslint-plugin-standard": "3.1.0",
     "file-loader": "1.1.11",
-    "formeo-i18n": "^1.0.0",
+    "formeo-i18n": "^2.0.0",
     "husky": "0.14.3",
     "immutable": "3.8.2",
     "jest": "23.4.2",
@@ -213,5 +213,18 @@
     ],
     "testRegex": "src/.*\\.spec\\.js$",
     "testURL": "http://localhost"
+  },
+  "release": {
+    "branch": "master",
+    "verifyConditions": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ],
+    "prepare": [
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/git"
+    ]
   }
 }

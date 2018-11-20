@@ -1,7 +1,7 @@
 stages:
   - lint
   - test
-  - now-deploy
+  - deploy
 language: node_js
 node_js: '10'
 cache:
@@ -10,16 +10,18 @@ cache:
   - node_modules
 notifications:
   email: false
+git:
+  submodules: false
+before_install:
+- "git config --global user.name \"\U0001F916\""
 jobs:
   include:
   - stage: lint
     script: yarn lint
     skip_cleanup: true
-  - stage: now-deploy
+  - stage: deploy
     if: branch = master
     before_deploy:
-    - yarn add now --no-save
-    - now rm demo --token $NOW_TOKEN --yes || true
     - yarn build
     deploy:
       provider: script

@@ -1,3 +1,5 @@
+import '../sass/demo.scss'
+
 const isSite = window.location.href.indexOf('draggable.github.io') !== -1
 const container = document.querySelector('.build-form')
 const renderContainer = document.querySelector('.render-form')
@@ -8,7 +10,7 @@ const external = {
   },
 }
 const formeoOpts = {
-  editorContainer: '.build-form',
+  editorContainer: container,
   i18n: {
     location: '../assets/lang',
   },

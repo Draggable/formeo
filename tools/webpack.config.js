@@ -4,6 +4,7 @@ const autoprefixer = require('autoprefixer')
 const CompressionPlugin = require('compression-webpack-plugin')
 const { BannerPlugin } = require('webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CleanWebpackPlugin = require('clean-webpack-plugin')
 
 // hack for Ubuntu on Windows
 try {
@@ -12,7 +13,8 @@ try {
   require('os').networkInterfaces = () => ({})
 }
 
-const outputDir = resolve(__dirname, '../', 'dist/')
+const root = resolve(__dirname, '../')
+const outputDir = resolve(root, 'dist/')
 const PRODUCTION = process.argv.includes('production')
 const ANALYZE = process.argv.includes('--analyze')
 const devtool = PRODUCTION ? false : 'cheap-module-source-map'
@@ -20,6 +22,7 @@ const devtool = PRODUCTION ? false : 'cheap-module-source-map'
 const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
 
 const plugins = [
+  new CleanWebpackPlugin(['dist/*', 'demo/**/formeo*'], { root }),
   new BannerPlugin(bannerTemplate),
   new CompressionPlugin({
     asset: '[path].gz[query]',
@@ -34,11 +37,14 @@ const webpackConfig = {
   mode: PRODUCTION ? 'production' : 'development',
   target: 'web',
   context: outputDir,
-  entry: resolve(__dirname, '../src/js/index.js'),
+  entry: {
+    'dist/formeo': resolve(__dirname, '../src/js/index.js'),
+    'demo/assets/js/demo': resolve(__dirname, '../src/demo/', 'js/demo.js'),
+  },
   output: {
-    path: outputDir,
+    path: root,
     publicPath: '/dist',
-    filename: `${pkg.name}.min.js`,
+    filename: `[name].min.js`,
   },
   module: {
     rules: [
