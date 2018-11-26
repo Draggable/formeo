@@ -5,6 +5,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const { BannerPlugin } = require('webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 // hack for Ubuntu on Windows
 try {
@@ -17,6 +18,7 @@ const root = resolve(__dirname, '../')
 const outputDir = resolve(root, 'dist/')
 const PRODUCTION = process.argv.includes('production')
 const ANALYZE = process.argv.includes('--analyze')
+const COPY = process.argv.includes('--copy')
 const devtool = PRODUCTION ? false : 'cheap-module-source-map'
 
 const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
@@ -32,6 +34,13 @@ const plugins = [
     minRatio: 0.8,
   }),
 ]
+
+if (COPY) {
+  const patterns = [
+    {from: `src/demo/assets/**/*`, to: `demo/assets/`}
+  ]
+  plugins.push(new CopyWebpackPlugin([ ...patterns ], {context: root}))
+}
 
 const webpackConfig = {
   mode: PRODUCTION ? 'production' : 'development',
