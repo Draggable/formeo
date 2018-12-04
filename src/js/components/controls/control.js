@@ -1,5 +1,5 @@
 import { insertScript, insertStyle } from '../../common/loaders'
-import { identity } from 'lodash/identity'
+import identity from 'lodash/identity'
 
 const LOADER_MAP = {
   js: insertScript,

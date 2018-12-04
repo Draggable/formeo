@@ -1,4 +1,4 @@
-const isSite = window.location.href.indexOf('draggable.github.io') !== -1
+import { IS_SITE, GOOGLE_ANALYTICS } from './constants'
 
 /**
  * Prepends script tags
@@ -14,7 +14,7 @@ function injectScript(props) {
   firstScript.parentNode.insertBefore(js, firstScript)
 }
 
-if (isSite) {
+if (IS_SITE) {
   if (window.location.protocol !== 'https:') {
     window.location.protocol = 'https:'
   }
@@ -41,7 +41,7 @@ if (isSite) {
       src: '//www.google-analytics.com/analytics.js',
       id: 'google-analytics',
       onload: () => {
-        window.ga('create', 'UA-79014176-2', 'auto')
+        window.ga('create', GOOGLE_ANALYTICS, 'auto')
         window.ga('send', 'pageview')
       },
     },

@@ -1,6 +1,5 @@
 node_modules
 npm-debug.log
-demo/assets/**/*.map
-demo/assets/formeo*
+demo/
 dist/
 yarn-error.log

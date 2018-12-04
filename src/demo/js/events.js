@@ -1,6 +1,4 @@
-import { editorActions } from './actionButtons'
-
-// @todo add console
+// @todo add console for pretty logging
 const logEvent = evt => {
   console.log(evt)
 }

@@ -1,11 +1,18 @@
-const pkg = require('../package.json')
 const { resolve } = require('path')
+const { BannerPlugin, DefinePlugin } = require('webpack')
 const autoprefixer = require('autoprefixer')
 const CompressionPlugin = require('compression-webpack-plugin')
-const { BannerPlugin } = require('webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
+const { default: mi18n } = require('mi18n')
+const { languageFiles, enUS } = require('formeo-i18n')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const pkg = require('../package.json')
 
 // hack for Ubuntu on Windows
 try {
@@ -18,13 +25,36 @@ const root = resolve(__dirname, '../')
 const outputDir = resolve(root, 'dist/')
 const PRODUCTION = process.argv.includes('production')
 const ANALYZE = process.argv.includes('--analyze')
-const COPY = process.argv.includes('--copy')
 const devtool = PRODUCTION ? false : 'cheap-module-source-map'
 
 const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
-
+const copyPatterns = [{ from: './**/*', to: 'demo/assets/' }]
 const plugins = [
-  new CleanWebpackPlugin(['dist/*', 'demo/**/formeo*'], { root }),
+  new CleanWebpackPlugin(['dist/*', 'demo/*'], { root }),
+  new DefinePlugin({
+    EN_US: JSON.stringify(enUS),
+  }),
+  new CopyWebpackPlugin(copyPatterns, { context: `${root}/src/demo/assets` }),
+  new HtmlWebpackPlugin({
+    template: '../src/demo/index.html',
+    filename: '../demo/index.html',
+    formBuilder: PRODUCTION ? 'assets/js/formeo.min.js' : 'dist/formeo.min.js',
+    demo: PRODUCTION ? 'assets/js/demo.min.js' : 'demo/assets/js/demo.min.js',
+    alwaysWriteToDisk: true,
+    inject: false,
+    langFiles: Object.entries(languageFiles).map(([locale, val]) => {
+      const lang = mi18n.processFile(val)
+      return {
+        locale,
+        dir: lang.dir,
+        nativeName: lang[locale],
+      }
+    }),
+  }),
+  new HtmlWebpackHarddiskPlugin({ outputPath: './demo/' }),
+  new MiniCssExtractPlugin({
+    filename: ({ name }) => `${name.replace('/js/', '/css/')}.min.css`,
+  }),
   new BannerPlugin(bannerTemplate),
   new CompressionPlugin({
     asset: '[path].gz[query]',
@@ -35,12 +65,17 @@ const plugins = [
   }),
 ]
 
-if (COPY) {
-  const patterns = [
-    {from: `src/demo/assets/**/*`, to: `demo/assets/`}
-  ]
-  plugins.push(new CopyWebpackPlugin([ ...patterns ], {context: root}))
-}
+const extractTextLoader = !PRODUCTION
+  ? {
+      loader: 'style-loader',
+      options: {
+        attrs: {
+          class: 'formeo-injected-style',
+        },
+        sourceMap: !PRODUCTION,
+      },
+    }
+  : MiniCssExtractPlugin.loader
 
 const webpackConfig = {
   mode: PRODUCTION ? 'production' : 'development',
@@ -71,15 +106,7 @@ const webpackConfig = {
       {
         test: /\.scss$/,
         use: [
-          {
-            loader: 'style-loader',
-            options: {
-              attrs: {
-                class: 'formeo-injected-style',
-              },
-              sourceMap: !PRODUCTION,
-            },
-          },
+          extractTextLoader,
           {
             loader: 'css-loader',
             options: {
@@ -111,8 +138,17 @@ const webpackConfig = {
   },
   plugins,
   devtool,
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: !PRODUCTION,
+      }),
+      new OptimizeCSSAssetsPlugin(),
+    ],
+  },
   resolve: {
-    symlinks: false,
     modules: [resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.scss'],
   },

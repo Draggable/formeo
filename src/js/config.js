@@ -1,8 +1,9 @@
 import mi18n from 'mi18n'
 import { isIE } from './common/helpers'
-import pkg from '../../package.json'
-import { FALLBACK_SVG_SPRITE } from './constants'
-import { enUS } from 'formeo-i18n'
+import { FALLBACK_SVG_SPRITE, PACKAGE_NAME } from './constants'
+
+// eslint-disable-next-line no-undef
+mi18n.addLanguage('en-US', EN_US)
 
 export const defaults = {
   get editor() {
@@ -11,7 +12,7 @@ export const defaults = {
       dataType: 'json',
       debug: false,
       sessionStorage: false,
-      editorContainer: `.${pkg.name}-wrap`,
+      editorContainer: `.${PACKAGE_NAME}-wrap`,
       external: {}, // assign external data to be used in conditions autolinker
       svgSprite: FALLBACK_SVG_SPRITE, // change to null
       iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
@@ -22,11 +23,6 @@ export const defaults = {
       polyfills: isIE(), // loads csspreloadrel
       i18n: {
         location: 'https://draggable.github.io/formeo/assets/lang/',
-        locale: 'en-US',
-        langs: ['en-US'],
-        override: {
-          'en-US': mi18n.processFile(enUS),
-        },
       },
     }
   },

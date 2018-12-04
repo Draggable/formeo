@@ -105,19 +105,16 @@
     "analyze": "webpack --mode production -p --progress --config tools/webpack.config --analyze",
     "icons": ". ./tools/build-icons.sh",
     "build": "webpack --mode production -p --progress --config tools/webpack.config",
-    "copy": "yarn run icons && cp -a dist/* demo/assets/",
-    "lint": "eslint ./src/js --ext .js || true",
+    "lint": "eslint ./src --ext .js || true",
     "test": "jest src/",
     "test:ci": "yarn test --coverage",
-    "prestart": "yarn copy",
-    "start": "webpack-dev-server --mode development --open --config tools/webpack.config",
+    "start": "webpack-dev-server --mode development --open --config tools/webpack.config --copy",
     "tag": "node ./node_modules/babel-cli/bin/babel-node.js -- tools/run tag",
     "release:patch": "yarn run tag patch && yarn run deploy",
     "release:minor": "yarn run tag minor && yarn run deploy",
     "deploy:gh": "yarn build && git push upstream $(git subtree split --prefix demo master):gh-pages --force",
     "semantic-release": "semantic-release",
     "travis-deploy-once": "travis-deploy-once",
-    "precommit": "lint-staged",
     "prepush": "yarn test"
   },
   "devDependencies": {
@@ -154,7 +151,9 @@
     "eslint-plugin-react": "7.7.0",
     "eslint-plugin-standard": "3.1.0",
     "file-loader": "1.1.11",
-    "formeo-i18n": "^2.0.0",
+    "formeo-i18n": "^2.1.2",
+    "html-webpack-harddisk-plugin": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
     "husky": "0.14.3",
     "immutable": "3.8.2",
     "jest": "23.4.2",
@@ -162,7 +161,9 @@
     "lint-staged": "7.3.0",
     "lodash": "4.17.10",
     "mi18n": "0.4.6",
+    "mini-css-extract-plugin": "^0.4.5",
     "node-sass": "4.9.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
     "pell": "1.0.4",
     "postcss-loader": "2.1.4",
     "prettier": "1.14.2",
@@ -174,6 +175,8 @@
     "style-loader": "0.21.0",
     "svg-sprite": "1.4.0",
     "travis-deploy-once": "5.0.2",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "unfetch": "^4.0.1",
     "uuid": "3.3.2",
     "webpack": "4.16.5",
     "webpack-bundle-analyzer": "2.13.1",
@@ -226,5 +229,10 @@
       "@semantic-release/npm",
       "@semantic-release/git"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }

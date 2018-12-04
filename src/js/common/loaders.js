@@ -1,7 +1,8 @@
 import noop from 'lodash/noop'
-import { get as fetch } from 'axios'
 import dom from './dom'
 import { POLYFILLS } from '../constants'
+
+/* global fetch */
 
 const loaded = {
   js: [],

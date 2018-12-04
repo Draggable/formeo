@@ -1,5 +1,5 @@
-import '../sass/demo.scss'
 import './scripts'
+import '../sass/demo.scss'
 import { editorOptions } from './options'
 import { editorButtons } from './actionButtons'
 import { editorEvents } from './events'
