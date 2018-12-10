@@ -14,7 +14,7 @@ import { defaults } from './config'
 /**
  * Main class
  */
-class FormeoEditor {
+export class FormeoEditor {
   /**
    * @param  {Object} options  formeo options
    * @param  {String|Object}   userFormData loaded formData
@@ -70,6 +70,7 @@ class FormeoEditor {
 
     // Ajax load svgSprite and inject into markup.
     if (this.opts.svgSprite) {
+      console.log(this.opts.svgSprite)
       promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(FALLBACK_SVG_SPRITE, insertIcons)))
     }
 

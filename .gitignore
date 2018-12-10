@@ -1,5 +1,6 @@
 node_modules
 npm-debug.log
-demo/
-dist/
+demo
+!src/demo
+dist
 yarn-error.log

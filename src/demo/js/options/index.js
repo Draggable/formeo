@@ -1,6 +1,7 @@
 import external from './external'
 import controls from './controls'
 import config from './config'
+import { devPrefix } from '../../../../tools/build-vars'
 
 const editorContainer = document.querySelector('.build-form')
 const renderContainer = document.querySelector('.render-form')
@@ -21,7 +22,7 @@ export const editorOptions = {
   // onUpdate: console.log,
   // onSave: console.log
   // },
-  svgSprite: './assets/formeo-sprite.svg',
+  svgSprite: `./${devPrefix}assets/img/formeo-sprite.svg`,
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,

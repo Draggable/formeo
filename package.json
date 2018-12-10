@@ -104,7 +104,8 @@
   "scripts": {
     "analyze": "webpack --mode production -p --progress --config tools/webpack.config --analyze",
     "icons": ". ./tools/build-icons.sh",
-    "build": "webpack --mode production -p --progress --config tools/webpack.config",
+    "build": "webpack --mode production -p --progress --config tools/webpack.config && yarn copy",
+    "copy": "cp -a dist/*.js demo/assets/js/ && cp -a dist/*.css demo/assets/css/",
     "lint": "eslint ./src --ext .js || true",
     "test": "jest src/",
     "test:ci": "yarn test --coverage",

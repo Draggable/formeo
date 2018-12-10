@@ -12,7 +12,7 @@ const { languageFiles, enUS } = require('formeo-i18n')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const pkg = require('../package.json')
+const { IS_PRODUCTION, ANALYZE, projectRoot, outputDir, devtool, bannerTemplate } = require('./build-vars')
 
 // hack for Ubuntu on Windows
 try {
@@ -21,25 +21,20 @@ try {
   require('os').networkInterfaces = () => ({})
 }
 
-const root = resolve(__dirname, '../')
-const outputDir = resolve(root, 'dist/')
-const PRODUCTION = process.argv.includes('production')
-const ANALYZE = process.argv.includes('--analyze')
-const devtool = PRODUCTION ? false : 'cheap-module-source-map'
-
-const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
-const copyPatterns = [{ from: './**/*', to: 'demo/assets/' }]
+const copyPatterns = [{ from: './**/*', to: 'demo/assets/' }, { from: '../../../dist/*', to: 'demo/assets/' }]
 const plugins = [
-  new CleanWebpackPlugin(['dist/*', 'demo/*'], { root }),
+  new CleanWebpackPlugin(['dist/*', 'demo/*'], { root: projectRoot }),
   new DefinePlugin({
     EN_US: JSON.stringify(enUS),
   }),
-  new CopyWebpackPlugin(copyPatterns, { context: `${root}/src/demo/assets` }),
+  new CopyWebpackPlugin(copyPatterns, { context: `${projectRoot}/src/demo/assets`, debug: 'debug' }),
   new HtmlWebpackPlugin({
+    isProduction: IS_PRODUCTION,
+    devPrefix: IS_PRODUCTION ? '' : 'dist/demo/',
     template: '../src/demo/index.html',
     filename: '../demo/index.html',
-    formBuilder: PRODUCTION ? 'assets/js/formeo.min.js' : 'dist/formeo.min.js',
-    demo: PRODUCTION ? 'assets/js/demo.min.js' : 'demo/assets/js/demo.min.js',
+    formeo: IS_PRODUCTION ? 'assets/js/formeo.min.js' : 'dist/formeo.min.js',
+    demo: 'assets/js/demo.min.js',
     alwaysWriteToDisk: true,
     inject: false,
     langFiles: Object.entries(languageFiles).map(([locale, val]) => {
@@ -65,28 +60,28 @@ const plugins = [
   }),
 ]
 
-const extractTextLoader = !PRODUCTION
+const extractTextLoader = !IS_PRODUCTION
   ? {
       loader: 'style-loader',
       options: {
         attrs: {
           class: 'formeo-injected-style',
         },
-        sourceMap: !PRODUCTION,
+        sourceMap: !IS_PRODUCTION,
       },
     }
   : MiniCssExtractPlugin.loader
 
 const webpackConfig = {
-  mode: PRODUCTION ? 'production' : 'development',
+  mode: IS_PRODUCTION ? 'production' : 'development',
   target: 'web',
   context: outputDir,
   entry: {
     'dist/formeo': resolve(__dirname, '../src/js/index.js'),
-    'demo/assets/js/demo': resolve(__dirname, '../src/demo/', 'js/demo.js'),
+    'demo/assets/js/demo': resolve(__dirname, '../src/demo/js/demo.js'),
   },
   output: {
-    path: root,
+    path: projectRoot,
     publicPath: '/dist',
     filename: `[name].min.js`,
   },
@@ -112,7 +107,7 @@ const webpackConfig = {
             options: {
               camelCase: true,
               minimize: true,
-              sourceMap: !PRODUCTION,
+              sourceMap: !IS_PRODUCTION,
             },
           },
           {
@@ -123,13 +118,13 @@ const webpackConfig = {
                   browsers: ['> 1%'],
                 }),
               ],
-              sourceMap: !PRODUCTION,
+              sourceMap: !IS_PRODUCTION,
             },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: !PRODUCTION,
+              sourceMap: !IS_PRODUCTION,
             },
           },
         ],
@@ -143,7 +138,7 @@ const webpackConfig = {
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: !PRODUCTION,
+        sourceMap: !IS_PRODUCTION,
       }),
       new OptimizeCSSAssetsPlugin(),
     ],

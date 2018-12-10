@@ -29,9 +29,10 @@ export const editorButtons = editor => {
     const attrs = { id, type: 'button' }
     const button = Object.assign(document.createElement('button'), attrs)
     button.addEventListener('click', cb, false)
+    editorActionButtonContainer.appendChild(button)
     return button
   })
-  buttons.forEach(editorActionButtonContainer.appendChild)
+
   return buttons
 }
 
