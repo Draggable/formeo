@@ -14,7 +14,7 @@ import { defaults } from './config'
 /**
  * Main class
  */
-class FormeoEditor {
+export class FormeoEditor {
   /**
    * @param  {Object} options  formeo options
    * @param  {String|Object}   userFormData loaded formData

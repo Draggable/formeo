@@ -62,8 +62,8 @@ const removeButton = () =>
 
 export default class FormeoRenderer {
   constructor(opts, formData) {
-    const { container, external } = processOptions(opts)
-    this.container = container
+    const { renderContainer, external } = processOptions(opts)
+    this.container = renderContainer
     this.form = formData
     this.external = external
     this.components = Object.create(null)

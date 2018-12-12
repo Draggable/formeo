@@ -1,8 +1,11 @@
-import pkg from '../../package.json'
+import { name } from '../../package.json'
+
+export const PACKAGE_NAME = name
 
 export const POLYFILLS = [
   { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
+  { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
 
 export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg'
@@ -84,8 +87,8 @@ export const COLUMN_TEMPLATES = new Map(
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]
 
-export const SESSION_FORMDATA_KEY = `${pkg.name}-formData`
-export const SESSION_LOCALE_KEY = `${pkg.name}-locale`
+export const SESSION_FORMDATA_KEY = `${name}-formData`
+export const SESSION_LOCALE_KEY = `${name}-locale`
 
 export const ANIMATION_SPEED_BASE = 333
 export const ANIMATION_SPEED_FAST = Math.round(ANIMATION_SPEED_BASE / 2)

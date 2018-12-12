@@ -155,12 +155,14 @@ export default class EditPanel {
     const metaId = this.field.data.meta.id
     const type = metaId === 'select' ? 'option' : metaId
     const newOptionLabel = i18n.get(`newOptionLabel`, { type }) || 'New Option'
-    const itemKey = `options.${this.data.length - 1}`
+    const itemKey = `options.${this.data.length}`
     const itemData = { label: newOptionLabel, value: hyphenCase(newOptionLabel), selected: false }
     const newOption = new EditPanelItem(itemKey, itemData, this.field)
 
+
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
+    this.field.set(itemKey, itemData)
     this.field.resizePanelWrap()
   }
 

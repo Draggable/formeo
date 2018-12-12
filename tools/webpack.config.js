@@ -1,9 +1,18 @@
-const pkg = require('../package.json')
 const { resolve } = require('path')
+const { BannerPlugin, DefinePlugin } = require('webpack')
 const autoprefixer = require('autoprefixer')
 const CompressionPlugin = require('compression-webpack-plugin')
-const { BannerPlugin } = require('webpack')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
+const { default: mi18n } = require('mi18n')
+const { languageFiles, enUS } = require('formeo-i18n')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const { IS_PRODUCTION, ANALYZE, projectRoot, outputDir, devtool, bannerTemplate } = require('./build-vars')
 
 // hack for Ubuntu on Windows
 try {
@@ -12,14 +21,42 @@ try {
   require('os').networkInterfaces = () => ({})
 }
 
-const outputDir = resolve(__dirname, '../', 'dist/')
-const PRODUCTION = process.argv.includes('production')
-const ANALYZE = process.argv.includes('--analyze')
-const devtool = PRODUCTION ? false : 'cheap-module-source-map'
-
-const bannerTemplate = [`${pkg.name} - ${pkg.homepage}`, `Version: ${pkg.version}`, `Author: ${pkg.author}`].join('\n')
-
+const copyPatterns = [
+  { from: './**/*', to: 'demo/assets/', context: `${projectRoot}/src/demo/assets` },
+  {
+    from: '*.lang',
+    to: 'demo/assets/lang/',
+    context: require.resolve('formeo-i18n').replace(/main.min.js$/, 'lang/'),
+  },
+]
 const plugins = [
+  new CleanWebpackPlugin(['dist/*', 'demo/*'], { root: projectRoot }),
+  new DefinePlugin({
+    EN_US: JSON.stringify(enUS),
+  }),
+  new CopyWebpackPlugin(copyPatterns, { debug: 'debug' }),
+  new HtmlWebpackPlugin({
+    isProduction: IS_PRODUCTION,
+    devPrefix: IS_PRODUCTION ? '' : 'dist/demo/',
+    template: '../src/demo/index.html',
+    filename: '../demo/index.html',
+    formeo: IS_PRODUCTION ? 'assets/js/formeo.min.js' : 'dist/formeo.min.js',
+    demo: 'assets/js/demo.min.js',
+    alwaysWriteToDisk: true,
+    inject: false,
+    langFiles: Object.entries(languageFiles).map(([locale, val]) => {
+      const lang = mi18n.processFile(val)
+      return {
+        locale,
+        dir: lang.dir,
+        nativeName: lang[locale],
+      }
+    }),
+  }),
+  new HtmlWebpackHarddiskPlugin({ outputPath: './demo/' }),
+  new MiniCssExtractPlugin({
+    filename: ({ name }) => `${name.replace('/js/', '/css/')}.min.css`,
+  }),
   new BannerPlugin(bannerTemplate),
   new CompressionPlugin({
     asset: '[path].gz[query]',
@@ -30,15 +67,36 @@ const plugins = [
   }),
 ]
 
+const entry = {
+  'dist/formeo': resolve(__dirname, '../src/js/index.js'),
+  'demo/assets/js/demo': resolve(__dirname, '../src/demo/js/demo.js'),
+}
+
+if (IS_PRODUCTION) {
+  entry['demo/assets/js/formeo'] = resolve(__dirname, '../src/js/index.js')
+}
+
+const extractTextLoader = !IS_PRODUCTION
+  ? {
+      loader: 'style-loader',
+      options: {
+        attrs: {
+          class: 'formeo-injected-style',
+        },
+        sourceMap: !IS_PRODUCTION,
+      },
+    }
+  : MiniCssExtractPlugin.loader
+
 const webpackConfig = {
-  mode: PRODUCTION ? 'production' : 'development',
+  mode: IS_PRODUCTION ? 'production' : 'development',
   target: 'web',
   context: outputDir,
-  entry: resolve(__dirname, '../src/js/index.js'),
+  entry,
   output: {
-    path: outputDir,
+    path: projectRoot,
     publicPath: '/dist',
-    filename: `${pkg.name}.min.js`,
+    filename: `[name].min.js`,
   },
   module: {
     rules: [
@@ -56,21 +114,13 @@ const webpackConfig = {
       {
         test: /\.scss$/,
         use: [
-          {
-            loader: 'style-loader',
-            options: {
-              attrs: {
-                class: 'formeo-injected-style',
-              },
-              sourceMap: !PRODUCTION,
-            },
-          },
+          extractTextLoader,
           {
             loader: 'css-loader',
             options: {
               camelCase: true,
               minimize: true,
-              sourceMap: !PRODUCTION,
+              sourceMap: !IS_PRODUCTION,
             },
           },
           {
@@ -81,13 +131,13 @@ const webpackConfig = {
                   browsers: ['> 1%'],
                 }),
               ],
-              sourceMap: !PRODUCTION,
+              sourceMap: !IS_PRODUCTION,
             },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: !PRODUCTION,
+              sourceMap: !IS_PRODUCTION,
             },
           },
         ],
@@ -96,10 +146,20 @@ const webpackConfig = {
   },
   plugins,
   devtool,
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: !IS_PRODUCTION,
+      }),
+      new OptimizeCSSAssetsPlugin(),
+    ],
+  },
   resolve: {
-    symlinks: false,
     modules: [resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.scss'],
+    symlinks: true,
   },
   devServer: {
     inline: true,
