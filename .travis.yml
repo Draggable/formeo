@@ -26,10 +26,9 @@ jobs:
     deploy:
       provider: script
       script:
-      - now demo --public --token $NOW_TOKEN -A ./now.json
+      - yarn travis-deploy-once "yarn semantic-release"
       skip_cleanup: true
     after_deploy:
-    - yarn travis-deploy-once "yarn semantic-release"
     - yarn deploy:gh
 env:
   global:
