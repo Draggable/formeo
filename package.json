@@ -104,15 +104,17 @@
   "scripts": {
     "analyze": "webpack --mode production -p --progress --config tools/webpack.config --analyze",
     "icons": ". ./tools/build-icons.sh",
-    "build": "webpack --mode production -p --progress --config tools/webpack.config",
+    "build": "cross-env NODE_ENV=production webpack --mode production -p --progress --config tools/webpack.config",
     "lint": "eslint ./src --ext .js || true",
     "test": "jest src/",
     "test:ci": "yarn test --coverage",
-    "start": "webpack-dev-server --mode development --open --config tools/webpack.config --copy",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open --config tools/webpack.config --copy",
     "deploy:gh": "git push upstream $(git subtree split --prefix demo master):gh-pages --force",
     "semantic-release": "semantic-release",
     "travis-deploy-once": "travis-deploy-once",
-    "prepush": "yarn test"
+    "postinstall": "npm --prefix ./node_modules/mini-css-extract-plugin install ./node_modules/mini-css-extract-plugin && npm run --prefix ./node_modules/mini-css-extract-plugin build",
+    "prepush": "yarn test",
+    "defaults": "webpack-defaults"
   },
   "devDependencies": {
     "@semantic-release/changelog": "3.0.0",
@@ -131,6 +133,7 @@
     "clean-webpack-plugin": "1.0.0",
     "compression-webpack-plugin": "1.1.11",
     "copy-webpack-plugin": "4.6.0",
+    "cross-env": "^5.2.0",
     "css-loader": "0.28.11",
     "enzyme": "3.4.1",
     "enzyme-to-json": "3.3.4",
@@ -156,7 +159,7 @@
     "lint-staged": "7.3.0",
     "lodash": "4.17.10",
     "mi18n": "0.4.6",
-    "mini-css-extract-plugin": "https://github.com/Draggable/mini-css-extract-plugin.git#feat/filename-transform",
+    "mini-css-extract-plugin": "Draggable/mini-css-extract-plugin#feat/filename-transform",
     "node-sass": "4.9.0",
     "optimize-css-assets-webpack-plugin": "5.0.1",
     "postcss-loader": "2.1.4",

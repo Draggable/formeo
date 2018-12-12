@@ -12,7 +12,7 @@ const { languageFiles, enUS } = require('formeo-i18n')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const { IS_PRODUCTION, ANALYZE, projectRoot, outputDir, devtool, bannerTemplate } = require('./build-vars')
+const { IS_PRODUCTION, ANALYZE, projectRoot, outputDir, devtool, bannerTemplate, version } = require('./build-vars')
 
 // hack for Ubuntu on Windows
 try {
@@ -33,8 +33,11 @@ const plugins = [
   new CleanWebpackPlugin(['dist/*', 'demo/*'], { root: projectRoot }),
   new DefinePlugin({
     EN_US: JSON.stringify(enUS),
+    'process.env': {
+      production: JSON.stringify(process.env.NODE_ENV),
+    },
   }),
-  new CopyWebpackPlugin(copyPatterns, { debug: 'debug' }),
+  new CopyWebpackPlugin(copyPatterns),
   new HtmlWebpackPlugin({
     isProduction: IS_PRODUCTION,
     devPrefix: IS_PRODUCTION ? '' : 'dist/demo/',
@@ -52,6 +55,7 @@ const plugins = [
         nativeName: lang[locale],
       }
     }),
+    version
   }),
   new HtmlWebpackHarddiskPlugin({ outputPath: './demo/' }),
   new MiniCssExtractPlugin({

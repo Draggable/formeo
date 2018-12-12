@@ -18,18 +18,16 @@ export const editorOptions = {
   // allowEdit: false,
   controls,
   config,
-  // events: {
-  // onUpdate: console.log,
-  // onSave: console.log
-  // },
+  events: {
+    // onUpdate: console.log,
+    onSave: console.log,
+  },
   svgSprite: `./${devPrefix}assets/img/formeo-sprite.svg`,
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options'],
 }
-
-console.log(editorOptions.svgSprite)
 
 export const renderOptions = {
   renderContainer,
