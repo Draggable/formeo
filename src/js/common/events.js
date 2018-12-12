@@ -27,7 +27,7 @@ const defaults = {
 }
 
 const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
-  const evt = new window.CustomEvent(EVENT_FORMEO_UPDATED, {
+  const evt = new window.CustomEvent(type, {
     detail: evtData,
     bubbles: events.opts.debug || events.opts.bubbles,
   })

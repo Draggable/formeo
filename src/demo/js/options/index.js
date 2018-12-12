@@ -12,7 +12,7 @@ export const editorOptions = {
     location: `./${devPrefix}assets/lang`,
   },
   actions: {
-    save: console.log,
+    // save: formData => null, // do something on save action
   },
   external,
   // allowEdit: false,

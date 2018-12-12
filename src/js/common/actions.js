@@ -2,6 +2,7 @@ import identity from 'lodash/identity'
 import i18n from 'mi18n'
 import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants'
 import { sessionStorage } from './utils'
+import events from './events'
 
 // Actions are the callbacks for things like adding
 // new attributes, options, field removal confirmations etc.
@@ -68,6 +69,7 @@ const actions = {
       sessionStorage.set(SESSION_FORMDATA_KEY, formData)
     }
 
+    events.formeoSaved({ formData })
     return actions.opts.save(formData)
   },
 }
