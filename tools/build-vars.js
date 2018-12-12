@@ -1,11 +1,10 @@
 const { resolve } = require('path')
 const { name: pkgName, homepage, version, author } = require('../package.json')
 
-const IS_PRODUCTION = process.argv.includes('production')
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
 const ANALYZE = process.argv.includes('--analyze')
 
-const devPrefix = process.argv.includes('development') ? 'dist/demo/' : ''
-
+const devPrefix = !IS_PRODUCTION ? 'dist/demo/' : ''
 const projectRoot = resolve(__dirname, '../')
 const outputDir = resolve(projectRoot, 'dist/')
 
@@ -21,4 +20,5 @@ module.exports = {
   outputDir,
   bannerTemplate,
   devtool,
+  version
 }
