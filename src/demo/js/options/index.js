@@ -9,7 +9,7 @@ const renderContainer = document.querySelector('.render-form')
 export const editorOptions = {
   editorContainer,
   i18n: {
-    location: '../assets/lang',
+    location: `./${devPrefix}assets/lang`,
   },
   actions: {
     save: console.log,
@@ -28,6 +28,8 @@ export const editorOptions = {
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options'],
 }
+
+console.log(editorOptions.svgSprite)
 
 export const renderOptions = {
   renderContainer,

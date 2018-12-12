@@ -4,7 +4,7 @@ const { name: pkgName, homepage, version, author } = require('../package.json')
 const IS_PRODUCTION = process.argv.includes('production')
 const ANALYZE = process.argv.includes('--analyze')
 
-const devPrefix = IS_PRODUCTION ? '' : 'dist/demo/'
+const devPrefix = process.argv.includes('development') ? 'dist/demo/' : ''
 
 const projectRoot = resolve(__dirname, '../')
 const outputDir = resolve(projectRoot, 'dist/')

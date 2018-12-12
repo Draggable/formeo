@@ -21,13 +21,20 @@ try {
   require('os').networkInterfaces = () => ({})
 }
 
-const copyPatterns = [{ from: './**/*', to: 'demo/assets/' }, { from: '../../../dist/*', to: 'demo/assets/' }]
+const copyPatterns = [
+  { from: './**/*', to: 'demo/assets/', context: `${projectRoot}/src/demo/assets` },
+  {
+    from: '*.lang',
+    to: 'demo/assets/lang/',
+    context: require.resolve('formeo-i18n').replace(/main.min.js$/, 'lang/'),
+  },
+]
 const plugins = [
   new CleanWebpackPlugin(['dist/*', 'demo/*'], { root: projectRoot }),
   new DefinePlugin({
     EN_US: JSON.stringify(enUS),
   }),
-  new CopyWebpackPlugin(copyPatterns, { context: `${projectRoot}/src/demo/assets`, debug: 'debug' }),
+  new CopyWebpackPlugin(copyPatterns, { debug: 'debug' }),
   new HtmlWebpackPlugin({
     isProduction: IS_PRODUCTION,
     devPrefix: IS_PRODUCTION ? '' : 'dist/demo/',
@@ -60,6 +67,15 @@ const plugins = [
   }),
 ]
 
+const entry = {
+  'dist/formeo': resolve(__dirname, '../src/js/index.js'),
+  'demo/assets/js/demo': resolve(__dirname, '../src/demo/js/demo.js'),
+}
+
+if (IS_PRODUCTION) {
+  entry['demo/assets/js/formeo'] = resolve(__dirname, '../src/js/index.js')
+}
+
 const extractTextLoader = !IS_PRODUCTION
   ? {
       loader: 'style-loader',
@@ -76,10 +92,7 @@ const webpackConfig = {
   mode: IS_PRODUCTION ? 'production' : 'development',
   target: 'web',
   context: outputDir,
-  entry: {
-    'dist/formeo': resolve(__dirname, '../src/js/index.js'),
-    'demo/assets/js/demo': resolve(__dirname, '../src/demo/js/demo.js'),
-  },
+  entry,
   output: {
     path: projectRoot,
     publicPath: '/dist',
@@ -146,6 +159,7 @@ const webpackConfig = {
   resolve: {
     modules: [resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.scss'],
+    symlinks: true,
   },
   devServer: {
     inline: true,

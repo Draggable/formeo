@@ -30,6 +30,7 @@ jobs:
       skip_cleanup: true
     after_deploy:
     - yarn travis-deploy-once "yarn semantic-release"
+    - yarn deploy:gh
 env:
   global:
   - secure: HjL2Z3NzrHAxjhP4P/n6bBdl9OTkmy3P4Xzx94FRBFHv2sXSHzN7RVQOjl/0NRWk+UvHXg4Ak5y08z2BvF2t8ah2l0tra62NCXBf2FKgbcs0YW41AsEPQY8GPHdCGqNEH0XYJaOxRvWPOJI2z3v7kHMpkrQzwj1OlxUo9uGDeFPn1M2HKBLZfJj4yhyI8oZkB9GWYDmU8R7eZsNg09PwPHWk91mDVDIsXu6Ir2lyJOHJx19qPe3fXKRpzCfYYTpPlpyi1us2lm6FVvuwgBCwU3qRuodyX+DCIA3la48OsZhT4BUMw6iZ22aIEukBcmh6B9wk597YExG6VUE5YylH+KTXvGFab8V166Rhfo3VpmDyu1YPwNRcUYv6gpW/4KyJcuGx6I0hA2ESYSnOSK9kCdggDyJ7Blz2XPoZr8IEqOHhYpqzjmS/OhZx0f//uelWcNDABT6IdTvL2udONN4sQGts2TrVR0rlLf3qyRIx/lH1KdZ5kd51akWJZ7mm19Yn7r/MFzV6VYANV/ZIVnw+B0UpjQpgJ1NUZhW/6mVqA7FAGy70PSGwLb2hK4DIg2bNfJJaGWhi2nElWB78TBenR/GKSscdSsUXhFaTa2/KBvX2ULH+DeQLQojeqS+P3HBzaUOf0erpEHo8bXuk5+ln57uJm7JVWBwCDXYbb79/+Ss=

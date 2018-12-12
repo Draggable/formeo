@@ -1,8 +1,3 @@
-// @todo add console for pretty logging
-const logEvent = evt => {
-  console.log(evt)
-}
-
 export const editorEvents = editor => {
   const controlFilter = document.getElementById('control-filter')
   const localeSelect = document.getElementById('locale')
@@ -14,10 +9,10 @@ export const editorEvents = editor => {
   }
   controlFilter.addEventListener('input', onChangeFilterInput)
   if (formeoLocale) {
-    localeSelect.value = formeoLocale
+    localeSelect.value = JSON.parse(formeoLocale)
+  } else {
+    localeSelect.value = 'en-US'
   }
 
   localeSelect.addEventListener('change', onChangeLocale, false)
 }
-
-document.addEventListener('formeoUpdated', logEvent, false)
