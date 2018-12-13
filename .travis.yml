@@ -22,14 +22,11 @@ jobs:
   - stage: deploy
     if: branch = master
     before_deploy:
-    - yarn add now --no-save
-    - now rm demo --token $NOW_TOKEN --yes || true
     - yarn build
     deploy:
       provider: script
       script:
       - yarn travis-deploy-once "yarn semantic-release"
-      - now demo --public --token $NOW_TOKEN -A ./now.json
       skip_cleanup: true
     after_deploy:
     - yarn deploy:gh
