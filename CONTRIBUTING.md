@@ -15,20 +15,19 @@ To develop for Formeo you'll need:
 ### Recommended Tooling
 While not required, the following tools are recommended to maintain code quality and consistency in style.
 
-- [JSCS](http://jscs.info/)
 - [ESLint](http://jshint.com/)
-- [SASS-lint](https://www.npmjs.com/package/sass-lint)
 
 ### Installation
 
 Navigate to the directory you'll be working from and run:
 ```
-git clone https://github.com/kevinchappell/formeo.git
+git clone https://github.com/Draggable/formeo.git
 cd formeo
-npm install && npm run dev
+npm install
+npm start
 ```
 
-The above code will clone the repo, install the required `node_modules` and run the npm `dev` task. You should now have a locally running version of the demo accessible at [http://localhost:8080/](http://localhost:8080/).
+The above code will clone the repo, install the required `node_modules` and run the npm `start` task. You should now have a locally running version of the demo accessible at [http://localhost:8080/](http://localhost:8080/).
 
 ## Notes
 Windows users, remember to configure your line endings with `core.autocrlf`. More info [here](https://help.github.com/articles/dealing-with-line-endings/#platform-windows)

@@ -7658,9 +7658,9 @@ mimic-response@^1.0.0, mimic-response@^1.0.1:
   resolved "https://registry.yarnpkg.com/mimic-response/-/mimic-response-1.0.1.tgz#4923538878eef42063cb8a3e3b0798781487ab1b"
   integrity sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ==
 
-mini-css-extract-plugin@Draggable/mini-css-extract-plugin#feat/filename-transform:
-  version "0.4.5"
-  resolved "https://codeload.github.com/Draggable/mini-css-extract-plugin/tar.gz/ceb72c8d380457f9a297c54cb613eccc3f957c0d"
+"mini-css-extract-plugin@https://github.com/Draggable/mini-css-extract-plugin/tarball/feat/filename-transform":
+  version "0.5.0"
+  resolved "https://github.com/Draggable/mini-css-extract-plugin/tarball/feat/filename-transform#3b736ac9bf69348f2c088a3ff84781aff97d142b"
   dependencies:
     loader-utils "^1.1.0"
     schema-utils "^1.0.0"

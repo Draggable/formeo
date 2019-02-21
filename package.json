@@ -159,7 +159,7 @@
     "lint-staged": "7.3.0",
     "lodash": "4.17.10",
     "mi18n": "0.4.6",
-    "mini-css-extract-plugin": "Draggable/mini-css-extract-plugin#feat/filename-transform",
+    "mini-css-extract-plugin": "https://github.com/Draggable/mini-css-extract-plugin/tarball/feat/filename-transform",
     "node-sass": "4.9.0",
     "optimize-css-assets-webpack-plugin": "5.0.1",
     "postcss-loader": "2.1.4",
