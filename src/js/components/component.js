@@ -425,6 +425,11 @@ export default class Component extends Data {
     }
     this.emptyClass()
 
+    // make this configurable
+    if (this.name !== 'stage' && !this.children.length) {
+      this.remove()
+    }
+
     return this.saveChildOrder()
   }
 
