@@ -394,6 +394,7 @@ class DOM {
     const { action, attrs } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
+    const multipleOptions = options.length > 1
 
     const optionMap = (option, i) => {
       const { label, ...rest } = option
@@ -401,7 +402,7 @@ class DOM {
         const input = {
           tag: 'input',
           attrs: {
-            name: `${id}[]`,
+            name: multipleOptions ? `${id}[]` : id,
             type: fieldType,
             value: option.value || '',
             ...rest,
