@@ -1,3 +1,15 @@
+## [0.7.18](https://github.com/Draggable/formeo/compare/v0.7.17...v0.7.18) (2019-03-19)
+
+
+### Bug Fixes
+
+* **ci:** remove deploy tokens ([4573d76](https://github.com/Draggable/formeo/commit/4573d76))
+* **ci:** remove now deploy ([0d71061](https://github.com/Draggable/formeo/commit/0d71061))
+* **ci:** Update tokens ([e9a5458](https://github.com/Draggable/formeo/commit/e9a5458))
+* **domMethod:** removeEmpty ([0d404bc](https://github.com/Draggable/formeo/commit/0d404bc))
+* **i18n:** embed english in editor config ([#158](https://github.com/Draggable/formeo/issues/158)) ([ba5bd1e](https://github.com/Draggable/formeo/commit/ba5bd1e))
+* **travis:** config needs to run on pro because its not a personal repo- this should really be documented somewhere ([85b1260](https://github.com/Draggable/formeo/commit/85b1260))
+
 # Changelog
 
 - v0.7.17 - Update Tag script [#83](http://github.com/draggable/formeo/pulls/83)
