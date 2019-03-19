@@ -4,6 +4,7 @@ import dom from '../../common/dom'
 import actions from '../../common/actions'
 import EditPanelItem from './edit-panel-item'
 import { hyphenCase, capitalize } from '../../common/helpers'
+import { cleanObj } from '../../common/utils'
 
 /**
  * Element/Field class.
@@ -153,12 +154,14 @@ export default class EditPanel {
    */
   addOption = () => {
     const metaId = this.field.data.meta.id
+    const fieldOptionData = this.field.get('options')
     const type = metaId === 'select' ? 'option' : metaId
     const newOptionLabel = i18n.get(`newOptionLabel`, { type }) || 'New Option'
     const itemKey = `options.${this.data.length}`
-    const itemData = { label: newOptionLabel, value: hyphenCase(newOptionLabel), selected: false }
-    const newOption = new EditPanelItem(itemKey, itemData, this.field)
 
+    const optionTemplate = fieldOptionData.length ? cleanObj(fieldOptionData[fieldOptionData.length - 1]) : {}
+    const itemData = Object.assign({}, optionTemplate, { label: newOptionLabel, value: hyphenCase(newOptionLabel) })
+    const newOption = new EditPanelItem(itemKey, itemData, this.field)
 
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)

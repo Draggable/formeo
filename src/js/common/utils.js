@@ -160,13 +160,19 @@ export const numberBetween = (num, min, max) => num > min && num < max
  */
 export const cleanObj = obj => {
   const fresh = Object.assign({}, obj)
+  const typeMap = {
+    string: () => '',
+    boolean: () => false,
+    object: val => cleanObj(val),
+  }
+
   Object.keys(obj).forEach(key => {
-    if (typeof obj[key] === 'string') {
-      fresh[key] = ''
-    } else if (typeof obj[key] === 'boolean') {
-      fresh[key] = false
+    const valType = typeof obj[key]
+    if (typeMap[valType]) {
+      fresh[key] = typeMap[valType](obj[key])
     }
   })
+
   return fresh
 }
 

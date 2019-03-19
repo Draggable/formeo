@@ -158,7 +158,6 @@ class DOM {
           wrap.className = elem.attrs.className
         }
         wrap.config = Object.assign({}, elem.config)
-        wrap.className.push = h.get(elem, 'attrs.className')
         return this.create(wrap, isPreview)
       }
       processed.push('options')
@@ -402,8 +401,7 @@ class DOM {
         const input = {
           tag: 'input',
           attrs: {
-            id,
-            name: `${id}[${i}]`,
+            name: `${id}[]`,
             type: fieldType,
             value: option.value || '',
             ...rest,
@@ -416,7 +414,7 @@ class DOM {
           config: {
             inputWrap: 'form-check',
           },
-          children: [option.label],
+          children: [input, option.label],
         }
         const inputWrap = {
           children: [optionLabel],
@@ -439,8 +437,6 @@ class DOM {
           input.attrs.name = `prev-${input.attrs.name}`
           optionLabel.attrs.contenteditable = true
         }
-
-        inputWrap.children.unshift(input)
 
         return inputWrap
       }
