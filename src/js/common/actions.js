@@ -35,15 +35,21 @@ const defaultActions = {
       evt.action()
     },
   },
-  save: identity,
+  save: {
+    form: identity,
+  },
 }
 
 /**
- * Events class is used to register actions and throttle their callbacks
+ * @todo refactor to handle multiple instances of formeo
  */
 const actions = {
   init: function(options) {
-    this.opts = Object.assign({}, defaultActions, options)
+    const actionKeys = Object.keys(defaultActions)
+    this.opts = actionKeys.reduce((acc, key) => {
+      acc[key] = Object.assign({}, defaultActions[key], options[key])
+      return acc
+    }, options)
     return this
   },
   add: {
@@ -64,13 +70,15 @@ const actions = {
       return actions.opts.click.btn(evt)
     },
   },
-  save: formData => {
-    if (actions.opts.sessionStorage) {
-      sessionStorage.set(SESSION_FORMDATA_KEY, formData)
-    }
+  save: {
+    form: formData => {
+      if (actions.opts.sessionStorage) {
+        sessionStorage.set(SESSION_FORMDATA_KEY, formData)
+      }
 
-    events.formeoSaved({ formData })
-    return actions.opts.save(formData)
+      events.formeoSaved({ formData })
+      return actions.opts.save.form(formData)
+    },
   },
 }
 

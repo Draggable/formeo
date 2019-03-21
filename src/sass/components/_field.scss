@@ -3,7 +3,8 @@
   position: relative;
   padding: space();
   transition: background-color $animation-speed-base ease-in-out, box-shadow $animation-speed-base ease-in-out;
-
+  list-style: none;
+  margin: 0;
   will-change: box-shadow; // for highlight
 
   &:last-child {

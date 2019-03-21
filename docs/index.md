@@ -1,32 +1,28 @@
 # Formeo
-A highly configurable drag & drop form building module written in pure JavaScript.
 
-<p data-height="550" data-theme-id="0" data-slug-hash="NAXoRw" data-default-tab="result" data-user="kevinchappell" class="codepen"></p>
+A highly configurable drag & drop form building module.
+
+<div class="formeo-editor"></div>
 
 ## Introduction
-Formeo is the much hyped version 2.0 of the popular jQuery form building plug-in aptly titled "[jQuery formBuilder](https://formbuilder.online)". More than just a re-branding, Formeo is a 100% rewrite with focus on configuration extensibility.
+Formeo is an extensible form editor written in vanilla Javascript. It builds on years of experience in creating [formBuilder](https://formbuilder.online/) and implements many of the feature requests received for that plug-in. A great deal a focus went into API development for Formeo to make almost every part of it pluggable.
 
 ### Features
-* coming soon
 
-## Project layout
-```bash
-    demo/                    # Website for http://formbuilder.online
-    dist/                    # Compiled files for distribution
-    docs/
-        index.md             # The documentation homepage.
-        ...                  # Other markdown pages, images and other files.
-    src/                     # Source files for editing the plugin
-    .gitignore
-    .jsbeautifyrc            # Config file for jsbeautify
-    .jscsrc                  # Code quality and style
-    CHANGELOG.md
-    CONTRIBUTING.md          # Contributor guidelines
-    LICENSE
-    README.md
-    bower.json
-    build-icons.sh           # SVG icon build script
-    jquery-formeo.js         # jQuery wrapper for Formeo module.
-    package.json             # Module config. Files in build process are stored in the `"config"` property.
-    webpack.config.babel.js  # config for webpack
-```
+- Column/inline field support
+  - generate layouts for your form's fields
+  - numerous presets for common layouts and resizable for custom layouts
+- Conditional fields
+  - programmatically hide/show or change row, column or field values
+  - works with external data
+- Controls API
+  - create forms with signature pads, interactive maps and more
+  - extend or clone the built-in controls
+- External Data
+  - User session information in your forms such as name
+  - Dynamic data like remotely loaded select options
+- Rendering
+  - render your form template using the same renderer used to generate the Formeo UI
+  - or BYOR (Bring Your Own Renderer) to render form template data using third-party libraries.
+
+

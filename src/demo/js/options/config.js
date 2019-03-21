@@ -1,4 +1,13 @@
 const config = {
+  rows: {
+    all: {
+      events: {
+        onRender: element => {
+          console.log(`You just added a new row with the id "${element.id}"`)
+        },
+      },
+    },
+  },
   fields: {
     checkbox: {
       actionButtons: {
