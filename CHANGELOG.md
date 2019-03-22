@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/Draggable/formeo/compare/v1.0.2...v1.0.3) (2019-03-22)
+
+
+### Bug Fixes
+
+* **ci:** add github token to config ([#183](https://github.com/Draggable/formeo/issues/183)) ([f8273cb](https://github.com/Draggable/formeo/commit/f8273cb))
+
 ## [1.0.2](https://github.com/Draggable/formeo/compare/v1.0.1...v1.0.2) (2019-03-22)
 
 
