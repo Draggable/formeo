@@ -56,7 +56,7 @@ const plugins = [
         nativeName: lang[locale],
       }
     }),
-    version
+    version,
   }),
   new HtmlWebpackHarddiskPlugin({ outputPath: './demo/' }),
   new MiniCssExtractPlugin({
@@ -95,13 +95,13 @@ const extractTextLoader = !IS_PRODUCTION
 
 const webpackConfig = {
   mode: IS_PRODUCTION ? 'production' : 'development',
-  target: 'web',
   context: outputDir,
   entry,
   output: {
     path: projectRoot,
     publicPath: '/dist',
     filename: `[name].min.js`,
+    libraryTarget: 'umd',
   },
   module: {
     rules: [

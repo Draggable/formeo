@@ -90,8 +90,7 @@
             "es6.promise",
             "es6.object.assign"
           ],
-          "loose": true,
-          "modules": false
+          "loose": true
         }
       ]
     ],
