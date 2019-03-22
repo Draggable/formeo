@@ -6,7 +6,6 @@ import { editorEvents } from './events'
 import FormeoEditor from '../../js/editor'
 import FormeoRenderer from '../../js/renderer'
 
-
 const editor = new FormeoEditor(editorOptions)
 const renderer = new FormeoRenderer(renderOptions)
 

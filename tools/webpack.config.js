@@ -29,6 +29,7 @@ const copyPatterns = [
     context: require.resolve('formeo-i18n').replace(/main.min.js$/, 'lang/'),
   },
 ]
+
 const plugins = [
   new CleanWebpackPlugin(['dist/*', 'demo/*'], { root: projectRoot }),
   new DefinePlugin({

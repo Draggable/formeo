@@ -306,7 +306,7 @@ export default class Field extends Component {
   }
 
   /**
-   * Checks if attribute is allowed to be removed
+   * Checks if property can be removed
    * @param  {String}  propName
    * @return {Boolean}
    */

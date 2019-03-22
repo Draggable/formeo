@@ -10,7 +10,7 @@
 * **i18n:** embed english in editor config ([#158](https://github.com/Draggable/formeo/issues/158)) ([ba5bd1e](https://github.com/Draggable/formeo/commit/ba5bd1e))
 * **travis:** config needs to run on pro because its not a personal repo- this should really be documented somewhere ([85b1260](https://github.com/Draggable/formeo/commit/85b1260))
 
-# Changelog
+### Old changelog
 
 - v0.7.17 - Update Tag script [#83](http://github.com/draggable/formeo/pulls/83)
 * Update tag script

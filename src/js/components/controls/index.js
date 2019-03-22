@@ -249,7 +249,7 @@ export class Controls {
           }
           actions.click.btn(saveEvt)
 
-          return actions.save(formData)
+          return actions.save.form(formData)
         },
       },
     }

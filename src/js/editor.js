@@ -25,8 +25,10 @@ export class FormeoEditor {
     const mergedOptions = merge(defaults.editor, options)
 
     const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
-    this.editorContainer =
-      typeof editorContainer === 'string' ? document.querySelector(editorContainer) : editorContainer
+    if (editorContainer) {
+      this.editorContainer =
+        typeof editorContainer === 'string' ? document.querySelector(editorContainer) : editorContainer
+    }
     this.opts = opts
     dom.setOptions = opts
     Components.config = config
@@ -126,10 +128,12 @@ export class FormeoEditor {
       dom.dir = i18n.current.dir
     }
 
-    const formeoEditor = dom.create(elemConfig)
+    this.editor = dom.create(elemConfig)
 
-    dom.empty(_this.editorContainer)
-    _this.editorContainer.appendChild(formeoEditor)
+    if (_this.editorContainer) {
+      dom.empty(_this.editorContainer)
+      _this.editorContainer.appendChild(this.editor)
+    }
 
     Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {

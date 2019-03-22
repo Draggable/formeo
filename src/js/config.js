@@ -1,6 +1,6 @@
 import mi18n from 'mi18n'
 import { isIE } from './common/helpers'
-import { FALLBACK_SVG_SPRITE, PACKAGE_NAME } from './constants'
+import { FALLBACK_SVG_SPRITE } from './constants'
 
 // eslint-disable-next-line no-undef
 mi18n.addLanguage('en-US', EN_US)
@@ -12,7 +12,7 @@ export const defaults = {
       dataType: 'json',
       debug: false,
       sessionStorage: false,
-      editorContainer: `.${PACKAGE_NAME}-wrap`,
+      editorContainer: null, // element or selector to attach editor to
       external: {}, // assign external data to be used in conditions autolinker
       svgSprite: FALLBACK_SVG_SPRITE, // change to null
       iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
