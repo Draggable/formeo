@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/Draggable/formeo/compare/v0.7.18...v1.0.0) (2019-03-22)
+
+
+### Bug Fixes
+
+* make editorContainer optional, fix imports ([#176](https://github.com/Draggable/formeo/issues/176)) ([0b954cb](https://github.com/Draggable/formeo/commit/0b954cb))
+
+
+### BREAKING CHANGES
+
+* window.Formeo is now window.FormeoEditor
+
 ## [0.7.18](https://github.com/Draggable/formeo/compare/v0.7.17...v0.7.18) (2019-03-19)
 
 

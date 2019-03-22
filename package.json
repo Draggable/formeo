@@ -1,6 +1,6 @@
 {
   "name": "formeo",
-  "version": "0.7.18",
+  "version": "1.0.0",
   "main": "dist/formeo.min.js",
   "files": [
     "dist/*",
