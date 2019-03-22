@@ -85,9 +85,6 @@ const extractTextLoader = !IS_PRODUCTION
   ? {
       loader: 'style-loader',
       options: {
-        attrs: {
-          class: 'formeo-injected-style',
-        },
         sourceMap: !IS_PRODUCTION,
       },
     }
@@ -105,6 +102,10 @@ const webpackConfig = {
   },
   module: {
     rules: [
+      {
+        test: /formeo-sprite\.svg$/,
+        use: 'raw-loader',
+      },
       {
         enforce: 'pre',
         test: /\.js$/,

@@ -29,4 +29,4 @@ jobs:
           - yarn travis-deploy-once "yarn semantic-release"
         skip_cleanup: true
       after_deploy:
-        - git push --force --quiet "https://${GH_TOKEN}@${GH_REPO}" $(git subtree split --prefix demo master):gh-pages > /dev/null 2>&1
+        - git push --force "https://${GH_TOKEN}@${GH_REPO}" $(git subtree split --prefix demo master):gh-pages > /dev/null 2>&1

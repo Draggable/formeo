@@ -10,6 +10,7 @@ import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import { SESSION_LOCALE_KEY, FALLBACK_SVG_SPRITE } from './constants'
 import { sessionStorage, merge } from './common/utils'
 import { defaults } from './config'
+import sprite from '../demo/assets/img/formeo-sprite.svg'
 
 /**
  * Main class
@@ -73,6 +74,8 @@ export class FormeoEditor {
     // Ajax load svgSprite and inject into markup.
     if (this.opts.svgSprite) {
       promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(FALLBACK_SVG_SPRITE, insertIcons)))
+    } else {
+      promises.push(insertIcons(sprite))
     }
 
     promises.push(i18n.init(Object.assign({}, this.opts.i18n, { locale: sessionStorage.get(SESSION_LOCALE_KEY) })))

@@ -52,7 +52,7 @@ export const insertStyle = srcs => {
           loaded.css.push(src)
           resolve(src)
         }
-        const formeoStyle = dom.create({
+        const styleLink = dom.create({
           tag: 'link',
           attrs: {
             rel: 'preload',
@@ -65,7 +65,7 @@ export const insertStyle = srcs => {
           },
         })
 
-        document.head.appendChild(formeoStyle)
+        document.head.appendChild(styleLink)
       })
   )
 
@@ -73,7 +73,8 @@ export const insertStyle = srcs => {
 }
 
 export const insertIcons = resp => {
-  return resp.text().then(iconSvgStr => {
+  const spritePromise = typeof resp === 'string' ? Promise.resolve(resp) : resp.text()
+  return spritePromise.then(iconSvgStr => {
     const id = 'formeo-sprite'
     let iconSpriteWrap = document.getElementById(id)
     if (!iconSpriteWrap) {
@@ -85,6 +86,7 @@ export const insertIcons = resp => {
           style: 'display: none;',
         },
       })
+
       document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
     }
     return iconSpriteWrap
