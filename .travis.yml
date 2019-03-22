@@ -31,6 +31,8 @@ jobs:
         skip_cleanup: true
     - stage: deploy-demo
       if: branch = master
+      before_deploy:
+        - yarn build
       deploy:
         provider: pages
         skip-cleanup: true
