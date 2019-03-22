@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/Draggable/formeo/compare/v1.0.1...v1.0.2) (2019-03-22)
+
+
+### Bug Fixes
+
+* **module:** bundle as UMD to work in browser and import ([#181](https://github.com/Draggable/formeo/issues/181)) ([b8da2a8](https://github.com/Draggable/formeo/commit/b8da2a8))
+
 ## [1.0.1](https://github.com/Draggable/formeo/compare/v1.0.0...v1.0.1) (2019-03-22)
 
 
