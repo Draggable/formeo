@@ -1,32 +1,40 @@
 stages:
-- lint
-- test
-- deploy
+  - lint
+  - test
+  - release
+  - deploy-demo
 language: node_js
 node_js: '10'
 cache:
   directories:
-  - "~/.npm"
-  - node_modules
+    - '~/.npm'
+    - node_modules
 notifications:
   email: false
 git:
   submodules: false
 before_install:
-- "git config --global user.name \"\U0001F916\""
+  - "git config --global user.name \"\U0001F916\""
 jobs:
   include:
-  - stage: lint
-    script: yarn lint
-    skip_cleanup: true
-  - stage: deploy
-    if: branch = master
-    before_deploy:
-    - yarn build
-    deploy:
-      provider: script
-      script:
-      - yarn travis-deploy-once "yarn semantic-release"
+    - stage: lint
+      script: yarn lint
       skip_cleanup: true
-    after_deploy:
-    - yarn deploy:gh
+    - stage: release
+      if: branch = master
+      before_deploy:
+        - yarn build
+      deploy:
+        provider: script
+        script:
+          - yarn travis-deploy-once "yarn semantic-release"
+        skip_cleanup: true
+    - stage: deploy-demo
+      if: branch = master
+      deploy:
+        provider: pages
+        skip-cleanup: true
+        local-dir: demo
+        github-token: $GH_TOKEN
+        on:
+          branch: master

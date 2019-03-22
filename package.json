@@ -109,7 +109,6 @@
     "test": "jest src/",
     "test:ci": "yarn test --coverage",
     "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open --config tools/webpack.config --copy",
-    "deploy:gh": "git push upstream $(git subtree split --prefix demo master):gh-pages --force",
     "semantic-release": "semantic-release --ci --debug",
     "travis-deploy-once": "travis-deploy-once --pro",
     "prepare": "npm --prefix ./node_modules/mini-css-extract-plugin install ./node_modules/mini-css-extract-plugin && npm run --prefix ./node_modules/mini-css-extract-plugin build",
