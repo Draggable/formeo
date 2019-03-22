@@ -20,15 +20,6 @@ jobs:
     - stage: lint
       script: yarn lint
       skip_cleanup: true
-    - stage: release
-      if: branch = master
-      before_deploy:
-        - yarn build
-      deploy:
-        provider: script
-        script:
-          - yarn travis-deploy-once "yarn semantic-release"
-        skip_cleanup: true
     - stage: deploy-demo
       if: branch = master
       before_deploy:
@@ -40,3 +31,12 @@ jobs:
         github-token: $GH_TOKEN
         on:
           branch: master
+    - stage: release
+      if: branch = master
+      before_deploy:
+        - yarn build
+      deploy:
+        provider: script
+        script:
+          - yarn travis-deploy-once "yarn semantic-release"
+        skip_cleanup: true
