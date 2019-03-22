@@ -14,7 +14,7 @@ A zero dependency JavaScript module for drag and drop form creation.
 - Preview mode
 - i18n support
 
-## [Docs]([https://draggable.github.io/formeo/](https://github.com/Draggable/formeo/blob/master/docs/index.md))
+## [Docs](https://github.com/Draggable/formeo/blob/master/docs/index.md)
 
 ## Usage
 
