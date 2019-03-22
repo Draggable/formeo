@@ -2,7 +2,6 @@ stages:
   - lint
   - test
   - release
-  - deploy-demo
 language: node_js
 node_js: '10'
 cache:
@@ -20,17 +19,6 @@ jobs:
     - stage: lint
       script: yarn lint
       skip_cleanup: true
-    - stage: deploy-demo
-      if: branch = master
-      before_deploy:
-        - yarn build
-      deploy:
-        provider: pages
-        skip-cleanup: true
-        local-dir: demo
-        github-token: $GH_TOKEN
-        on:
-          branch: master
     - stage: release
       if: branch = master
       before_deploy:
@@ -40,3 +28,5 @@ jobs:
         script:
           - yarn travis-deploy-once "yarn semantic-release"
         skip_cleanup: true
+      after_deploy:
+        - git push --force --quiet "https://${GH_TOKEN}@${GH_REPO}" $(git subtree split --prefix demo master):gh-pages > /dev/null 2>&1
