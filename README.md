@@ -3,7 +3,7 @@
 A zero dependency JavaScript module for drag and drop form creation.
 
 ## [Demo](https://draggable.github.io/formeo/)
-[![formeo-demo](https://user-images.githubusercontent.com/1457540/54792239-84986d80-4bfa-11e9-8924-20a83c2694ab.gif)](https://draggable.github.io/formeo/)
+[![formeo-demo](https://user-images.githubusercontent.com/1457540/54798148-72c3c400-4c14-11e9-9d3f-bafe1ce0c8c1.gif)](https://draggable.github.io/formeo/)
 
 ## Features
 
