@@ -1,3 +1,12 @@
+## [1.0.1](https://github.com/Draggable/formeo/compare/v1.0.0...v1.0.1) (2019-03-22)
+
+
+### Bug Fixes
+
+* **ci:** build before deploy ([#179](https://github.com/Draggable/formeo/issues/179)) ([befa0b2](https://github.com/Draggable/formeo/commit/befa0b2))
+* **ci:** remove deploy-demo stage ([1d7e273](https://github.com/Draggable/formeo/commit/1d7e273))
+* **ci:** run release stage last ([#180](https://github.com/Draggable/formeo/issues/180)) ([fcdf133](https://github.com/Draggable/formeo/commit/fcdf133))
+
 # [1.0.0](https://github.com/Draggable/formeo/compare/v0.7.18...v1.0.0) (2019-03-22)
 
 
