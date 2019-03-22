@@ -29,7 +29,7 @@
     height: $action-btn-width / 2;
   }
 
-  .icon-handle {
+  .f-i-handle {
     opacity: 0.5;
   }
 
@@ -41,10 +41,10 @@
     }
   }
 
-  .icon-menu,
-  .icon-copy,
-  .icon-move,
-  .icon-move-vertical {
+  .f-i-menu,
+  .f-i-copy,
+  .f-i-move,
+  .f-i-move-vertical {
     display: none;
   }
 }
@@ -191,7 +191,7 @@
   border-right: 1px solid $white;
 
   .item-handle {
-    .icon-handle {
+    .f-i-handle {
       transform: rotate(90deg);
     }
   }
@@ -218,14 +218,14 @@
 [class*='hovering-'] {
   > .group-actions {
     .svg-icon {
-      &.icon-menu,
-      &.icon-move,
-      &.icon-copy,
-      &.icon-move-vertical {
+      &.f-i-menu,
+      &.f-i-move,
+      &.f-i-copy,
+      &.f-i-move-vertical {
         display: inline-block !important;
       }
 
-      &.icon-handle {
+      &.f-i-handle {
         display: none !important;
       }
     }

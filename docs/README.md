@@ -5,6 +5,7 @@ A highly configurable drag & drop form building module.
 <div class="formeo-editor"></div>
 
 ## Introduction
+
 Formeo is an extensible form editor written in vanilla Javascript. It builds on years of experience in creating [formBuilder](https://formbuilder.online/) and implements many of the feature requests received for that plug-in. A great deal a focus went into API development for Formeo to make almost every part of it pluggable.
 
 ### Features
@@ -25,4 +26,6 @@ Formeo is an extensible form editor written in vanilla Javascript. It builds on 
   - render your form template using the same renderer used to generate the Formeo UI
   - or BYOR (Bring Your Own Renderer) to render form template data using third-party libraries.
 
+## [Options](options/)
 
+## [Tools](tools/)

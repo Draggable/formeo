@@ -262,7 +262,8 @@ class DOM {
     if (!name) {
       return
     }
-    const iconLink = document.getElementById('icon-' + name)
+    const iconPrefix = 'f-i-'
+    const iconLink = document.getElementById(iconPrefix + name)
     let icon
     const iconFontTemplates = {
       glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
@@ -270,11 +271,11 @@ class DOM {
         const [style, name] = icon.split(' ')
         return `<i class="${style} fa-${name}"></i>`
       },
-      fontello: icon => `<i class="icon-${icon}">${icon}</i>`,
+      fontello: icon => `<i class="${iconPrefix}${icon}">${icon}</i>`,
     }
 
     if (iconLink) {
-      icon = `<svg class="svg-icon icon-${name}"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-${name}"></use></svg>`
+      icon = `<svg class="svg-icon ${iconPrefix}${name}"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#${iconPrefix}${name}"></use></svg>`
     } else if (dom.options.iconFont) {
       icon = iconFontTemplates[dom.options.iconFont](name)
     } else {

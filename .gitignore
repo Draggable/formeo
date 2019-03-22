@@ -4,3 +4,4 @@ demo
 !src/demo
 dist
 yarn-error.log
+.vscode

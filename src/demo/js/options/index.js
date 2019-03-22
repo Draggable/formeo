@@ -22,7 +22,7 @@ export const editorOptions = {
     // onUpdate: console.log,
     onSave: console.log,
   },
-  svgSprite: `./${devPrefix}assets/img/formeo-sprite.svg`,
+  // svgSprite: `./${devPrefix}assets/img/formeo-sprite.svg`,
   // style: 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css',
   // debug: true,
   sessionStorage: true,
