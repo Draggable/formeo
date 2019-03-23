@@ -76,6 +76,7 @@
     "build": "npm-run-all build:icons build:formeo",
     "build:formeo": "cross-env NODE_ENV=production webpack --mode production -p --progress --config tools/webpack.config",
     "build:icons": "babel-node ./tools/generate-sprite",
+    "deploy:demo": "babel-node ./tools/deploy-demo",
     "lint": "eslint ./src --ext .js || true",
     "test": "jest src/",
     "test:ci": "yarn test --coverage",
