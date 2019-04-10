@@ -11,9 +11,10 @@ $brand-info: #9954bb !default;
 
 $remove-bg: rgba(217, 83, 79, 0.5) !default;
 
-$row-outline-color: #325d88;
-$column-outline-color: #29abe0;
-$field-outline-color: #93c54b;
+$component-outline-color: #00ffff;
+$row-outline-color: $component-outline-color;
+$column-outline-color: darken($component-outline-color, 15%);
+$field-outline-color: darken($component-outline-color, 30%);
 
 $input-focus: #66afe9;
 

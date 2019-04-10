@@ -1,7 +1,7 @@
 import Sortable from 'sortablejs'
 import dom from '../../common/dom'
 import Component from '../component'
-import { STAGE_CLASSNAME, ANIMATION_SPEED_BASE } from '../../constants'
+import { STAGE_CLASSNAME, ANIMATION_SPEED_BASE, ROW_CLASSNAME } from '../../constants'
 import Stages from '.'
 import animate from '../../common/animation'
 
@@ -87,7 +87,7 @@ export default class Stage extends Component {
       onRemove: this.onRemove.bind(this),
       onStart: () => (Stages.active = this),
       onSort: this.onSort.bind(this),
-      draggable: '.stage-rows',
+      draggable: `.${ROW_CLASSNAME}`,
       handle: '.item-handle',
     })
   }

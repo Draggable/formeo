@@ -11,10 +11,10 @@ export const POLYFILLS = [
 export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg'
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
-export const STAGE_CLASSNAME = 'stage'
-export const ROW_CLASSNAME = `${STAGE_CLASSNAME}-rows`
-export const COLUMN_CLASSNAME = `${STAGE_CLASSNAME}-columns`
-export const FIELD_CLASSNAME = `${STAGE_CLASSNAME}-fields`
+export const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`
+export const ROW_CLASSNAME = `${PACKAGE_NAME}-rows`
+export const COLUMN_CLASSNAME = `${PACKAGE_NAME}-columns`
+export const FIELD_CLASSNAME = `${PACKAGE_NAME}-fields`
 
 export const CHILD_CLASSNAME_MAP = new Map([
   [STAGE_CLASSNAME, ROW_CLASSNAME],
@@ -39,6 +39,17 @@ export const COMPONENT_TYPE_CLASSNAMES = {
   column: COLUMN_CLASSNAME,
   field: FIELD_CLASSNAME,
 }
+
+export const COMPONENT_TYPE_CLASSNAMES_LOOKUP = Object.entries(COMPONENT_TYPE_CLASSNAMES).reduce(
+  (acc, [type, className]) => ({
+    ...acc,
+    [className]: type,
+  }),
+  {}
+)
+
+export const COMPONENT_TYPE_CLASSNAMES_ARRAY = Object.values(COMPONENT_TYPE_CLASSNAMES)
+export const COMPONENT_TYPE_CLASSNAMES_REGEXP = new RegExp(`${COMPONENT_TYPE_CLASSNAMES_ARRAY.join('|')}`, 'g')
 
 const childTypeMap = COMPONENT_TYPES.map(({ name }, index, arr) => {
   const { name: childName } = arr[index + 1] || {}

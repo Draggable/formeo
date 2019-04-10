@@ -5,7 +5,7 @@ import dom from '../../common/dom'
 import events from '../../common/events'
 import { bsGridRegEx } from '../../common/helpers'
 import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE } from '../../constants'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE, COLUMN_CLASSNAME } from '../../constants'
 import { removeCustomOption } from '../columns/events'
 
 const DEFAULT_DATA = () =>
@@ -60,7 +60,7 @@ export default class Row extends Component {
       onAdd: this.onAdd.bind(this),
       onSort: this.onSort.bind(this),
       filter: '.resize-x-handle',
-      draggable: '.stage-columns',
+      draggable: `.${COLUMN_CLASSNAME}`,
       handle: '.item-handle',
     })
 

@@ -9,6 +9,8 @@ import {
   ANIMATION_SPEED_BASE,
   FIELD_PROPERTY_MAP,
   COMPONENT_TYPE_CLASSNAMES,
+  COLUMN_CLASSNAME,
+  CONTROL_GROUP_CLASSNAME,
 } from '../constants'
 import Components from './index'
 import Data from './data'
@@ -312,9 +314,11 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd(evt) {
+  onAdd({ from, to: { parentElement: to }, item }) {
     const _this = this
-    const { from, item, to } = evt
+    if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
+      from = from.parentElement
+    }
     const newIndex = indexOfNode(item, to)
     const fromType = componentType(from)
     const toType = componentType(to)
@@ -411,6 +415,7 @@ export default class Component extends Data {
    * @return {Array} updated child order
    */
   onSort = () => {
+    console.log('hey')
     return this.saveChildOrder()
   }
 
@@ -419,10 +424,11 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Array} updated child order
    */
-  onRemove({ from }) {
-    if (from.classList.contains('stage-columns')) {
+  onRemove({ from: { parentElement: from } }) {
+    if (from.classList.contains(COLUMN_CLASSNAME)) {
       from.classList.remove('column-editing-field')
     }
+
     this.emptyClass()
 
     // make this configurable
@@ -437,7 +443,7 @@ export default class Component extends Data {
    * Callback for when dragging ends
    * @param  {Object} evt
    */
-  onEnd = ({ to, from }) => {
+  onEnd = ({ to: { parentElement: to }, from: { parentElement: from } }) => {
     to && to.classList.remove(`hovering-${componentType(to)}`)
     from && from.classList.remove(`hovering-${componentType(from)}`)
   }

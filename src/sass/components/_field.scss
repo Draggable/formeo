@@ -1,4 +1,4 @@
-.stage-fields {
+.formeo-fields {
   min-height: $icon-size;
   position: relative;
   padding: space();
@@ -26,19 +26,37 @@
   }
 
   .prev-label {
-    line-height: $icon-size;
+    min-height: $icon-size;
+    max-width: calc(100% - #{$icon-size});
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: $input-border-radius;
   }
 
   [contenteditable] {
-    padding: 1px 1px 0;
-    transition: border-color 250ms;
-    border-bottom: 1px dashed $gray-lighter;
+    padding: 1px 2px;
     user-select: text;
+    display: inline-block;
+    position: relative;
+    min-width: $icon-size;
+
+    &::after {
+      content: '';
+      width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      border-bottom: 1px dashed $gray-lighter;
+    }
 
     &:focus {
-      border: 1px solid $input-focus;
+      border-radius: $input-border-radius;
+      border-bottom-color: transparent;
       outline: none;
-      padding: 0;
+      box-shadow: 0 0 0 1px $input-focus inset;
+      &::after {
+        display: none;
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-.stage-rows {
+.formeo-rows {
   > .children {
     @extend %display-row;
     min-height: space(4);
@@ -51,7 +51,7 @@
       width: 100px;
     }
 
-    .stage-columns {
+    .formeo-columns {
       opacity: 0.5;
     }
   }
@@ -65,14 +65,14 @@
   }
 
   &.resizing-columns {
-    .stage-columns {
+    .formeo-columns {
       transition: none;
     }
   }
 
   &.editing-row {
     &.hovering-row {
-      .stage-columns {
+      .formeo-columns {
         opacity: 1;
       }
     }

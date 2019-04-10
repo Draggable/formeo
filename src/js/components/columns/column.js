@@ -4,7 +4,7 @@ import Component from '../component'
 import h from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { COLUMN_CLASSNAME } from '../../constants'
+import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
 import { resize } from './events'
 
 const DEFAULT_DATA = () =>
@@ -98,7 +98,7 @@ export default class Column extends Component {
         //   evt.related.parentElement.classList.add('hovering-column')
         // }
       },
-      draggable: '.stage-fields',
+      draggable: `.${FIELD_CLASSNAME}`,
       handle: '.item-handle',
     })
   }
