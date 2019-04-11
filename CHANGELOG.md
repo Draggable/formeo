@@ -1,3 +1,11 @@
+## [1.0.6](https://github.com/Draggable/formeo/compare/v1.0.5...v1.0.6) (2019-04-11)
+
+
+### Bug Fixes
+
+* minor format ([b72a523](https://github.com/Draggable/formeo/commit/b72a523))
+* update readme and trigger a release ([1dcb5dd](https://github.com/Draggable/formeo/commit/1dcb5dd))
+
 ## [1.0.5](https://github.com/Draggable/formeo/compare/v1.0.4...v1.0.5) (2019-04-11)
 
 
