@@ -61,7 +61,7 @@ const parentTypeMap = childTypeMap
   .map(typeMap => typeMap.slice().reverse())
   .reverse()
 
-export const CHILD_TYPE_MAP = new Map(childTypeMap.map(typeMap => typeMap.map(type => `${type}s`)))
+export const CHILD_TYPE_MAP = new Map(childTypeMap)
 
 export const PARENT_TYPE_MAP = new Map(parentTypeMap.slice())
 
