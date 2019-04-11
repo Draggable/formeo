@@ -395,7 +395,7 @@ class DOM {
     const { action, attrs } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
-    const multipleOptions = options.length > 1
+    const multipleOptions = options.length > 1 && fieldType !== 'radio'
 
     const optionMap = (option, i) => {
       const { label, ...rest } = option
@@ -406,20 +406,23 @@ class DOM {
             name: multipleOptions ? `${id}[]` : id,
             type: fieldType,
             value: option.value || '',
+            id: `${id}-${i}`,
             ...rest,
           },
           action,
         }
         const optionLabel = {
           tag: 'label',
-          attrs: {},
+          attrs: {
+            for: `${id}-${i}`,
+          },
           config: {
             inputWrap: 'form-check',
           },
-          children: [input, option.label],
+          children: option.label,
         }
         const inputWrap = {
-          children: [optionLabel],
+          children: [input, optionLabel],
           className: [`f-${fieldType}`],
         }
 

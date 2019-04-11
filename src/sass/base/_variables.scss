@@ -36,11 +36,12 @@ $shadow: rgba(255, 255, 255, 0.25);
 
 // Sizing
 $base-space: 8px;
+$half-space: $base-space / 2;
 $icon-size: $base-space * 3;
 $prop-btn-width: $icon-size;
 $action-btn-width: $icon-size;
 $border-radius: $base-space;
-$input-border-radius: $base-space / 2;
+$input-border-radius: $half-space;
 $input-btn-border-width: 1px;
 $input-padding: 0.3em 0.6em;
 $input-border: $input-btn-border-width solid $gray-lighter;
