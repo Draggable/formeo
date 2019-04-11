@@ -1,3 +1,10 @@
+## [1.0.7](https://github.com/Draggable/formeo/compare/v1.0.6...v1.0.7) (2019-04-11)
+
+
+### Bug Fixes
+
+* demo not deploying latest version ([dbf9e79](https://github.com/Draggable/formeo/commit/dbf9e79))
+
 ## [1.0.6](https://github.com/Draggable/formeo/compare/v1.0.5...v1.0.6) (2019-04-11)
 
 
