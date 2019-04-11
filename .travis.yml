@@ -14,7 +14,7 @@ git:
   submodules: false
 before_install:
   - "git config --global user.name \"\U0001F916\""
-  - "git config --global user.email \"travis@travis-ci.org\""
+  - "git config --global user.email \"travis@travis-ci.com\""
 jobs:
   include:
     - stage: lint
@@ -30,4 +30,7 @@ jobs:
           - yarn travis-deploy-once "yarn semantic-release"
         skip_cleanup: true
       after_deploy:
+        - sleep 10
+        - git pull https://${GH_TOKEN}@github.com/${GH_REPO}.git master
+        - yarn build
         - yarn deploy:demo
