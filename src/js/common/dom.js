@@ -395,7 +395,7 @@ class DOM {
     const { action, attrs } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
-    const multipleOptions = options.length > 1
+    const multipleOptions = options.length > 1 && fieldType !== 'radio'
 
     const optionMap = (option, i) => {
       const { label, ...rest } = option
@@ -406,20 +406,23 @@ class DOM {
             name: multipleOptions ? `${id}[]` : id,
             type: fieldType,
             value: option.value || '',
+            id: `${id}-${i}`,
             ...rest,
           },
           action,
         }
         const optionLabel = {
           tag: 'label',
-          attrs: {},
+          attrs: {
+            for: `${id}-${i}`,
+          },
           config: {
             inputWrap: 'form-check',
           },
-          children: [input, option.label],
+          children: option.label,
         }
         const inputWrap = {
-          children: [optionLabel],
+          children: [input, optionLabel],
           className: [`f-${fieldType}`],
         }
 
@@ -663,7 +666,7 @@ class DOM {
         dataClone.columns = []
         const stage = Stages.active
         const newRow = stage.addRow(null, dataClone.id)
-        const columns = elem.getElementsByClassName('stage-columns')
+        const columns = elem.getElementsByClassName(COLUMN_CLASSNAME)
 
         stage.insertBefore(newRow, stage.childNodes[newIndex])
         h.forEach(columns, column => _this.clone(column, newRow))
@@ -674,7 +677,7 @@ class DOM {
         dataClone.fields = []
         const newColumn = _this.addColumn(parent, dataClone.id)
         parent.insertBefore(newColumn, parent.childNodes[newIndex])
-        const fields = elem.getElementsByClassName('stage-fields')
+        const fields = elem.getElementsByClassName(FIELD_CLASSNAME)
 
         if (noParent) {
           dom.columnWidths(parent)
@@ -700,7 +703,7 @@ class DOM {
   removeEmpty = element => {
     const parent = element.parentElement
     const type = componentType(element)
-    const children = parent.getElementsByClassName(`stage-${type}s`)
+    const children = parent.getElementsByClassName(`formeo-${type}s`)
     this.remove(element)
     if (!children.length) {
       if (!this.isStage(parent)) {
@@ -759,7 +762,7 @@ class DOM {
    * @param  {Object}  row    DOM element
    */
   columnWidths(row) {
-    const columns = row.getElementsByClassName('stage-columns')
+    const columns = row.getElementsByClassName(COLUMN_CLASSNAME)
     if (!columns.length) {
       return
     }

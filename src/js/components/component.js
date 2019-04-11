@@ -9,6 +9,8 @@ import {
   ANIMATION_SPEED_BASE,
   FIELD_PROPERTY_MAP,
   COMPONENT_TYPE_CLASSNAMES,
+  COLUMN_CLASSNAME,
+  CONTROL_GROUP_CLASSNAME,
 } from '../constants'
 import Components from './index'
 import Data from './data'
@@ -251,8 +253,8 @@ export default class Component extends Data {
       return []
     }
     const domChildren = this.domChildren
-    const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
-    return map(domChildren, child => Components.getAddress(`${childGroup}.${child.id}`)).filter(Boolean)
+    const childGroup = CHILD_TYPE_MAP.get(this.name)
+    return map(domChildren, child => Components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean)
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
@@ -275,12 +277,16 @@ export default class Component extends Data {
 
     const childWrap = this.dom.querySelector('.children')
     const { id: childId = uuid() } = childData
-    const childGroup = CHILD_TYPE_MAP.get(`${this.name}s`)
+    const childGroup = CHILD_TYPE_MAP.get(this.name)
     if (!childGroup) {
       return null
     }
 
-    const child = Components.getAddress(`${childGroup}.${childId}`) || Components[childGroup].add(childId, childData)
+    const childComponentType = `${childGroup}s`
+
+    const child =
+      Components.getAddress(`${childComponentType}.${childId}`) ||
+      Components[childComponentType].add(childId, childData)
 
     childWrap.insertBefore(child.dom, childWrap.children[index])
 
@@ -312,12 +318,14 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd(evt) {
+  onAdd({ from, to, item }) {
     const _this = this
-    const { from, item, to } = evt
+    if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
+      from = from.parentElement
+    }
     const newIndex = indexOfNode(item, to)
     const fromType = componentType(from)
-    const toType = componentType(to)
+    const toType = componentType(to.parentElement)
     const defaultOnAdd = () => {
       _this.saveChildOrder()
       _this.removeClasses('empty')
@@ -327,14 +335,14 @@ export default class Component extends Data {
       [
         -2,
         () => {
-          const newChild = _this.addChild().addChild()
+          const newChild = _this.addChild({}, newIndex).addChild()
           return newChild.addChild.bind(newChild)
         },
       ],
       [
         -1,
         () => {
-          const newChild = _this.addChild()
+          const newChild = _this.addChild({}, newIndex)
           return newChild.addChild.bind(newChild)
         },
       ],
@@ -401,9 +409,10 @@ export default class Component extends Data {
       },
     }
 
-    const condition = onAddConditions[fromType] && onAddConditions[fromType]()
+    const component = onAddConditions[fromType] && onAddConditions[fromType](item, newIndex)
+
     defaultOnAdd()
-    return condition
+    return component
   }
 
   /**
@@ -419,16 +428,18 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Array} updated child order
    */
-  onRemove({ from }) {
-    if (from.classList.contains('stage-columns')) {
+  onRemove({ from: { parentElement: from } }) {
+    if (from.classList.contains(COLUMN_CLASSNAME)) {
       from.classList.remove('column-editing-field')
     }
-    this.emptyClass()
+
 
     // make this configurable
     if (this.name !== 'stage' && !this.children.length) {
-      this.remove()
+      return this.remove()
     }
+
+    this.emptyClass()
 
     return this.saveChildOrder()
   }
@@ -437,7 +448,7 @@ export default class Component extends Data {
    * Callback for when dragging ends
    * @param  {Object} evt
    */
-  onEnd = ({ to, from }) => {
+  onEnd = ({ to: { parentElement: to }, from: { parentElement: from } }) => {
     to && to.classList.remove(`hovering-${componentType(to)}`)
     from && from.classList.remove(`hovering-${componentType(from)}`)
   }

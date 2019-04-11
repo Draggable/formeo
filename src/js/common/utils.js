@@ -1,5 +1,10 @@
 import uuidv4 from 'uuid/v4'
-import { COMPONENT_TYPES, COMPONENT_INDEX_TYPES } from '../constants'
+import {
+  COMPONENT_INDEX_TYPES,
+  COMPONENT_TYPE_CLASSNAMES_REGEXP,
+  COMPONENT_TYPE_CLASSNAMES_LOOKUP,
+  CHILD_TYPE_MAP,
+} from '../constants'
 import mergeWith from 'lodash/mergeWith'
 
 /**
@@ -69,8 +74,8 @@ export const closestFtype = el => {
  * @return {String}     component type or undefined
  */
 export const componentType = node => {
-  const type = COMPONENT_TYPES.find(({ className }) => node.classList.contains(className))
-  return type && type.name
+  const classMatch = node.className.match(COMPONENT_TYPE_CLASSNAMES_REGEXP)
+  return classMatch && COMPONENT_TYPE_CLASSNAMES_LOOKUP[classMatch[0]]
 }
 
 /**
@@ -272,3 +277,5 @@ export const isExternalAddress = str => /^external/.test(str)
  * @param {String} key
  */
 export const isBoolKey = key => /^is|^has/.test(key)
+
+export const typeIsChildOf = (childType, parentType) => CHILD_TYPE_MAP.get(parentType) === childType

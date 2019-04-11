@@ -36,6 +36,7 @@ input {
   &[type='radio'] {
     width: auto;
     height: auto;
+    margin-right: $half-space;
   }
 
   &[type='date'] {
@@ -139,8 +140,6 @@ button {
   input,
   select {
     flex: 0 1 auto;
-
-    // border-width: 1px 1px 1px 0;
     border-radius: 0;
 
     &:last-child {
@@ -152,7 +151,6 @@ button {
       border-radius: $input-border-radius 0 0 $input-border-radius;
       border-left-width: 1px;
       &:last-child {
-        // border-right-width: 1px;
         border-radius: $input-border-radius;
       }
     }

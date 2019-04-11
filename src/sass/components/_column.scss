@@ -1,4 +1,4 @@
-.stage-columns {
+.formeo-columns {
   transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
   position: relative;
   background-color: $white;
@@ -92,7 +92,7 @@
       border-top-left-radius: 0;
     }
 
-    .stage-fields {
+    .formeo-fields {
       opacity: 0.5;
     }
 
@@ -127,7 +127,7 @@
 }
 
 .editing-row {
-  .stage-columns,
+  .formeo-columns,
   .empty {
     border-radius: $border-radius;
     height: 60px;
@@ -137,7 +137,7 @@
       min-height: 0;
     }
 
-    .stage-fields {
+    .formeo-fields {
       display: none;
     }
 
