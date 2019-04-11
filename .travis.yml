@@ -30,7 +30,5 @@ jobs:
           - yarn travis-deploy-once "yarn semantic-release"
         skip_cleanup: true
       after_deploy:
-        - sleep 10
-        - git pull https://${GH_TOKEN}@github.com/${GH_REPO}.git master
         - yarn build
         - yarn deploy:demo
