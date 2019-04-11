@@ -7,7 +7,7 @@ async function deployDemo() {
   const gitCommands = [
     'git add demo/',
     'git commit -am "add demo"',
-    `git push https://${GH_TOKEN}@${GH_REPO} $(git subtree split --prefix demo $(git rev-parse --abbrev-ref HEAD)):gh-pages --force`,
+    `git push https://${GH_TOKEN}@github.com/${GH_REPO}.git $(git subtree split --prefix demo $(git rev-parse --abbrev-ref HEAD)):gh-pages --force > /dev/null 2>&1`,
     'git reset --hard HEAD~1',
   ]
 
