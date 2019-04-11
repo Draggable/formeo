@@ -1,3 +1,10 @@
+## [1.0.4](https://github.com/Draggable/formeo/compare/v1.0.3...v1.0.4) (2019-04-11)
+
+
+### Bug Fixes
+
+* **ci:** git push update remote ([#188](https://github.com/Draggable/formeo/issues/188)) ([3a7a58c](https://github.com/Draggable/formeo/commit/3a7a58c))
+
 ## [1.0.3](https://github.com/Draggable/formeo/compare/v1.0.2...v1.0.3) (2019-03-22)
 
 
