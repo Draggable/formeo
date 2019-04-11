@@ -1,3 +1,10 @@
+## [1.0.5](https://github.com/Draggable/formeo/compare/v1.0.4...v1.0.5) (2019-04-11)
+
+
+### Bug Fixes
+
+* **ci:** use deploy-demo script ([#189](https://github.com/Draggable/formeo/issues/189)) ([8b78314](https://github.com/Draggable/formeo/commit/8b78314))
+
 ## [1.0.4](https://github.com/Draggable/formeo/compare/v1.0.3...v1.0.4) (2019-04-11)
 
 
