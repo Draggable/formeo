@@ -1,3 +1,10 @@
+## [1.0.8](https://github.com/Draggable/formeo/compare/v1.0.7...v1.0.8) (2019-04-11)
+
+
+### Bug Fixes
+
+* remove unnecessary sleep and pull ([aa3deeb](https://github.com/Draggable/formeo/commit/aa3deeb))
+
 ## [1.0.7](https://github.com/Draggable/formeo/compare/v1.0.6...v1.0.7) (2019-04-11)
 
 
