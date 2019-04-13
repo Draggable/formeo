@@ -23,6 +23,7 @@ Object {
       ],
     },
   ],
+  "config": Object {},
   "id": "test-id",
 }
 `;

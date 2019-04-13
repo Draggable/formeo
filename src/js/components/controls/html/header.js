@@ -22,6 +22,7 @@ class HeaderControl extends Control {
       config: {
         label: i18n.get(headerKey),
         hideLabel: true,
+        editableContent: true,
       },
       meta: {
         group: 'html',
