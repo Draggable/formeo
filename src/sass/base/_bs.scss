@@ -11,14 +11,19 @@ hr {
 
 .f-field-group {
   flex-wrap: wrap;
+  margin-bottom: $base-space + $half-space;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   label + .badge {
-    margin-left: 10px;
+    margin-left: $base-space;
   }
 
   > label {
     display: inline-block;
-    margin-bottom: 10px;
+    margin-bottom: $half-space;
   }
 
   button {
