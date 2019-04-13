@@ -67,7 +67,7 @@ export default class Field extends Component {
       return
     }
 
-    const labelVal = this.get('config.label')
+    const labelVal = this.get('config.editorLabel') || this.get('config.label')
     const required = this.get('attrs.required')
     const disableHTML = this.config.label.disableHTML
 
@@ -251,6 +251,10 @@ export default class Field extends Component {
     const prevData = clone(this.data)
     prevData.id = `prev-${this.id}`
 
+    if (this.data.config.editableContent) {
+      prevData.attrs = Object.assign({}, prevData.attrs, {contenteditable: true})
+    }
+
     const fieldPreview = {
       attrs: {
         className: 'field-preview',
@@ -279,10 +283,12 @@ export default class Field extends Component {
           }
         },
         input: evt => {
-          if (evt.target.contentEditable === 'true') {
-            super.set('attrs.value', evt.target.innerHTML)
-          } else {
+          if (['input', 'meter', 'progress', 'button'].includes(this.data.tag)) {
             super.set('attrs.value', evt.target.value)
+          }
+
+          if (evt.target.contentEditable) {
+            super.set('content', evt.target.innerHTML)
           }
         },
       },

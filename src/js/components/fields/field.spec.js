@@ -1,5 +1,5 @@
 import Field from './field'
-const fieldConfig = { id: 'test-id' }
+const fieldConfig = { id: 'test-id', config: {} }
 
 describe('Field', () => {
   it('should have data property matching snapshot', () => {

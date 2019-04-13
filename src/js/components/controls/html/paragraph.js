@@ -11,7 +11,7 @@ class ParagraphControl extends Control {
       config: {
         label: i18n.get('controls.html.paragraph'),
         hideLabel: true,
-        editable: true,
+        editableContent: true,
       },
       meta: {
         group: 'html',
