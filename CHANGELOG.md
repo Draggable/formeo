@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/Draggable/formeo/compare/v1.0.8...v1.0.9) (2019-04-13)
+
+
+### Bug Fixes
+
+* **controls:** block elements are not editable in the editor ([d099763](https://github.com/Draggable/formeo/commit/d099763)), closes [#161](https://github.com/Draggable/formeo/issues/161)
+
 ## [1.0.8](https://github.com/Draggable/formeo/compare/v1.0.7...v1.0.8) (2019-04-11)
 
 
