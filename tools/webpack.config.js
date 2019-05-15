@@ -60,7 +60,7 @@ const plugins = [
   }),
   new HtmlWebpackHarddiskPlugin({ outputPath: './demo/' }),
   new MiniCssExtractPlugin({
-    filename: ({ name }) => `${name.replace('/js/', '/css/')}.min.css`,
+    moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.min.css`,
   }),
   new BannerPlugin(bannerTemplate),
   new CompressionPlugin({
