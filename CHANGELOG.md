@@ -1,3 +1,10 @@
+## [1.0.11](https://github.com/Draggable/formeo/compare/v1.0.10...v1.0.11) (2019-05-15)
+
+
+### Bug Fixes
+
+* filename.replace error and update mini-css-extract-plugin ([1165ee8](https://github.com/Draggable/formeo/commit/1165ee8))
+
 ## [1.0.10](https://github.com/Draggable/formeo/compare/v1.0.9...v1.0.10) (2019-04-13)
 
 
