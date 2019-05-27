@@ -1,3 +1,11 @@
+## [1.0.12](https://github.com/Draggable/formeo/compare/v1.0.11...v1.0.12) (2019-05-27)
+
+
+### Bug Fixes
+
+* mini-css-extract-plugin ([9b65cde](https://github.com/Draggable/formeo/commit/9b65cde))
+* update dependencies to address vulnerability ([7d6ed68](https://github.com/Draggable/formeo/commit/7d6ed68))
+
 ## [1.0.11](https://github.com/Draggable/formeo/compare/v1.0.10...v1.0.11) (2019-05-15)
 
 
