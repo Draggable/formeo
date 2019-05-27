@@ -1,3 +1,10 @@
+## [1.0.13](https://github.com/Draggable/formeo/compare/v1.0.12...v1.0.13) (2019-05-27)
+
+
+### Bug Fixes
+
+* multiple attribute error ([05d4401](https://github.com/Draggable/formeo/commit/05d4401)), closes [#205](https://github.com/Draggable/formeo/issues/205)
+
 ## [1.0.12](https://github.com/Draggable/formeo/compare/v1.0.11...v1.0.12) (2019-05-27)
 
 
