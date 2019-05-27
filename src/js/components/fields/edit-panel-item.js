@@ -418,11 +418,6 @@ export default class EditPanelItem {
     const valType = dom.childType(val) || 'string'
 
     const inputTypeConfig = Object.assign({}, { config: {}, attrs: {} }, ITEM_INPUT_TYPE_MAP[valType](key, val))
-    const { attrs: fieldAttrs = {} } = this.field.data
-    const { multiple } = fieldAttrs
-    if (multiple) {
-      inputConfigBase.attrs.type = 'checkbox'
-    }
     const dataKey = this.itemKey.replace(/.\d+$/, index => `${index}.${key}`)
     const labelKey = dataKey
       .split('.')
