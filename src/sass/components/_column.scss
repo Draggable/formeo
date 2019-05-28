@@ -1,4 +1,4 @@
-.formeo-columns {
+.formeo-column {
   transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
   position: relative;
   background-color: $white;
@@ -92,7 +92,7 @@
       border-top-left-radius: 0;
     }
 
-    .formeo-fields {
+    .formeo-field {
       opacity: 0.5;
     }
 
@@ -127,7 +127,7 @@
 }
 
 .editing-row {
-  .formeo-columns,
+  .formeo-column,
   .empty {
     border-radius: $border-radius;
     height: 60px;
@@ -137,7 +137,7 @@
       min-height: 0;
     }
 
-    .formeo-fields {
+    .formeo-field {
       display: none;
     }
 

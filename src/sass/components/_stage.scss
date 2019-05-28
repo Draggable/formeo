@@ -35,12 +35,12 @@
   }
 
   &.removing-all-fields {
-    .formeo-rows {
+    .formeo-row {
       transition: margin-top 250ms ease-in;
     }
   }
 
-  & > .formeo-fields {
+  & > .formeo-field {
     background-color: $white;
   }
 }

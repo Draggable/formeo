@@ -13,7 +13,7 @@ const DEFAULT_DATA = () =>
       width: '100%',
     },
     children: [],
-    className: 'f-column',
+    className: COLUMN_CLASSNAME,
   })
 
 const DOM_CONFIGS = {
