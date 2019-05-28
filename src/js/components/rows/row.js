@@ -16,7 +16,7 @@ const DEFAULT_DATA = () =>
       inputGroup: false, // is repeatable input-group?
     },
     children: [],
-    className: ['f-row'],
+    className: [ROW_CLASSNAME],
   })
 
 /**

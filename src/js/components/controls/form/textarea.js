@@ -19,7 +19,7 @@ class TextAreaControl extends Control {
       //       let endHeight = target.style.height;
       //       if (startHeight !== endHeight) {
       //         //eslint-disable-next-line
-      //         let fieldId = closest(target, '.stage-fields').id;
+      //         let fieldId = closest(target, '.stage-field').id;
       //         const field = d.fields.get(fieldId).instance;
       //         field.addAttribute('style', `height: ${endHeight}`);
       //       }

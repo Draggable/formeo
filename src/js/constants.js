@@ -12,9 +12,9 @@ export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/im
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
 export const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`
-export const ROW_CLASSNAME = `${PACKAGE_NAME}-rows`
-export const COLUMN_CLASSNAME = `${PACKAGE_NAME}-columns`
-export const FIELD_CLASSNAME = `${PACKAGE_NAME}-fields`
+export const ROW_CLASSNAME = `${PACKAGE_NAME}-row`
+export const COLUMN_CLASSNAME = `${PACKAGE_NAME}-column`
+export const FIELD_CLASSNAME = `${PACKAGE_NAME}-field`
 
 export const CHILD_CLASSNAME_MAP = new Map([
   [STAGE_CLASSNAME, ROW_CLASSNAME],

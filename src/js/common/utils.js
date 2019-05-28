@@ -74,7 +74,7 @@ export const closestFtype = el => {
  * @return {String}     component type or undefined
  */
 export const componentType = node => {
-  const classMatch = node.className.match(COMPONENT_TYPE_CLASSNAMES_REGEXP)
+  const classMatch = node.className && node.className.match(COMPONENT_TYPE_CLASSNAMES_REGEXP)
   return classMatch && COMPONENT_TYPE_CLASSNAMES_LOOKUP[classMatch[0]]
 }
 

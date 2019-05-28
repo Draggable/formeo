@@ -1,10 +1,10 @@
-.f-row,
-.f-column,
-.f-field {
+.formeo-row,
+.formeo-column,
+.formeo-field {
   position: relative;
 }
 
-.f-row {
+.formeo-row {
   margin-bottom: 1em;
   flex-direction: row;
   justify-content: flex-start;
@@ -17,6 +17,10 @@
   transition: background-color 200ms;
   padding: space();
 
+  &:last-child {
+    margin-bottom: 0;
+  }
+
   &.will-remove {
     background-color: $remove-bg;
     box-shadow: 0 0 3px 1px $brand-error inset;
@@ -25,9 +29,9 @@
 
 .f-input-group-wrap {
   @include clearfix;
-  .f-row:first-of-type{
-    .remove-input-group{
-      display:none;
+  .formeo-row:first-of-type {
+    .remove-input-group {
+      display: none;
     }
   }
 }
@@ -79,7 +83,7 @@
   max-height: 100%;
 }
 
-.f-column {
+.formeo-column {
   padding: 0 space();
   float: left;
   max-width: none;

@@ -703,7 +703,7 @@ class DOM {
   removeEmpty = element => {
     const parent = element.parentElement
     const type = componentType(element)
-    const children = parent.getElementsByClassName(`formeo-${type}s`)
+    const children = parent.getElementsByClassName(`formeo-${type}`)
     this.remove(element)
     if (!children.length) {
       if (!this.isStage(parent)) {
@@ -917,13 +917,13 @@ class DOM {
       return styleSheet.insertRule(`${selector} { ${propStr} }`, rulesLength)
     }
   }
-  btnTemplate = ({ content, title }) => ({
+  btnTemplate = ({ title = '', ...rest }) => ({
     tag: 'button',
     attrs: {
       type: 'button',
       title,
     },
-    content,
+    ...rest,
   })
 
   isControls = node => componentType(node) === CONTROL_GROUP_CLASSNAME

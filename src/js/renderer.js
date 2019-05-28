@@ -1,6 +1,7 @@
 import isEqual from 'lodash/isEqual'
 import dom from './common/dom'
 import { uuid, isAddress, isExternalAddress } from './common/utils'
+import { STAGE_CLASSNAME } from './constants'
 
 const processOptions = ({ container, ...opts }) => {
   const processedOptions = {
@@ -13,15 +14,29 @@ const processOptions = ({ container, ...opts }) => {
 const baseId = id => id.replace(/^f-/, '')
 
 const recursiveNewIds = elem => {
+  elem.setAttribute('id', `f-${uuid()}`)
   const elems = elem.querySelectorAll('*')
   const elemsLength = elems.length
   for (let i = 0; i < elemsLength; i++) {
     const element = elems[i]
     if (element.id) {
-      element.setAttribute('id', uuid())
+      element.setAttribute('id', `f-${uuid()}`)
     }
   }
 }
+
+const createRemoveButton = () =>
+  dom.render(
+    dom.btnTemplate({
+      className: 'remove-input-group',
+      children: dom.icon('remove'),
+      action: {
+        mouseover: ({ target }) => target.parentElement.classList.add('will-remove'),
+        mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
+        click: ({ target }) => target.parentElement.remove(),
+      },
+    })
+  )
 
 const addButton = () =>
   dom.render({
@@ -35,27 +50,14 @@ const addButton = () =>
       click: e => {
         const fInputGroup = e.target.parentElement
         const elem = e.target.previousSibling.cloneNode(true)
-        elem.id = uuid()
-        dom.remove(elem.querySelector('.remove-input-group'))
         recursiveNewIds(elem)
+        const existingRemoveButton = elem.querySelector('.remove-input-group')
+        if (existingRemoveButton) {
+          dom.remove(existingRemoveButton)
+        }
 
         fInputGroup.insertBefore(elem, fInputGroup.lastChild)
-        elem.appendChild(removeButton())
-      },
-    },
-  })
-
-const removeButton = () =>
-  dom.render({
-    tag: 'button',
-    className: 'remove-input-group',
-    children: dom.icon('remove'),
-    action: {
-      mouseover: ({ target }) => target.parentElement.classList.add('will-remove'),
-      mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
-      click: ({ target }) => {
-        const currentInputGroup = target.parentElement
-        dom.remove(currentInputGroup)
+        elem.appendChild(createRemoveButton())
       },
     },
   })
@@ -122,7 +124,7 @@ export default class FormeoRenderer {
         return this.makeInputGroup(row)
       }
 
-      return dom.render(row)
+      return row
     })
 
   processColumns = rowId => {
@@ -154,21 +156,16 @@ export default class FormeoRenderer {
    * @param {Object} componentData
    * @return {NodeElement} inputGroup-ified component
    */
-  makeInputGroup = data => {
-    data.children.push(removeButton())
-    const inputGroupWrap = {
-      id: uuid(),
-      className: 'f-input-group-wrap',
-      children: [data, addButton()],
-    }
-
-    return dom.render(inputGroupWrap)
-  }
+  makeInputGroup = data => ({
+    id: uuid(),
+    className: 'f-input-group-wrap',
+    children: [data, addButton()],
+  })
 
   get processedData() {
     return Object.values(this.form.stages).map(stage => {
       stage.children = this.processRows(stage.id)
-      stage.className = 'f-stage'
+      stage.className = STAGE_CLASSNAME
       return dom.render(stage)
     })
   }
