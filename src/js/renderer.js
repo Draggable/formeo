@@ -13,15 +13,23 @@ const processOptions = ({ container, ...opts }) => {
 
 const baseId = id => id.replace(/^f-/, '')
 
-const recursiveNewIds = elem => {
-  elem.setAttribute('id', `f-${uuid()}`)
+const recursiveNewIds = (elem, level = 0) => {
+  if (!level) {
+    elem.setAttribute('id', `f-${uuid()}`)
+  }
   const elems = elem.querySelectorAll('*')
   const elemsLength = elems.length
   for (let i = 0; i < elemsLength; i++) {
     const element = elems[i]
     if (element.id) {
-      element.setAttribute('id', `f-${uuid()}`)
+      const label = element.parentElement.querySelector(`[for=${element.id}]`)
+      const newElementId = `f-${uuid()}`
+      element.setAttribute('id', newElementId)
+      if (label) {
+        label.setAttribute('for', newElementId)
+      }
     }
+    recursiveNewIds(element, level + 1)
   }
 }
 
