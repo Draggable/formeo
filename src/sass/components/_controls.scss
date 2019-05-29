@@ -2,6 +2,12 @@
   width: 26%;
   overflow: hidden;
 
+  &.formeo-sticky {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+  }
+
   &.pull-left {
     .form-actions {
       float: left;
