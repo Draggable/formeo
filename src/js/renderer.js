@@ -1,7 +1,9 @@
 import isEqual from 'lodash/isEqual'
 import dom from './common/dom'
 import { uuid, isAddress, isExternalAddress } from './common/utils'
-import { STAGE_CLASSNAME } from './constants'
+import { STAGE_CLASSNAME, UUID_REGEXP } from './constants'
+
+const RENDER_PREFIX = 'f-'
 
 const processOptions = ({ container, ...opts }) => {
   const processedOptions = {
@@ -11,27 +13,12 @@ const processOptions = ({ container, ...opts }) => {
   return Object.assign({}, opts, processedOptions)
 }
 
-const baseId = id => id.replace(/^f-/, '')
-
-const recursiveNewIds = (elem, level = 0) => {
-  if (!level) {
-    elem.setAttribute('id', `f-${uuid()}`)
-  }
-  const elems = elem.querySelectorAll('*')
-  const elemsLength = elems.length
-  for (let i = 0; i < elemsLength; i++) {
-    const element = elems[i]
-    if (element.id) {
-      const label = element.parentElement.querySelector(`[for=${element.id}]`)
-      const newElementId = `f-${uuid()}`
-      element.setAttribute('id', newElementId)
-      if (label) {
-        label.setAttribute('for', newElementId)
-      }
-    }
-    recursiveNewIds(element, level + 1)
-  }
+const baseId = id => {
+  const match = id.match(UUID_REGEXP)
+  return (match && match[0]) || id
 }
+
+const newUUID = id => id.replace(UUID_REGEXP, uuid())
 
 const createRemoveButton = () =>
   dom.render(
@@ -45,30 +32,6 @@ const createRemoveButton = () =>
       },
     })
   )
-
-const addButton = () =>
-  dom.render({
-    tag: 'button',
-    attrs: {
-      className: 'add-input-group btn pull-right',
-      type: 'button',
-    },
-    children: 'Add +',
-    action: {
-      click: e => {
-        const fInputGroup = e.target.parentElement
-        const elem = e.target.previousSibling.cloneNode(true)
-        recursiveNewIds(elem)
-        const existingRemoveButton = elem.querySelector('.remove-input-group')
-        if (existingRemoveButton) {
-          dom.remove(existingRemoveButton)
-        }
-
-        fInputGroup.insertBefore(elem, fInputGroup.lastChild)
-        elem.appendChild(createRemoveButton())
-      },
-    },
-  })
 
 export default class FormeoRenderer {
   constructor(opts, formData) {
@@ -96,79 +59,106 @@ export default class FormeoRenderer {
     this.renderedForm = dom.render(config)
     dom.empty(this.container)
 
+    this.applyConditions()
+
     this.container.appendChild(this.renderedForm)
   }
 
-  orderChildren = (type, order) =>
-    order.reduce((acc, cur) => {
-      acc.push(this.form[type][cur])
-      return acc
-    }, [])
+  orderChildren = (type, order) => order.reduce((acc, cur) => [...acc, this.form[type][cur]], [])
+
+  prefixId = id => RENDER_PREFIX + id
 
   /**
    * Convert sizes, apply styles for render
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumnConfig = columnData => {
-    if (!columnData) {
-      return
-    }
-    const colWidth = columnData.config.width || '100%'
-    columnData.style = `width: ${colWidth}`
-    columnData.children = this.processFields(columnData.children)
-    return dom.render(columnData)
-  }
+  processColumn = ({ id, ...columnData }) =>
+    Object.assign({}, columnData, {
+      id: this.prefixId(id),
+      children: this.processFields(columnData.children),
+      style: `width: ${columnData.config.width || '100%'}`,
+    })
 
   processRows = stageId =>
-    this.orderChildren('rows', this.form.stages[stageId].children).map(row => {
-      if (!row) {
-        return
-      }
+    this.orderChildren('rows', this.form.stages[stageId].children).reduce(
+      (acc, row) => (row ? [...acc, this.processRow(row)] : acc),
+      []
+    )
 
-      row.children = this.processColumns(row.id)
-
-      if (row.config.inputGroup) {
-        return this.makeInputGroup(row)
-      }
-
-      return row
-    })
-
-  processColumns = rowId => {
-    return this.orderChildren('columns', this.form.rows[rowId].children).map(columnConfig => {
-      if (columnConfig) {
-        const column = this.processColumnConfig(columnConfig)
-        this.components[baseId(columnConfig.id)] = column
-
-        return column
-      }
-    })
-  }
-
-  processFields = fieldIds => {
-    return this.orderChildren('fields', fieldIds).map(child => {
-      if (child) {
-        const { conditions } = child
-        const field = dom.render(child)
-        this.components[baseId(child.id)] = field
-        this.processConditions(conditions)
-        return field
-      }
-    })
+  cacheComponent = data => {
+    this.components[baseId(data.id)] = data
+    return data
   }
 
   /**
-   * Converts a row to an cloneable input group
-   * @todo make all columns and fields input groups
-   * @param {Object} componentData
-   * @return {NodeElement} inputGroup-ified component
+   * Applies a row's config
+   * @param {Object} row data
+   * @return {Object} row config object
    */
-  makeInputGroup = data => ({
-    id: uuid(),
-    className: 'f-input-group-wrap',
-    children: [data, addButton()],
-  })
+  processRow = (data, type = 'row') => {
+    const { config, id } = data
+    const className = [`formeo-${type}-wrap`]
+    const rowData = Object.assign({}, data, { children: this.processColumns(data.id), id: this.prefixId(id) })
+    this.cacheComponent(rowData)
+
+    const configConditions = [
+      { condition: config.legend, result: () => ({ tag: config.fieldset ? 'legend' : 'h3', children: config.legend }) },
+      { condition: true, result: () => rowData },
+      { condition: config.inputGroup, result: () => this.addButton(id) },
+    ]
+
+    const children = configConditions.reduce((acc, { condition, result }) => (condition ? [...acc, result()] : acc), [])
+
+    if (config.inputGroup) {
+      className.push(RENDER_PREFIX + 'input-group-wrap')
+    }
+
+    return {
+      tag: config.fieldset ? 'fieldset' : 'div',
+      id: uuid(),
+      className,
+      children,
+    }
+  }
+
+  cloneComponentData = componentId => {
+    const { children = [], id, ...rest } = this.components[componentId]
+    return Object.assign({}, rest, {
+      id: newUUID(id),
+      children: children.length && children.map(({ id }) => this.cloneComponentData(baseId(id))),
+    })
+  }
+
+  addButton = id =>
+    dom.render({
+      tag: 'button',
+      attrs: {
+        className: 'add-input-group btn pull-right',
+        type: 'button',
+      },
+      children: 'Add +',
+      action: {
+        click: e => {
+          const fInputGroup = e.target.parentElement
+          const elem = dom.render(this.cloneComponentData(id))
+          fInputGroup.insertBefore(elem, fInputGroup.lastChild)
+          elem.appendChild(createRemoveButton())
+        },
+      },
+    })
+
+  processColumns = rowId => {
+    return this.orderChildren('columns', this.form.rows[rowId].children).map(column =>
+      this.cacheComponent(this.processColumn(column))
+    )
+  }
+
+  processFields = fieldIds => {
+    return this.orderChildren('fields', fieldIds).map(({ id, ...field }) =>
+      this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) }))
+    )
+  }
 
   get processedData() {
     return Object.values(this.form.stages).map(stage => {
@@ -180,33 +170,32 @@ export default class FormeoRenderer {
 
   /**
    * Evaulate and execute conditions for fields by creating listeners for input and changes
-   * @param {Array} conditions array of arrays of condition definitions
    * @return {Array} flattened array of conditions
    */
-  processConditions = conditions => {
-    if (!conditions) {
-      return null
-    }
+  applyConditions = () => {
+    Object.values(this.components).forEach(({ conditions }) => {
+      if (conditions) {
+        conditions.forEach((condition, i) => {
+          const { if: ifConditions, then: thenConditions } = condition
 
-    conditions.forEach((condition, i) => {
-      const { if: ifConditions, then: thenConditions } = condition
-
-      ifConditions.forEach(ifCondition => {
-        const { source, ...ifRest } = ifCondition
-        if (isAddress(source)) {
-          const component = this.getComponent(source)
-          const listenerEvent = LISTEN_TYPE_MAP(component)
-          if (listenerEvent) {
-            component.addEventListener(
-              listenerEvent,
-              evt =>
-                this.evaluateCondition(ifRest, evt) &&
-                thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
-              false
-            )
-          }
-        }
-      })
+          ifConditions.forEach(ifCondition => {
+            const { source, ...ifRest } = ifCondition
+            if (isAddress(source)) {
+              const component = this.getComponent(source)
+              const listenerEvent = LISTEN_TYPE_MAP(component)
+              if (listenerEvent) {
+                component.addEventListener(
+                  listenerEvent,
+                  evt =>
+                    this.evaluateCondition(ifRest, evt) &&
+                    thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
+                  false
+                )
+              }
+            }
+          })
+        })
+      }
     })
   }
 
@@ -248,7 +237,7 @@ export default class FormeoRenderer {
     const componentId = address.slice(address.indexOf('.') + 1)
     const component = isExternalAddress(address)
       ? this.external[componentId]
-      : this.components[componentId].querySelector(`#f-${componentId}`)
+      : this.renderedForm.querySelector(`#f-${componentId}`)
     return component
   }
 }

@@ -1,22 +1,22 @@
 // Colors
-$brand-primary: #325d88 !default;
+$brand-primary: rgb(50, 93, 136) !default;
 $brand-primary-dark: darken($brand-primary, 10%) !default;
-$brand-success: #93c54b !default;
+$brand-success: rgb(147, 197, 75) !default;
 $brand-success-dark: darken($brand-success, 10%) !default;
-$brand-warning: #f47c3c !default;
+$brand-warning: rgb(244, 124, 60) !default;
 $brand-warning-dark: darken($brand-warning, 10%) !default;
-$brand-error: #d9534f !default;
+$brand-error: rgb(217, 83, 79) !default;
 $brand-error-dark: darken($brand-error, 10%) !default;
-$brand-info: #9954bb !default;
+$brand-info: rgb(153, 84, 187) !default;
 
-$remove-bg: rgba(217, 83, 79, 0.5) !default;
+$remove-bg: rgba($brand-error, 0.25) !default;
 
 $component-outline-color: #00ffff;
 $row-outline-color: $component-outline-color;
 $column-outline-color: darken($component-outline-color, 15%);
 $field-outline-color: darken($component-outline-color, 30%);
 
-$input-focus: #66afe9;
+$input-focus: rgba(102, 175, 233, 1);
 
 // Grayscale and brand colors for use across Bootstrap.
 $black: #000;

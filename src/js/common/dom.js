@@ -439,7 +439,6 @@ class DOM {
         }
 
         if (isPreview) {
-          input.attrs.name = `prev-${input.attrs.name}`
           optionLabel.attrs.contenteditable = true
         }
 

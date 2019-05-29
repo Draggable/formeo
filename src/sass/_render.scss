@@ -4,6 +4,20 @@
   position: relative;
 }
 
+.f-input-group-wrap {
+  > fieldset {
+    position: relative;
+    .remove-input-group {
+      top: 8px;
+    }
+  }
+}
+
+.will-remove {
+  background-color: $remove-bg;
+  box-shadow: 0 0 1px 0 $brand-error inset;
+}
+
 .formeo-row {
   margin-bottom: 1em;
   flex-direction: row;
@@ -12,18 +26,23 @@
   align-content: stretch;
   align-items: stretch;
   display: flex;
-  background-color: transparent;
   border-radius: $border-radius;
-  transition: background-color 200ms;
-  padding: space();
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  transition: background-color 200ms, padding 200ms;
+  padding: space() 0;
 
   &.will-remove {
-    background-color: $remove-bg;
-    box-shadow: 0 0 3px 1px $brand-error inset;
+    padding: space();
+  }
+
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+
+.formeo-row-wrap {
+  margin-bottom: 1em;
+  &:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -53,15 +72,15 @@
 
 .remove-input-group {
   position: absolute;
-  right: -32px;
-  width: space(3);
-  height: space(3);
-  bottom: 0;
+  right: 0;
+  top: 0;
+  width: space(2);
+  height: space(2);
   border: 0 none;
   background: transparent;
   outline: 0 none;
   line-height: 0;
-  padding: space() space(1);
+  padding: space();
 
   &:hover {
     .svg-icon {
