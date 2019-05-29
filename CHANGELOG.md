@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Draggable/formeo/compare/v1.0.13...v1.1.0) (2019-05-29)
+
+
+### Features
+
+* added sticky function to controls container ([b8ddfd3](https://github.com/Draggable/formeo/commit/b8ddfd3))
+
 ## [1.0.13](https://github.com/Draggable/formeo/compare/v1.0.12...v1.0.13) (2019-05-27)
 
 
