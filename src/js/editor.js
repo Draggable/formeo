@@ -91,7 +91,7 @@ export class FormeoEditor {
   init() {
     const _this = this
     this.load(this.userFormData, _this.opts)
-    this.controls = Controls.init(_this.opts.controls)
+    this.controls = Controls.init(_this.opts.controls, _this.opts.stickyControls)
     _this.formId = Components.get('id')
     this.i18n = {
       setLang: formeoLocale => {

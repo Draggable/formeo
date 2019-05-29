@@ -7,6 +7,7 @@ mi18n.addLanguage('en-US', EN_US)
 export const defaults = {
   get editor() {
     return {
+      stickyControls: false,
       allowEdit: true,
       dataType: 'json',
       debug: false,

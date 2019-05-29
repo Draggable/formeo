@@ -67,10 +67,10 @@ export class Controls {
    * Methods to be called on initialization
    * @param {Object} controlOptions
    */
-  init(controlOptions) {
+  init(controlOptions, sticky = false) {
     this.applyOptions(controlOptions)
     this.registerControls()
-    this.buildDOM()
+    this.buildDOM(sticky)
     return this
   }
 
@@ -265,7 +265,7 @@ export class Controls {
    * Returns the markup for the form controls/fields
    * @return {DOM}
    */
-  buildDOM() {
+  buildDOM(sticky) {
     const _this = this
     const groupedFields = this.groupElements()
     const formActions = this.formActions()
@@ -276,8 +276,13 @@ export class Controls {
       content: _this.panels.children,
     })
 
+    let controlClass = 'formeo-controls'
+    if (sticky) {
+      controlClass += ' formeo-sticky'
+    }
+
     const element = dom.create({
-      className: 'formeo-controls',
+      className: controlClass,
       content: [groupsWrap, formActions],
     })
     const groups = element.getElementsByClassName('control-group')
