@@ -433,7 +433,6 @@ export default class Component extends Data {
       from.classList.remove('column-editing-field')
     }
 
-
     // make this configurable
     if (this.name !== 'stage' && !this.children.length) {
       return this.remove()
@@ -584,6 +583,7 @@ export default class Component extends Data {
     if (this.name === 'column') {
       parent.autoColumnWidths()
     }
+    return newClone
   }
 
   cloneChildren = toParent => {
