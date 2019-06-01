@@ -1,3 +1,12 @@
+## [1.1.1](https://github.com/Draggable/formeo/compare/v1.1.0...v1.1.1) (2019-06-01)
+
+
+### Bug Fixes
+
+* cloned rows should have unique ID ([2e664c9](https://github.com/Draggable/formeo/commit/2e664c9))
+* field ids for input groups ([fd27c65](https://github.com/Draggable/formeo/commit/fd27c65))
+* label for attribute for cloned checkboxes ([1dacddc](https://github.com/Draggable/formeo/commit/1dacddc))
+
 # [1.1.0](https://github.com/Draggable/formeo/compare/v1.0.13...v1.1.0) (2019-05-29)
 
 
