@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/Draggable/formeo/compare/v1.1.1...v1.1.2) (2019-06-19)
+
+
+### Bug Fixes
+
+* container selectors not used ([73abb52](https://github.com/Draggable/formeo/commit/73abb52))
+
 ## [1.1.1](https://github.com/Draggable/formeo/compare/v1.1.0...v1.1.1) (2019-06-01)
 
 
