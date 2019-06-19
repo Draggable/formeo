@@ -4,7 +4,7 @@ import config from './config'
 import { devPrefix } from '../../../../tools/build-vars'
 
 const editorContainer = document.querySelector('.build-form')
-const renderContainer = document.querySelector('.render-form')
+const renderContainer = '.render-form'
 
 export const editorOptions = {
   editorContainer,

@@ -5,9 +5,11 @@ import { STAGE_CLASSNAME, UUID_REGEXP } from './constants'
 
 const RENDER_PREFIX = 'f-'
 
-const processOptions = ({ container, ...opts }) => {
+const processOptions = ({ editorContainer, renderContainer, ...opts }) => {
+  const containerLookup = container => (typeof container === 'string' ? document.querySelector(container) : container)
   const processedOptions = {
-    container: typeof container === 'string' ? document.querySelector(container) : container,
+    renderContainer: containerLookup(renderContainer),
+    editorContainer: containerLookup(editorContainer),
   }
 
   return Object.assign({}, opts, processedOptions)
