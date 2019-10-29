@@ -1,5 +1,7 @@
 # Events
-Events are emitted by interacting with the form. Below are a list of built-in events.
+
+Events are emitted by interacting with the form. While [actions](../actions/) let you override certain functionality, events simply allow you to react to an event (typically after an action completes).
+Below are a list of built-in events.
 
 | Option               | Type     | Description                 |
 | -------------------- | -------- | --------------------------- |
