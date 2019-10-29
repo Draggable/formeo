@@ -17,8 +17,6 @@ A zero dependency JavaScript module for drag and drop form creation.
 - Preview mode
 - i18n support
 
-## [Docs](https://github.com/Draggable/formeo/blob/master/docs/README.md)
-
 ## Installation
 
 ### NPM
@@ -41,8 +39,7 @@ To start building forms with this module include formeo.min.js and formeo.min.cs
 import { FormeoEditor, FormeoRenderer } from 'formeo'
 
 // Set up a form builder
-const editor = new FormeoEditor() // or:
-const editor = new FormeoEditor(options, formData)
+const editor = new FormeoEditor(options)
 
 // When you're ready, grab the form data object
 // Typically you'd do this in the "onSave" event, which you can configure through the editor's options object
@@ -52,5 +49,7 @@ const formData = editor.formData
 const renderer = new FormeoRenderer(options)
 renderer.render(formData)
 ```
+
+## [Docs](https://github.com/Draggable/formeo/blob/master/docs/README.md)
 
 ## [Changelog](https://github.com/Draggable/formeo/blob/master/CHANGELOG.md)
