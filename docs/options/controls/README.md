@@ -86,7 +86,7 @@ const formeo = new FormeoEditor(formeoOptions)
 
 ## elementOrder
 
-Set the element order with `elementOrder`. May be overridden if [sortable](#sortable) is set to true
+Set the element order within a control group. May be overridden if [sortable](#sortable) is set to true
 
 ```javascript
 const controlOptions = {
