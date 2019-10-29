@@ -5,6 +5,7 @@ Below are a list of built-in events.
 
 | Option               | Type     | Description                       |
 | -------------------- | -------- | --------------------------------- |
+| [formeoLoaded](#)    | Function | Fires when Formeo loads           |
 | [onAdd](#)           | Function | Fires when element is added       |
 | [onSave](#)          | Function | Fires when form is saved          |
 | [onUpdate](#)        | Function | Fires when form is updated        |

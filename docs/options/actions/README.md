@@ -1,15 +1,16 @@
 # Actions
 
-| Option            | Type     | Description                                    |
-| ----------------- | -------- | ---------------------------------------------- |
-| [add.attr](#)     | Function | Called when adding an attribute to an element  |
-| [add.option](#)   | Function | Called when adding an option to a field        |
-| [click.button](#) | Function | Called when clicking a [form action](#) button |
-| [save](#)         | Function | Called when saving                             |
+| Option             | Type     | Description                                    |
+| ------------------ | -------- | ---------------------------------------------- |
+| [add.attr](#)      | Function | Called when adding an attribute to an element  |
+| [add.option](#)    | Function | Called when adding an option to a field        |
+| [add.condition](#) | Function | Called when adding an condition to a field     |
+| [click.button](#)  | Function | Called when clicking a [form action](#) button |
+| [save](#)          | Function | Called when saving                             |
 
 With Actions you can modify or completely replace some editor functions. For example the default action for adding an attribute will use `window.prompt` to get info from the user, if you want your application to use a custom modal or extend attribute validation with custom rules, you could do so by defining an action handler for `add.attr`.
 
-**Full Example**
+## Full Example
 
 ```javascript
 function addAttribute(evt) {
