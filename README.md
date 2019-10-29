@@ -38,9 +38,19 @@ npm install --save formeo
 To start building forms with this module include formeo.min.js and formeo.min.css in your project and call:
 
 ```javascript
-import { FormeoEditor } from 'formeo'
+import { FormeoEditor, FormeoRenderer } from 'formeo'
 
-const editor = new FormeoEditor()
+// Set up a form builder
+const editor = new FormeoEditor() // or:
+const editor = new FormeoEditor(options, formData)
+
+// When you're ready, grab the form data object
+// Typically you'd do this in the "onSave" event, which you can configure through the editor's options object
+const formData = editor.formData
+
+// Then, when you're ready to render the form, use
+const renderer = new FormeoRenderer(options)
+renderer.render(formData)
 ```
 
 ## [Changelog](https://github.com/Draggable/formeo/blob/master/CHANGELOG.md)

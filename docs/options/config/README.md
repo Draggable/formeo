@@ -45,9 +45,7 @@ The `config` option enables fine tuning of the editor's UI. With it you can disa
   fields: {
     'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': { // apply to a specific field
       panels: {
-        disabled: [
-          'conditions'
-        ]
+        disabled: ['conditions']
       }
     }
   }
