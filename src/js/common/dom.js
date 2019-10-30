@@ -395,7 +395,6 @@ class DOM {
     const { action, attrs } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
-    const multipleOptions = options.length > 1 && fieldType !== 'radio'
 
     const optionMap = (option, i) => {
       const { label, ...rest } = option
@@ -403,7 +402,7 @@ class DOM {
         const input = {
           tag: 'input',
           attrs: {
-            name: multipleOptions ? `${id}[]` : id,
+            name: id,
             type: fieldType,
             value: option.value || '',
             id: `${id}-${i}`,
