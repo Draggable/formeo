@@ -182,18 +182,23 @@ export default class FormeoRenderer {
 
           ifConditions.forEach(ifCondition => {
             const { source, ...ifRest } = ifCondition
+
             if (isAddress(source)) {
-              const component = this.getComponent(source)
-              const listenerEvent = LISTEN_TYPE_MAP(component)
-              if (listenerEvent) {
-                component.addEventListener(
-                  listenerEvent,
-                  evt =>
-                    this.evaluateCondition(ifRest, evt) &&
-                    thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
-                  false
-                )
-              }
+              const components = this.getComponents(source)
+
+              components.forEach(component => {
+                const listenerEvent = LISTEN_TYPE_MAP(component)
+
+                if (listenerEvent) {
+                  component.addEventListener(
+                    listenerEvent,
+                    evt =>
+                      this.evaluateCondition(ifRest, evt) &&
+                      thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
+                    false
+                  )
+                }
+              })
             }
           })
         })
@@ -242,12 +247,25 @@ export default class FormeoRenderer {
       : this.renderedForm.querySelector(`#f-${componentId}`)
     return component
   }
+
+  getComponents = address => {
+    const components = []
+    const componentId = address.slice(address.indexOf('.') + 1)
+
+    if (isExternalAddress(address)) {
+      components.push(this.external[componentId])
+    } else {
+      components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`))
+    }
+
+    return components
+  }
 }
 
 const LISTEN_TYPE_MAP = component => {
   const typesMap = [
     ['input', c => ['textarea', 'text'].includes(c.type)],
-    ['change', c => ['select'].includes(c.tagName) || ['checkbox', 'radio'].includes(c.type)],
+    ['change', c => ['select'].includes(c.tagName.toLowerCase()) || ['checkbox', 'radio'].includes(c.type)],
   ]
 
   const [listenerEvent] = typesMap.find(typeMap => typeMap[1](component)) || [false]
