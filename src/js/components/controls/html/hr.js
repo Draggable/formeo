@@ -14,6 +14,9 @@ class HRControl extends Control {
         icon: 'divider',
         id: 'divider',
       },
+      attrs: {
+        className: '',
+      }
     }
     super(hrConfig)
   }
