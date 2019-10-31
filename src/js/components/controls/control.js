@@ -10,7 +10,6 @@ export default class Control {
   constructor({ events = {}, dependencies = {}, ...restConfig } = {}) {
     this.events = events
     this.controlData = restConfig
-    this.controlData.attrs = Object.assign({}, this.controlData.attrs, {hidden: false});
     this.depsLoaded = this.fetchDependencies(dependencies)
   }
 
