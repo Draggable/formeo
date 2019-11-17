@@ -1,24 +1,23 @@
-const { resolve } = require('path')
-const { BannerPlugin, DefinePlugin } = require('webpack')
-const autoprefixer = require('autoprefixer')
-const CompressionPlugin = require('compression-webpack-plugin')
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-const CleanWebpackPlugin = require('clean-webpack-plugin')
-const CopyWebpackPlugin = require('copy-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
-const { default: mi18n } = require('mi18n')
-const { languageFiles, enUS } = require('formeo-i18n')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const { IS_PRODUCTION, ANALYZE, projectRoot, outputDir, devtool, bannerTemplate, version } = require('./build-vars')
+const path = require('path');
+const { BannerPlugin, DefinePlugin } = require('webpack');
+const autoprefixer = require('autoprefixer');
+const CompressionPlugin = require('compression-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
+const { enUS } = require('formeo-i18n');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const { IS_PRODUCTION, ANALYZE, projectRoot, outputDir, devtool, bannerTemplate } = require('./build-vars');
 
 // hack for Ubuntu on Windows
 try {
-  require('os').networkInterfaces()
+  require('os').networkInterfaces();
 } catch (e) {
-  require('os').networkInterfaces = () => ({})
+  require('os').networkInterfaces = () => ({});
 }
 
 const copyPatterns = [
@@ -28,7 +27,7 @@ const copyPatterns = [
     to: 'demo/assets/lang/',
     context: require.resolve('formeo-i18n').replace(/main.min.js$/, 'lang/'),
   },
-]
+];
 
 const plugins = [
   new CleanWebpackPlugin(['dist/*', 'demo/*'], { root: projectRoot }),
@@ -40,25 +39,10 @@ const plugins = [
   }),
   new CopyWebpackPlugin(copyPatterns),
   new HtmlWebpackPlugin({
-    isProduction: IS_PRODUCTION,
-    devPrefix: IS_PRODUCTION ? '' : 'dist/demo/',
     template: '../src/demo/index.html',
-    filename: '../demo/index.html',
-    formeo: IS_PRODUCTION ? 'assets/js/formeo.min.js' : 'dist/formeo.min.js',
-    demo: 'assets/js/demo.min.js',
-    alwaysWriteToDisk: true,
-    inject: false,
-    langFiles: Object.entries(languageFiles).map(([locale, val]) => {
-      const lang = mi18n.processFile(val)
-      return {
-        locale,
-        dir: lang.dir,
-        nativeName: lang[locale],
-      }
-    }),
-    version,
+    filename: path.join(__dirname, '../demo/index.html'),
   }),
-  new HtmlWebpackHarddiskPlugin({ outputPath: './demo/' }),
+  new HtmlWebpackHarddiskPlugin({ outputPath: path.join(__dirname, '../demo/') }),
   new MiniCssExtractPlugin({
     moduleFilename: ({ name }) => `${name.replace('/js/', '/css/')}.min.css`,
   }),
@@ -70,16 +54,16 @@ const plugins = [
     threshold: 10240,
     minRatio: 0.8,
   }),
-]
+];
 
 const entry = {
-  'dist/formeo': resolve(__dirname, '../src/js/index.js'),
-  'demo/assets/js/demo': resolve(__dirname, '../src/demo/js/demo.js'),
-}
+  dist: path.resolve(__dirname, '../src/js/index.js'),
+  demo: path.resolve(__dirname, '../src/demo/js/demo.js'),
+};
 
 if (IS_PRODUCTION) {
-  entry['demo/assets/js/formeo'] = resolve(__dirname, '../src/js/index.js')
-}
+  entry.demo = path.resolve(__dirname, '../src/js/index.js')
+};
 
 const extractTextLoader = !IS_PRODUCTION
   ? {
@@ -88,15 +72,15 @@ const extractTextLoader = !IS_PRODUCTION
         sourceMap: !IS_PRODUCTION,
       },
     }
-  : MiniCssExtractPlugin.loader
+  : MiniCssExtractPlugin.loader;
 
 const webpackConfig = {
   mode: IS_PRODUCTION ? 'production' : 'development',
   context: outputDir,
   entry,
   output: {
-    path: projectRoot,
-    publicPath: '/dist',
+    path: `${projectRoot}/${IS_PRODUCTION ? 'dist' : 'demo'}`,
+    // publicPath: `/${IS_PRODUCTION ? 'dist' : 'demo'}`,
     filename: `[name].min.js`,
     libraryTarget: 'umd',
   },
@@ -163,19 +147,19 @@ const webpackConfig = {
     ],
   },
   resolve: {
-    modules: [resolve(__dirname, 'src'), 'node_modules'],
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     extensions: ['.js', '.scss'],
     symlinks: true,
   },
   devServer: {
     inline: true,
-    contentBase: 'demo/',
+    contentBase: path.join(__dirname, '../demo'),
     noInfo: true,
   },
-}
+};
 
 if (ANALYZE) {
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
-}
+};
 
-module.exports = webpackConfig
+module.exports = webpackConfig;

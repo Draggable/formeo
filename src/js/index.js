@@ -1,12 +1,12 @@
-import Editor from './editor'
-import Renderer from './renderer'
+import Editor from './editor';
+import Renderer from './renderer';
 
 if (window !== undefined) {
-  window.FormeoEditor = Editor
-  window.FormeoRenderer = Renderer
+  window.FormeoEditor = Editor;
+  window.FormeoRenderer = Renderer;
 }
 
-export const FormeoEditor = Editor
-export const FormeoRenderer = Renderer
+export const FormeoEditor = Editor;
+export const FormeoRenderer = Renderer;
 
-export default { FormeoEditor, FormeoRenderer }
+export default { FormeoEditor, FormeoRenderer };
