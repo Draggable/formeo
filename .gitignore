@@ -5,3 +5,4 @@ demo
 dist
 yarn-error.log
 .vscode
+.idea/
