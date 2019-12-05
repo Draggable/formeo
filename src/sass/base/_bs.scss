@@ -2,11 +2,28 @@
   border-radius: 50px;
 }
 
-hr {
+.formeo-divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
   margin-top: 1rem;
   margin-bottom: 1rem;
-  border: 0;
-  border-top: 1px solid $gray-lighter;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid $gray-lighter;
+  }
+
+  &.formeo-divider--has-text {
+    &::before {
+      margin-right: .25em;
+    }
+
+    &::after {
+      margin-left: .25em;
+    }
+  }
 }
 
 .f-field-group {

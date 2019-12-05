@@ -1,3 +1,6 @@
+import isNil from 'lodash/fp/isNil';
+import get from 'lodash/get';
+import classnames from 'classnames';
 import i18n from 'mi18n'
 import startCase from 'lodash/startCase'
 import throttle from 'lodash/throttle'
@@ -134,24 +137,33 @@ export default class Field extends Component {
    * wrapper for Data.set
    */
   set(...args) {
-    const [path, value] = args
+    const [path, value] = args;
+    const data = super.set(path, value);
+    this.updatePreview();
 
-    const data = super.set(path, value)
-    this.updatePreview()
-
-    return data
+    return data;
   }
 
   /**
    * Update the label dom when label data changes
    */
   updateLabel() {
-    if (!this.label) {
+    if (isNil(this.label)) {
       return null
     }
     const newLabel = dom.create(this.labelConfig)
     this.label.parentElement.replaceChild(newLabel, this.label)
     this.label = newLabel
+  }
+
+  updateInnerHtml() {
+    if (this.data.meta.id !== 'divider') return;
+
+    this.data.attrs.className = classnames('formeo-divider', {
+      'formeo-divider--has-text': get(this.data, 'options[0].innerHTML') !== '',
+    });
+
+    this.data.innerHTML = this.data.options[0].innerHTML;
   }
 
   /**
@@ -176,13 +188,13 @@ export default class Field extends Component {
    */
   updatePreview = throttle(
     () => {
-      if (!this.preview.parentElement) {
-        return null
-      }
-      this.updateLabel()
-      const newPreview = dom.create(this.fieldPreview(), true)
-      this.preview.parentElement.replaceChild(newPreview, this.preview)
-      this.preview = newPreview
+      if (!this.preview.parentElement) return null;
+
+      this.updateInnerHtml();
+      this.updateLabel();
+      const newPreview = dom.create(this.fieldPreview(), true);
+      this.preview.parentElement.replaceChild(newPreview, this.preview);
+      this.preview = newPreview;
     },
     ANIMATION_SPEED_BASE,
     { leading: false }
