@@ -54,7 +54,10 @@ export default class Component extends Data {
         if (isInt(delItem)) {
           parent.splice(Number(delItem), 1)
         } else {
-          this.set(delPath, parent.filter(item => item !== delItem))
+          this.set(
+            delPath,
+            parent.filter(item => item !== delItem)
+          )
         }
       } else {
         delete parent[delItem]
@@ -590,11 +593,12 @@ export default class Component extends Data {
     this.children.forEach(child => child && child.clone(toParent))
   }
 
-  createChildWrap = () =>
+  createChildWrap = children =>
     dom.create({
       tag: 'ul',
       attrs: {
         className: 'children',
       },
+      children,
     })
 }

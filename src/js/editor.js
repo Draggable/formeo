@@ -118,12 +118,13 @@ export class FormeoEditor {
   render() {
     const _this = this
     const controls = this.controls.dom
+    this.stages = Object.values(Components.get('stages'))
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',
         id: _this.formId,
       },
-      content: [Object.values(Components.get('stages')).map(({ dom }) => dom), controls],
+      content: [this.stages.map(({ dom }) => dom), controls],
     }
 
     if (i18n.current.dir) {
