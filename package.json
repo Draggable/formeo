@@ -84,7 +84,6 @@
     "start:demo": "cross-env NODE_ENV=development webpack-dev-server --mode development --open --config tools/webpack.config --copy",
     "semantic-release": "semantic-release --ci --debug",
     "travis-deploy-once": "travis-deploy-once --pro",
-    "prepare": "npm --prefix ./node_modules/mini-css-extract-plugin install ./node_modules/mini-css-extract-plugin && npm run --prefix ./node_modules/mini-css-extract-plugin build",
     "prepush": "yarn test",
     "defaults": "webpack-defaults"
   },
@@ -132,7 +131,7 @@
     "lint-staged": "7.3.0",
     "lodash": "^4.17.11",
     "mi18n": "^0.4.8",
-    "mini-css-extract-plugin": "webpack-contrib/mini-css-extract-plugin#master",
+    "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.11.0",
     "npm-run-all": "^4.1.5",
     "optimize-css-assets-webpack-plugin": "5.0.1",
