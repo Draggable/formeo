@@ -1,3 +1,16 @@
+# [1.2.0](https://github.com/Draggable/formeo/compare/v1.1.3...v1.2.0) (2020-02-23)
+
+
+### Bug Fixes
+
+* Fixed conditional logic for CHECKBOX ([a521730](https://github.com/Draggable/formeo/commit/a5217302978b3f39a017f93fa238c43757e3cf68))
+* Fixed conditional logic for SELECT and RADIO ([45f2440](https://github.com/Draggable/formeo/commit/45f24402cff13df215ec0f44d8461d832300adbd))
+
+
+### Features
+
+* Added ability to mark control as hidden ([106b4e8](https://github.com/Draggable/formeo/commit/106b4e844c200de52da0ba91c5f4df898feeb93f))
+
 ## [1.1.3](https://github.com/Draggable/formeo/compare/v1.1.2...v1.1.3) (2020-02-23)
 
 
