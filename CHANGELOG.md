@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/Draggable/formeo/compare/v1.1.2...v1.1.3) (2020-02-23)
+
+
+### Bug Fixes
+
+* **npm:** remove npm-prepare script ([65fc364](https://github.com/Draggable/formeo/commit/65fc364c21bb12e2d0ff4ae10a9daddfe4ecb83d))
+
 ## [1.1.2](https://github.com/Draggable/formeo/compare/v1.1.1...v1.1.2) (2019-06-19)
 
 
