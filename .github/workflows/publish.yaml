@@ -1,0 +1,36 @@
+name: Publish
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Nodejs ${{ matrix.node }}
+        uses: actions/setup-node@v1
+      - name: Install dependencies
+        env:
+          CI: true
+        run: npm install
+      - name: Build the plugin
+        run: npm run build
+      - name: Publish the plugin
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
+      - name: Deploy the Demo - https://draggable.github.io/formeo/
+        if: success()
+        env:
+          GH_PAT: ${{ secrets.GH_TOKEN }}
+          BUILD_DIR: demo/
+        uses: maxheld83/ghpages@v0.2.1
