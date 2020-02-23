@@ -30,6 +30,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
+      - name: Build the new version for the demo
+        if: success()
+        run: npm run build
       - name: Deploy - https://draggable.github.io/formeo/
         if: success()
         env:
