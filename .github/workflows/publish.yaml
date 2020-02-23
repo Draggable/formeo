@@ -19,9 +19,11 @@ jobs:
         env:
           CI: true
         run: npm install
-      - name: Build the plugin
+      - name: Test
+        run: npm test
+      - name: Build
         run: npm run build
-      - name: Publish the plugin
+      - name: Publish
         if: success()
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
