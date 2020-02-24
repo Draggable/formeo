@@ -7,6 +7,8 @@ const defaults = {
   type: 'field',
 }
 
+const getTransition = val => ({ transform: `translateX(${val}px)` })
+
 /**
  * Edit and control sliding panels
  */
@@ -201,7 +203,8 @@ export default class Panels {
     const firstControlNav = this.labels.querySelector('.panel-labels').firstChild
     const siblingGroups = this.currentPanel.parentElement.childNodes
     let index = indexOfNode(this.currentPanel, groupParent)
-    let offset = {}
+    let offset = { nav: 0, panel: 0 }
+    let lastOffset = { ...offset }
 
     const groupChange = newIndex => {
       const labels = this.labels.querySelector('.panel-labels div').children
@@ -211,20 +214,43 @@ export default class Panels {
       this.currentPanel.classList.add('active-panel')
 
       labels[newIndex].classList.add('active-tab')
-      this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
-      // if (this.opts.type === 'field') {
-      //   this.slideToggle.style.height = 'auto'
-      // }
       return this.currentPanel
     }
 
-    const translateX = offset => {
-      if (_this.panelDisplay !== 'tabbed') {
-        firstControlNav.style.transform = `translateX(-${offset.nav}px)`
-      } else {
+    const translateX = (offset, reset) => {
+      if (_this.panelDisplay === 'tabbed') {
         firstControlNav.removeAttribute('style')
+        const { transform } = getTransition(offset.panel)
+        groupParent.style.transform = transform
+        return null
       }
-      groupParent.style.transform = `translateX(-${offset.panel}px)`
+
+      const panelQueue = [getTransition(lastOffset.panel), getTransition(offset.panel)]
+      const navQueue = [getTransition(lastOffset.nav), getTransition(offset.nav)]
+
+      if (reset) {
+        const [panelStart] = panelQueue
+        const [navStart] = navQueue
+        panelQueue.push(panelStart)
+        navQueue.push(navStart)
+      }
+
+      const animationOptions = {
+        easing: 'ease-in-out',
+        duration: 150,
+        fill: 'forwards',
+      }
+
+      const panelTransition = groupParent.animate(panelQueue, animationOptions)
+      firstControlNav.animate(navQueue, animationOptions)
+      const handleFinish = () => {
+        this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
+        panelTransition.removeEventListener('finish', handleFinish)
+        if (!reset) {
+          lastOffset = offset
+        }
+      }
+      panelTransition.addEventListener('finish', handleFinish)
     }
 
     action.refresh = newIndex => {
@@ -234,8 +260,8 @@ export default class Panels {
       }
       _this.resizePanels()
       offset = {
-        nav: firstControlNav.offsetWidth * index,
-        panel: groupParent.offsetWidth * index,
+        nav: -firstControlNav.offsetWidth * index,
+        panel: -groupParent.offsetWidth * index,
       }
       translateX(offset)
     }
@@ -247,27 +273,19 @@ export default class Panels {
     action.nextGroup = () => {
       const newIndex = index + 1
       if (newIndex !== siblingGroups.length) {
+        const curPanel = groupChange(newIndex)
         offset = {
-          nav: firstControlNav.offsetWidth * newIndex,
-          panel: groupParent.offsetWidth * newIndex,
+          nav: -firstControlNav.offsetWidth * newIndex,
+          panel: -curPanel.offsetLeft,
         }
         translateX(offset)
-        groupChange(newIndex)
         index++
       } else {
-        const origOffset = {
-          nav: firstControlNav.style.transform,
-          panel: groupParent.style.transform,
-        }
         offset = {
-          nav: firstControlNav.offsetWidth * index + 10,
-          panel: groupParent.offsetWidth * index + 10,
+          nav: lastOffset.nav - 8,
+          panel: lastOffset.panel - 8,
         }
-        translateX(offset)
-        setTimeout(() => {
-          firstControlNav.style.transform = origOffset.nav
-          groupParent.style.transform = origOffset.panel
-        }, 150)
+        translateX(offset, true)
       }
 
       return this.currentPanel
@@ -276,22 +294,19 @@ export default class Panels {
     action.prevGroup = () => {
       if (index !== 0) {
         const newIndex = index - 1
+        const curPanel = groupChange(newIndex)
         offset = {
-          nav: firstControlNav.offsetWidth * newIndex,
-          panel: groupParent.offsetWidth * newIndex,
+          nav: -firstControlNav.offsetWidth * newIndex,
+          panel: -curPanel.offsetLeft,
         }
         translateX(offset)
-        groupChange(newIndex)
         index--
       } else {
-        const curTranslate = [firstControlNav.style.transform, groupParent.style.transform]
-        const nudge = 'translateX(10px)'
-        firstControlNav.style.transform = nudge
-        groupParent.style.transform = nudge
-        setTimeout(() => {
-          firstControlNav.style.transform = curTranslate[0]
-          groupParent.style.transform = curTranslate[1]
-        }, 150)
+        offset = {
+          nav: 8,
+          panel: 8,
+        }
+        translateX(offset, true)
       }
     }
 

@@ -71,7 +71,7 @@
 
   .panels {
     white-space: nowrap;
-    transition-property: transform, height;
+    transition-property: height;
     transition-duration: 150ms;
     transition-timing-function: ease-in-out;
     will-change: transform;
@@ -85,8 +85,6 @@
     text-align: center;
 
     div {
-      transition: transform 150ms ease-in-out;
-      will-change: transform;
       white-space: nowrap;
     }
   }
