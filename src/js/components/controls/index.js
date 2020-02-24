@@ -269,8 +269,8 @@ export class Controls {
     const _this = this
     const groupedFields = this.groupElements()
     const formActions = this.formActions()
-    _this.panels = new Panels({ panels: groupedFields, type: 'controls' })
-    const groupsWrapClasses = ['control-groups', 'panels-wrap', `panel-count-${groupedFields.length}`]
+    _this.panels = new Panels({ panels: groupedFields, type: 'controls', displayType: 'slider' })
+    const groupsWrapClasses = ['control-groups', 'formeo-panels-wrap', `panel-count-${groupedFields.length}`]
     const groupsWrap = dom.create({
       className: groupsWrapClasses,
       content: _this.panels.children,

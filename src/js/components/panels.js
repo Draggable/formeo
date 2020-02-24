@@ -2,7 +2,6 @@ import i18n from 'mi18n'
 import Sortable from 'sortablejs'
 import h, { indexOfNode } from '../common/helpers'
 import dom from '../common/dom'
-// import Fields from './fields'
 
 const defaults = {
   type: 'field',
@@ -27,11 +26,8 @@ export default class Panels {
     this.panels = panels.childNodes
     this.currentPanel = _this.panels[0]
     this.nav = _this.navActions()
-    // if (_this.opts.type === 'field') {
-    //   setTimeout(_this.setPanelsHeight.bind(_this), 100)
-    // }
 
-    this.panelDisplay = 'slider'
+    this.panelDisplay = this.opts.displayType || 'slider'
 
     return {
       children: [_this.labels, panels],
@@ -50,8 +46,9 @@ export default class Panels {
     const panelsWrap = this.panelsWrap
     const column = panelsWrap.parentElement.parentElement
     const width = parseInt(dom.getStyle(column, 'width'))
-    const isTabbed = width > 390
-    this.panelDisplay = isTabbed ? 'tabbed' : 'slider'
+    const autoDisplayType = width > 390 ? 'tabbed' : 'slider'
+    this.panelDisplay = this.opts.displayType || autoDisplayType
+    const isTabbed = this.panelDisplay === 'tabbed'
     panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed)
     const panelStyle = panelsWrap.style
     const activePanelHeight = dom.getStyle(this.currentPanel, 'height')
@@ -61,27 +58,6 @@ export default class Panels {
     panelStyle.height = activePanelHeight
     return activePanelHeight
   }
-
-  /**
-   * Set panel height so we can animate it with css
-   */
-  // setPanelsHeight() {
-  //   const field = Fields.get(this.opts.id).dom
-  //   this.slideToggle = field.querySelector('.field-edit')
-
-  //   // temp styles
-  //   this.slideToggle.style.display = 'block'
-  //   this.slideToggle.style.position = 'absolute'
-  //   this.slideToggle.style.opacity = 0
-
-  //   this.resizePanels()
-
-  //   // reset styles
-  //   this.slideToggle.style.display = 'none'
-  //   this.slideToggle.style.position = 'relative'
-  //   this.slideToggle.style.opacity = 1
-  //   this.slideToggle.style.height = 'auto'
-  // }
 
   /**
    * Wrap a panel and make properties sortable
@@ -132,17 +108,6 @@ export default class Panels {
       }
     })
   }
-
-  /**
-   * Save a fields' property
-   * @param  {Object} group property group
-   * @return {Object}       DOM node for updated property preview
-   */
-  // propertySave(group) {
-  //   const field = dom.fields.get(this.opts.id)
-  //   data.save(group.editGroup, group, false)
-  //   return field.instance.updatePreview()
-  // }
 
   /**
    * Panel navigation, tabs and arrow buttons for slider

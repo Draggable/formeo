@@ -200,7 +200,7 @@ export default class Field extends Component {
     const allowedPanels = panelOrder.filter(panelName => !noPanels.includes(panelName))
 
     const fieldEdit = {
-      className: ['field-edit', 'slide-toggle', 'panels-wrap'],
+      className: ['field-edit', 'slide-toggle', 'formeo-panels-wrap'],
     }
 
     allowedPanels.forEach(panelName => {
@@ -252,7 +252,7 @@ export default class Field extends Component {
     prevData.id = `prev-${this.id}`
 
     if (this.data.config.editableContent) {
-      prevData.attrs = Object.assign({}, prevData.attrs, {contenteditable: true})
+      prevData.attrs = Object.assign({}, prevData.attrs, { contenteditable: true })
     }
 
     const fieldPreview = {

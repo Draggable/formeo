@@ -55,11 +55,12 @@
       &.prev-group {
         border-top-left-radius: $border-radius;
         border-bottom-left-radius: 0;
+        left: 0;
       }
     }
   }
 
-  .panels-wrap {
+  .formeo-panels-wrap {
     font-size: 0.85em;
     line-height: 1.8em;
   }
