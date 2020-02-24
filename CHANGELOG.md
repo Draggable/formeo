@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/Draggable/formeo/compare/v1.2.0...v1.2.1) (2020-02-24)
+
+
+### Bug Fixes
+
+* nested styles prevent external controls ([611cfa3](https://github.com/Draggable/formeo/commit/611cfa3dd328a92133ed5e0f875deaf8e7869ca2))
+* panel css transition ([2a8fa8d](https://github.com/Draggable/formeo/commit/2a8fa8d0d9fb3f747b69d8b8620dfdcfd1101e5b))
+
 # [1.2.0](https://github.com/Draggable/formeo/compare/v1.1.3...v1.2.0) (2020-02-23)
 
 
