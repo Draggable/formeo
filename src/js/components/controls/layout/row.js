@@ -1,5 +1,6 @@
 export const rowControl = {
   config: {
+    hideLabel: true,
     label: 'row',
   },
   meta: {
