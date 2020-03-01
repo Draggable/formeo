@@ -289,7 +289,8 @@ export class Controls {
 
     this.dom = element
     this.groups = groups
-    this.currentGroup = groups[0]
+    const [firstGroup] = groups
+    this.currentGroup = firstGroup
 
     this.actions = {
       filter: term => {
@@ -396,7 +397,8 @@ export class Controls {
 
   applyOptions = (controlOptions = {}) => {
     this.options = {}
-    const { groupOrder = [], elements = [] } = controlOptions
+    const { groupOrder = [], elements = [], container } = controlOptions
+    this.container = container
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.options = merge(this.defaults, controlOptions)
     this.options.elements = elements.concat(defaultElements)
