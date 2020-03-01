@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/Draggable/formeo/compare/v1.2.1...v1.2.2) (2020-03-01)
+
+
+### Bug Fixes
+
+* control container option ([a366616](https://github.com/Draggable/formeo/commit/a366616198d7eea790f26f7dfc383fe5f51902ce))
+
 ## [1.2.1](https://github.com/Draggable/formeo/compare/v1.2.0...v1.2.1) (2020-02-24)
 
 
