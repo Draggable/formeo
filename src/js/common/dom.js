@@ -780,10 +780,6 @@ class DOM {
       document.dispatchEvent(events.columnResized)
     })
 
-    // fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh())
-
-    // setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
-
     dom.updateColumnPreset(row)
   }
 
