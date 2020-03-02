@@ -139,7 +139,6 @@
     "raw-loader": "^2.0.0",
     "sass-loader": "7.0.1",
     "semantic-release": "^15.13.4",
-    "sortablejs": "1.4.2",
     "style-loader": "0.21.0",
     "svg-sprite": "^1.5.0",
     "travis-deploy-once": "^5.0.11",
@@ -151,7 +150,9 @@
     "webpack-dev-server": "^3.4.1"
   },
   "engines": {},
-  "dependencies": {},
+  "dependencies": {
+    "sortablejs": "1.10.2"
+  },
   "lint-staged": {
     "src/**/*.js": [
       "prettier --config package.json --write",
