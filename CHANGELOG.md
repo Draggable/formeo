@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/Draggable/formeo/compare/v1.2.2...v1.2.3) (2020-03-02)
+
+
+### Bug Fixes
+
+* column drop position ([9c2d83d](https://github.com/Draggable/formeo/commit/9c2d83d05cb09b7df216985786ba67b048c44834))
+
 ## [1.2.2](https://github.com/Draggable/formeo/compare/v1.2.1...v1.2.2) (2020-03-01)
 
 
