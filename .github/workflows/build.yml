@@ -1,0 +1,23 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [12]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Nodejs ${{ matrix.node }}
+        uses: actions/setup-node@v1
+      - name: Install dependencies
+        env:
+          CI: true
+        run: npm install
+      - name: Build
+        run: npm run build
