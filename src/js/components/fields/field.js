@@ -158,7 +158,7 @@ export default class Field extends Component {
    * Updates the conditions panel when linked field data changes
    */
   updateConditionsPanel = () => {
-    setTimeout(() => {
+    const updateConditionsTimeout = setTimeout(() => {
       const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
       if (!newConditionsPanel) {
         return null
@@ -166,6 +166,7 @@ export default class Field extends Component {
       const newProps = newConditionsPanel.createProps()
       const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
       currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
+      clearTimeout(updateConditionsTimeout)
     }, ANIMATION_SPEED_BASE)
   }
 
