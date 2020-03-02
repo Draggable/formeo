@@ -54,10 +54,7 @@ export default class Component extends Data {
         if (isInt(delItem)) {
           parent.splice(Number(delItem), 1)
         } else {
-          this.set(
-            delPath,
-            parent.filter(item => item !== delItem)
-          )
+          this.set(delPath, parent.filter(item => item !== delItem))
         }
       } else {
         delete parent[delItem]
@@ -321,12 +318,11 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd({ from, to, item }) {
+  onAdd({ from, to, item, newIndex }) {
     const _this = this
     if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
       from = from.parentElement
     }
-    const newIndex = indexOfNode(item, to)
     const fromType = componentType(from)
     const toType = componentType(to.parentElement)
     const defaultOnAdd = () => {
@@ -400,7 +396,7 @@ export default class Component extends Data {
           column: 1,
         }
         const action = (depthMap.get(targets[toType]) || identity)()
-        return action && action(item.id)
+        return action && action({ id: item.id }, newIndex)
       },
       column: () => {
         const targets = {

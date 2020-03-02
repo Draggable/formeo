@@ -5,7 +5,7 @@ import dom from '../../common/dom'
 import events from '../../common/events'
 import { bsGridRegEx } from '../../common/helpers'
 import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE, COLUMN_CLASSNAME } from '../../constants'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_FAST, COLUMN_CLASSNAME } from '../../constants'
 import { removeCustomOption } from '../columns/events'
 
 const DEFAULT_DATA = () =>
@@ -194,7 +194,10 @@ export default class Row extends Component {
       column.set('config.width', newColWidth)
       colDom.style.width = newColWidth
       colDom.dataset.colWidth = newColWidth
-      setTimeout(column.refreshFieldPanels, ANIMATION_SPEED_BASE)
+      const refreshTimeout = setTimeout(() => {
+        clearTimeout(refreshTimeout)
+        column.refreshFieldPanels()
+      }, ANIMATION_SPEED_FAST)
       document.dispatchEvent(events.columnResized)
     })
     this.updateColumnPreset()
