@@ -1,8 +1,8 @@
 # Formeo
 
-A zero dependency JavaScript module for drag and drop form creation.
+A pure JavaScript module for drag and drop form creation.
 
-![npm](https://img.shields.io/npm/v/formeo.svg) ![GitHub](https://img.shields.io/github/license/Draggable/formeo.svg) [![Build Status](https://travis-ci.com/Draggable/formeo.svg?branch=master)](https://travis-ci.com/Draggable/formeo)
+![npm](https://img.shields.io/npm/v/formeo.svg) ![GitHub](https://img.shields.io/github/license/Draggable/formeo.svg) [![build](https://github.com/Draggable/formeo/workflows/build/badge.svg)](https://github.com/Draggable/formeo/actions?query=workflow%3Abuild)
 
 ## [Demo](https://draggable.github.io/formeo/)
 
