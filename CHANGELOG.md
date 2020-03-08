@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/Draggable/formeo/compare/v1.2.3...v1.3.0) (2020-03-08)
+
+
+### Bug Fixes
+
+* column resizing ([9c8a800](https://github.com/Draggable/formeo/commit/9c8a80066e89c06d36fcf4319a3f88e393a38b27))
+
+
+### Features
+
+* add disable form actions option ([df59eae](https://github.com/Draggable/formeo/commit/df59eae3ecfea075894e7cbc20b000c36a338295))
+
 ## [1.2.3](https://github.com/Draggable/formeo/compare/v1.2.2...v1.2.3) (2020-03-02)
 
 
