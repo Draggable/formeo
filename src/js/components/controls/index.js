@@ -5,7 +5,7 @@ import actions from '../../common/actions'
 import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { match, unique, uuid } from '../../common/utils'
+import { match, unique, uuid, merge } from '../../common/utils'
 import Panels from '../panels'
 import Field from '../fields/field'
 import Control from './control'
@@ -379,7 +379,7 @@ export class Controls {
   }
 
   applyOptions = (controlOptions = {}) => {
-    const { container, elements, groupOrder, ...options } = { ...defaultOptions, controlOptions }
+    const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions, { mergeArray: true })
     this.container = container
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.elements = elements.concat(defaultElements)
