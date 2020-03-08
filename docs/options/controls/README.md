@@ -2,14 +2,15 @@
 
 Control options can be used to disable, extend and modify the Formeo's control panel.
 
-| Option                        | Type   | Description                                                                         | Example                                      | Default                        |
-| ----------------------------- | ------ | ----------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------ |
-| [sortable](#sortable)         | String | allow controls to be reordered by users                                             | `true`                                       | `false`                        |
-| [disable](#disable)           | Object | disable built-in elements or groups                                                 | `{elements: ['number']}`                     | `{}`                           |
-| [elements](#elements)         | Array  | define custom elements                                                              | [see below](#elements)                       | `[]`                           |
-| [elementOrder](#elementOrder) | Object | set order of elements in a group                                                    | `{html: ['header', 'paragraph', 'divider']}` | `[]`                           |
-| [groups](#groups)             | Array  | define custom [control groups](../../controls/#control-groups) beyond the default 3 | [see below](#groups)                         | `[]`                           |
-| [groupOrder](#groupOrder)     | Array  | set order of [control groups](../../controls/#control-groups)                       | `['html', 'layout']`                         | `['common', 'html', 'layout']` |
+| Option                        | Type    | Description                                                                         | Example                                      | Default                        |
+| ----------------------------- | ------- | ----------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------ |
+| [sortable](#sortable)         | String  | allow controls to be reordered by users                                             | `true`                                       | `false`                        |
+| [disable](#disable)           | Object  | disable built-in elements or groups                                                 | `{elements: ['number']}`                     | `{}`                           |
+| [elements](#elements)         | Array   | define custom elements                                                              | [see below](#elements)                       | `[]`                           |
+| [elementOrder](#elementOrder) | Object  | set order of elements in a group                                                    | `{html: ['header', 'paragraph', 'divider']}` | `[]`                           |
+| [groups](#groups)             | Array   | define custom [control groups](../../controls/#control-groups) beyond the default 3 | [see below](#groups)                         | `[]`                           |
+| [groupOrder](#groupOrder)     | Array   | set order of [control groups](../../controls/#control-groups)                       | `['html', 'layout']`                         | `['common', 'html', 'layout']` |
+| [ghostPreview](#ghostPreview) | Boolean | use a live preview of the control when dragging                                     | `true`                                       | `false`                        |
 
 ## sortable
 
@@ -34,6 +35,7 @@ const controlOptions = {
   disable: {
     elements: ['number'],
     groups: ['layout'],
+    formActions: true, // cancel and save buttons will not be shown
   },
 }
 

@@ -11,6 +11,7 @@ import {
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
   CHILD_CLASSNAME_MAP,
+  bsColRegExp,
 } from '../constants'
 
 /**
@@ -110,7 +111,7 @@ class DOM {
         element.innerHTML += children
       },
       object: children => {
-        return element.appendChild(_this.create(children, isPreview))
+        return children && element.appendChild(_this.create(children, isPreview))
       },
       node: children => {
         return element.appendChild(children)
@@ -765,9 +766,8 @@ class DOM {
       return
     }
     const width = parseFloat((100 / columns.length).toFixed(1)) / 1
-    const bsGridRegEx = /\bcol-\w+-\d+/g
 
-    this.removeClasses(columns, bsGridRegEx)
+    this.removeClasses(columns, bsColRegExp)
     h.forEach(columns, column => {
       Columns.get(column.id).refreshFieldPanels()
 

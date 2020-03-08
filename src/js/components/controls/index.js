@@ -180,6 +180,9 @@ export class Controls {
    * @return {Object} form action buttons config
    */
   formActions() {
+    if (this.options.disable.formActions === true) {
+      return null
+    }
     const clearBtn = {
       ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
@@ -227,9 +230,15 @@ export class Controls {
         },
       },
     }
+
     const formActions = {
       className: 'form-actions f-btn-group',
-      content: [clearBtn, saveBtn],
+      content: Object.entries({ clearBtn, saveBtn }).reduce((acc, [key, value]) => {
+        if (!this.options.disable.formActions.includes(key)) {
+          acc.push(value)
+        }
+        return acc
+      }, []),
     }
 
     return formActions
@@ -255,14 +264,9 @@ export class Controls {
       controlClass += ' formeo-sticky'
     }
 
-    const content = [groupsWrap]
-    if (!this.options.disable.formActions) {
-      content.push(formActions)
-    }
-
     const element = dom.create({
       className: controlClass,
-      content,
+      content: [groupsWrap, formActions],
     })
     const groups = element.getElementsByClassName('control-group')
 
