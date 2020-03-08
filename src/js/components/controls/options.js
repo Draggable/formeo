@@ -22,7 +22,7 @@ const defaultOptions = Object.freeze({
   disable: {
     groups: [],
     elements: [],
-    formActions: true,
+    formActions: [],
   },
   elements: [],
   container: null,
