@@ -1,11 +1,12 @@
 import dom from '../../common/dom'
 import Components from '..'
 import { percent, numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME } from '../../constants'
+import { ROW_CLASSNAME, bsColRegExp } from '../../constants'
 import { map } from '../../common/helpers'
 
 const CUSTOM_COLUMN_OPTION_CLASSNAME = 'custom-column-widths'
 const COLUMN_PRESET_CLASSNAME = 'column-preset'
+const COLUMN_RESIZE_CLASSNAME = 'resizing-columns'
 
 /**
  * Handle column resizing
@@ -18,18 +19,17 @@ export function resize(evt) {
   const row = column.closest(`.${ROW_CLASSNAME}`)
   const rowStyle = dom.getStyle(row)
   const rowPadding = parseFloat(rowStyle.paddingLeft) + parseFloat(rowStyle.paddingRight)
+  evt.target.removeEventListener('pointerdown', resize)
 
   /**
    * Set the width before resizing so the column
    * does not resize near window edges
    * @param  {Object} evt
    */
-  resize.move = evt => {
-    let clientX
-    if (evt.type === 'touchmove') {
-      clientX = evt.touches[0].clientX
-    } else {
-      clientX = evt.clientX
+  resize.move = ({ touches, type, clientX }) => {
+    if (type === 'touchmove') {
+      const [firstTouch] = touches
+      clientX = firstTouch.clientX
     }
     const newColWidth = resize.colStartWidth + clientX - resize.startX
     const newSibWidth = resize.sibStartWidth - clientX + resize.startX
@@ -37,17 +37,19 @@ export function resize(evt) {
     const colWidthPercent = parseFloat(percent(newColWidth, resize.rowWidth))
     const sibWidthPercent = parseFloat(percent(newSibWidth, resize.rowWidth))
 
-    column.dataset.colWidth = numToPercent(colWidthPercent.toFixed(1))
-    sibling.dataset.colWidth = numToPercent(sibWidthPercent.toFixed(1))
+    const colWidth = numToPercent(colWidthPercent.toFixed(1))
+    const siblingColWidth = numToPercent(sibWidthPercent.toFixed(1))
 
-    column.style.width = numToPercent(colWidthPercent)
-    sibling.style.width = numToPercent(sibWidthPercent)
+    column.dataset.colWidth = colWidth
+    sibling.dataset.colWidth = siblingColWidth
+    column.style.width = colWidth
+    sibling.style.width = siblingColWidth
     resize.resized = true
   }
 
   resize.stop = function() {
-    window.removeEventListener('mousemove', resize.move)
-    window.removeEventListener('mouseup', resize.stop)
+    window.removeEventListener('pointermove', resize.move)
+    window.removeEventListener('pointerup', resize.stop)
     window.removeEventListener('touchmove', resize.move)
     window.removeEventListener('touchend', resize.stop)
     if (!resize.resized) {
@@ -55,37 +57,35 @@ export function resize(evt) {
     }
 
     setCustomWidthValue(row, resize.rowWidth)
-    row.classList.remove('resizing-columns')
+    row.classList.remove(COLUMN_RESIZE_CLASSNAME)
 
     Components.setAddress(`columns.${column.id}.config.width`, column.dataset.colWidth)
     Components.setAddress(`columns.${sibling.id}.config.width`, sibling.dataset.colWidth)
     resize.resized = false
   }
 
-  resize.start = (function(evt) {
-    if (evt.type === 'touchstart') {
-      resize.startX = evt.touches[0].clientX
-    } else {
-      resize.startX = evt.clientX
-    }
-    row.classList.add('resizing-columns')
+  if (evt.type === 'touchstart') {
+    const [firstTouch] = evt.touches
+    resize.startX = firstTouch.clientX
+  } else {
+    resize.startX = evt.clientX
+  }
+  row.classList.add(COLUMN_RESIZE_CLASSNAME)
 
-    // remove bootstrap column classes since we are custom sizing
-    const reg = /\bcol-\w+-\d+/g
-    column.className.replace(reg, '')
-    sibling.className.replace(reg, '')
+  // remove bootstrap column classes since we are custom sizing
+  column.className.replace(bsColRegExp, '')
+  sibling.className.replace(bsColRegExp, '')
 
-    // eslint-disable-next-line
-    resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width')
-    // eslint-disable-next-line
-    resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width')
-    resize.rowWidth = row.offsetWidth - rowPadding // compensate for padding
+  // eslint-disable-next-line
+  resize.colStartWidth = column.offsetWidth || dom.getStyle(column, 'width')
+  // eslint-disable-next-line
+  resize.sibStartWidth = sibling.offsetWidth || dom.getStyle(sibling, 'width')
+  resize.rowWidth = row.offsetWidth - rowPadding // compensate for padding
 
-    window.addEventListener('mouseup', resize.stop, false)
-    window.addEventListener('mousemove', resize.move, false)
-    window.addEventListener('touchend', resize.stop, false)
-    window.addEventListener('touchmove', resize.move, false)
-  })(evt)
+  window.addEventListener('pointerup', resize.stop, false)
+  window.addEventListener('pointermove', resize.move, false)
+  window.addEventListener('touchend', resize.stop, false)
+  window.addEventListener('touchmove', resize.move, false)
 }
 
 /**

@@ -3,9 +3,8 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import events from '../../common/events'
-import { bsGridRegEx } from '../../common/helpers'
 import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_FAST, COLUMN_CLASSNAME } from '../../constants'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_FAST, COLUMN_CLASSNAME, bsColRegExp } from '../../constants'
 import { removeCustomOption } from '../columns/events'
 
 const DEFAULT_DATA = () =>
@@ -187,7 +186,7 @@ export default class Row extends Component {
     const width = parseFloat((100 / columns.length).toFixed(1)) / 1
 
     columns.forEach(column => {
-      column.removeClasses(bsGridRegEx)
+      column.removeClasses(bsColRegExp)
       const colDom = column.dom
       const newColWidth = numToPercent(width)
 
