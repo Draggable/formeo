@@ -36,6 +36,7 @@ const controlOptions = {
     elements: ['number'],
     groups: ['layout'],
     formActions: true, // cancel and save buttons will not be shown
+    // formActions: ['clearBtn'], // only the clear button will be disabled
   },
 }
 
