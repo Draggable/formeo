@@ -379,7 +379,7 @@ export class Controls {
   }
 
   applyOptions = (controlOptions = {}) => {
-    const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions, { mergeArray: true })
+    const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions)
     this.container = container
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.elements = elements.concat(defaultElements)
