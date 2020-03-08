@@ -7,7 +7,7 @@ Control options can be used to disable, extend and modify the Formeo's control p
 | [sortable](#sortable)         | String | allow controls to be reordered by users                                             | `true`                                       | `false`                        |
 | [disable](#disable)           | Object | disable built-in elements or groups                                                 | `{elements: ['number']}`                     | `{}`                           |
 | [elements](#elements)         | Array  | define custom elements                                                              | [see below](#elements)                       | `[]`                           |
-| [elementOrder](#elementOrder) | Array  | set order of elements in a group                                                    | `{html: ['header', 'paragraph', 'divider']}` | `[]`                           |
+| [elementOrder](#elementOrder) | Object | set order of elements in a group                                                    | `{html: ['header', 'paragraph', 'divider']}` | `[]`                           |
 | [groups](#groups)             | Array  | define custom [control groups](../../controls/#control-groups) beyond the default 3 | [see below](#groups)                         | `[]`                           |
 | [groupOrder](#groupOrder)     | Array  | set order of [control groups](../../controls/#control-groups)                       | `['html', 'layout']`                         | `['common', 'html', 'layout']` |
 
@@ -33,8 +33,8 @@ Disable built-in elements or groups
 const controlOptions = {
   disable: {
     elements: ['number'],
-    groups: ['layout']
-  }
+    groups: ['layout'],
+  },
 }
 
 const formeoOptions = {
@@ -46,7 +46,7 @@ const formeo = new FormeoEditor(formeoOptions)
 
 ## elements
 
-Define a custom element. Does *not* remove existing elements.
+Define a custom element. Does _not_ remove existing elements.
 
 ```javascript
 const controlOptions = {
@@ -56,25 +56,28 @@ const controlOptions = {
       config: {
         label: 'Email',
         disabledAttrs: ['type'], // Attributes hidden from the user
-        lockedAttrs: [] // Attributes that cannot be deleted
+        lockedAttrs: [], // Attributes that cannot be deleted
       },
       meta: {
         group: 'common',
         id: 'email',
         icon: 'email', // Icon name in icon set
       },
-      attrs: { // actual attributes on the HTML element, and their default values
+      attrs: {
+        // actual attributes on the HTML element, and their default values
         type: 'email', // type field is important if tag==input
         name: 'email',
       },
-      options: [ // Used for element types like radio buttons
+      options: [
+        // Used for element types like radio buttons
         // {label: 'Option 1', value: 'opt1', selected: true}
       ],
     },
   ],
-  elementOrder: { // Must be set in conjunction or it may not appear in the group
-    common: ['email', /* ...rest of the elements */]
-  }
+  elementOrder: {
+    // Must be set in conjunction or it may not appear in the group
+    common: ['email' /* ...rest of the elements */],
+  },
 }
 
 const formeoOptions = {
@@ -91,8 +94,8 @@ Set the element order within a control group. May be overridden if [sortable](#s
 ```javascript
 const controlOptions = {
   elementOrder: {
-    html: ['header', 'paragraph', 'divider']
-  }
+    html: ['header', 'paragraph', 'divider'],
+  },
 }
 
 const formeoOptions = {
@@ -104,7 +107,7 @@ const formeo = new FormeoEditor(formeoOptions)
 
 ## groups
 
-Define a custom [control group](../../controls/#control-groups) beyond the default 3. Does *not* remove existing groups
+Define a custom [control group](../../controls/#control-groups) beyond the default 3. Does _not_ remove existing groups
 
 ```javascript
 const controlOptions = {
@@ -113,7 +116,7 @@ const controlOptions = {
       id: 'mygroup',
       label: 'My Amazing Group!',
       elementOrder: ['myelement'],
-    }
+    },
   ],
 }
 

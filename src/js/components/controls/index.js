@@ -1,7 +1,6 @@
 import Sortable from 'sortablejs'
 import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
-import merge from 'lodash/merge'
 import actions from '../../common/actions'
 import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
 import events from '../../common/events'
@@ -17,6 +16,7 @@ import Components, { Stages, Rows } from '..'
 import layoutControls from './layout'
 import formControls from './form'
 import htmlControls from './html'
+import defaultOptions from './options'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -27,32 +27,6 @@ export class Controls {
   constructor() {
     const _this = this
     this.data = new Map()
-    this.defaults = {
-      sortable: true,
-      elementOrder: {},
-      groups: [
-        {
-          id: 'layout',
-          label: 'controls.groups.layout',
-          elementOrder: ['row', 'column'],
-        },
-        {
-          id: 'common',
-          label: 'controls.groups.form',
-          elementOrder: ['button', 'checkbox'],
-        },
-        {
-          id: 'html',
-          label: 'controls.groups.html',
-          elementOrder: ['header', 'block-text'],
-        },
-      ],
-      disable: {
-        groups: [],
-        elements: [],
-      },
-      elements: [],
-    }
 
     this.controlEvents = {
       focus: ({ target }) => {
@@ -89,7 +63,7 @@ export class Controls {
    * @return {Array} elementControls
    */
   registerControls() {
-    this.controls = this.options.elements.map(Element => {
+    this.controls = this.elements.map(Element => {
       const isControl = typeof Element === 'function'
       const control = isControl ? new Element() : new Control(Element)
       const {
@@ -281,9 +255,14 @@ export class Controls {
       controlClass += ' formeo-sticky'
     }
 
+    const content = [groupsWrap]
+    if (!this.options.disable.formActions) {
+      content.push(formActions)
+    }
+
     const element = dom.create({
       className: controlClass,
-      content: [groupsWrap, formActions],
+      content,
     })
     const groups = element.getElementsByClassName('control-group')
 
@@ -396,12 +375,11 @@ export class Controls {
   }
 
   applyOptions = (controlOptions = {}) => {
-    this.options = {}
-    const { groupOrder = [], elements = [], container } = controlOptions
+    const { container, elements, groupOrder, ...options } = { ...defaultOptions, controlOptions }
     this.container = container
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
-    this.options = merge(this.defaults, controlOptions)
-    this.options.elements = elements.concat(defaultElements)
+    this.elements = elements.concat(defaultElements)
+    this.options = options
   }
 }
 
