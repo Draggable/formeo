@@ -1,3 +1,4 @@
+import '../../../../tools/__mocks__/ResizeObserver'
 import Field from './field'
 const fieldConfig = { id: 'test-id', config: {} }
 
