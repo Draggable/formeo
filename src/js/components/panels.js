@@ -54,17 +54,6 @@ export default class Panels {
     }
   }
 
-  get isTabbed() {
-    const panelsWrap = this.panelsWrap
-    const column = panelsWrap.parentElement.parentElement
-    const width = parseInt(dom.getStyle(column, 'width'))
-    const autoDisplayType = width > 390 ? 'tabbed' : 'slider'
-    this.panelDisplay = this.opts.displayType || autoDisplayType
-    const isTabbed = this.panelDisplay === 'tabbed'
-    panelsWrap.parentElement.classList.toggle('tabbed-panels', isTabbed)
-    return isTabbed
-  }
-
   toggleTabbedLayout = () => {
     const panelsWrap = this.panelsWrap
     const column = panelsWrap.parentElement.parentElement
