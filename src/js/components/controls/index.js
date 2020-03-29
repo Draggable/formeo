@@ -25,15 +25,14 @@ const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
  */
 export class Controls {
   constructor() {
-    const _this = this
     this.data = new Map()
 
     this.controlEvents = {
       focus: ({ target }) => {
         const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
-        return group && _this.panels.nav.refresh(indexOfNode(group))
+        return group && this.panels.nav.refresh(indexOfNode(group))
       },
-      click: ({ target }) => _this.addElement(target.parentElement.id),
+      click: ({ target }) => this.addElement(target.parentElement.id),
     }
   }
 
@@ -249,14 +248,14 @@ export class Controls {
    * @return {DOM}
    */
   buildDOM(sticky) {
-    const _this = this
     const groupedFields = this.groupElements()
     const formActions = this.formActions()
-    _this.panels = new Panels({ panels: groupedFields, type: 'controls', displayType: 'slider' })
+    const { displayType } = this.options.panels
+    this.panels = new Panels({ panels: groupedFields, type: 'controls', displayType })
     const groupsWrapClasses = ['control-groups', 'formeo-panels-wrap', `panel-count-${groupedFields.length}`]
     const groupsWrap = dom.create({
       className: groupsWrapClasses,
-      content: _this.panels.children,
+      content: [this.panels.panelNav, this.panels.panelsWrap],
     })
 
     let controlClass = 'formeo-controls'
@@ -303,7 +302,7 @@ export class Controls {
           filteredTerm.remove()
         }
       },
-      addElement: _this.addElement,
+      addElement: this.addElement,
       // @todo finish the addGroup method
       addGroup: group => console.log(group),
     }
@@ -324,7 +323,7 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
-        onRemove: _this.applyControlEvents,
+        onRemove: this.applyControlEvents,
         onStart: ({ item }) => {
           const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {

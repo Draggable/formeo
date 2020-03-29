@@ -26,6 +26,7 @@ const defaultOptions = Object.freeze({
   },
   elements: [],
   container: null,
+  panels: { displayType: 'slider' },
 })
 
 export default defaultOptions
