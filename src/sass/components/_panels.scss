@@ -83,10 +83,9 @@
     background: $white;
     overflow: hidden;
     text-align: center;
-
-    div {
-      white-space: nowrap;
-    }
+    white-space: nowrap;
+    border-top-left-radius: $input-border-radius;
+    border-top-right-radius: $input-border-radius;
   }
 }
 
@@ -97,10 +96,6 @@
     button {
       display: none;
     }
-  }
-
-  .panels {
-    transition: none;
   }
 
   .f-panel {
@@ -131,9 +126,4 @@
       }
     }
   }
-}
-
-.no-transition .panels,
-.no-transition .panel-labels div {
-  transition: none;
 }

@@ -216,19 +216,20 @@ export default class Field extends Component {
     const panelsData = {
       panels: this.editPanels.map(({ panelConfig }) => panelConfig),
       id: _this.id,
+      displayType: 'auto',
     }
 
     const editPanelLength = this.editPanels.length
 
     if (editPanelLength) {
-      const editPanels = (_this.panels = new Panels(panelsData))
+      this.panels = new Panels(panelsData)
       fieldEdit.className.push(`panel-count-${editPanelLength}`)
-      fieldEdit.content = editPanels.children
-      _this.panelNav = editPanels.nav
-      _this.resizePanelWrap = editPanels.action.resize
+      fieldEdit.content = [this.panels.panelNav, this.panels.panelsWrap]
+      this.panelNav = this.panels.nav
+      this.resizePanelWrap = this.panels.nav.refresh
       fieldEdit.action = {
         onRender: () => {
-          _this.resizePanelWrap()
+          this.resizePanelWrap()
           if (!editPanelLength) {
             const field = this.dom
             const editToggle = field.querySelector('.item-edit-toggle')

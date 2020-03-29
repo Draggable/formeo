@@ -23,6 +23,12 @@
     width: calc(100% - 2px);
   }
 
+  .tabbed-panels {
+    nav {
+      padding: 0;
+    }
+  }
+
   nav {
     position: relative;
     padding: 0 $action-btn-width;
