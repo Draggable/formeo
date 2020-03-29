@@ -51,7 +51,6 @@ export default class Panels {
     const autoDisplayType = width > 390 ? 'tabbed' : 'slider'
     const isAuto = this.opts.displayType === 'auto'
     this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults.displayType
-    console.log(autoDisplayType, this.panelDisplay)
     return this.panelDisplay
   }
 
