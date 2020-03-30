@@ -1,3 +1,12 @@
+# [1.4.0](https://github.com/Draggable/formeo/compare/v1.3.0...v1.4.0) (2020-03-30)
+
+
+### Features
+
+* **events:** component level updates ([503bd66](https://github.com/Draggable/formeo/commit/503bd6674a1dc2d0f37433825ef4970c0cecbec5))
+* configurable panel displayType option with auto fallback ([be66bc9](https://github.com/Draggable/formeo/commit/be66bc9492b18531a79b1ffbbb1dba1a3d6ac12c))
+* response panel ui ([433eee9](https://github.com/Draggable/formeo/commit/433eee9c22e40e0e7b6955589de348af9992fff4))
+
 # [1.3.0](https://github.com/Draggable/formeo/compare/v1.2.3...v1.3.0) (2020-03-08)
 
 
