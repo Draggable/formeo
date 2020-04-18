@@ -75,7 +75,7 @@ export default class Data {
   }
   getData = () => {
     return Object.entries(this.data).reduce((acc, [key, val]) => {
-      acc[key] = val.data ? val.getData() : val
+      acc[key] = val?.data ? val.getData() : val
       return acc
     }, {})
   }

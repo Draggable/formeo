@@ -40,7 +40,8 @@ export class Components extends Data {
     }
   }
 
-  load = (formData, opts = Object.create(null)) => {
+  load = (formData, opts = this.opts || Object.create(null)) => {
+    this.empty()
     if (typeof formData === 'string') {
       formData = JSON.parse(formData)
     }

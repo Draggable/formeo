@@ -68,7 +68,8 @@
     "comments": false,
     "plugins": [
       "@babel/plugin-proposal-object-rest-spread",
-      "@babel/plugin-proposal-class-properties"
+      "@babel/plugin-proposal-class-properties",
+      "@babel/plugin-proposal-optional-chaining"
     ]
   },
   "scripts": {
@@ -92,6 +93,7 @@
     "@babel/node": "^7.2.2",
     "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@babel/preset-env": "^7.4.2",
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-angular": "^7.5.0",

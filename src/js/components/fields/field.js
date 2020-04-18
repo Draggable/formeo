@@ -253,7 +253,7 @@ export default class Field extends Component {
     const prevData = clone(this.data)
     prevData.id = `prev-${this.id}`
 
-    if (this.data.config.editableContent) {
+    if (this.data?.config.editableContent) {
       prevData.attrs = Object.assign({}, prevData.attrs, { contenteditable: true })
     }
 
