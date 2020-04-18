@@ -21,7 +21,7 @@ export class FormeoEditor {
    * @param  {String|Object}   userFormData loaded formData
    * @return {Object}          formeo references and actions
    */
-  constructor(options, userFormData) {
+  constructor({ formData, ...options }, userFormData) {
     const _this = this
     const mergedOptions = merge(defaults.editor, options)
 
@@ -34,7 +34,7 @@ export class FormeoEditor {
     dom.setOptions = opts
     Components.config = config
 
-    this.userFormData = userFormData
+    this.userFormData = userFormData || formData
 
     this.Components = Components
     Events.init({ debug, ...events })
@@ -52,8 +52,8 @@ export class FormeoEditor {
   get formData() {
     return this.Components.formData
   }
-  set formData(data) {
-    return this.load(data, this.opts)
+  set formData(data = {}) {
+    return this.load({ ...this.userFormData, ...data }, this.opts)
   }
   get json() {
     return this.Components.json
@@ -110,7 +110,7 @@ export class FormeoEditor {
     _this.render()
   }
 
-  load(formData, opts = this.opts) {
+  load(formData = this.userFormData, opts = this.opts) {
     return this.Components.load(formData, opts)
   }
 
