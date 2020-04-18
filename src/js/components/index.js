@@ -106,7 +106,11 @@ export class Components extends Data {
   setAddress(address, value) {
     const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
     const componentType = type.replace(/s?$/, 's')
-    this[componentType].get(id).set(path, value)
+    const component = this[componentType].get(id)
+    if (component) {
+      component.set(path, value)
+    }
+    return component
   }
 
   /**
