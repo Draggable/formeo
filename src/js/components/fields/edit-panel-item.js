@@ -376,7 +376,7 @@ export default class EditPanelItem {
       return segmentTypes[key](val)
     }
 
-    console.error(`${key}: invalid confirguration`)
+    console.error(`${key}: invalid condition attribute`)
   }
 
   get itemControls() {
