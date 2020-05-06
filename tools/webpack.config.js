@@ -85,7 +85,7 @@ const extractTextLoader = !IS_PRODUCTION
   ? {
       loader: 'style-loader',
       options: {
-        sourceMap: true,
+        sourceMap: !IS_PRODUCTION,
       },
     }
   : MiniCssExtractPlugin.loader
@@ -126,7 +126,7 @@ const webpackConfig = {
             options: {
               camelCase: true,
               minimize: true,
-              sourceMap: true,
+              sourceMap: !IS_PRODUCTION,
             },
           },
           {
@@ -137,13 +137,13 @@ const webpackConfig = {
                   browsers: ['> 1%'],
                 }),
               ],
-              sourceMap: true,
+              sourceMap: !IS_PRODUCTION,
             },
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: true,
+              sourceMap: !IS_PRODUCTION,
             },
           },
         ],
@@ -157,7 +157,7 @@ const webpackConfig = {
       new UglifyJsPlugin({
         cache: true,
         parallel: true,
-        sourceMap: true,
+        sourceMap: !IS_PRODUCTION,
       }),
       new OptimizeCSSAssetsPlugin(),
     ],
