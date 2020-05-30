@@ -3,6 +3,7 @@ import NumberControl from './input.number'
 import TextAreaControl from './textarea'
 import TextControl from './input.text'
 import FileControl from './input.file'
+import EmailControl from './input.email'
 import SelectControl from './select'
 import CheckboxGroupControl from './checkbox-group'
 import RadioGroupControl from './radio-group'
@@ -17,6 +18,7 @@ export default [
   TextAreaControl,
   TextControl,
   FileControl,
+  EmailControl,
   SelectControl,
   CheckboxGroupControl,
   RadioGroupControl,

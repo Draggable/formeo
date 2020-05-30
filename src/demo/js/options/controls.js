@@ -5,24 +5,24 @@ const controls = {
     // elements: ['button'],
   },
   elements: [
-    {
-      tag: 'input',
-      config: {
-        label: 'Email',
-        disabledAttrs: ['type'],
-        lockedAttrs: ['required', 'className'],
-      },
-      meta: {
-        group: 'common',
-        id: 'email',
-        icon: '@',
-      },
-      attrs: {
-        className: 'custom-email',
-        type: 'email',
-        required: true,
-      },
-    },
+    // {
+    //   tag: 'input',
+    //   config: {
+    //     label: 'Email',
+    //     disabledAttrs: ['type'],
+    //     lockedAttrs: ['required', 'className'],
+    //   },
+    //   meta: {
+    //     group: 'common',
+    //     id: 'email',
+    //     icon: '@',
+    //   },
+    //   attrs: {
+    //     className: 'custom-email',
+    //     type: 'email',
+    //     required: true,
+    //   },
+    // },
     //     {
     //   tag: 'input',
     //   attrs: {
@@ -75,6 +75,7 @@ const controls = {
       'hidden',
       'upload',
       'number',
+      'email',
       'radio',
       'select',
       'text-input',
