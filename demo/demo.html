@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="chrome=1" />
+	<meta
+	name="viewport"
+	content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
+	/>
+	<link rel="stylesheet" type="text/css" href="assets/css/demo.min.css" />
+	<link href="../node_modules/@pnotify/core/dist/PNotify.css" rel="stylesheet" type="text/css" />
+	<link href="../node_modules/@pnotify/mobile/dist/PNotifyMobile.css" rel="stylesheet" type="text/css" />
+	<link href="../node_modules/@pnotify/core/dist/BrightTheme.css" rel="stylesheet" type="text/css" />
+	<title>Formeo</title>
+</head>
+<body>
+	<div class="site-wrap">
+		<section id="main_content" class="inner">
+			<form action="" method="post" enctype="multipart/form-data" id="save_form" class="inspection-template formeo-form">
+				<div class="row">
+					<div class="col-md-3">
+						<div class="form-group">
+							<label>Form Name <span class="text-red">*</span></label>
+							<input type="text" name="ft_title" id="ft_title" class="form-control" value="" required="true">
+						</div>
+					</div>	
+					<div class="col-md-3 hide">
+						<div class="form-group">
+							<label>Form Category</label>
+							<select class="form-control select2 select2-hidden-accessible" name="ft_tt_id" tabindex="-1" aria-hidden="true">
+								<option value="1">reporting</option>
+								<option value="2">quotation</option>
+							</select>
+						</div>
+					</div>								
+					<div class="col-md-3">
+						<div class="form-group">
+							<label>Reporting Template</label>
+							<select class="form-control select2 select2-hidden-accessible" name="ft_rt_id" tabindex="-1" aria-hidden="true">
+								<option value="">Please Select</option>
+								<option value="91">TIS SG 12</option>
+								<option value="90">TIS SG</option>
+								<option value="89">TIS PV</option>
+								<option value="88">DEMO TEMPLATE</option>
+								<option value="87">SAFRIPOL DRUMS</option>
+								<option value="86">HE SAFRIPOL</option>
+								<option value="85">Cover Page Template 12/24/36 Rev 06</option>
+								<option value="84">NO COLORS</option>
+								<option value="83">SG INSPECTION REPORT</option>
+								<option value="82">ENGEN: EXTERNAL EJECTOR</option>
+								<option value="81">annual SG</option>
+								<option value="80">STAAF QUAL</option>
+								<option value="79">ANNEX E</option>
+								<option value="78">ANNEX D</option>
+								<option value="77">SERVICE AUDIT</option>
+								<option value="76">INTRODUCTION CLAUSE</option>
+								<option value="75">cp evaluation</option>
+								<option value="74">INDSERVE IPE- PT</option>
+								<option value="73">INDSERVE SG 12 MONTHLY</option>
+								<option value="72">DESIGN VERIFICATION</option>
+								<option value="71">KIS EXAM PLANT</option>
+								<option value="70">KIS IPE </option>
+								<option value="69">KIS WALL THK</option>
+								<option value="68">KIS ISI SG 12 COVERPAGE</option>
+								<option value="67">TEST- NEW COVER-COLOR</option>
+								<option value="66">ultrasonic test report</option>
+								<option value="65">pre-com cert</option>
+								<option value="64">COVERPAGE-SG-NIS</option>
+								<option value="63">COVERPAGE-PV-NIS</option>
+								<option value="62">VAAS JOBCARD</option>
+								<option value="61">NEW CUSTOMER</option>
+								<option value="60">AIR RECEIVER</option>
+								<option value="59">BLOWER</option>
+								<option value="58">FILTER</option>
+								<option value="57">dryer</option>
+								<option value="56">compressor</option>
+								<option value="55">NCR REPORT</option>
+								<option value="54">INTERNAL AUDIT</option>
+								<option value="53">ITS NDT REPORT TEMPLATE</option>
+								<option value="52">AUDIT FORM</option>
+								<option value="51">JOB CARD</option>
+								<option value="50">test1</option>
+								<option value="49">test</option>
+								<option value="48">MRE</option>
+								<option value="47">Torrent power template</option>
+								<option value="46">SGS SG report</option>
+								<option value="45">SGS PV report</option>
+								<option value="44">SGS Inspection report</option>
+								<option value="42">SG annual report</option>
+								<option value="41">PV stat report</option>
+								<option value="40">SG stat report</option>
+								<option value="39">Neda - one pagers</option>
+								<option value="37">SGS Annual Report</option>
+								<option value="36">pre-com</option>
+								<option value="35">HPIA_NDT </option>
+								<option value="34">SUPER AIR TEMPLATE</option>
+								<option value="33">TCRC REPORT COVER PAGE</option>
+								<option value="32">VESSEL LOADING REPORT</option>
+								<option value="30">CII reporting template</option>
+								<option value="28">service report</option>
+								<option value="27">KIS IPE -PT</option>
+								<option value="25">INDSERVE PV TEMPLATE</option>
+								<option value="24">KIS ISI SG COVERPAGE</option>
+								<option value="23">KIS ISI HX COVERPAGE</option>
+								<option value="22">GLOBAL NDT </option>
+								<option value="21">Cover Page Template 12/24/36 Rev 05</option>
+								<option value="20">INDSERVE HX TEMPLATE</option>
+								<option value="19">PV INSPECTION REPORT</option>
+								<option value="18">IPE INSPECTION</option>
+								<option value="17">INDSERVE SG TEMPLATE</option>
+								<option value="15">KIS ISI PV COVERPAGE</option>
+								<option value="12">Vais Cover Page</option>
+								<option value="8">SEBATA INSPECTION TEMPLATE</option>
+								<option value="7">SEBATA SG TEMPLATE</option>
+								<option value="6">SEBATA PV TEMPLATE</option>
+								<option value="4">VAIS FORMAT</option>
+								<option value="3">SEBATA REPORT FORMAT</option>
+								<option value="2">Test 1</option>
+								<option value="1">INDSERVE REPORT</option>
+							</select>
+						</div>
+					</div>	
+					<div class="col-md-3">
+						<div class="form-group">
+							<label>Form Company</label>
+							<select class="form-control select2 select2-hidden-accessible" name="ft_c_id" id="ft_c_id" tabindex="-1" aria-hidden="true">
+								<option value="">Please Select</option>
+								<option value="5">Dept of Labour</option>
+								<option value="6">INDSERVE CC</option>
+								<option value="7">Inspection Company B01</option>
+								<option value="8">Inspection Company A02</option>
+								<option value="9">Inspection Company A03</option>
+							</select>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="form-group">
+								<label>Form Division <span class="text-red">*</span></label>
+								<select name="form_dept[]" required="true" class="form-control select2 select2-hidden-accessible" multiple="" style="width: 100%;" tabindex="-1" aria-hidden="true">
+									<option value="">Please Select</option>
+									<option value="37">GENERAL</option><option value="34">CLIENT</option><option value="13">INSPECTION</option>	
+								</select><span class="select2 select2-container select2-container--default" dir="ltr" style="width: 100%;"><span class="selection"><span class="select2-selection select2-selection--multiple" role="combobox" aria-haspopup="true" aria-expanded="false" tabindex="-1"><ul class="select2-selection__rendered"><li class="select2-search select2-search--inline"><input class="select2-search__field" type="search" tabindex="0" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" role="textbox" aria-autocomplete="list" placeholder="" style="width: 0.75em;"></li></ul></span></span><span class="dropdown-wrapper" aria-hidden="true"></span></span>
+							</div>
+						</div>
+					</div>
+					<div class="build-form"></div>
+					<input type="text" id="load-json" placeholder="ex. text" class="form-control">
+				</form>
+				<div class="render-form"></div>
+			</section>
+			<div class="container render-btn-wrap editor-action-buttons">
+			</div>
+		</div>
+		<script src="formeo-addon.js"></script>
+		<script src="assets/js/demo.min.js"></script>
+	</body>
+	</html>
+	
