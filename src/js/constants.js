@@ -3,9 +3,9 @@ import { name } from '../../package.json'
 export const PACKAGE_NAME = name
 
 export const POLYFILLS = [
-  { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
-  { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
-  { name: 'fetch', src: './polyfill' },
+  { name: 'cssPreload', src: 'fg-loadcss' },
+  { name: 'mutationObserver', src: 'mutationobserver-shim' },
+  { name: 'fetch', src: 'polyfill' },
 ]
 
 export const FALLBACK_SVG_SPRITE = '../img/formeo-sprite.svg'
