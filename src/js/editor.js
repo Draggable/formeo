@@ -116,13 +116,14 @@ export class FormeoEditor {
    * @return {void}
    */
   render() {
-    this.stages = Object.values(Components.get('stages'))
+    const _this = this
+    const controls = this.controls.dom
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',
-        id: this.formId,
+        id: _this.formId,
       },
-      content: [this.stages.map(({ dom }) => dom)],
+      content: [Object.values(Components.get('stages')).map(({ dom }) => dom), controls],
     }
 
     if (i18n.current.dir) {
@@ -132,17 +133,14 @@ export class FormeoEditor {
 
     this.editor = dom.create(elemConfig)
 
-    const controlsContainer = this.controls.container || this.editor
-    controlsContainer.appendChild(this.controls.dom)
-
-    if (this.editorContainer) {
-      dom.empty(this.editorContainer)
-      this.editorContainer.appendChild(this.editor)
+    if (_this.editorContainer) {
+      dom.empty(_this.editorContainer)
+      _this.editorContainer.appendChild(this.editor)
     }
 
     Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
       detail: {
-        formeo: this,
+        formeo: _this,
       },
     })
 

@@ -127,6 +127,48 @@ export default class Component extends Data {
       },
     }
   }
+  
+  /* 23-07-2020 code Modifies start  */
+
+  setCellStyle(e) {
+    e.dom.setAttribute('data-hover-tag', 'Cell')
+    e.dom.setAttribute('style', 'border-radius:10px; min-height:inherit;height:inherit; ' + e.dom.getAttribute('style'))
+    e.dom.setAttribute('tablegenerated', 'true')
+  }
+
+  renderTable(a) {
+    const cIndex = indexOfNode(a.parent.parent.dom, a.parent.parent.dom.parentNode) + 1
+    a.parent.parent.dom.setAttribute('style', 'margin-bottom:0px;')
+
+    const cStage = this.parent.parent.parent
+    const rowCntLength = this.data.options[0]['value']
+    for (var i = 0; i < 1; i++) {
+      const newChild = cStage.addChild({}, i + cIndex).addChild()
+      newChild.data.tblgen = true
+      newChild.parent.data.tblgen = true
+      newChild.parent.dom.setAttribute(
+        'style',
+        'padding-left: 15px !important;min-height:' + rowCntLength * 100 + 'px;'
+      )
+      this.setCellStyle(newChild)
+      if (i === 0) {
+        const { controlData } = Controls.get(
+          document.getElementsByClassName('html.header-control')[0].getAttribute('id')
+        )
+        controlData['tableheader'] = true
+        const action = newChild.addChild.bind(newChild)
+        action(controlData, 1)
+      } else {
+        newChild.addChild.bind(newChild)
+      }
+      for (var j = 1; j < this.data.options[1]['value']; j++) {
+        const r = newChild.clone(newChild.parent)
+        this.setCellStyle(r)
+      }
+      newChild.parent.dom.setAttribute('tablegenerated', 'true')
+    }
+    this.parent.parent.remove()
+  }
 
   /**
    * Toggles the edit window
@@ -145,10 +187,30 @@ export default class Component extends Data {
     }
 
     element.classList.toggle(editClass, open)
+
+    // code for table layout
+    if (this.data.config.label === 'Table' && !this.isEditing) {
+      this.renderTable(this)
+    }
+    if (this.data.config.label === 'Image' && !this.isEditing) {
+      const thisId = element.getAttribute("id");
+	  this.data.attrs.src=document.getElementById(thisId+"-attrs-src").value;
+	  this.updatePreview();
+    }
+    else if (this.data.config.label === 'Image' && this.isEditing) {
+      const thisId = element.getAttribute("id");
+	  if(document.getElementById(thisId+"-attrs-src-image")===null){
+		  const mm = document.getElementById(thisId+"-attrs-src");
+		  mm.parentElement.innerHTML=mm.parentElement.innerHTML+'<input type="file" id="'+thisId+'-attrs-src-image'+'"  onchange="compressImage(this, \''+thisId+'-attrs-src'+'\')">';
+	  }
+    }
   }
 
   get buttons() {
     const _this = this
+	if(this && this.name==="field" && this.hasOwnProperty("data") && this.data.hasOwnProperty("attrs") && this.data.attrs.hasOwnProperty("type") && this.data.attrs.type==="checkbox"){
+		this.config.actionButtons.buttons=["handle", "edit", "remove"];
+	}
     const parseIcons = icons => icons.map(icon => dom.icon(icon))
     const buttonConfig = {
       handle: (icons = ['move', 'handle']) => {
@@ -296,6 +358,11 @@ export default class Component extends Data {
       child.loadChildren(grandChildren)
     }
 
+	// added tablegenerated attribute while edit form
+	if(this.data.hasOwnProperty('tblgen')){
+	  this.dom.setAttribute('tablegenerated', 'true');
+	}
+
     this.removeClasses('empty')
     this.saveChildOrder()
     return child
@@ -308,6 +375,23 @@ export default class Component extends Data {
     if (this.render) {
       return
     }
+    if (
+      this &&
+      this.children.length > 1 &&
+      this.hasOwnProperty('data') &&
+      this.data.hasOwnProperty('tblgen') &&
+      this.data.className === 'formeo-column'
+    ) {
+      if(this.children[1].data.hasOwnProperty('tableheader')){
+        const tempData = this.dom.children[3].children[1]
+        this.dom.children[3].children[1].remove()
+        this.dom.children[3].innerHTML = tempData.outerHTML + this.dom.children[3].innerHTML
+        this.saveChildOrder()
+      }
+      if(this.parent.dom.style.minHeight!=="" && this.children.length>=(parseInt(this.parent.dom.style.minHeight)/100)){
+        this.parent.dom.style.minHeight="100px";
+      }
+    }
     const newChildOrder = this.children.map(({ id }) => id)
     this.set('children', newChildOrder)
     return newChildOrder
@@ -318,10 +402,22 @@ export default class Component extends Data {
    * @param  {Object} evt
    * @return {Object} Component
    */
-  onAdd({ from, to, item, newIndex }) {
+  onAdd({ from, to, item }) {
+	  debugger;
     const _this = this
     if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
       from = from.parentElement
+    }
+    let newIndex = indexOfNode(item, to)
+    if (
+      this &&
+      this.children.length > 1 &&
+      this.hasOwnProperty('data') &&
+      this.data.hasOwnProperty('tblgen') &&
+      this.data.className === 'formeo-column' &&
+      newIndex === 0
+    ) {
+      newIndex = 1
     }
     const fromType = componentType(from)
     const toType = componentType(to.parentElement)
@@ -342,6 +438,15 @@ export default class Component extends Data {
         -1,
         () => {
           const newChild = _this.addChild({}, newIndex)
+          if (_this.data.hasOwnProperty('tblgen')) {
+            newChild.data['tblgen'] = true
+            const { controlData } = Controls.get(
+              document.getElementsByClassName('html.header-control')[0].getAttribute('id')
+            )
+            controlData['tableheader'] = true
+            const action = newChild.addChild.bind(newChild)
+            action(controlData, 1)
+          }
           return newChild.addChild.bind(newChild)
         },
       ],
@@ -354,6 +459,20 @@ export default class Component extends Data {
         },
       ],
       [2, controlData => () => _this.parent.parent.addChild(controlData)],
+      [
+        3,
+        () => {debugger;
+			if(_this.name==="column"){
+				const newChild = _this.parent.parent.addChild({}, newIndex).addChild()
+				return newChild.addChild.bind(newChild)
+			}else if(_this.name==="row"){
+				const newChild = _this.parent.addChild({}, newIndex).addChild()
+				return newChild.addChild.bind(newChild)
+				}
+          const newChild =_this.addChild({}, newIndex).addChild()
+          return newChild.addChild.bind(newChild)
+        },
+      ],
     ])
 
     const onAddConditions = {
@@ -369,6 +488,7 @@ export default class Component extends Data {
             row: 0,
             column: -1,
             field: -2,
+            table: 3,
           },
           row: {
             row: 1,
@@ -382,7 +502,8 @@ export default class Component extends Data {
           },
           field: 1,
         }
-        const depth = get(targets, `${_this.name}.${controlType}`)
+        const depth = controlType==="table"?3: get(targets, `${_this.name}.${controlType}`)
+		
         const action = depthMap.get(depth)()
         dom.remove(item)
         const component = action(controlData, newIndex)
@@ -396,7 +517,7 @@ export default class Component extends Data {
           column: 1,
         }
         const action = (depthMap.get(targets[toType]) || identity)()
-        return action && action({ id: item.id }, newIndex)
+        return action && action(item.id)
       },
       column: () => {
         const targets = {
@@ -409,11 +530,10 @@ export default class Component extends Data {
     }
 
     const component = onAddConditions[fromType] && onAddConditions[fromType](item, newIndex)
-
     defaultOnAdd()
     return component
   }
-
+/* 23-07-2020 code Modifies end  */
   /**
    * Save updated child order
    * @return {Array} updated child order
@@ -589,12 +709,11 @@ export default class Component extends Data {
     this.children.forEach(child => child && child.clone(toParent))
   }
 
-  createChildWrap = children =>
+  createChildWrap = () =>
     dom.create({
       tag: 'ul',
       attrs: {
         className: 'children',
       },
-      children,
     })
 }

@@ -18,10 +18,9 @@ const config = {
       events: {
         onRender: element => {
           console.log(element)
-          const onRenderTimeout = setTimeout(() => {
+          setTimeout(() => {
             // formeo.Components.fields.get(element.id).toggleEdit(true)
             element.querySelector('.next-group').click()
-            clearTimeout(onRenderTimeout)
           }, 333)
         },
       },

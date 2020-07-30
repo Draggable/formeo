@@ -1,4 +1,4 @@
-.formeo-panels-wrap {
+.panels-wrap {
   h5 {
     margin: 0;
     padding: 0.55em 0;
@@ -71,7 +71,7 @@
 
   .panels {
     white-space: nowrap;
-    transition-property: height;
+    transition-property: transform, height;
     transition-duration: 150ms;
     transition-timing-function: ease-in-out;
     will-change: transform;
@@ -83,9 +83,12 @@
     background: $white;
     overflow: hidden;
     text-align: center;
-    white-space: nowrap;
-    border-top-left-radius: $input-border-radius;
-    border-top-right-radius: $input-border-radius;
+
+    div {
+      transition: transform 150ms ease-in-out;
+      will-change: transform;
+      white-space: nowrap;
+    }
   }
 }
 
@@ -96,6 +99,10 @@
     button {
       display: none;
     }
+  }
+
+  .panels {
+    transition: none;
   }
 
   .f-panel {
@@ -126,4 +133,9 @@
       }
     }
   }
+}
+
+.no-transition .panels,
+.no-transition .panel-labels div {
+  transition: none;
 }

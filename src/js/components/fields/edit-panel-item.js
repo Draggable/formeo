@@ -230,27 +230,29 @@ export default class EditPanelItem {
     }
     const hideFields = fields => {
       fields = Array.isArray(fields) ? fields : [fields]
-      const hideFieldsTimeout = setTimeout(() => {
-        fields.forEach(field => {
-          if (field.dom) {
-            field = field.dom
-          }
-          field.style.display = 'none'
-        })
-        clearTimeout(hideFieldsTimeout)
-      }, ANIMATION_SPEED_BASE)
+      setTimeout(
+        () =>
+          fields.forEach(field => {
+            if (field.dom) {
+              field = field.dom
+            }
+            field.style.display = 'none'
+          }),
+        ANIMATION_SPEED_BASE
+      )
     }
     const showFields = fields => {
       fields = Array.isArray(fields) ? fields : [fields]
-      const showFieldsTimeout = setTimeout(() => {
-        fields.forEach(field => {
-          if (field.dom) {
-            field = field.dom
-          }
-          field.removeAttribute('style')
-        })
-        clearTimeout(showFieldsTimeout)
-      }, ANIMATION_SPEED_BASE)
+      setTimeout(
+        () =>
+          fields.forEach(field => {
+            if (field.dom) {
+              field = field.dom
+            }
+            field.removeAttribute('style')
+          }),
+        ANIMATION_SPEED_BASE
+      )
     }
     const actions = new Map([
       [

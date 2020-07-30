@@ -23,35 +23,58 @@ export default class Field extends Component {
    * @param  {Object} fieldData existing field ID
    * @return {Object} field object
    */
+   /* 23-07-2020 code modify start  */
   constructor(fieldData = Object.create(null)) {
     super('field', Object.assign({}, DEFAULT_DATA(), fieldData))
-
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create(this.fieldPreview())
     this.editPanels = []
-
-    let field = {
-      tag: 'li',
-      attrs: {
-        className: FIELD_CLASSNAME,
-      },
-      id: this.id,
-      children: [
-        this.label,
-        this.getActionButtons(), // fieldEdit window
-        this.fieldEdit, // fieldEdit window,
-        this.preview, // preview
-      ],
-      panelNav: this.panelNav,
-      dataset: {
-        hoverTag: i18n.get('field'),
-      },
-      action: {
-        mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
-        mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
-      },
+    let field = {}
+    if (fieldData && fieldData.hasOwnProperty('tableheader')) {
+      field = {
+        tag: 'li',
+        attrs: {
+          className: FIELD_CLASSNAME,
+        },
+        id: this.id,
+        children: [
+          this.label,
+          {}, // fieldEdit window
+          this.fieldEdit, // fieldEdit window,
+          this.preview, // preview
+        ],
+        panelNav: this.panelNav,
+        dataset: {
+          hoverTag: i18n.get('field'),
+        },
+        action: {
+          mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
+          mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
+        },
+      }
+    } else {
+      field = {
+        tag: 'li',
+        attrs: {
+          className: FIELD_CLASSNAME,
+        },
+        id: this.id,
+        children: [
+          this.label,
+          this.getActionButtons(), // fieldEdit window
+          this.fieldEdit, // fieldEdit window,
+          this.preview, // preview
+        ],
+        panelNav: this.panelNav,
+        dataset: {
+          hoverTag: i18n.get('field'),
+        },
+        action: {
+          mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
+          mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
+        },
+      }
     }
-
     field = dom.create(field)
     this.observe(field)
 
@@ -59,7 +82,7 @@ export default class Field extends Component {
     this.isEditing = false
     this.onRender(field)
   }
-
+/* 23-07-2020 code modify end  */
   get labelConfig() {
     const hideLabel = !!this.get('config.hideLabel')
 
@@ -158,7 +181,7 @@ export default class Field extends Component {
    * Updates the conditions panel when linked field data changes
    */
   updateConditionsPanel = () => {
-    const updateConditionsTimeout = setTimeout(() => {
+    setTimeout(() => {
       const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
       if (!newConditionsPanel) {
         return null
@@ -166,7 +189,6 @@ export default class Field extends Component {
       const newProps = newConditionsPanel.createProps()
       const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
       currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
-      clearTimeout(updateConditionsTimeout)
     }, ANIMATION_SPEED_BASE)
   }
 
@@ -201,7 +223,7 @@ export default class Field extends Component {
     const allowedPanels = panelOrder.filter(panelName => !noPanels.includes(panelName))
 
     const fieldEdit = {
-      className: ['field-edit', 'slide-toggle', 'formeo-panels-wrap'],
+      className: ['field-edit', 'slide-toggle', 'panels-wrap'],
     }
 
     allowedPanels.forEach(panelName => {
@@ -216,20 +238,19 @@ export default class Field extends Component {
     const panelsData = {
       panels: this.editPanels.map(({ panelConfig }) => panelConfig),
       id: _this.id,
-      displayType: 'auto',
     }
 
     const editPanelLength = this.editPanels.length
 
     if (editPanelLength) {
-      this.panels = new Panels(panelsData)
+      const editPanels = (_this.panels = new Panels(panelsData))
       fieldEdit.className.push(`panel-count-${editPanelLength}`)
-      fieldEdit.content = [this.panels.panelNav, this.panels.panelsWrap]
-      this.panelNav = this.panels.nav
-      this.resizePanelWrap = this.panels.nav.refresh
+      fieldEdit.content = editPanels.children
+      _this.panelNav = editPanels.nav
+      _this.resizePanelWrap = editPanels.action.resize
       fieldEdit.action = {
         onRender: () => {
-          this.resizePanelWrap()
+          _this.resizePanelWrap()
           if (!editPanelLength) {
             const field = this.dom
             const editToggle = field.querySelector('.item-edit-toggle')

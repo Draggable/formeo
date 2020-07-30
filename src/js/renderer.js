@@ -48,9 +48,28 @@ export default class FormeoRenderer {
    * Renders the formData to a target Element
    * @param {Object} formData
    */
+   /* 23-07-2020 code modify start  */
+  addEmptyElement = temp2 => {
+    document.getElementsByClassName('html.header-control')[0].getAttribute('id')
+    for (var k in temp2.rows) {
+      if (temp2.rows[k].hasOwnProperty('tblgen')) {
+        console.log(k)
+        console.log(temp2.rows[k].children)
+        for (var c in temp2.rows[k].children) {
+          console.log(temp2.columns[temp2.rows[k].children[c]].children)
+        }
+      }
+    }
+  }
+
   render = (formData = this.form) => {
     this.form = formData
-
+    const a = document.getElementsByClassName('formeo-row')
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].getAttribute('tablegenerated') === 'true') {
+        a[i].style = a[i].style + 'min-height:100px'
+      }
+    }
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
       id: this.form.id,
@@ -75,12 +94,17 @@ export default class FormeoRenderer {
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumn = ({ id, ...columnData }) =>
-    Object.assign({}, columnData, {
+  processColumn = ({ id, ...columnData }) => {
+    if (columnData.hasOwnProperty('tblgen')) {
+      columnData.className = columnData.className + 'tblgen tblgen-col'
+    }
+
+    return Object.assign({}, columnData, {
       id: this.prefixId(id),
       children: this.processFields(columnData.children),
       style: `width: ${columnData.config.width || '100%'}`,
     })
+  }
 
   processRows = stageId =>
     this.orderChildren('rows', this.form.stages[stageId].children).reduce(
@@ -101,6 +125,10 @@ export default class FormeoRenderer {
   processRow = (data, type = 'row') => {
     const { config, id } = data
     const className = [`formeo-${type}-wrap`]
+    if (data.hasOwnProperty('tblgen')) {
+      className.push('tblgen')
+      className.push('tblgen-row')
+    }
     const rowData = Object.assign({}, data, { children: this.processColumns(data.id), id: this.prefixId(id) })
     this.cacheComponent(rowData)
 
@@ -123,7 +151,7 @@ export default class FormeoRenderer {
       children,
     }
   }
-
+/* 23-07-2020 code modify end  */
   cloneComponentData = componentId => {
     const { children = [], id, ...rest } = this.components[componentId]
     return Object.assign({}, rest, {
@@ -157,9 +185,12 @@ export default class FormeoRenderer {
   }
 
   processFields = fieldIds => {
-    return this.orderChildren('fields', fieldIds).map(({ id, ...field }) =>
-      this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) }))
-    )
+    return this.orderChildren('fields', fieldIds).map(({ id, ...field }) => {
+      if (field.config.label === 'Table') {
+        field.config.label = ''
+      }
+      return this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) }))
+    })
   }
 
   get processedData() {
@@ -182,23 +213,18 @@ export default class FormeoRenderer {
 
           ifConditions.forEach(ifCondition => {
             const { source, ...ifRest } = ifCondition
-
             if (isAddress(source)) {
-              const components = this.getComponents(source)
-
-              components.forEach(component => {
-                const listenerEvent = LISTEN_TYPE_MAP(component)
-
-                if (listenerEvent) {
-                  component.addEventListener(
-                    listenerEvent,
-                    evt =>
-                      this.evaluateCondition(ifRest, evt) &&
-                      thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
-                    false
-                  )
-                }
-              })
+              const component = this.getComponent(source)
+              const listenerEvent = LISTEN_TYPE_MAP(component)
+              if (listenerEvent) {
+                component.addEventListener(
+                  listenerEvent,
+                  evt =>
+                    this.evaluateCondition(ifRest, evt) &&
+                    thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
+                  false
+                )
+              }
             }
           })
         })
@@ -247,25 +273,12 @@ export default class FormeoRenderer {
       : this.renderedForm.querySelector(`#f-${componentId}`)
     return component
   }
-
-  getComponents = address => {
-    const components = []
-    const componentId = address.slice(address.indexOf('.') + 1)
-
-    if (isExternalAddress(address)) {
-      components.push(this.external[componentId])
-    } else {
-      components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`))
-    }
-
-    return components
-  }
 }
 
 const LISTEN_TYPE_MAP = component => {
   const typesMap = [
     ['input', c => ['textarea', 'text'].includes(c.type)],
-    ['change', c => ['select'].includes(c.tagName.toLowerCase()) || ['checkbox', 'radio'].includes(c.type)],
+    ['change', c => ['select'].includes(c.tagName) || ['checkbox', 'radio'].includes(c.type)],
   ]
 
   const [listenerEvent] = typesMap.find(typeMap => typeMap[1](component)) || [false]

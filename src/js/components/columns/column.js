@@ -20,7 +20,8 @@ const DOM_CONFIGS = {
   resizeHandle: () => ({
     className: 'resize-x-handle',
     action: {
-      pointerdown: resize,
+      mousedown: resize,
+      touchstart: resize,
     },
     content: [dom.icon('triangle-down'), dom.icon('triangle-up')],
   }),

@@ -108,11 +108,7 @@ export const uuid = elem => {
 export const merge = (obj1, obj2, opts = Object.create(null)) => {
   const customizer = (objValue, srcValue) => {
     if (Array.isArray(objValue)) {
-      if (Array.isArray(srcValue)) {
-        return unique(opts.mergeArray ? objValue.concat(srcValue) : srcValue)
-      } else {
-        return srcValue
-      }
+      return unique(opts.mergeArray ? objValue.concat(srcValue) : srcValue)
     }
   }
   return mergeWith({}, obj1, obj2, customizer)

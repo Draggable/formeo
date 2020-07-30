@@ -3,8 +3,9 @@ import Sortable from 'sortablejs'
 import Component from '../component'
 import dom from '../../common/dom'
 import events from '../../common/events'
+import { bsGridRegEx } from '../../common/helpers'
 import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_FAST, COLUMN_CLASSNAME, bsColRegExp } from '../../constants'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_BASE, COLUMN_CLASSNAME } from '../../constants'
 import { removeCustomOption } from '../columns/events'
 
 const DEFAULT_DATA = () =>
@@ -28,6 +29,7 @@ export default class Row extends Component {
    * @return {Object}
    */
   constructor(rowData) {
+    
     super('row', Object.assign({}, DEFAULT_DATA(), rowData))
 
     const children = this.createChildWrap()
@@ -186,17 +188,14 @@ export default class Row extends Component {
     const width = parseFloat((100 / columns.length).toFixed(1)) / 1
 
     columns.forEach(column => {
-      column.removeClasses(bsColRegExp)
+      column.removeClasses(bsGridRegEx)
       const colDom = column.dom
       const newColWidth = numToPercent(width)
 
       column.set('config.width', newColWidth)
       colDom.style.width = newColWidth
       colDom.dataset.colWidth = newColWidth
-      const refreshTimeout = setTimeout(() => {
-        clearTimeout(refreshTimeout)
-        column.refreshFieldPanels()
-      }, ANIMATION_SPEED_FAST)
+      setTimeout(column.refreshFieldPanels, ANIMATION_SPEED_BASE)
       document.dispatchEvent(events.columnResized)
     })
     this.updateColumnPreset()

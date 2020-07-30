@@ -1,11 +1,12 @@
 import Sortable from 'sortablejs'
 import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
+import merge from 'lodash/merge'
 import actions from '../../common/actions'
 import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
 import events from '../../common/events'
 import dom from '../../common/dom'
-import { match, unique, uuid, merge } from '../../common/utils'
+import { match, unique, uuid } from '../../common/utils'
 import Panels from '../panels'
 import Field from '../fields/field'
 import Control from './control'
@@ -16,7 +17,6 @@ import Components, { Stages, Rows } from '..'
 import layoutControls from './layout'
 import formControls from './form'
 import htmlControls from './html'
-import defaultOptions from './options'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -25,14 +25,41 @@ const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
  */
 export class Controls {
   constructor() {
+    const _this = this
     this.data = new Map()
+    this.defaults = {
+      sortable: true,
+      elementOrder: {},
+      groups: [
+        {
+          id: 'layout',
+          label: 'controls.groups.layout',
+          elementOrder: ['row', 'column'],
+        },
+        {
+          id: 'common',
+          label: 'controls.groups.form',
+          elementOrder: ['button', 'checkbox'],
+        },
+        {
+          id: 'html',
+          label: 'controls.groups.html',
+          elementOrder: ['header', 'block-text'],
+        },
+      ],
+      disable: {
+        groups: [],
+        elements: [],
+      },
+      elements: [],
+    }
 
     this.controlEvents = {
       focus: ({ target }) => {
         const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
-        return group && this.panels.nav.refresh(indexOfNode(group))
+        return group && _this.panels.nav.refresh(indexOfNode(group))
       },
-      click: ({ target }) => this.addElement(target.parentElement.id),
+      click: ({ target }) => _this.addElement(target.parentElement.id),
     }
   }
 
@@ -62,7 +89,7 @@ export class Controls {
    * @return {Array} elementControls
    */
   registerControls() {
-    this.controls = this.elements.map(Element => {
+    this.controls = this.options.elements.map(Element => {
       const isControl = typeof Element === 'function'
       const control = isControl ? new Element() : new Control(Element)
       const {
@@ -179,9 +206,6 @@ export class Controls {
    * @return {Object} form action buttons config
    */
   formActions() {
-    if (this.options.disable.formActions === true) {
-      return null
-    }
     const clearBtn = {
       ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
@@ -225,19 +249,26 @@ export class Controls {
           }
           actions.click.btn(saveEvt)
 
+// start: when click on save check if load json have value or not if it has value than load it
+
+			let data = {};
+			console.log(document.getElementById('load-json'), document.getElementById('load-json').value)
+			if(document.getElementById('load-json').value!==''){
+				data = JSON.parse(document.getElementById('load-json').value);
+				Components.load(data);
+				actions.save.form(data);
+				window.location.reload();
+				return 
+			}
+
+// end:
           return actions.save.form(formData)
         },
       },
     }
-
     const formActions = {
       className: 'form-actions f-btn-group',
-      content: Object.entries({ clearBtn, saveBtn }).reduce((acc, [key, value]) => {
-        if (!this.options.disable.formActions.includes(key)) {
-          acc.push(value)
-        }
-        return acc
-      }, []),
+      content: [clearBtn, saveBtn],
     }
 
     return formActions
@@ -248,14 +279,14 @@ export class Controls {
    * @return {DOM}
    */
   buildDOM(sticky) {
+    const _this = this
     const groupedFields = this.groupElements()
     const formActions = this.formActions()
-    const { displayType } = this.options.panels
-    this.panels = new Panels({ panels: groupedFields, type: 'controls', displayType })
-    const groupsWrapClasses = ['control-groups', 'formeo-panels-wrap', `panel-count-${groupedFields.length}`]
+    _this.panels = new Panels({ panels: groupedFields, type: 'controls' })
+    const groupsWrapClasses = ['control-groups', 'panels-wrap', `panel-count-${groupedFields.length}`]
     const groupsWrap = dom.create({
       className: groupsWrapClasses,
-      content: [this.panels.panelNav, this.panels.panelsWrap],
+      content: _this.panels.children,
     })
 
     let controlClass = 'formeo-controls'
@@ -271,8 +302,7 @@ export class Controls {
 
     this.dom = element
     this.groups = groups
-    const [firstGroup] = groups
-    this.currentGroup = firstGroup
+    this.currentGroup = groups[0]
 
     this.actions = {
       filter: term => {
@@ -302,7 +332,7 @@ export class Controls {
           filteredTerm.remove()
         }
       },
-      addElement: this.addElement,
+      addElement: _this.addElement,
       // @todo finish the addGroup method
       addGroup: group => console.log(group),
     }
@@ -323,7 +353,7 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
-        onRemove: this.applyControlEvents,
+        onRemove: _this.applyControlEvents,
         onStart: ({ item }) => {
           const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {
@@ -362,6 +392,7 @@ export class Controls {
    * Append an element to the stage
    * @param {String} id of elements
    */
+   /* 23-07-2020 code modify start  */
   addElement = id => {
     const controlData = get(this.get(id), 'controlData')
     const {
@@ -372,17 +403,18 @@ export class Controls {
       row: () => Stages.active.addChild(),
       column: () => layoutTypes.row().addChild(),
       field: controlData => layoutTypes.column().addChild(controlData),
+      table: () => Stages.active.addChild(),
     }
 
-    return group !== 'layout' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]()
+    return group !== 'layout' ? layoutTypes.field(controlData) : (metaId==='layout-table' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]())
   }
-
+/* 23-07-2020 code modify end  */
   applyOptions = (controlOptions = {}) => {
-    const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions)
-    this.container = container
+    this.options = {}
+    const { groupOrder = [], elements = [] } = controlOptions
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
-    this.elements = elements.concat(defaultElements)
-    this.options = options
+    this.options = merge(this.defaults, controlOptions)
+    this.options.elements = elements.concat(defaultElements)
   }
 }
 

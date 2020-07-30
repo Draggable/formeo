@@ -1,17 +1,12 @@
 import throttle from 'lodash/throttle'
 import {
   EVENT_FORMEO_UPDATED,
-  EVENT_FORMEO_UPDATED_STAGE,
-  EVENT_FORMEO_UPDATED_ROW,
-  EVENT_FORMEO_UPDATED_COLUMN,
-  EVENT_FORMEO_UPDATED_FIELD,
   EVENT_FORMEO_ON_RENDER,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_SAVED,
   EVENT_FORMEO_CLEARED,
-  ANIMATION_SPEED_FAST,
 } from '../constants'
-import components, { Columns, Controls } from '../components'
+import { Columns, Controls } from '../components'
 
 const NO_TRANSITION_CLASS_NAME = 'no-transition'
 
@@ -22,10 +17,6 @@ const defaults = {
   formeoLoaded: evt => {},
   onAdd: () => {},
   onUpdate: evt => events.opts.debug && console.log(evt),
-  onUpdateStage: evt => events.opts.debug && console.log(evt),
-  onUpdateRow: evt => events.opts.debug && console.log(evt),
-  onUpdateColumn: evt => events.opts.debug && console.log(evt),
-  onUpdateField: evt => events.opts.debug && console.log(evt),
   onRender: evt => events.opts.debug && console.log(evt),
   onSave: evt => {},
   confirmClearAll: evt => {
@@ -59,46 +50,7 @@ const events = {
   formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
 }
 
-const formeoUpdatedThrottled = throttle(
-  () => {
-    events.opts.onUpdate({
-      timeStamp: window.performance.now(),
-      type: EVENT_FORMEO_UPDATED,
-      detail: components.formData,
-    })
-  },
-  ANIMATION_SPEED_FAST,
-  {
-    leading: false,
-  }
-)
-
-document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled)
-document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, evt => {
-  const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
-})
-document.addEventListener(EVENT_FORMEO_UPDATED_ROW, evt => {
-  const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
-})
-document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, evt => {
-  const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
-})
-document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
+document.addEventListener(EVENT_FORMEO_UPDATED, evt => {
   const { timeStamp, type, detail } = evt
   events.opts.onUpdate({
     timeStamp,
@@ -107,7 +59,7 @@ document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
   })
 })
 
-document.addEventListener(EVENT_FORMEO_ON_RENDER, evt => {
+document.addEventListener(EVENT_FORMEO_UPDATED, evt => {
   const { timeStamp, type, detail } = evt
   events.opts.onRender({
     timeStamp,
