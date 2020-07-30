@@ -1,27 +1,39 @@
 import startCase from 'lodash/startCase'
+import submitTemplateForm from './submitTemplateForm'
 
-const editorActionButtonContainer = document.getElementById('editor-action-buttons')
+const editorActionButtonContainer = document.querySelectorAll('.editor-action-buttons')
 const editorActions = (editor, renderer) => ({
-  renderForm: () => renderer.render(editor.formData),
-  logJSON: () => console.log(editor.json),
-  viewData: () => {
-    Object.entries(editor.formData).forEach(([key, val]) => console.log(key, val))
-  },
-  resetEditor: () => {
-    window.sessionStorage.removeItem('formeo-formData')
-    window.location.reload()
-  },
+  // renderForm: () => renderer.render(editor.formData),
+  // logJSON: () => console.log(editor.json),
+  publish: () => submitTemplateForm(editor.formData),
+  /* viewData: () => {
+		Object.entries(editor.formData).forEach(([key, val]) => console.log(key, val))
+	},
+	resetEditor: () => {
+		window.sessionStorage.removeItem('formeo-formData')
+		window.location.reload()
+	}, */
 })
 
 export const editorButtons = (editor, renderer) => {
   const buttonActions = editorActions(editor, renderer)
   const buttons = Object.entries(buttonActions).map(([id, cb]) => {
-    const attrs = { id, type: 'button' }
-    const button = Object.assign(document.createElement('button'), attrs)
-    const buttonText = document.createTextNode(startCase(id))
-    button.appendChild(buttonText)
-    button.addEventListener('click', cb, false)
-    editorActionButtonContainer.appendChild(button)
+    var button = []
+    for (const container of editorActionButtonContainer) {
+      const attrs = {
+        // id,
+        type: 'button',
+        className: 'btn btn-info btn-sm btn-flat pull-right publish-form m-l-5',
+      }
+      const btn = Object.assign(document.createElement('button'), attrs)
+      const buttonText = document.createTextNode(startCase(id))
+      btn.appendChild(buttonText)
+      btn.addEventListener('click', cb, false)
+
+      container.appendChild(btn)
+      button.push(btn)
+    }
+
     return button
   })
 

@@ -2,16 +2,17 @@ import Sortable from 'sortablejs'
 import i18n from 'mi18n'
 import cloneDeep from 'lodash/cloneDeep'
 import merge from 'lodash/merge'
-import actions from '../../common/actions'
+// import actions from '../../common/actions'
 import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
-import events from '../../common/events'
+// import events from '../../common/events'
 import dom from '../../common/dom'
 import { match, unique, uuid } from '../../common/utils'
 import Panels from '../panels'
 import Field from '../fields/field'
 import Control from './control'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants'
-import Components, { Stages, Rows } from '..'
+// import Components, { Stages, Rows } from '..'
+import { Stages } from '..'
 
 // control configs
 import layoutControls from './layout'
@@ -206,6 +207,7 @@ export class Controls {
    * @return {Object} form action buttons config
    */
   formActions() {
+    /* 
     const clearBtn = {
       ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
@@ -249,26 +251,28 @@ export class Controls {
           }
           actions.click.btn(saveEvt)
 
-// start: when click on save check if load json have value or not if it has value than load it
+          // start: when click on save check if load json have value or not if it has value than load it
 
-			let data = {};
-			console.log(document.getElementById('load-json'), document.getElementById('load-json').value)
-			if(document.getElementById('load-json').value!==''){
-				data = JSON.parse(document.getElementById('load-json').value);
-				Components.load(data);
-				actions.save.form(data);
-				window.location.reload();
-				return 
-			}
+          let data = {}
+          console.log(document.getElementById('load-json'), document.getElementById('load-json').value)
+          if (document.getElementById('load-json').value !== '') {
+            data = JSON.parse(document.getElementById('load-json').value)
+            Components.load(data)
+            actions.save.form(data)
+            window.location.reload()
+            return
+          }
 
-// end:
+          // end:
           return actions.save.form(formData)
         },
       },
     }
+     */
     const formActions = {
       className: 'form-actions f-btn-group',
-      content: [clearBtn, saveBtn],
+      // content: [clearBtn, saveBtn],
+      content: [],
     }
 
     return formActions
@@ -334,7 +338,7 @@ export class Controls {
       },
       addElement: _this.addElement,
       // @todo finish the addGroup method
-      addGroup: group => console.log(group),
+      // addGroup: group => console.log(group),
     }
 
     // Make controls sortable
@@ -392,7 +396,7 @@ export class Controls {
    * Append an element to the stage
    * @param {String} id of elements
    */
-   /* 23-07-2020 code modify start  */
+  /* 23-07-2020 code modify start  */
   addElement = id => {
     const controlData = get(this.get(id), 'controlData')
     const {
@@ -406,9 +410,13 @@ export class Controls {
       table: () => Stages.active.addChild(),
     }
 
-    return group !== 'layout' ? layoutTypes.field(controlData) : (metaId==='layout-table' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]())
+    return group !== 'layout'
+      ? layoutTypes.field(controlData)
+      : metaId === 'layout-table'
+        ? layoutTypes.field(controlData)
+        : layoutTypes[metaId.replace('layout-', '')]()
   }
-/* 23-07-2020 code modify end  */
+  /* 23-07-2020 code modify end  */
   applyOptions = (controlOptions = {}) => {
     this.options = {}
     const { groupOrder = [], elements = [] } = controlOptions

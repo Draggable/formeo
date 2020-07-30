@@ -3,7 +3,7 @@ const config = {
     all: {
       events: {
         onRender: element => {
-          console.log(`You just added a new row with the id "${element.id}"`)
+          // console.log(`You just added a new row with the id "${element.id}"`)
         },
       },
     },
@@ -17,7 +17,7 @@ const config = {
     'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': {
       events: {
         onRender: element => {
-          console.log(element)
+          // console.log(element)
           setTimeout(() => {
             // formeo.Components.fields.get(element.id).toggleEdit(true)
             element.querySelector('.next-group').click()

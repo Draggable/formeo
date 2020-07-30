@@ -29,7 +29,6 @@ export default class Row extends Component {
    * @return {Object}
    */
   constructor(rowData) {
-    
     super('row', Object.assign({}, DEFAULT_DATA(), rowData))
 
     const children = this.createChildWrap()

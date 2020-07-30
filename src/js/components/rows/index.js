@@ -12,7 +12,6 @@ export class Rows extends ComponentData {
   constructor(rowData) {
     super('rows', rowData)
     this.config = { all: DEFAULT_CONFIG }
-    
   }
   Component(data) {
     return new Row(data)

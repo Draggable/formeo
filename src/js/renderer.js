@@ -48,16 +48,16 @@ export default class FormeoRenderer {
    * Renders the formData to a target Element
    * @param {Object} formData
    */
-   /* 23-07-2020 code modify start  */
+  /* 23-07-2020 code modify start  */
   addEmptyElement = temp2 => {
     document.getElementsByClassName('html.header-control')[0].getAttribute('id')
     for (var k in temp2.rows) {
       if (temp2.rows[k].hasOwnProperty('tblgen')) {
-        console.log(k)
-        console.log(temp2.rows[k].children)
-        for (var c in temp2.rows[k].children) {
-          console.log(temp2.columns[temp2.rows[k].children[c]].children)
-        }
+        // console.log(k)
+        // console.log(temp2.rows[k].children)
+        // for (var c in temp2.rows[k].children) {
+        //   console.log(temp2.columns[temp2.rows[k].children[c]].children)
+        // }
       }
     }
   }
@@ -151,7 +151,7 @@ export default class FormeoRenderer {
       children,
     }
   }
-/* 23-07-2020 code modify end  */
+  /* 23-07-2020 code modify end  */
   cloneComponentData = componentId => {
     const { children = [], id, ...rest } = this.components[componentId]
     return Object.assign({}, rest, {

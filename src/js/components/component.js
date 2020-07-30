@@ -127,7 +127,7 @@ export default class Component extends Data {
       },
     }
   }
-  
+
   /* 23-07-2020 code Modifies start  */
 
   setCellStyle(e) {
@@ -193,24 +193,38 @@ export default class Component extends Data {
       this.renderTable(this)
     }
     if (this.data.config.label === 'Image' && !this.isEditing) {
-      const thisId = element.getAttribute("id");
-	  this.data.attrs.src=document.getElementById(thisId+"-attrs-src").value;
-	  this.updatePreview();
-    }
-    else if (this.data.config.label === 'Image' && this.isEditing) {
-      const thisId = element.getAttribute("id");
-	  if(document.getElementById(thisId+"-attrs-src-image")===null){
-		  const mm = document.getElementById(thisId+"-attrs-src");
-		  mm.parentElement.innerHTML=mm.parentElement.innerHTML+'<input type="file" id="'+thisId+'-attrs-src-image'+'"  onchange="compressImage(this, \''+thisId+'-attrs-src'+'\')">';
-	  }
+      const thisId = element.getAttribute('id')
+      this.data.attrs.src = document.getElementById(thisId + '-attrs-src').value
+      this.updatePreview()
+    } else if (this.data.config.label === 'Image' && this.isEditing) {
+      const thisId = element.getAttribute('id')
+      if (document.getElementById(thisId + '-attrs-src-image') === null) {
+        const mm = document.getElementById(thisId + '-attrs-src')
+        mm.parentElement.innerHTML =
+          mm.parentElement.innerHTML +
+          '<input type="file" id="' +
+          thisId +
+          '-attrs-src-image' +
+          '"  onchange="compressImage(this, \'' +
+          thisId +
+          '-attrs-src' +
+          '\')">'
+      }
     }
   }
 
   get buttons() {
     const _this = this
-	if(this && this.name==="field" && this.hasOwnProperty("data") && this.data.hasOwnProperty("attrs") && this.data.attrs.hasOwnProperty("type") && this.data.attrs.type==="checkbox"){
-		this.config.actionButtons.buttons=["handle", "edit", "remove"];
-	}
+    if (
+      this &&
+      this.name === 'field' &&
+      this.hasOwnProperty('data') &&
+      this.data.hasOwnProperty('attrs') &&
+      this.data.attrs.hasOwnProperty('type') &&
+      this.data.attrs.type === 'checkbox'
+    ) {
+      this.config.actionButtons.buttons = ['handle', 'edit', 'remove']
+    }
     const parseIcons = icons => icons.map(icon => dom.icon(icon))
     const buttonConfig = {
       handle: (icons = ['move', 'handle']) => {
@@ -358,10 +372,10 @@ export default class Component extends Data {
       child.loadChildren(grandChildren)
     }
 
-	// added tablegenerated attribute while edit form
-	if(this.data.hasOwnProperty('tblgen')){
-	  this.dom.setAttribute('tablegenerated', 'true');
-	}
+    // added tablegenerated attribute while edit form
+    if (this.data.hasOwnProperty('tblgen')) {
+      this.dom.setAttribute('tablegenerated', 'true')
+    }
 
     this.removeClasses('empty')
     this.saveChildOrder()
@@ -382,14 +396,17 @@ export default class Component extends Data {
       this.data.hasOwnProperty('tblgen') &&
       this.data.className === 'formeo-column'
     ) {
-      if(this.children[1].data.hasOwnProperty('tableheader')){
+      if (this.children[1].data.hasOwnProperty('tableheader')) {
         const tempData = this.dom.children[3].children[1]
         this.dom.children[3].children[1].remove()
         this.dom.children[3].innerHTML = tempData.outerHTML + this.dom.children[3].innerHTML
         this.saveChildOrder()
       }
-      if(this.parent.dom.style.minHeight!=="" && this.children.length>=(parseInt(this.parent.dom.style.minHeight)/100)){
-        this.parent.dom.style.minHeight="100px";
+      if (
+        this.parent.dom.style.minHeight !== '' &&
+        this.children.length >= parseInt(this.parent.dom.style.minHeight) / 100
+      ) {
+        this.parent.dom.style.minHeight = '100px'
       }
     }
     const newChildOrder = this.children.map(({ id }) => id)
@@ -403,7 +420,7 @@ export default class Component extends Data {
    * @return {Object} Component
    */
   onAdd({ from, to, item }) {
-	  debugger;
+    debugger
     const _this = this
     if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
       from = from.parentElement
@@ -461,15 +478,16 @@ export default class Component extends Data {
       [2, controlData => () => _this.parent.parent.addChild(controlData)],
       [
         3,
-        () => {debugger;
-			if(_this.name==="column"){
-				const newChild = _this.parent.parent.addChild({}, newIndex).addChild()
-				return newChild.addChild.bind(newChild)
-			}else if(_this.name==="row"){
-				const newChild = _this.parent.addChild({}, newIndex).addChild()
-				return newChild.addChild.bind(newChild)
-				}
-          const newChild =_this.addChild({}, newIndex).addChild()
+        () => {
+          debugger
+          if (_this.name === 'column') {
+            const newChild = _this.parent.parent.addChild({}, newIndex).addChild()
+            return newChild.addChild.bind(newChild)
+          } else if (_this.name === 'row') {
+            const newChild = _this.parent.addChild({}, newIndex).addChild()
+            return newChild.addChild.bind(newChild)
+          }
+          const newChild = _this.addChild({}, newIndex).addChild()
           return newChild.addChild.bind(newChild)
         },
       ],
@@ -502,8 +520,8 @@ export default class Component extends Data {
           },
           field: 1,
         }
-        const depth = controlType==="table"?3: get(targets, `${_this.name}.${controlType}`)
-		
+        const depth = controlType === 'table' ? 3 : get(targets, `${_this.name}.${controlType}`)
+
         const action = depthMap.get(depth)()
         dom.remove(item)
         const component = action(controlData, newIndex)
@@ -533,7 +551,7 @@ export default class Component extends Data {
     defaultOnAdd()
     return component
   }
-/* 23-07-2020 code Modifies end  */
+  /* 23-07-2020 code Modifies end  */
   /**
    * Save updated child order
    * @return {Array} updated child order

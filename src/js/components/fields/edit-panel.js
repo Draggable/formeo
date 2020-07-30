@@ -18,7 +18,6 @@ export default class EditPanel {
    * @return {Object} field object
    */
   constructor(panelData, panelName, field) {
-    
     this.type = dom.childType(panelData)
     this.data = this.type === 'object' ? Object.entries(panelData) : panelData
     this.name = panelName

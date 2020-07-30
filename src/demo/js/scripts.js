@@ -1,4 +1,4 @@
-import { IS_SITE, GOOGLE_ANALYTICS } from './constants'
+import { IS_SITE } from './constants'
 
 /**
  * Prepends script tags
@@ -36,14 +36,6 @@ if (IS_SITE) {
     {
       src: '//buttons.github.io/buttons.js',
       id: 'github-script',
-    },
-    {
-      src: '//www.google-analytics.com/analytics.js',
-      id: 'google-analytics',
-      onload: () => {
-        window.ga('create', GOOGLE_ANALYTICS, 'auto')
-        window.ga('send', 'pageview')
-      },
     },
   ]
 

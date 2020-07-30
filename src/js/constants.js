@@ -5,10 +5,10 @@ export const PACKAGE_NAME = name
 export const POLYFILLS = [
   { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
-  { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
+  { name: 'fetch', src: './polyfill' },
 ]
 
-export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg'
+export const FALLBACK_SVG_SPRITE = '../img/formeo-sprite.svg'
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
 export const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`

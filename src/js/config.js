@@ -22,7 +22,7 @@ export const defaults = {
       controls: {},
       polyfills: isIE(), // loads csspreloadrel
       i18n: {
-        location: 'https://draggable.github.io/formeo/assets/lang/',
+        location: '',
       },
     }
   },

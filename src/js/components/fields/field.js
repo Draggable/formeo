@@ -23,7 +23,7 @@ export default class Field extends Component {
    * @param  {Object} fieldData existing field ID
    * @return {Object} field object
    */
-   /* 23-07-2020 code modify start  */
+  /* 23-07-2020 code modify start  */
   constructor(fieldData = Object.create(null)) {
     super('field', Object.assign({}, DEFAULT_DATA(), fieldData))
     this.label = dom.create(this.labelConfig)
@@ -82,7 +82,7 @@ export default class Field extends Component {
     this.isEditing = false
     this.onRender(field)
   }
-/* 23-07-2020 code modify end  */
+  /* 23-07-2020 code modify end  */
   get labelConfig() {
     const hideLabel = !!this.get('config.hideLabel')
 
