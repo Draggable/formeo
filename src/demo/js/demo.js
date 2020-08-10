@@ -1,5 +1,6 @@
 import './scripts'
 import '../sass/demo.scss'
+import '../sass/formeo-table.scss'
 import { editorOptions, renderOptions } from './options'
 import { editorButtons } from './actionButtons'
 // import { editorEvents } from './events'
