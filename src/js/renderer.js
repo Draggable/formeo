@@ -217,9 +217,9 @@ export default class FormeoRenderer {
       notContains: (source, target) => !source.includes(target),
     }
 
-    const sourceValue = evt.target[sourceProperty]
-    const targetValue = isAddress(target) ? this.getComponent(target)[targetProperty] : target
-
+    // Compare as string, this allows values like "true" to be checked for properties like "checked".
+    const sourceValue = String(evt.target[sourceProperty])
+    const targetValue = String(isAddress(target) ? this.getComponent(target)[targetProperty] : target)
     return comparisonMap[comparison] && comparisonMap[comparison](sourceValue, targetValue)
   }
 
