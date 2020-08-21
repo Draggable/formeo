@@ -4,6 +4,7 @@ demo
 !src/demo
 dist
 yarn-error.log
+.idea
 .vscode
 .DS_Store
 .yarn.lock
