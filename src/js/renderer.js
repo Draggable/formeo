@@ -198,6 +198,11 @@ export default class FormeoRenderer {
                     false
                   )
                 }
+
+                // Evaluate conditions on load.
+                const fakeEvt = { target: component } // We don't have an actual event, mock one.
+                this.evaluateCondition(ifRest, fakeEvt) &&
+                  thenConditions.forEach(thenCondition => this.execResult(thenCondition, fakeEvt))
               })
             }
           })
