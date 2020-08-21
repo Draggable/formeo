@@ -227,15 +227,29 @@ export default class FormeoRenderer {
     const assignMap = {
       equals: elem => {
         const propMap = {
-          value: () => (elem[targetProperty] = value),
-          isNotVisible: () => elem.parentElement.setAttribute('hidden', true),
-          isVisible: () => elem.parentElement.removeAttribute('hidden'),
+          value: () => {
+            elem[targetProperty] = value
+          },
+          isNotVisible: () => {
+            elem.parentElement.setAttribute('hidden', true)
+            elem.required = false // Hidden input cannot be required.
+          },
+          isVisible: () => {
+            elem.parentElement.removeAttribute('hidden')
+            elem.required = elem._required
+          },
         }
         propMap[targetProperty] && propMap[targetProperty]()
       },
     }
+
     if (isAddress(target)) {
       const elem = this.getComponent(target)
+
+      // Store required value.
+      if (elem && elem._required === undefined) {
+        elem._required = elem.required
+      }
       assignMap[assignment] && assignMap[assignment](elem)
     }
   }
