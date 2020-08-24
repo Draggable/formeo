@@ -151,6 +151,11 @@
   },
   "engines": {},
   "dependencies": {
+    "axios": "^0.19.2",
+    "fg-loadcss": "^3.1.0",
+    "mutationobserver-shim": "^0.3.7",
+    "pnotify": "^5.1.2",
+    "polyfill": "^0.1.0",
     "sortablejs": "1.10.2"
   },
   "lint-staged": {

@@ -5,6 +5,8 @@ import lodashGet from 'lodash/get'
 import lodashCamelCase from 'lodash/camelCase'
 import lodashLowerCase from 'lodash/lowerCase'
 
+export const bsGridRegEx = /\bcol-\w+-\d+/g
+
 /**
  * Tests if is whole number. returns false if n is Float
  * @param {String|Number} n

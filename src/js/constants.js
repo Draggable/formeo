@@ -3,12 +3,12 @@ import { name } from '../../package.json'
 export const PACKAGE_NAME = name
 
 export const POLYFILLS = [
-  { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
-  { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
-  { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
+  { name: 'cssPreload', src: 'fg-loadcss' },
+  { name: 'mutationObserver', src: 'mutationobserver-shim' },
+  { name: 'fetch', src: 'polyfill' },
 ]
 
-export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg'
+export const FALLBACK_SVG_SPRITE = '../img/formeo-sprite.svg'
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
 export const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`
@@ -108,10 +108,6 @@ export const ANIMATION_SPEED_SLOW = Math.round(ANIMATION_SPEED_BASE * 2)
 //  Event constants
 export const EVENT_FORMEO_SAVED = 'formeoSaved'
 export const EVENT_FORMEO_UPDATED = 'formeoUpdated'
-export const EVENT_FORMEO_UPDATED_STAGE = 'formeoUpdatedStage'
-export const EVENT_FORMEO_UPDATED_ROW = 'formeoUpdatedRow'
-export const EVENT_FORMEO_UPDATED_COLUMN = 'formeoUpdatedColumn'
-export const EVENT_FORMEO_UPDATED_FIELD = 'formeoUpdatedField'
 export const EVENT_FORMEO_CLEARED = 'formeoCleared'
 export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
 export const EVENT_FORMEO_CONDITION_UPDATED = 'formeoConditionUpdated'
@@ -181,5 +177,3 @@ export const CONDITION_TEMPLATE = () => ({
 })
 
 export const UUID_REGEXP = /(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)/gi
-
-export const bsColRegExp = /\bcol-\w+-\d+/g

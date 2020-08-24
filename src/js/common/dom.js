@@ -11,7 +11,6 @@ import {
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
   CHILD_CLASSNAME_MAP,
-  bsColRegExp,
 } from '../constants'
 
 /**
@@ -111,7 +110,7 @@ class DOM {
         element.innerHTML += children
       },
       object: children => {
-        return children && element.appendChild(_this.create(children, isPreview))
+        return element.appendChild(_this.create(children, isPreview))
       },
       node: children => {
         return element.appendChild(children)
@@ -396,6 +395,7 @@ class DOM {
     const { action, attrs } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
+    const multipleOptions = options.length > 1 && fieldType !== 'radio'
 
     const optionMap = (option, i) => {
       const { label, ...rest } = option
@@ -403,7 +403,7 @@ class DOM {
         const input = {
           tag: 'input',
           attrs: {
-            name: id,
+            name: multipleOptions ? `${id}[]` : id,
             type: fieldType,
             value: option.value || '',
             id: `${id}-${i}`,
@@ -766,8 +766,9 @@ class DOM {
       return
     }
     const width = parseFloat((100 / columns.length).toFixed(1)) / 1
+    const bsGridRegEx = /\bcol-\w+-\d+/g
 
-    this.removeClasses(columns, bsColRegExp)
+    this.removeClasses(columns, bsGridRegEx)
     h.forEach(columns, column => {
       Columns.get(column.id).refreshFieldPanels()
 
@@ -779,6 +780,10 @@ class DOM {
       column.dataset.colWidth = newColWidth
       document.dispatchEvent(events.columnResized)
     })
+
+    // fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh())
+
+    // setTimeout(() => fields.forEach(fieldId => Fields.get(fieldId).panelNav.refresh()), 250)
 
     dom.updateColumnPreset(row)
   }

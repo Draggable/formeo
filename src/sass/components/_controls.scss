@@ -23,12 +23,6 @@
     width: calc(100% - 2px);
   }
 
-  .tabbed-panels {
-    nav {
-      padding: 0;
-    }
-  }
-
   nav {
     position: relative;
     padding: 0 $action-btn-width;
@@ -61,12 +55,11 @@
       &.prev-group {
         border-top-left-radius: $border-radius;
         border-bottom-left-radius: 0;
-        left: 0;
       }
     }
   }
 
-  .formeo-panels-wrap {
+  .panels-wrap {
     font-size: 0.85em;
     line-height: 1.8em;
   }
