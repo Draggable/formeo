@@ -23,14 +23,28 @@ export default class EditPanel {
     this.name = panelName
     this.field = field
 
-    this.props = this.createProps()
+    this.panelConfig = this.getPanelConfig(this.data)
+
+    if (panelName === 'options') {
+      field.addSetCallback(`^${panelName}`, () => {
+        this.data = field.get('options')
+        const { config, ...panelConfig } = this.getPanelConfig(this.data)
+        const editPanel = document.getElementById(this.panelConfig.id)
+        editPanel.replaceWith(dom.create(panelConfig))
+      })
+    }
+  }
+
+  getPanelConfig(data) {
+    this.props = this.createProps(data)
     this.editButtons = this.createEditButtons()
-    this.panelConfig = {
+    return {
+      id: `${this.field.id}-${this.name}-panel`,
       config: {
-        label: i18n.get(`panel.label.${panelName}`),
+        label: i18n.get(`panel.label.${this.name}`),
       },
       attrs: {
-        className: `f-panel ${panelName}-panel`,
+        className: `f-panel ${this.name}-panel`,
       },
       children: [this.props, this.editButtons],
     }
@@ -42,11 +56,11 @@ export default class EditPanel {
    * @param  {Object} dataObj   field config object
    * @return {Object}           formeo DOM config object
    */
-  createProps() {
-    this.editPanelItems = Array.from(this.data).map((data, index) => {
+  createProps(data) {
+    this.editPanelItems = Array.from(data).map((dataVal, index) => {
       const isArray = this.type === 'array'
-      const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
-      const itemData = isArray ? data : { [data[0]]: data[1] }
+      const itemKey = [this.name, isArray ? String(index) : dataVal[0]].join('.')
+      const itemData = isArray ? dataVal : { [dataVal[0]]: dataVal[1] }
 
       return new EditPanelItem({ key: itemKey, data: itemData, field: this.field })
     })
