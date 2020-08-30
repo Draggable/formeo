@@ -35,6 +35,11 @@ export default class Data {
 
     const data = set(this.data, path, newVal)
 
+    const callBackPath = Array.isArray(path) ? path.join('.') : path
+    const callBackGroups = Object.keys(this.setCallbacks).filter(setKey => new RegExp(setKey).test(callBackPath))
+    const cbArgs = { newVal, oldVal, path }
+    callBackGroups.forEach(cbGroup => this.setCallbacks[cbGroup].forEach(cb => cb(cbArgs)))
+
     if (!this.disableEvents) {
       const change = this.getChangeType(oldVal, newVal)
       const evtData = {
@@ -53,6 +58,16 @@ export default class Data {
     }
 
     return data
+  }
+  addSetCallback(path, cb) {
+    if (this.setCallbacks[path]) {
+      this.setCallbacks[path].push(cb)
+    } else {
+      this.setCallbacks[path] = [cb]
+    }
+  }
+  removeSetCallback(path, cb) {
+    this.setCallbacks[path] = this.setCallbacks[path].filter(setCb => setCb !== cb)
   }
   add = (id, data = Object.create(null)) => {
     const { id: dataId } = data
@@ -79,5 +94,6 @@ export default class Data {
       return acc
     }, {})
   }
+  setCallbacks = {}
   configVal = Object.create(null)
 }
