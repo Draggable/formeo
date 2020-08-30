@@ -1,3 +1,12 @@
+# [1.5.0](https://github.com/Draggable/formeo/compare/v1.4.0...v1.5.0) (2020-08-30)
+
+
+### Features
+
+* allow "checked" condition to be set ([1df926f](https://github.com/Draggable/formeo/commit/1df926f5c62af196ce6c92ff5f574223d6f8e9c0))
+* evaluate conditions on init ([bb5a08f](https://github.com/Draggable/formeo/commit/bb5a08f7554ac7b97c2c746f2fdbeca3caf90628))
+* remove required attribute from fields if hidden due to condition ([dfb6e62](https://github.com/Draggable/formeo/commit/dfb6e622b04cf17cb77dc0e51f0feb9ac1cd0499))
+
 # [1.4.0](https://github.com/Draggable/formeo/compare/v1.3.0...v1.4.0) (2020-03-30)
 
 
