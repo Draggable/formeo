@@ -3,7 +3,7 @@ import startCase from 'lodash/startCase'
 import throttle from 'lodash/throttle'
 import dom from '../../common/dom'
 import Panels from '../panels'
-import { indexOfNode } from '../../common/helpers'
+// import { indexOfNode } from '../../common/helpers'
 import { clone, unique } from '../../common/utils'
 import EditPanel from './edit-panel'
 import Component from '../component'
@@ -269,12 +269,12 @@ export default class Field extends Component {
           const { checked, type } = target
           // @todo these kind of events should be added to control definitions
           if (['checkbox', 'radio'].includes(type)) {
-            const optionIndex = indexOfNode(target)
-            const options = this.get('options')
+            const optionIndex = +target.id.split('-').pop()
             // uncheck options if radio
             if (type === 'radio') {
-              options.forEach(({ selected }) => (selected = false))
+              this.set('options', this.get('options').map(option => ({ ...option, selected: false })))
             }
+
             const checkType = type === 'checkbox' ? 'checked' : 'selected'
             this.set(`options.${optionIndex}.${checkType}`, checked)
           }

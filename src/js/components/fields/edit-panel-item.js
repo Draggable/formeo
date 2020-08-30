@@ -112,6 +112,9 @@ const INPUT_ORDER = ['selected', 'checked']
 const INPUT_TYPE_ACTION = {
   boolean: (dataKey, field) => ({
     click: ({ target: { checked } }) => {
+      if (field.data?.attrs?.type === 'radio') {
+        field.set('options', field.data.options.map(option => ({ ...option, selected: false })))
+      }
       field.set(dataKey, checked)
       field.updatePreview()
     },
@@ -148,18 +151,19 @@ export default class EditPanelItem {
    * @param  {String} field
    * @return {Object} field object
    */
-  constructor(itemKey, itemData, field) {
-    this.itemValues = orderObjectsBy(Object.entries(itemData), INPUT_ORDER, '0')
+  constructor({ key, data, index, field }) {
+    this.itemValues = orderObjectsBy(Object.entries(data), INPUT_ORDER, '0')
+    const [panelName, item] = key.split('.')
     this.field = field
-    this.itemKey = itemKey
-    const [panelName, item] = itemKey.split('.')
+    this.itemKey = key
+    this.itemIndex = index
     this.panelName = panelName
     this.isDisabled = field.isDisabledProp(item, panelName)
     this.isHidden = this.isDisabled && field.config.panels[panelName].hideDisabled
     this.isLocked = field.isLockedProp(item, panelName)
     this.dom = dom.create({
       tag: 'li',
-      className: [`field-${itemKey.replace(/\./g, '-')}`, 'prop-wrap', this.isHidden && 'hidden-property'],
+      className: [`field-${key.replace(/\./g, '-')}`, 'prop-wrap', this.isHidden && 'hidden-property'],
       children: { className: 'field-prop', children: [this.itemInputs, this.itemControls] },
     })
   }
@@ -422,9 +426,9 @@ export default class EditPanelItem {
       .filter(isNaN)
       .join('.')
 
-    const id = [this.field.id, !['selected', 'checked'].includes(key) && this.itemKey.replace(/\./g, '-')]
-      .filter(Boolean)
-      .join('-')
+    const [id, name] = [[...this.itemKey.split('.'), key], [key]].map(attrVars =>
+      [this.field.id, ...attrVars].filter(Boolean).join('-')
+    )
 
     inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
       label: this.panelName !== 'options' && labelHelper(labelKey),
@@ -432,7 +436,7 @@ export default class EditPanelItem {
     })
 
     inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
-      name: inputTypeConfig.attrs.type === 'checkbox' ? `${id}[]` : id,
+      name: inputTypeConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
       id,
       disabled: this.isDisabled,
       locked: this.isLocked,

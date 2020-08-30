@@ -14,8 +14,8 @@ EditPanelItem {
       >
         <input
           class="type"
-          id="attrs-type"
-          name="attrs-type"
+          id="attrs-type-type"
+          name="type"
           placeholder="Type"
           type="text"
           value="checkbox"
@@ -45,6 +45,7 @@ EditPanelItem {
   "isHidden": null,
   "isLocked": null,
   "itemFieldGroups": Array [],
+  "itemIndex": undefined,
   "itemKey": "attrs.type",
   "itemValues": Array [
     Array [
@@ -74,23 +75,24 @@ EditPanelItem {
         >
           <input
             class="checked"
-            name="[]"
+            id="options-0-checked"
+            name="checked[]"
             placeholder="Checked"
             type="checkbox"
           />
         </div>
         <input
           class="label"
-          id="options-0"
-          name="options-0"
+          id="options-0-label"
+          name="label"
           placeholder="Label"
           type="text"
           value="Checkbox 1"
         />
         <input
           class="value"
-          id="options-0"
-          name="options-0"
+          id="options-0-value"
+          name="value"
           placeholder="Value"
           type="text"
           value="checkbox-1"
@@ -120,6 +122,7 @@ EditPanelItem {
   "isHidden": null,
   "isLocked": null,
   "itemFieldGroups": Array [],
+  "itemIndex": 0,
   "itemKey": "options.0",
   "itemValues": Array [
     Array [
