@@ -48,7 +48,7 @@ export default class EditPanel {
       const itemKey = [this.name, isArray ? String(index) : data[0]].join('.')
       const itemData = isArray ? data : { [data[0]]: data[1] }
 
-      return new EditPanelItem(itemKey, itemData, this.field)
+      return new EditPanelItem({ key: itemKey, data: itemData, field: this.field })
     })
     const editGroupConfig = {
       tag: 'ul',
@@ -138,7 +138,7 @@ export default class EditPanel {
     this.field.set(`attrs.${attr}`, val)
 
     const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`)
-    const newAttr = new EditPanelItem(itemKey, { [safeAttr]: val }, this.field)
+    const newAttr = new EditPanelItem({ key: itemKey, data: { [safeAttr]: val }, field: this.field })
 
     if (existingAttr) {
       this.props.replaceChild(newAttr.dom, existingAttr)
@@ -161,7 +161,12 @@ export default class EditPanel {
 
     const optionTemplate = fieldOptionData.length ? cleanObj(fieldOptionData[fieldOptionData.length - 1]) : {}
     const itemData = Object.assign({}, optionTemplate, { label: newOptionLabel, value: hyphenCase(newOptionLabel) })
-    const newOption = new EditPanelItem(itemKey, itemData, this.field)
+    const newOption = new EditPanelItem({
+      key: itemKey,
+      data: itemData,
+      field: this.field,
+      index: this.props.children.length,
+    })
 
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
@@ -173,7 +178,7 @@ export default class EditPanel {
     const currentConditions = this.field.get('conditions')
     const itemKey = `conditions.${currentConditions.length}`
     const existingCondition = this.props.querySelector(`.field-${itemKey.replace('.', '-')}`)
-    const newCondition = new EditPanelItem(itemKey, evt.template, this.field)
+    const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.field })
 
     if (existingCondition) {
       this.props.replaceChild(newCondition.dom, existingCondition)
