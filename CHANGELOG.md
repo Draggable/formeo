@@ -1,3 +1,17 @@
+# [1.6.0](https://github.com/Draggable/formeo/compare/v1.5.0...v1.6.0) (2020-08-30)
+
+
+### Bug Fixes
+
+* formData loading ([86bfa3e](https://github.com/Draggable/formeo/commit/86bfa3e244fce342b7b562ce0cce4d4e79af7179))
+* radio selected preview and unique id warning ([6a43466](https://github.com/Draggable/formeo/commit/6a43466f5f0b313d6c4c2ad511ebd46991557831))
+
+
+### Features
+
+* add Data.set callback ([b7c8ff3](https://github.com/Draggable/formeo/commit/b7c8ff398074647e65490baae4674164adf09e92))
+* formData setter ([0534285](https://github.com/Draggable/formeo/commit/05342858c83cb65143e198f65d4ae8c26478ba38))
+
 # [1.5.0](https://github.com/Draggable/formeo/compare/v1.4.0...v1.5.0) (2020-08-30)
 
 
