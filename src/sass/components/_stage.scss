@@ -1,9 +1,9 @@
-@import 'components/group-actions';
-@import 'components/row';
-@import 'components/row-edit';
-@import 'components/column';
-@import 'components/field';
-@import 'components/field-edit';
+@import './group-actions';
+@import './row';
+@import './row-edit';
+@import './column';
+@import './field';
+@import './field-edit';
 
 .highlight-component {
   box-shadow: 0 0 space() 2px $brand-info;

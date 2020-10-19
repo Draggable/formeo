@@ -28,6 +28,7 @@ const copyPatterns = [
     to: 'demo/assets/lang/',
     context: require.resolve('formeo-i18n').replace(/main.min.js$/, 'lang/'),
   },
+  { from: 'src/sass', to: 'dist/', context: projectRoot },
 ]
 
 const plugins = [
