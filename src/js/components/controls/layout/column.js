@@ -1,6 +1,7 @@
 export const columnControl = {
   config: {
     label: 'column',
+    hideLabel: true,
   },
   meta: {
     group: 'layout',
