@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/Draggable/formeo/compare/v1.6.0...v1.6.1) (2020-10-20)
+
+
+### Bug Fixes
+
+* formData default arg ([596a639](https://github.com/Draggable/formeo/commit/596a63984b425e2fdc504c6518088fdbd7d0ecc1))
+
 # [1.6.0](https://github.com/Draggable/formeo/compare/v1.5.0...v1.6.0) (2020-08-30)
 
 
