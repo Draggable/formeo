@@ -164,6 +164,13 @@ class DOM {
       processed.push('options')
     }
 
+    // disabling all initially selected options because we are setting them manualy at #330
+    if (element.tagName === 'OPTION') {
+      setTimeout(() => {
+        element.selected = false
+      }, 0)
+    }
+
     // Set element attributes
     if (elem.attrs) {
       _this.processAttrs(elem, element, isPreview)
@@ -317,12 +324,12 @@ class DOM {
 
       if (value) {
         // if multiple options are being used and they are being selected automatically, the browser wants the element
-        // to be rendered before setting the selected-attribute. Hence, we're setting the 'selected'-property at the beginning of 
+        // to be rendered before setting the selected-attribute. Hence, we're setting the 'selected'-property at the beginning of
         // the next iteration of the event-loop.
-        if (name === "selected") {
+        if (element.tagName === 'OPTION' && name === 'selected') {
           setTimeout(() => {
             element.setAttribute(name, value)
-          }, 0);
+          }, 0)
         } else {
           element.setAttribute(name, value)
         }
