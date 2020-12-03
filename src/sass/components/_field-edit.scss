@@ -360,6 +360,10 @@
     margin-bottom: 0;
     display: inline-flex;
     align-items: center;
+
+    label {
+      min-width: 10%;
+    }
   }
 
   .f-addon {

@@ -4,7 +4,13 @@ import i18n from 'mi18n'
 import { orderObjectsBy, indexOfNode } from '../../common/helpers'
 import dom from '../../common/dom'
 import animate from '../../common/animation'
-import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_SPEED_BASE } from '../../constants'
+import {
+  CONDITION_INPUT_ORDER,
+  CUSTOM_LABELS,
+  FIELD_PROPERTY_MAP,
+  OPERATORS,
+  ANIMATION_SPEED_BASE,
+} from '../../constants'
 import events from '../../common/events'
 import Components from '../index'
 import Autocomplete from '../autocomplete'
@@ -79,7 +85,7 @@ const labelHelper = key => {
     return labelText
   }
   const splitKey = key.split('.')
-  return i18n.get(splitKey[splitKey.length - 1])
+  return i18n.get(splitKey[splitKey.length - 1]) || CUSTOM_LABELS[key]
 }
 
 const ITEM_INPUT_TYPE_MAP = {

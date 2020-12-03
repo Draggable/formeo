@@ -95,7 +95,9 @@ export default class FormeoRenderer {
 
   /**
    * Applies a row's config
-   * @param {Object} row data
+   *
+   * @param {Object} data       row data
+   * @param {string} type
    * @return {Object} row config object
    */
   processRow = (data, type = 'row') => {
