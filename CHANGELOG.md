@@ -1,3 +1,10 @@
+## [1.6.2](https://github.com/Draggable/formeo/compare/v1.6.1...v1.6.2) (2020-12-30)
+
+
+### Bug Fixes
+
+* option re-render onInput ([4f2bd20](https://github.com/Draggable/formeo/commit/4f2bd20e0be81eb7567fd65cd177cc6d9ddb8326))
+
 ## [1.6.1](https://github.com/Draggable/formeo/compare/v1.6.0...v1.6.1) (2020-10-20)
 
 
