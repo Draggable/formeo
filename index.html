@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta
+      name="viewport"
+      content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
+    />
+    <meta name="description" content="Vanilla Javascript form building module" />
+    <meta name="theme-color" content="#232323" />
+    
+    <link rel="stylesheet" type="text/css" href="assets/css/demo.min.css" />
+    
+    <title>Formeo | Drag &amp; Drop Form Creation</title>
+  </head>
+  <body>
+    <div class="site-wrap">
+      <header id="demo-header">
+        <div id="debug-wrap">
+          <div class="debug-window inner">
+            <div class="option-editor debug-type"><!-- <h2>Language</h2> --></div>
+            <!--
+              <div class="action-tester debug-type">
+                <h2>Action Tester</h2>
+              </div>
+            -->
+          </div>
+        </div>
+        <nav>
+          <ul>
+            <li>
+              <label for="locale">Language</label>
+              <select name="locale" id="locale" class="form-control">
+                
+                <option value="af-ZA" dir="ltr">Afrikaans</option>
+                
+                <option value="ar-TN" dir="rtl">تونسي</option>
+                
+                <option value="de-DE" dir="ltr">Deutsch</option>
+                
+                <option value="en-US" dir="ltr">English</option>
+                
+                <option value="es-ES" dir="ltr">español</option>
+                
+                <option value="fi-FI" dir="ltr">suomen</option>
+                
+                <option value="hu-HU" dir="ltr">magyar</option>
+                
+                <option value="it-IT" dir="ltr">italiano</option>
+                
+                <option value="ja-JP" dir="ltr">日本語</option>
+                
+                <option value="nb-NO" dir="ltr">norsk</option>
+                
+                <option value="pl-PL" dir="ltr">Polska</option>
+                
+                <option value="ro-RO" dir="ltr">român</option>
+                
+                <option value="ru-RU" dir="ltr">русский язык</option>
+                
+                <option value="tr-TR" dir="ltr">Türkçe</option>
+                
+                <option value="zh-CN" dir="ltr">简化字</option>
+                
+              </select>
+              <label for="control-filter">Control Filter:</label>
+              <input type="text" id="control-filter" placeholder="ex. text" class="form-control" />
+              <!-- <a href="#debug" id="debug-demo" title="Debug">Debug</a> -->
+            </li>
+            <li style="float: right;">
+              v1.6.2
+            </li>
+          </ul>
+        </nav>
+        <img src="assets/img/formeo-logo.svg" alt="Formeo" width="130" id="formeo-logo" />
+      </header>
+      <section id="main_content" class="inner">
+        <form class="build-form clearfix"></form>
+        <div class="render-form"></div>
+      </section>
+      <div class="container render-btn-wrap" id="editor-action-buttons">
+      </div>
+    </div>
+    <footer id="demo-footer">
+      <nav>
+        <ul>
+          <li>
+            <a href="https://github.com/Draggable/formeo" target="_blank" title="View project on GitHub">
+              <img src="assets/img/github.png" width="77" alt="GitHub" />
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+    <script src="assets/js/demo.min.js"></script>
+  </body>
+</html>
