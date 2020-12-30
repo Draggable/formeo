@@ -122,7 +122,6 @@ const INPUT_TYPE_ACTION = {
   string: (dataKey, field) => ({
     input: ({ target: { value } }) => {
       field.set(dataKey, value)
-      field.updatePreview()
     },
   }),
   number: (dataKey, field) => ({
