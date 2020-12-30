@@ -24,15 +24,6 @@ export default class EditPanel {
     this.field = field
 
     this.panelConfig = this.getPanelConfig(this.data)
-
-    if (panelName === 'options') {
-      field.addSetCallback(`^${panelName}`, () => {
-        this.data = field.get('options')
-        const { config, ...panelConfig } = this.getPanelConfig(this.data)
-        const editPanel = document.getElementById(this.panelConfig.id)
-        editPanel.replaceWith(dom.create(panelConfig))
-      })
-    }
   }
 
   getPanelConfig(data) {
