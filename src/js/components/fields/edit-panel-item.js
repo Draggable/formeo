@@ -337,7 +337,8 @@ export default class EditPanelItem {
       const row = target.closest('.f-condition-row')
       const regex = new RegExp(`${target.className}(?:\\S?)+`, 'gm')
       row.className = row.className.replace(regex, '')
-      row.classList.add([target.className, target.value].filter(Boolean).join('-'))
+      const value = target.value.split(' ').join('-')
+      row.classList.add([target.className, value].filter(Boolean).join('-'))
       const evtData = {
         dataPath,
         value: target.value,
