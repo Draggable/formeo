@@ -37,7 +37,7 @@ function addAttribute(evt) {
 {
   actions: {
     add: {
-      attr: addAttribute,
+      attr: addAttribute(event),
     },
   },
 }
