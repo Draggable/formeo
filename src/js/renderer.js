@@ -41,6 +41,7 @@ export default class FormeoRenderer {
     this.container = renderContainer
     this.form = formData
     this.external = external
+    this.dom = dom
     this.components = Object.create(null)
   }
 
