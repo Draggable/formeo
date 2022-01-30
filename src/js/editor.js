@@ -37,6 +37,7 @@ export class FormeoEditor {
     this.userFormData = userFormData || formData
 
     this.Components = Components
+    this.dom = dom
     Events.init({ debug, ...events })
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
 
