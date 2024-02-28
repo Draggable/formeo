@@ -121,6 +121,11 @@ export class FormeoEditor {
    */
   render() {
     this.stages = Object.values(Components.get('stages'))
+    if (this.opts.controlOnLeft) {
+      this.stages.forEach(stage => {
+        stage.dom.style.order = 1
+      })
+    }
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',
