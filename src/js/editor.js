@@ -119,7 +119,17 @@ export class FormeoEditor {
    * @return {void}
    */
   render() {
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js'
+
+    document.head.appendChild(script)
+
     this.stages = Object.values(Components.get('stages'))
+    if (this.opts.controlOnLeft) {
+      this.stages.forEach(stage => {
+        stage.dom.style.order = 1
+      })
+    }
     const elemConfig = {
       attrs: {
         className: 'formeo formeo-editor',

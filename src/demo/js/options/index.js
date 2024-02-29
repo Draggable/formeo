@@ -27,6 +27,7 @@ export const editorOptions = {
   // debug: true,
   sessionStorage: true,
   editPanelOrder: ['attrs', 'options'],
+  // controlOnLeft: true,
 }
 
 export const renderOptions = {
