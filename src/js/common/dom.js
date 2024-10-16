@@ -120,9 +120,9 @@ class DOM {
         return element.appendChild(children.dom)
       },
       array: children => {
-        for (let i = 0; i < children.length; i++) {
-          childType = _this.childType(children[i])
-          appendChildren[childType](children[i])
+        for (const child of children) {
+          childType = _this.childType(child)
+          appendChildren[childType](child)
         }
       },
       function: children => {
