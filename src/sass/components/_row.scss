@@ -1,25 +1,31 @@
+@use "../base/mixins";
+
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
+
 .formeo-row {
   > .children {
-    @extend %display-row;
-    min-height: space(4);
+    @include mixins.display-row;
+    min-height: mixins.space(4);
   }
 
-  @include clearfix;
+  @include mixins.clearfix;
 
   transition: background-color 125ms ease-in-out;
   position: relative;
   clear: both;
   margin-left: 0;
-  margin-bottom: space();
-  background-color: $white;
-  padding: space();
-  box-shadow: 0 0 0 1px $gray-lighter inset;
+  margin-bottom: mixins.space();
+  background-color: color.$white;
+  padding: mixins.space();
+  box-shadow: 0 0 0 1px color.$gray-lighter inset;
 
   &::before {
-    @extend %element-tag;
+    @include mixins.element-tag;
 
-    border-bottom-right-radius: $border-radius;
-    border: 1px solid $row-outline-color;
+    border-bottom-right-radius: var.$border-radius;
+    border: 1px solid color.$row-outline-color;
     border-width: 1px 0;
     left: 0;
   }
@@ -33,13 +39,13 @@
   }
 
   &:first-child {
-    border-top-right-radius: $border-radius;
+    border-top-right-radius: var.$border-radius;
     border-top-left-radius: 0;
   }
 
   &:last-child {
-    border-bottom-right-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: var.$border-radius;
+    border-bottom-left-radius: var.$border-radius;
   }
 
   &.hovering-row {
@@ -79,7 +85,7 @@
   }
 
   &.editing-row {
-    box-shadow: 0 0 0 1px $row-outline-color inset;
+    box-shadow: 0 0 0 1px color.$row-outline-color inset;
 
     &::before {
       border-width: 1px 0 0;
@@ -89,7 +95,7 @@
   }
 
   &.hovering-row {
-    box-shadow: 0 0 0 1px $row-outline-color inset;
+    box-shadow: 0 0 0 1px color.$row-outline-color inset;
 
     &.editing-row {
       &::before {
@@ -98,20 +104,20 @@
     }
 
     &::before {
-      box-shadow: 1px 1px 1px $gray-lighter;
+      box-shadow: 1px 1px 1px color.$gray-lighter;
       border-right-width: 1px;
       width: 80px !important;
     }
   }
 
   &.row-moving {
-    box-shadow: 0 0 0 1px $row-outline-color inset, 0 0 30px 0 $gray-light;
+    box-shadow: 0 0 0 1px color.$row-outline-color inset, 0 0 30px 0 color.$gray-light;
   }
 
   &.empty {
     &::after {
       left: 0;
-      transform: translate(space(1), -50%);
+      transform: translate(mixins.space(1), -50%);
     }
   }
 

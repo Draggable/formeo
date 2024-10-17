@@ -1,9 +1,10 @@
-@import 'base/variables';
-@import 'base/animation';
-@import 'base/mixins';
-@import 'base/icons';
-@import 'components/autocomplete';
-@import 'components/panels';
+@use "sass:meta";
+@use 'base/variables';
+@use 'base/animation';
+@use 'base/mixins';
+@use 'base/icons';
+@use 'components/autocomplete';
+@use 'components/panels';
 
 .formeo-sprite {
   display: none !important;
@@ -14,29 +15,29 @@
     box-sizing: inherit;
   }
 
-  @import 'base/bs';
+  @include meta.load-css('base/bs');
 
-  @include clearfix;
+  @include mixins.clearfix;
 
   &.formeo-editor {
     display: flex;
     flex-direction: row;
     text-align: left;
-    @import 'components/component';
-    @import 'components/stage';
+    @include meta.load-css('components/component');
+    @include meta.load-css('components/stage');
 
-    @import 'base/rtl';
+    @include meta.load-css('base/rtl');
   }
 
   &.formeo-render {
-    @import 'render';
+    @include meta.load-css('render');
   }
 }
 
-@import 'components/controls';
+@include meta.load-css('components/controls');
 
 .field-control {
-  @extend %field-control;
+  @include mixins.field-control;
 
   .svg-icon {
     pointer-events: none;

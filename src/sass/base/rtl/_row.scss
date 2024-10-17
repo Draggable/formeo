@@ -1,19 +1,21 @@
+@use "../variables";
+
 .formeo-row {
   &::before {
-    border-bottom-left-radius: $border-radius;
+    border-bottom-left-radius: variables.$border-radius;
     border-bottom-right-radius: 0;
     right: 0;
     left: auto;
   }
 
   &:first-child {
-    border-top-left-radius: $border-radius;
+    border-top-left-radius: variables.$border-radius;
     border-top-right-radius: 0;
   }
 
   &:last-child {
-    border-bottom-left-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
+    border-bottom-left-radius: variables.$border-radius;
+    border-bottom-right-radius: variables.$border-radius;
   }
 
   &.hovering-row {

@@ -1,24 +1,28 @@
+@use '../colors' as color;
+@use '../variables' as var;
+
+
 .row-actions {
   right: -23px;
   left: auto;
-  border-top-right-radius: $border-radius;
-  border-bottom-right-radius: $border-radius;
+  border-top-right-radius: var.$border-radius;
+  border-bottom-right-radius: var.$border-radius;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  border-left: 1px solid $white;
+  border-left: 1px solid color.$white;
 }
 
 .field-actions {
   text-align: left;
   left: 0;
   right: auto;
-  border-bottom-right-radius: $input-border-radius;
+  border-bottom-right-radius: var.$input-border-radius;
   border-bottom-left-radius: 0;
 
   button {
     @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
-        left: $i * $action-btn-width - $action-btn-width;
+        left: $i * var.$action-btn-width - var.$action-btn-width;
         right: auto;
       }
     }
@@ -33,7 +37,7 @@
   &.hovering-field,
   &.editing-field {
     .field-actions {
-      box-shadow: 1px 1px 1px $gray-lighter;
+      box-shadow: 1px 1px 1px color.$gray-lighter;
       border-width: 1px 0 0 1px;
     }
   }

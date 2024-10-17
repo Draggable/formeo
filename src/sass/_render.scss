@@ -1,3 +1,9 @@
+@use "base/mixins";
+
+@use 'base/colors' as color;
+@use 'base/variables' as var;
+
+
 .formeo-row,
 .formeo-column,
 .formeo-field {
@@ -14,8 +20,8 @@
 }
 
 .will-remove {
-  background-color: $remove-bg;
-  box-shadow: 0 0 1px 0 $brand-error inset;
+  background-color: color.$remove-bg;
+  box-shadow: 0 0 1px 0 color.$brand-error inset;
 }
 
 .formeo-row {
@@ -26,12 +32,12 @@
   align-content: stretch;
   align-items: stretch;
   display: flex;
-  border-radius: $border-radius;
+  border-radius: var.$border-radius;
   transition: background-color 200ms, padding 200ms;
-  padding: space() 0;
+  padding: mixins.space() 0;
 
   &.will-remove {
-    padding: space();
+    padding: mixins.space();
   }
 
   &:last-of-type {
@@ -47,7 +53,7 @@
 }
 
 .f-input-group-wrap {
-  @include clearfix;
+  @include mixins.clearfix;
   .formeo-row:first-of-type {
     .remove-input-group {
       display: none;
@@ -74,17 +80,17 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: space(2);
-  height: space(2);
+  width: mixins.space(2);
+  height: mixins.space(2);
   border: 0 none;
   background: transparent;
   outline: 0 none;
   line-height: 0;
-  padding: space();
+  padding: mixins.space();
 
   &:hover {
     .svg-icon {
-      fill: $brand-error;
+      fill: color.$brand-error;
     }
   }
 
@@ -103,7 +109,7 @@
 }
 
 .formeo-column {
-  padding: 0 space();
+  padding: 0 mixins.space();
   float: left;
   max-width: none;
   flex-direction: column;

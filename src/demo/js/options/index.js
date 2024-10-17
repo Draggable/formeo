@@ -1,7 +1,6 @@
 import external from './external'
 import controls from './controls'
 import config from './config'
-import { devPrefix } from '../../../../tools/build-vars'
 
 const editorContainer = document.querySelector('.build-form')
 const renderContainer = '.render-form'
@@ -9,7 +8,7 @@ const renderContainer = '.render-form'
 export const editorOptions = {
   editorContainer,
   i18n: {
-    location: `./${devPrefix}assets/lang`,
+    location: `./assets/lang`,
   },
   actions: {
     // save: formData => null, // do something on save action

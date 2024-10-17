@@ -1,3 +1,7 @@
+@use "sass:color" as sass-color;
+@use 'colors' as color;
+@use 'variables' as var;
+
 /*
   Mixins
 */
@@ -41,14 +45,14 @@
 }
 
 @function space($space: 0.5) {
-  @return $space * $base-space;
+  @return $space * var.$base-space;
 }
 
 @mixin custom-scroll($trackColor, $thumbColor) {
   // Let's get this party started
   &::-webkit-scrollbar {
-    width: $base-space;
-    height: $base-space;
+    width: var.$base-space;
+    height: var.$base-space;
   }
 
   // Track
@@ -68,7 +72,7 @@
   overflow: auto;
 }
 
-%display-row {
+@mixin display-row {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
@@ -77,60 +81,60 @@
   align-items: stretch;
 }
 
-%input-style {
+@mixin input-style {
   font-size: 100%;
   font-family: inherit;
   height: 2.1em;
   line-height: 1.5;
   margin: 0;
-  border: $input-border;
-  border-radius: $input-border-radius;
-  background-color: $white;
+  border: var.$input-border;
+  border-radius: var.$input-border-radius;
+  background-color: color.$white;
   width: 100%;
-  padding: $input-padding;
+  padding: var.$input-padding;
   box-sizing: border-box;
 
   &:focus {
-    border: 1px solid $input-focus;
+    border: 1px solid color.$input-focus;
     outline: none;
   }
 }
 
-%no-list-style {
+@mixin no-list-style {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-%element-tag {
+@mixin element-tag {
   font-size: 12px;
   position: absolute;
   top: 0;
   width: 0;
   padding: 0;
-  height: $action-btn-width - 2;
-  line-height: $action-btn-width;
+  height: var.$action-btn-width - 2;
+  line-height: var.$action-btn-width;
   text-align: center;
   overflow: hidden;
   z-index: 100;
   transition-property: width;
   transition-duration: 150ms;
   content: attr(data-hover-tag);
-  background-color: $white;
+  background-color: color.$white;
 }
 
-%field-control {
+@mixin field-control {
   cursor: move;
   list-style: none;
   margin: -1px 0 0;
-  border: 1px solid $gray-lighter;
+  border: 1px solid color.$gray-lighter;
   text-align: left;
-  background: $white;
+  background: color.$white;
   user-select: none;
   overflow: hidden;
 
   &.control-moving {
-    border-radius: $border-radius;
+    border-radius: var.$border-radius;
     animation: DRAG_GHOST 500ms forwards;
   }
 
@@ -140,7 +144,7 @@
   }
 
   &:hover {
-    background-color: darken($white, 5%);
+    background-color: sass-color.adjust(color.$white, $lightness: -5%);
   }
 
   button {
@@ -158,8 +162,8 @@
 
     &:focus {
       outline: 0 none;
-      background-color: darken($white, 5%);
-      box-shadow: 0 0 0 1px $input-focus inset;
+      background-color: sass-color.adjust(color.$white, $lightness: -5%);
+      box-shadow: 0 0 0 1px color.$input-focus inset;
       border-radius: 0 !important;
     }
 
@@ -176,8 +180,8 @@
     float: left;
     margin-right: space(1);
     text-align: center;
-    width: $icon-size;
-    height: $icon-size;
+    width: var.$icon-size;
+    height: var.$icon-size;
   }
 
   [dir='rtl'] & {
@@ -192,11 +196,11 @@
   }
 }
 
-%button-style {
-  border-radius: $input-border-radius;
-  border: 1px solid $gray;
-  color: $gray-dark;
-  background-color: $white;
+@mixin button-style {
+  border-radius: var.$input-border-radius;
+  border: 1px solid color.$gray;
+  color: color.$gray-dark;
+  background-color: color.$white;
   padding: space() space(1);
 
   &:active {
@@ -213,36 +217,36 @@
   &.success,
   &.warning,
   &.error {
-    color: $white;
+    color: color.$white;
   }
 
   &.primary {
-    background-color: $brand-primary;
-    border-color: $brand-primary-dark;
+    background-color: color.$brand-primary;
+    border-color: color.$brand-primary-dark;
   }
 
   &.success {
-    background-color: $brand-success;
-    border-color: $brand-success-dark;
+    background-color: color.$brand-success;
+    border-color: color.$brand-success-dark;
   }
 
   &.warning {
-    background-color: $brand-warning;
-    border-color: $brand-warning-dark;
+    background-color: color.$brand-warning;
+    border-color: color.$brand-warning-dark;
   }
 
   &.error {
-    background-color: $brand-error;
-    border-color: $brand-error-dark;
+    background-color: color.$brand-error;
+    border-color: color.$brand-error-dark;
   }
 
   &[disabled] {
-    background-color: $gray-lighter;
-    color: $white;
+    background-color: color.$gray-lighter;
+    color: color.$white;
   }
 
   &:focus {
-    border: 1px solid $input-focus;
+    border: 1px solid color.$input-focus;
   }
 
   &:hover,

@@ -1,4 +1,3 @@
-import uuidv4 from 'uuid/v4'
 import {
   COMPONENT_INDEX_TYPES,
   COMPONENT_TYPE_CLASSNAMES_REGEXP,
@@ -6,6 +5,8 @@ import {
   CHILD_TYPE_MAP,
 } from '../constants'
 import mergeWith from 'lodash/mergeWith'
+
+const uuidv4 = () => crypto.randomUUID()
 
 /**
  * Match the values from a string or array against a str.

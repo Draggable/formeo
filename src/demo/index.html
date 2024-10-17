@@ -1,70 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta
-      name="viewport"
-      content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
-    />
-    <meta name="description" content="Vanilla Javascript form building module" />
-    <meta name="theme-color" content="#232323" />
-    <% if (htmlWebpackPlugin.options.isProduction) { %>
-    <link rel="stylesheet" type="text/css" href="<%= htmlWebpackPlugin.options.demo.replace(/js/g, 'css') %>" />
-    <% } %>
-    <title>Formeo | Drag &amp; Drop Form Creation</title>
-  </head>
-  <body>
-    <div class="site-wrap">
-      <header id="demo-header">
-        <div id="debug-wrap">
-          <div class="debug-window inner">
-            <div class="option-editor debug-type"><!-- <h2>Language</h2> --></div>
-            <!--
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+  <meta name="viewport"
+    content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+  <meta name="description" content="Vanilla Javascript form building module" />
+  <meta name="theme-color" content="#232323" />
+  <title>Formeo | Drag &amp; Drop Form Creation</title>
+</head>
+
+<body>
+  <div class="site-wrap">
+    <header id="demo-header">
+      <div id="debug-wrap">
+        <div class="debug-window inner">
+          <div class="option-editor debug-type"><!-- <h2>Language</h2> --></div>
+          <!--
               <div class="action-tester debug-type">
                 <h2>Action Tester</h2>
               </div>
             -->
-          </div>
         </div>
-        <nav>
-          <ul>
-            <li>
-              <label for="locale">Language</label>
-              <select name="locale" id="locale" class="form-control">
-                <% _.forEach(htmlWebpackPlugin.options.langFiles, function(langFile) { %>
-                <option value="<%- langFile.locale %>" dir="<%- langFile.dir %>"><%- langFile.nativeName %></option>
-                <% }); %>
-              </select>
-              <label for="control-filter">Control Filter:</label>
-              <input type="text" id="control-filter" placeholder="ex. text" class="form-control" />
-              <!-- <a href="#debug" id="debug-demo" title="Debug">Debug</a> -->
-            </li>
-            <li style="float: right;">
-              v<%= htmlWebpackPlugin.options.version %>
-            </li>
-          </ul>
-        </nav>
-        <img src="<%= htmlWebpackPlugin.options.devPrefix %>assets/img/formeo-logo.svg" alt="Formeo" width="130" id="formeo-logo" />
-      </header>
-      <section id="main_content" class="inner">
-        <form class="build-form clearfix"></form>
-        <div class="render-form"></div>
-      </section>
-      <div class="container render-btn-wrap" id="editor-action-buttons">
       </div>
-    </div>
-    <footer id="demo-footer">
       <nav>
         <ul>
           <li>
-            <a href="https://github.com/Draggable/formeo" target="_blank" title="View project on GitHub">
-              <img src="<%= htmlWebpackPlugin.options.devPrefix %>assets/img/github.png" width="77" alt="GitHub" />
-            </a>
+            <label for="locale">Language</label>
+            <select name="locale" id="locale" class="form-control">
+              <% langFiles.forEach(function(langFile) { %>
+                <option value="<%- langFile.locale %>" dir="<%- langFile.dir %>"><%- langFile.nativeName %></option>
+                <% }); %>
+            </select>
+            <label for="control-filter">Control Filter:</label>
+            <input type="text" id="control-filter" placeholder="ex. text" class="form-control" />
+            <!-- <a href="#debug" id="debug-demo" title="Debug">Debug</a> -->
+          </li>
+          <li style="float: right;">
+            v<%= version %>
           </li>
         </ul>
       </nav>
-    </footer>
-    <script src="<%= `${htmlWebpackPlugin.options.devPrefix}${htmlWebpackPlugin.options.demo}` %>"></script>
-  </body>
+      <img src="assets/img/formeo-logo.svg" alt="Formeo" width="130" id="formeo-logo" />
+    </header>
+    <section id="main_content" class="inner">
+      <form class="build-form clearfix"></form>
+      <div class="render-form"></div>
+    </section>
+    <div class="container render-btn-wrap" id="editor-action-buttons">
+    </div>
+  </div>
+  <footer id="demo-footer">
+    <nav>
+      <ul>
+        <li>
+          <a href="https://github.com/Draggable/formeo" target="_blank" title="View project on GitHub">
+            <img src="assets/img/github.png" width="77" alt="GitHub" />
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </footer>
+</body>
+
 </html>

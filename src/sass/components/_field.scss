@@ -1,36 +1,42 @@
+@use "../base/mixins";
+
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
+
 .formeo-field {
-  min-height: $icon-size;
+  min-height: var.$icon-size;
   position: relative;
-  padding: space();
-  transition: background-color $animation-speed-base ease-in-out, box-shadow $animation-speed-base ease-in-out;
+  padding: mixins.space();
+  transition: background-color var.$animation-speed-base ease-in-out, box-shadow var.$animation-speed-base ease-in-out;
   list-style: none;
   margin: 0;
   will-change: box-shadow; // for highlight
 
   &:last-child {
-    border-bottom-right-radius: $input-border-radius;
-    border-bottom-left-radius: $input-border-radius;
+    border-bottom-right-radius: var.$input-border-radius;
+    border-bottom-left-radius: var.$input-border-radius;
   }
 
   &.first-field {
-    border-top-right-radius: $input-border-radius;
+    border-top-right-radius: var.$input-border-radius;
 
     .field-actions {
-      border-top-right-radius: $input-border-radius;
+      border-top-right-radius: var.$input-border-radius;
     }
   }
 
   &.last-field {
-    border-bottom-right-radius: $input-border-radius;
-    border-bottom-left-radius: $input-border-radius;
+    border-bottom-right-radius: var.$input-border-radius;
+    border-bottom-left-radius: var.$input-border-radius;
   }
 
   .prev-label {
-    min-height: $icon-size;
-    max-width: calc(100% - #{$icon-size});
+    min-height: var.$icon-size;
+    max-width: calc(100% - #{var.$icon-size});
     display: flex;
     align-items: flex-end;
-    margin-bottom: $input-border-radius;
+    margin-bottom: var.$input-border-radius;
   }
 
   [contenteditable] {
@@ -38,7 +44,7 @@
     user-select: text;
     display: inline-block;
     position: relative;
-    min-width: $icon-size;
+    min-width: var.$icon-size;
 
     &::after {
       content: '';
@@ -46,14 +52,14 @@
       position: absolute;
       bottom: 0;
       left: 0;
-      border-bottom: 1px dashed $gray-lighter;
+      border-bottom: 1px dashed color.$gray-lighter;
     }
 
     &:focus {
-      border-radius: $input-border-radius;
+      border-radius: var.$input-border-radius;
       border-bottom-color: transparent;
       outline: none;
-      box-shadow: 0 0 0 1px $input-focus inset;
+      box-shadow: 0 0 0 1px color.$input-focus inset;
       &::after {
         display: none;
       }
@@ -69,7 +75,7 @@
   }
 
   &::before {
-    @extend %element-tag;
+    @include mixins.element-tag;
 
     display: none;
 
@@ -78,23 +84,23 @@
     top: 0;
     padding: 0 10px;
     right: 0;
-    transform: translateX(-(3 * $action-btn-width));
+    transform: translateX(-(3 * var.$action-btn-width));
     border-bottom-right-radius: 0;
-    border-bottom-left-radius: $border-radius;
+    border-bottom-left-radius: var.$border-radius;
   }
 
   &.field-type-hidden {
-    border: 1px dashed $gray-lighter;
+    border: 1px dashed color.$gray-lighter;
   }
 }
 
 .editing-field,
 .hovering-field {
-  box-shadow: 0 0 0 1px $field-outline-color inset;
+  box-shadow: 0 0 0 1px color.$field-outline-color inset;
 
   &::before {
-    border-left: 1px solid $field-outline-color;
-    border-bottom: 1px solid $field-outline-color;
+    border-left: 1px solid color.$field-outline-color;
+    border-bottom: 1px solid color.$field-outline-color;
   }
 }
 .field-actions {
@@ -104,12 +110,12 @@
 }
 
 .field-moving {
-  box-shadow: 0 0 0 1px $field-outline-color inset, 0 0 30px 0 $gray-light;
-  background-color: $white;
+  box-shadow: 0 0 0 1px color.$field-outline-color inset, 0 0 30px 0 color.$gray-light;
+  background-color: color.$white;
 }
 
 .editing-field {
-  background-color: $gray-lightest;
+  background-color: color.$gray-lightest;
   z-index: 1;
 }
 

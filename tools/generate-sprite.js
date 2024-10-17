@@ -1,22 +1,28 @@
+import { fileURLToPath } from 'url'
+import { dirname, resolve, join } from 'path'
 import fs from 'fs-extra'
-import path from 'path'
 import SVGSpriter from 'svg-sprite'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
 // Create a sprite from a directory of svg files.
 
-const projectRootDir = path.resolve(__dirname, '../')
+const projectRootDir = resolve(__dirname, '../')
 
 function generateSprite() {
   const prefix = 'f'
   const iconDelim = 'i'
-  const srcDir = path.join(projectRootDir, process.argv[2] || 'src/icons')
-  const outputDir = path.join(projectRootDir, process.argv[3] || 'src/demo/assets/img')
+  const srcDir = join(projectRootDir, process.argv[2] || 'src/icons')
+  const outputDir = srcDir
   const spriteName = process.argv[3] ? '' : '/formeo-sprite.svg'
 
-  const isSvg = filePath => /.svg$/.test(filePath)
+  console.log(outputDir)
+
+  const isIconSvg = filePath => /^icon-.+\.svg$/.test(filePath)
   const iconPaths = fs
-    .readdirSync(srcDir)
-    .filter(isSvg)
+    .readdirSync(srcDir, srcDir)
+    .filter(isIconSvg)
     .map(filename => `${srcDir}/${filename}`)
 
   const spriteConfig = {
@@ -29,15 +35,16 @@ function generateSprite() {
         {
           svgo: {
             plugins: [
-              { cleanupAttrs: true },
-              { removeDimensions: true },
-              { removeTitle: true },
-              { removeUselessDefs: true },
-              { mergePaths: true },
-              { removeStyleElement: true },
-              { removeNonInheritableGroupAttrs: true },
+              'cleanupAttrs',
+              'removeDimensions',
+              'removeTitle',
+              'removeUselessDefs',
+              'mergePaths',
+              'removeStyleElement',
+              'removeNonInheritableGroupAttrs',
               {
-                removeAttrs: { attrs: '(stroke|fill|style|^font-*)' },
+                name: 'removeAttrs',
+                params: { attrs: '(stroke|fill|style|^font-*)' },
               },
             ],
           },
@@ -57,7 +64,7 @@ function generateSprite() {
   })
 
   // Compile the sprite
-  spriter.compile(function(error, result) {
+  spriter.compile(function (error, result) {
     if (error) {
       throw new Error(error)
     }

@@ -1,3 +1,9 @@
+@use "sass:color" as sass-color;
+@use "mixins";
+
+@use 'colors' as color;
+@use 'variables' as var;
+
 /*
   Animations
 */
@@ -14,22 +20,22 @@
 
 @keyframes DRAG_GHOST {
   0% {
-    box-shadow: 0 0 0 0 $gray-light;
+    box-shadow: 0 0 0 0 color.$gray-light;
   }
 
   100% {
-    box-shadow: 0 0 30px 0 $gray-light;
+    box-shadow: 0 0 30px 0 color.$gray-light;
   }
 }
 
 @keyframes EDIT_PULSE {
   from,
   to {
-    border-color: $input-focus;
+    border-color: color.$input-focus;
   }
 
   50% {
-    border-color: lighten($input-focus, 20%);
+    border-color: sass-color.adjust(color.$input-focus, $lightness: 20%);
   }
 }
 
@@ -44,9 +50,9 @@
 
 @keyframes COMPONENT_HIGHLIGHT_PULSE {
   0% {
-    box-shadow: 0 0 1px space(1) $brand-info;
+    box-shadow: 0 0 1px mixins.space(1) color.$brand-info;
   }
   100% {
-    box-shadow: 0 0 0 0 $brand-info;
+    box-shadow: 0 0 0 0 color.$brand-info;
   }
 }

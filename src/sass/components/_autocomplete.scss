@@ -1,5 +1,11 @@
+@use "sass:color" as sass-color;
+@use "../base/mixins";
+
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
 .f-autocomplete-list {
-  background-color: $white;
+  background-color: color.$white;
   display: none;
   list-style: none;
   padding: 0;
@@ -9,31 +15,31 @@
   overflow-y: auto;
   width: 100%;
   margin: 0 -1px;
-  border: 1px solid $gray-light;
+  border: 1px solid color.$gray-light;
   border-width: 1px 1px 0;
-  box-shadow: 0 1px space() 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px mixins.space() 0 rgba(0, 0, 0, 0.5);
 
   li {
-    border: 1px solid $gray-light;
+    border: 1px solid color.$gray-light;
     display: none;
     cursor: default;
-    padding: space();
+    padding: mixins.space();
     margin: -1px 0 0;
     border-width: 1px 0;
-    transition: background-color $animation-speed-fast ease-in-out;
+    transition: background-color var.$animation-speed-fast ease-in-out;
     will-change: background-color;
     font-size: 0.85em;
 
     &.active-option {
-      background-color: lighten($brand-info, 33%);
+      background-color: sass-color.adjust(color.$brand-info, $lightness: 33%);
     }
     &:hover {
-      background-color: lighten($brand-info, 16.6%);
+      background-color: sass-color.adjust(color.$brand-info, $lightness: 16.6%);
     }
   }
 
   .component-type {
-    color: $gray;
+    color: color.$gray;
     font-style: italic;
     font-size: 0.75em;
   }

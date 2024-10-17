@@ -1,42 +1,46 @@
+@use 'colors' as color;
+@use 'variables' as var;
+
+
 .svg-icon {
   display: inline-block;
-  width: $action-btn-width;
-  height: $action-btn-width;
+  width: var.$action-btn-width;
+  height: var.$action-btn-width;
   pointer-events: none;
 }
 
 .f-i-remove {
   &:hover {
-    fill: $brand-error;
+    fill: color.$brand-error;
   }
 }
 
 button[class*='-remove'] {
   &:hover {
-    background-color: $brand-error !important;
+    background-color: color.$brand-error !important;
 
     .svg-icon {
-      fill: $white;
+      fill: color.$white;
     }
   }
 }
 
 button[class*='-clone'] {
   &:hover {
-    background-color: $brand-success !important;
+    background-color: color.$brand-success !important;
 
     .svg-icon {
-      fill: $white;
+      fill: color.$white;
     }
   }
 }
 
 .item-edit-toggle {
   &:hover {
-    background-color: $brand-primary !important;
+    background-color: color.$brand-primary !important;
 
     .svg-icon {
-      fill: $white;
+      fill: color.$white;
     }
   }
 }

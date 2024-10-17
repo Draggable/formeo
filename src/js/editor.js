@@ -10,7 +10,7 @@ import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import { SESSION_LOCALE_KEY, FALLBACK_SVG_SPRITE } from './constants'
 import { sessionStorage, merge } from './common/utils'
 import { defaults } from './config'
-import sprite from '../demo/assets/img/formeo-sprite.svg'
+import sprite from '../demo/assets/img/formeo-sprite.svg?raw'
 
 /**
  * Main class
@@ -54,7 +54,7 @@ export class FormeoEditor {
     return this.Components.formData
   }
   set formData(data = {}) {
-    return this.load({ ...this.userFormData, ...data }, this.opts)
+    this.load({ ...this.userFormData, ...data }, this.opts)
   }
   get json() {
     return this.Components.json
@@ -82,7 +82,7 @@ export class FormeoEditor {
       promises.push(insertIcons(sprite))
     }
 
-    promises.push(i18n.init(Object.assign({}, this.opts.i18n, { locale: sessionStorage.get(SESSION_LOCALE_KEY) })))
+    promises.push(i18n.init({ ...this.opts.i18n, locale: sessionStorage.get(SESSION_LOCALE_KEY) }))
 
     return Promise.all(promises)
   }

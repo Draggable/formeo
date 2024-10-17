@@ -1,36 +1,39 @@
-@import 'components/group-actions';
-@import 'components/row';
-@import 'components/row-edit';
-@import 'components/column';
-@import 'components/field';
-@import 'components/field-edit';
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
+@use "group-actions";
+@use "row";
+@use "row-edit";
+@use "column";
+@use "field";
+@use "field-edit";
+@use "../base/mixins";
+
+
 
 .highlight-component {
-  box-shadow: 0 0 space() 2px $brand-info;
+  box-shadow: 0 0 mixins.space() 2px color.$brand-info;
 }
 
 .formeo-stage {
-  @include breakpoint('phone-lrg') {
-    width: calc(100% - 50px);
-  }
+  
   width: 73%;
   box-sizing: border-box;
   transition: width 250ms;
-  margin-right: space();
+  margin-right: mixins.space();
   flex: 1 1 auto;
-  @extend %no-list-style;
   position: relative;
   transition-property: background-color, border-color;
   transition-duration: 500ms, 333ms;
   border: 0 dashed transparent;
-  background-color: $stage-background;
-  padding-left: $action-btn-width - 1;
-  padding-bottom: space(1);
+  background-color: color.$stage-background;
+  padding-left: var.$action-btn-width - 1;
+  padding-bottom: mixins.space(1);
   overflow: visible;
 
   &.empty {
-    border: 3px dashed $gray-lighter;
-    background-color: $shadow;
+    border: 3px dashed color.$gray-lighter;
+    background-color: color.$shadow;
   }
 
   &.removing-all-fields {
@@ -40,11 +43,18 @@
   }
 
   & > .formeo-field {
-    background-color: $white;
+    background-color: color.$white;
+  }
+
+  
+  @include mixins.no-list-style;
+
+  @include mixins.breakpoint("phone-lrg") {
+    width: calc(100% - 50px);
   }
 }
 
-&.editing-stage {
+.editing-stage {
   .formeo-settings {
     display: block;
   }
@@ -60,8 +70,8 @@
 // }
 
 // element label
-[class$='empty'] {
-  &[class*='editing-'] {
+[class$="empty"] {
+  &[class*="editing-"] {
     &::after {
       opacity: 0;
     }
@@ -73,7 +83,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    color: $gray-light;
+    color: color.$gray-light;
     transition: opacity 200ms ease-in-out;
     will-change: opacity;
     text-align: center;

@@ -1,25 +1,30 @@
+@use "sass:color" as sass-color;
+@use "../base/mixins";
+
+@use "../base/colors" as color;
+@use "../base/variables" as var;
+
 .formeo-column {
   transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
   position: relative;
-  background-color: $white;
+  background-color: color.$white;
   max-width: none;
   flex-direction: column;
   will-change: width;
   max-width: 100%;
 
-  &[class*='col-'] {
+  &[class*="col-"] {
     padding: 0;
   }
 
-  @extend %no-list-style;
 
   &:first-of-type {
-    border-top-right-radius: $border-radius;
+    border-top-right-radius: var.$border-radius;
   }
 
   &:last-of-type {
-    border-bottom-right-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: var.$border-radius;
+    border-bottom-left-radius: var.$border-radius;
 
     .resize-x-handle {
       display: none !important;
@@ -29,27 +34,27 @@
   .resize-x-handle {
     display: none;
     position: absolute;
-    right: - space(1);
+    right: -space(1);
     top: 0;
     bottom: 0;
-    width: space(2);
+    width: mixins.space(2);
     z-index: 2;
     cursor: ew-resize;
 
     &::before {
       width: 0;
       right: 6px;
-      border: 1px dashed lighten($column-outline-color, 15%);
+      border: 1px dashed sass-color.adjust(color.$column-outline-color, $lightness: 15%);
       border-width: 0 2px;
       display: block;
       top: 0;
       position: absolute;
       height: 100%;
-      content: '';
+      content: "";
     }
 
     svg {
-      fill: lighten($column-outline-color, 15%);
+      fill: sass-color.adjust(color.$column-outline-color, $lightness: 15%);
       position: absolute;
       right: 1px;
       width: 14px;
@@ -64,16 +69,16 @@
     }
     &:hover {
       &::before {
-        border-color: $column-outline-color;
+        border-color: color.$column-outline-color;
       }
       svg {
-        fill: $column-outline-color;
+        fill: color.$column-outline-color;
       }
     }
   }
 
   &::before {
-    @extend %element-tag;
+    @include mixins.element-tag;
 
     transition-property: height;
     transition-duration: 150ms;
@@ -83,8 +88,8 @@
     transform: translate(-50%, -100%);
     width: auto;
     height: 0;
-    border-top-left-radius: $border-radius;
-    border-top-right-radius: $border-radius;
+    border-top-left-radius: var.$border-radius;
+    border-top-right-radius: var.$border-radius;
   }
 
   &.hovering-column {
@@ -103,18 +108,19 @@
 
   &.editing-column,
   &.hovering-column {
-    box-shadow: 0 0 0 1px $column-outline-color inset;
+    box-shadow: 0 0 0 1px color.$column-outline-color inset;
 
     &::before {
       height: 23px;
-      border-right: 1px solid $column-outline-color;
-      border-left: 1px solid $column-outline-color;
-      border-top: 1px solid $column-outline-color;
+      border-right: 1px solid color.$column-outline-color;
+      border-left: 1px solid color.$column-outline-color;
+      border-top: 1px solid color.$column-outline-color;
     }
   }
 
   &.column-moving {
-    box-shadow: 0 0 0 1px $column-outline-color inset, 0 0 30px 0 $gray-light;
+    box-shadow: 0 0 0 1px color.$column-outline-color inset,
+      0 0 30px 0 color.$gray-light;
   }
 
   &.editing-column {
@@ -124,14 +130,16 @@
       display: block;
     }
   }
+
+  @include mixins.no-list-style;
 }
 
 .editing-row {
   .formeo-column,
   .empty {
-    border-radius: $border-radius;
+    border-radius: var.$border-radius;
     height: 60px;
-    background-color: $gray-lightest;
+    background-color: color.$gray-lightest;
 
     &.empty {
       min-height: 0;
@@ -146,7 +154,7 @@
     }
 
     &::after {
-      color: $gray-dark !important;
+      color: color.$gray-dark !important;
       line-height: 1em;
       opacity: 1;
       font-size: 1.1em;
@@ -160,14 +168,6 @@
       top: 50%;
       transform: translate(-50%, -50%);
     }
-
-    // &::before {
-    //   top: 0;
-    //   transform: translate(-50%, 0);
-    //   height: 18px;
-    //   line-height: 1.5;
-    //   background: transparent;
-    // }
   }
 }
 

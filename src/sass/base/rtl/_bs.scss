@@ -1,3 +1,5 @@
+@use "../variables";
+
 .f-btn-group {
   display: inline-flex;
   vertical-align: middle;
@@ -12,8 +14,8 @@
     &:last-child:not(:first-child):not(.dropdown-toggle) {
       border-bottom-right-radius: 0;
       border-top-right-radius: 0;
-      border-bottom-left-radius: $input-border-radius;
-      border-top-left-radius: $input-border-radius;
+      border-bottom-left-radius: variables.$input-border-radius;
+      border-top-left-radius: variables.$input-border-radius;
     }
 
     &:first-child {
@@ -23,8 +25,8 @@
     &:first-child:not(:last-child):not(.dropdown-toggle) {
       border-bottom-left-radius: 0;
       border-top-left-radius: 0;
-      border-bottom-right-radius: $input-border-radius;
-      border-top-right-radius: $input-border-radius;
+      border-bottom-right-radius: variables.$input-border-radius;
+      border-top-right-radius: variables.$input-border-radius;
     }
   }
 

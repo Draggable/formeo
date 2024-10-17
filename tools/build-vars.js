@@ -1,24 +1,18 @@
-const { resolve } = require('path')
-const { name: pkgName, homepage, version, author } = require('../package.json')
+import { resolve, dirname } from 'path'
+import { fileURLToPath } from 'url'
+import { name as pkgName, homepage, author, version } from '../package.json'
 
-const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-const ANALYZE = process.argv.includes('--analyze')
 
-const devPrefix = !IS_PRODUCTION ? 'dist/demo/' : ''
-const projectRoot = resolve(__dirname, '../')
-const outputDir = resolve(projectRoot, 'dist/')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-const bannerTemplate = [`${pkgName} - ${homepage}`, `Version: ${version}`, `Author: ${author}`].join('\n')
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+export const ANALYZE = process.argv.includes('--analyze')
 
-const devtool = IS_PRODUCTION ? false : 'cheap-module-source-map'
+export const devPrefix = !IS_PRODUCTION ? 'dist/demo/' : ''
+export const projectRoot = resolve(__dirname, '../')
+export const outputDir = resolve(projectRoot, 'dist/')
 
-module.exports = {
-  IS_PRODUCTION,
-  ANALYZE,
-  devPrefix,
-  projectRoot,
-  outputDir,
-  bannerTemplate,
-  devtool,
-  version
-}
+export const bannerTemplate = [`${pkgName} - ${homepage}`, `Version: ${version}`, `Author: ${author}`].join('\n')
+
+export const devtool = IS_PRODUCTION ? false : 'cheap-module-source-map'

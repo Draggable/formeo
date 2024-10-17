@@ -1,51 +1,17 @@
-// Colors
-$brand-primary: rgb(50, 93, 136) !default;
-$brand-primary-dark: darken($brand-primary, 10%) !default;
-$brand-success: rgb(147, 197, 75) !default;
-$brand-success-dark: darken($brand-success, 10%) !default;
-$brand-warning: rgb(244, 124, 60) !default;
-$brand-warning-dark: darken($brand-warning, 10%) !default;
-$brand-error: rgb(217, 83, 79) !default;
-$brand-error-dark: darken($brand-error, 10%) !default;
-$brand-info: rgb(153, 84, 187) !default;
-
-$remove-bg: rgba($brand-error, 0.25) !default;
-
-$component-outline-color: #00ffff;
-$row-outline-color: $component-outline-color;
-$column-outline-color: darken($component-outline-color, 15%);
-$field-outline-color: darken($component-outline-color, 30%);
-
-$input-focus: rgba(102, 175, 233, 1);
-
-// Grayscale and brand colors for use across Bootstrap.
-$black: #000;
-$white: #fff;
-$off-white: #fefefe;
-
-// $gray-dark: #373a3c !default;
-$gray-dark: lighten($black, 20%) !default;
-$gray: lighten($black, 40%) !default;
-$gray-light: lighten($black, 60%) !default;
-$gray-lighter: lighten($black, 80%) !default;
-$gray-lightest: lighten($black, 90%) !default;
-
-// Stage
-$stage-background: rgba(255, 255, 255, 0);
-$shadow: rgba(255, 255, 255, 0.25);
+@use 'colors' as color;
 
 // Sizing
 $base-space: 8px;
-$half-space: $base-space / 2;
-$icon-size: $base-space * 3;
+$half-space: calc($base-space / 2);
+$icon-size: calc($base-space * 3);
 $prop-btn-width: $icon-size;
 $action-btn-width: $icon-size;
 $border-radius: $base-space;
 $input-border-radius: $half-space;
 $input-btn-border-width: 1px;
 $input-padding: 0.3em 0.6em;
-$input-border: $input-btn-border-width solid $gray-lighter;
+$input-border: $input-btn-border-width solid color.$gray-lighter;
 $checkbox-character: '✔' !default;
 $animation-speed-base: 333ms;
-$animation-speed-slow: $animation-speed-base * 2;
-$animation-speed-fast: $animation-speed-base / 2;
+$animation-speed-slow: calc($animation-speed-base * 2);
+$animation-speed-fast: calc($animation-speed-base / 2);
