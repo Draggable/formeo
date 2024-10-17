@@ -9,4 +9,3 @@ if (window !== undefined) {
 export const FormeoEditor = Editor
 export const FormeoRenderer = Renderer
 
-export default { FormeoEditor, FormeoRenderer }

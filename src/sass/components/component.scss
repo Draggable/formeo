@@ -1,4 +1,6 @@
+@use '../base/mixins';
+
 .children {
-  @extend %no-list-style;
+  @include mixins.no-list-style;
   height: 100%;
 }

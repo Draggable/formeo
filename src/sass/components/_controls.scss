@@ -1,3 +1,8 @@
+@use "../base/mixins";
+
+@use "../base/colors" as color;
+@use "../base/variables" as var;
+
 .formeo-controls {
   width: 26%;
   overflow: hidden;
@@ -15,10 +20,10 @@
   }
 
   .filtered-term {
-    background-color: $white;
+    background-color: color.$white;
     text-align: center;
-    border-radius: $input-border-radius $input-border-radius 0 0;
-    border: 1px solid $gray-lighter;
+    border-radius: var.$input-border-radius var.$input-border-radius 0 0;
+    border: 1px solid color.$gray-lighter;
     border-bottom: 0 none;
     width: calc(100% - 2px);
   }
@@ -31,7 +36,7 @@
 
   nav {
     position: relative;
-    padding: 0 $action-btn-width;
+    padding: 0 var.$action-btn-width;
     overflow: hidden;
 
     h5 {
@@ -41,25 +46,25 @@
 
     button {
       position: absolute;
-      width: $action-btn-width;
-      color: $black;
+      width: var.$action-btn-width;
+      color: color.$black;
       height: calc(100% + 1px);
       padding: 0;
       line-height: 0;
       margin: 0;
-      border-color: $gray-lighter;
+      border-color: color.$gray-lighter;
 
       &.next-group {
         right: 0;
         top: 0;
         border-top-left-radius: 0;
-        border-top-right-radius: $border-radius;
+        border-top-right-radius: var.$border-radius;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
       }
 
       &.prev-group {
-        border-top-left-radius: $border-radius;
+        border-top-left-radius: var.$border-radius;
         border-bottom-left-radius: 0;
         left: 0;
       }
@@ -72,7 +77,7 @@
   }
 
   .panel-labels {
-    border-top: 1px solid $gray-lighter;
+    border-top: 1px solid color.$gray-lighter;
 
     // border-radius: $border-radius;
   }
@@ -86,20 +91,20 @@
 
     .control-group {
       li:first-child {
-        border-radius: $border-radius $border-radius 0 0;
+        border-radius: var.$border-radius var.$border-radius 0 0;
       }
     }
   }
 
   ul {
-    @extend %no-list-style;
+    @include mixins.no-list-style;
   }
 
   .control-group {
     vertical-align: top;
     display: inline-block;
     width: 100%;
-    border-top: 1px solid $gray-lighter;
+    border-top: 1px solid color.$gray-lighter;
 
     > li {
       &:first-child {
@@ -107,7 +112,7 @@
       }
 
       &:last-child {
-        border-radius: 0 0 $border-radius $border-radius;
+        border-radius: 0 0 var.$border-radius var.$border-radius;
       }
     }
   }
@@ -127,7 +132,7 @@
       &:last-child {
         > li {
           &:last-child {
-            border-radius: 0 0 0 $input-border-radius;
+            border-radius: 0 0 0 var.$input-border-radius;
           }
         }
       }
@@ -140,7 +145,7 @@
 
   .control-group-labels {
     height: 100%;
-    background: $white;
+    background: color.$white;
     overflow: hidden;
 
     div {
@@ -155,38 +160,38 @@
 
   .form-actions {
     float: right;
-    margin-top: space();
+    margin-top: mixins.space();
 
     .svg-icon {
-      fill: $gray;
+      fill: color.$gray;
       display: none;
 
       &:hover {
-        fill: $black;
+        fill: color.$black;
       }
     }
 
     .save-form,
     .clear-form {
       &:hover {
-        color: $white;
+        color: color.$white;
       }
     }
 
     .save-form {
       &:hover {
-        background-color: $brand-primary;
+        background-color: color.$brand-primary;
       }
     }
 
     .clear-form {
       &:hover {
-        background-color: $brand-error;
+        background-color: color.$brand-error;
       }
     }
   }
 
-  @include breakpoint('phone-lrg') {
+  @include mixins.breakpoint("phone-lrg") {
     width: 45px;
 
     .control-group {
@@ -202,7 +207,7 @@
       margin-top: 10px;
 
       > button + button {
-        margin-top: -$input-btn-border-width;
+        margin-top: -(var.$input-btn-border-width);
         margin-left: 0;
       }
 
@@ -221,15 +226,15 @@
         }
 
         &:first-child:not(:last-child) {
-          border-top-right-radius: $input-border-radius;
-          border-top-left-radius: $input-border-radius;
+          border-top-right-radius: var.$input-border-radius;
+          border-top-left-radius: var.$input-border-radius;
           border-bottom-right-radius: 0;
           border-bottom-left-radius: 0;
         }
 
         &:last-child:not(:first-child) {
-          border-bottom-left-radius: $input-border-radius;
-          border-bottom-right-radius: $input-border-radius;
+          border-bottom-left-radius: var.$input-border-radius;
+          border-bottom-right-radius: var.$input-border-radius;
           border-top-right-radius: 0;
           border-top-left-radius: 0;
         }
@@ -243,7 +248,7 @@
   }
 
   .field-control {
-    @extend %field-control;
+    @include mixins.field-control;
 
     .control-icon {
       pointer-events: none;

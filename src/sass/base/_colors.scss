@@ -1,0 +1,37 @@
+@use "sass:color";
+
+// Colors
+$brand-primary: rgb(50, 93, 136) !default;
+$brand-primary-dark: color.adjust($brand-primary, $lightness: -10%) !default;
+$brand-success: rgb(147, 197, 75) !default;
+$brand-success-dark: color.adjust($brand-success, $lightness: -10%) !default;
+$brand-warning: rgb(244, 124, 60) !default;
+$brand-warning-dark: color.adjust($brand-warning, $lightness: -10%) !default;
+$brand-error: rgb(217, 83, 79) !default;
+$brand-error-dark: color.adjust($brand-error, $lightness: -10%) !default;
+$brand-info: rgb(153, 84, 187) !default;
+
+$remove-bg: rgba($brand-error, 0.25) !default;
+
+$component-outline-color: #00ffff;
+$row-outline-color: $component-outline-color;
+$column-outline-color: color.adjust($component-outline-color, $lightness: -15%);
+$field-outline-color: color.adjust($component-outline-color, $lightness: -30%);
+
+$input-focus: rgba(102, 175, 233, 1);
+
+// Grayscale and brand colors for use across Bootstrap.
+$black: #000;
+$white: #fff;
+$off-white: #fefefe;
+
+// $gray-dark: #373a3c !default;
+$gray-dark: color.scale($black, $lightness: 20%) !default;
+$gray: color.scale($black, $lightness: 40%) !default;
+$gray-light: color.scale($black, $lightness: 60%) !default;
+$gray-lighter: color.scale($black, $lightness: 80%) !default;
+$gray-lightest: color.scale($black, $lightness: 90%) !default;
+
+// Stage
+$stage-background: rgba(255, 255, 255, 0);
+$shadow: rgba(255, 255, 255, 0.25);

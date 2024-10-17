@@ -1,7 +1,10 @@
+@use "../base/colors" as color;
+@use "../base/variables" as var;
+
 .group-actions {
-  min-width: $action-btn-width;
-  width: $action-btn-width;
-  height: $action-btn-width;
+  min-width: var.$action-btn-width;
+  width: var.$action-btn-width;
+  height: var.$action-btn-width;
   overflow: hidden;
   position: absolute;
   top: 0;
@@ -9,13 +12,13 @@
   z-index: 2;
 
   button {
-    width: $action-btn-width;
-    height: $action-btn-width;
+    width: var.$action-btn-width;
+    height: var.$action-btn-width;
     padding: 6px;
     border: 0 none;
     line-height: 0;
     overflow: hidden;
-    background-color: $white;
+    background-color: color.$white;
 
     &:focus {
       border: 0 none;
@@ -25,8 +28,8 @@
   }
 
   .svg-icon {
-    width: $action-btn-width / 2;
-    height: $action-btn-width / 2;
+    width: calc(var.$action-btn-width / 2);
+    height: calc(var.$action-btn-width / 2);
   }
 
   .f-i-handle {
@@ -59,8 +62,8 @@
   &.hovering-field,
   &.editing-field {
     .field-actions {
-      box-shadow: -1px 1px 1px $gray-lighter;
-      border-color: $field-outline-color;
+      box-shadow: -1px 1px 1px color.$gray-lighter;
+      border-color: color.$field-outline-color;
       border-width: 1px 1px 0 0;
       border-style: solid;
     }
@@ -82,7 +85,7 @@
   right: 0;
   text-align: right;
   transition: width 0.166s;
-  border-bottom-left-radius: $input-border-radius;
+  border-bottom-left-radius: var.$input-border-radius;
   border-bottom-right-radius: 0;
   will-change: width;
   overflow: hidden;
@@ -93,7 +96,7 @@
 
     @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
-        right: $i * $action-btn-width - $action-btn-width;
+        right: $i * var.$action-btn-width - var.$action-btn-width;
       }
     }
 
@@ -115,8 +118,8 @@
 }
 
 .column-actions {
-  width: $action-btn-width;
-  height: $action-btn-width;
+  width: var.$action-btn-width;
+  height: var.$action-btn-width;
   padding: 0;
   right: 50%;
   transform: translateX(12px);
@@ -135,7 +138,7 @@
 
     @for $i from 1 through 6 {
       &:nth-of-type(#{$i}) {
-        right: $i * $action-btn-width - $action-btn-width;
+        right: $i * var.$action-btn-width - var.$action-btn-width;
       }
     }
 
@@ -151,7 +154,7 @@
 
     &:last-child {
       .hovering-column & {
-        border-bottom-left-radius: $input-border-radius;
+        border-bottom-left-radius: var.$input-border-radius;
       }
     }
   }
@@ -163,32 +166,32 @@
     transform: translateX(50%);
     width: auto;
     border-bottom-right-radius: 0;
-    border-bottom-left-radius: $input-border-radius;
+    border-bottom-left-radius: var.$input-border-radius;
 
     button {
       &:first-child {
-        border-bottom-right-radius: $input-border-radius;
+        border-bottom-right-radius: var.$input-border-radius;
         right: 0;
       }
 
       &:last-child {
-        border-bottom-left-radius: $input-border-radius;
+        border-bottom-left-radius: var.$input-border-radius;
       }
     }
   }
 }
 
 .row-actions {
-  width: $action-btn-width;
-  height: $action-btn-width;
-  left: -($action-btn-width - 1);
+  width: var.$action-btn-width;
+  height: var.$action-btn-width;
+  left: -(var.$action-btn-width - 1);
   text-align: right;
-  border-top-left-radius: $border-radius;
-  border-bottom-left-radius: $border-radius;
+  border-top-left-radius: var.$border-radius;
+  border-bottom-left-radius: var.$border-radius;
   transition: height 150ms ease-in-out;
   white-space: normal;
-  border: 1px solid $gray-lighter;
-  border-right: 1px solid $white;
+  border: 1px solid color.$gray-lighter;
+  border-right: 1px solid color.$white;
 
   .item-handle {
     .f-i-handle {
@@ -204,8 +207,7 @@
 .hovering-row,
 .editing-row {
   .row-actions {
-    // box-shadow: 1px 1px 1px $gray-lighter;
-    border: 1px solid $row-outline-color;
+    border: 1px solid color.$row-outline-color;
 
     button {
       &:first-child {
@@ -215,7 +217,7 @@
   }
 }
 
-[class*='hovering-'] {
+[class*="hovering-"] {
   > .group-actions {
     .svg-icon {
       &.f-i-menu,

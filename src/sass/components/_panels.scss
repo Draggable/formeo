@@ -1,8 +1,15 @@
+@use "../base/mixins";
+
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
+
+
 .formeo-panels-wrap {
   h5 {
     margin: 0;
     padding: 0.55em 0;
-    color: $gray;
+    color: color.$gray;
     font-weight: normal;
     display: inline-block;
     width: 100%;
@@ -16,7 +23,7 @@
     button {
       position: absolute;
       width: 24px;
-      color: $black;
+      color: color.$black;
       height: 100%;
       padding: 0;
       line-height: 0;
@@ -24,7 +31,7 @@
 
       &:focus {
         outline: none;
-        border: 1px solid $input-focus;
+        border: 1px solid color.$input-focus;
         box-shadow: none;
       }
 
@@ -52,7 +59,7 @@
   }
 
   ul {
-    @extend %no-list-style;
+    @include mixins.no-list-style;
   }
 
   .f-panel {
@@ -64,7 +71,7 @@
 
     > li {
       &:last-child {
-        border-radius: 0 0 space() space();
+        border-radius: 0 0 mixins.space() mixins.space();
       }
     }
   }
@@ -80,12 +87,12 @@
 
   .panel-labels {
     height: 100%;
-    background: $white;
+    background: color.$white;
     overflow: hidden;
     text-align: center;
     white-space: nowrap;
-    border-top-left-radius: $input-border-radius;
-    border-top-right-radius: $input-border-radius;
+    border-top-left-radius: var.$input-border-radius;
+    border-top-right-radius: var.$input-border-radius;
   }
 }
 
@@ -99,7 +106,7 @@
   }
 
   .f-panel {
-    background-color: $white;
+    background-color: color.$white;
   }
 
   .panel-labels {
@@ -116,13 +123,13 @@
       flex-direction: column;
       flex: 1;
       cursor: pointer;
-      background-color: $gray-lighter;
-      box-shadow: 0 -1px space(1) $gray-light inset;
+      background-color: color.$gray-lighter;
+      box-shadow: 0 -1px mixins.space(1) color.$gray-light inset;
 
       &.active-tab {
-        color: $black;
+        color: color.$black;
         box-shadow: none;
-        background-color: $white;
+        background-color: color.$white;
       }
     }
   }

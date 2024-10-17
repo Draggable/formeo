@@ -1,7 +1,7 @@
 import mi18n from 'mi18n'
 import { isIE } from './common/helpers'
+const EN_US = import.meta.env.EN_US
 
-// eslint-disable-next-line no-undef
 mi18n.addLanguage('en-US', EN_US)
 
 export const defaults = {

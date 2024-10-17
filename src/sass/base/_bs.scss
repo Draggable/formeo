@@ -1,3 +1,8 @@
+@use "mixins";
+
+@use 'colors' as color;
+@use 'variables' as var;
+
 .pill-buttons > button {
   border-radius: 50px;
 }
@@ -6,42 +11,42 @@ hr {
   margin-top: 1rem;
   margin-bottom: 1rem;
   border: 0;
-  border-top: 1px solid $gray-lighter;
+  border-top: 1px solid color.$gray-lighter;
 }
 
 .f-field-group {
   flex-wrap: wrap;
-  margin-bottom: $base-space + $half-space;
+  margin-bottom: var.$base-space + var.$half-space;
 
   &:last-child {
     margin-bottom: 0;
   }
 
   label + .badge {
-    margin-left: $base-space;
+    margin-left: var.$base-space;
   }
 
   > label {
     display: inline-block;
-    margin-bottom: $half-space;
+    margin-bottom: var.$half-space;
   }
 
   button {
-    margin-right: space();
+    margin-right: mixins.space();
   }
 }
 
 select {
-  @extend %input-style;
+  @include mixins.input-style;
 }
 
 input {
-  @extend %input-style;
+  @include mixins.input-style;
   &[type='checkbox'],
   &[type='radio'] {
     width: auto;
     height: auto;
-    margin-right: $half-space;
+    margin-right: var.$half-space;
   }
 
   &[type='date'] {
@@ -51,21 +56,21 @@ input {
 }
 
 textarea {
-  @extend %input-style;
+  @include mixins.input-style;
 
   height: auto;
 }
 
 button {
-  @extend %button-style;
+  @include mixins.button-style;
 
   line-height: 1.5em;
 
-  @include states;
+  @include mixins.states;
 }
 
 .f-addon {
-  @extend %input-style;
+  @include mixins.input-style;
 
   width: auto;
 
@@ -117,7 +122,7 @@ button {
 }
 
 .f-input-group {
-  @extend %display-row;
+  @include mixins.display-row;
 
   display: inline-flex;
   vertical-align: bottom;
@@ -130,8 +135,7 @@ button {
   }
 
   select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    appearance: none;
     &::-ms-expand {
       display: none;
     }
@@ -149,21 +153,21 @@ button {
 
     &:last-child {
       border-right-width: 1px;
-      border-radius: 0 $input-border-radius $input-border-radius 0;
+      border-radius: 0 var.$input-border-radius var.$input-border-radius 0;
     }
 
     &:first-child {
-      border-radius: $input-border-radius 0 0 $input-border-radius;
+      border-radius: var.$input-border-radius 0 0 var.$input-border-radius;
       border-left-width: 1px;
       &:last-child {
-        border-radius: $input-border-radius;
+        border-radius: var.$input-border-radius;
       }
     }
 
     &:focus {
       + input,
       + select {
-        border-left: 1px solid $input-focus;
+        border-left: 1px solid color.$input-focus;
       }
     }
   }
@@ -171,18 +175,18 @@ button {
 
 .text- {
   &primary {
-    color: $brand-primary;
+    color: color.$brand-primary;
   }
 
   &success {
-    color: $brand-success;
+    color: color.$brand-success;
   }
 
   &warning {
-    color: $brand-warning;
+    color: color.$brand-warning;
   }
 
   &error {
-    color: $brand-error;
+    color: color.$brand-error;
   }
 }

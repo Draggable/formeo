@@ -1,3 +1,10 @@
+@use "../base/mixins";
+
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
+
+
 .field-edit {
   display: none;
   overflow: hidden;
@@ -21,7 +28,7 @@
   }
 
   .active-panel {
-    background-color: $white;
+    background-color: color.$white;
   }
 
   .field-prop {
@@ -38,8 +45,8 @@
     }
 
     .svg-icon {
-      width: $prop-btn-width / 2;
-      height: $prop-btn-width / 2;
+      width: calc(var.$prop-btn-width / 2);
+      height: calc(var.$prop-btn-width / 2);
       left: 50%;
       position: absolute;
       top: 50%;
@@ -48,8 +55,8 @@
   }
 
   .prop-control {
-    width: $prop-btn-width;
-    height: $prop-btn-width;
+    width: var.$prop-btn-width;
+    height: var.$prop-btn-width;
     right: 0;
     bottom: 0;
     position: absolute;
@@ -57,7 +64,7 @@
 
     @for $i from 1 through 4 {
       &:nth-of-type(#{$i}) {
-        right: $i * $prop-btn-width - $prop-btn-width;
+        right: $i * var.$prop-btn-width - var.$prop-btn-width;
       }
     }
 
@@ -67,22 +74,22 @@
 
     :not(.control-count-1) & {
       &:last-child {
-        border-radius: $input-border-radius 0 0 $input-border-radius;
+        border-radius: var.$input-border-radius 0 0 var.$input-border-radius;
         margin-right: -1px;
         display: none;
       }
 
       &:first-child {
-        border-radius: $input-border-radius;
+        border-radius: var.$input-border-radius;
       }
     }
 
     &:hover {
       &:first-child {
-        border-radius: 0 $input-border-radius $input-border-radius 0;
+        border-radius: 0 var.$input-border-radius var.$input-border-radius 0;
 
         &:last-child {
-          border-radius: $input-border-radius;
+          border-radius: var.$input-border-radius;
         }
       }
 
@@ -93,24 +100,24 @@
 
     &:last-child:first-child {
       display: inline-block;
-      border-radius: $input-border-radius;
+      border-radius: var.$input-border-radius;
       margin-right: 0;
     }
   }
 
   .prop-wrap {
     position: relative;
-    margin-bottom: space(1);
+    margin-bottom: mixins.space(1);
     list-style: none;
     margin-left: 0;
   }
 
   .field-edit-group {
-    padding: space(1) space(1) 0;
+    padding: mixins.space(1) mixins.space(1) 0;
   }
 
   [contenteditable] {
-    @extend %input-style;
+    @include mixins.display-row
   }
 
   .prop-inputs,
@@ -119,7 +126,7 @@
     will-change: width;
 
     .f-addon,
-    input:not([type='checkbox']):not([type='radio']),
+    input:not([type="checkbox"]):not([type="radio"]),
     select,
     textarea,
     [contenteditable] {
@@ -130,8 +137,8 @@
       }
     }
 
-    [class^='condition-'] + select,
-    select + [class^='condition-'] {
+    [class^="condition-"] + select,
+    select + [class^="condition-"] {
       margin-left: -1px;
     }
   }
@@ -139,10 +146,10 @@
   .control-count-2 {
     .prop-controls {
       &:hover {
-        width: $prop-btn-width * 2;
+        width: var.$prop-btn-width * 2;
 
         + .prop-inputs {
-          width: calc(100% - #{$prop-btn-width});
+          width: calc(100% - #{var.$prop-btn-width});
         }
       }
     }
@@ -150,7 +157,7 @@
 
   &.panel-count-1 {
     .panel-nav {
-      border-bottom: 1px solid $gray-light;
+      border-bottom: 1px solid color.$gray-light;
 
       button {
         display: none;
@@ -167,41 +174,41 @@
   display: flex;
   width: 100%;
   margin-top: -1px;
-  border: 1px solid $gray-lighter;
+  border: 1px solid color.$gray-lighter;
   input,
   select,
   [contenteditable] {
     border-width: 0;
     border-radius: 0;
     width: inherit;
-    box-shadow: 0 0 0 1px $gray-lighter;
+    box-shadow: 0 0 0 1px color.$gray-lighter;
     &:focus {
-      box-shadow: 0 0 0 1px $input-focus;
+      box-shadow: 0 0 0 1px color.$input-focus;
     }
   }
   &:first-child {
     input:last-child,
     select:last-child {
-      border-top-right-radius: $input-border-radius;
+      border-top-right-radius: var.$input-border-radius;
     }
   }
   &:last-child {
     input:last-child,
     select:last-child {
-      border-bottom-right-radius: $input-border-radius;
+      border-bottom-right-radius: var.$input-border-radius;
     }
   }
   &:first-child {
-    border-top-left-radius: $input-border-radius;
-    border-top-right-radius: $input-border-radius;
+    border-top-left-radius: var.$input-border-radius;
+    border-top-right-radius: var.$input-border-radius;
   }
   &:last-child {
-    border-bottom-left-radius: $input-border-radius;
-    border-bottom-right-radius: $input-border-radius;
+    border-bottom-left-radius: var.$input-border-radius;
+    border-bottom-right-radius: var.$input-border-radius;
   }
 
   .condition-logical {
-    max-width: space(7);
+    max-width: mixins.space(7);
     text-transform: uppercase;
   }
 
@@ -211,9 +218,9 @@
     width: 100%;
   }
 
-  [class^='condition-'] {
+  [class^="condition-"] {
     max-width: 100%;
-    transition: max-width $animation-speed-base;
+    transition: max-width var.$animation-speed-base;
     will-change: max-width;
   }
 
@@ -225,7 +232,7 @@
       .condition-assignment,
       .condition-value,
       .condition-targetProperty {
-        @include hideConditionField;
+        @include mixins.hideConditionField;
       }
     }
   }
@@ -236,20 +243,20 @@
       .condition-comparison,
       .condition-assignment,
       .condition-value {
-        @include hideConditionField;
+        @include mixins.hideConditionField;
       }
     }
   }
 
   &.condition-target {
     .condition-targetProperty {
-      @include hideConditionField;
+      @include mixins.hideConditionField;
     }
   }
 
   &.condition-source {
     .condition-sourceProperty {
-      @include hideConditionField;
+      @include mixins.hideConditionField;
     }
   }
 }
@@ -260,7 +267,7 @@
   }
 }
 
-[class$='-focused'] {
+[class$="-focused"] {
   z-index: 1;
   .f-autocomplete-list {
     z-index: 100;
@@ -271,19 +278,19 @@
   label.condition-label {
     display: inline-flex;
     flex: 0 0 auto;
-    box-shadow: 0 0 0 1px $gray-lighter;
+    box-shadow: 0 0 0 1px color.$gray-lighter;
     align-items: center;
-    padding: space();
+    padding: mixins.space();
     border-right: 0;
     text-transform: uppercase;
-    color: $gray-light;
+    color: color.$gray-light;
     &.if-condition-label {
-      border-top-left-radius: $input-border-radius;
+      border-top-left-radius: var.$input-border-radius;
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
     }
     &.then-condition-label {
-      border-bottom-left-radius: $input-border-radius;
+      border-bottom-left-radius: var.$input-border-radius;
       border-top-left-radius: 0;
       border-top-right-radius: 0;
       border-top: 0;
@@ -292,7 +299,7 @@
 }
 
 .field-edit-group {
-  @extend %no-list-style;
+  @include mixins.no-list-style;
 }
 
 .hidden-property {
@@ -301,7 +308,7 @@
 
 .options-panel {
   .prop-wrap {
-    margin-bottom: space(1);
+    margin-bottom: mixins.space(1);
   }
 
   .input-group-addon {
@@ -309,7 +316,7 @@
   }
 
   .prop-labels {
-    padding: space(1) 34px space(1) space(1);
+    padding: mixins.space(1) 34px mixins.space(1) mixins.space(1);
 
     .input-group-addon {
       font-size: 12px;
@@ -334,11 +341,11 @@
 }
 
 .panel-action-buttons {
-  @include clearfix;
+  @include mixins.clearfix;
 
-  padding: 0 space(1) space(1);
+  padding: 0 mixins.space(1) mixins.space(1);
 
-  [class^='add-'] {
+  [class^="add-"] {
     float: right;
   }
 }
@@ -381,7 +388,7 @@
 
   &.attrs-prop-inputs {
     .f-addon,
-    input:not([type='checkbox']):not([type='radio']),
+    input:not([type="checkbox"]):not([type="radio"]),
     select,
     textarea,
     [contenteditable] {
