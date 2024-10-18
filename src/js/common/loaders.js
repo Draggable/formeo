@@ -75,7 +75,6 @@ export const insertStyle = srcs => {
 export const insertIcons = resp => {
   const spritePromise = typeof resp === 'string' ? Promise.resolve(resp) : resp.text()
   return spritePromise.then(iconSvgStr => {
-    console.log(resp, iconSvgStr)
     const id = 'formeo-sprite'
     let iconSpriteWrap = document.getElementById(id)
     if (!iconSpriteWrap) {

@@ -10,7 +10,7 @@ import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders'
 import { SESSION_LOCALE_KEY, FALLBACK_SVG_SPRITE } from './constants'
 import { sessionStorage, merge } from './common/utils'
 import { defaults } from './config'
-import sprite from '../demo/assets/img/formeo-sprite.svg?raw'
+import sprite from '../icons/formeo-sprite.svg?raw'
 
 /**
  * Main class

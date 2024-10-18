@@ -27,16 +27,15 @@ const sharedConfig = {
 
 const libConfig = {
   ...sharedConfig,
-  root: 'src',
   build: {
     emptyOutDir: true,
     lib: {
-      entry: 'js/index.js',
+      entry: 'src/js/index.js',
       name: 'Formeo',
       fileName: format => `formeo.${format}.js`,
       formats: ['es', 'cjs', 'umd', 'iife'],
       outDir: 'dist',
-    },
+    }
   },
 }
 
@@ -90,9 +89,8 @@ const demoConfig = {
 }
 
 export default defineConfig(({ mode }) => {
-  // console.log(rest)
   if (mode === 'lib') {
-    return libConfig // Run this configuration when building the library
+    return libConfig
   }
-  return demoConfig // Default is the demo build
+  return demoConfig
 })
