@@ -45,7 +45,7 @@ const demoConfig = {
   build: {
     rollupOptions: {
       input: {
-        demo: 'src/demo/index.html', // Entry for the demo
+        demo: 'demo/index.html', // Entry for the demo
       },
       output: {
         dir: 'dist/demo', // Demo build output folder
