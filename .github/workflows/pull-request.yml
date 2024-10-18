@@ -4,13 +4,12 @@ name: Pull Request
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [12]
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Nodejs ${{ matrix.node }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      - name: Set up Nodejs v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
       - name: Install dependencies
         env:
           CI: true
