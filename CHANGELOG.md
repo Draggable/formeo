@@ -1,3 +1,10 @@
+## [1.6.3](https://github.com/Draggable/formeo/compare/v1.6.2...v1.6.3) (2024-10-18)
+
+
+### Bug Fixes
+
+* **chore:** fixed rendering multiple selected options ([177b6fe](https://github.com/Draggable/formeo/commit/177b6fe323692d5da0a194925c01a39e699b42b8))
+
 ## [1.6.2](https://github.com/Draggable/formeo/compare/v1.6.1...v1.6.2) (2020-12-30)
 
 
