@@ -1,3 +1,11 @@
+# [1.7.0](https://github.com/Draggable/formeo/compare/v1.6.3...v1.7.0) (2024-10-18)
+
+
+### Features
+
+* **field:** add tinymce field ([4b00192](https://github.com/Draggable/formeo/commit/4b00192a60be86bcdffcd57060a04b0f1abd0c81))
+* **layout:** add controlOnLeft option ([bf5a455](https://github.com/Draggable/formeo/commit/bf5a4554759fc6ad6ff321d51486e38d1f811be6))
+
 ## [1.6.3](https://github.com/Draggable/formeo/compare/v1.6.2...v1.6.3) (2024-10-18)
 
 
