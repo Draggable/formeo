@@ -56,7 +56,7 @@
     "dev": "vite",
     "preview": "vite preview",
     "analyze": "webpack --mode production -p --progress --config tools/webpack.config --analyze",
-    "build": "npm-run-all -p build:icons build:formeo",
+    "build": "npm-run-all -p build:icons build:formeo build:demo",
     "build:formeo": "vite build --mode lib",
     "build:demo": "vite build --mode demo",
     "build:icons": "node ./tools/generate-sprite",

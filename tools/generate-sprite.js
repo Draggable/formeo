@@ -14,14 +14,12 @@ function generateSprite() {
   const prefix = 'f'
   const iconDelim = 'i'
   const srcDir = join(projectRootDir, process.argv[2] || 'src/icons')
-  const outputDir = srcDir
+  const outputDir = join(projectRootDir, process.argv[3] || 'src/icons')
   const spriteName = process.argv[3] ? '' : '/formeo-sprite.svg'
-
-  console.log(outputDir)
 
   const isIconSvg = filePath => /^icon-.+\.svg$/.test(filePath)
   const iconPaths = fs
-    .readdirSync(srcDir, srcDir)
+    .readdirSync(srcDir)
     .filter(isIconSvg)
     .map(filename => `${srcDir}/${filename}`)
 

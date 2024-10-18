@@ -6,7 +6,7 @@ Formeo uses an SVG sprite as the source of its icons. SVG has many advantages th
 
 ### Generate icons with the default settings
 
-The following command will read `^icon-(.*).svg$` files from `src/icons/` and output a sprite to `src/demo/img/formeo-sprite.svg`
+The following command will read `^icon-(.*).svg$` files from `src/icons/` and output a sprite to `src/icons/formeo-sprite.svg`
 
 ```bash
 yarn build:icons
