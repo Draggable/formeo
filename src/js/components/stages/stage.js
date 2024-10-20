@@ -1,9 +1,9 @@
 import Sortable from 'sortablejs'
-import dom from '../../common/dom'
-import Component from '../component'
-import { STAGE_CLASSNAME, ANIMATION_SPEED_BASE, ROW_CLASSNAME } from '../../constants'
-import Stages from '.'
-import animate from '../../common/animation'
+import dom from '../../common/dom.js'
+import Component from '../component.js'
+import { STAGE_CLASSNAME, ANIMATION_SPEED_BASE, ROW_CLASSNAME } from '../../constants.js'
+import Stages from './index.js'
+import animate from '../../common/animation.js'
 
 const DEFAULT_DATA = () => Object.freeze({ children: [] })
 

@@ -1,4 +1,3 @@
-import throttle from 'lodash/throttle'
 import {
   EVENT_FORMEO_UPDATED,
   EVENT_FORMEO_UPDATED_STAGE,
@@ -10,8 +9,9 @@ import {
   EVENT_FORMEO_SAVED,
   EVENT_FORMEO_CLEARED,
   ANIMATION_SPEED_FAST,
-} from '../constants'
-import components, { Columns, Controls } from '../components'
+} from '../constants.js'
+import components, { Columns, Controls } from '../components/index.js'
+import { throttle } from './utils/index.mjs'
 
 const NO_TRANSITION_CLASS_NAME = 'no-transition'
 
@@ -48,8 +48,8 @@ const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) =>
  * Events class is used to register events and throttle their callbacks
  */
 const events = {
-  init: function(options) {
-    this.opts = Object.assign({}, defaults, options)
+  init: function (options) {
+    this.opts = { ...defaults, ...options }
     return this
   },
   formeoSaved: evt => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
@@ -59,19 +59,13 @@ const events = {
   formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
 }
 
-const formeoUpdatedThrottled = throttle(
-  () => {
-    events.opts.onUpdate({
-      timeStamp: window.performance.now(),
-      type: EVENT_FORMEO_UPDATED,
-      detail: components.formData,
-    })
-  },
-  ANIMATION_SPEED_FAST,
-  {
-    leading: false,
-  }
-)
+const formeoUpdatedThrottled = throttle(() => {
+  events.opts.onUpdate({
+    timeStamp: window.performance.now(),
+    type: EVENT_FORMEO_UPDATED,
+    detail: components.formData,
+  })
+}, ANIMATION_SPEED_FAST)
 
 document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled)
 document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, evt => {
@@ -153,14 +147,10 @@ function onResizeWindow() {
         Controls.dom.classList.add(NO_TRANSITION_CLASS_NAME)
         Controls.panels.nav.refresh()
         column.refreshFieldPanels()
-        throttle(
-          () => {
-            column.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
-            Controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
-          },
-          1000,
-          { leading: false }
-        )
+        throttle(() => {
+          column.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
+          Controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
+        }, 1000)
       })
     })
 }

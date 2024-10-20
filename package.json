@@ -61,7 +61,8 @@
     "build:demo": "vite build --mode demo",
     "build:icons": "node ./tools/generate-sprite",
     "lint": "eslint ./src --ext .js || true",
-    "test": "jest src/",
+    "test": "node --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.js",
+    "test:updateSnapshots": "node --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.js",
     "test:ci": "yarn test --coverage",
     "start": "npm-run-all build:icons dev",
     "semantic-release": "semantic-release --ci --debug",
@@ -76,17 +77,21 @@
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^12.0.1",
+    "jsdom": "^25.0.1",
     "lefthook": "^1.7.18",
     "npm-run-all": "^4.1.5",
     "sass-embedded": "^1.80.1",
     "semantic-release": "^24.1.2",
     "svg-sprite": "^2.0.4",
     "vite": "^5.4.8",
+    "vite-plugin-banner": "^0.8.0",
+    "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.2"
   },
   "dependencies": {
     "formeo-i18n": "^2.1.3",
-    "mi18n": "^0.4.8",
+    "lodash": "^4.17.21",
+    "mi18n": "file:../../mI18N/mi18n",
     "sortablejs": "^1.15.3"
   },
   "release": {

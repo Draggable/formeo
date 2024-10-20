@@ -1,9 +1,9 @@
 import i18n from 'mi18n'
-import startCase from 'lodash/startCase'
-import animate from '../common/animation'
-import dom from '../common/dom'
-import Components from '.'
-import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../constants'
+import animate from '../common/animation.js'
+import dom from '../common/dom.js'
+import Components from './index.js'
+import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../constants.js'
+import { toTitleCase } from '../common/utils/string.mjs'
 
 const BASE_NAME = 'f-autocomplete'
 const HIGHLIGHT_CLASS_NAME = 'highlight-component'
@@ -33,7 +33,7 @@ const getComponentLabel = ({ name, id, ...component }) => {
   }, null)
 
   const externalLabel = (...externalAddress) =>
-    i18n.get(externalAddress.join('.')) || startCase(externalAddress.join(' '))
+    i18n.get(externalAddress.join('.')) || toTitleCase(externalAddress.join(' '))
 
   return label || (name === 'external' && externalLabel(name, id))
 }
@@ -51,7 +51,7 @@ export const componentOptions = selected => {
     if (label) {
       const type = {
         tag: 'span',
-        content: ` ${startCase(component.name)}`,
+        content: ` ${toTitleCase(component.name)}`,
         className: 'component-type',
       }
       const labelKey = `${component.name}.${label}`

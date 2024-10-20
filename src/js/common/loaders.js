@@ -1,6 +1,6 @@
-import noop from 'lodash/noop'
-import dom from './dom'
-import { POLYFILLS } from '../constants'
+import dom from './dom.js'
+import { POLYFILLS } from '../constants.js'
+import { noop } from './utils/index.mjs'
 
 /* global fetch */
 
@@ -66,7 +66,7 @@ export const insertStyle = srcs => {
         })
 
         document.head.appendChild(styleLink)
-      })
+      }),
   )
 
   return Promise.all(promises)

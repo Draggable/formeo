@@ -1,13 +1,12 @@
 import i18n from 'mi18n'
-import startCase from 'lodash/startCase'
-import throttle from 'lodash/throttle'
-import dom from '../../common/dom'
-import Panels from '../panels'
-import { clone, unique } from '../../common/utils'
-import EditPanel from './edit-panel'
-import Component from '../component'
-import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants'
-import Components from '..'
+import dom from '../../common/dom.js'
+import Panels from '../panels.js'
+import { clone, throttle, unique } from '../../common/utils/index.mjs'
+import EditPanel from './edit-panel.js'
+import Component from '../component.js'
+import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants.js'
+import Components from '../index.js'
+import { toTitleCase } from '../../common/utils/string.mjs'
 
 const DEFAULT_DATA = () => ({
   conditions: [CONDITION_TEMPLATE()],
@@ -23,7 +22,7 @@ export default class Field extends Component {
    * @return {Object} field object
    */
   constructor(fieldData = Object.create(null)) {
-    super('field', Object.assign({}, DEFAULT_DATA(), fieldData))
+    super('field', { ...DEFAULT_DATA(), ...fieldData })
 
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create(this.fieldPreview())
@@ -95,7 +94,7 @@ export default class Field extends Component {
           if (reverseConditionField) {
             return reverseConditionField.updateConditionSourceLabel(
               `${this.name}s.${this.id}`,
-              disableHTML ? value : innerText
+              disableHTML ? value : innerText,
             )
           }
         },
@@ -173,19 +172,15 @@ export default class Field extends Component {
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview = throttle(
-    () => {
-      if (!this.preview.parentElement) {
-        return null
-      }
-      this.updateLabel()
-      const newPreview = dom.create(this.fieldPreview(), true)
-      this.preview.parentElement.replaceChild(newPreview, this.preview)
-      this.preview = newPreview
-    },
-    ANIMATION_SPEED_BASE,
-    { leading: false }
-  )
+  updatePreview = throttle(() => {
+    if (!this.preview.parentElement) {
+      return null
+    }
+    this.updateLabel()
+    const newPreview = dom.create(this.fieldPreview(), true)
+    this.preview.parentElement.replaceChild(newPreview, this.preview)
+    this.preview = newPreview
+  }, ANIMATION_SPEED_BASE)
 
   /**
    * Generate the markup for field edit mode
@@ -229,14 +224,14 @@ export default class Field extends Component {
       fieldEdit.action = {
         onRender: () => {
           this.resizePanelWrap()
-          if (!editPanelLength) {
+          // if (!editPanelLength) {
             const field = this.dom
             const editToggle = field.querySelector('.item-edit-toggle')
             const fieldActions = field.querySelector('.field-actions')
             const actionButtons = fieldActions.getElementsByTagName('button')
             fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
             dom.remove(editToggle)
-          }
+          // }
         },
       }
     }
@@ -271,7 +266,10 @@ export default class Field extends Component {
             const optionIndex = +target.id.split('-').pop()
             // uncheck options if radio
             if (type === 'radio') {
-              this.set('options', this.get('options').map(option => ({ ...option, selected: false })))
+              this.set(
+                'options',
+                this.get('options').map(option => ({ ...option, selected: false })),
+              )
             }
 
             const checkType = type === 'checkbox' ? 'checked' : 'selected'
@@ -308,7 +306,7 @@ export default class Field extends Component {
     if (!propKind) {
       return false
     }
-    const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${startCase(kind)}`))
+    const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${toTitleCase(kind)}`))
     return disabledAttrs.includes(propName)
   }
 
@@ -322,7 +320,7 @@ export default class Field extends Component {
     if (!propKind) {
       return false
     }
-    const lockedAttrs = propKind.locked.concat(this.get(`config.locked${startCase(kind)}`))
+    const lockedAttrs = propKind.locked.concat(this.get(`config.locked${toTitleCase(kind)}`))
     return lockedAttrs.includes(propName)
   }
 }

@@ -1,11 +1,11 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import Component from '../component'
-import h from '../../common/helpers'
-import events from '../../common/events'
-import dom from '../../common/dom'
-import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants'
-import { resize } from './events'
+import Component from '../component.js'
+import h from '../../common/helpers.mjs'
+import events from '../../common/events.js'
+import dom from '../../common/dom.js'
+import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants.js'
+import { resize } from './events.js'
 
 const DEFAULT_DATA = () =>
   Object.freeze({

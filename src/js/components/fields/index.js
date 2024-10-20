@@ -1,7 +1,7 @@
-import { get } from '../../common/helpers'
-import ComponentData from '../component-data'
-import Field from './field'
-import Controls from '../controls'
+import ComponentData from '../component-data.js'
+import Field from './field.js'
+import Controls from '../controls/index.js'
+import { get } from '../../common/utils/object.mjs'
 
 const DEFAULT_CONFIG = {
   actionButtons: {

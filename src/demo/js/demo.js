@@ -1,10 +1,9 @@
 import './scripts'
 import '../sass/demo.scss'
-import { editorOptions, renderOptions } from './options'
-import { editorButtons } from './actionButtons'
-import { editorEvents } from './events'
-import FormeoEditor from '../../js/editor'
-import FormeoRenderer from '../../js/renderer'
+import { editorOptions, renderOptions } from './options/index.js'
+import { editorButtons } from './actionButtons.js'
+import { editorEvents } from './events.js'
+import { FormeoEditor, FormeoRenderer } from '../../js/index.js'
 
 const editor = new FormeoEditor(editorOptions)
 const renderer = new FormeoRenderer(renderOptions)

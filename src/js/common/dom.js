@@ -1,9 +1,9 @@
-import h, { indexOfNode, forEach } from './helpers'
+import h, { indexOfNode, forEach } from './helpers.mjs'
 import i18n from 'mi18n'
-import events from './events'
-import animate from './animation'
-import Components, { Stages, Columns } from '../components'
-import { uuid, clone, numToPercent, componentType, merge } from './utils'
+import events from './events.js'
+import animate from './animation.js'
+import Components, { Stages, Columns } from '../components/index.js'
+import { uuid, clone, numToPercent, componentType, merge } from './utils/index.mjs'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -12,7 +12,7 @@ import {
   CONTROL_GROUP_CLASSNAME,
   CHILD_CLASSNAME_MAP,
   bsColRegExp,
-} from '../constants'
+} from '../constants.js'
 
 /**
  * General purpose markup utilities and generator.
@@ -166,8 +166,9 @@ class DOM {
 
     // disabling all initially selected options because we are setting them manualy at #330
     if (element.tagName === 'OPTION') {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         element.selected = false
+        clearTimeout(timeout)
       }, 0)
     }
 
@@ -327,8 +328,9 @@ class DOM {
         // to be rendered before setting the selected-attribute. Hence, we're setting the 'selected'-property at the beginning of
         // the next iteration of the event-loop.
         if (element.tagName === 'OPTION' && name === 'selected') {
-          setTimeout(() => {
+          const timeout = setTimeout(() => {
             element.setAttribute(name, value)
+            clearTimeout(timeout)
           }, 0)
         } else {
           element.setAttribute(name, value)

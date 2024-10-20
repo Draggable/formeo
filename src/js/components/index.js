@@ -1,13 +1,13 @@
-import Data from './data'
-import { uuid, sessionStorage, isAddress } from '../common/utils'
-import ControlsData from './controls'
+import Data from './data.js'
+import { uuid, sessionStorage, isAddress } from '../common/utils/index.mjs'
+import ControlsData from './controls/index.js'
 
-import StagesData from './stages'
-import RowsData from './rows'
-import ColumnsData from './columns'
-import FieldsData from './fields'
-import ExternalsData from './externals'
-import { SESSION_FORMDATA_KEY } from '../constants'
+import StagesData from './stages/index.js'
+import RowsData from './rows/index.js'
+import ColumnsData from './columns/index.js'
+import FieldsData from './fields/index.js'
+import ExternalsData from './externals.js'
+import { SESSION_FORMDATA_KEY } from '../constants.js'
 
 export const Stages = StagesData
 export const Rows = RowsData
@@ -35,7 +35,7 @@ export class Components extends Data {
   }
 
   sessionFormData = () => {
-    if (this.opts && this.opts.sessionStorage) {
+    if (this.opts?.sessionStorage) {
       return sessionStorage.get(SESSION_FORMDATA_KEY)
     }
   }

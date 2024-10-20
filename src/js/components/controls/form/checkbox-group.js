@@ -1,6 +1,6 @@
-import { generateOptionConfig } from './shared'
+import { generateOptionConfig } from './shared.js'
 import i18n from 'mi18n'
-import Control from '../control'
+import Control from '../control.js'
 
 class CheckboxGroupControl extends Control {
   constructor() {

@@ -1,5 +1,5 @@
-import ComponentData from '../component-data'
-import Column from './column'
+import ComponentData from '../component-data.js'
+import Column from './column.js'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
