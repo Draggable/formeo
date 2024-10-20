@@ -1,3 +1,10 @@
+## [1.7.1](https://github.com/Draggable/formeo/compare/v1.7.0...v1.7.1) (2024-10-20)
+
+
+### Bug Fixes
+
+* sortablejs upgrade ([b1778fd](https://github.com/Draggable/formeo/commit/b1778fd19f09015139ba5ef4f04ce58e4d579833))
+
 # [1.7.0](https://github.com/Draggable/formeo/compare/v1.6.3...v1.7.0) (2024-10-18)
 
 
