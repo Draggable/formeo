@@ -104,6 +104,6 @@ export const ajax = (file, callback, onError = noop) => {
   return new Promise((resolve, reject) => {
     return fetch(file)
       .then(data => resolve(callback ? callback(data) : data))
-      .catch(err => reject(onError(err)))
+      .catch(err => reject(new Error(onError(err))))
   })
 }

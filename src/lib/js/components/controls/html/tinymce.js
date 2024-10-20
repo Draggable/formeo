@@ -20,7 +20,6 @@ class TinyMCEControl extends Control {
         onRender: evt => {
           if (evt.id) {
             this.textareaID = evt.id
-            console.log('render ', evt.id)
             window.tinymce.remove('textarea#' + evt.id)
             window.tinymce.init({
               selector: 'textarea#' + evt.id,
