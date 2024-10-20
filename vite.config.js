@@ -44,8 +44,8 @@ const libConfig = {
     lib: {
       entry: 'src/lib/js/index.js',
       name: 'Formeo',
-      fileName: format => `formeo.${format}.min.js`,
-      formats: ['es', 'cjs', 'umd', 'iife'],
+      fileName: () => 'formeo.min.js',
+      formats: ['umd'],
       outDir: resolve(__dirname, 'dist'),
     },
     minify: 'terser',
@@ -70,6 +70,7 @@ const libConfig = {
 const demoConfig = {
   ...sharedConfig,
   root: 'src/demo',
+  base: '',
   resolve: {
     alias: {
       'formeo': resolve(__dirname, 'src/lib/js/index.js'),
