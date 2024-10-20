@@ -20,7 +20,10 @@ Author: ${pkg.author}
 
 const sharedConfig = {
   server: {
-    open: true, // Automatically opens the app in the browser
+    open: true,
+    fs: {
+      strict: false,
+    },
   },
   define: {
     'import.meta.env.EN_US': JSON.stringify(enUS),
@@ -37,13 +40,13 @@ const sharedConfig = {
 const libConfig = {
   ...sharedConfig,
   build: {
-    emptyOutDir: true,
+    emptyOutDir: false,
     lib: {
-      entry: 'src/js/index.js',
+      entry: 'src/lib/js/index.js',
       name: 'Formeo',
       fileName: format => `formeo.${format}.min.js`,
       formats: ['es', 'cjs', 'umd', 'iife'],
-      outDir: 'dist',
+      outDir: resolve(__dirname, 'dist'),
     },
     minify: 'terser',
     terserOptions: {
@@ -67,26 +70,31 @@ const libConfig = {
 const demoConfig = {
   ...sharedConfig,
   root: 'src/demo',
+  resolve: {
+    alias: {
+      'formeo': resolve(__dirname, 'src/lib/js/index.js'),
+    },
+  },
   build: {
+    emptyOutDir: false,
     rollupOptions: {
       input: {
         demo: resolve(__dirname, 'src/demo/index.html'),
       },
       output: {
-        dir: 'dist/demo',
+        manualChunks:{
+          formeo: ['formeo'],
+        },
       },
     },
+    outDir: resolve(__dirname, 'dist/demo'),
   },
   plugins: [
     createHtmlPlugin({
       minify: true,
-      entry: 'js/demo.js',
+      entry: 'js/index.js',
       template: 'index.html',
       filename: 'index.html',
-
-      /**
-       * Data that needs to be injected into the index.html ejs template
-       */
       inject: {
         data: {
           langFiles: Object.entries(languageFiles).map(([locale, val]) => {
@@ -99,15 +107,6 @@ const demoConfig = {
           }),
           version: pkg.version,
         },
-        tags: [
-          {
-            injectTo: 'body-prepend',
-            tag: 'div',
-            attrs: {
-              id: 'tag',
-            },
-          },
-        ],
       },
     }),
   ],
