@@ -1,9 +1,9 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import h, { indexOfNode } from '../common/helpers'
-import dom from '../common/dom'
-import { ANIMATION_SPEED_SLOW, ANIMATION_SPEED_FAST } from '../constants'
-import { merge } from '../common/utils'
+import h, { indexOfNode } from '../common/helpers.mjs'
+import dom from '../common/dom.js'
+import { ANIMATION_SPEED_SLOW, ANIMATION_SPEED_FAST } from '../constants.js'
+import { merge } from '../common/utils/index.mjs'
 
 const defaults = Object.freeze({
   type: 'field',

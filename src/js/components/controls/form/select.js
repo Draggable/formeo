@@ -1,6 +1,6 @@
-import { generateOptionConfig } from './shared'
 import i18n from 'mi18n'
-import Control from '../control'
+import { generateOptionConfig } from './shared.js'
+import Control from '../control.js'
 
 class SelectControl extends Control {
   constructor() {

@@ -1,6 +1,6 @@
-import Data from './data'
-import { get } from '../common/helpers'
-import { uuid, clone, merge } from '../common/utils'
+import Data from './data.js'
+import { uuid, clone, merge } from '../common/utils/index.mjs'
+import { get } from '../common/utils/object.mjs'
 
 export default class ComponentData extends Data {
   load = (data = Object.create(null)) => {
@@ -16,7 +16,7 @@ export default class ComponentData extends Data {
 
   add = (id, data = Object.create(null)) => {
     const elemId = id || uuid()
-    const component = this.Component(Object.assign({}, data, { id: elemId }))
+    const component = this.Component({ ...data, id: elemId })
     this.set(elemId, component)
     this.active = component
 
@@ -60,7 +60,6 @@ export default class ComponentData extends Data {
    */
   set config(config) {
     this.configVal = merge(this.configVal, clone(config))
-    return this.configVal
   }
 
   /**

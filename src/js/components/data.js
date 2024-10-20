@@ -1,8 +1,7 @@
-import isEqual from 'lodash/isEqual'
-import { uuid } from '../common/utils'
-import { get, set } from '../common/helpers'
-import events from '../common/events'
-import { CHANGE_TYPES } from '../constants'
+import { uuid } from '../common/utils/index.mjs'
+import events from '../common/events.js'
+import { CHANGE_TYPES } from '../constants.js'
+import { get, set } from '../common/utils/object.mjs'
 
 export default class Data {
   constructor(name, data = Object.create(null)) {
@@ -23,15 +22,15 @@ export default class Data {
   get = path => get(this.data, path)
   getChangeType = (oldVal, newVal) => {
     const change = CHANGE_TYPES.find(({ condition }) => condition(oldVal, newVal)) || { type: 'unknown' }
-    change.desc = !change.type === 'added' ? `${oldVal} to ${newVal}` : newVal
+    change.desc = change.type === 'added' ? `${oldVal} to ${newVal}` : newVal
     return change
   }
   set(path, newVal) {
     const oldVal = get(this.data, path)
 
-    if (isEqual(oldVal, newVal)) {
-      return this.data
-    }
+    // if (isEqual(oldVal, newVal)) {
+    //   return this.data
+    // }
 
     const data = set(this.data, path, newVal)
 

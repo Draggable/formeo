@@ -1,13 +1,13 @@
-import HiddenControl from './input.hidden'
-import NumberControl from './input.number'
-import TextAreaControl from './textarea'
-import TextControl from './input.text'
-import FileControl from './input.file'
-import SelectControl from './select'
-import CheckboxGroupControl from './checkbox-group'
-import RadioGroupControl from './radio-group'
-import ButtonControl from './button'
-import DateControl from './input.date'
+import HiddenControl from './input.hidden.js'
+import NumberControl from './input.number.js'
+import TextAreaControl from './textarea.js'
+import TextControl from './input.text.js'
+import FileControl from './input.file.js'
+import SelectControl from './select.js'
+import CheckboxGroupControl from './checkbox-group.js'
+import RadioGroupControl from './radio-group.js'
+import ButtonControl from './button.js'
+import DateControl from './input.date.js'
 
 export default [
   ButtonControl,

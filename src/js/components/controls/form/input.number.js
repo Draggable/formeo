@@ -1,5 +1,5 @@
 import i18n from 'mi18n'
-import Control from '../control'
+import Control from '../control.js'
 
 class NumberControl extends Control {
   constructor() {

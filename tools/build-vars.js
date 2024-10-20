@@ -1,6 +1,6 @@
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { name as pkgName, homepage, author, version } from '../package.json'
+import { name as pkgName, homepage, author, version } from '../package.json' assert { type: 'json' }
 
 
 const __filename = fileURLToPath(import.meta.url)

@@ -1,22 +1,22 @@
 import Sortable from 'sortablejs'
 import i18n from 'mi18n'
-import cloneDeep from 'lodash/cloneDeep'
-import actions from '../../common/actions'
-import { indexOfNode, orderObjectsBy, get } from '../../common/helpers'
-import events from '../../common/events'
-import dom from '../../common/dom'
-import { match, unique, uuid, merge } from '../../common/utils'
-import Panels from '../panels'
-import Field from '../fields/field'
-import Control from './control'
-import { CONTROL_GROUP_CLASSNAME } from '../../constants'
-import Components, { Stages, Rows } from '..'
+import actions from '../../common/actions.js'
+import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
+import events from '../../common/events.js'
+import dom from '../../common/dom.js'
+import { match, unique, uuid, merge, clone } from '../../common/utils/index.mjs'
+import Panels from '../panels.js'
+import Field from '../fields/field.js'
+import Control from './control.js'
+import { CONTROL_GROUP_CLASSNAME } from '../../constants.js'
+import Components, { Stages, Rows } from '../index.js'
 
 // control configs
-import layoutControls from './layout'
-import formControls from './form'
-import htmlControls from './html'
-import defaultOptions from './options'
+import layoutControls from './layout/index.js'
+import formControls from './form/index.js'
+import htmlControls from './html/index.js'
+import defaultOptions from './options.js'
+import { get } from '../../common/utils/object.mjs'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -165,13 +165,14 @@ export class Controls {
   add(control = Object.create(null)) {
     const { id, ...config } = control
     const controlId = id || uuid()
-    const controlConfig = cloneDeep(config)
+    const controlConfig = clone(config)
     this.data.set(controlId, controlConfig)
     return { id: controlId, ...controlConfig }
   }
 
   get(controlId) {
-    return cloneDeep(this.data.get(controlId))
+    // return clone(this.data.get(controlId))
+    return this.data.get(controlId)
   }
 
   /**

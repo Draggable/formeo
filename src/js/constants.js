@@ -1,5 +1,6 @@
-import { name } from '../../package.json'
+import pkg from '../../package.json' with { type: 'json' }
 
+const name = pkg.name
 export const PACKAGE_NAME = name
 
 export const POLYFILLS = [

@@ -1,8 +1,7 @@
-import identity from 'lodash/identity'
 import i18n from 'mi18n'
-import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants'
-import { sessionStorage } from './utils'
-import events from './events'
+import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants.js'
+import { identity, sessionStorage } from './utils/index.mjs'
+import events from './events.js'
 
 // Actions are the callbacks for things like adding
 // new attributes, options, field removal confirmations etc.
@@ -47,7 +46,7 @@ const actions = {
   init: function(options) {
     const actionKeys = Object.keys(defaultActions)
     this.opts = actionKeys.reduce((acc, key) => {
-      acc[key] = Object.assign({}, defaultActions[key], options[key])
+      acc[key] = { ...defaultActions[key], ...options[key] }
       return acc
     }, options)
     return this

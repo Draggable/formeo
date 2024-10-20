@@ -1,5 +1,5 @@
-import ComponentData from '../component-data'
-import Row from './row'
+import ComponentData from '../component-data.js'
+import Row from './row.js'
 
 const DEFAULT_CONFIG = {
   actionButtons: {

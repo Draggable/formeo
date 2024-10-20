@@ -1,8 +1,7 @@
 /* global MutationObserver */
-import identity from 'lodash/identity'
-import { uuid, componentType, merge, clone, remove } from '../common/utils'
-import { isInt, get, map, forEach, indexOfNode } from '../common/helpers'
-import dom from '../common/dom'
+import { uuid, componentType, merge, clone, remove, identity } from '../common/utils/index.mjs'
+import { isInt, map, forEach, indexOfNode } from '../common/helpers.mjs'
+import dom from '../common/dom.js'
 import {
   CHILD_TYPE_MAP,
   PARENT_TYPE_MAP,
@@ -11,15 +10,16 @@ import {
   COMPONENT_TYPE_CLASSNAMES,
   COLUMN_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
-} from '../constants'
-import Components from './index'
-import Data from './data'
-import animate from '../common/animation'
-import Controls from './controls'
+} from '../constants.js'
+import Components from './index.js'
+import Data from './data.js'
+import animate from '../common/animation.js'
+import Controls from './controls/index.js'
+import { get } from '../common/utils/object.mjs'
 
 export default class Component extends Data {
   constructor(name, data = {}, render) {
-    super(name, Object.assign({}, data, { id: data.id || uuid() }))
+    super(name, { ...data, id: data.id || uuid() })
     this.id = this.data.id
     this.name = name
     this.config = Components[`${this.name}s`].config
@@ -54,7 +54,10 @@ export default class Component extends Data {
         if (isInt(delItem)) {
           parent.splice(Number(delItem), 1)
         } else {
-          this.set(delPath, parent.filter(item => item !== delItem))
+          this.set(
+            delPath,
+            parent.filter(item => item !== delItem),
+          )
         }
       } else {
         delete parent[delItem]
@@ -396,7 +399,7 @@ export default class Component extends Data {
           column: 1,
         }
         const action = (depthMap.get(targets[toType]) || identity)()
-        return action && action({ id: item.id }, newIndex)
+        return action?.({ id: item.id }, newIndex)
       },
       column: () => {
         const targets = {
@@ -404,11 +407,11 @@ export default class Component extends Data {
           row: -1,
         }
         const action = (depthMap.get(targets[toType]) || identity)()
-        return action && action(item.id)
+        return action?.(item.id)
       },
     }
 
-    const component = onAddConditions[fromType] && onAddConditions[fromType](item, newIndex)
+    const component = onAddConditions[fromType]?.(item, newIndex)
 
     defaultOnAdd()
     return component
@@ -447,8 +450,8 @@ export default class Component extends Data {
    * @param  {Object} evt
    */
   onEnd = ({ to: { parentElement: to }, from: { parentElement: from } }) => {
-    to && to.classList.remove(`hovering-${componentType(to)}`)
-    from && from.classList.remove(`hovering-${componentType(from)}`)
+    to?.classList.remove(`hovering-${componentType(to)}`)
+    from?.classList.remove(`hovering-${componentType(from)}`)
   }
 
   /**
@@ -469,11 +472,10 @@ export default class Component extends Data {
     const idConfig = get(config, this.id)
     const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
       (acc, cur) => (cur ? merge(acc, cur) : acc),
-      this.configVal
+      this.configVal,
     )
 
     this.configVal = mergedConfig
-    return this.configVal
   }
 
   get config() {
@@ -482,7 +484,7 @@ export default class Component extends Data {
 
   runConditions = () => {
     const conditionsList = this.get('conditions')
-    if (!conditionsList || !conditionsList.length) {
+    if (!conditionsList?.length) {
       return null
     }
 
@@ -532,12 +534,7 @@ export default class Component extends Data {
   processResults = results => {
     return results.map(({ operator, target, value }) => {
       const targetComponent = this.getComponent(target)
-      const propertyPath =
-        targetComponent &&
-        target
-          .split('.')
-          .slice(2, target.length)
-          .join('.')
+      const propertyPath = targetComponent && target.split('.').slice(2, target.length).join('.')
       const processedResult = {
         target: targetComponent,
         propertyPath,

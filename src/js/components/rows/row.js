@@ -1,11 +1,11 @@
 import i18n from 'mi18n'
 import Sortable from 'sortablejs'
-import Component from '../component'
-import dom from '../../common/dom'
-import events from '../../common/events'
-import { numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_FAST, COLUMN_CLASSNAME, bsColRegExp } from '../../constants'
-import { removeCustomOption } from '../columns/events'
+import Component from '../component.js'
+import dom from '../../common/dom.js'
+import events from '../../common/events.js'
+import { numToPercent } from '../../common/utils/index.mjs'
+import { ROW_CLASSNAME, COLUMN_TEMPLATES, ANIMATION_SPEED_FAST, COLUMN_CLASSNAME, bsColRegExp } from '../../constants.js'
+import { removeCustomOption } from '../columns/events.js'
 
 const DEFAULT_DATA = () =>
   Object.freeze({

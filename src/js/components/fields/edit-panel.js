@@ -1,10 +1,10 @@
 import i18n from 'mi18n'
-import startCase from 'lodash/startCase'
-import dom from '../../common/dom'
-import actions from '../../common/actions'
-import EditPanelItem from './edit-panel-item'
-import { hyphenCase, capitalize } from '../../common/helpers'
-import { cleanObj } from '../../common/utils'
+import dom from '../../common/dom.js'
+import actions from '../../common/actions.js'
+import EditPanelItem from './edit-panel-item.mjs'
+import { capitalize } from '../../common/helpers.mjs'
+import { slugify, toTitleCase } from '../../common/utils/string.mjs'
+import { cleanObj } from '../../common/utils/object.mjs'
 
 /**
  * Element/Field class.
@@ -100,7 +100,7 @@ export default class EditPanel {
             }
           }
 
-          const eventType = startCase(type)
+          const eventType = toTitleCase(type)
           const customEvt = new window.CustomEvent(`onAdd${eventType}`, {
             detail: addEvt,
           })
@@ -128,7 +128,7 @@ export default class EditPanel {
    * @param {String|Array} val
    */
   addAttribute = (attr, val) => {
-    const safeAttr = hyphenCase(attr)
+    const safeAttr = slugify(attr)
     const itemKey = `attrs.${safeAttr}`
 
     if (!i18n.current[itemKey]) {
@@ -165,7 +165,7 @@ export default class EditPanel {
     const itemKey = `options.${this.data.length}`
 
     const optionTemplate = fieldOptionData.length ? cleanObj(fieldOptionData[fieldOptionData.length - 1]) : {}
-    const itemData = Object.assign({}, optionTemplate, { label: newOptionLabel, value: hyphenCase(newOptionLabel) })
+    const itemData = { ...optionTemplate, label: newOptionLabel, value: slugify(newOptionLabel) }
     const newOption = new EditPanelItem({
       key: itemKey,
       data: itemData,

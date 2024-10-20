@@ -1,5 +1,5 @@
-import ComponentData from '../component-data'
-import Stage from './stage'
+import ComponentData from '../component-data.js'
+import Stage from './stage.js'
 
 export class Stages extends ComponentData {
   constructor(stageData) {

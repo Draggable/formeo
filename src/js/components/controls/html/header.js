@@ -1,5 +1,5 @@
 import i18n from 'mi18n'
-import Control from '../control'
+import Control from '../control.js'
 
 const headerTags = Array.from(Array(5).keys())
   .slice(1)

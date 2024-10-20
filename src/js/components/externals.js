@@ -1,5 +1,5 @@
-import ComponentData from './component-data'
-import External from './component'
+import ComponentData from './component-data.js'
+import External from './component.js'
 
 export class Externals extends ComponentData {
   constructor(externalData) {

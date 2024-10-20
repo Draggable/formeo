@@ -1,8 +1,8 @@
-import dom from '../../common/dom'
-import Components from '..'
-import { percent, numToPercent } from '../../common/utils'
-import { ROW_CLASSNAME, bsColRegExp } from '../../constants'
-import { map } from '../../common/helpers'
+import dom from '../../common/dom.js'
+import Components from '../index.js'
+import { percent, numToPercent } from '../../common/utils/index.mjs'
+import { ROW_CLASSNAME, bsColRegExp } from '../../constants.js'
+import { map } from '../../common/helpers.mjs'
 
 const CUSTOM_COLUMN_OPTION_CLASSNAME = 'custom-column-widths'
 const COLUMN_PRESET_CLASSNAME = 'column-preset'
