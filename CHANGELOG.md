@@ -1,3 +1,15 @@
+# [2.0.0](https://github.com/Draggable/formeo/compare/v1.7.1...v2.0.0) (2024-10-20)
+
+
+### chore
+
+* update build ([d4d6b1d](https://github.com/Draggable/formeo/commit/d4d6b1d05426a90a2a8a49ca0f538fc3b5864b9b))
+
+
+### BREAKING CHANGES
+
+* updates the build type
+
 ## [1.7.1](https://github.com/Draggable/formeo/compare/v1.7.0...v1.7.1) (2024-10-20)
 
 
