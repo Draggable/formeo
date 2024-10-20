@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 23
@@ -30,7 +30,7 @@ jobs:
         run: npx semantic-release
       - name: Deploy - https://draggable.github.io/formeo/
         if: success()
-        env:
-          GH_PAT: ${{ secrets.GH_TOKEN }}
-          BUILD_DIR: dist/demo/
-        uses: maxheld83/ghpages@v0.2.1
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          publish_dir: ./dist/demo
