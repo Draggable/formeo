@@ -93,7 +93,7 @@
   "dependencies": {
     "formeo-i18n": "^2.1.3",
     "lodash": "^4.17.21",
-    "mi18n": "mi18n",
+    "mi18n": "^1.0.2",
     "sortablejs": "^1.15.3"
   },
   "release": {
