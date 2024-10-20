@@ -1,4 +1,10 @@
+pre-push:
+  parallel: true
+  commands:
+    run-tests:
+      run: npm test
+
 commit-msg:
   commands:
     commitlint:
-      run: npx commitlint --edit $1
+      run: npx commitlint --edit $GIT_PARAMS
