@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/Draggable/formeo/compare/v2.0.0...v2.0.1) (2024-10-21)
+
+
+### Bug Fixes
+
+* bug with edit panel not showing ([a226bfa](https://github.com/Draggable/formeo/commit/a226bfad487a12b5633c73b45019e4d6d1231659))
+
 # [2.0.0](https://github.com/Draggable/formeo/compare/v1.7.1...v2.0.0) (2024-10-20)
 
 
