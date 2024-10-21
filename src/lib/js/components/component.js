@@ -200,7 +200,7 @@ export default class Component extends Data {
           },
         }
       },
-      clone: (icons = ['copy']) => {
+      clone: (icons = ['copy', 'handle']) => {
         return {
           ...dom.btnTemplate({ content: parseIcons(icons) }),
           className: ['item-clone'],
@@ -214,11 +214,10 @@ export default class Component extends Data {
       },
     }
 
-    return this.config.actionButtons.buttons.map(btn => {
-      const [key, ...rest] = btn.split('|')
-      const icons = rest.length ? rest : undefined
-      return (buttonConfig[key] && buttonConfig[key](icons)) || btn
-    })
+    const { buttons, disabled } = this.config.actionButtons
+    const activeButtons = buttons.filter(btn => !disabled.includes(btn))
+
+    return activeButtons.map(btn => buttonConfig[btn]?.() || btn)
   }
 
   /**
@@ -295,7 +294,7 @@ export default class Component extends Data {
 
     // @todo add event for onAddChild
     const grandChildren = child.get('children')
-    if (grandChildren && grandChildren.length) {
+    if (grandChildren?.length) {
       child.loadChildren(grandChildren)
     }
 
@@ -503,7 +502,7 @@ export default class Component extends Data {
   getComponent(path) {
     const [type, id] = path.split('.')
     const group = Components[type]
-    return id === this.id ? this : group && group.get(id)
+    return id === this.id ? this : group?.get(id)
   }
 
   value = (path, val) => {

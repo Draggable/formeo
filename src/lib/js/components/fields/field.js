@@ -28,6 +28,9 @@ export default class Field extends Component {
     this.preview = dom.create(this.fieldPreview())
     this.editPanels = []
 
+    const actionButtons = this.getActionButtons()
+    const hasEditButton = actionButtons.children.children.some(child => child.meta?.id === 'edit')
+
     let field = {
       tag: 'li',
       attrs: {
@@ -36,10 +39,10 @@ export default class Field extends Component {
       id: this.id,
       children: [
         this.label,
-        this.getActionButtons(), // fieldEdit window
-        this.fieldEdit, // fieldEdit window,
-        this.preview, // preview
-      ],
+        actionButtons,
+        hasEditButton && this.fieldEdit, // fieldEdit window,
+        this.preview,
+      ].filter(Boolean),
       panelNav: this.panelNav,
       dataset: {
         hoverTag: i18n.get('field'),
@@ -224,14 +227,15 @@ export default class Field extends Component {
       fieldEdit.action = {
         onRender: () => {
           this.resizePanelWrap()
-          // if (!editPanelLength) {
+          if (!editPanelLength) {
+            // If this element has no edit panels, remove the edit toggle
             const field = this.dom
             const editToggle = field.querySelector('.item-edit-toggle')
             const fieldActions = field.querySelector('.field-actions')
             const actionButtons = fieldActions.getElementsByTagName('button')
             fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
             dom.remove(editToggle)
-          // }
+          }
         },
       }
     }
@@ -248,7 +252,7 @@ export default class Field extends Component {
     prevData.id = `prev-${this.id}`
 
     if (this.data?.config.editableContent) {
-      prevData.attrs = Object.assign({}, prevData.attrs, { contenteditable: true })
+      prevData.attrs = { ...prevData.attrs, contenteditable: true }
     }
 
     const fieldPreview = {

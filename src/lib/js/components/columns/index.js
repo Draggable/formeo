@@ -3,7 +3,7 @@ import Column from './column.js'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
-    buttons: ['clone|copy|handle', 'handle', 'remove'],
+    buttons: ['clone', 'handle', 'remove'],
     disabled: [],
   },
 }
