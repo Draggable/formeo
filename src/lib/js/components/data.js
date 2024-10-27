@@ -38,7 +38,11 @@ export default class Data {
     const callbackPath = Array.isArray(path) ? path.join('.') : path
     const callBackGroups = Object.keys(this.setCallbacks).filter(setKey => new RegExp(setKey).test(callbackPath))
     const cbArgs = { newVal, oldVal, path }
-    callBackGroups.forEach(cbGroup => this.setCallbacks[cbGroup].forEach(cb => cb(cbArgs)))
+    for (const cbGroup of callBackGroups) {
+      for (const cb of this.setCallbacks[cbGroup]) {
+        cb(cbArgs)
+      }
+    }
 
     if (!this.disableEvents) {
       const change = this.getChangeType(oldVal, newVal)

@@ -76,11 +76,9 @@ export default class Row extends Component {
    * @return {Object} edit window dom config for Row
    */
   get editWindow() {
-    const _this = this
-
     const fieldsetInput = {
       tag: 'input',
-      id: _this.id + '-fieldset',
+      id: `${this.id}-fieldset`,
       attrs: {
         type: 'checkbox',
         checked: this.get('config.fieldset'),
@@ -118,11 +116,11 @@ export default class Row extends Component {
       attrs: {
         type: 'text',
         ariaLabel: 'Legend for fieldset',
-        value: _this.get('config.legend'),
+        value: this.get('config.legend'),
         placeholder: 'Legend',
       },
       action: {
-        input: ({ target: { value } }) => _this.set('config.legend', value),
+        input: ({ target: { value } }) => this.set('config.legend', value),
       },
       className: '',
     }
@@ -186,9 +184,9 @@ export default class Row extends Component {
       return
     }
 
-    const width = parseFloat((100 / columns.length).toFixed(1)) / 1
+    const width = Number.parseFloat((100 / columns.length).toFixed(1)) / 1
 
-    columns.forEach(column => {
+    for (const column of columns) {
       column.removeClasses(bsColRegExp)
       const colDom = column.dom
       const newColWidth = numToPercent(width)
@@ -201,7 +199,7 @@ export default class Row extends Component {
         column.refreshFieldPanels()
       }, ANIMATION_SPEED_FAST)
       document.dispatchEvent(events.columnResized)
-    })
+    }
 
     this.updateColumnPreset()
   }
@@ -283,7 +281,6 @@ export default class Row extends Component {
    * @return {Object} columnPresetControlConfig
    */
   get columnPresetControlConfig() {
-    const _this = this
     const layoutPreset = {
       tag: 'select',
       attrs: {
@@ -293,14 +290,7 @@ export default class Row extends Component {
       action: {
         change: ({ target }) => {
           const { value } = target
-
-          // forEach(target.children, option => {
-          //   option.selected = option.value === value
-          // })
-          // if (value !== 'custom') {
-          // removeCustomOption(this.dom)
-          _this.setColumnWidths(value)
-          // }
+          this.setColumnWidths(value)
         },
       },
       options: this.getColumnPresetOptions,
