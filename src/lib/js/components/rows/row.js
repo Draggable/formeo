@@ -13,10 +13,6 @@ import {
   CUSTOM_COLUMN_OPTION_CLASSNAME,
   COLUMN_PRESET_CLASSNAME,
 } from '../../constants.js'
-import columnsData from '../columns/index.js'
-import data from '../data.js'
-import components from '../index.js'
-import { forEach } from 'lodash'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -82,10 +78,6 @@ export default class Row extends Component {
   get editWindow() {
     const _this = this
 
-    const fieldsetLabel = {
-      tag: 'label',
-      content: i18n.get('row.settings.fieldsetWrap'),
-    }
     const fieldsetInput = {
       tag: 'input',
       id: _this.id + '-fieldset',
@@ -98,6 +90,9 @@ export default class Row extends Component {
         click: ({ target: { checked } }) => {
           this.set('config.fieldset', Boolean(checked))
         },
+      },
+      config: {
+        label: i18n.get('row.settings.fieldsetWrap'),
       },
     }
 
@@ -118,11 +113,6 @@ export default class Row extends Component {
       },
     }
 
-    const inputAddon = {
-      tag: 'span',
-      className: 'input-group-addon',
-      content: fieldsetInput,
-    }
     const legendInput = {
       tag: 'input',
       attrs: {
@@ -139,10 +129,10 @@ export default class Row extends Component {
 
     const fieldsetInputGroup = {
       className: 'input-group',
-      content: [inputAddon, legendInput],
+      content: legendInput,
     }
 
-    const fieldSetControls = dom.formGroup([fieldsetLabel, fieldsetInputGroup])
+    const fieldSetControls = dom.formGroup([fieldsetInput, fieldsetInputGroup])
     const columnSettingsPresetLabel = {
       tag: 'label',
       content: i18n.get('defineColumnWidths'),
@@ -165,11 +155,9 @@ export default class Row extends Component {
       className: `${this.name}-edit group-config`,
       action: {
         onRender: editWindow => {
-          const timeout = setTimeout(() => {
-            const elements = editWindowContents.map(elem => dom.create(elem))
-            editWindow.append(...elements)
-            clearTimeout(timeout)
-          }, 1000)
+          // Edit window contents are dependent on columns which have not rendered at the time of row creation
+          const elements = editWindowContents.map(elem => dom.create(elem))
+          editWindow.append(...elements)
         },
       },
     })

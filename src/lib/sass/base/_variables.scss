@@ -3,6 +3,7 @@
 // Sizing
 $base-space: 8px;
 $half-space: calc($base-space / 2);
+$double-space: calc($base-space * 2);
 $icon-size: calc($base-space * 3);
 $prop-btn-width: $icon-size;
 $action-btn-width: $icon-size;

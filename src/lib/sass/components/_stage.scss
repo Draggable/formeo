@@ -53,6 +53,15 @@
   @include mixins.breakpoint("phone-lrg") {
     width: calc(100% - 50px);
   }
+
+  &:has(.editing-field) {
+    .column-actions {
+      display: none;
+    }
+    .row-actions {
+      display: none;
+    }
+  }
 }
 
 .editing-stage {
@@ -68,9 +77,7 @@
 .f-field-group {
   margin-bottom: 0;
 }
-// }
 
-// element label
 [class$="empty"] {
   &[class*="editing-"] {
     &::after {
@@ -95,25 +102,4 @@
 
 .formeo-settings {
   display: none;
-}
-
-.active-hover-row {
-  .group-actions:not(.hovering .row-actions) {
-    display: none;
-    opacity: 0;
-  }
-}
-
-.active-hover-column {
-  .group-actions:not(.hovering .column-actions) {
-    display: none;
-    opacity: 0;
-  }
-}
-
-.active-hover-field {
-  .group-actions:not(.hovering .field-actions) {
-    display: none;
-    opacity: 0;
-  }
 }

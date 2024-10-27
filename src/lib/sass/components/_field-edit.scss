@@ -1,13 +1,13 @@
 @use "../base/mixins";
 
-@use '../base/colors' as color;
-@use '../base/variables' as var;
-
-
+@use "../base/colors" as color;
+@use "../base/variables" as var;
 
 .field-edit {
   display: none;
   overflow: hidden;
+  margin-top: var.$double-space;
+  border-top: 1px solid color.$gray-lighter;
 
   label {
     font-size: 0.825em;
@@ -117,7 +117,7 @@
   }
 
   [contenteditable] {
-    @include mixins.display-row
+    @include mixins.display-row;
   }
 
   .prop-inputs,

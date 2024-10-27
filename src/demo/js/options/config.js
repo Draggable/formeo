@@ -11,7 +11,7 @@ const config = {
   fields: {
     checkbox: {
       actionButtons: {
-        buttons: ['edit'],
+        // buttons: ['edit'], // array of allow action buttons
       },
     },
     'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': {

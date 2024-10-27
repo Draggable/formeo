@@ -24,12 +24,6 @@
   border-style: solid;
   border-width: 1px 1px 0 1px;
 
-  // transform: translateY(100%);
-  // clip-path: inset(0 -#{var.$icon-size} 100% -#{var.$icon-size});
-  // will-change: transform, clip-path;
-  // transition: transform var.$animation-speed-fast,
-  //   clip-path var.$animation-speed-fast;
-
   [class*="-handle-"] {
     width: calc(var.$half-space * 3);
     height: calc(var.$half-space * 3);
@@ -48,13 +42,6 @@
       left: -(var.$base-space);
       transform: scaleX(-1);
     }
-  }
-}
-
-.hovering {
-  > .component-tag {
-    // transform: translateY(0);
-    // clip-path: inset(0 -#{var.$icon-size} 0 -#{var.$icon-size});
   }
 }
 

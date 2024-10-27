@@ -29,6 +29,10 @@
     .component-handle {
       opacity: 0.65;
     }
+
+    button {
+      background-color: color.$white;
+    }
   }
 
   button {
@@ -63,17 +67,6 @@
 .column-editing-field {
   .column-actions {
     display: none;
-  }
-}
-
-.hovering-column,
-.hovering-row {
-  .field-actions {
-    display: none;
-  }
-
-  .row-actions {
-    z-index: 10;
   }
 }
 

@@ -1,5 +1,7 @@
 * {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body,
@@ -14,35 +16,43 @@ body {
 }
 
 .site-wrap {
-  margin-bottom: -35px;
-  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#demo-header,
+#demo-footer {
+  width: 100%;
 }
 
 #demo-header {
   text-align: center;
+
+  nav {
+    text-align: left;
+    background-color: #efefef;
+    display: block;
+  }
 }
 
 #demo-footer {
-  height: 35px;
+  width: 100%;
+
+  nav {
+    background-color: #666;
+    text-align: right;
+  }
 }
 
 #main_content {
   padding-bottom: 50px;
-  clear: both;
-}
-
-#demo-footer nav {
-  background-color: #666;
-  text-align: right;
-}
-
-#demo-header nav {
-  text-align: left;
-  background-color: #efefef;
-  content: '';
-  display: table;
-  clear: both;
+  flex: 1;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 #demo-footer ul,
@@ -84,23 +94,11 @@ body {
 }
 
 .debug-window {
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
-  -webkit-flex-direction: row;
-  -ms-flex-direction: row;
   flex-direction: row;
-  -webkit-flex-wrap: nowrap;
-  -ms-flex-wrap: nowrap;
   flex-wrap: nowrap;
-  -webkit-justify-content: flex-start;
-  -ms-flex-pack: start;
   justify-content: flex-start;
-  -webkit-align-content: stretch;
-  -ms-flex-line-pack: stretch;
   align-content: stretch;
-  -webkit-align-items: flex-start;
-  -ms-flex-align: start;
   align-items: flex-start;
 }
 
@@ -123,9 +121,11 @@ body {
 }
 
 .render-form {
-  /* display: none; */
+  display: none;
+  width: 100%;
   max-width: 800px;
   margin: auto;
+  padding: 32px 0;
 }
 
 .form-rendered .render-form {
@@ -134,8 +134,58 @@ body {
 
 .render-btn-wrap {
   text-align: center;
+  padding: 32px 0;
+  display: flex;
+  gap: 8px;
+
+  button {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid gray;
+  }
 }
 
 #control-filter {
   line-height: 1em;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shimmer {
+  0%,
+  80% {
+    // Keep shimmer off for the first 80% of the duration
+    background-position: -120px 0;
+  }
+  81% {
+    background-position: 120px 0; // Start shimmer animation briefly
+  }
+  100% {
+    background-position: 120px 0; // End with the shimmer completed
+  }
+}
+
+#formeo-logo-wrap {
+  display: inline-block;
+  width: 224px;
+  height: 150px;
+  mask-image: url("assets/img/formeo-logo.svg");
+  mask-repeat: no-repeat;
+  background-image: linear-gradient(
+    -60deg,
+    black 45%,
+    rgba(255, 255, 255, 0.6) 50%,
+    black 55%
+  );
+  background-position: -120px 0;
+  background-size: 105% 100%;
+
+  animation: shimmer 45s ease-in-out infinite;
 }

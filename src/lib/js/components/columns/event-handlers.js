@@ -194,17 +194,14 @@ export class ResizeColumn {
    */
   setCustomWidthValue() {
     const columnPreset = this.columnPreset
-    const customOption = columnPreset.querySelector(`.${CUSTOM_COLUMN_OPTION_CLASSNAME}`)
+    let customOption = columnPreset.querySelector(`.${CUSTOM_COLUMN_OPTION_CLASSNAME}`)
     const cols = this.row.querySelector('.children').children
     const widths = map(cols, col => percent(col.clientWidth, this.rowWidth).toFixed(1))
     const value = widths.join(',')
     const content = widths.join(' | ')
 
-    if (customOption) {
-      customOption.value = value
-      customOption.textContent = content
-    } else {
-      const newCustomOption = dom.create({
+    if (!customOption) {
+      customOption = dom.create({
         tag: 'option',
         attrs: {
           className: CUSTOM_COLUMN_OPTION_CLASSNAME,
@@ -214,12 +211,12 @@ export class ResizeColumn {
         content,
       })
 
-      columnPreset.append(newCustomOption)
+      columnPreset.append(customOption)
     }
 
-    columnPreset.value = value
+    customOption.value = value
+    customOption.textContent = content
 
     return value
   }
 }
-

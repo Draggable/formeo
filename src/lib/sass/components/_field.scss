@@ -5,8 +5,6 @@
 .formeo-field {
   min-height: var.$icon-size;
   position: relative;
-  transition: background-color var.$animation-speed-base ease-in-out,
-    box-shadow var.$animation-speed-base ease-in-out;
   list-style: none;
   margin: 0;
   will-change: box-shadow;
@@ -73,13 +71,11 @@
 }
 
 .field-tag {
-  // display: flex;
   right: -1px;
   left: auto;
   top: -(var.$icon-size);
 
   border-color: color.$field-outline-color;
-  // background-color: color.$field-highlight-color;
   background-color: color.$white;
 
   .f-i-component-corner {
@@ -88,8 +84,18 @@
   }
 }
 
+// .hovering-field {
+//   background-color: color.$white;
+
+// }
+
+.editing-field,
 .hovering-field {
-  background-color: color.$white;
+  box-shadow: 0 0 0 1px color.$field-outline-color;
+
+  .field-tag {
+    display: flex;
+  }
 
   .field-action-btn-wrap {
     display: flex;
@@ -98,21 +104,6 @@
   .field-handle {
     display: none;
   }
-
-  // .field-tag {
-  // display: flex;
-  // right: -1px;
-  // left: auto;
-  // top: -(var.$icon-size);
-
-  // border-color: color.$field-outline-color;
-  // background-color: color.$field-highlight-color;
-  // }
-}
-
-.editing-field,
-.hovering-field {
-  box-shadow: 0 0 0 1px color.$field-outline-color;
 }
 .field-actions {
   border-color: transparent;
@@ -121,10 +112,8 @@
 
   right: 0;
   text-align: right;
-  transition: width 0.166s;
   border-bottom-left-radius: var.$input-border-radius;
   border-bottom-right-radius: 0;
-  will-change: width;
 
   .action-btn-wrap {
     flex-direction: row-reverse;
@@ -132,12 +121,22 @@
 }
 
 .field-moving {
-  box-shadow: 0 0 0 1px color.$field-outline-color, 0 0 30px 0 color.$gray-light;
-  background-color: color.$white;
+  background-color: color.$field-highlight-color;
+  .action-btn-wrap {
+    button {
+      background-color: color.$field-highlight-color;
+    }
+  }
+  .field-tag {
+    background-color: color.$field-highlight-color;
+
+    .f-i-component-corner {
+      fill: color.$field-highlight-color;
+    }
+  }
 }
 
 .editing-field {
-  background-color: color.$gray-lightest;
   z-index: 1;
 }
 
@@ -152,13 +151,3 @@
     white-space: normal;
   }
 }
-
-// .hovering-field,
-// .editing-field {
-//   .field-actions {
-//     box-shadow: -1px 1px 1px color.$gray-lighter;
-//     border-color: color.$field-outline-color;
-//     border-width: 1px 1px 0 0;
-//     border-style: solid;
-//   }
-// }
