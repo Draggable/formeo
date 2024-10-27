@@ -46,11 +46,13 @@ export class Components extends Data {
       formData = JSON.parse(formData)
     }
     this.opts = opts
-    const { stages = { [uuid()]: {} }, rows, columns, fields, id = uuid() } = Object.assign(
-      {},
-      this.sessionFormData(),
-      formData
-    )
+    const {
+      stages = { [uuid()]: {} },
+      rows,
+      columns,
+      fields,
+      id = uuid(),
+    } = { ...this.sessionFormData(), ...formData }
     this.set('id', id)
     this.add('stages', Stages.load(stages))
     this.add('rows', Rows.load(rows))
@@ -103,13 +105,13 @@ export class Components extends Data {
   /**
    * call `set` on a component in memory
    */
-  setAddress(address, value) {
-    const [type, id, ...path] = Array.isArray(address) ? address : address.split('.')
+  setAddress(fullAddress, value) {
+    const [type, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : fullAddress.split('.')
     const componentType = type.replace(/s?$/, 's')
     const component = this[componentType].get(id)
-    if (component) {
-      component.set(path, value)
-    }
+
+    component?.set(localAddress, value)
+
     return component
   }
 

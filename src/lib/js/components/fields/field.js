@@ -29,16 +29,17 @@ export default class Field extends Component {
     this.editPanels = []
 
     const actionButtons = this.getActionButtons()
-    const hasEditButton = actionButtons.children.children.some(child => child.meta?.id === 'edit')
+    const hasEditButton = this.actionButtons.some(child => child.meta?.id === 'edit')
 
     let field = {
       tag: 'li',
       attrs: {
-        className: FIELD_CLASSNAME,
+        className: [FIELD_CLASSNAME],
       },
       id: this.id,
       children: [
         this.label,
+        this.getComponentTag(),
         actionButtons,
         hasEditButton && this.fieldEdit, // fieldEdit window,
         this.preview,
@@ -48,8 +49,8 @@ export default class Field extends Component {
         hoverTag: i18n.get('field'),
       },
       action: {
-        mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
-        mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
+        // mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
+        // mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
       },
     }
 

@@ -1,9 +1,8 @@
-import h, { indexOfNode, forEach } from './helpers.mjs'
+import h, { forEach } from './helpers.mjs'
 import i18n from 'mi18n'
-import events from './events.js'
 import animate from './animation.js'
-import Components, { Stages, Columns } from '../components/index.js'
-import { uuid, clone, numToPercent, componentType, merge } from './utils/index.mjs'
+import Components from '../components/index.js'
+import { uuid, componentType, merge } from './utils/index.mjs'
 import {
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -11,8 +10,17 @@ import {
   FIELD_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
   CHILD_CLASSNAME_MAP,
-  bsColRegExp,
+  iconPrefix,
 } from '../constants.js'
+
+const iconFontTemplates = {
+  glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
+  'font-awesome': icon => {
+    const [style, name] = icon.split(' ')
+    return `<i class="${style} fa-${name}"></i>`
+  },
+  fontello: icon => `<i class="${iconPrefix}${icon}">${icon}</i>`,
+}
 
 /**
  * General purpose markup utilities and generator.
@@ -258,6 +266,38 @@ class DOM {
     })
   }
 
+  get icons() {
+    if (this.iconSymbols) {
+      return this.iconSymbols
+    }
+
+    const iconSymbolNodes = document.querySelectorAll('#formeo-sprite svg symbol')
+
+    const createSvgIconConfig = symbolId => ({
+      tag: 'svg',
+      attrs: {
+        className: `svg-icon ${symbolId}`,
+      },
+      children: [
+        {
+          tag: 'use',
+          attrs: {
+            'xmlns:xlink': 'http://www.w3.org/1999/xlink',
+            'xlink:href': `#${symbolId}`,
+          },
+        },
+      ],
+    })
+
+    this.iconSymbols = Array.from(iconSymbolNodes).reduce((acc, symbol) => {
+      const name = symbol.id.replace(iconPrefix, '')
+      acc[name] = dom.create(createSvgIconConfig(symbol.id))
+      return acc
+    }, {})
+
+    return this.iconSymbols
+  }
+
   /**
    * Create and SVG or font icon.
    * Simple string concatenation instead of DOM.create because:
@@ -265,32 +305,22 @@ class DOM {
    *  - it forces the icon to be appended using innerHTML which helps svg render
    * @param  {String} name - icon name
    * @return {String} icon markup
-   * @todo remove document.getElementById
    */
-  icon(name = null) {
+  icon(name = null, classNames = []) {
     if (!name) {
       return
     }
-    const iconPrefix = 'f-i-'
-    const iconLink = document.getElementById(iconPrefix + name)
-    let icon
-    const iconFontTemplates = {
-      glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
-      'font-awesome': icon => {
-        const [style, name] = icon.split(' ')
-        return `<i class="${style} fa-${name}"></i>`
-      },
-      fontello: icon => `<i class="${iconPrefix}${icon}">${icon}</i>`,
+
+    const icon = this.icons[name]
+
+    if (icon) {
+      const iconClone = icon.cloneNode(true)
+      iconClone.classList.add(...classNames)
+
+      return iconClone.outerHTML
     }
 
-    if (iconLink) {
-      icon = `<svg class="svg-icon ${iconPrefix}${name}"><use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#${iconPrefix}${name}"></use></svg>`
-    } else if (dom.options.iconFont) {
-      icon = iconFontTemplates[dom.options.iconFont](name)
-    } else {
-      icon = name
-    }
-    return icon
+    return iconFontTemplates[dom.options.iconFont]?.(name) || name
   }
 
   /**
@@ -366,7 +396,7 @@ class DOM {
     forEach(collection, elem => {
       const txt = elem.textContent.toLowerCase()
       const contains = txt.indexOf(term.toLowerCase()) !== -1
-      cb && cb(elem, contains)
+      cb?.(elem, contains)
       contains && elementsContainingText.push(elem)
     })
     return elementsContainingText
@@ -473,7 +503,8 @@ class DOM {
         },
         button: option => {
           const { type, label, className, id } = option
-          return Object.assign({}, elem, {
+          return {
+            ...elem,
             attrs: {
               type,
             },
@@ -482,13 +513,13 @@ class DOM {
             options: undefined,
             children: label,
             action: elem.action,
-          })
+          }
         },
         checkbox: defaultInput,
         radio: defaultInput,
       }
 
-      return optionMarkup[fieldType] && optionMarkup[fieldType](option)
+      return optionMarkup[fieldType]?.(option)
     }
 
     const mappedOptions = options.map(optionMap)
@@ -574,7 +605,7 @@ class DOM {
     const fieldLabel = {
       tag: 'label',
       attrs: {
-        for: elemId || (attrs && attrs.id),
+        for: elemId || attrs?.id,
       },
       className: [],
       children: [labelText, required && this.requiredMark()],
@@ -604,7 +635,7 @@ class DOM {
     return [
       ['array', content => Array.isArray(content)],
       ['node', content => content instanceof window.Node || content instanceof window.HTMLElement],
-      ['component', () => content && content.dom],
+      ['component', () => content?.dom],
       [typeof content, () => true],
     ].find(typeCondition => typeCondition[1](content))[0]
   }
@@ -654,62 +685,6 @@ class DOM {
       this.remove(elem.firstChild)
     }
     return elem
-  }
-
-  /**
-   * Clones an element, it's data and
-   * it's nested elements and data
-   * @param {Object} elem element we are cloning
-   * @param {Object} parent
-   * @todo move to Component
-   * @return {Object} cloned element
-   */
-  clone(elem, parent) {
-    // remove
-    const formData = {}
-    const _this = this
-    const { id, fType } = elem
-    const dataClone = clone(formData[fType].get(id))
-    const newIndex = indexOfNode(elem) + 1
-    let noParent = false
-    dataClone.id = uuid()
-    formData[fType].set(dataClone.id, dataClone)
-    if (!parent) {
-      parent = elem.parentElement
-      noParent = true
-    }
-    const cloneType = {
-      rows: () => {
-        dataClone.columns = []
-        const stage = Stages.active
-        const newRow = stage.addRow(null, dataClone.id)
-        const columns = elem.getElementsByClassName(COLUMN_CLASSNAME)
-
-        stage.insertBefore(newRow, stage.childNodes[newIndex])
-        h.forEach(columns, column => _this.clone(column, newRow))
-        // data.saveRowOrder()
-        return newRow
-      },
-      columns: () => {
-        dataClone.fields = []
-        const newColumn = _this.addColumn(parent, dataClone.id)
-        parent.insertBefore(newColumn, parent.childNodes[newIndex])
-        const fields = elem.getElementsByClassName(FIELD_CLASSNAME)
-
-        if (noParent) {
-          dom.columnWidths(parent)
-        }
-        h.forEach(fields, field => _this.clone(field, newColumn))
-        return newColumn
-      },
-      fields: () => {
-        const newField = _this.addField(parent, dataClone.id)
-        parent.insertBefore(newField, parent.childNodes[newIndex])
-        return newField
-      },
-    }
-
-    return cloneType[fType]()
   }
 
   /**
@@ -774,32 +749,32 @@ class DOM {
     h.forEach(nodeList, addClass[this.childType(className)])
   }
 
-  /**
-   * Read columns and generate bootstrap cols
-   * @param  {Object}  row    DOM element
-   */
-  columnWidths(row) {
-    const columns = row.getElementsByClassName(COLUMN_CLASSNAME)
-    if (!columns.length) {
-      return
-    }
-    const width = parseFloat((100 / columns.length).toFixed(1)) / 1
+  // /**
+  //  * Read columns and generate bootstrap cols
+  //  * @param  {Object}  row    DOM element
+  //  */
+  // columnWidths(row) {
+  //   const columns = row.getElementsByClassName(COLUMN_CLASSNAME)
+  //   if (!columns.length) {
+  //     return
+  //   }
+  //   const width = parseFloat((100 / columns.length).toFixed(1)) / 1
 
-    this.removeClasses(columns, bsColRegExp)
-    h.forEach(columns, column => {
-      Columns.get(column.id).refreshFieldPanels()
+  //   this.removeClasses(columns, bsColRegExp)
+  //   h.forEach(columns, column => {
+  //     Columns.get(column.id).refreshFieldPanels()
 
-      const newColWidth = numToPercent(width)
+  //     const newColWidth = numToPercent(width)
 
-      column.style.width = newColWidth
-      column.style.float = 'left'
-      Columns.set(`${column.id}.config.width`, newColWidth)
-      column.dataset.colWidth = newColWidth
-      document.dispatchEvent(events.columnResized)
-    })
+  //     column.style.width = newColWidth
+  //     column.style.float = 'left'
+  //     Columns.set(`${column.id}.config.width`, newColWidth)
+  //     column.dataset.colWidth = newColWidth
+  //     document.dispatchEvent(events.columnResized)
+  //   })
 
-    dom.updateColumnPreset(row)
-  }
+  //   dom.updateColumnPreset(row)
+  // }
 
   /**
    * Wrap content in a formGroup
@@ -895,40 +870,6 @@ class DOM {
     elem.classList.toggle('empty', !children.length)
   }
 
-  /**
-   * Style Object
-   * Usage:
-   *
-      const rules = [['.css-class-selector', ['width', '100%', true]]]
-      dom.insertRule(rules)
-   * @param  {Object} rules
-   * @return {Number} index of added rule
-   */
-  insertRule(rules) {
-    const styleSheet = this.styleSheet
-    const rulesLength = styleSheet.cssRules.length
-    for (let i = 0, rl = rules.length; i < rl; i++) {
-      let j = 1
-      let rule = rules[i]
-      const selector = rules[i][0]
-      let propStr = ''
-      // If the second argument of a rule is an array
-      // of arrays, correct our variables.
-      if (Object.prototype.toString.call(rule[1][0]) === '[object Array]') {
-        rule = rule[1]
-        j = 0
-      }
-
-      for (let pl = rule.length; j < pl; j++) {
-        const prop = rule[j]
-        const important = prop[2] ? ' !important' : ''
-        propStr += `${prop[0]}:${prop[1]}${important};`
-      }
-
-      // Insert CSS Rule
-      return styleSheet.insertRule(`${selector} { ${propStr} }`, rulesLength)
-    }
-  }
   btnTemplate = ({ title = '', ...rest }) => ({
     tag: 'button',
     attrs: {

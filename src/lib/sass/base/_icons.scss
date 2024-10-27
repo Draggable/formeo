@@ -14,6 +14,15 @@
     fill: color.$brand-error;
   }
 }
+button[class*='-move'] {
+  &:hover {
+    background-color: color.$brand-info !important;
+
+    .svg-icon {
+      fill: color.$white;
+    }
+  }
+}
 
 button[class*='-remove'] {
   &:hover {

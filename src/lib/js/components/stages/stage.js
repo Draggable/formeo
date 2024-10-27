@@ -18,7 +18,7 @@ export default class Stage extends Component {
    * @return {Object} DOM element
    */
   constructor(stageData, render) {
-    super('stage', Object.assign({}, DEFAULT_DATA(), stageData), render)
+    super('stage', { ...DEFAULT_DATA(), ...stageData }, render)
 
     // @todo move formSettings to its own component
     // const defaultOptions = {
@@ -88,7 +88,7 @@ export default class Stage extends Component {
       onStart: () => (Stages.active = this),
       onSort: this.onSort.bind(this),
       draggable: `.${ROW_CLASSNAME}`,
-      handle: '.item-handle',
+      handle: '.item-move',
     })
   }
   empty(isAnimated = true) {

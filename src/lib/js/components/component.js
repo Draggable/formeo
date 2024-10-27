@@ -1,5 +1,5 @@
 /* global MutationObserver */
-import { uuid, componentType, merge, clone, remove, identity } from '../common/utils/index.mjs'
+import { uuid, componentType, merge, clone, remove, identity, closest } from '../common/utils/index.mjs'
 import { isInt, map, forEach, indexOfNode } from '../common/helpers.mjs'
 import dom from '../common/dom.js'
 import {
@@ -10,12 +10,14 @@ import {
   COMPONENT_TYPE_CLASSNAMES,
   COLUMN_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
+  COMPONENT_TYPES,
 } from '../constants.js'
 import Components from './index.js'
 import Data from './data.js'
 import animate from '../common/animation.js'
 import Controls from './controls/index.js'
 import { get } from '../common/utils/object.mjs'
+import { toTitleCase } from '../common/utils/string.mjs'
 
 export default class Component extends Data {
   constructor(name, data = {}, render) {
@@ -39,6 +41,7 @@ export default class Component extends Data {
     this.observer.disconnect()
     this.observer.observe(container, { childList: true })
   }
+
   get js() {
     return this.data
   }
@@ -109,26 +112,44 @@ export default class Component extends Data {
    * @return {Object} element config object
    */
   getActionButtons() {
-    let expandSize = '97px'
-    const hoverClassname = `hovering-${this.name}`
+    const hoverClassnames = [`hovering-${this.name}`, 'hovering']
     return {
-      className: `${this.name}-actions group-actions`,
+      className: [`${this.name}-actions`, 'group-actions'],
       action: {
-        onRender: elem => (expandSize = `${elem.getElementsByTagName('button').length * 24 + 1}px`),
         mouseenter: ({ target }) => {
-          this.dom.classList.add(hoverClassname)
-          target.style[this.name === 'row' ? 'height' : 'width'] = expandSize
+          Components.stages.active.dom.classList.add(`active-hover-${this.name}`)
+          this.dom.classList.add(...hoverClassnames)
         },
         mouseleave: ({ target }) => {
-          this.dom.classList.remove(hoverClassname)
+          this.dom.classList.remove(...hoverClassnames)
+          Components.stages.active.dom.classList.remove(`active-hover-${this.name}`)
           target.removeAttribute('style')
         },
       },
-      children: {
-        className: 'action-btn-wrap',
-        children: this.buttons,
-      },
+      children: [
+        {
+          ...dom.btnTemplate({ content: dom.icon(`handle-${this.name}`) }),
+          className: ['component-handle', `${this.name}-handle`],
+        },
+        {
+          className: ['action-btn-wrap', `${this.name}-action-btn-wrap`],
+          children: this.buttons,
+        },
+      ],
     }
+  }
+
+  getComponentTag = () => {
+    return dom.create({
+      tag: 'span',
+      className: ['component-tag', `${this.name}-tag`],
+      children: [
+        (this.isColumn || this.isField) && dom.icon('component-corner', ['bottom-left']),
+        dom.icon(`handle-${this.name}`),
+        toTitleCase(this.name),
+        (this.isColumn || this.isRow) && dom.icon('component-corner', ['bottom-right']),
+      ].filter(Boolean),
+    })
   }
 
   /**
@@ -138,34 +159,44 @@ export default class Component extends Data {
   toggleEdit(open = !this.isEditing) {
     this.isEditing = open
     const element = this.dom
-    const editClass = `editing-${this.name}`
+    const editingClassName = 'editing'
+    const editingComponentClassname = `${editingClassName}-${this.name}`
     const editWindow = this.dom.querySelector(`.${this.name}-edit`)
     animate.slideToggle(editWindow, ANIMATION_SPEED_BASE, open)
 
     if (this.name === 'field') {
       animate.slideToggle(this.preview, ANIMATION_SPEED_BASE, !open)
-      element.parentElement.classList.toggle(`column-${editClass}`, open)
+      element.parentElement.classList.toggle(`column-${editingComponentClassname}`, open)
     }
 
-    element.classList.toggle(editClass, open)
+    element.classList.toggle(editingClassName, open)
+    element.classList.toggle(editingComponentClassname, open)
   }
 
   get buttons() {
     const _this = this
-    const parseIcons = icons => icons.map(icon => dom.icon(icon))
+    if (this.actionButtons) {
+      return this.actionButtons
+    }
+
+    // const parseIcons = icons => icons.map(icon => dom.icon(icon))
     const buttonConfig = {
-      handle: (icons = ['move', 'handle']) => {
+      handle: (icon = `handle-${this.name}`) => ({
+        ...dom.btnTemplate({ content: dom.icon(icon) }),
+        className: ['component-handle'],
+      }),
+      move: (icon = 'move') => {
         return {
-          ...dom.btnTemplate({ content: parseIcons(icons) }),
-          className: ['item-handle'],
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
+          className: ['item-move'],
           meta: {
-            id: 'handle',
+            id: 'move',
           },
         }
       },
-      edit: (icons = ['edit']) => {
+      edit: (icon = 'edit') => {
         return {
-          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
           className: ['item-edit-toggle'],
           meta: {
             id: 'edit',
@@ -177,9 +208,9 @@ export default class Component extends Data {
           },
         }
       },
-      remove: (icons = ['remove']) => {
+      remove: (icon = 'remove') => {
         return {
-          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
           className: ['item-remove'],
           meta: {
             id: 'remove',
@@ -200,15 +231,20 @@ export default class Component extends Data {
           },
         }
       },
-      clone: (icons = ['copy', 'handle']) => {
+      clone: (icon = 'copy') => {
         return {
-          ...dom.btnTemplate({ content: parseIcons(icons) }),
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
           className: ['item-clone'],
           meta: {
             id: 'clone',
           },
           action: {
-            click: () => this.clone(),
+            click: () => {
+              this.clone(this.parent)
+              if (this.name === 'column') {
+                this.parent.autoColumnWidths()
+              }
+            },
           },
         }
       },
@@ -216,8 +252,11 @@ export default class Component extends Data {
 
     const { buttons, disabled } = this.config.actionButtons
     const activeButtons = buttons.filter(btn => !disabled.includes(btn))
+    const actionButtonsConfigs = activeButtons.map(btn => buttonConfig[btn]?.() || btn)
 
-    return activeButtons.map(btn => buttonConfig[btn]?.() || btn)
+    this.actionButtons = actionButtonsConfigs
+
+    return this.actionButtons
   }
 
   /**
@@ -562,27 +601,26 @@ export default class Component extends Data {
     })
   }
 
-  cloneData = () => {
+  cloneData() {
     const clonedData = { ...clone(this.data), id: uuid() }
     if (this.name !== 'field') {
       clonedData.children = []
     }
+
     return clonedData
   }
 
-  clone = (parent = this.parent) => {
+  clone(parent = this.parent) {
     const newClone = parent.addChild(this.cloneData(), this.index + 1)
     if (this.name !== 'field') {
       this.cloneChildren(newClone)
     }
-    if (this.name === 'column') {
-      parent.autoColumnWidths()
-    }
+
     return newClone
   }
 
-  cloneChildren = toParent => {
-    this.children.forEach(child => child && child.clone(toParent))
+  cloneChildren(toParent) {
+    this.children.forEach(child => child?.clone(toParent))
   }
 
   createChildWrap = children =>
@@ -593,4 +631,27 @@ export default class Component extends Data {
       },
       children,
     })
+
+  get isRow() {
+    return this.name === COMPONENT_TYPES.row
+  }
+  get isColumn() {
+    return this.name === COMPONENT_TYPES.column
+  }
+  get isField() {
+    return this.name === COMPONENT_TYPES.field
+  }
+
+  // set(path, val) {
+  //   super.set(path, val)
+  //   debugger
+  // const [key, ...rest] = path.split('.')
+  // const parent = this.get(rest.slice(0, rest.length - 1).join('.'))
+  // const property = rest.slice(rest.length - 1, rest.length).join('.')
+  // const value = val || this.get(path)
+  // if (parent) {
+  //   parent[key] = { ...parent[key], [property]: value }
+  // }
+  // return this.get(path)
+  // }
 }

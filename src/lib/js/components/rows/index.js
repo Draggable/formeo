@@ -3,7 +3,7 @@ import Row from './row.js'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
-    buttons: ['handle', 'edit', 'clone', 'remove'],
+    buttons: ['move', 'edit', 'clone', 'remove'],
     disabled: [],
   },
 }

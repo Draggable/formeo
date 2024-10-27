@@ -17,6 +17,11 @@ export const ROW_CLASSNAME = `${PACKAGE_NAME}-row`
 export const COLUMN_CLASSNAME = `${PACKAGE_NAME}-column`
 export const FIELD_CLASSNAME = `${PACKAGE_NAME}-field`
 
+export const CUSTOM_COLUMN_OPTION_CLASSNAME = 'custom-column-widths'
+export const COLUMN_PRESET_CLASSNAME = 'column-preset'
+export const COLUMN_RESIZE_CLASSNAME = 'resizing-columns'
+
+
 export const CHILD_CLASSNAME_MAP = new Map([
   [STAGE_CLASSNAME, ROW_CLASSNAME],
   [ROW_CLASSNAME, COLUMN_CLASSNAME],
@@ -25,7 +30,9 @@ export const CHILD_CLASSNAME_MAP = new Map([
 
 export const COMPONENT_INDEX_TYPES = ['external', 'stages', 'rows', 'columns', 'fields']
 
-export const COMPONENT_TYPES = [
+export const COMPONENT_TYPES = ['stage', 'row', 'column', 'field'].reduce((acc, type) => ({ ...acc, [type]: type }), {})
+
+export const COMPONENT_TYPE_CONFIGS = [
   { name: 'controls', className: CONTROL_GROUP_CLASSNAME },
   { name: 'stage', className: STAGE_CLASSNAME },
   { name: 'row', className: ROW_CLASSNAME },
@@ -46,13 +53,13 @@ export const COMPONENT_TYPE_CLASSNAMES_LOOKUP = Object.entries(COMPONENT_TYPE_CL
     ...acc,
     [className]: type,
   }),
-  {}
+  {},
 )
 
 export const COMPONENT_TYPE_CLASSNAMES_ARRAY = Object.values(COMPONENT_TYPE_CLASSNAMES)
 export const COMPONENT_TYPE_CLASSNAMES_REGEXP = new RegExp(`${COMPONENT_TYPE_CLASSNAMES_ARRAY.join('|')}`, 'g')
 
-const childTypeMap = COMPONENT_TYPES.map(({ name }, index, arr) => {
+const childTypeMap = COMPONENT_TYPE_CONFIGS.map(({ name }, index, arr) => {
   const { name: childName } = arr[index + 1] || {}
   return childName && [name, childName]
 }).filter(Boolean)
@@ -94,7 +101,7 @@ export const COLUMN_TEMPLATES = new Map(
   columnTemplates.reduce((acc, cur, idx) => {
     acc.push([idx, cur])
     return acc
-  })
+  }),
 )
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]
@@ -185,3 +192,5 @@ export const CONDITION_TEMPLATE = () => ({
 export const UUID_REGEXP = /(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)/gi
 
 export const bsColRegExp = /\bcol-\w+-\d+/g
+
+export const iconPrefix = 'f-i-'

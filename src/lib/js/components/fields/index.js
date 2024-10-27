@@ -5,7 +5,7 @@ import { get } from '../../common/utils/object.mjs'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
-    buttons: ['handle', 'edit', 'clone', 'remove'],
+    buttons: ['move', 'edit', 'clone', 'remove'],
     disabled: [],
   },
   panels: {

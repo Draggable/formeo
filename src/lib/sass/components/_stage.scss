@@ -1,5 +1,5 @@
-@use '../base/colors' as color;
-@use '../base/variables' as var;
+@use "../base/colors" as color;
+@use "../base/variables" as var;
 
 @use "group-actions";
 @use "row";
@@ -9,14 +9,11 @@
 @use "field-edit";
 @use "../base/mixins";
 
-
-
 .highlight-component {
   box-shadow: 0 0 mixins.space() 2px color.$brand-info;
 }
 
 .formeo-stage {
-  
   width: 73%;
   box-sizing: border-box;
   transition: width 250ms;
@@ -30,6 +27,11 @@
   padding-left: var.$action-btn-width - 1;
   padding-bottom: mixins.space(1);
   overflow: visible;
+
+  > .children {
+    @include mixins.display-column;
+    gap: var.$component-gap;
+  }
 
   &.empty {
     border: 3px dashed color.$gray-lighter;
@@ -46,7 +48,6 @@
     background-color: color.$white;
   }
 
-  
   @include mixins.no-list-style;
 
   @include mixins.breakpoint("phone-lrg") {
@@ -94,4 +95,25 @@
 
 .formeo-settings {
   display: none;
+}
+
+.active-hover-row {
+  .group-actions:not(.hovering .row-actions) {
+    display: none;
+    opacity: 0;
+  }
+}
+
+.active-hover-column {
+  .group-actions:not(.hovering .column-actions) {
+    display: none;
+    opacity: 0;
+  }
+}
+
+.active-hover-field {
+  .group-actions:not(.hovering .field-actions) {
+    display: none;
+    opacity: 0;
+  }
 }

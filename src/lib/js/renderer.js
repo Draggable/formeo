@@ -32,7 +32,7 @@ const createRemoveButton = () =>
         mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
         click: ({ target }) => target.parentElement.remove(),
       },
-    })
+    }),
   )
 
 export default class FormeoRenderer {
@@ -76,17 +76,19 @@ export default class FormeoRenderer {
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumn = ({ id, ...columnData }) =>
-    Object.assign({}, columnData, {
+  processColumn = ({ id, ...columnData }) => ({
+    ...columnData,
+    ...{
       id: this.prefixId(id),
       children: this.processFields(columnData.children),
       style: `width: ${columnData.config.width || '100%'}`,
-    })
+    },
+  })
 
   processRows = stageId =>
     this.orderChildren('rows', this.form.stages[stageId].children).reduce(
       (acc, row) => (row ? [...acc, this.processRow(row)] : acc),
-      []
+      [],
     )
 
   cacheComponent = data => {
@@ -102,7 +104,7 @@ export default class FormeoRenderer {
   processRow = (data, type = 'row') => {
     const { config, id } = data
     const className = [`formeo-${type}-wrap`]
-    const rowData = Object.assign({}, data, { children: this.processColumns(data.id), id: this.prefixId(id) })
+    const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) }
     this.cacheComponent(rowData)
 
     const configConditions = [
@@ -153,13 +155,13 @@ export default class FormeoRenderer {
 
   processColumns = rowId => {
     return this.orderChildren('columns', this.form.rows[rowId].children).map(column =>
-      this.cacheComponent(this.processColumn(column))
+      this.cacheComponent(this.processColumn(column)),
     )
   }
 
   processFields = fieldIds => {
     return this.orderChildren('fields', fieldIds).map(({ id, ...field }) =>
-      this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) }))
+      this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) })),
     )
   }
 
@@ -196,7 +198,7 @@ export default class FormeoRenderer {
                     evt =>
                       this.evaluateCondition(ifRest, evt) &&
                       thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
-                    false
+                    false,
                   )
                 }
 

@@ -5,7 +5,7 @@ import h from '../../common/helpers.mjs'
 import events from '../../common/events.js'
 import dom from '../../common/dom.js'
 import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants.js'
-import { resize } from './events.js'
+import { ResizeColumn } from './event-handlers.js'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -13,14 +13,14 @@ const DEFAULT_DATA = () =>
       width: '100%',
     },
     children: [],
-    className: COLUMN_CLASSNAME,
+    className: [COLUMN_CLASSNAME],
   })
 
 const DOM_CONFIGS = {
-  resizeHandle: () => ({
+  resizeHandle: columnRisizer => ({
     className: 'resize-x-handle',
     action: {
-      pointerdown: resize,
+      pointerdown: columnRisizer.onStart.bind(columnRisizer),
     },
     content: [dom.icon('triangle-down'), dom.icon('triangle-up')],
   }),
@@ -39,7 +39,7 @@ export default class Column extends Component {
    * @return {Object} Column config object
    */
   constructor(columnData) {
-    super('column', Object.assign({}, DEFAULT_DATA(), columnData))
+    super('column', { ...DEFAULT_DATA(), ...columnData })
 
     const _this = this
 
@@ -51,17 +51,14 @@ export default class Column extends Component {
       dataset: {
         hoverTag: i18n.get('column'),
       },
-      action: {
-        mouseup: evt => {
-          const column = evt.target.parentElement
-          if (column.resizing) {
-            column.resizing = false
-            column.parentElement.classList.remove('resizing-columns')
-          }
-        },
-      },
       id: this.id,
-      content: [this.getActionButtons(), DOM_CONFIGS.editWindow(), DOM_CONFIGS.resizeHandle(), children],
+      content: [
+        this.getComponentTag(),
+        this.getActionButtons(),
+        DOM_CONFIGS.editWindow(),
+        DOM_CONFIGS.resizeHandle(new ResizeColumn()),
+        children,
+      ],
     })
 
     this.processConfig(this.dom)
@@ -93,12 +90,9 @@ export default class Column extends Component {
         if (evt.from !== evt.to) {
           evt.from.classList.remove('hovering-column')
         }
-        // if (evt.related.parentElement.fType === 'columns') {
-        //   evt.related.parentElement.classList.add('hovering-column')
-        // }
       },
       draggable: `.${FIELD_CLASSNAME}`,
-      handle: '.item-handle',
+      handle: '.item-move',
     })
   }
 
@@ -111,28 +105,7 @@ export default class Column extends Component {
     if (columnWidth) {
       column.dataset.colWidth = columnWidth
       column.style.width = columnWidth
-      column.style.float = 'left'
     }
-  }
-
-  /**
-   * Sets classes for legacy browsers to identify first and last fields in a block
-   * consider removing
-   * @param  {DOM} column
-   */
-  fieldOrderClasses = () => {
-    const fields = this.children.map(({ dom }) => dom)
-
-    if (fields.length) {
-      this.removeClasses(['first-field', 'last-field'])
-      fields[0].classList.add('first-field')
-      fields[fields.length - 1].classList.add('last-field')
-    }
-  }
-
-  addChild(...args) {
-    super.addChild(...args)
-    this.fieldOrderClasses()
   }
 
   // loops through children and refresh their edit panels

@@ -1,4 +1,4 @@
-@use 'colors' as color;
+@use "colors" as color;
 
 // Sizing
 $base-space: 8px;
@@ -11,7 +11,8 @@ $input-border-radius: $half-space;
 $input-btn-border-width: 1px;
 $input-padding: 0.3em 0.6em;
 $input-border: $input-btn-border-width solid color.$gray-lighter;
-$checkbox-character: '✔' !default;
-$animation-speed-base: 333ms;
+$checkbox-character: "✔" !default;
+$animation-speed-base: 266ms;
 $animation-speed-slow: calc($animation-speed-base * 2);
 $animation-speed-fast: calc($animation-speed-base / 2);
+$component-gap: calc($base-space * 2);
