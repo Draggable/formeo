@@ -1,3 +1,10 @@
+# [2.1.0](https://github.com/Draggable/formeo/compare/v2.0.1...v2.1.0) (2024-10-27)
+
+
+### Features
+
+* update component styles ([598164c](https://github.com/Draggable/formeo/commit/598164c94053aebd838804161491c973b4a68268))
+
 ## [2.0.1](https://github.com/Draggable/formeo/compare/v2.0.0...v2.0.1) (2024-10-21)
 
 
