@@ -749,33 +749,6 @@ class DOM {
     h.forEach(nodeList, addClass[this.childType(className)])
   }
 
-  // /**
-  //  * Read columns and generate bootstrap cols
-  //  * @param  {Object}  row    DOM element
-  //  */
-  // columnWidths(row) {
-  //   const columns = row.getElementsByClassName(COLUMN_CLASSNAME)
-  //   if (!columns.length) {
-  //     return
-  //   }
-  //   const width = parseFloat((100 / columns.length).toFixed(1)) / 1
-
-  //   this.removeClasses(columns, bsColRegExp)
-  //   h.forEach(columns, column => {
-  //     Columns.get(column.id).refreshFieldPanels()
-
-  //     const newColWidth = numToPercent(width)
-
-  //     column.style.width = newColWidth
-  //     column.style.float = 'left'
-  //     Columns.set(`${column.id}.config.width`, newColWidth)
-  //     column.dataset.colWidth = newColWidth
-  //     document.dispatchEvent(events.columnResized)
-  //   })
-
-  //   dom.updateColumnPreset(row)
-  // }
-
   /**
    * Wrap content in a formGroup
    * @param  {Object|Array|String} content
