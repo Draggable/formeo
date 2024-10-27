@@ -179,7 +179,6 @@ export default class Component extends Data {
       return this.actionButtons
     }
 
-    // const parseIcons = icons => icons.map(icon => dom.icon(icon))
     const buttonConfig = {
       handle: (icon = `handle-${this.name}`) => ({
         ...dom.btnTemplate({ content: dom.icon(icon) }),
@@ -641,17 +640,4 @@ export default class Component extends Data {
   get isField() {
     return this.name === COMPONENT_TYPES.field
   }
-
-  // set(path, val) {
-  //   super.set(path, val)
-  //   debugger
-  // const [key, ...rest] = path.split('.')
-  // const parent = this.get(rest.slice(0, rest.length - 1).join('.'))
-  // const property = rest.slice(rest.length - 1, rest.length).join('.')
-  // const value = val || this.get(path)
-  // if (parent) {
-  //   parent[key] = { ...parent[key], [property]: value }
-  // }
-  // return this.get(path)
-  // }
 }

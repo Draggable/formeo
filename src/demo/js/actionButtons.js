@@ -1,8 +1,12 @@
 import startCase from 'lodash/startCase'
 
 const editorActionButtonContainer = document.getElementById('editor-action-buttons')
+const renderFormWrap = document.querySelector('.render-form')
 const editorActions = (editor, renderer) => ({
-  renderForm: () => renderer.render(editor.formData),
+  renderForm: () => {
+    renderFormWrap.style.display = 'block'
+    renderer.render(editor.formData)
+  },
   logJSON: () => console.log(editor.json),
   viewData: () => {
     Object.entries(editor.formData).forEach(([key, val]) => console.log(key, val))
@@ -27,35 +31,3 @@ export const editorButtons = (editor, renderer) => {
 
   return buttons
 }
-
-// fbPromise.then(function(fb) {
-//   const apiBtns = {
-//     ...builderActions,
-//     ...renderActions,
-//     ...demoActions,
-//   }
-
-//   Object.keys(apiBtns).forEach(function(action) {
-//     document.getElementById(action).addEventListener('click', function(e) {
-//       apiBtns[action]()
-//     })
-//   })
-
-//   document.querySelectorAll('.editForm').forEach(element => element.addEventListener('click', toggleEdit), false)
-//   const langSelect = document.getElementById('setLanguage')
-//   const savedLocale = window.sessionStorage.getItem(localeSessionKey)
-
-//   if (savedLocale && savedLocale !== defaultLocale) {
-//     langSelect.value = savedLocale
-//     fb.actions.setLang(savedLocale)
-//   }
-
-//   langSelect.addEventListener(
-//     'change',
-//     ({ target: { value: lang } }) => {
-//       window.sessionStorage.setItem(localeSessionKey, lang)
-//       fb.actions.setLang(lang)
-//     },
-//     false
-//   )
-// })

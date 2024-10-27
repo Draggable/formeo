@@ -7,9 +7,8 @@
 .formeo-column {
   @include mixins.no-list-style;
 
-  transition: background-color 125ms ease-in-out, box-shadow 125ms, width 250ms;
+  transition: width var.$animation-speed-base;
   position: relative;
-  // background-color: color.$white;
   flex-direction: column;
   will-change: width;
   max-width: 100%;
@@ -20,6 +19,8 @@
   }
 
   .column-tag {
+    border-color: color.$column-outline-color;
+
     .f-i-component-corner {
       fill: color.$white;
       stroke: color.$column-outline-color;
@@ -102,16 +103,17 @@
     }
   }
 
-  &.column-moving {
-    box-shadow: 0 0 0 1px color.$column-outline-color inset,
-      0 0 30px 0 color.$gray-light;
-  }
-
   &.editing-column {
     overflow: hidden;
 
     .column-edit {
       display: block;
+    }
+  }
+
+  &:has(.hovering-field) {
+    .column-actions {
+      display: none;
     }
   }
 }
@@ -160,13 +162,27 @@
   }
 }
 
+.column-moving {
+  background-color: color.$column-highlight-color;
+  .action-btn-wrap {
+    button {
+      background-color: color.$column-highlight-color;
+    }
+  }
+  .column-tag {
+    background-color: color.$column-highlight-color;
+
+    .f-i-component-corner {
+      fill: color.$column-highlight-color;
+    }
+  }
+}
+
 .hovering-column {
-  background-color: color.$white;
+  // background-color: color.$white;
 
   .column-tag {
     display: flex;
-    border-color: color.$column-outline-color;
-    // background-color: color.$column-highlight-color;
   }
   .column-handle {
     display: none;
@@ -188,35 +204,12 @@
 .editing-column {
   box-shadow: 0 0 0 1px color.$column-outline-color;
 
-  .column-actions {
-    // border-bottom-right-radius: 0;
-    // border-bottom-left-radius: var.$input-border-radius;
-
-    .column-action-btn-wrap {
-      // box-shadow: 0 0 0 1px color.$column-outline-color inset;
-
-      // border: 1px solid color.$column-outline-color;
-      // border-radius: var.$base-space;
-    }
-
-    button {
-      &:first-child {
-        border-bottom-right-radius: var.$input-border-radius;
-        right: 0;
-      }
-
-      &:last-child {
-        border-bottom-left-radius: var.$input-border-radius;
-      }
-    }
-  }
-
-  &::before {
-    display: block;
-    border-right: 1px solid color.$column-outline-color;
-    border-left: 1px solid color.$column-outline-color;
-    border-top: 1px solid color.$column-outline-color;
-  }
+  // &::before {
+  //   display: block;
+  //   border-right: 1px solid color.$column-outline-color;
+  //   border-left: 1px solid color.$column-outline-color;
+  //   border-top: 1px solid color.$column-outline-color;
+  // }
 }
 
 .column-actions {
@@ -227,36 +220,5 @@
 
   .f-i-handle {
     transform: rotate(90deg);
-  }
-
-  .action-btn-wrap {
-    white-space: nowrap;
-  }
-
-  button {
-    background-color: transparent;
-    border-radius: 0;
-
-    @for $i from 1 through 6 {
-      &:nth-of-type(#{$i}) {
-        right: $i * var.$action-btn-width - var.$action-btn-width;
-      }
-    }
-
-    &:first-child {
-      border-bottom-right-radius: 0;
-      right: 0;
-
-      .hovering-column & {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-    }
-
-    &:last-child {
-      .hovering-column & {
-        border-bottom-left-radius: var.$input-border-radius;
-      }
-    }
   }
 }

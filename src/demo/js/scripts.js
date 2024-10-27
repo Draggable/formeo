@@ -18,17 +18,12 @@ if (IS_SITE) {
   if (window.location.protocol !== 'https:') {
     window.location.protocol = 'https:'
   }
-
   ;((window.gitter = {}).chat = {}).options = {
     room: 'Draggable/formeo',
     activationElement: '.toggle-gitter',
   }
 
   const scripts = [
-    {
-      src: '//sidecar.gitter.im/dist/sidecar.v1.js',
-      id: 'gitter-sidecar',
-    },
     {
       src: '//platform.twitter.com/widgets.js',
       id: 'twitter-script',

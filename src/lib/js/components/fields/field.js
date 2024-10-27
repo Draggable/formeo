@@ -34,7 +34,7 @@ export default class Field extends Component {
     let field = {
       tag: 'li',
       attrs: {
-        className: [FIELD_CLASSNAME],
+        className: FIELD_CLASSNAME,
       },
       id: this.id,
       children: [
@@ -47,10 +47,6 @@ export default class Field extends Component {
       panelNav: this.panelNav,
       dataset: {
         hoverTag: i18n.get('field'),
-      },
-      action: {
-        // mouseenter: () => this.dom.classList.add(`hovering-${this.name}`),
-        // mouseleave: () => this.dom.classList.remove(`hovering-${this.name}`),
       },
     }
 

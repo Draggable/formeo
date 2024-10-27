@@ -12,12 +12,12 @@ const processOptions = ({ editorContainer, renderContainer, ...opts }) => {
     editorContainer: containerLookup(editorContainer),
   }
 
-  return Object.assign({}, opts, processedOptions)
+  return { ...opts, ...processedOptions }
 }
 
 const baseId = id => {
   const match = id.match(UUID_REGEXP)
-  return (match && match[0]) || id
+  return match?.[0] || id
 }
 
 const newUUID = id => id.replace(UUID_REGEXP, uuid())
@@ -60,11 +60,16 @@ export default class FormeoRenderer {
     }
 
     this.renderedForm = dom.render(config)
-    dom.empty(this.container)
 
     this.applyConditions()
 
-    this.container.appendChild(this.renderedForm)
+    const existingRenderedForm = this.container.querySelector('.formeo-render')
+
+    if (existingRenderedForm) {
+      existingRenderedForm.replaceWith(this.renderedForm)
+    } else {
+      this.container.appendChild(this.renderedForm)
+    }
   }
 
   orderChildren = (type, order) => order.reduce((acc, cur) => [...acc, this.form[type][cur]], [])

@@ -24,13 +24,6 @@
       border-top-left-radius: 0;
     }
 
-    &.editing-row {
-      &::before {
-        border-left-width: 0;
-        border-right-width: auto;
-      }
-    }
-
     &::before {
       border-left-width: 1px;
     }

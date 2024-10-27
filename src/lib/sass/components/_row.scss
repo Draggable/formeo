@@ -14,7 +14,7 @@
   position: relative;
   clear: both;
   background-color: color.$white;
-  box-shadow: 0 0 0 1px color.$gray-lighter inset;
+  box-shadow: 0 0 0 1px color.$gray-lighter;
   padding: mixins.space(2);
 
   &::after {
@@ -26,7 +26,9 @@
   }
 
   &:first-child {
-    border-top-left-radius: var.$border-radius;
+    &:not(.editing-row, .hovering-row) {
+      border-top-left-radius: var.$border-radius;
+    }
     border-top-right-radius: var.$border-radius;
   }
 
@@ -43,11 +45,6 @@
     .formeo-column {
       transition: none;
     }
-  }
-
-  &.row-moving {
-    box-shadow: 0 0 0 1px color.$row-outline-color inset,
-      0 0 30px 0 color.$gray-light;
   }
 
   &.empty {
@@ -70,30 +67,44 @@
       stroke: color.$row-outline-color;
     }
   }
+
+  &:has(.hovering-column) {
+    .row-actions,
+    .field-actions {
+      display: none;
+    }
+  }
+}
+
+.row-moving {
+  background-color: color.$row-highlight-color;
+  .action-btn-wrap {
+    button {
+      background-color: color.$row-highlight-color;
+    }
+  }
+  .row-tag {
+    background-color: color.$row-highlight-color;
+
+    .f-i-component-corner {
+      fill: color.$row-highlight-color;
+    }
+  }
 }
 
 .row-actions {
   left: 0;
-
-  // transition: height 150ms ease-in-out;
-  white-space: normal;
-  // border-width: 1px 0 1px 1px;
-  justify-content: flex-start;
-  align-items: flex-start;
-
-  button {
-    border-radius: 0;
-  }
 }
 
 .hovering-row {
-  // background-color: color.$row-highlight-color;
+  .column-actions,
+  .field-actions {
+    display: none;
+  }
 
   &:first-child {
     border-top-left-radius: 0;
   }
-
-  box-shadow: 0 0 0 1px color.$row-outline-color;
 
   &.editing-row {
     &::before {
@@ -104,7 +115,6 @@
 
 .editing-row {
   display: block;
-  box-shadow: 0 0 0 1px color.$row-outline-color inset;
 
   .row-edit {
     display: block;
@@ -119,6 +129,8 @@
 
 .hovering-row,
 .editing-row {
+  box-shadow: 0 0 0 1px color.$row-outline-color;
+
   .row-handle {
     display: none;
   }
