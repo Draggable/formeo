@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/Draggable/formeo/compare/v2.1.0...v2.1.1) (2024-10-27)
+
+
+### Bug Fixes
+
+* ghost styles while dragging ([90e29af](https://github.com/Draggable/formeo/commit/90e29aff2bd35629a52d8c6eef1568c231dc7468))
+
 # [2.1.0](https://github.com/Draggable/formeo/compare/v2.0.1...v2.1.0) (2024-10-27)
 
 
