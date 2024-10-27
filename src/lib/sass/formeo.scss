@@ -1,10 +1,9 @@
 @use "sass:meta";
-@use 'base/variables';
-@use 'base/animation';
-@use 'base/mixins';
-@use 'base/icons';
-@use 'components/autocomplete';
-@use 'components/panels';
+@use "base/variables";
+@use "base/mixins";
+@use "base/icons";
+@use "components/autocomplete";
+@use "components/panels";
 
 .formeo-sprite {
   display: none !important;
@@ -15,26 +14,26 @@
     box-sizing: inherit;
   }
 
-  @include meta.load-css('base/bs');
-
-  @include mixins.clearfix;
+  @include meta.load-css("base/bs");
 
   &.formeo-editor {
     display: flex;
     flex-direction: row;
     text-align: left;
-    @include meta.load-css('components/component');
-    @include meta.load-css('components/stage');
+    gap: variables.$component-gap;
 
-    @include meta.load-css('base/rtl');
+    @include meta.load-css("components/component");
+    @include meta.load-css("components/stage");
+
+    @include meta.load-css("base/rtl");
   }
 
   &.formeo-render {
-    @include meta.load-css('render');
+    @include meta.load-css("render");
   }
 }
 
-@include meta.load-css('components/controls');
+@include meta.load-css("components/controls");
 
 .field-control {
   @include mixins.field-control;

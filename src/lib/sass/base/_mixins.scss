@@ -1,6 +1,6 @@
 @use "sass:color" as sass-color;
-@use 'colors' as color;
-@use 'variables' as var;
+@use "colors" as color;
+@use "variables" as var;
 
 /*
   Mixins
@@ -81,6 +81,12 @@
   align-items: stretch;
 }
 
+@mixin display-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
 @mixin input-style {
   font-size: 100%;
   font-family: inherit;
@@ -104,23 +110,6 @@
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-@mixin element-tag {
-  font-size: 12px;
-  position: absolute;
-  top: 0;
-  width: 0;
-  padding: 0;
-  height: var.$action-btn-width - 2;
-  line-height: var.$action-btn-width;
-  text-align: center;
-  overflow: hidden;
-  z-index: 100;
-  transition-property: width;
-  transition-duration: 150ms;
-  content: attr(data-hover-tag);
-  background-color: color.$white;
 }
 
 @mixin field-control {
@@ -151,7 +140,7 @@
     box-sizing: border-box;
     font-size: 1em;
     line-height: 1.8em;
-    display: block;
+    display: flex;
     height: 100%;
     width: 100%;
     background: transparent;
@@ -177,14 +166,16 @@
   }
 
   .control-icon {
-    float: left;
     margin-right: space(1);
     text-align: center;
     width: var.$icon-size;
     height: var.$icon-size;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  [dir='rtl'] & {
+  [dir="rtl"] & {
     button {
       text-align: right !important;
     }
@@ -257,7 +248,7 @@
 
 @mixin clearfix {
   &::after {
-    content: '';
+    content: "";
     display: table;
     clear: both;
   }

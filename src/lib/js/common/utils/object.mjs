@@ -1,82 +1,8 @@
-/**
- * Retrieves the value at a given path within an object.
- *
- * @param {Object} obj - The object to query.
- * @param {string|string[]} pathArg - The path of the property to get. If a string is provided, it will be converted to an array.
- * @returns {*} - Returns the value at the specified path of the object.
- *
- * @example
- * const obj = { foo: [{ bar: 'baz' }] };
- * get(obj, 'foo[0].bar'); // 'baz'
- * get(obj, ['foo', '0', 'bar']); // 'baz'
- */
-export function get(obj, pathArg) {
-  let path = pathArg
-  if (!Array.isArray(pathArg)) {
-    /*
-      If pathString is not an array, then this statement replaces any
-      instances of `[<digit>]` with `.<digit>` using a regular expression
-      (/\[(\d)\]/g) and then splits pathString into an array using the
-      delimiter `.`. The g flag in the regex indicates that we want to
-      replace all instances of [<digit>] (not just the first instance).
-      We're doing this because the walker needs each path segment to be
-      a valid dot notation property.
+import lodashSet from 'lodash/set.js'
+import lodashGet from 'lodash/get.js'
 
-      For example, if we have a path string of 'foo[0].bar', we need to
-      convert it to 'foo.0.bar' so that we can split it into an array
-      of ['foo', '0', 'bar'].
-     */
-    path = pathArg.replace(/\[(\d)\]/g, '.$1').split('.')
-  }
-
-  return path.reduce((acc, part) => {
-    const currentVal = acc[part]
-    path.shift()
-    if (Array.isArray(currentVal)) {
-      const [nextPart] = path
-      const nextPartIndex = Number(nextPart)
-      path.shift()
-      if (nextPart) {
-        if (isNaN(nextPartIndex)) {
-          return get(currentVal.map(aObj => aObj[nextPart]).flat(), path)
-        }
-
-        return get(obj[part][nextPartIndex], path)
-      }
-
-      return currentVal
-    }
-
-    if (!currentVal) {
-      path.splice(0)
-    }
-
-    return get(currentVal, path)
-  }, obj)
-}
-
-/**
- * Sets the value at the specified path of the object. If the path does not exist, it will be created.
- *
- * @param {Object} obj - The object to modify.
- * @param {string|string[]} pathArg - The path of the property to set. Can be a string with dot notation or an array of strings/numbers.
- * @param {*} value - The value to set at the specified path.
- */
-export function set(obj, pathArg, value) {
-  let path = pathArg
-  if (!Array.isArray(pathArg)) {
-    path = pathArg.replace(/\[(\d)\]/g, '.$1').split('.')
-  }
-
-  path.reduce((acc, part, index) => {
-    if (index === path.length - 1) {
-      acc[part] = value
-    } else if (!acc[part] || typeof acc[part] !== 'object') {
-      acc[part] = isNaN(Number(path[index + 1])) ? {} : []
-    }
-    return acc[part]
-  }, obj)
-}
+export const get = lodashGet
+export const set = lodashSet
 
 /**
  * Empty an objects contents
@@ -99,4 +25,39 @@ export const cleanObj = obj => {
   })
 
   return fresh
+}
+
+/**
+ * Determines if a value should be cloned.
+ *
+ * @param {*} value - The value to check.
+ * @returns {boolean} - Returns `true` if the value is an object and not null, otherwise `false`.
+ */
+export function shouldClone(value) {
+  return value !== null && typeof value === 'object'
+}
+
+/**
+ * Deeply clones an object or array.
+ *
+ * This function recursively clones all nested objects and arrays within the provided object.
+ * If the input is not an object or array, it returns the input as is.
+ *
+ * @param {Object|Array} obj - The object or array to be deeply cloned.
+ * @returns {Object|Array} - A deep clone of the input object or array.
+ */
+export function deepClone(obj) {
+  if (!shouldClone(obj)) return obj
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => deepClone(item))
+  }
+
+  const cloned = {}
+  for (const key in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      cloned[key] = deepClone(obj[key])
+    }
+  }
+  return cloned
 }

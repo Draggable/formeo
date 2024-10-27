@@ -1,8 +1,8 @@
 @use "sass:color" as sass-color;
 @use "mixins";
 
-@use 'colors' as color;
-@use 'variables' as var;
+@use "colors" as color;
+@use "variables" as var;
 
 /*
   Animations
@@ -54,5 +54,16 @@
   }
   100% {
     box-shadow: 0 0 0 0 color.$brand-info;
+  }
+}
+
+@keyframes SLIDE_UP {
+  0% {
+    transform: translateY(100%);
+    clip-path: inset(0 0 100% -20%);
+  }
+  100% {
+    transform: translateY(0);
+    clip-path: inset(0 0 0 -20%);
   }
 }

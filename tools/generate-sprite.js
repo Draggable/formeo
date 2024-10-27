@@ -42,7 +42,7 @@ function generateSprite() {
               'removeNonInheritableGroupAttrs',
               {
                 name: 'removeAttrs',
-                params: { attrs: '(stroke|fill|style|^font-*)' },
+                params: { attrs: '(style|^font-*)' },
               },
             ],
           },

@@ -1,4 +1,62 @@
-@use '../base/mixins';
+@use "../base/mixins";
+@use "../base/colors" as color;
+@use "../base/variables" as var;
+@use "../base/animation";
+
+.component-tag {
+  display: none;
+  height: var.$icon-size;
+  z-index: 200;
+
+  flex-direction: row;
+  gap: var.$half-space;
+  align-items: center;
+  position: absolute;
+  font-size: 0.8em;
+
+  padding: 0 var.$base-space;
+  left: 50%;
+  top: -(var.$icon-size);
+  border-top-left-radius: var.$border-radius;
+  border-top-right-radius: var.$border-radius;
+  background-color: color.$white;
+  border-color: color.$gray-lighter;
+  border-style: solid;
+  border-width: 1px 1px 0 1px;
+
+  // transform: translateY(100%);
+  // clip-path: inset(0 -#{var.$icon-size} 100% -#{var.$icon-size});
+  // will-change: transform, clip-path;
+  // transition: transform var.$animation-speed-fast,
+  //   clip-path var.$animation-speed-fast;
+
+  [class*="-handle-"] {
+    width: calc(var.$half-space * 3);
+    height: calc(var.$half-space * 3);
+  }
+
+  .f-i-component-corner {
+    position: absolute;
+    width: var.$base-space;
+    height: var.$base-space;
+    &.bottom-right {
+      bottom: 0;
+      right: -(var.$base-space);
+    }
+    &.bottom-left {
+      bottom: 0;
+      left: -(var.$base-space);
+      transform: scaleX(-1);
+    }
+  }
+}
+
+.hovering {
+  > .component-tag {
+    // transform: translateY(0);
+    // clip-path: inset(0 -#{var.$icon-size} 0 -#{var.$icon-size});
+  }
+}
 
 .children {
   @include mixins.no-list-style;

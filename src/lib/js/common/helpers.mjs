@@ -66,12 +66,23 @@ export const map = (arr, cb) => {
   return newArray
 }
 
+const sanitizedAttributeNames = {}
+
 export const safeAttrName = name => {
-  const safeAttr = {
+  const attributeMap = {
     className: 'class',
   }
 
-  return safeAttr[name] || slugify(name)
+  if (sanitizedAttributeNames[name]) {
+    return sanitizedAttributeNames[name]
+  }
+
+  const attributeName = attributeMap[name] || name
+  const sanitizedAttributeName = attributeName.replace(/^\d/, '').replace(/[^a-zA-Z0-9-:]/g, '')
+
+  sanitizedAttributeNames[name] = sanitizedAttributeName
+
+  return sanitizedAttributeName
 }
 
 export const capitalize = str => str.replace(/\b\w/g, m => m.toUpperCase())

@@ -158,8 +158,6 @@ export const clone = obj => {
     return copy
   }
 
-  debugger
-
   throw new Error('Unable to copy Object, type not supported.')
 }
 

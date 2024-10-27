@@ -2,6 +2,7 @@ import { uuid } from '../common/utils/index.mjs'
 import events from '../common/events.js'
 import { CHANGE_TYPES } from '../constants.js'
 import { get, set } from '../common/utils/object.mjs'
+import isEqual from 'lodash/isEqual'
 
 export default class Data {
   constructor(name, data = Object.create(null)) {
@@ -28,14 +29,14 @@ export default class Data {
   set(path, newVal) {
     const oldVal = get(this.data, path)
 
-    // if (isEqual(oldVal, newVal)) {
-    //   return this.data
-    // }
+    if (isEqual(oldVal, newVal)) {
+      return this.data
+    }
 
     const data = set(this.data, path, newVal)
 
-    const callBackPath = Array.isArray(path) ? path.join('.') : path
-    const callBackGroups = Object.keys(this.setCallbacks).filter(setKey => new RegExp(setKey).test(callBackPath))
+    const callbackPath = Array.isArray(path) ? path.join('.') : path
+    const callBackGroups = Object.keys(this.setCallbacks).filter(setKey => new RegExp(setKey).test(callbackPath))
     const cbArgs = { newVal, oldVal, path }
     callBackGroups.forEach(cbGroup => this.setCallbacks[cbGroup].forEach(cb => cb(cbArgs)))
 

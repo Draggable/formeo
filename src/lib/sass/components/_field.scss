@@ -1,17 +1,15 @@
 @use "../base/mixins";
-
-@use '../base/colors' as color;
-@use '../base/variables' as var;
-
+@use "../base/colors" as color;
+@use "../base/variables" as var;
 
 .formeo-field {
   min-height: var.$icon-size;
   position: relative;
-  padding: mixins.space();
-  transition: background-color var.$animation-speed-base ease-in-out, box-shadow var.$animation-speed-base ease-in-out;
+  transition: background-color var.$animation-speed-base ease-in-out,
+    box-shadow var.$animation-speed-base ease-in-out;
   list-style: none;
   margin: 0;
-  will-change: box-shadow; // for highlight
+  will-change: box-shadow;
 
   &:last-child {
     border-bottom-right-radius: var.$input-border-radius;
@@ -24,11 +22,6 @@
     .field-actions {
       border-top-right-radius: var.$input-border-radius;
     }
-  }
-
-  &.last-field {
-    border-bottom-right-radius: var.$input-border-radius;
-    border-bottom-left-radius: var.$input-border-radius;
   }
 
   .prev-label {
@@ -47,7 +40,7 @@
     min-width: var.$icon-size;
 
     &::after {
-      content: '';
+      content: "";
       width: 100%;
       position: absolute;
       bottom: 0;
@@ -74,43 +67,72 @@
     position: absolute;
   }
 
-  &::before {
-    @include mixins.element-tag;
-
-    display: none;
-
-    // remove to animate field title
-    position: absolute;
-    top: 0;
-    padding: 0 10px;
-    right: 0;
-    transform: translateX(-(3 * var.$action-btn-width));
-    border-bottom-right-radius: 0;
-    border-bottom-left-radius: var.$border-radius;
-  }
-
   &.field-type-hidden {
     border: 1px dashed color.$gray-lighter;
   }
 }
 
+.field-tag {
+  // display: flex;
+  right: -1px;
+  left: auto;
+  top: -(var.$icon-size);
+
+  border-color: color.$field-outline-color;
+  // background-color: color.$field-highlight-color;
+  background-color: color.$white;
+
+  .f-i-component-corner {
+    fill: color.$white;
+    stroke: color.$field-outline-color;
+  }
+}
+
+.hovering-field {
+  background-color: color.$white;
+
+  .field-action-btn-wrap {
+    display: flex;
+  }
+
+  .field-handle {
+    display: none;
+  }
+
+  // .field-tag {
+  // display: flex;
+  // right: -1px;
+  // left: auto;
+  // top: -(var.$icon-size);
+
+  // border-color: color.$field-outline-color;
+  // background-color: color.$field-highlight-color;
+  // }
+}
+
 .editing-field,
 .hovering-field {
-  box-shadow: 0 0 0 1px color.$field-outline-color inset;
-
-  &::before {
-    border-left: 1px solid color.$field-outline-color;
-    border-bottom: 1px solid color.$field-outline-color;
-  }
+  box-shadow: 0 0 0 1px color.$field-outline-color;
 }
 .field-actions {
   border-color: transparent;
   border-width: 1px 1px 0 0;
   border-style: solid;
+
+  right: 0;
+  text-align: right;
+  transition: width 0.166s;
+  border-bottom-left-radius: var.$input-border-radius;
+  border-bottom-right-radius: 0;
+  will-change: width;
+
+  .action-btn-wrap {
+    flex-direction: row-reverse;
+  }
 }
 
 .field-moving {
-  box-shadow: 0 0 0 1px color.$field-outline-color inset, 0 0 30px 0 color.$gray-light;
+  box-shadow: 0 0 0 1px color.$field-outline-color, 0 0 30px 0 color.$gray-light;
   background-color: color.$white;
 }
 
@@ -130,3 +152,13 @@
     white-space: normal;
   }
 }
+
+// .hovering-field,
+// .editing-field {
+//   .field-actions {
+//     box-shadow: -1px 1px 1px color.$gray-lighter;
+//     border-color: color.$field-outline-color;
+//     border-width: 1px 1px 0 0;
+//     border-style: solid;
+//   }
+// }
