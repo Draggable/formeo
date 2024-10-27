@@ -74,10 +74,18 @@
       display: none;
     }
   }
+
+  &.sortable-ghost {
+    background-color: color.$row-highlight-color;
+    box-shadow: 0 0 0 1px color.$row-outline-color;
+    * {
+      opacity: 0;
+    }
+  }
 }
 
 .row-moving {
-  background-color: color.$row-highlight-color;
+  background-color: color.$row-highlight-color !important;
   .action-btn-wrap {
     button {
       background-color: color.$row-highlight-color;

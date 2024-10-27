@@ -68,6 +68,14 @@
   &.field-type-hidden {
     border: 1px dashed color.$gray-lighter;
   }
+
+  &.sortable-ghost {
+    background-color: color.$field-highlight-color;
+    box-shadow: 0 0 0 1px color.$field-outline-color;
+    * {
+      opacity: 0;
+    }
+  }
 }
 
 .field-tag {

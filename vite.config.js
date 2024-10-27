@@ -70,7 +70,7 @@ const libConfig = {
 const demoConfig = {
   ...sharedConfig,
   root: 'src/demo',
-  base: '',
+  base: '/',
   resolve: {
     alias: {
       'formeo': resolve(__dirname, 'src/lib/js/index.js'),

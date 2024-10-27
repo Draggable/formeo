@@ -85,7 +85,9 @@ export default class Stage extends Component {
       disabled: false,
       onAdd: this.onAdd.bind(this),
       onRemove: this.onRemove.bind(this),
-      onStart: () => (Stages.active = this),
+      onStart: () => {
+        Stages.active = this
+      },
       onSort: this.onSort.bind(this),
       draggable: `.${ROW_CLASSNAME}`,
       handle: '.item-move',
