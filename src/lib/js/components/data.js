@@ -2,7 +2,7 @@ import { uuid } from '../common/utils/index.mjs'
 import events from '../common/events.js'
 import { CHANGE_TYPES } from '../constants.js'
 import { get, set } from '../common/utils/object.mjs'
-import isEqual from 'lodash/isEqual'
+import isEqual from 'lodash/isEqual.js'
 
 export default class Data {
   constructor(name, data = Object.create(null)) {
