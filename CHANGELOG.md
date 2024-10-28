@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/Draggable/formeo/compare/v2.1.1...v2.1.2) (2024-10-28)
+
+
+### Bug Fixes
+
+* vite config base option ([090339b](https://github.com/Draggable/formeo/commit/090339bba67fa21234dc209c43566651a06f0101))
+
 ## [2.1.1](https://github.com/Draggable/formeo/compare/v2.1.0...v2.1.1) (2024-10-27)
 
 
