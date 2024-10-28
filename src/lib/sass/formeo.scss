@@ -12,6 +12,7 @@
 .formeo {
   * {
     box-sizing: inherit;
+    font-family: inherit;
   }
 
   @include meta.load-css("base/bs");
