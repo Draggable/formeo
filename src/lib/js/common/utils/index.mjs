@@ -111,9 +111,9 @@ export const merge = (obj1, obj2, opts = Object.create(null)) => {
     if (Array.isArray(objValue)) {
       if (Array.isArray(srcValue)) {
         return unique(opts.mergeArray ? objValue.concat(srcValue) : srcValue)
-      } else {
-        return srcValue
       }
+
+      return srcValue
     }
   }
   return mergeWith({}, obj1, obj2, customizer)
@@ -138,7 +138,7 @@ export const clone = obj => {
   }
 
   // Handle Array
-  if (obj instanceof Array) {
+  if (Array.isArray(obj)) {
     copy = []
     for (let i = 0, len = obj.length; i < len; i++) {
       copy[i] = clone(obj[i])
@@ -150,7 +150,7 @@ export const clone = obj => {
   if (obj instanceof Object) {
     copy = {}
     for (const attr in obj) {
-      if (obj.hasOwnProperty(attr)) {
+      if (Object.hasOwn(obj, attr)) {
         copy[attr] = clone(obj[attr])
       }
     }
@@ -163,7 +163,7 @@ export const clone = obj => {
 
 export const percent = (val, total) => (val / total) * 100
 
-export const numToPercent = num => num.toString() + '%'
+export const numToPercent = num => `${num.toString()}%`
 
 export const numberBetween = (num, min, max) => num > min && num < max
 

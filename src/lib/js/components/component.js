@@ -306,17 +306,18 @@ export default class Component extends Data {
 
   /**
    * Adds a child to the component
-   * @param {Object} childData
+   * @param {Object|String} childData
    * @param {Number} index
    * @return {Object} child DOM element
    */
   addChild(childData = {}, index = this.domChildren.length) {
+    let data = childData
     if (typeof childData !== 'object') {
-      childData = { id: childData }
+      data = { id: data }
     }
 
     const childWrap = this.dom.querySelector('.children')
-    const { id: childId = uuid() } = childData
+    const { id: childId = uuid() } = data
     const childGroup = CHILD_TYPE_MAP.get(this.name)
     if (!childGroup) {
       return null
@@ -325,12 +326,12 @@ export default class Component extends Data {
     const childComponentType = `${childGroup}s`
 
     const child =
-      Components.getAddress(`${childComponentType}.${childId}`) ||
-      Components[childComponentType].add(childId, childData)
+      Components.getAddress(`${childComponentType}.${childId}`) || Components[childComponentType].add(childId, data)
 
     childWrap.insertBefore(child.dom, childWrap.children[index])
 
-    // @todo add event for onAddChild
+    this.config.events?.onAddChild?.({ parent: this, child })
+
     const grandChildren = child.get('children')
     if (grandChildren?.length) {
       child.loadChildren(grandChildren)
@@ -359,41 +360,40 @@ export default class Component extends Data {
    * @return {Object} Component
    */
   onAdd({ from, to, item, newIndex }) {
-    const _this = this
     if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
       from = from.parentElement
     }
     const fromType = componentType(from)
     const toType = componentType(to.parentElement)
     const defaultOnAdd = () => {
-      _this.saveChildOrder()
-      _this.removeClasses('empty')
+      this.saveChildOrder()
+      this.removeClasses('empty')
     }
 
     const depthMap = new Map([
       [
         -2,
         () => {
-          const newChild = _this.addChild({}, newIndex).addChild()
+          const newChild = this.addChild({}, newIndex).addChild()
           return newChild.addChild.bind(newChild)
         },
       ],
       [
         -1,
         () => {
-          const newChild = _this.addChild({}, newIndex)
+          const newChild = this.addChild({}, newIndex)
           return newChild.addChild.bind(newChild)
         },
       ],
-      [0, () => _this.addChild.bind(_this)],
+      [0, () => this.addChild.bind(this)],
       [
         1,
         controlData => {
-          const currentIndex = indexOfNode(_this.dom)
-          return () => _this.parent.addChild(controlData, currentIndex + 1)
+          const currentIndex = indexOfNode(this.dom)
+          return () => this.parent.addChild(controlData, currentIndex + 1)
         },
       ],
-      [2, controlData => () => _this.parent.parent.addChild(controlData)],
+      [2, controlData => () => this.parent.parent.addChild(controlData)],
     ])
 
     const onAddConditions = {
@@ -422,7 +422,7 @@ export default class Component extends Data {
           },
           field: 1,
         }
-        const depth = get(targets, `${_this.name}.${controlType}`)
+        const depth = get(targets, `${this.name}.${controlType}`)
         const action = depthMap.get(depth)()
         dom.remove(item)
         const component = action(controlData, newIndex)
@@ -600,7 +600,7 @@ export default class Component extends Data {
     })
   }
 
-  cloneData() {
+  cloneData = () => {
     const clonedData = { ...clone(this.data), id: uuid() }
     if (this.name !== 'field') {
       clonedData.children = []
@@ -609,7 +609,7 @@ export default class Component extends Data {
     return clonedData
   }
 
-  clone(parent = this.parent) {
+  clone = (parent = this.parent) => {
     const newClone = parent.addChild(this.cloneData(), this.index + 1)
     if (this.name !== 'field') {
       this.cloneChildren(newClone)
@@ -619,7 +619,9 @@ export default class Component extends Data {
   }
 
   cloneChildren(toParent) {
-    this.children.forEach(child => child?.clone(toParent))
+    for (const child of this.children) {
+      child?.clone(toParent)
+    }
   }
 
   createChildWrap = children =>

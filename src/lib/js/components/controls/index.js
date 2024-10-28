@@ -48,16 +48,6 @@ export class Controls {
   }
 
   /**
-   * Dragging from the control bar clears element
-   * events lets add them back after drag.
-   * @param  {Object} evt
-   */
-  applyControlEvents = ({ clone: control }) => {
-    const button = control.querySelector('button')
-    Object.keys(this.controlEvents).map(action => button.addEventListener(action, this.controlEvents[action]))
-  }
-
-  /**
    * Generate control config for UI and bind actions
    * @return {Array} elementControls
    */
@@ -171,7 +161,6 @@ export class Controls {
   }
 
   get(controlId) {
-    // return clone(this.data.get(controlId))
     return this.data.get(controlId)
   }
 
@@ -259,13 +248,13 @@ export class Controls {
       content: [this.panels.panelNav, this.panels.panelsWrap],
     })
 
-    let controlClass = 'formeo-controls'
+    const controlClasses = ['formeo-controls']
     if (sticky) {
-      controlClass += ' formeo-sticky'
+      controlClasses.push('formeo-sticky')
     }
 
     const element = dom.create({
-      className: controlClass,
+      className: controlClasses,
       content: [groupsWrap, formActions],
     })
     const groups = element.getElementsByClassName('control-group')
@@ -324,12 +313,16 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
-        onRemove: this.applyControlEvents,
         onStart: ({ item }) => {
           const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {
             item.innerHTML = ''
             item.appendChild(new Field(controlData).preview)
+          }
+        },
+        onEnd: ({ from, item, clone }) => {
+          if (from.contains(clone)) {
+            from.replaceChild(item, clone)
           }
         },
         sort: this.options.sortable,
