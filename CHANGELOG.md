@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/Draggable/formeo/compare/v2.1.2...v2.1.3) (2024-10-28)
+
+
+### Bug Fixes
+
+* font-family not inherited ([191bb3e](https://github.com/Draggable/formeo/commit/191bb3e0e5a3403bcce98cbfe9bc1aec098bf3cd))
+
 ## [2.1.2](https://github.com/Draggable/formeo/compare/v2.1.1...v2.1.2) (2024-10-28)
 
 
