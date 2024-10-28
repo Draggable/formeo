@@ -1,3 +1,10 @@
+## [2.1.4](https://github.com/Draggable/formeo/compare/v2.1.3...v2.1.4) (2024-10-28)
+
+
+### Bug Fixes
+
+* control cloning ([b7f90b5](https://github.com/Draggable/formeo/commit/b7f90b5535842b1a951d77fafe9f6d5669f836bb))
+
 ## [2.1.3](https://github.com/Draggable/formeo/compare/v2.1.2...v2.1.3) (2024-10-28)
 
 
