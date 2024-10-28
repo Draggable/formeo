@@ -78,11 +78,10 @@ export default class Field extends Component {
         config.tag = 'input'
         config.attrs.value = labelVal
         return config
-      } else {
-        config.attrs.contenteditable = true
-        config.children = labelVal
-        return config
       }
+      config.attrs.contenteditable = true
+      config.children = labelVal
+      return config
     }
 
     const label = {
@@ -118,14 +117,14 @@ export default class Field extends Component {
       return null
     }
 
-    newConditionsPanel.editPanelItems.forEach(({ itemFieldGroups }) => {
-      itemFieldGroups.forEach(fields => {
+    for (const { itemFieldGroups } of newConditionsPanel.editPanelItems) {
+      for (const fields of itemFieldGroups) {
         const autocomplete = fields.find(field => field.value === value)
         if (autocomplete) {
           autocomplete.displayField.value = label
         }
-      })
-    })
+      }
+    }
   }
 
   /**
