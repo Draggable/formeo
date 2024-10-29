@@ -90,7 +90,8 @@ class DOM {
    * @param  {Boolean} isPreview generating element for preview or render?
    * @return {Object}            DOM Object
    */
-  create = (elem, isPreview = false) => {
+  create = (elemArg, isPreview = false) => {
+    let elem = elemArg
     if (!elem) {
       return
     }
@@ -216,7 +217,7 @@ class DOM {
     // Set the new element's dataset
     if (elem.dataset) {
       for (const data in elem.dataset) {
-        if (elem.dataset.hasOwnProperty(data)) {
+        if (Object.hasOwn(elem.dataset, data)) {
           element.dataset[data] = typeof elem.dataset[data] === 'function' ? elem.dataset[data]() : elem.dataset[data]
         }
       }
@@ -256,13 +257,18 @@ class DOM {
   actionHandler(node, actions) {
     const handlers = {
       onRender: dom.onRender,
+      render: dom.onRender,
     }
     const useCaptureEvts = ['focus', 'blur']
     const defaultHandler = event => (node, cb) => node.addEventListener(event, cb, useCaptureEvts.includes(event))
 
-    return Object.entries(actions).map(([key, cb]) => {
-      const action = handlers[key] || defaultHandler(key)
-      return action(node, cb)
+    return Object.entries(actions).map(([event, cb]) => {
+      const cbs = Array.isArray(cb) ? cb : [cb]
+
+      return cbs.map(cb => {
+        const action = handlers[event] || defaultHandler(event)
+        return action(node, cb)
+      })
     })
   }
 
@@ -340,7 +346,7 @@ class DOM {
     }
 
     // Set element attributes
-    Object.keys(attrs).forEach(attr => {
+    for (const attr of Object.keys(attrs)) {
       const name = h.safeAttrName(attr)
       let value = attrs[attr] || ''
 
@@ -366,7 +372,7 @@ class DOM {
           element.setAttribute(name, value)
         }
       }
-    })
+    }
   }
 
   /**

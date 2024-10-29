@@ -40,19 +40,14 @@ export class Components extends Data {
     }
   }
 
-  load = (formData, opts = this.opts || Object.create(null)) => {
+  load = (formDataArg, opts = this.opts || Object.create(null)) => {
+    let formData = formDataArg
     this.empty()
-    if (typeof formData === 'string') {
-      formData = JSON.parse(formData)
+    if (typeof formDataArg === 'string') {
+      formData = JSON.parse(formDataArg)
     }
     this.opts = opts
-    const {
-      stages = { [uuid()]: {} },
-      rows,
-      columns,
-      fields,
-      id = uuid(),
-    } = { ...this.sessionFormData(), ...formData }
+    const { stages = { [uuid()]: {} }, rows, columns, fields, id = uuid() } = { ...this.sessionFormData(), ...formData }
     this.set('id', id)
     this.add('stages', Stages.load(stages))
     this.add('rows', Rows.load(rows))
@@ -60,7 +55,9 @@ export class Components extends Data {
     this.add('fields', Fields.load(fields))
     this.add('externals', Externals.load(opts.external))
 
-    Object.values(this.get('stages')).forEach(stage => stage.loadChildren())
+    for (const stage of Object.values(this.get('stages'))) {
+      stage.loadChildren()
+    }
 
     return this.data
   }
@@ -72,9 +69,9 @@ export class Components extends Data {
   flatList(data = this.data, acculumator = Object.create(null)) {
     return Object.entries(data).reduce((acc, [type, components]) => {
       if (typeof components === 'object') {
-        Object.entries(components).forEach(([id, component]) => {
+        for (const [id, component] of Object.entries(components)) {
           acc[`${type}.${id}`] = component
-        })
+        }
       }
       return acc
     }, acculumator)

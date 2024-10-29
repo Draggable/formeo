@@ -101,7 +101,7 @@ export const COLUMN_TEMPLATES = new Map(
   columnTemplates.reduce((acc, cur, idx) => {
     acc.push([idx, cur])
     return acc
-  }),
+  }, []),
 )
 
 export const CHANGE_TYPES = [{ type: 'added', condition: (o, n) => Boolean(o === undefined && n) }]

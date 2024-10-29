@@ -88,7 +88,8 @@
     "vite": "^5.4.8",
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-compression": "^0.5.1",
-    "vite-plugin-html": "^3.2.2"
+    "vite-plugin-html": "^3.2.2",
+    "vite-plugin-static-copy": "^2.0.0"
   },
   "dependencies": {
     "formeo-i18n": "^2.1.3",

@@ -5,6 +5,7 @@ import { I18N } from 'mi18n'
 import banner from 'vite-plugin-banner'
 import compression from 'vite-plugin-compression'
 import { createHtmlPlugin } from 'vite-plugin-html'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 import pkg from './package.json'
 
@@ -17,6 +18,8 @@ Version: ${pkg.version}
 Author: ${pkg.author}
 */
 `
+
+console.log(resolve('node_modules/formeo-i18n/dist/lang/'))
 
 const sharedConfig = {
   server: {
@@ -110,6 +113,14 @@ const demoConfig = {
         },
       },
     }),
+    viteStaticCopy({
+      targets: [
+        {
+          src: resolve('node_modules/formeo-i18n/dist/lang/'),
+          dest: './src/demo/assets/lang/'
+        }
+      ]
+    })
   ],
 }
 

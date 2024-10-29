@@ -8,6 +8,7 @@ const headerTags = Array.from(Array(5).keys())
 const headerKey = 'controls.html.header'
 
 class HeaderControl extends Control {
+  
   constructor() {
     const header = {
       tag: headerTags[0],
@@ -30,6 +31,15 @@ class HeaderControl extends Control {
         id: 'html.header',
       },
       content: i18n.get(headerKey),
+      action: {
+        onRender: evt => {
+          console.log('evt', evt)
+        },
+        click: evt => {
+          // debugger
+          console.log('evt', evt)
+        },
+      },
     }
     super(header)
   }
@@ -41,7 +51,9 @@ class HeaderControl extends Control {
     return {
       // i18n custom mappings (defaults to camelCase type)
       i18n: {
-        header: 'Header222',
+        'en-US': {
+          header: 'Custom English Header',
+        },
       },
     }
   }

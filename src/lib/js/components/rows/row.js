@@ -50,7 +50,7 @@ export default class Row extends Component {
       content: [this.getComponentTag(), this.getActionButtons(), this.editWindow, children],
     })
 
-    this.sortable = Sortable.create(children, {
+    Sortable.create(children, {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,

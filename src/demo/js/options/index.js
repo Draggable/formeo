@@ -8,7 +8,7 @@ const renderContainer = '.render-form'
 export const editorOptions = {
   editorContainer,
   i18n: {
-    location: `./assets/lang`,
+    location: './assets/lang',
   },
   actions: {
     // save: formData => null, // do something on save action
@@ -32,4 +32,20 @@ export const editorOptions = {
 export const renderOptions = {
   renderContainer,
   external,
+  elements: {
+    tinymce: {
+      dependencies: { js: 'cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js' },
+      action: {
+        onRender: elem => {
+          if (elem.id) {
+            const selector = `#${elem.id}`
+            window.tinymce.remove(selector)
+            window.tinymce.init({
+              selector: selector,
+            })
+          }
+        },
+      },
+    },
+  },
 }

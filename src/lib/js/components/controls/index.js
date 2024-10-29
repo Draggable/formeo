@@ -4,7 +4,7 @@ import actions from '../../common/actions.js'
 import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
 import events from '../../common/events.js'
 import dom from '../../common/dom.js'
-import { match, unique, uuid, merge, clone } from '../../common/utils/index.mjs'
+import { match, unique, merge, clone } from '../../common/utils/index.mjs'
 import Panels from '../panels.js'
 import Field from '../fields/field.js'
 import Control from './control.js'
@@ -27,12 +27,16 @@ export class Controls {
   constructor() {
     this.data = new Map()
 
-    this.controlEvents = {
+    this.buttonActions = {
+      // this is used for keyboard navigation. when tabbing through controls it
+      // will auto navigated between the groups
       focus: ({ target }) => {
         const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
         return group && this.panels.nav.refresh(indexOfNode(group))
       },
-      click: ({ target }) => this.addElement(target.parentElement.id),
+      click: ({ target }) => {
+        this.addElement(target.parentElement.id)
+      },
     }
   }
 
@@ -40,10 +44,11 @@ export class Controls {
    * Methods to be called on initialization
    * @param {Object} controlOptions
    */
-  init(controlOptions, sticky = false) {
-    this.applyOptions(controlOptions)
-    this.registerControls()
+  async init(controlOptions, sticky = false) {
+    // this.isReady = false
+    await this.applyOptions(controlOptions)
     this.buildDOM(sticky)
+
     return this
   }
 
@@ -51,36 +56,27 @@ export class Controls {
    * Generate control config for UI and bind actions
    * @return {Array} elementControls
    */
-  registerControls() {
-    this.controls = this.elements.map(Element => {
+  registerControls(elements) {
+    this.controls = []
+    return elements.map(async Element => {
       const isControl = typeof Element === 'function'
-      const control = isControl ? new Element() : new Control(Element)
-      const {
-        controlData: { meta, config },
-      } = control
-      const controlLabel = isControl ? config.label : i18n.get(config.label) || config.label
-      const { id: controlId } = this.add(control)
-      const button = {
-        tag: 'button',
-        attrs: {
-          type: 'button',
-        },
-        content: [{ tag: 'span', className: 'control-icon', children: dom.icon(meta.icon) }, controlLabel],
-        action: this.controlEvents,
+
+      let control
+      if (isControl) {
+        control = new Element()
+      } else {
+        control = new Control(Element)
       }
 
-      control.dom = dom.create({
-        tag: 'li',
-        id: controlId,
-        className: ['field-control', `${meta.group}-control`, `${meta.id}-control`],
-        content: button,
-        meta: meta,
-      })
+      // not a fan of this pattern but its better
+      // than passing controls through Element constructor
+      // control.parent = this
 
-      return control.dom
+      this.add(control)
+      this.controls.push(control.dom)
+
+      return control.promise()
     })
-
-    return this.controls
   }
 
   groupLabel = key => i18n.get(key) || key || ''
@@ -153,11 +149,12 @@ export class Controls {
   }
 
   add(control = Object.create(null)) {
-    const { id, ...config } = control
-    const controlId = id || uuid()
-    const controlConfig = clone(config)
-    this.data.set(controlId, controlConfig)
-    return { id: controlId, ...controlConfig }
+    const controlConfig = clone(control)
+    this.data.set(controlConfig.id, controlConfig)
+    if (controlConfig.controlData.meta.id) {
+      this.data.set(controlConfig.controlData.meta.id, controlConfig.controlData)
+    }
+    return controlConfig
   }
 
   get(controlId) {
@@ -371,12 +368,12 @@ export class Controls {
     return group !== 'layout' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]()
   }
 
-  applyOptions = (controlOptions = {}) => {
+  applyOptions = async (controlOptions = {}) => {
     const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions)
     this.container = container
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
-    this.elements = elements.concat(defaultElements)
     this.options = options
+    return Promise.all(this.registerControls([...defaultElements, ...elements]))
   }
 }
 

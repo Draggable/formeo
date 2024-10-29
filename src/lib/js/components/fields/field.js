@@ -7,6 +7,8 @@ import Component from '../component.js'
 import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants.js'
 import Components from '../index.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
+import { mergeActions } from '../../common/utils/object.mjs'
+import controls from '../controls/index.js'
 
 const DEFAULT_DATA = () => ({
   conditions: [CONDITION_TEMPLATE()],
@@ -25,7 +27,7 @@ export default class Field extends Component {
     super('field', { ...DEFAULT_DATA(), ...fieldData })
 
     this.label = dom.create(this.labelConfig)
-    this.preview = dom.create(this.fieldPreview())
+    this.preview = dom.create({})
     this.editPanels = []
 
     const actionButtons = this.getActionButtons()
@@ -186,7 +188,6 @@ export default class Field extends Component {
    * @return {Object} fieldEdit element config
    */
   get fieldEdit() {
-    const _this = this
     this.editPanels = []
     const editable = ['object', 'array']
     const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
@@ -197,18 +198,18 @@ export default class Field extends Component {
       className: ['field-edit', 'slide-toggle', 'formeo-panels-wrap'],
     }
 
-    allowedPanels.forEach(panelName => {
+    for (const panelName of allowedPanels) {
       const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.includes(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
         this.editPanels.push(editPanel)
       }
-    })
+    }
 
     const panelsData = {
       panels: this.editPanels.map(({ panelConfig }) => panelConfig),
-      id: _this.id,
+      id: this.id,
       displayType: 'auto',
     }
 
@@ -239,13 +240,52 @@ export default class Field extends Component {
     return fieldEdit
   }
 
+  get defaultPreviewActions() {
+    return {
+      change: evt => {
+        const { target } = evt
+        const { checked, type } = target
+        // @todo these kind of events should be added to control definitions
+        if (['checkbox', 'radio'].includes(type)) {
+          const optionIndex = +target.id.split('-').pop()
+          // uncheck options if radio
+          if (type === 'radio') {
+            this.set(
+              'options',
+              this.get('options').map(option => ({ ...option, selected: false })),
+            )
+          }
+
+          const checkType = type === 'checkbox' ? 'checked' : 'selected'
+          this.set(`options.${optionIndex}.${checkType}`, checked)
+        }
+      },
+      click: evt => {
+        if (evt.target.contentEditable === 'true') {
+          evt.preventDefault()
+        }
+      },
+      input: evt => {
+        if (['input', 'meter', 'progress', 'button'].includes(this.data.tag)) {
+          super.set('attrs.value', evt.target.value)
+        }
+
+        if (evt.target.contentEditable) {
+          super.set('content', evt.target.innerHTML)
+        }
+      },
+    }
+  }
+
   /**
    * Generate field preview config
    * @return {Object} fieldPreview
    */
   fieldPreview() {
     const prevData = clone(this.data)
+    const { action = {} } = controls.get(prevData.meta.id)
     prevData.id = `prev-${this.id}`
+    prevData.action = action
 
     if (this.data?.config.editableContent) {
       prevData.attrs = { ...prevData.attrs, contenteditable: true }
@@ -257,40 +297,7 @@ export default class Field extends Component {
         style: this.isEditing && 'display: none;',
       },
       content: dom.create(prevData, true),
-      action: {
-        change: evt => {
-          const { target } = evt
-          const { checked, type } = target
-          // @todo these kind of events should be added to control definitions
-          if (['checkbox', 'radio'].includes(type)) {
-            const optionIndex = +target.id.split('-').pop()
-            // uncheck options if radio
-            if (type === 'radio') {
-              this.set(
-                'options',
-                this.get('options').map(option => ({ ...option, selected: false })),
-              )
-            }
-
-            const checkType = type === 'checkbox' ? 'checked' : 'selected'
-            this.set(`options.${optionIndex}.${checkType}`, checked)
-          }
-        },
-        click: evt => {
-          if (evt.target.contentEditable === 'true') {
-            evt.preventDefault()
-          }
-        },
-        input: evt => {
-          if (['input', 'meter', 'progress', 'button'].includes(this.data.tag)) {
-            super.set('attrs.value', evt.target.value)
-          }
-
-          if (evt.target.contentEditable) {
-            super.set('content', evt.target.innerHTML)
-          }
-        },
-      },
+      action: this.defaultPreviewActions,
     }
 
     return fieldPreview

@@ -70,7 +70,7 @@ export default class Column extends Component {
       },
     })
 
-    this.sortable = Sortable.create(children, {
+    Sortable.create(children, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,

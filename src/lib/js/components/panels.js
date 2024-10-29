@@ -10,7 +10,10 @@ const defaults = Object.freeze({
   displayType: 'slider',
 })
 
-const getTransition = val => ({ transform: `translateX(${val ? `${val}px` : 0})` })
+const getTransition = val => {
+  const translateXVal = val ? `${val}px` : 0
+  return { transform: `translateX(${translateXVal})` }
+}
 
 /**
  * Edit and control sliding panels
@@ -31,13 +34,19 @@ export default class Panels {
     const panelsWrap = this.createPanelsWrap()
     this.nav = this.navActions()
 
-    const resizeObserver = new window.ResizeObserver(([{ contentRect: { width } }]) => {
-      if (this.currentWidth !== width) {
-        this.toggleTabbedLayout()
-        this.currentWidth = width
-        this.nav.setTranslateX(this.activePanelIndex, false)
-      }
-    })
+    const resizeObserver = new window.ResizeObserver(
+      ([
+        {
+          contentRect: { width },
+        },
+      ]) => {
+        if (this.currentWidth !== width) {
+          this.toggleTabbedLayout()
+          this.currentWidth = width
+          this.nav.setTranslateX(this.activePanelIndex, false)
+        }
+      },
+    )
 
     const observeTimeout = window.setTimeout(() => {
       resizeObserver.observe(panelsWrap)
@@ -47,7 +56,7 @@ export default class Panels {
 
   getPanelDisplay() {
     const column = this.panelsWrap
-    const width = parseInt(dom.getStyle(column, 'width'))
+    const width = Number.parseInt(dom.getStyle(column, 'width'))
     const autoDisplayType = width > 390 ? 'tabbed' : 'slider'
     const isAuto = this.opts.displayType === 'auto'
     this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults.displayType
@@ -84,7 +93,7 @@ export default class Panels {
   createPanelsWrap() {
     const panelsWrap = dom.create({
       className: 'panels',
-      content: this.opts.panels.map(({ config: { label }, ...panel }) => panel),
+      content: this.opts.panels.map(({ config: _config, ...panel }) => panel),
     })
 
     if (this.opts.type === 'field') {
@@ -104,24 +113,23 @@ export default class Panels {
    * @return {Array} panel groups
    */
   sortableProperties(panels) {
-    const _this = this
     const groups = panels.getElementsByClassName('field-edit-group')
 
-    return h.forEach(groups, (group, index) => {
-      group.fieldId = _this.opts.id
+    return h.forEach(groups, group => {
+      group.fieldId = this.opts.id
       if (group.isSortable) {
         Sortable.create(group, {
           animation: 150,
           group: {
-            name: 'edit-' + group.editGroup,
+            name: `edit-${group.editGroup}`,
             pull: true,
             put: ['properties'],
           },
           sort: true,
           handle: '.prop-order',
           onSort: evt => {
-            _this.propertySave(evt.to)
-            _this.resizePanels()
+            this.propertySave(evt.to)
+            this.resizePanels()
           },
         })
       }
@@ -224,7 +232,7 @@ export default class Panels {
     let offset = { nav: 0, panel: 0 }
     let lastOffset = { ...offset }
 
-    const groupChange = newIndex => {
+    action.groupChange = newIndex => {
       const labels = labelWrap.children
       dom.removeClasses(siblingGroups, 'active-panel')
       dom.removeClasses(labels, 'active-tab')
@@ -232,6 +240,7 @@ export default class Panels {
       this.currentPanel.classList.add('active-panel')
 
       labels[newIndex].classList.add('active-tab')
+
       return this.currentPanel
     }
 
@@ -272,18 +281,18 @@ export default class Panels {
       panelTransition.addEventListener('finish', handleFinish)
     }
 
-    action.setTranslateX = (panelIndex, animate = true) => {
-      offset = getOffset(panelIndex || this.activePanelIndex)
+    action.setTranslateX = (panelIndex = this.activePanelIndex, animate = true) => {
+      offset = getOffset(panelIndex)
       translateX({ offset, animate })
     }
 
-    action.refresh = newIndex => {
-      if (newIndex !== undefined) {
+    action.refresh = (newIndex = this.activePanelIndex) => {
+      if (this.activePanelIndex !== newIndex) {
         this.activePanelIndex = newIndex
-        groupChange(newIndex)
+        action.groupChange(newIndex)
       }
+      action.setTranslateX(this.activePanelIndex)
       this.resizePanels()
-      action.setTranslateX(this.activePanelIndex, false)
     }
 
     /**
@@ -293,7 +302,7 @@ export default class Panels {
     action.nextGroup = () => {
       const newIndex = this.activePanelIndex + 1
       if (newIndex !== siblingGroups.length) {
-        const curPanel = groupChange(newIndex)
+        const curPanel = action.groupChange(newIndex)
         offset = {
           nav: -labelWrap.offsetWidth * newIndex,
           panel: -curPanel.offsetLeft,
@@ -314,7 +323,7 @@ export default class Panels {
     action.prevGroup = () => {
       if (this.activePanelIndex !== 0) {
         const newIndex = this.activePanelIndex - 1
-        const curPanel = groupChange(newIndex)
+        const curPanel = action.groupChange(newIndex)
         offset = {
           nav: -labelWrap.offsetWidth * newIndex,
           panel: -curPanel.offsetLeft,
