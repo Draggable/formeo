@@ -1,4 +1,3 @@
-'use strict'
 import '../sass/formeo.scss'
 import i18n from 'mi18n'
 import dom from './common/dom.js'
@@ -22,7 +21,6 @@ export class FormeoEditor {
    * @return {Object}          formeo references and actions
    */
   constructor({ formData, ...options }, userFormData) {
-    const _this = this
     const mergedOptions = merge(defaults.editor, options)
 
     const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
@@ -42,10 +40,10 @@ export class FormeoEditor {
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
 
     // Load remote resources such as css and svg sprite
-    _this.loadResources().then(() => {
+    this.loadResources().then(() => {
       if (opts.allowEdit) {
-        _this.edit = _this.init.bind(_this)
-        _this.init()
+        // this.edit = this.init.bind(this)
+        this.init()
       }
     })
   }
@@ -82,7 +80,7 @@ export class FormeoEditor {
       promises.push(insertIcons(sprite))
     }
 
-    promises.push(i18n.init({ ...this.opts.i18n, locale: sessionStorage.get(SESSION_LOCALE_KEY) }))
+    promises.push(i18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }))
 
     return Promise.all(promises)
   }
@@ -93,22 +91,22 @@ export class FormeoEditor {
    * dom elements, actions events and more.
    */
   init() {
-    const _this = this
-    this.load(this.userFormData, _this.opts)
-    this.controls = Controls.init(_this.opts.controls, _this.opts.stickyControls)
-    _this.formId = Components.get('id')
-    this.i18n = {
-      setLang: formeoLocale => {
-        sessionStorage.set(SESSION_LOCALE_KEY, formeoLocale)
-        const loadLang = i18n.setCurrent(formeoLocale)
-        loadLang.then(() => {
-          this.controls = Controls.init(_this.opts.controls)
-          _this.render()
-        }, console.error)
-      },
-    }
+    Controls.init(this.opts.controls, this.opts.stickyControls).then(controls => {
+      this.controls = controls
+      this.load(this.userFormData, this.opts)
+      this.formId = Components.get('id')
+      this.i18n = {
+        setLang: formeoLocale => {
+          window.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale)
+          const loadLang = i18n.setCurrent(formeoLocale)
+          loadLang.then(() => {
+            this.init()
+          }, console.error)
+        },
+      }
 
-    _this.render()
+      this.render()
+    })
   }
 
   load(formData = this.userFormData, opts = this.opts) {
@@ -120,16 +118,15 @@ export class FormeoEditor {
    * @return {void}
    */
   render() {
-    const script = document.createElement('script')
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js'
-
-    document.head.appendChild(script)
+    if (!this.controls) {
+      return window.requestAnimationFrame(() => this.render())
+    }
 
     this.stages = Object.values(Components.get('stages'))
     if (this.opts.controlOnLeft) {
-      this.stages.forEach(stage => {
+      for (const stage of this.stages) {
         stage.dom.style.order = 1
-      })
+      }
     }
     const elemConfig = {
       attrs: {

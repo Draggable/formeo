@@ -215,18 +215,18 @@ export const memoize = (fn, resolver) => {
 export const sessionStorage = Object.create(null, {
   get: {
     value: key => {
-      const itemValue = window.sessionStorage && window.sessionStorage.getItem(key)
+      const itemValue = window.sessionStorage?.getItem(key)
       try {
         return JSON.parse(itemValue)
-      } catch (error) {
-        console.error(error)
+      } catch (_err) {
+        return itemValue
       }
     },
   },
   set: {
     value: (key, itemValue) => {
       try {
-        return window.sessionStorage && window.sessionStorage.setItem(key, JSON.stringify(itemValue))
+        return window.sessionStorage?.setItem(key, JSON.stringify(itemValue))
       } catch (error) {
         console.error(error)
       }

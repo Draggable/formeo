@@ -1,7 +1,8 @@
 import isEqual from 'lodash/isEqual'
 import dom from './common/dom'
-import { uuid, isAddress, isExternalAddress } from './common/utils'
+import { uuid, isAddress, isExternalAddress, merge } from './common/utils'
 import { STAGE_CLASSNAME, UUID_REGEXP } from './constants'
+import { fetchDependencies } from './common/loaders'
 
 const RENDER_PREFIX = 'f-'
 
@@ -37,12 +38,13 @@ const createRemoveButton = () =>
 
 export default class FormeoRenderer {
   constructor(opts, formData = {}) {
-    const { renderContainer, external } = processOptions(opts)
+    const { renderContainer, external, elements } = processOptions(opts)
     this.container = renderContainer
     this.form = formData
     this.external = external
     this.dom = dom
     this.components = Object.create(null)
+    this.elements = elements
   }
 
   /**
@@ -72,7 +74,11 @@ export default class FormeoRenderer {
     }
   }
 
-  orderChildren = (type, order) => order.reduce((acc, cur) => [...acc, this.form[type][cur]], [])
+  orderChildren = (type, order) =>
+    order.reduce((acc, cur) => {
+      acc.push(this.form[type][cur])
+      return acc
+    }, [])
 
   prefixId = id => RENDER_PREFIX + id
 
@@ -91,10 +97,12 @@ export default class FormeoRenderer {
   })
 
   processRows = stageId =>
-    this.orderChildren('rows', this.form.stages[stageId].children).reduce(
-      (acc, row) => (row ? [...acc, this.processRow(row)] : acc),
-      [],
-    )
+    this.orderChildren('rows', this.form.stages[stageId].children).reduce((acc, row) => {
+      if (row) {
+        acc.push(this.processRow(row))
+      }
+      return acc
+    }, [])
 
   cacheComponent = data => {
     this.components[baseId(data.id)] = data
@@ -118,10 +126,15 @@ export default class FormeoRenderer {
       { condition: config.inputGroup, result: () => this.addButton(id) },
     ]
 
-    const children = configConditions.reduce((acc, { condition, result }) => (condition ? [...acc, result()] : acc), [])
+    const children = configConditions.reduce((acc, { condition, result }) => {
+      if (condition) {
+        acc.push(result())
+      }
+      return acc
+    }, [])
 
     if (config.inputGroup) {
-      className.push(RENDER_PREFIX + 'input-group-wrap')
+      className.push(`${RENDER_PREFIX}input-group-wrap`)
     }
 
     return {
@@ -164,10 +177,23 @@ export default class FormeoRenderer {
     )
   }
 
-  processFields = fieldIds => {
+  processFieldsOrig = fieldIds => {
     return this.orderChildren('fields', fieldIds).map(({ id, ...field }) =>
       this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) })),
     )
+  }
+
+  processFields = fieldIds => {
+    return this.orderChildren('fields', fieldIds).map(({ id, ...field }) => {
+      const { action = {}, dependencies = {} } = this.elements[field.meta.id] || {}
+      if (dependencies) {
+        fetchDependencies(dependencies)
+      }
+
+      const mergedFieldData = merge({ action }, field)
+
+      return this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) })
+    })
   }
 
   get processedData() {
@@ -233,7 +259,7 @@ export default class FormeoRenderer {
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
     const sourceValue = String(evt.target[sourceProperty])
     const targetValue = String(isAddress(target) ? this.getComponent(target)[targetProperty] : target)
-    return comparisonMap[comparison] && comparisonMap[comparison](sourceValue, targetValue)
+    return comparisonMap[comparison]?.(sourceValue, targetValue)
   }
 
   execResult = ({ assignment, target, targetProperty, value }) => {
@@ -252,7 +278,7 @@ export default class FormeoRenderer {
             elem.required = elem._required
           },
         }
-        propMap[targetProperty] && propMap[targetProperty]()
+        propMap[targetProperty]?.()
       },
     }
 
@@ -263,7 +289,7 @@ export default class FormeoRenderer {
       if (elem && elem._required === undefined) {
         elem._required = elem.required
       }
-      assignMap[assignment] && assignMap[assignment](elem)
+      assignMap[assignment]?.(elem)
     }
   }
 

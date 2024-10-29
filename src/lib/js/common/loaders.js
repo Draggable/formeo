@@ -5,15 +5,27 @@ import { noop } from './utils/index.mjs'
 /* global fetch */
 
 const loaded = {
-  js: [],
-  css: [],
+  js: new Set(),
+  css: new Set(),
+}
+
+const onLoadStylesheet = (elem, cb) => {
+  elem.removeEventListener('load', onLoadStylesheet)
+  elem.rel = 'stylesheet'
+  cb(elem.src)
+}
+
+const onLoadJavascript = (elem, cb) => {
+  elem.removeEventListener('load', onLoadJavascript)
+  cb(elem.src)
 }
 
 export const insertScript = src => {
   return new Promise((resolve, reject) => {
-    if (loaded.js.includes(src)) {
+    if (loaded.js.has(src)) {
       return resolve(src)
     }
+    loaded.js.add(src)
 
     // Create script element and set attributes
     const script = dom.create({
@@ -21,20 +33,16 @@ export const insertScript = src => {
       attrs: {
         type: 'text/javascript',
         async: true,
-        src: `//${this.src}`,
+        src: `//${src.replace(/^https?:\/\//, '')}`,
       },
       action: {
-        load: () => {
-          loaded.js.push(src)
-          resolve(src)
-        },
-        error: () => reject(new Error(`${this.src} failed to load.`)),
+        load: () => onLoadJavascript(script, resolve),
+        error: () => reject(new Error(`${src} failed to load.`)),
       },
     })
 
-    // Append the script to the DOM
-    const el = document.getElementsByTagName('script')[0]
-    el.parentNode.insertBefore(script, el)
+    // Append the script to the document head
+    document.head.appendChild(script)
   })
 }
 
@@ -43,15 +51,11 @@ export const insertStyle = srcs => {
   const promises = srcs.map(
     src =>
       new Promise((resolve, reject) => {
-        if (loaded.css.includes(src)) {
+        if (loaded.css.has(src)) {
           return resolve(src)
         }
-        function onLoad() {
-          this.removeEventListener('load', onLoad)
-          this.rel = 'stylesheet'
-          loaded.css.push(src)
-          resolve(src)
-        }
+        loaded.css.add(src)
+
         const styleLink = dom.create({
           tag: 'link',
           attrs: {
@@ -60,7 +64,7 @@ export const insertStyle = srcs => {
             as: 'style',
           },
           action: {
-            load: onLoad,
+            load: () => onLoadStylesheet(styleLink, resolve),
             error: () => reject(new Error(`${this.src} failed to load.`)),
           },
         })
@@ -69,6 +73,18 @@ export const insertStyle = srcs => {
       }),
   )
 
+  return Promise.all(promises)
+}
+
+export const insertScripts = srcs => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs]
+  const promises = srcs.map(src => insertScript(src))
+  return Promise.all(promises)
+}
+
+export const insertStyles = srcs => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs]
+  const promises = srcs.map(src => insertStyle(src))
   return Promise.all(promises)
 }
 
@@ -106,4 +122,16 @@ export const ajax = (file, callback, onError = noop) => {
       .then(data => resolve(callback ? callback(data) : data))
       .catch(err => reject(new Error(onError(err))))
   })
+}
+
+export const LOADER_MAP = {
+  js: insertScripts,
+  css: insertStyles,
+}
+
+export const fetchDependencies = dependencies => {
+  const promises = Object.entries(dependencies).map(([type, src]) => {
+    return LOADER_MAP[type](src)
+  })
+  return Promise.all(promises)
 }

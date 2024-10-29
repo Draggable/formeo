@@ -17,12 +17,12 @@ export const cleanObj = obj => {
     object: val => cleanObj(val),
   }
 
-  Object.keys(obj).forEach(key => {
+  for (const key of Object.keys(obj)) {
     const valType = typeof obj[key]
     if (typeMap[valType]) {
       fresh[key] = typeMap[valType](obj[key])
     }
-  })
+  }
 
   return fresh
 }
@@ -55,9 +55,37 @@ export function deepClone(obj) {
 
   const cloned = {}
   for (const key in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) {
+    if (Object.hasOwn(obj, key)) {
       cloned[key] = deepClone(obj[key])
     }
   }
   return cloned
+}
+
+/**
+ * Merges two action objects. If a key already exists in the target object, 
+ * converts the value to an array and adds the value of the source object's key to the array.
+ *
+ * @param {Object} target - The target object to merge into.
+ * @param {Object} source - The source object to merge from.
+ * @returns {Object} - The merged object.
+ */
+export function mergeActions(target, source = {}) {
+  const result = { ...target }
+
+  for (const key in source) {
+    if (Object.hasOwn(source, key)) {
+      if (Object.hasOwn(result, key)) {
+        if (Array.isArray(result[key])) {
+          result[key].push(source[key])
+        } else {
+          result[key] = [result[key], source[key]]
+        }
+      } else {
+        result[key] = source[key]
+      }
+    }
+  }
+
+  return result
 }

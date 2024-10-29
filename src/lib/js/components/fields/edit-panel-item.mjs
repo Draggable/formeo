@@ -101,6 +101,7 @@ const ITEM_INPUT_TYPE_MAP = {
   },
   object: val => {
     return Object.entries(val).map(([key, val]) => {
+      console.log(dom.childType(val))
       return ITEM_INPUT_TYPE_MAP[dom.childType(val)](key, val)
     })
   },
@@ -112,7 +113,10 @@ const INPUT_TYPE_ACTION = {
   boolean: (dataKey, field) => ({
     click: ({ target: { checked } }) => {
       if (field.data?.attrs?.type === 'radio') {
-        field.set('options', field.data.options.map(option => ({ ...option, selected: false })))
+        field.set(
+          'options',
+          field.data.options.map(option => ({ ...option, selected: false })),
+        )
       }
       field.set(dataKey, checked)
       field.updatePreview()
@@ -207,7 +211,7 @@ export default class EditPanelItem {
       const orderedFields = orderObjectsBy(
         fields,
         CONDITION_INPUT_ORDER.map(fieldName => `condition-${fieldName}`),
-        'className||dom.className'
+        'className||dom.className',
       )
 
       this.processConditionUIState(orderedFields)
@@ -417,28 +421,31 @@ export default class EditPanelItem {
   itemInput(key, val) {
     const valType = dom.childType(val) || 'string'
 
-    const inputTypeConfig = Object.assign({}, { config: {}, attrs: {} }, ITEM_INPUT_TYPE_MAP[valType](key, val))
+    const inputTypeConfig = { ...{ config: {}, attrs: {} }, ...ITEM_INPUT_TYPE_MAP[valType](key, val) }
     const dataKey = this.itemKey.replace(/.\d+$/, index => `${index}.${key}`)
-    const labelKey = dataKey
-      .split('.')
-      .filter(isNaN)
-      .join('.')
+    const labelKey = dataKey.split('.').filter(Number.isNaN).join('.')
 
     const [id, name] = [[...this.itemKey.split('.'), key], [key]].map(attrVars =>
-      [this.field.id, ...attrVars].filter(Boolean).join('-')
+      [this.field.id, ...attrVars].filter(Boolean).join('-'),
     )
 
-    inputTypeConfig.config = Object.assign({}, inputTypeConfig.config, {
-      label: this.panelName !== 'options' && labelHelper(labelKey),
-      labelAfter: false,
-    })
+    inputTypeConfig.config = {
+      ...inputTypeConfig.config,
+      ...{
+        label: this.panelName !== 'options' && labelHelper(labelKey),
+        labelAfter: false,
+      },
+    }
 
-    inputTypeConfig.attrs = Object.assign({}, inputTypeConfig.attrs, {
-      name: inputTypeConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
-      id,
-      disabled: this.isDisabled,
-      locked: this.isLocked,
-    })
+    inputTypeConfig.attrs = {
+      ...inputTypeConfig.attrs,
+      ...{
+        name: inputTypeConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
+        id,
+        disabled: this.isDisabled,
+        locked: this.isLocked,
+      },
+    }
 
     inputTypeConfig.action = {
       ...INPUT_TYPE_ACTION[valType](dataKey, this.field),

@@ -1,7 +1,8 @@
+import { merge } from 'lodash'
 import Control from '../control.js'
 
 class TinyMCEControl extends Control {
-  constructor() {
+  constructor(options) {
     const textAreaConfig = {
       tag: 'textarea',
       config: {
@@ -16,19 +17,30 @@ class TinyMCEControl extends Control {
       attrs: {
         required: false,
       },
+      dependencies: { js: 'cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js' },
+      // this action is passed to the rendered control/element
+      // useful for actions and events on the control preview
       action: {
-        onRender: evt => {
-          if (evt.id) {
-            this.textareaID = evt.id
-            window.tinymce.remove('textarea#' + evt.id)
-            window.tinymce.init({
-              selector: 'textarea#' + evt.id,
-            })
-          }
+        onRender: elem => {
+          const selector = `#${elem.id}`
+          window.tinymce.remove(selector)
+          window.tinymce.init({
+            selector: selector,
+          })
         },
       },
+      controlAction: {
+        // callback when control is clicked
+        click: () => {
+          console.log('window.tinymce control clicked')
+        },
+        // callback for when control is rendered
+        onRender: () => {},
+      },
     }
-    super(textAreaConfig)
+
+    const mergedOptions = merge(textAreaConfig, options)
+    super(mergedOptions)
   }
 }
 

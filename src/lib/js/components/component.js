@@ -1,5 +1,5 @@
 /* global MutationObserver */
-import { uuid, componentType, merge, clone, remove, identity, closest } from '../common/utils/index.mjs'
+import { uuid, componentType, merge, clone, remove, identity } from '../common/utils/index.mjs'
 import { isInt, map, forEach, indexOfNode } from '../common/helpers.mjs'
 import dom from '../common/dom.js'
 import {
@@ -174,7 +174,6 @@ export default class Component extends Data {
   }
 
   get buttons() {
-    const _this = this
     if (this.actionButtons) {
       return this.actionButtons
     }
@@ -202,7 +201,7 @@ export default class Component extends Data {
           },
           action: {
             click: evt => {
-              _this.toggleEdit()
+              this.toggleEdit()
             },
           },
         }
@@ -216,13 +215,13 @@ export default class Component extends Data {
           },
           action: {
             click: (evt, id) => {
-              animate.slideUp(_this.dom, ANIMATION_SPEED_BASE, () => {
-                if (_this.name === 'column') {
-                  const row = _this.parent
+              animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
+                if (this.name === 'column') {
+                  const row = this.parent
                   row.autoColumnWidths()
-                  _this.remove()
+                  this.remove()
                 } else {
-                  _this.remove()
+                  this.remove()
                 }
               })
               //  @todo add onRemove to Events and Actions
