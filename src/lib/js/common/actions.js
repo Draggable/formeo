@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants.js'
 import { identity, sessionStorage } from './utils/index.mjs'
 import events from './events.js'

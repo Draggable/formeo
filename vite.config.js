@@ -1,15 +1,12 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vite'
-import formeoI18n from 'formeo-i18n'
-import { I18N } from 'mi18n'
+import { languageFileOptions, enUS } from '@draggable/formeo-languages'
 import banner from 'vite-plugin-banner'
 import compression from 'vite-plugin-compression'
-import { createHtmlPlugin } from 'vite-plugin-html'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { createHtmlPlugin } from 'vite-plugin-html'
 
 import pkg from './package.json'
-
-const { languageFiles, enUS } = formeoI18n
 
 const bannerTemplate = `
 /**
@@ -19,7 +16,14 @@ Author: ${pkg.author}
 */
 `
 
-console.log(resolve('node_modules/formeo-i18n/dist/lang/'))
+const isImage = extType => /png|jpe?g|svg|gif|tiff|bmp|ico/i.test(extType)
+const getExtType = assetInfo => {
+  let [extType] = assetInfo.name.split('.').reverse()
+  if (isImage(extType)) {
+    extType = 'img'
+  }
+  return extType
+}
 
 const sharedConfig = {
   server: {
@@ -40,58 +44,46 @@ const sharedConfig = {
   },
 }
 
-const libConfig = {
+export default defineConfig({
   ...sharedConfig,
-  build: {
-    emptyOutDir: false,
-    lib: {
-      entry: 'src/lib/js/index.js',
-      name: 'Formeo',
-      fileName: () => 'formeo.min.js',
-      formats: ['umd'],
-      outDir: resolve(__dirname, 'dist'),
+  root: 'src/demo',
+  base: process.env.NODE_ENV === 'production' ? '/formeo/' : '/',
+  resolve: {
+    alias: {
+      formeo: resolve(__dirname, 'src/lib/js/index.js'),
     },
+  },
+  build: {
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        demo: resolve(__dirname, 'src/demo/index.html'),
+      },
+      output: {
+        manualChunks: {
+          formeo: ['formeo'],
+        },
+        entryFileNames: 'assets/js/[name].min.js',
+        chunkFileNames: 'assets/js/[name].min.js',
+        assetFileNames: assetInfo => {
+          const extType = getExtType(assetInfo)
+          const ext = extType === 'img' ? '[ext]' : 'min.[ext]'
+          return `assets/${getExtType(assetInfo)}/[name].${ext}`
+        },
+      },
+    },
+    outDir: resolve(__dirname, 'dist/demo'),
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
         drop_debugger: true,
       },
-    },
-  },
-  plugins: [
-    banner(bannerTemplate),
-    compression({
-      algorithm: 'gzip',
-      minRatio: 0.8,
-      ext: '.gz',
-      threshold: 10240,
-    }),
-  ],
-}
-
-const demoConfig = {
-  ...sharedConfig,
-  root: 'src/demo',
-  base: process.env.NODE_ENV === 'production' ? '/formeo/' : '/',
-  resolve: {
-    alias: {
-      'formeo': resolve(__dirname, 'src/lib/js/index.js'),
-    },
-  },
-  build: {
-    emptyOutDir: false,
-    rollupOptions: {
-      input: {
-        demo: resolve(__dirname, 'src/demo/index.html'),
-      },
       output: {
-        manualChunks:{
-          formeo: ['formeo'],
-        },
+        comments: false,
+        beautify: false,
       },
     },
-    outDir: resolve(__dirname, 'dist/demo'),
   },
   plugins: [
     createHtmlPlugin({
@@ -101,32 +93,32 @@ const demoConfig = {
       filename: 'index.html',
       inject: {
         data: {
-          langFiles: Object.entries(languageFiles).map(([locale, val]) => {
-            const lang = I18N.processFile(val)
-            return {
-              locale,
-              dir: lang.dir,
-              nativeName: lang[locale],
-            }
-          }),
+          langFiles: languageFileOptions,
           version: pkg.version,
         },
       },
     }),
+    banner(bannerTemplate),
+    compression({
+      algorithm: 'gzip',
+      minRatio: 0.8,
+      ext: '.gz',
+      threshold: 10240,
+    }),
     viteStaticCopy({
       targets: [
         {
-          src: resolve('node_modules/formeo-i18n/dist/lang/'),
-          dest: './src/demo/assets/lang/'
-        }
-      ]
-    })
+          src: resolve('src/lib/icons/formeo-sprite.svg'),
+          dest: './assets/img/',
+        },
+        {
+          src: resolve('node_modules', '@draggable/formeo-languages/dist/lang/*'),
+          dest: './assets/lang',
+        },
+      ],
+    }),
   ],
-}
-
-export default defineConfig(({ mode }) => {
-  if (mode === 'lib') {
-    return libConfig
-  }
-  return demoConfig
+  // optimizeDeps: {
+  //   exclude: ['@draggable/i18n']
+  // }
 })

@@ -1,5 +1,5 @@
 import h, { forEach } from './helpers.mjs'
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import animate from './animation.js'
 import Components from '../components/index.js'
 import { uuid, componentType, merge } from './utils/index.mjs'
@@ -735,7 +735,11 @@ class DOM {
   removeClasses(nodeList, className) {
     const removeClass = {
       string: elem => elem.classList.remove(className),
-      array: elem => className.forEach(name => elem.classList.remove(name)),
+      array: elem => {
+        for (const name of className) {
+          elem.classList.remove(name)
+        }
+      },
     }
     removeClass.object = removeClass.string // handles regex map
     h.forEach(nodeList, removeClass[this.childType(className)])
@@ -750,7 +754,11 @@ class DOM {
   addClasses(nodeList, className) {
     const addClass = {
       string: elem => elem.classList.add(className),
-      array: elem => className.forEach(name => elem.classList.add(name)),
+      array: elem => {
+        for (const name of className) {
+          elem.classList.add(name)
+        }
+      },
     }
     h.forEach(nodeList, addClass[this.childType(className)])
   }

@@ -2,7 +2,16 @@
   "name": "formeo",
   "version": "2.1.4",
   "type": "module",
-  "main": "dist/formeo.min.js",
+  "main": "dist/formeo.cjs.js",
+  "module": "dist/formeo.es.js",
+  "unpkg": "dist/formeo.umd.js",
+  "exports": {
+    ".": {
+      "import": "./dist/formeo.es.js",
+      "require": "./dist/formeo.cjs.js",
+      "default": "./dist/formeo.umd.js"
+    }
+  },
   "files": [
     "dist/*",
     "demo/**/*"
@@ -55,10 +64,9 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "analyze": "webpack --mode production -p --progress --config tools/webpack.config --analyze",
-    "build": "npm-run-all -p build:icons build:formeo build:demo",
-    "build:formeo": "vite build --mode lib",
-    "build:formeo:watch": "npm run build:formeo -- --watch",
+    "build:lib": "vite build --config vite.config.lib.mjs",
+    "build": "npm-run-all -p build:icons build:demo",
+    "prebuild": "npm run build:lib",
     "build:demo": "vite build --mode demo",
     "build:demo:watch": "vite build --mode demo --watch",
     "build:icons": "node ./tools/generate-sprite",
@@ -68,6 +76,7 @@
     "test:ci": "yarn test --coverage",
     "start": "npm-run-all build:icons dev",
     "semantic-release": "semantic-release --ci --debug",
+    "copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
     "travis-deploy-once": "travis-deploy-once --pro",
     "prepush": "yarn test",
     "defaults": "webpack-defaults"
@@ -92,9 +101,9 @@
     "vite-plugin-static-copy": "^2.0.0"
   },
   "dependencies": {
-    "formeo-i18n": "^2.1.3",
+    "@draggable/formeo-languages": "^3.1.3",
+    "@draggable/i18n": "^1.0.7",
     "lodash": "^4.17.21",
-    "mi18n": "^1.0.2",
     "sortablejs": "^1.15.3"
   },
   "release": {

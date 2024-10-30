@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import { generateOptionConfig } from './shared.js'
 import Control from '../control.js'
 

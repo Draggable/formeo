@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import { toTitleCase } from '../../../common/utils/string.mjs'
 
 export const generateOptionConfig = (type, count = 3) =>
