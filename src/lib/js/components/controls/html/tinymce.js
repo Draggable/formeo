@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import { merge } from '../../../common/utils/index.mjs'
 import Control from '../control.js'
 
 class TinyMCEControl extends Control {
