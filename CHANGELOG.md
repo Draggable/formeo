@@ -1,3 +1,12 @@
+## [2.1.5](https://github.com/Draggable/formeo/compare/v2.1.4...v2.1.5) (2024-10-30)
+
+
+### Bug Fixes
+
+* i18n, build and demo assets ([e7eb92f](https://github.com/Draggable/formeo/commit/e7eb92fa2e1de68c4a9ce3800595077386f5a5f6))
+* start i18n perf fix ([3a6ae42](https://github.com/Draggable/formeo/commit/3a6ae42f1f47cea47c44226f1cd9592a767ebebf))
+* tinymce test ([5c87cde](https://github.com/Draggable/formeo/commit/5c87cde7e206c3db1bfc2ffe192255e127507d5f))
+
 ## [2.1.4](https://github.com/Draggable/formeo/compare/v2.1.3...v2.1.4) (2024-10-28)
 
 
