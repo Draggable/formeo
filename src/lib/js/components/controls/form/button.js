@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import Control from '../control.js'
 
 class ButtonControl extends Control {

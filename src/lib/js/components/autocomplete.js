@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import animate from '../common/animation.js'
 import dom from '../common/dom.js'
 import Components from './index.js'

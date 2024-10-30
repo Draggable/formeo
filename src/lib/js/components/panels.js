@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import h, { indexOfNode } from '../common/helpers.mjs'
 import dom from '../common/dom.js'

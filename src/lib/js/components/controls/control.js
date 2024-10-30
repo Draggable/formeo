@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { fetchDependencies } from '../../common/loaders.js'
 import { uuid } from '../../common/utils/index.mjs'

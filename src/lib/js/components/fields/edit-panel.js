@@ -1,4 +1,4 @@
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import actions from '../../common/actions.js'
 import EditPanelItem from './edit-panel-item.mjs'

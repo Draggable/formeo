@@ -1,5 +1,5 @@
 import Sortable from 'sortablejs'
-import i18n from 'mi18n'
+import i18n from '@draggable/i18n'
 import actions from '../../common/actions.js'
 import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
 import events from '../../common/events.js'
