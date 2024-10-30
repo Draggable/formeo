@@ -60,9 +60,6 @@ export default defineConfig({
         demo: resolve(__dirname, 'src/demo/index.html'),
       },
       output: {
-        manualChunks: {
-          formeo: ['formeo'],
-        },
         entryFileNames: 'assets/js/[name].min.js',
         chunkFileNames: 'assets/js/[name].min.js',
         assetFileNames: assetInfo => {
@@ -71,6 +68,7 @@ export default defineConfig({
           return `assets/${getExtType(assetInfo)}/[name].${ext}`
         },
       },
+      external: ['formeo'],
     },
     outDir: resolve(__dirname, 'dist/demo'),
     minify: 'terser',
@@ -114,6 +112,11 @@ export default defineConfig({
         {
           src: resolve('node_modules', '@draggable/formeo-languages/dist/lang/*'),
           dest: './assets/lang',
+        },
+        {
+          src: resolve('dist/formeo.umd.js'),
+          dest: './assets/js/',
+          rename: 'formeo.min.js',
         },
       ],
     }),

@@ -14,16 +14,6 @@
 <body>
   <div class="site-wrap">
     <header id="demo-header">
-      <div id="debug-wrap">
-        <div class="debug-window inner">
-          <div class="option-editor debug-type"><!-- <h2>Language</h2> --></div>
-          <!--
-              <div class="action-tester debug-type">
-                <h2>Action Tester</h2>
-              </div>
-            -->
-        </div>
-      </div>
       <nav aria-label="Footer navigation">
         <ul>
           <li>
@@ -35,7 +25,6 @@
             </select>
             <label for="control-filter">Control Filter:</label>
             <input type="text" id="control-filter" placeholder="ex. text" class="form-control" />
-            <!-- <a href="#debug" id="debug-demo" title="Debug">Debug</a> -->
           </li>
           <li style="float: right;">
             v<%= version %>
@@ -46,7 +35,9 @@
     </header>
     <section id="main_content" class="inner">
       <form class="build-form clearfix"></form>
-      <div class="render-form"><h2>Rendered Form</h2></div>
+      <div class="render-form">
+        <h2>Rendered Form</h2>
+      </div>
     </section>
     <div class="container render-btn-wrap" id="editor-action-buttons">
     </div>
