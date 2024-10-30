@@ -1,3 +1,10 @@
+## [2.1.6](https://github.com/Draggable/formeo/compare/v2.1.5...v2.1.6) (2024-10-30)
+
+
+### Bug Fixes
+
+* demo assets ([2dd2cb2](https://github.com/Draggable/formeo/commit/2dd2cb2a99f96a75bd8bdc3df7799bfca2d5be82))
+
 ## [2.1.5](https://github.com/Draggable/formeo/compare/v2.1.4...v2.1.5) (2024-10-30)
 
 
