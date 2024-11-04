@@ -118,6 +118,10 @@ export default defineConfig({
           dest: './assets/js/',
           rename: 'formeo.min.js',
         },
+        {
+          src: resolve('dist/formeo.min.css'),
+          dest: './assets/css/',
+        },
       ],
     }),
   ],
