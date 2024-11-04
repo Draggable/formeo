@@ -1,3 +1,10 @@
+## [2.1.7](https://github.com/Draggable/formeo/compare/v2.1.6...v2.1.7) (2024-11-04)
+
+
+### Bug Fixes
+
+* missing css in demo ([447c1dd](https://github.com/Draggable/formeo/commit/447c1dd69d8edcaefca6e0395aa2fed76bbba75f))
+
 ## [2.1.6](https://github.com/Draggable/formeo/compare/v2.1.5...v2.1.6) (2024-10-30)
 
 
