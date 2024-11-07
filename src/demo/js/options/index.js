@@ -34,7 +34,6 @@ export const renderOptions = {
   external,
   elements: {
     tinymce: {
-      dependencies: { js: 'cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js' },
       action: {
         onRender: elem => {
           if (elem.id) {

@@ -43,7 +43,7 @@ export const insertScript = src => {
       attrs: {
         type: 'text/javascript',
         async: true,
-        src: `//${src.replace(/^https?:\/\//, '')}`,
+        src,
       },
       action: {
         load: () => onLoadJavascript(script, resolve),
