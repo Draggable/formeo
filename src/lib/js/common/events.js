@@ -9,6 +9,7 @@ import {
   EVENT_FORMEO_SAVED,
   EVENT_FORMEO_CLEARED,
   ANIMATION_SPEED_FAST,
+  ANIMATION_SPEED_BASE,
 } from '../constants.js'
 import components, { Columns, Controls } from '../components/index.js'
 import { throttle } from './utils/index.mjs'
@@ -21,12 +22,12 @@ const defaults = {
   bubbles: true, // bubble events from components
   formeoLoaded: evt => {},
   onAdd: () => {},
-  onUpdate: evt => events.opts.debug && console.log(evt),
-  onUpdateStage: evt => events.opts.debug && console.log(evt),
-  onUpdateRow: evt => events.opts.debug && console.log(evt),
-  onUpdateColumn: evt => events.opts.debug && console.log(evt),
-  onUpdateField: evt => events.opts.debug && console.log(evt),
-  onRender: evt => events.opts.debug && console.log(evt),
+  onUpdate: evt => events.opts?.debug && console.log(evt),
+  onUpdateStage: evt => events.opts?.debug && console.log(evt),
+  onUpdateRow: evt => events.opts?.debug && console.log(evt),
+  onUpdateColumn: evt => events.opts?.debug && console.log(evt),
+  onUpdateField: evt => events.opts?.debug && console.log(evt),
+  onRender: evt => events.opts?.debug && console.log(evt),
   onSave: evt => {},
   confirmClearAll: evt => {
     if (window.confirm(evt.confirmationMessage)) {
@@ -38,7 +39,7 @@ const defaults = {
 const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
   const evt = new window.CustomEvent(type, {
     detail: evtData,
-    bubbles: events.opts.debug || events.opts.bubbles,
+    bubbles: events.opts?.debug || events.opts?.bubbles,
   })
   evt.data = (src || document).dispatchEvent(evt)
   return evt
@@ -142,7 +143,7 @@ function onResizeWindow() {
     throttling ||
     window.requestAnimationFrame(() => {
       throttling = false
-      Object.values(Columns.data).forEach(column => {
+      for (const column of Object.values(Columns.data)) {
         column.dom.classList.add(NO_TRANSITION_CLASS_NAME)
         Controls.dom.classList.add(NO_TRANSITION_CLASS_NAME)
         Controls.panels.nav.refresh()
@@ -150,8 +151,8 @@ function onResizeWindow() {
         throttle(() => {
           column.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
           Controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
-        }, 1000)
-      })
+        }, ANIMATION_SPEED_BASE)
+      }
     })
 }
 
