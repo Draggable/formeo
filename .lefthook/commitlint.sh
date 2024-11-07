@@ -1,5 +1,5 @@
 #!/bin/bash
 
-if [[ -z "$CI" ]]; then
+if [[ "$CI" != "true" ]]; then
   npx commitlint --edit $GIT_PARAMS
 fi
