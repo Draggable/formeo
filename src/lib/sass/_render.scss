@@ -10,6 +10,12 @@
 }
 
 .f-input-group-wrap {
+  .formeo-row:first-of-type {
+    .remove-input-group {
+      display: none;
+    }
+  }
+
   > fieldset {
     position: relative;
     .remove-input-group {
@@ -53,7 +59,6 @@ fieldset.formeo-row-wrap {
 
 .formeo-row-wrap {
   margin-bottom: 1em;
-  padding: mixins.space(2) 0;
   border-radius: mixins.space(1);
 
   legend {
@@ -66,15 +71,6 @@ fieldset.formeo-row-wrap {
   }
   &:last-child {
     margin-bottom: 0;
-  }
-}
-
-.f-input-group-wrap {
-  @include mixins.clearfix;
-  .formeo-row:first-of-type {
-    .remove-input-group {
-      display: none;
-    }
   }
 }
 

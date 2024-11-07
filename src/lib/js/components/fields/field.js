@@ -8,6 +8,7 @@ import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../..
 import Components from '../index.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import controls from '../controls/index.js'
+import { indexOfNode } from '../../common/helpers.mjs'
 
 const DEFAULT_DATA = () => ({
   conditions: [CONDITION_TEMPLATE()],
@@ -279,12 +280,22 @@ export default class Field extends Component {
         }
       },
       input: evt => {
-        if (['input', 'meter', 'progress', 'button'].includes(this.data.tag)) {
+        if (['input', 'meter', 'progress', 'button'].includes(evt.target.tagName.toLowerCase())) {
           super.set('attrs.value', evt.target.value)
-          this.debouncedUpdateEditPanels()
+          return this.debouncedUpdateEditPanels()
         }
 
         if (evt.target.contentEditable) {
+          const parentClassList = evt.target.parentElement.classList
+          const isOption = parentClassList.contains('f-checkbox') || parentClassList.contains('f-radio')
+          if (isOption) {
+            const option = evt.target.parentElement
+            const optionWrap = option.parentElement
+            const optionIndex = indexOfNode(option, optionWrap)
+            super.set(`options[${optionIndex}].label`, evt.target.innerHTML)
+            return this.debouncedUpdateEditPanels()
+          }
+
           super.set('content', evt.target.innerHTML)
         }
       },
