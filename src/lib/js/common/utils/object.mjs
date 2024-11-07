@@ -46,24 +46,33 @@ export function shouldClone(value) {
  * @param {Object|Array} obj - The object or array to be deeply cloned.
  * @returns {Object|Array} - A deep clone of the input object or array.
  */
-export function deepClone(obj) {
+export function deepClone(obj, seen = new WeakMap()) {
   if (!shouldClone(obj)) return obj
 
-  if (Array.isArray(obj)) {
-    return obj.map(item => deepClone(item))
+  if (seen.has(obj)) {
+    return seen.get(obj)
   }
 
-  const cloned = {}
+  if (Array.isArray(obj)) {
+    const clonedArray = obj.map(item => deepClone(item, seen))
+    seen.set(obj, clonedArray)
+    return clonedArray
+  }
+
+  const clonedObject = {}
+  seen.set(obj, clonedObject)
+
   for (const key in obj) {
     if (Object.hasOwn(obj, key)) {
-      cloned[key] = deepClone(obj[key])
+      clonedObject[key] = deepClone(obj[key], seen)
     }
   }
-  return cloned
+
+  return clonedObject
 }
 
 /**
- * Merges two action objects. If a key already exists in the target object, 
+ * Merges two action objects. If a key already exists in the target object,
  * converts the value to an array and adds the value of the source object's key to the array.
  *
  * @param {Object} target - The target object to merge into.

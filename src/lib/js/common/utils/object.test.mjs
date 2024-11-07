@@ -1,128 +1,60 @@
-import assert from 'assert'
 import { test, suite } from 'node:test'
 
-import { set, get } from './object'
+import { deepClone, mergeActions } from './object.mjs'
+suite('object', () => {
+  suite('mergeActions', () => {
+    test('mergeActions should merge two objects with no conflicts', ({ assert }) => {
+      const target = { a: 1 }
+      const source = { b: 2 }
+      const result = mergeActions(target, source)
+      assert.deepStrictEqual(result, { a: 1, b: 2 })
+    })
 
-suite('set', () => {
-  test('set should set a value at a simple path', () => {
-    const obj = {}
-    set(obj, 'a', 1)
-    assert.deepStrictEqual(obj, { a: 1 })
-  })
+    test('mergeActions should merge two objects with conflicting keys', ({ assert }) => {
+      const target = { a: 1 }
+      const source = { a: 2 }
+      const result = mergeActions(target, source)
+      assert.deepStrictEqual(result, { a: [1, 2] })
+    })
 
-  test('set should set a value at a nested path', () => {
-    const obj = {}
-    set(obj, 'a.b.c', 2)
-    assert.deepStrictEqual(obj, { a: { b: { c: 2 } } })
-  })
+    test('mergeActions should merge two objects with array values', ({ assert }) => {
+      const target = { a: [1] }
+      const source = { a: 2 }
+      const result = mergeActions(target, source)
+      assert.deepStrictEqual(result, { a: [1, 2] })
+    })
 
-  test('set should set a value at an array index path', () => {
-    const obj = {}
-    set(obj, 'a[0].b', 3)
-    assert.deepStrictEqual(obj, { a: [{ b: 3 }] })
-  })
+    suite('deepCLone', () => {
+      test('deepClone should deeply clone an object', ({ assert }) => {
+        const obj = { a: 1, b: { c: 2 } }
+        const result = deepClone(obj)
+        assert.deepStrictEqual(result, obj)
+        assert.notStrictEqual(result, obj)
+        assert.notStrictEqual(result.b, obj.b)
+      })
 
-  test('set should overwrite existing value at the path', () => {
-    const obj = { a: { b: { c: 1 } } }
-    set(obj, 'a.b.c', 4)
-    assert.deepStrictEqual(obj, { a: { b: { c: 4 } } })
-  })
+      test('deepClone should deeply clone an array', ({ assert }) => {
+        const arr = [1, [2, 3]]
+        const result = deepClone(arr)
+        assert.deepStrictEqual(result, arr)
+        assert.notStrictEqual(result, arr)
+        assert.notStrictEqual(result[1], arr[1])
+      })
 
-  test('set should create nested objects if they do not exist', () => {
-    const obj = {}
-    set(obj, 'a.b.c.d', 5)
-    assert.deepStrictEqual(obj, { a: { b: { c: { d: 5 } } } })
-  })
+      test('deepClone should return non-object values as is', ({ assert }) => {
+        assert.strictEqual(deepClone(1), 1)
+        assert.strictEqual(deepClone('string'), 'string')
+        assert.strictEqual(deepClone(null), null)
+        assert.strictEqual(deepClone(undefined), undefined)
+      })
 
-  test('set should create nested arrays if they do not exist', () => {
-    const obj = {}
-    set(obj, 'a[0].b[1].c', 6)
-    assert.deepStrictEqual(obj, { a: [{ b: [null, { c: 6 }] }] })
-  })
-
-  test('set should handle mixed object and array paths', () => {
-    const obj = {}
-    set(obj, 'a[0].b.c[1].d', 7)
-    assert.deepStrictEqual(obj, { a: [{ b: { c: [null, { d: 7 }] } }] })
-  })
-  test('set should set a value at a simple path', () => {
-    const obj = {}
-    set(obj, 'a', 1)
-    assert.deepStrictEqual(obj, { a: 1 })
-  })
-
-  test('set should set a value at a nested path', () => {
-    const obj = {}
-    set(obj, 'a.b.c', 2)
-    assert.deepStrictEqual(obj, { a: { b: { c: 2 } } })
-  })
-
-  test('set should set a value at an array index path', () => {
-    const obj = {}
-    set(obj, 'a[0].b', 3)
-    assert.deepStrictEqual(obj, { a: [{ b: 3 }] })
-  })
-
-  test('set should overwrite existing value at the path', () => {
-    const obj = { a: { b: { c: 1 } } }
-    set(obj, 'a.b.c', 4)
-    assert.deepStrictEqual(obj, { a: { b: { c: 4 } } })
-  })
-
-  test('set should create nested objects if they do not exist', () => {
-    const obj = {}
-    set(obj, 'a.b.c.d', 5)
-    assert.deepStrictEqual(obj, { a: { b: { c: { d: 5 } } } })
-  })
-
-  test('set should create nested arrays if they do not exist', () => {
-    const obj = {}
-    set(obj, 'a[0].b[1].c', 6)
-    assert.deepStrictEqual(obj, { a: [{ b: [null, { c: 6 }] }] })
-  })
-
-  test('set should handle mixed object and array paths', () => {
-    const obj = {}
-    set(obj, 'a[0].b.c[1].d', 7)
-    assert.deepStrictEqual(obj, { a: [{ b: { c: [null, { d: 7 }] } }] })
-  })
-})
-
-
-suite('get', () => {
-  test('get should retrieve a value at a simple path', () => {
-    const obj = { a: 1 }
-    const value = get(obj, 'a')
-    assert.strictEqual(value, 1)
-  })
-
-  test('get should retrieve a value at a nested path', () => {
-    const obj = { a: { b: { c: 2 } } }
-    const value = get(obj, 'a.b.c')
-    assert.strictEqual(value, 2)
-  })
-
-  test('get should retrieve a value at an array index path', () => {
-    const obj = { a: [{ b: 3 }] }
-    const value = get(obj, 'a[0].b')
-    assert.strictEqual(value, 3)
-  })
-
-  test('get should return undefined for non-existing path', () => {
-    const obj = { a: { b: { c: 1 } } }
-    const value = get(obj, 'a.b.d')
-    assert.strictEqual(value, undefined)
-  })
-
-  test('get should handle mixed object and array paths', () => {
-    const obj = { a: [{ b: { c: [null, { d: 7 }] } }] }
-    const value = get(obj, 'a[0].b.c[1].d')
-    assert.strictEqual(value, 7)
-  })
-
-  test('get should retrieve a value from a path array', () => {
-    const obj = { foo: [{ bar: 'baz' }] }
-    const value = get(obj, ['foo', '0', 'bar'])
-    assert.strictEqual(value, 'baz')
+      test('deepClone should handle objects with circular references', ({ assert }) => {
+        const obj = { a: 1 }
+        obj.self = obj
+        const result = deepClone(obj)
+        assert.strictEqual(result.a, 1)
+        assert.strictEqual(result.self, result)
+      })
+    })
   })
 })
