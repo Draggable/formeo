@@ -50,7 +50,9 @@ const createOptions = (fieldVal, selected) => {
 
 const addOptions = (select, options) => {
   dom.empty(select)
-  options.forEach(option => select.add(option))
+  for (const option of options) {
+    select.add(option)
+  }
 }
 
 const inputConfigBase = ({ key, value, type = 'text', checked }) => {
@@ -101,7 +103,6 @@ const ITEM_INPUT_TYPE_MAP = {
   },
   object: val => {
     return Object.entries(val).map(([key, val]) => {
-      console.log(dom.childType(val))
       return ITEM_INPUT_TYPE_MAP[dom.childType(val)](key, val)
     })
   },
@@ -119,7 +120,6 @@ const INPUT_TYPE_ACTION = {
         )
       }
       field.set(dataKey, checked)
-      field.updatePreview()
     },
   }),
   string: (dataKey, field) => ({
@@ -130,13 +130,11 @@ const INPUT_TYPE_ACTION = {
   number: (dataKey, field) => ({
     input: ({ target: { value } }) => {
       field.set(dataKey, Number(value))
-      field.updatePreview()
     },
   }),
   array: (dataKey, field) => ({
     change: ({ target: { value } }) => {
       field.set(dataKey, value)
-      field.updatePreview()
     },
   }),
   object: () => ({}),
@@ -300,12 +298,12 @@ export default class EditPanelItem {
       ],
     ])
 
-    fields.forEach(field => {
+    for (const field of fields) {
       const action = actions.get(field.className)
       if (action) {
         action(field)
       }
-    })
+    }
   }
 
   conditionInput = (key, val, conditionType, i) => {
@@ -316,7 +314,7 @@ export default class EditPanelItem {
 
     const createConditionSelect = (key, propertyValue, i18nKey) => {
       const options = createOptions(i18nKey || key, propertyValue)
-      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP['array'](`condition.${key}`)
+      const propertyFieldConfig = ITEM_INPUT_TYPE_MAP.array(`condition.${key}`)
 
       propertyFieldConfig.action = {
         change: conditionChangeAction,
@@ -352,7 +350,7 @@ export default class EditPanelItem {
       comparison: value => createConditionSelect('comparison', value),
       logical: value => createConditionSelect('logical', value),
       source: (value, type = 'source') => {
-        const componentInput = ITEM_INPUT_TYPE_MAP['autocomplete'](`condition.${type}`, value, conditionType)
+        const componentInput = ITEM_INPUT_TYPE_MAP.autocomplete(`condition.${type}`, value, conditionType)
         // add to condition map for the type so we can perform reverse lookup when editing a field connected to this condition
         Components.setConditionMap(value, field)
 
@@ -368,7 +366,7 @@ export default class EditPanelItem {
       targetProperty: value => createConditionSelect('targetProperty', value, 'field.property'),
       target: value => segmentTypes.source(value, 'target'),
       value: value => {
-        const valueField = ITEM_INPUT_TYPE_MAP['string']('condition.value', value)
+        const valueField = ITEM_INPUT_TYPE_MAP.string('condition.value', value)
         valueField.action = {
           input: conditionChangeAction,
         }
@@ -423,7 +421,7 @@ export default class EditPanelItem {
 
     const inputTypeConfig = { ...{ config: {}, attrs: {} }, ...ITEM_INPUT_TYPE_MAP[valType](key, val) }
     const dataKey = this.itemKey.replace(/.\d+$/, index => `${index}.${key}`)
-    const labelKey = dataKey.split('.').filter(Number.isNaN).join('.')
+    const labelKey = dataKey.split('.').filter(Number.isNaN).join('.') || key
 
     const [id, name] = [[...this.itemKey.split('.'), key], [key]].map(attrVars =>
       [this.field.id, ...attrVars].filter(Boolean).join('-'),
@@ -432,7 +430,7 @@ export default class EditPanelItem {
     inputTypeConfig.config = {
       ...inputTypeConfig.config,
       ...{
-        label: this.panelName !== 'options' && labelHelper(labelKey),
+        label: this.panelName !== 'options' && (labelHelper(labelKey) || toTitleCase(labelKey)),
         labelAfter: false,
       },
     }

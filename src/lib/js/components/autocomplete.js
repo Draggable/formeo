@@ -16,7 +16,10 @@ let optionsCache
  * @param {Array} arr labels
  * @param {String} label
  */
-export const labelCount = (arr, label) => arr.reduce((n, x) => n + (x === label), 0)
+export const labelCount = (arr, label) => {
+  const count = arr.reduce((n, x) => n + (x === label), 0)
+  return count > 1 ? `(${count})` : ''
+}
 
 /**
  * Find or generate a label for components and external data
@@ -38,18 +41,31 @@ const getComponentLabel = ({ name, id, ...component }) => {
   return label || (name === 'external' && externalLabel(name, id))
 }
 
+const makeOption = ({ id, textLabel, htmlLabel, selectedId }) => {
+  const option = {
+    value: id,
+    textLabel,
+    htmlLabel,
+  }
+  if (id === selectedId) {
+    option.selected = true
+  }
+
+  return option
+}
+
 /**
  * Generate options for the autolinker component
- * @param {String} selected option value
+ * @param {String} selectedId option value
  * @return {Array} option config objects
  */
-export const componentOptions = selected => {
+export const componentOptions = selectedId => {
   const labels = []
   const flatList = Components.flatList()
   const options = Object.entries(flatList).map(([id, component]) => {
     const label = getComponentLabel(component)
     if (label) {
-      const type = {
+      const typeConfig = {
         tag: 'span',
         content: ` ${toTitleCase(component.name)}`,
         className: 'component-type',
@@ -57,12 +73,15 @@ export const componentOptions = selected => {
       const labelKey = `${component.name}.${label}`
       labels.push(labelKey)
       const count = labelCount(labels, labelKey)
+
       const countConfig = {
         tag: 'span',
-        content: count > 1 && `(${count})`,
+        content: count,
         className: 'component-label-count',
       }
-      return dom.makeOption([id, [`${label} `, countConfig, type]], selected)
+      const htmlLabel = [`${label} `, countConfig, typeConfig]
+      const textLabel = [label, count].join(' ').trim()
+      return makeOption({ id, textLabel, htmlLabel, selectedId })
     }
   })
 
@@ -172,9 +191,10 @@ export default class Autocomplete {
           this.showList(activeOption)
         }
 
-        this.hiddenField.value = evt.target.value
-        this.value = evt.target.value
-        this.runEvent('onChange', { target: this.hiddenField })
+        const value = evt.target.value.trim()
+
+        this.hiddenField.value = value
+        this.value = value
       },
     }
 
@@ -226,7 +246,9 @@ export default class Autocomplete {
     }
     const options = optionsCache || this.generateOptions()
 
-    options.forEach(option => this.list.appendChild(option))
+    for (const option of options) {
+      this.list.appendChild(option)
+    }
   }
 
   generateOptions() {
@@ -240,15 +262,13 @@ export default class Autocomplete {
     }
 
     optionsCache = options.map(optionData => {
-      const value = optionData.value
-      let [label] = optionData.label
-      label = label.trim()
+      const { value, textLabel, htmlLabel } = optionData
       const optionConfig = {
         tag: 'li',
-        children: optionData.label,
+        children: htmlLabel,
         dataset: {
           value,
-          label,
+          label: textLabel,
         },
         className: `${BASE_NAME}-list-item`,
         action: {
@@ -337,15 +357,15 @@ export default class Autocomplete {
    */
   selectOption(selectedOption, list = this.list) {
     const options = list.querySelectorAll('li')
-    for (let i = 0; i < options.length; i++) {
+    for (const option of options) {
       const {
         dataset: { value },
-      } = options[i]
-      options[i].classList.remove('active-option')
+      } = option
+      option.classList.remove('active-option')
 
       if (value) {
         const component = Components.getAddress(value)
-        component.dom && component.dom.classList.remove(HIGHLIGHT_CLASS_NAME)
+        component.dom?.classList.remove(HIGHLIGHT_CLASS_NAME)
       }
     }
     if (selectedOption) {
@@ -359,8 +379,8 @@ export default class Autocomplete {
    */
   removeHighlight() {
     const highlightedComponents = document.getElementsByClassName(HIGHLIGHT_CLASS_NAME)
-    for (let i = 0; i < highlightedComponents.length; i++) {
-      highlightedComponents[i].classList.remove(HIGHLIGHT_CLASS_NAME)
+    for (const component of highlightedComponents) {
+      component.classList.remove(HIGHLIGHT_CLASS_NAME)
     }
   }
 
@@ -374,7 +394,7 @@ export default class Autocomplete {
 
     if (value) {
       const component = Components.getAddress(value)
-      component.dom && component.dom.classList.add(HIGHLIGHT_CLASS_NAME)
+      component.dom?.classList.add(HIGHLIGHT_CLASS_NAME)
     }
   }
 
@@ -398,7 +418,6 @@ export default class Autocomplete {
    */
   setValue(target) {
     const { label, value } = target.dataset
-
     this.displayField.value = label
     this.hiddenField.value = value
     this.value = value
@@ -411,10 +430,10 @@ export default class Autocomplete {
   }
 
   runEvent(eventName, evt) {
-    this.events.forEach(([key, event]) => {
+    for (const [key, event] of this.events) {
       if (key === eventName) {
         event(evt)
       }
-    })
+    }
   }
 }

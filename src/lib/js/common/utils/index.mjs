@@ -3,6 +3,7 @@ import {
   COMPONENT_TYPE_CLASSNAMES_REGEXP,
   COMPONENT_TYPE_CLASSNAMES_LOOKUP,
   CHILD_TYPE_MAP,
+  ANIMATION_SPEED_SLOW,
 } from '../../constants.js'
 import mergeWith from 'lodash/mergeWith.js'
 
@@ -273,17 +274,31 @@ export const typeIsChildOf = (childType, parentType) => CHILD_TYPE_MAP.get(paren
  * @param {number} limit - The number of milliseconds to throttle invocations to.
  * @returns {Function} - Returns the new throttled function.
  */
-export function throttle(callback, limit) {
-  let wait = false
-  return function () {
-    if (!wait) {
-      callback(...arguments)
-      wait = true
-      const timeout = setTimeout(() => {
-        wait = false
-        clearTimeout(timeout)
-      }, limit)
+export function throttle(callback, limit = ANIMATION_SPEED_SLOW) {
+  let lastCall = 0
+  return function (...args) {
+    const now = Date.now()
+    if (now - lastCall >= limit) {
+      lastCall = now
+      callback.apply(this, args)
     }
+  }
+}
+
+/**
+ * Creates a debounced function that delays invoking the provided function until after the specified delay.
+ *
+ * @param {Function} fn - The function to debounce.
+ * @param {number} [delay=ANIMATION_SPEED_SLOW] - The number of milliseconds to delay invocation.
+ * @returns {Function} - A new debounced function.
+ */
+export function debounce(fn, delay = ANIMATION_SPEED_SLOW) {
+  let timeoutID
+  return function (...args) {
+    if (timeoutID) {
+      clearTimeout(timeoutID)
+    }
+    timeoutID = setTimeout(() => fn.apply(this, args), delay)
   }
 }
 
