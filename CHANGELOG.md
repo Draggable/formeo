@@ -1,3 +1,10 @@
+## [2.2.1](https://github.com/Draggable/formeo/compare/v2.2.0...v2.2.1) (2024-11-07)
+
+
+### Bug Fixes
+
+* js dependency loading without server ([8e2c302](https://github.com/Draggable/formeo/commit/8e2c3027a3aeb089b608e3dbf8c3ba476dab7f54))
+
 # [2.2.0](https://github.com/Draggable/formeo/compare/v2.1.7...v2.2.0) (2024-11-07)
 
 
