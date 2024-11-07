@@ -278,8 +278,7 @@ class DOM {
       return this.iconSymbols
     }
 
-    const formeoSprite = document.getElementById(formeoSpriteId)
-    const iconSymbolNodes = formeoSprite.querySelectorAll('svg symbol')
+    const iconSymbolNodes = document.querySelectorAll(`#${formeoSpriteId} svg symbol`)
 
     const createSvgIconConfig = symbolId => ({
       tag: 'svg',
