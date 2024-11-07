@@ -4,8 +4,8 @@ import Events from './common/events.js'
 import Actions from './common/actions.js'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
-import { loadPolyfills, insertStyle, fetchIcons, isCssLoaded, fetchFormeoStyle } from './common/loaders.js'
-import { SESSION_LOCALE_KEY, CSS_URL } from './constants.js'
+import { loadPolyfills, fetchIcons, fetchFormeoStyle } from './common/loaders.js'
+import { SESSION_LOCALE_KEY } from './constants.js'
 import { merge } from './common/utils/index.mjs'
 import { defaults } from './config.js'
 import '../sass/formeo.scss'
@@ -65,18 +65,14 @@ export class FormeoEditor {
       loadPolyfills(this.opts.polyfills)
     }
 
-    if (this.opts.style) {
-      promises.push(insertStyle(this.opts.style))
-    }
 
     // Ajax load svgSprite and inject into markup.
-    promises.push(fetchIcons(this.opts.svgSprite))
+    await fetchIcons(this.opts.svgSprite)
+    promises.push(fetchFormeoStyle(this.opts.style))
 
     promises.push(i18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }))
 
     const resolvedPromises = await Promise.all(promises)
-
-    fetchFormeoStyle()
 
     if (this.opts.allowEdit) {
       this.init()

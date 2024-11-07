@@ -1,6 +1,6 @@
 import mi18n from '@draggable/i18n'
 import { isIE } from './common/helpers'
-import { SVG_SPRITE_URL } from './constants'
+import { CSS_URL, SVG_SPRITE_URL } from './constants'
 const enUS = import.meta.env.enUS
 
 mi18n.addLanguage('en-US', enUS)
@@ -16,6 +16,7 @@ export const defaults = {
       editorContainer: null, // element or selector to attach editor to
       external: {}, // assign external data to be used in conditions autolinker
       svgSprite: SVG_SPRITE_URL, // change to null
+      style: CSS_URL, // change to null
       iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
       config: {}, // stages, rows, columns, fields
       events: {},
