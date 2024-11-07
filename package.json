@@ -73,13 +73,14 @@
     "lint": "eslint ./src --ext .js || true",
     "test": "node --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.js",
     "test:updateSnapshots": "node --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.js",
-    "test:ci": "yarn test --coverage",
+    "test:ci": "npm test --coverage",
     "start": "npm-run-all build:icons dev",
     "semantic-release": "semantic-release --ci --debug",
     "copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
     "travis-deploy-once": "travis-deploy-once --pro",
-    "prepush": "yarn test",
-    "defaults": "webpack-defaults"
+    "prepush": "npm test",
+    "prepare": "lefthook install",
+    "postmerge": "lefthook install"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.3",
