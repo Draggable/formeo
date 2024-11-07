@@ -53,15 +53,6 @@
   @include mixins.breakpoint("phone-lrg") {
     width: calc(100% - 50px);
   }
-
-  &:has(.editing-field) {
-    .column-actions {
-      display: none;
-    }
-    .row-actions {
-      display: none;
-    }
-  }
 }
 
 .editing-stage {

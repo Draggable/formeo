@@ -124,6 +124,12 @@
       opacity: 0;
     }
   }
+
+  &:has(.editing-field) {
+    .column-actions {
+      display: none;
+    }
+  }
 }
 
 // this is column styleing in the row edit window
