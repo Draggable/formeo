@@ -1,6 +1,6 @@
 import pkg from '../../../package.json' with { type: 'json' }
 
-const isProd = import.meta.env.PROD
+const isProd = import.meta.env?.PROD
 
 const name = pkg.name
 const version = pkg.version
