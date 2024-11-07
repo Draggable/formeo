@@ -23,6 +23,8 @@ const iconFontTemplates = {
   fontello: icon => `<i class="${iconPrefix}${icon}">${icon}</i>`,
 }
 
+const inputTags = new Set(['input', 'textarea', 'select'])
+
 /**
  * General purpose markup utilities and generator.
  */
@@ -31,20 +33,12 @@ class DOM {
    * Set defaults, store references to key elements
    * like stages, rows, columns etc
    */
-  constructor() {
-    this.options = Object.create(null)
-    this.styleSheet = (() => {
-      const style = document.createElement('style')
-      style.setAttribute('media', 'screen')
-      style.setAttribute('type', 'text/css')
-      style.appendChild(document.createTextNode(''))
-      document.head.appendChild(style)
-      return style.sheet
-    })()
+  constructor(options = Object.create(null)) {
+    this.options = options
   }
 
   set setOptions(options) {
-    this.options = merge(Object.assign({}, this.options, options))
+    this.options = merge(this.options, options)
   }
 
   /**
@@ -52,14 +46,18 @@ class DOM {
    * @param  {Object|String} elem
    * @return {Object} valid element object
    */
-  processTagName(elem) {
+  processTagName(elemArg) {
+    let elem = elemArg
     let tagName
     if (typeof elem === 'string') {
       tagName = elem
       elem = { tag: tagName }
+      return elem
     }
+
     if (elem.attrs) {
       const { tag, ...restAttrs } = elem.attrs
+      // this is used for interchangeable tagNames like h1, h2, h3 etc
       if (tag) {
         if (typeof tag === 'string') {
           tagName = tag
@@ -92,12 +90,11 @@ class DOM {
    * @return {Object}            DOM Object
    */
   create = (elemArg, isPreview = false) => {
-    let elem = elemArg
-    if (!elem) {
+    if (!elemArg) {
       return
     }
 
-    elem = this.processTagName(elem)
+    const { className, options, ...elem } = this.processTagName(elemArg)
     const _this = this
     let childType
     const { tag } = elem
@@ -147,39 +144,27 @@ class DOM {
     processed.push('tag')
 
     // check for root className property
-    if (elem.className) {
-      const { className } = elem
-      elem.attrs = Object.assign({}, elem.attrs, { className })
-      delete elem.className
+    if (className) {
+      elem.attrs = { ...elem.attrs, className }
     }
 
-    // Append Element Content
-    if (elem.options) {
-      let { options } = elem
-      options = this.processOptions(options, elem, isPreview)
+    if (options) {
+      const processedOptions = this.processOptions(options, elem, isPreview)
       if (this.holdsContent(element) && tag !== 'button') {
         // mainly used for <select> tag
-        appendChildren.array.call(this, options)
-        delete elem.content
+        appendChildren.array.call(this, processedOptions)
+        elem.content = undefined
       } else {
-        h.forEach(options, option => {
+        h.forEach(processedOptions, option => {
           wrap.children.push(_this.create(option, isPreview))
         })
         if (elem.attrs.className) {
           wrap.className = elem.attrs.className
         }
-        wrap.config = Object.assign({}, elem.config)
+        wrap.config = { ...elem.config }
         return this.create(wrap, isPreview)
       }
       processed.push('options')
-    }
-
-    // disabling all initially selected options because we are setting them manualy at #330
-    if (element.tagName === 'OPTION') {
-      const timeout = setTimeout(() => {
-        element.selected = false
-        clearTimeout(timeout)
-      }, 0)
     }
 
     // Set element attributes
@@ -361,17 +346,7 @@ class DOM {
       }
 
       if (value) {
-        // if multiple options are being used and they are being selected automatically, the browser wants the element
-        // to be rendered before setting the selected-attribute. Hence, we're setting the 'selected'-property at the beginning of
-        // the next iteration of the event-loop.
-        if (element.tagName === 'OPTION' && name === 'selected') {
-          const timeout = setTimeout(() => {
-            element.setAttribute(name, value)
-            clearTimeout(timeout)
-          }, 0)
-        } else {
-          element.setAttribute(name, value)
-        }
+        element.setAttribute(name, value === true ? '' : value)
       }
     }
   }
@@ -427,17 +402,6 @@ class DOM {
           }),
       },
     }
-  }
-
-  makeOption = ([value, label], selected, i18nKey) => {
-    const option = {
-      value,
-      label: i18n.get(`${i18nKey}.${label}`) || label,
-    }
-    if (value === selected) {
-      option.selected = true
-    }
-    return option
   }
 
   /**
@@ -558,11 +522,12 @@ class DOM {
    * @param  {String|Object} tag tagName or DOM element
    * @return {Boolean} isInput
    */
-  isInput(tag) {
+  isInput(tagArg) {
+    let tag = tagArg
     if (typeof tag !== 'string') {
       tag = tag.tagName
     }
-    return ['input', 'textarea', 'select'].indexOf(tag) !== -1
+    return inputTags.has(tag)
   }
 
   /**
@@ -621,7 +586,7 @@ class DOM {
 
     if (fMap) {
       // for attribute will prevent label focus
-      delete fieldLabel.attrs.for
+      fieldLabel.attrs.for = undefined
       fieldLabel.attrs.contenteditable = true
       fieldLabel.fMap = fMap
     }
@@ -707,9 +672,8 @@ class DOM {
     if (!children.length) {
       if (!this.isStage(parent)) {
         return this.removeEmpty(parent)
-      } else {
-        this.emptyClass(parent)
       }
+      return this.emptyClass(parent)
     }
   }
 
@@ -833,7 +797,8 @@ class DOM {
    * @param  {Object} elem DOM element
    * @param  {Boolean} state
    */
-  toggleSortable(elem, state) {
+  toggleSortable(elem, stateArg) {
+    let state = stateArg
     const fType = componentType(elem)
     if (!fType) {
       return

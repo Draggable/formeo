@@ -1,13 +1,12 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import Panels from '../panels.js'
-import { clone, throttle, unique } from '../../common/utils/index.mjs'
+import { clone, debounce, throttle, unique } from '../../common/utils/index.mjs'
 import EditPanel from './edit-panel.js'
 import Component from '../component.js'
 import { FIELD_CLASSNAME, CONDITION_TEMPLATE, ANIMATION_SPEED_BASE } from '../../constants.js'
 import Components from '../index.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
-import { mergeActions } from '../../common/utils/object.mjs'
 import controls from '../controls/index.js'
 
 const DEFAULT_DATA = () => ({
@@ -26,6 +25,7 @@ export default class Field extends Component {
   constructor(fieldData = Object.create(null)) {
     super('field', { ...DEFAULT_DATA(), ...fieldData })
 
+    this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create({})
     this.editPanels = []
@@ -156,24 +156,21 @@ export default class Field extends Component {
   /**
    * Updates the conditions panel when linked field data changes
    */
-  updateConditionsPanel = () => {
-    const updateConditionsTimeout = setTimeout(() => {
-      const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
-      if (!newConditionsPanel) {
-        return null
-      }
-      const newProps = newConditionsPanel.createProps()
-      const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
-      currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
-      clearTimeout(updateConditionsTimeout)
-    }, ANIMATION_SPEED_BASE)
-  }
+  updateConditionsPanel = throttle(() => {
+    const newConditionsPanel = this.editPanels.find(({ name }) => name === 'conditions')
+    if (!newConditionsPanel) {
+      return null
+    }
+    const newProps = newConditionsPanel.createProps()
+    const currentConditionsProps = this.dom.querySelector('.field-edit-conditions')
+    currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps)
+  }, ANIMATION_SPEED_BASE)
 
   /**
    * Updates a field's preview
    * @return {Object} fresh preview
    */
-  updatePreview = throttle(() => {
+  updatePreview = () => {
     if (!this.preview.parentElement) {
       return null
     }
@@ -181,22 +178,14 @@ export default class Field extends Component {
     const newPreview = dom.create(this.fieldPreview(), true)
     this.preview.parentElement.replaceChild(newPreview, this.preview)
     this.preview = newPreview
-  }, ANIMATION_SPEED_BASE)
+  }
 
-  /**
-   * Generate the markup for field edit mode
-   * @return {Object} fieldEdit element config
-   */
-  get fieldEdit() {
+  updateEditPanels = () => {
     this.editPanels = []
     const editable = ['object', 'array']
-    const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
     const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
+    const noPanels = ['config', 'meta', 'action', 'events', ...this.config.panels.disabled]
     const allowedPanels = panelOrder.filter(panelName => !noPanels.includes(panelName))
-
-    const fieldEdit = {
-      className: ['field-edit', 'slide-toggle', 'formeo-panels-wrap'],
-    }
 
     for (const panelName of allowedPanels) {
       const panelData = this.get(panelName)
@@ -213,51 +202,75 @@ export default class Field extends Component {
       displayType: 'auto',
     }
 
+    this.panels = new Panels(panelsData)
+    if (this.dom) {
+      this.dom.querySelector('.panel-nav').replaceWith(this.panels.panelNav)
+      this.dom.querySelector('.panels').replaceWith(this.panels.panelsWrap)
+    }
+  }
+
+  /**
+   * Generate the markup for field edit mode
+   * @return {Object} fieldEdit element config
+   */
+  get fieldEdit() {
+    const fieldEdit = {
+      className: ['field-edit', 'slide-toggle', 'formeo-panels-wrap'],
+    }
+
+    this.updateEditPanels()
+
     const editPanelLength = this.editPanels.length
 
     if (editPanelLength) {
-      this.panels = new Panels(panelsData)
       fieldEdit.className.push(`panel-count-${editPanelLength}`)
       fieldEdit.content = [this.panels.panelNav, this.panels.panelsWrap]
       this.panelNav = this.panels.nav
       this.resizePanelWrap = this.panels.nav.refresh
-      fieldEdit.action = {
-        onRender: () => {
-          this.resizePanelWrap()
-          if (!editPanelLength) {
-            // If this element has no edit panels, remove the edit toggle
-            const field = this.dom
-            const editToggle = field.querySelector('.item-edit-toggle')
-            const fieldActions = field.querySelector('.field-actions')
-            const actionButtons = fieldActions.getElementsByTagName('button')
-            fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
-            dom.remove(editToggle)
-          }
-        },
-      }
     }
 
-    return fieldEdit
+    fieldEdit.action = {
+      onRender: () => {
+        if (editPanelLength === 0) {
+          // If this element has no edit panels, remove the edit toggle
+          const field = this.dom
+          const editToggle = field.querySelector('.item-edit-toggle')
+          const fieldActions = field.querySelector('.field-actions')
+          const actionButtons = fieldActions.getElementsByTagName('button')
+          fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
+          dom.remove(editToggle)
+        } else {
+          this.resizePanelWrap()
+        }
+      },
+    }
+
+    return dom.create(fieldEdit)
+  }
+
+  toggleCheckedOptions = (optionIndex, type) => {
+    const updatedOptionData = this.get('options').map((option, index) => {
+      const isCurrentIndex = index === optionIndex
+      if (type === 'radio') {
+        option.selected = isCurrentIndex
+      } else {
+        option.checked = isCurrentIndex ? !option.checked : option.checked
+      }
+
+      return option
+    })
+    this.set('options', updatedOptionData)
   }
 
   get defaultPreviewActions() {
     return {
       change: evt => {
         const { target } = evt
-        const { checked, type } = target
-        // @todo these kind of events should be added to control definitions
+        const { type } = target
         if (['checkbox', 'radio'].includes(type)) {
           const optionIndex = +target.id.split('-').pop()
-          // uncheck options if radio
-          if (type === 'radio') {
-            this.set(
-              'options',
-              this.get('options').map(option => ({ ...option, selected: false })),
-            )
-          }
-
-          const checkType = type === 'checkbox' ? 'checked' : 'selected'
-          this.set(`options.${optionIndex}.${checkType}`, checked)
+          this.toggleCheckedOptions(optionIndex, type)
+          this.debouncedUpdateEditPanels()
         }
       },
       click: evt => {
@@ -268,6 +281,7 @@ export default class Field extends Component {
       input: evt => {
         if (['input', 'meter', 'progress', 'button'].includes(this.data.tag)) {
           super.set('attrs.value', evt.target.value)
+          this.debouncedUpdateEditPanels()
         }
 
         if (evt.target.contentEditable) {
