@@ -1,3 +1,15 @@
+# [2.2.0](https://github.com/Draggable/formeo/compare/v2.1.7...v2.2.0) (2024-11-07)
+
+
+### Bug Fixes
+
+* style loaded when sprite is missing ([846710d](https://github.com/Draggable/formeo/commit/846710d1b7187858130ab0884fa7a61a7d93327c)), closes [#359](https://github.com/Draggable/formeo/issues/359)
+
+
+### Features
+
+* auto load missing resources ([46771a8](https://github.com/Draggable/formeo/commit/46771a8e96d6c41d440a8bb9ba5a42dfae35a9fa))
+
 ## [2.1.7](https://github.com/Draggable/formeo/compare/v2.1.6...v2.1.7) (2024-11-04)
 
 
