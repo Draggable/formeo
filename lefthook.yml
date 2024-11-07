@@ -5,6 +5,6 @@ pre-push:
       run: npm test
 
 commit-msg:
-  commands:
-    commitlint:
-      run: npx commitlint --edit $GIT_PARAMS
+  scripts:
+    "commitlint.sh":
+      runner: bash
