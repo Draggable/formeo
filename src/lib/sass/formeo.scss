@@ -5,8 +5,9 @@
 @use "components/autocomplete";
 @use "components/panels";
 
-.formeo-sprite {
+#formeo-sprite {
   display: none !important;
+  visibility: hidden !important;
 }
 
 .formeo {

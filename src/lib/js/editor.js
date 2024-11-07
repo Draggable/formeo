@@ -1,15 +1,14 @@
-import '../sass/formeo.scss'
 import i18n from '@draggable/i18n'
 import dom from './common/dom.js'
 import Events from './common/events.js'
 import Actions from './common/actions.js'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
-import { loadPolyfills, insertStyle, insertIcons, ajax } from './common/loaders.js'
-import { SESSION_LOCALE_KEY, FALLBACK_SVG_SPRITE } from './constants.js'
+import { loadPolyfills, insertStyle, fetchIcons, isCssLoaded, fetchFormeoStyle } from './common/loaders.js'
+import { SESSION_LOCALE_KEY, CSS_URL } from './constants.js'
 import { merge } from './common/utils/index.mjs'
 import { defaults } from './config.js'
-import sprite from '../icons/formeo-sprite.svg?raw'
+import '../sass/formeo.scss'
 
 /**
  * Main class
@@ -40,12 +39,7 @@ export class FormeoEditor {
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
 
     // Load remote resources such as css and svg sprite
-    this.loadResources().then(() => {
-      if (opts.allowEdit) {
-        // this.edit = this.init.bind(this)
-        this.init()
-      }
-    })
+    document.addEventListener('DOMContentLoaded', this.loadResources.bind(this))
   }
 
   get formData() {
@@ -62,7 +56,9 @@ export class FormeoEditor {
    * Load remote resources
    * @return {Promise} asynchronously loaded remote resources
    */
-  loadResources() {
+  async loadResources() {
+    document.removeEventListener('DOMContentLoaded', this.loadResources)
+
     const promises = []
 
     if (this.opts.polyfills) {
@@ -74,15 +70,19 @@ export class FormeoEditor {
     }
 
     // Ajax load svgSprite and inject into markup.
-    if (this.opts.svgSprite) {
-      promises.push(ajax(this.opts.svgSprite, insertIcons, () => ajax(FALLBACK_SVG_SPRITE, insertIcons)))
-    } else {
-      promises.push(insertIcons(sprite))
-    }
+    promises.push(fetchIcons(this.opts.svgSprite))
 
     promises.push(i18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }))
 
-    return Promise.all(promises)
+    const resolvedPromises = await Promise.all(promises)
+
+    fetchFormeoStyle()
+
+    if (this.opts.allowEdit) {
+      this.init()
+    }
+
+    return resolvedPromises
   }
 
   /**

@@ -8,7 +8,6 @@ const headerTags = Array.from(Array(5).keys())
 const headerKey = 'controls.html.header'
 
 class HeaderControl extends Control {
-  
   constructor() {
     const header = {
       tag: headerTags[0],
@@ -32,13 +31,8 @@ class HeaderControl extends Control {
       },
       content: i18n.get(headerKey),
       action: {
-        onRender: evt => {
-          console.log('evt', evt)
-        },
-        click: evt => {
-          // debugger
-          console.log('evt', evt)
-        },
+        // onRender: evt => {},
+        // click: evt => {},
       },
     }
     super(header)

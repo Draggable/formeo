@@ -1,5 +1,12 @@
 import dom from './dom.js'
-import { POLYFILLS } from '../constants.js'
+import {
+  CSS_URL,
+  FALLBACK_CSS_URL,
+  FALLBACK_SVG_SPRITE_URL,
+  POLYFILLS,
+  SVG_SPRITE_URL,
+  formeoSpriteId,
+} from '../constants.js'
 import { noop } from './utils/index.mjs'
 
 /* global fetch */
@@ -7,6 +14,19 @@ import { noop } from './utils/index.mjs'
 const loaded = {
   js: new Set(),
   css: new Set(),
+}
+
+export const ajax = (fileUrl, callback, onError = noop) => {
+  return new Promise(resolve => {
+    return fetch(fileUrl)
+      .then(data => {
+        if (!data.ok) {
+          return resolve(onError(data))
+        }
+        resolve(callback ? callback(data) : data)
+      })
+      .catch(err => onError(err))
+  })
 }
 
 const onLoadStylesheet = (elem, cb) => {
@@ -82,31 +102,51 @@ export const insertScripts = srcs => {
   return Promise.all(promises)
 }
 
+/**
+ * Inserts multiple stylesheets into the document.
+ *
+ * @param {string|string[]} srcs - A single stylesheet URL or an array of stylesheet URLs to be inserted.
+ * @returns {Promise<void[]>} A promise that resolves when all stylesheets have been inserted.
+ */
 export const insertStyles = srcs => {
   srcs = Array.isArray(srcs) ? srcs : [srcs]
   const promises = srcs.map(src => insertStyle(src))
   return Promise.all(promises)
 }
 
-export const insertIcons = resp => {
-  const spritePromise = typeof resp === 'string' ? Promise.resolve(resp) : resp.text()
-  return spritePromise.then(iconSvgStr => {
-    const id = 'formeo-sprite'
-    let iconSpriteWrap = document.getElementById(id)
-    if (!iconSpriteWrap) {
-      iconSpriteWrap = dom.create({
-        id,
-        children: iconSvgStr,
-        attrs: {
-          hidden: true,
-          style: 'display: none;',
-        },
-      })
+/**
+ * Inserts SVG icons into the document if they are not already present.
+ *
+ * @param {string} iconSvgStr - A string containing SVG icons.
+ * @returns {HTMLElement} The element wrapping the inserted SVG icons.
+ */
+export const insertIcons = iconSvgStr => {
+  let iconSpriteWrap = document.getElementById(formeoSpriteId)
+  if (!iconSpriteWrap) {
+    iconSpriteWrap = dom.create({
+      id: formeoSpriteId,
+      children: iconSvgStr,
+      attrs: {
+        hidden: true,
+        style: 'display: none;',
+      },
+    })
 
-      document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
-    }
-    return iconSpriteWrap
-  })
+    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
+  }
+  return iconSpriteWrap
+}
+
+/**
+ * Fetches icons from the provided URL and inserts them into the document.
+ * If the primary URL fails, it attempts to fetch from a fallback URL.
+ *
+ * @param {string} iconSpriteUrl - The URL to fetch the icon sprite from.
+ * @returns {Promise<void>} A promise that resolves when the icons are fetched and inserted.
+ */
+export const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
+  const parseResp = async resp => insertIcons(await resp.text())
+  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp))
 }
 
 export const loadPolyfills = polyfillConfig => {
@@ -114,14 +154,6 @@ export const loadPolyfills = polyfillConfig => {
     ? POLYFILLS.filter(({ name }) => polyfillConfig.indexOf(name) !== -1)
     : POLYFILLS
   return Promise.all(polyfills.map(({ src }) => insertScript(src)))
-}
-
-export const ajax = (file, callback, onError = noop) => {
-  return new Promise((resolve, reject) => {
-    return fetch(file)
-      .then(data => resolve(callback ? callback(data) : data))
-      .catch(err => reject(new Error(onError(err))))
-  })
 }
 
 export const LOADER_MAP = {
@@ -134,4 +166,22 @@ export const fetchDependencies = dependencies => {
     return LOADER_MAP[type](src)
   })
   return Promise.all(promises)
+}
+
+export const isCssLoaded = () => {
+  const formeoSprite = document.getElementById(formeoSpriteId)
+  const computedStyle = window.getComputedStyle(formeoSprite)
+
+  return computedStyle.visibility === 'hidden'
+}
+
+export const fetchFormeoStyle = async () => {
+  // check if necessary styles were loaded
+  if (!isCssLoaded()) {
+    await insertStyle(CSS_URL)
+    // check again and use fallback if necessary styles were not loaded
+    if (!isCssLoaded()) {
+      return await insertStyle(FALLBACK_CSS_URL)
+    }
+  }
 }

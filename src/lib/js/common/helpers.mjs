@@ -1,7 +1,5 @@
-'use strict'
 import { unique } from './utils/index.mjs'
 import { get } from './utils/object.mjs'
-import { slugify } from './utils/string.mjs'
 
 /**
  * Tests if is whole number. returns false if n is Float

@@ -1,9 +1,9 @@
 const animate = {
   /**
-   * Gets the computed style for an element
-   * @param  {[type]}  elem     [description]
-   * @param  {Boolean} property [description]
-   * @return {[type]}           [description]
+   * Get the computed style for DOM element
+   * @param  {Object}  elem     dom element
+   * @param  {Boolean} property style eg. width, height, opacity
+   * @return {String}           computed style
    */
   getStyle: (elem, property = false) => {
     let style

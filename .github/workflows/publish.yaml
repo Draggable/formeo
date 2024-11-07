@@ -29,6 +29,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npx semantic-release
+      - run: npm run build
+        if: success()
       - name: Deploy - https://draggable.github.io/formeo/
         if: success()
         uses: peaceiris/actions-gh-pages@v4
