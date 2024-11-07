@@ -82,6 +82,12 @@
       opacity: 0;
     }
   }
+
+  &:has(.editing-field) {
+    .row-actions {
+      display: none;
+    }
+  }
 }
 
 .row-moving {
