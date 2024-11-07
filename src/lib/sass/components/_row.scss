@@ -116,10 +116,6 @@
     display: none;
   }
 
-  &:first-child {
-    border-top-left-radius: 0;
-  }
-
   &.editing-row {
     &::before {
       border-right-width: 0;
@@ -145,6 +141,9 @@
 .editing-row {
   box-shadow: 0 0 0 1px color.$row-outline-color;
 
+  &:first-child {
+    border-top-left-radius: 0;
+  }
   .row-handle {
     display: none;
   }

@@ -1,8 +1,7 @@
 @use "base/mixins";
 
-@use 'base/colors' as color;
-@use 'base/variables' as var;
-
+@use "base/colors" as color;
+@use "base/variables" as var;
 
 .formeo-row,
 .formeo-column,
@@ -19,11 +18,6 @@
   }
 }
 
-.will-remove {
-  background-color: color.$remove-bg;
-  box-shadow: 0 0 1px 0 color.$brand-error inset;
-}
-
 .formeo-row {
   margin-bottom: 1em;
   flex-direction: row;
@@ -33,11 +27,16 @@
   align-items: stretch;
   display: flex;
   border-radius: var.$border-radius;
-  transition: background-color 200ms, padding 200ms;
+  outline: 0 solid color.$remove-bg;
+
+  transition: background-color var.$animation-speed-fast,
+    outline var.$animation-speed-fast;
   padding: mixins.space() 0;
 
   &.will-remove {
-    padding: mixins.space();
+    border-radius: 2px;
+    background-color: color.$remove-bg;
+    outline: 6px solid color.$remove-bg;
   }
 
   &:last-of-type {
@@ -45,8 +44,26 @@
   }
 }
 
+div.formeo-row-wrap {
+  padding: mixins.space(2) 0;
+}
+fieldset.formeo-row-wrap {
+  padding: mixins.space(2);
+}
+
 .formeo-row-wrap {
   margin-bottom: 1em;
+  padding: mixins.space(2) 0;
+  border-radius: mixins.space(1);
+
+  legend {
+    padding: mixins.space() mixins.space(1);
+    border-style: groove;
+    border-width: 2px;
+    border-color: threedface;
+    border-radius: mixins.space(1);
+    font-size: 1.15em;
+  }
   &:last-child {
     margin-bottom: 0;
   }
@@ -80,8 +97,8 @@
   position: absolute;
   right: 0;
   top: 0;
-  width: mixins.space(2);
-  height: mixins.space(2);
+  width: mixins.space(3);
+  height: mixins.space(3);
   border: 0 none;
   background: transparent;
   outline: 0 none;
@@ -89,6 +106,7 @@
   padding: mixins.space();
 
   &:hover {
+    background-color: color.$white;
     .svg-icon {
       fill: color.$brand-error;
     }
