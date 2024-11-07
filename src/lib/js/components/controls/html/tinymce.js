@@ -31,9 +31,7 @@ class TinyMCEControl extends Control {
       },
       controlAction: {
         // callback when control is clicked
-        click: () => {
-          console.log('window.tinymce control clicked')
-        },
+        click: () => {},
         // callback for when control is rendered
         onRender: () => {},
       },

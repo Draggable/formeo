@@ -11,6 +11,7 @@ import {
   CONTROL_GROUP_CLASSNAME,
   CHILD_CLASSNAME_MAP,
   iconPrefix,
+  formeoSpriteId,
 } from '../constants.js'
 
 const iconFontTemplates = {
@@ -277,7 +278,8 @@ class DOM {
       return this.iconSymbols
     }
 
-    const iconSymbolNodes = document.querySelectorAll('#formeo-sprite svg symbol')
+    const formeoSprite = document.getElementById(formeoSpriteId)
+    const iconSymbolNodes = formeoSprite.querySelectorAll('svg symbol')
 
     const createSvgIconConfig = symbolId => ({
       tag: 'svg',

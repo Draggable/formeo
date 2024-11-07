@@ -9,7 +9,9 @@ const editorActions = (editor, renderer) => ({
   },
   logJSON: () => console.log(editor.json),
   viewData: () => {
-    Object.entries(editor.formData).forEach(([key, val]) => console.log(key, val))
+    for (const [key, val] of Object.entries(editor.formData)) {
+      console.log(key, val)
+    }
   },
   resetEditor: () => {
     window.sessionStorage.removeItem('formeo-formData')

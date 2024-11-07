@@ -1,15 +1,21 @@
 import pkg from '../../../package.json' with { type: 'json' }
 
+const isProd = import.meta.env.PROD
+
 const name = pkg.name
+const version = pkg.version
 export const PACKAGE_NAME = name
+export const formeoSpriteId = 'formeo-sprite'
 
 export const POLYFILLS = [
   { name: 'cssPreload', src: '//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js' },
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
   { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
-
-export const FALLBACK_SVG_SPRITE = 'https://draggable.github.io/formeo/assets/img/formeo-sprite.svg'
+export const SVG_SPRITE_URL = isProd ? `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg` : `assets/img/${formeoSpriteId}.svg`
+export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`
+export const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formeo.min.css`
+export const FALLBACK_CSS_URL = 'https://draggable.github.io/formeo/assets/css/formeo.min.css'
 
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
 export const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`
@@ -20,7 +26,6 @@ export const FIELD_CLASSNAME = `${PACKAGE_NAME}-field`
 export const CUSTOM_COLUMN_OPTION_CLASSNAME = 'custom-column-widths'
 export const COLUMN_PRESET_CLASSNAME = 'column-preset'
 export const COLUMN_RESIZE_CLASSNAME = 'resizing-columns'
-
 
 export const CHILD_CLASSNAME_MAP = new Map([
   [STAGE_CLASSNAME, ROW_CLASSNAME],

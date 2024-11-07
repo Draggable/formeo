@@ -33,7 +33,7 @@ const sharedConfig = {
     },
   },
   define: {
-    'import.meta.env.EN_US': JSON.stringify(enUS),
+    'import.meta.env.enUS': JSON.stringify(enUS),
   },
   css: {
     preprocessorOptions: {
@@ -65,7 +65,7 @@ export default defineConfig({
         assetFileNames: assetInfo => {
           const extType = getExtType(assetInfo)
           const ext = extType === 'img' ? '[ext]' : 'min.[ext]'
-          return `assets/${getExtType(assetInfo)}/[name].${ext}`
+          return `assets/${extType}/[name].${ext}`
         },
       },
       external: ['formeo'],
@@ -110,6 +110,10 @@ export default defineConfig({
           dest: './assets/img/',
         },
         {
+          src: resolve('src/lib/icons/formeo-sprite.svg'),
+          dest: resolve('dist/'),
+        },
+        {
           src: resolve('node_modules', '@draggable/formeo-languages/dist/lang/*'),
           dest: './assets/lang',
         },
@@ -119,13 +123,15 @@ export default defineConfig({
           rename: 'formeo.min.js',
         },
         {
+          src: resolve('dist/formeo.umd.js'),
+          dest: resolve('dist/'),
+          rename: 'formeo.min.js',
+        },
+        {
           src: resolve('dist/formeo.min.css'),
           dest: './assets/css/',
         },
       ],
     }),
   ],
-  // optimizeDeps: {
-  //   exclude: ['@draggable/i18n']
-  // }
 })
