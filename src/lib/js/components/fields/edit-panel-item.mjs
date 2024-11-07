@@ -5,7 +5,7 @@ import animate from '../../common/animation.js'
 import { CONDITION_INPUT_ORDER, FIELD_PROPERTY_MAP, OPERATORS, ANIMATION_SPEED_BASE } from '../../constants.js'
 import events from '../../common/events.js'
 import Components from '../index.js'
-import Autocomplete from '../autocomplete.js'
+import Autocomplete from '../autocomplete.mjs'
 import { isExternalAddress, isAddress, isBoolKey } from '../../common/utils/index.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
 

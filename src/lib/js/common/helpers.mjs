@@ -66,6 +66,12 @@ export const map = (arr, cb) => {
 
 const sanitizedAttributeNames = {}
 
+/**
+ * Sanitizes an attribute name to ensure it is valid for use in HTML.
+ *
+ * @param {string} name - The attribute name to sanitize.
+ * @returns {string} - The sanitized attribute name.
+ */
 export const safeAttrName = name => {
   const attributeMap = {
     className: 'class',
@@ -76,7 +82,7 @@ export const safeAttrName = name => {
   }
 
   const attributeName = attributeMap[name] || name
-  const sanitizedAttributeName = attributeName.replace(/^\d/, '').replace(/[^a-zA-Z0-9-:]/g, '')
+  const sanitizedAttributeName = attributeName.replace(/^\d+/, '').replace(/[^a-zA-Z0-9-:]/g, '')
 
   sanitizedAttributeNames[name] = sanitizedAttributeName
 
