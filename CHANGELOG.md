@@ -1,3 +1,12 @@
+## [2.2.2](https://github.com/Draggable/formeo/compare/v2.2.1...v2.2.2) (2024-11-07)
+
+
+### Bug Fixes
+
+* commitlint breaking CI ([9bd0af4](https://github.com/Draggable/formeo/commit/9bd0af41eeecece0966065fd492b1766f00e8064))
+* field preview updates ([5de9636](https://github.com/Draggable/formeo/commit/5de9636de8ea7cb9ced27a00a213548330a885d7))
+* publish ci action ([990683d](https://github.com/Draggable/formeo/commit/990683de4318ef1cb02f34c1a930d6ba3f12f7a0))
+
 ## [2.2.1](https://github.com/Draggable/formeo/compare/v2.2.0...v2.2.1) (2024-11-07)
 
 
