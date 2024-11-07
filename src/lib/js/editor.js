@@ -1,3 +1,4 @@
+import '../sass/formeo.scss'
 import i18n from '@draggable/i18n'
 import dom from './common/dom.js'
 import Events from './common/events.js'
@@ -8,7 +9,6 @@ import { loadPolyfills, fetchIcons, fetchFormeoStyle } from './common/loaders.js
 import { SESSION_LOCALE_KEY } from './constants.js'
 import { merge } from './common/utils/index.mjs'
 import { defaults } from './config.js'
-import '../sass/formeo.scss'
 
 /**
  * Main class
@@ -64,7 +64,6 @@ export class FormeoEditor {
     if (this.opts.polyfills) {
       loadPolyfills(this.opts.polyfills)
     }
-
 
     // Ajax load svgSprite and inject into markup.
     await fetchIcons(this.opts.svgSprite)
