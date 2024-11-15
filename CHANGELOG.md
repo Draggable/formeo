@@ -1,3 +1,17 @@
+# [2.3.0](https://github.com/Draggable/formeo/compare/v2.2.2...v2.3.0) (2024-11-15)
+
+
+### Bug Fixes
+
+* option labels not updated when editing in preview ([207696e](https://github.com/Draggable/formeo/commit/207696e38477a598691ef9b2b472f7af9319104f))
+* preview control change ([e1ee84f](https://github.com/Draggable/formeo/commit/e1ee84fdfbeec6d405ea8748df98df7b3c30a37a))
+* row render styles ([a212870](https://github.com/Draggable/formeo/commit/a212870304900760fac8196cb3b12e6fb3429e0a))
+
+
+### Features
+
+* add tooltip ([7f3c0b8](https://github.com/Draggable/formeo/commit/7f3c0b8797d420c8e829aa27be5137493a97be4c))
+
 ## [2.2.2](https://github.com/Draggable/formeo/compare/v2.2.1...v2.2.2) (2024-11-07)
 
 
