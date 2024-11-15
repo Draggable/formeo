@@ -111,13 +111,26 @@ export default class Row extends Component {
       },
     }
 
+    const rowTitleTooltip = {
+      tag: 'span',
+      content: ' ⓘ',
+      dataset: {
+        tooltip: 'Row title will be used as the legend for the fieldset',
+      },
+    }
+
     const legendInput = {
       tag: 'input',
       attrs: {
         type: 'text',
         ariaLabel: 'Legend for fieldset',
         value: this.get('config.legend'),
-        placeholder: 'Legend',
+        placeholder: 'Title',
+      },
+      config: {
+        label: {
+          children: ['Row Title', rowTitleTooltip],
+        },
       },
       action: {
         input: ({ target: { value } }) => this.set('config.legend', value),

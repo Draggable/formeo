@@ -41,8 +41,6 @@ export default class Column extends Component {
   constructor(columnData) {
     super('column', { ...DEFAULT_DATA(), ...columnData })
 
-    const _this = this
-
     const children = this.createChildWrap()
 
     this.dom = dom.create({
@@ -66,7 +64,7 @@ export default class Column extends Component {
     events.columnResized = new window.CustomEvent('columnResized', {
       detail: {
         column: this.dom,
-        instance: _this,
+        instance: this,
       },
     })
 

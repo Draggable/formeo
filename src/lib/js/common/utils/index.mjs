@@ -103,16 +103,24 @@ export const uuid = elem => {
 
 /**
  * Merge one object with another.
- * This is expensive, use as little as possible.
+ * This can be expensive, use as little as possible.
  * @param  {Object} obj1
  * @param  {Object} obj2
  * @return {Object}      merged object
  */
-export const merge = (obj1, obj2, opts = Object.create(null)) => {
+export const merge = (obj1, obj2) => {
   const customizer = (objValue, srcValue) => {
     if (Array.isArray(objValue)) {
-      if (Array.isArray(srcValue)) {
-        return unique(opts.mergeArray ? objValue.concat(srcValue) : srcValue)
+      if (srcValue !== undefined && srcValue !== null) {
+        return unique(objValue.concat(srcValue))
+      }
+
+      return srcValue
+    }
+
+    if (Array.isArray(srcValue)) {
+      if (objValue !== undefined && objValue !== null) {
+        return unique(srcValue.concat(objValue))
       }
 
       return srcValue
