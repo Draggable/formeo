@@ -1,5 +1,6 @@
 import '../sass/formeo.scss'
 import i18n from '@draggable/i18n'
+import { SmartTooltip } from '@draggable/tooltip'
 import dom from './common/dom.js'
 import Events from './common/events.js'
 import Actions from './common/actions.js'
@@ -37,6 +38,7 @@ export class FormeoEditor {
     this.dom = dom
     Events.init({ debug, ...events })
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
+    this.tooltip = new SmartTooltip()
 
     // Load remote resources such as css and svg sprite
     document.addEventListener('DOMContentLoaded', this.loadResources.bind(this))

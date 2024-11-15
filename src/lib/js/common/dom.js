@@ -94,11 +94,12 @@ class DOM {
       return
     }
 
-    const { className, options, ...elem } = this.processTagName(elemArg)
     const _this = this
+    const processed = ['children', 'content']
+    const { className, options, dataset, ...elem } = this.processTagName(elemArg)
+    processed.push('tag')
     let childType
     const { tag } = elem
-    const processed = ['children', 'content']
     let i
     const wrap = {
       attrs: {},
@@ -141,11 +142,9 @@ class DOM {
       boolean: () => null,
     }
 
-    processed.push('tag')
-
     // check for root className property
     if (className) {
-      elem.attrs = { ...elem.attrs, className }
+      elem.attrs = merge(elem.attrs, { className })
     }
 
     if (options) {
@@ -182,7 +181,10 @@ class DOM {
         const label = _this.label(elem)
 
         if (!elem.config.hideLabel) {
-          const wrapContent = [...(_this.labelAfter(elem) ? [element, label] : [label, element])]
+          const wrapContent = [label, element]
+          if (_this.labelAfter(elem)) {
+            wrapContent.reverse()
+          }
           wrap.children.push(wrapContent)
         }
       }
@@ -201,10 +203,10 @@ class DOM {
     }
 
     // Set the new element's dataset
-    if (elem.dataset) {
-      for (const data in elem.dataset) {
-        if (Object.hasOwn(elem.dataset, data)) {
-          element.dataset[data] = typeof elem.dataset[data] === 'function' ? elem.dataset[data]() : elem.dataset[data]
+    if (dataset) {
+      for (const data in dataset) {
+        if (Object.hasOwn(dataset, data)) {
+          element.dataset[data] = typeof dataset[data] === 'function' ? dataset[data]() : dataset[data]
         }
       }
       processed.push('dataset')
@@ -268,7 +270,7 @@ class DOM {
     const createSvgIconConfig = symbolId => ({
       tag: 'svg',
       attrs: {
-        className: `svg-icon ${symbolId}`,
+        className: ['svg-icon', symbolId],
       },
       children: [
         {
@@ -283,9 +285,10 @@ class DOM {
 
     this.iconSymbols = Array.from(iconSymbolNodes).reduce((acc, symbol) => {
       const name = symbol.id.replace(iconPrefix, '')
-      acc[name] = dom.create(createSvgIconConfig(symbol.id))
+      acc[name] = createSvgIconConfig(symbol.id)
       return acc
     }, {})
+    this.cachedIcons = {}
 
     return this.iconSymbols
   }
@@ -296,20 +299,33 @@ class DOM {
    *  - we don't need the perks of having icons be DOM objects at this stage
    *  - it forces the icon to be appended using innerHTML which helps svg render
    * @param  {String} name - icon name
+   * @param  {Function} config - dom element config object
    * @return {String} icon markup
    */
-  icon(name = null, classNames = []) {
+  icon(name, config) {
     if (!name) {
       return
     }
 
-    const icon = this.icons[name]
+    const cacheKey = `${name}?${new URLSearchParams(config).toString()}`
 
-    if (icon) {
-      const iconClone = icon.cloneNode(true)
-      iconClone.classList.add(...classNames)
+    if (this.cachedIcons?.[cacheKey]) {
+      return this.cachedIcons[cacheKey]
+    }
 
-      return iconClone.outerHTML
+    const iconConfig = this.icons[name]
+
+    if (iconConfig) {
+      if (config) {
+        const mergedConfig = merge(iconConfig, config)
+
+        this.cachedIcons[cacheKey] = dom.create(mergedConfig).outerHTML
+
+        return this.cachedIcons[cacheKey]
+      }
+
+      this.cachedIcons[cacheKey] = dom.create(iconConfig).outerHTML
+      return this.cachedIcons[cacheKey]
     }
 
     return iconFontTemplates[dom.options.iconFont]?.(name) || name
@@ -325,30 +341,34 @@ class DOM {
   processAttrs(elem, element, isPreview) {
     const { attrs = {} } = elem
 
-    if (!isPreview) {
-      if (!attrs.name && this.isInput(elem.tag)) {
-        element.setAttribute('name', uuid(elem))
-      }
+    if (!isPreview && !attrs.name && this.isInput(elem.tag)) {
+      element.setAttribute('name', uuid(elem))
     }
 
     // Set element attributes
     for (const attr of Object.keys(attrs)) {
       const name = h.safeAttrName(attr)
-      let value = attrs[attr] || ''
 
-      if (Array.isArray(value)) {
-        if (typeof value[0] === 'object') {
-          const selected = value.filter(t => t.selected === true)
-          value = selected.length ? selected[0].value : value[0].value
-        } else {
-          value = value.join(' ')
-        }
-      }
+      const value = this.processAttrValue(attrs[attr])
 
       if (value) {
         element.setAttribute(name, value === true ? '' : value)
       }
     }
+  }
+
+  processAttrValue(valueArg) {
+    let value = valueArg || ''
+    if (Array.isArray(value)) {
+      if (typeof value[0] === 'object') {
+        const selected = value.filter(t => t.selected === true)
+        value = selected.length ? selected[0].value : value[0].value
+      } else {
+        value = value.join(' ')
+      }
+    }
+
+    return value
   }
 
   /**

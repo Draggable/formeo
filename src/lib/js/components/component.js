@@ -116,7 +116,7 @@ export default class Component extends Data {
     return {
       className: [`${this.name}-actions`, 'group-actions'],
       action: {
-        mouseenter: ({ target }) => {
+        mouseenter: () => {
           Components.stages.active.dom.classList.add(`active-hover-${this.name}`)
           this.dom.classList.add(...hoverClassnames)
         },
@@ -144,10 +144,10 @@ export default class Component extends Data {
       tag: 'span',
       className: ['component-tag', `${this.name}-tag`],
       children: [
-        (this.isColumn || this.isField) && dom.icon('component-corner', ['bottom-left']),
+        (this.isColumn || this.isField) && dom.icon('component-corner', { className: 'bottom-left' }),
         dom.icon(`handle-${this.name}`),
         toTitleCase(this.name),
-        (this.isColumn || this.isRow) && dom.icon('component-corner', ['bottom-right']),
+        (this.isColumn || this.isRow) && dom.icon('component-corner', { className: 'bottom-right' }),
       ].filter(Boolean),
     })
   }
