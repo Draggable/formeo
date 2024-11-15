@@ -280,6 +280,7 @@ export default class Field extends Component {
         }
       },
       input: evt => {
+        console.log(evt)
         if (['input', 'meter', 'progress', 'button'].includes(evt.target.tagName.toLowerCase())) {
           super.set('attrs.value', evt.target.value)
           return this.debouncedUpdateEditPanels()

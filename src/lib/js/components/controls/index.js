@@ -158,7 +158,7 @@ export class Controls {
   }
 
   get(controlId) {
-    return this.data.get(controlId)
+    return clone(this.data.get(controlId))
   }
 
   /**
@@ -355,6 +355,7 @@ export class Controls {
    */
   addElement = id => {
     const controlData = get(this.get(id), 'controlData')
+    
     const {
       meta: { group, id: metaId },
     } = controlData
