@@ -177,15 +177,11 @@ export default class FormeoRenderer {
     )
   }
 
-  processFieldsOrig = fieldIds => {
-    return this.orderChildren('fields', fieldIds).map(({ id, ...field }) =>
-      this.cacheComponent(Object.assign({}, field, { id: this.prefixId(id) })),
-    )
-  }
+  processFields = fieldIds =>
+    this.orderChildren('fields', fieldIds).map(({ id, ...field }) => {
+      const controlId = field.config?.controlId || field.meta?.id
+      const { action = {}, dependencies = {} } = this.elements[controlId] || {}
 
-  processFields = fieldIds => {
-    return this.orderChildren('fields', fieldIds).map(({ id, ...field }) => {
-      const { action = {}, dependencies = {} } = this.elements[field.meta.id] || {}
       if (dependencies) {
         fetchDependencies(dependencies)
       }
@@ -194,7 +190,6 @@ export default class FormeoRenderer {
 
       return this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) })
     })
-  }
 
   get processedData() {
     return Object.values(this.form.stages).map(stage => {
@@ -208,41 +203,51 @@ export default class FormeoRenderer {
    * Evaulate and execute conditions for fields by creating listeners for input and changes
    * @return {Array} flattened array of conditions
    */
+  handleComponentCondition = (component, ifRest, thenConditions) => {
+    const listenerEvent = LISTEN_TYPE_MAP(component)
+
+    if (listenerEvent) {
+      component.addEventListener(
+        listenerEvent,
+        evt => {
+          if (this.evaluateCondition(ifRest, evt)) {
+            for (const thenCondition of thenConditions) {
+              this.execResult(thenCondition, evt)
+            }
+          }
+        },
+        false,
+      )
+    }
+
+    // Evaluate conditions on load.
+    const fakeEvt = { target: component }
+    if (this.evaluateCondition(ifRest, fakeEvt)) {
+      for (const thenCondition of thenConditions) {
+        this.execResult(thenCondition, fakeEvt)
+      }
+    }
+  }
+
   applyConditions = () => {
-    Object.values(this.components).forEach(({ conditions }) => {
+    for (const { conditions } of Object.values(this.components)) {
       if (conditions) {
-        conditions.forEach((condition, i) => {
+        for (const condition of conditions) {
           const { if: ifConditions, then: thenConditions } = condition
 
-          ifConditions.forEach(ifCondition => {
+          for (const ifCondition of ifConditions) {
             const { source, ...ifRest } = ifCondition
 
             if (isAddress(source)) {
               const components = this.getComponents(source)
-
-              components.forEach(component => {
-                const listenerEvent = LISTEN_TYPE_MAP(component)
-
-                if (listenerEvent) {
-                  component.addEventListener(
-                    listenerEvent,
-                    evt =>
-                      this.evaluateCondition(ifRest, evt) &&
-                      thenConditions.forEach(thenCondition => this.execResult(thenCondition, evt)),
-                    false,
-                  )
-                }
-
-                // Evaluate conditions on load.
-                const fakeEvt = { target: component } // We don't have an actual event, mock one.
-                this.evaluateCondition(ifRest, fakeEvt) &&
-                  thenConditions.forEach(thenCondition => this.execResult(thenCondition, fakeEvt))
-              })
+              for (const component of components) {
+                this.handleComponentCondition(component, ifRest, thenConditions)
+              }
             }
-          })
-        })
+          }
+        }
       }
-    })
+    }
   }
 
   /**

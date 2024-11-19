@@ -27,10 +27,10 @@ export const labelCount = (arr, label) => {
  * @return {String} component label
  */
 const getComponentLabel = ({ name, id, ...component }) => {
-  const labelPaths = ['config.label', 'attrs.id', 'meta.id']
+  const labelPaths = ['config.label', 'config.controlId', 'meta.id', 'attrs.id']
   const label = labelPaths.reduce((acc, cur) => {
     if (!acc) {
-      acc = component.get(cur)
+      return component.get(cur)
     }
     return acc
   }, null)

@@ -65,7 +65,7 @@ export default class Field extends Component {
     const hideLabel = !!this.get('config.hideLabel')
 
     if (hideLabel) {
-      return
+      return null
     }
 
     const labelVal = this.get('config.editorLabel') || this.get('config.label')
@@ -308,7 +308,7 @@ export default class Field extends Component {
    */
   fieldPreview() {
     const prevData = clone(this.data)
-    const { action = {} } = controls.get(prevData.meta.id)
+    const { action = {} } = controls.get(prevData.config.controlId)
     prevData.id = `prev-${this.id}`
     prevData.action = action
 

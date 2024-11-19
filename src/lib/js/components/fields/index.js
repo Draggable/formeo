@@ -1,7 +1,7 @@
 import ComponentData from '../component-data.js'
 import Field from './field.js'
 import Controls from '../controls/index.js'
-import { get } from '../../common/utils/object.mjs'
+import { get, set } from '../../common/utils/object.mjs'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
@@ -59,6 +59,23 @@ export class Fields extends ComponentData {
       acc[key] = data
       return acc
     }, {})
+  }
+
+  load = (dataArg = Object.create(null)) => {
+    const allFieldData = this.parseformData(dataArg)
+    this.empty()
+
+    for (const [key, val] of Object.entries(allFieldData)) {
+      const { meta, ...data } = val
+      // meta object is only for controls, we want to migrate it out of field data
+      // we only need the control id to tie actions back to control definitons
+      if (meta?.id) {
+        set(data, 'config.controlId', meta?.id)
+      }
+      this.add(key, data)
+    }
+
+    return this.data
   }
 }
 

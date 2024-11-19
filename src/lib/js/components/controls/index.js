@@ -16,7 +16,7 @@ import layoutControls from './layout/index.js'
 import formControls from './form/index.js'
 import htmlControls from './html/index.js'
 import defaultOptions from './options.js'
-import { get } from '../../common/utils/object.mjs'
+import { get, set } from '../../common/utils/object.mjs'
 
 const defaultElements = [...formControls, ...htmlControls, ...layoutControls]
 
@@ -126,17 +126,17 @@ export class Controls {
        */
       groupConfig.content = elements.filter(control => {
         const { controlData: field } = this.get(control.id)
-        const fieldId = field.meta.id || ''
+        const controlId = field.meta.id || ''
         const filters = [
-          match(fieldId, this.options.disable.elements),
+          match(controlId, this.options.disable.elements),
           field.meta.group === group.id,
-          !usedElementIds.includes(field.meta.id),
+          !usedElementIds.includes(controlId),
         ]
 
         let shouldFilter = true
         shouldFilter = filters.every(val => val === true)
         if (shouldFilter) {
-          usedElementIds.push(fieldId)
+          usedElementIds.push(controlId)
         }
 
         return shouldFilter
@@ -349,24 +349,29 @@ export class Controls {
     return element
   }
 
+  layoutTypes = {
+    row: () => Stages.active.addChild(),
+    column: () => this.layoutTypes.row().addChild(),
+    field: controlData => this.layoutTypes.column().addChild(controlData),
+  }
+
   /**
    * Append an element to the stage
    * @param {String} id of elements
    */
   addElement = id => {
-    const controlData = get(this.get(id), 'controlData')
-    
     const {
       meta: { group, id: metaId },
-    } = controlData
+      ...elementData
+    } = get(this.get(id), 'controlData')
 
-    const layoutTypes = {
-      row: () => Stages.active.addChild(),
-      column: () => layoutTypes.row().addChild(),
-      field: controlData => layoutTypes.column().addChild(controlData),
+    set(elementData, 'config.controlId', metaId)
+
+    if (group === 'layout') {
+      return this.layoutTypes[metaId.replace('layout-', '')]()
     }
 
-    return group !== 'layout' ? layoutTypes.field(controlData) : layoutTypes[metaId.replace('layout-', '')]()
+    return this.layoutTypes.field(elementData)
   }
 
   applyOptions = async (controlOptions = {}) => {

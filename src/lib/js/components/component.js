@@ -16,7 +16,7 @@ import Components from './index.js'
 import Data from './data.js'
 import animate from '../common/animation.js'
 import Controls from './controls/index.js'
-import { get } from '../common/utils/object.mjs'
+import { get, set } from '../common/utils/object.mjs'
 import { toTitleCase } from '../common/utils/string.mjs'
 
 export default class Component extends Data {
@@ -355,6 +355,7 @@ export default class Component extends Data {
 
   /**
    * Method for handling onAdd for all components
+   * @todo improve readability of this method
    * @param  {Object} evt
    * @return {Object} Component
    */
@@ -397,10 +398,14 @@ export default class Component extends Data {
 
     const onAddConditions = {
       controls: () => {
-        const { controlData } = Controls.get(item.id)
         const {
-          meta: { id: metaId },
-        } = controlData
+          controlData: {
+            meta: { id: metaId },
+            ...elementData
+          },
+        } = Controls.get(item.id)
+
+        set(elementData, 'config.controlId', metaId)
 
         const controlType = metaId.startsWith('layout-') ? metaId.replace(/^layout-/, '') : 'field'
         const targets = {
@@ -424,7 +429,7 @@ export default class Component extends Data {
         const depth = get(targets, `${this.name}.${controlType}`)
         const action = depthMap.get(depth)()
         dom.remove(item)
-        const component = action(controlData, newIndex)
+        const component = action(elementData, newIndex)
 
         return component
       },
@@ -501,10 +506,23 @@ export default class Component extends Data {
     events.onRender && dom.onRender(this.dom, events.onRender)
   }
 
+  /**
+   * Sets the configuration for the component. See src/demo/js/options/config.js for example
+   * @param {Object} config - Configuration object with possible structures:
+   * @param {Object} [config.all] - Global configuration applied to all components
+   * @param {Object} [config[controlId]] - Configuration specific to a control type
+   * @param {Object} [config[id]] - Configuration specific to a component instance
+   * @description Merges configurations in order of precedence:
+   * 1. Existing config (this.configVal)
+   * 2. Global config (all)
+   * 3. Control type specific config
+   * 4. Instance specific config
+   * The merged result is stored in this.configVal
+   */
   set config(config) {
-    const metaId = get(this.data, 'meta.id')
     const allConfig = get(config, 'all')
-    const typeConfig = metaId && get(config, metaId)
+    const controlId = get(this.data, 'config.controlId')
+    const typeConfig = controlId && get(config, controlId)
     const idConfig = get(config, this.id)
     const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
       (acc, cur) => (cur ? merge(acc, cur) : acc),

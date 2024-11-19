@@ -100,4 +100,25 @@ export default class Data {
   }
   setCallbacks = {}
   configVal = Object.create(null)
+
+  /**
+   * Parses the provided data argument. If the argument is a string, it attempts to parse it as JSON.
+   * If the parsing fails, it logs an error and returns an empty object.
+   * If the argument is not a string, it returns the argument as is.
+   *
+   * @param {string|Object} dataArg - The data to be parsed. Can be a JSON string or an object.
+   * @returns {Object} - The parsed object or the original object if the input was not a string.
+   */
+  parseformData = (dataArg = Object.create(null)) => {
+    if (typeof dataArg === 'string') {
+      try {
+        return JSON.parse(dataArg)
+      } catch (e) {
+        console.error('Invalid JSON string provided:', e)
+        return Object.create(null)
+      }
+    }
+
+    return dataArg
+  }
 }

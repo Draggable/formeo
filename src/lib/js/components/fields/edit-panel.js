@@ -126,7 +126,8 @@ export default class EditPanel {
    * @param {String} attr
    * @param {String|Array} val
    */
-  addAttribute = (attr, val) => {
+  addAttribute = (attr, valArg) => {
+    let val = valArg
     const safeAttr = slugify(attr)
     const itemKey = `attrs.${safeAttr}`
 
@@ -157,16 +158,16 @@ export default class EditPanel {
    * Add option to options panel
    */
   addOption = () => {
-    const metaId = this.field.data.meta.id
+    const controlId = this.field.data.config.controlId
     const fieldOptionData = this.field.get('options')
-    const type = metaId === 'select' ? 'option' : metaId
+    const type = controlId === 'select' ? 'option' : controlId
     const newOptionLabel = i18n.get('newOptionLabel', { type }) || 'New Option'
     const itemKey = `options.${this.data.length}`
-    
+
     const lastOptionData = fieldOptionData[fieldOptionData.length - 1]
     const optionTemplate = fieldOptionData.length ? lastOptionData : {}
     const itemData = { ...optionTemplate, label: newOptionLabel }
-    if (metaId !== 'button') {
+    if (controlId !== 'button') {
       itemData.value = slugify(newOptionLabel)
     }
     const newOption = new EditPanelItem({
