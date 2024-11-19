@@ -26,6 +26,7 @@ export const defaults = {
       i18n: {
         location: 'https://draggable.github.io/formeo/assets/lang/',
       },
+      onLoad: () => {},
     }
   },
 }

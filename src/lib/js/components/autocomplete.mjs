@@ -93,6 +93,12 @@ export const componentOptions = selectedId => {
  * Output an autocomplete form element
  */
 export default class Autocomplete {
+  /**
+   * Create an Autocomplete instance
+   * @param {String} key - The key for the autocomplete instance
+   * @param {String} value - The initial value for the autocomplete input
+   * @param {String} i18nKey - The internationalization key for the autocomplete
+   */
   constructor(key, value, i18nKey) {
     this.key = key
     this.className = key.replace(/\./g, '-')
@@ -220,16 +226,16 @@ export default class Autocomplete {
     })
 
     this.dom = dom.create({
-      children: [this.displayField, this.hiddenField, this.list],
+      children: [this.displayField, this.hiddenField],
       className: this.className,
       action: {
-        onRender: () => {
+        onRender: element => {
+          this.stage = element.closest('.formeo-stage')
           const component = this.value && Components.getAddress(this.value)
           this.label = component && getComponentLabel(component)
           if (this.label) {
             this.displayField.value = this.label
           }
-          this.updateOptions()
         },
       },
     })
@@ -238,16 +244,17 @@ export default class Autocomplete {
   }
 
   updateOptions() {
+    let options = optionsCache
     const now = Date.now()
-    if (now - lastCache > ANIMATION_SPEED_SLOW) {
+
+    if (!options || now - lastCache > ANIMATION_SPEED_SLOW * 10) {
       dom.empty(this.list)
-      this.generateOptions()
+      options = this.generateOptions()
       lastCache = now
     }
-    const options = optionsCache || this.generateOptions()
 
-    for (const option of options) {
-      this.list.appendChild(option)
+    if (!this.list.children.length) {
+      this.list.append(...options)
     }
   }
 
@@ -291,13 +298,17 @@ export default class Autocomplete {
     return optionsCache
   }
 
-  /**
-   * Hides autocomplete list and deselects all the options
-   * @param {Object} list - list of autocomplete options
-   */
-  hideList(list = this.list) {
-    animate.slideUp(list, ANIMATION_SPEED_FAST)
-    this.removeHighlight()
+  setListPosition() {
+    const { offsetHeight, offsetWidth } = this.displayField
+    const containerRect = this.displayField.closest('.formeo-stage').getBoundingClientRect()
+    const triggerRect = this.displayField.getBoundingClientRect()
+    const listStyle = {
+      position: 'absolute',
+      top: `${triggerRect.y + offsetHeight + window.scrollY - containerRect.y}px`,
+      left: `${triggerRect.x + window.scrollX - containerRect.x}px`,
+      width: `${offsetWidth + 1}px`,
+    }
+    Object.assign(this.list.style, listStyle)
   }
 
   /**
@@ -306,8 +317,24 @@ export default class Autocomplete {
    * @param {Object} selectedOption - option to be selected
    */
   showList(selectedOption, list = this.list) {
+    if (!this.stage.contains(this.list)) {
+      this.stage.appendChild(this.list)
+    }
+    this.setListPosition()
     this.selectOption(selectedOption)
     animate.slideDown(list, ANIMATION_SPEED_FAST)
+  }
+
+  /**
+   * Hides autocomplete list and deselects all the options
+   * @param {Object} list - list of autocomplete options
+   */
+  hideList(list = this.list) {
+    animate.slideUp(list, ANIMATION_SPEED_FAST)
+    this.removeHighlight()
+    if (this.stage.contains(this.list)) {
+      this.stage.removeChild(this.list)
+    }
   }
 
   /**
@@ -316,8 +343,8 @@ export default class Autocomplete {
    * @return {Object} first list option with 'active-option' class
    */
   getActiveOption(list = this.list) {
-    const activeOption = list.getElementsByClassName('active-option')[0]
-    if (activeOption && activeOption.style.display !== 'none') {
+    const activeOption = list.querySelector('.active-option')
+    if (activeOption?.style.display !== 'none') {
       return activeOption
     }
     return null
