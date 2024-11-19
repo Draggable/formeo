@@ -7,7 +7,7 @@ const editorActions = (editor, renderer) => ({
     renderFormWrap.style.display = 'block'
     renderer.render(editor.formData)
   },
-  logJSON: () => console.log(editor.json),
+  logJSON: () => console.log(JSON.stringify(JSON.parse(editor.json), null, 2)),
   viewData: () => {
     for (const [key, val] of Object.entries(editor.formData)) {
       console.log(key, val)
