@@ -1,3 +1,22 @@
+# [3.0.0](https://github.com/Draggable/formeo/compare/v2.3.1...v3.0.0) (2024-11-19)
+
+
+### Bug Fixes
+
+* add missing properties ([6569a8e](https://github.com/Draggable/formeo/commit/6569a8ee8a928d2ed75693e76a0ac93b6e35d062))
+* remove unused conditions from formData ([d63cb9f](https://github.com/Draggable/formeo/commit/d63cb9f2922330bacad48141ee9e5a72cef67bed))
+
+
+### Features
+
+* add  to formData json ([8561857](https://github.com/Draggable/formeo/commit/8561857d146ede24dbffa4d183f35e10e19e3458))
+* generate a json schema from zod defnied schema ([1eb4985](https://github.com/Draggable/formeo/commit/1eb498599cae228306289b31e436511f59b72d7d))
+
+
+### BREAKING CHANGES
+
+* adding a new key to formData could potentially break existing software that assumes only the old keys
+
 ## [2.3.1](https://github.com/Draggable/formeo/compare/v2.3.0...v2.3.1) (2024-11-19)
 
 
