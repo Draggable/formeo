@@ -67,6 +67,7 @@
     "build:lib": "vite build --config vite.config.lib.mjs",
     "build": "npm-run-all -p build:icons build:demo",
     "prebuild": "npm run build:lib",
+    "postbuild": "npm run generate:jsonSchema",
     "build:demo": "vite build --mode demo",
     "build:demo:watch": "vite build --mode demo --watch",
     "build:icons": "node ./tools/generate-sprite",
