@@ -1,3 +1,11 @@
+## [2.3.1](https://github.com/Draggable/formeo/compare/v2.3.0...v2.3.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* button options ([3075f1c](https://github.com/Draggable/formeo/commit/3075f1c330034b10d62ba4322ae23a82e68e4b13))
+* tab group animations ([399b74a](https://github.com/Draggable/formeo/commit/399b74a0ead36d559c0de36908cdad49f6abc577))
+
 # [2.3.0](https://github.com/Draggable/formeo/compare/v2.2.2...v2.3.0) (2024-11-15)
 
 
