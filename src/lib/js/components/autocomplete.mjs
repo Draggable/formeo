@@ -8,9 +8,6 @@ import { toTitleCase } from '../common/utils/string.mjs'
 const BASE_NAME = 'f-autocomplete'
 const HIGHLIGHT_CLASS_NAME = 'highlight-component'
 
-let lastCache = Date.now()
-let optionsCache
-
 /**
  * Counts the number of occurences of a string in an array of strings
  * @param {Array} arr labels
@@ -93,6 +90,8 @@ export const componentOptions = selectedId => {
  * Output an autocomplete form element
  */
 export default class Autocomplete {
+  lastCache = Date.now()
+  optionsCache = null
   /**
    * Create an Autocomplete instance
    * @param {String} key - The key for the autocomplete instance
@@ -201,6 +200,8 @@ export default class Autocomplete {
 
         this.hiddenField.value = value
         this.value = value
+
+        this.setValue({ dataset: { label: value, value } })
       },
     }
 
@@ -244,13 +245,13 @@ export default class Autocomplete {
   }
 
   updateOptions() {
-    let options = optionsCache
+    let options = this.optionsCache
     const now = Date.now()
 
-    if (!options || now - lastCache > ANIMATION_SPEED_SLOW * 10) {
+    if (!options || now - this.lastCache > ANIMATION_SPEED_SLOW * 10) {
       dom.empty(this.list)
       options = this.generateOptions()
-      lastCache = now
+      this.lastCache = now
     }
 
     if (!this.list.children.length) {
@@ -268,7 +269,7 @@ export default class Autocomplete {
       return target
     }
 
-    optionsCache = options.map(optionData => {
+    this.optionsCache = options.map(optionData => {
       const { value, textLabel, htmlLabel } = optionData
       const optionConfig = {
         tag: 'li',
@@ -295,7 +296,7 @@ export default class Autocomplete {
       return dom.create(optionConfig)
     })
 
-    return optionsCache
+    return this.optionsCache
   }
 
   setListPosition() {

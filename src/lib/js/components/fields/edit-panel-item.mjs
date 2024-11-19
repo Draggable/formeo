@@ -328,10 +328,10 @@ export default class EditPanelItem {
     }
 
     const conditionChangeAction = ({ target }) => {
-      const row = target.closest('.f-condition-row')
+      const conditionRow = target.closest('.f-condition-row')
       const regex = new RegExp(`${target.className}(?:\\S?)+`, 'gm')
-      row.className = row.className.replace(regex, '')
-      row.classList.add([target.className, target.value].filter(Boolean).join('-'))
+      conditionRow.className = conditionRow.className.replace(regex, '')
+
       const evtData = {
         dataPath,
         value: target.value,
@@ -341,7 +341,6 @@ export default class EditPanelItem {
       events.formeoUpdated(evtData)
       Components.setAddress(dataPath, target.value)
 
-      const conditionRow = target.closest('.f-condition-row')
       const rowIndex = indexOfNode(conditionRow)
       this.processConditionUIState(this.itemFieldGroups[rowIndex])
     }
