@@ -13,6 +13,13 @@ const htmlAttributesSchema = z.record(
     z.boolean(),
     z.function(),
     z.record(z.string(), z.string()), // for style objects
+    z.array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
+        selected: z.boolean(),
+      }),
+    ), // for configurable html elements like h1, h2 etc
   ]),
 )
 
@@ -46,7 +53,7 @@ const formDataSchema = z
       z.object({
         id: z.string().uuid(),
         children: z.array(z.string().uuid()),
-        className: z.string().optional(),
+        className: z.union([z.string(), z.array(z.string())]).optional(),
         config: z
           .object({
             width: z.string().optional(),
@@ -63,7 +70,10 @@ const formDataSchema = z
         config: z
           .object({
             label: z.string().optional(),
+            hideLabel: z.boolean().optional(),
+            editableContent: z.boolean().optional(),
           })
+          .catchall(z.any())
           .optional(),
         meta: z
           .object({
@@ -72,6 +82,8 @@ const formDataSchema = z
             id: z.string().optional(),
           })
           .optional(),
+        content: z.string().optional(),
+        action: z.object({}).optional(),
         conditions: z
           .array(
             z.object({
