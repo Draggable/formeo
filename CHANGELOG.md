@@ -1,3 +1,10 @@
+## [3.0.1](https://github.com/Draggable/formeo/compare/v3.0.0...v3.0.1) (2024-11-19)
+
+
+### Bug Fixes
+
+* migrate meta.id to config.controlId for smaller payloads ([47d1bc5](https://github.com/Draggable/formeo/commit/47d1bc5df8027250a7c52452607d297b43398193))
+
 # [3.0.0](https://github.com/Draggable/formeo/compare/v2.3.1...v3.0.0) (2024-11-19)
 
 
