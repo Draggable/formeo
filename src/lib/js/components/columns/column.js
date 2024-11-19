@@ -41,7 +41,7 @@ export default class Column extends Component {
   constructor(columnData) {
     super('column', { ...DEFAULT_DATA(), ...columnData })
 
-    const children = this.createChildWrap()
+    const childWrap = this.createChildWrap()
 
     this.dom = dom.create({
       tag: 'li',
@@ -55,11 +55,11 @@ export default class Column extends Component {
         this.getActionButtons(),
         DOM_CONFIGS.editWindow(),
         DOM_CONFIGS.resizeHandle(new ResizeColumn()),
-        children,
+        childWrap,
       ],
     })
 
-    this.processConfig(this.dom)
+    this.processConfig()
 
     events.columnResized = new window.CustomEvent('columnResized', {
       detail: {
@@ -68,7 +68,7 @@ export default class Column extends Component {
       },
     })
 
-    Sortable.create(children, {
+    Sortable.create(childWrap, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
@@ -98,11 +98,10 @@ export default class Column extends Component {
    * Process column configuration data
    * @param  {Object} column
    */
-  processConfig(column) {
+  processConfig() {
     const columnWidth = h.get(this.data, 'config.width')
     if (columnWidth) {
-      column.dataset.colWidth = columnWidth
-      column.style.width = columnWidth
+      this.setDomWidth(columnWidth)
     }
   }
 
@@ -114,12 +113,21 @@ export default class Column extends Component {
   }
 
   /**
+   * Sets the width data and style for the column
+   * @param {string} width - The width value to be set for the column
+   * @returns {void}
+   */
+  setDomWidth = width => {
+    this.dom.dataset.colWidth = width
+    this.dom.style.width = width
+  }
+
+  /**
    * Sets a columns width
    * @param {String} width percent or pixel
    */
   setWidth = width => {
-    this.dom.dataset.colWidth = width
-    this.dom.style.width = width
+    this.setDomWidth(width)
     return this.set('config.width', width)
   }
 }

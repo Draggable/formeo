@@ -17,7 +17,7 @@ const htmlAttributesSchema = z.record(
       z.object({
         label: z.string(),
         value: z.string(),
-        selected: z.boolean(),
+        selected: z.boolean().optional(),
       }),
     ), // for configurable html elements like h1, h2 etc
   ]),
@@ -84,6 +84,26 @@ const formDataSchema = z
           .optional(),
         content: z.string().optional(),
         action: z.object({}).optional(),
+        options: z
+          .array(
+            z.object({
+              label: z.string(),
+              value: z.string().optional(),
+              selected: z.boolean().optional(),
+              checked: z.boolean().optional(),
+              type: z
+                .array(
+                  z.object({
+                    type: z.string(),
+                    label: z.string(),
+                    // value: z.string().optional(),
+                    selected: z.boolean().optional(),
+                  }),
+                )
+                .optional(),
+            }),
+          )
+          .optional(),
         conditions: z
           .array(
             z.object({
@@ -134,7 +154,23 @@ const reorderSchema = (schema: object) => {
     ...schema,
   }
 }
+
+function deepRemoveKeys(obj, exclude) {
+  if (Array.isArray(obj)) {
+    return obj.map(i => deepRemoveKeys(i, exclude))
+  }
+  if (typeof obj === 'object') {
+    return Object.fromEntries(
+      Object.entries(obj)
+        .filter(([k, v]) => !(k in exclude && (exclude[k] === undefined || exclude[k] === v)))
+        .map(([k, v]) => [k, deepRemoveKeys(v, exclude)]),
+    )
+  }
+  return obj
+}
+
 const jsonSchema = zodToJsonSchema(formDataSchema, { name: 'formData', nameStrategy: 'title' })
 const orderedJsonSchema = reorderSchema(jsonSchema)
+const filteredJsonSchema = deepRemoveKeys(orderedJsonSchema, { additionalProperties: false })
 const distDir = join(__dirname, '../dist')
-writeFileSync(join(distDir, 'formData.schema.json'), JSON.stringify(orderedJsonSchema, null, 2))
+writeFileSync(join(distDir, 'formData.schema.json'), JSON.stringify(filteredJsonSchema, null, 2))
