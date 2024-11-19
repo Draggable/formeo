@@ -142,11 +142,12 @@ export default class Panels {
       action: {
         click: evt => {
           const index = indexOfNode(evt.target, evt.target.parentElement)
-          this.currentPanel = this.panels[index]
-          const labels = evt.target.parentElement.childNodes
-          this.nav.refresh(index)
-          dom.removeClasses(labels, 'active-tab')
-          evt.target.classList.add('active-tab')
+          this.nav.groupChange(index)
+          // this.currentPanel = this.panels[index]
+          // const labels = this.labels.querySelectorAll('h5')
+          // this.nav.refresh(index)
+          // dom.removeClasses(labels, 'active-tab')
+          // evt.target.classList.add('active-tab')
         },
       },
       content: panel.config.label,
@@ -233,14 +234,15 @@ export default class Panels {
     let lastOffset = { ...offset }
 
     action.groupChange = newIndex => {
+      this.activePanelIndex = newIndex
       const labels = labelWrap.children
       dom.removeClasses(siblingGroups, 'active-panel')
       dom.removeClasses(labels, 'active-tab')
       this.currentPanel = siblingGroups[newIndex]
       this.currentPanel.classList.add('active-panel')
-
       labels[newIndex].classList.add('active-tab')
-
+      
+      action.setTranslateX(newIndex)
       return this.currentPanel
     }
 
@@ -254,6 +256,8 @@ export default class Panels {
     const translateX = ({ offset, reset, duration = ANIMATION_SPEED_FAST, animate = !this.isTabbed }) => {
       const panelQueue = [getTransition(lastOffset.panel), getTransition(offset.panel)]
       const navQueue = [getTransition(lastOffset.nav), getTransition(this.isTabbed ? 0 : offset.nav)]
+
+      debugger
 
       if (reset) {
         const [panelStart] = panelQueue
@@ -278,6 +282,7 @@ export default class Panels {
           lastOffset = offset
         }
       }
+
       panelTransition.addEventListener('finish', handleFinish)
     }
 
@@ -291,6 +296,7 @@ export default class Panels {
         this.activePanelIndex = newIndex
         action.groupChange(newIndex)
       }
+      // debugger
       action.setTranslateX(this.activePanelIndex)
       this.resizePanels()
     }

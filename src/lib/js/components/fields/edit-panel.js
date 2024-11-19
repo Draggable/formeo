@@ -161,18 +161,23 @@ export default class EditPanel {
     const metaId = this.field.data.meta.id
     const fieldOptionData = this.field.get('options')
     const type = metaId === 'select' ? 'option' : metaId
-    const newOptionLabel = i18n.get(`newOptionLabel`, { type }) || 'New Option'
+    const newOptionLabel = i18n.get('newOptionLabel', { type }) || 'New Option'
     const itemKey = `options.${this.data.length}`
-
-    const optionTemplate = fieldOptionData.length ? cleanObj(fieldOptionData[fieldOptionData.length - 1]) : {}
-    const itemData = { ...optionTemplate, label: newOptionLabel, value: slugify(newOptionLabel) }
+    
+    const lastOptionData = fieldOptionData[fieldOptionData.length - 1]
+    const optionTemplate = fieldOptionData.length ? lastOptionData : {}
+    const itemData = { ...optionTemplate, label: newOptionLabel }
+    if (metaId !== 'button') {
+      itemData.value = slugify(newOptionLabel)
+    }
     const newOption = new EditPanelItem({
       key: itemKey,
       data: itemData,
       field: this.field,
       index: this.props.children.length,
     })
-
+    
+    // debugger
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
     this.field.set(itemKey, itemData)
