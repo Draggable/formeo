@@ -25,6 +25,7 @@ const htmlAttributesSchema = z.record(
 
 const formDataSchema = z
   .object({
+    $schema: z.string().regex(/\.json$/),
     id: z.string().uuid(),
     stages: z.record(
       z.string().uuid(),
