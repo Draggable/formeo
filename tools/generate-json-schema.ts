@@ -173,4 +173,4 @@ const jsonSchema = zodToJsonSchema(formDataSchema, { name: 'formData', nameStrat
 const orderedJsonSchema = reorderSchema(jsonSchema)
 const filteredJsonSchema = deepRemoveKeys(orderedJsonSchema, { additionalProperties: false })
 const distDir = join(__dirname, '../dist')
-writeFileSync(join(distDir, 'formData.schema.json'), JSON.stringify(filteredJsonSchema, null, 2))
+writeFileSync(join(distDir, 'formData_schema.json'), JSON.stringify(filteredJsonSchema, null, 2))
