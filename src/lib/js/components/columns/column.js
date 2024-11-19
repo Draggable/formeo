@@ -108,7 +108,9 @@ export default class Column extends Component {
 
   // loops through children and refresh their edit panels
   refreshFieldPanels = () => {
-    this.children.forEach(field => field.panels.nav.refresh())
+    for (const field of this.children) {
+      field.panels.nav.refresh()
+    }
   }
 
   /**
