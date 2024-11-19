@@ -20,7 +20,7 @@ class ButtonControl extends Control {
       options: [
         {
           label: i18n.get('button'),
-          type: ['button', 'submit', 'reset'].map((buttonType, index) => ({
+          type: ['button', 'submit', 'reset'].map((buttonType) => ({
             label: buttonType,
             type: buttonType,
           })),

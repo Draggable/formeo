@@ -4,7 +4,6 @@ import actions from '../../common/actions.js'
 import EditPanelItem from './edit-panel-item.mjs'
 import { capitalize } from '../../common/helpers.mjs'
 import { slugify, toTitleCase } from '../../common/utils/string.mjs'
-import { cleanObj } from '../../common/utils/object.mjs'
 
 /**
  * Element/Field class.
@@ -176,8 +175,7 @@ export default class EditPanel {
       field: this.field,
       index: this.props.children.length,
     })
-    
-    // debugger
+
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
     this.field.set(itemKey, itemData)

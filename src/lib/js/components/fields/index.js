@@ -40,6 +40,26 @@ export class Fields extends ComponentData {
     }
     return found
   }
+
+  getData = () => {
+    return Object.entries(this.data).reduce((acc, [key, val]) => {
+      const { conditions, ...data } = val?.getData() || val
+
+      if (conditions?.length) {
+        let hasConditions = true
+        if (conditions.length === 1) {
+          const [firstCondition] = conditions
+          hasConditions = Boolean(firstCondition.if[0].source && firstCondition.then[0].target)
+        }
+        if (hasConditions) {
+          data.conditions = conditions
+        }
+      }
+
+      acc[key] = data
+      return acc
+    }, {})
+  }
 }
 
 const fields = new Fields()
