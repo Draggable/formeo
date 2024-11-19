@@ -7,7 +7,7 @@ import RowsData from './rows/index.js'
 import ColumnsData from './columns/index.js'
 import FieldsData from './fields/index.js'
 import ExternalsData from './externals.js'
-import { SESSION_FORMDATA_KEY } from '../constants.js'
+import { SESSION_FORMDATA_KEY, version } from '../constants.js'
 
 export const Stages = StagesData
 export const Rows = RowsData
@@ -78,7 +78,10 @@ export class Components extends Data {
   }
 
   get json() {
-    return window.JSON.stringify(this.formData)
+    return window.JSON.stringify({
+      $schema: `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formData_schema.json`,
+      ...this.formData,
+    })
   }
 
   get formData() {

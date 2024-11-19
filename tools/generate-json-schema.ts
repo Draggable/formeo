@@ -82,26 +82,28 @@ const formDataSchema = z
             id: z.string().optional(),
           })
           .optional(),
-        content: z.string().optional(),
+        content: z.any().optional(),
         action: z.object({}).optional(),
         options: z
           .array(
-            z.object({
-              label: z.string(),
-              value: z.string().optional(),
-              selected: z.boolean().optional(),
-              checked: z.boolean().optional(),
-              type: z
-                .array(
-                  z.object({
-                    type: z.string(),
-                    label: z.string(),
-                    // value: z.string().optional(),
-                    selected: z.boolean().optional(),
-                  }),
-                )
-                .optional(),
-            }),
+            z
+              .object({
+                label: z.string(),
+                value: z.string().optional(),
+                selected: z.boolean().optional(),
+                checked: z.boolean().optional(),
+                type: z
+                  .array(
+                    z.object({
+                      type: z.string(),
+                      label: z.string(),
+                      // value: z.string().optional(),
+                      selected: z.boolean().optional(),
+                    }),
+                  )
+                  .optional(),
+              })
+              .catchall(z.any()),
           )
           .optional(),
         conditions: z
@@ -155,22 +157,7 @@ const reorderSchema = (schema: object) => {
   }
 }
 
-function deepRemoveKeys(obj, exclude) {
-  if (Array.isArray(obj)) {
-    return obj.map(i => deepRemoveKeys(i, exclude))
-  }
-  if (typeof obj === 'object') {
-    return Object.fromEntries(
-      Object.entries(obj)
-        .filter(([k, v]) => !(k in exclude && (exclude[k] === undefined || exclude[k] === v)))
-        .map(([k, v]) => [k, deepRemoveKeys(v, exclude)]),
-    )
-  }
-  return obj
-}
-
 const jsonSchema = zodToJsonSchema(formDataSchema, { name: 'formData', nameStrategy: 'title' })
 const orderedJsonSchema = reorderSchema(jsonSchema)
-const filteredJsonSchema = deepRemoveKeys(orderedJsonSchema, { additionalProperties: false })
 const distDir = join(__dirname, '../dist')
-writeFileSync(join(distDir, 'formData_schema.json'), JSON.stringify(filteredJsonSchema, null, 2))
+writeFileSync(join(distDir, 'formData_schema.json'), JSON.stringify(orderedJsonSchema, null, 2))
