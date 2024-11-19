@@ -142,12 +142,8 @@ export default class Panels {
       action: {
         click: evt => {
           const index = indexOfNode(evt.target, evt.target.parentElement)
+          this.nav.setTranslateX(index, false)
           this.nav.groupChange(index)
-          // this.currentPanel = this.panels[index]
-          // const labels = this.labels.querySelectorAll('h5')
-          // this.nav.refresh(index)
-          // dom.removeClasses(labels, 'active-tab')
-          // evt.target.classList.add('active-tab')
         },
       },
       content: panel.config.label,
@@ -228,6 +224,7 @@ export default class Panels {
     const action = {}
     const groupParent = this.currentPanel.parentElement
     const labelWrap = this.labels.firstChild
+    const panelTabs = labelWrap.children
     const siblingGroups = this.currentPanel.parentElement.childNodes
     this.activePanelIndex = indexOfNode(this.currentPanel, groupParent)
     let offset = { nav: 0, panel: 0 }
@@ -235,14 +232,14 @@ export default class Panels {
 
     action.groupChange = newIndex => {
       this.activePanelIndex = newIndex
-      const labels = labelWrap.children
-      dom.removeClasses(siblingGroups, 'active-panel')
-      dom.removeClasses(labels, 'active-tab')
       this.currentPanel = siblingGroups[newIndex]
+
+      dom.removeClasses(siblingGroups, 'active-panel')
+      dom.removeClasses(panelTabs, 'active-tab')
+
       this.currentPanel.classList.add('active-panel')
-      labels[newIndex].classList.add('active-tab')
-      
-      action.setTranslateX(newIndex)
+      panelTabs[newIndex].classList.add('active-tab')
+
       return this.currentPanel
     }
 
@@ -256,8 +253,6 @@ export default class Panels {
     const translateX = ({ offset, reset, duration = ANIMATION_SPEED_FAST, animate = !this.isTabbed }) => {
       const panelQueue = [getTransition(lastOffset.panel), getTransition(offset.panel)]
       const navQueue = [getTransition(lastOffset.nav), getTransition(this.isTabbed ? 0 : offset.nav)]
-
-      debugger
 
       if (reset) {
         const [panelStart] = panelQueue
@@ -293,11 +288,9 @@ export default class Panels {
 
     action.refresh = (newIndex = this.activePanelIndex) => {
       if (this.activePanelIndex !== newIndex) {
-        this.activePanelIndex = newIndex
         action.groupChange(newIndex)
       }
-      // debugger
-      action.setTranslateX(this.activePanelIndex)
+      action.setTranslateX(this.activePanelIndex, false)
       this.resizePanels()
     }
 
@@ -308,13 +301,13 @@ export default class Panels {
     action.nextGroup = () => {
       const newIndex = this.activePanelIndex + 1
       if (newIndex !== siblingGroups.length) {
-        const curPanel = action.groupChange(newIndex)
+        const nextPanel = siblingGroups[newIndex]
         offset = {
           nav: -labelWrap.offsetWidth * newIndex,
-          panel: -curPanel.offsetLeft,
+          panel: -nextPanel.offsetLeft,
         }
         translateX({ offset })
-        this.activePanelIndex++
+        action.groupChange(newIndex)
       } else {
         offset = {
           nav: lastOffset.nav - 8,
@@ -329,13 +322,13 @@ export default class Panels {
     action.prevGroup = () => {
       if (this.activePanelIndex !== 0) {
         const newIndex = this.activePanelIndex - 1
-        const curPanel = action.groupChange(newIndex)
+        const prevPanel = siblingGroups[newIndex]
         offset = {
           nav: -labelWrap.offsetWidth * newIndex,
-          panel: -curPanel.offsetLeft,
+          panel: -prevPanel.offsetLeft,
         }
         translateX({ offset })
-        this.activePanelIndex--
+        action.groupChange(newIndex)
       } else {
         offset = {
           nav: 8,
