@@ -1,3 +1,11 @@
+## [3.0.2](https://github.com/Draggable/formeo/compare/v3.0.1...v3.0.2) (2024-11-19)
+
+
+### Bug Fixes
+
+* conditions component autocomplete visibility ([57a9028](https://github.com/Draggable/formeo/commit/57a902834b6f48dcb068d0d8d53394c77273ec77))
+* instance option cache ([b1d07e1](https://github.com/Draggable/formeo/commit/b1d07e195c52ae9f99664048366bc05224c8e09d)), closes [#310](https://github.com/Draggable/formeo/issues/310)
+
 ## [3.0.1](https://github.com/Draggable/formeo/compare/v3.0.0...v3.0.1) (2024-11-19)
 
 
