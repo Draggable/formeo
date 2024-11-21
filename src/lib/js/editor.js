@@ -73,13 +73,11 @@ export class FormeoEditor {
 
     promises.push(i18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }))
 
-    if (this.opts.allowEdit) {
-      promises.push(this.init())
-    }
-
     const resolvedPromises = await Promise.all(promises)
 
-    this.opts.onLoad?.(this)
+    if (this.opts.allowEdit) {
+      this.init()
+    }
 
     return resolvedPromises
   }
@@ -105,6 +103,7 @@ export class FormeoEditor {
       }
 
       this.render()
+      this.opts.onLoad?.(this)
     })
   }
 
