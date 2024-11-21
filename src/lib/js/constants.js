@@ -172,7 +172,7 @@ export const CONDITION_INPUT_ORDER = [
 
 export const FIELD_PROPERTY_MAP = {
   value: 'attrs.value',
-  checked: 'attrs.checked',
+  isChecked: 'attrs.checked',
   ...visiblityConfigs,
 }
 
