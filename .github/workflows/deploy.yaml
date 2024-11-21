@@ -1,0 +1,35 @@
+name: Deploy
+
+on:
+  release:
+    types: [created]
+
+    jobs:
+      build:
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          CI: true
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - uses: actions/setup-node@v4
+            with:
+              cache: 'npm'
+              node-version: 23
+          - name: Install dependencies
+            run: npm install
+          - name: Test
+            run: npm test
+          - name: Build
+            if: success()
+            run: npm run build
+            if: success()
+          - name: Deploy - https://draggable.github.io/formeo/
+            if: success()
+            uses: peaceiris/actions-gh-pages@v4
+            with:
+              github_token: ${{ secrets.GH_TOKEN }}
+              publish_dir: ./dist/demo
+    
