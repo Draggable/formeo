@@ -1,3 +1,10 @@
+## [3.0.3](https://github.com/Draggable/formeo/compare/v3.0.2...v3.0.3) (2024-11-21)
+
+
+### Bug Fixes
+
+* async race condition ([26389a0](https://github.com/Draggable/formeo/commit/26389a085335b6f945fca1a523228b094a62b566))
+
 ## [3.0.2](https://github.com/Draggable/formeo/compare/v3.0.1...v3.0.2) (2024-11-19)
 
 
