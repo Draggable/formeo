@@ -20,9 +20,10 @@ import { get, set } from '../common/utils/object.mjs'
 import { toTitleCase } from '../common/utils/string.mjs'
 
 export default class Component extends Data {
-  constructor(name, data = {}, render) {
-    super(name, { ...data, id: data.id || uuid() })
-    this.id = this.data.id
+  constructor(name, dataArg = {}, render) {
+    const data = { ...dataArg, id: dataArg.id || uuid() }
+    super(name, data)
+    this.id = data.id
     this.name = name
     this.config = Components[`${this.name}s`].config
     merge(this.config, data.config)
@@ -96,8 +97,9 @@ export default class Component extends Data {
    * @return  {Object} parent element
    */
   empty() {
-    const removed = this.children.map(child => child.remove())
-    this.data.children = this.data.children.filter(childId => removed.indexOf(childId) === -1)
+    const removed = this.children.map(child => {
+      child.remove()
+    })
     this.dom.classList.add('empty')
     return removed
   }

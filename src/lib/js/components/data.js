@@ -84,7 +84,7 @@ export default class Data {
     const parent = this.get(delPath)
     if (Array.isArray(parent)) {
       parent.splice(Number(delItem), 1)
-    } else {
+    } else if (parent) {
       delete parent[delItem]
     }
     return parent
