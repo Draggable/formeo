@@ -1,3 +1,10 @@
+## [3.0.6](https://github.com/Draggable/formeo/compare/v3.0.5...v3.0.6) (2024-11-26)
+
+
+### Bug Fixes
+
+* form render mutating formData ([437cadc](https://github.com/Draggable/formeo/commit/437cadc279c1e51d4f747509714a19c65a6a3da1))
+
 ## [3.0.5](https://github.com/Draggable/formeo/compare/v3.0.4...v3.0.5) (2024-11-26)
 
 
