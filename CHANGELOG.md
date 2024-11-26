@@ -1,3 +1,10 @@
+## [3.0.5](https://github.com/Draggable/formeo/compare/v3.0.4...v3.0.5) (2024-11-26)
+
+
+### Bug Fixes
+
+* deploy github action ([c758fbf](https://github.com/Draggable/formeo/commit/c758fbfe7567bd9cecf460cd8958c70d56457910))
+
 ## [3.0.4](https://github.com/Draggable/formeo/compare/v3.0.3...v3.0.4) (2024-11-26)
 
 
