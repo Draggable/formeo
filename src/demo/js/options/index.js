@@ -2,7 +2,7 @@ import external from './external'
 import controls from './controls'
 import config from './config'
 
-const editorContainer = document.querySelector('.build-form')
+const editorContainer = '.build-form'
 const renderContainer = '.render-form'
 
 export const editorOptions = {

@@ -1,10 +1,10 @@
 import Data from './data.js'
-import { uuid, clone, merge } from '../common/utils/index.mjs'
+import { uuid, clone, merge, parseData } from '../common/utils/index.mjs'
 import { get } from '../common/utils/object.mjs'
 
 export default class ComponentData extends Data {
   load = dataArg => {
-    const data = this.parseformData(dataArg)
+    const data = parseData(dataArg)
     this.empty()
     for (const [key, val] of Object.entries(data)) {
       this.add(key, val)
