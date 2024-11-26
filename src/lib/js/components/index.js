@@ -1,5 +1,5 @@
 import Data from './data.js'
-import { uuid, sessionStorage, isAddress } from '../common/utils/index.mjs'
+import { uuid, sessionStorage, isAddress, parseData, clone } from '../common/utils/index.mjs'
 import ControlsData from './controls/index.js'
 
 import StagesData from './stages/index.js'
@@ -16,15 +16,28 @@ export const Fields = FieldsData
 export const Controls = ControlsData
 export const Externals = ExternalsData
 
-const DEFAULT_DATA = {
+const defaultFormData = () => ({
   id: uuid(),
+  stages: { [uuid()]: {} },
+  rows: {},
+  columns: {},
+  fields: {},
+})
+
+const getFormData = (formData, useSessionStorage = false) => {
+  if (formData) {
+    return clone(parseData(formData))
+  }
+  if (useSessionStorage) {
+    return sessionStorage.get(SESSION_FORMDATA_KEY) || defaultFormData()
+  }
+
+  return defaultFormData()
 }
 
 export class Components extends Data {
-  constructor(opts) {
+  constructor() {
     super('components')
-    this.opts = opts
-    this.data = DEFAULT_DATA
     this.disableEvents = true
     this.stages = Stages
     this.rows = Rows
@@ -34,26 +47,18 @@ export class Components extends Data {
     this.externals = Externals
   }
 
-  sessionFormData = () => {
-    if (this.opts?.sessionStorage) {
-      return sessionStorage.get(SESSION_FORMDATA_KEY)
-    }
-  }
-
-  load = (formDataArg, opts = this.opts || Object.create(null)) => {
-    let formData = formDataArg
+  load = (formDataArg, opts) => {
     this.empty()
-    if (typeof formDataArg === 'string') {
-      formData = JSON.parse(formDataArg)
-    }
+    const formData = getFormData(formDataArg, opts.sessionStorage)
+
     this.opts = opts
-    const { stages = { [uuid()]: {} }, rows, columns, fields, id = uuid() } = { ...this.sessionFormData(), ...formData }
-    this.set('id', id)
-    this.add('stages', Stages.load(stages))
-    this.add('rows', Rows.load(rows))
-    this.add('columns', Columns.load(columns))
-    this.add('fields', Fields.load(fields))
-    this.add('externals', Externals.load(opts.external))
+
+    this.set('id', formData.id)
+    this.add('stages', Stages.load(formData.stages))
+    this.add('rows', Rows.load(formData.rows))
+    this.add('columns', Columns.load(formData.columns))
+    this.add('fields', Fields.load(formData.fields))
+    this.add('externals', Externals.load(this.opts.external))
 
     for (const stage of Object.values(this.get('stages'))) {
       stage.loadChildren()

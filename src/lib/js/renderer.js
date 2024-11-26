@@ -1,18 +1,18 @@
 import isEqual from 'lodash/isEqual'
 import dom from './common/dom'
-import { uuid, isAddress, isExternalAddress, merge } from './common/utils'
+import { uuid, isAddress, isExternalAddress, merge, parseData, clone } from './common/utils/index.mjs'
 import { STAGE_CLASSNAME, UUID_REGEXP } from './constants'
 import { fetchDependencies } from './common/loaders'
-import { parseData } from './common/utils/index.mjs'
 
 const RENDER_PREFIX = 'f-'
 
+const cleanFormData = formData => (formData ? clone(parseData(formData)) : {})
 const containerLookup = container => (typeof container === 'string' ? document.querySelector(container) : container)
 const processOptions = ({ editorContainer, renderContainer, formData, ...opts }) => {
   const processedOptions = {
     renderContainer: containerLookup(renderContainer),
     editorContainer: containerLookup(editorContainer),
-    formData: parseData(formData) || {},
+    formData: cleanFormData(formData),
   }
 
   return { elements: {}, ...opts, ...processedOptions }
@@ -42,7 +42,7 @@ export default class FormeoRenderer {
   constructor(opts, formDataArg) {
     const { renderContainer, external, elements, formData } = processOptions(opts)
     this.container = renderContainer
-    this.form = parseData(formDataArg || formData)
+    this.form = cleanFormData(formDataArg || formData)
     this.external = external
     this.dom = dom
     this.components = Object.create(null)
@@ -54,7 +54,7 @@ export default class FormeoRenderer {
    * @param {Object} formData
    */
   render = (formData = this.form) => {
-    this.form = parseData(formData)
+    this.form = cleanFormData(formData)
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
