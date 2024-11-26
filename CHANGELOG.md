@@ -1,3 +1,11 @@
+## [3.0.4](https://github.com/Draggable/formeo/compare/v3.0.3...v3.0.4) (2024-11-26)
+
+
+### Bug Fixes
+
+* formData not correctly parsed ([cec4935](https://github.com/Draggable/formeo/commit/cec4935ceeeab46a183ce642ad36ac8992d463c6))
+* uncaught error when elements not defined ([4cd5a24](https://github.com/Draggable/formeo/commit/4cd5a24899c468d3cd7b256f98af03a010b41d74)), closes [#377](https://github.com/Draggable/formeo/issues/377)
+
 ## [3.0.3](https://github.com/Draggable/formeo/compare/v3.0.2...v3.0.3) (2024-11-21)
 
 
