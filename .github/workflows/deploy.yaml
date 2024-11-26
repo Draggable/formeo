@@ -25,7 +25,6 @@ jobs:
       - name: Build
         if: success()
         run: npm run build
-        if: success()
       - name: Deploy - https://draggable.github.io/formeo/
         if: success()
         uses: peaceiris/actions-gh-pages@v4
