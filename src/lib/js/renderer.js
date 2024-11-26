@@ -7,14 +7,15 @@ import { parseData } from './common/utils/index.mjs'
 
 const RENDER_PREFIX = 'f-'
 
-const processOptions = ({ editorContainer, renderContainer, ...opts }) => {
-  const containerLookup = container => (typeof container === 'string' ? document.querySelector(container) : container)
+const containerLookup = container => (typeof container === 'string' ? document.querySelector(container) : container)
+const processOptions = ({ editorContainer, renderContainer, formData, ...opts }) => {
   const processedOptions = {
     renderContainer: containerLookup(renderContainer),
     editorContainer: containerLookup(editorContainer),
+    formData: parseData(formData) || {},
   }
 
-  return { ...opts, ...processedOptions }
+  return { elements: {}, ...opts, ...processedOptions }
 }
 
 const baseId = id => {
@@ -39,7 +40,7 @@ const createRemoveButton = () =>
 
 export default class FormeoRenderer {
   constructor(opts, formDataArg) {
-    const { renderContainer, external, elements, formData = {} } = processOptions(opts)
+    const { renderContainer, external, elements, formData } = processOptions(opts)
     this.container = renderContainer
     this.form = parseData(formDataArg || formData)
     this.external = external
