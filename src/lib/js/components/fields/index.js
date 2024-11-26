@@ -2,6 +2,7 @@ import ComponentData from '../component-data.js'
 import Field from './field.js'
 import Controls from '../controls/index.js'
 import { get, set } from '../../common/utils/object.mjs'
+import { parseData } from '../../common/utils/index.mjs'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
@@ -62,7 +63,7 @@ export class Fields extends ComponentData {
   }
 
   load = (dataArg = Object.create(null)) => {
-    const allFieldData = this.parseformData(dataArg)
+    const allFieldData = parseData(dataArg)
     this.empty()
 
     for (const [key, val] of Object.entries(allFieldData)) {

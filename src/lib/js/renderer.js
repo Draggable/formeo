@@ -3,6 +3,7 @@ import dom from './common/dom'
 import { uuid, isAddress, isExternalAddress, merge } from './common/utils'
 import { STAGE_CLASSNAME, UUID_REGEXP } from './constants'
 import { fetchDependencies } from './common/loaders'
+import { parseData } from './common/utils/index.mjs'
 
 const RENDER_PREFIX = 'f-'
 
@@ -37,10 +38,10 @@ const createRemoveButton = () =>
   )
 
 export default class FormeoRenderer {
-  constructor(opts, formData = {}) {
-    const { renderContainer, external, elements } = processOptions(opts)
+  constructor(opts, formDataArg) {
+    const { renderContainer, external, elements, formData = {} } = processOptions(opts)
     this.container = renderContainer
-    this.form = formData
+    this.form = parseData(formDataArg || formData)
     this.external = external
     this.dom = dom
     this.components = Object.create(null)
@@ -52,7 +53,7 @@ export default class FormeoRenderer {
    * @param {Object} formData
    */
   render = (formData = this.form) => {
-    this.form = formData
+    this.form = parseData(formData)
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
