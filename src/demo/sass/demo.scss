@@ -189,3 +189,29 @@ body {
 
   animation: shimmer 45s ease-in-out infinite;
 }
+
+#formData-popover[popover] {
+  width: 50%;
+  height: 50%;
+  padding: 16px;
+  border: 1px solid #ccc;
+  background-color: white;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  border-radius: 8px;
+
+  &:popover-open {
+    display: flex;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 8px;
+    flex: 1;
+    padding: 4px;
+  }
+}
