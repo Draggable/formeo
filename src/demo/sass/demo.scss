@@ -207,11 +207,50 @@ body {
     display: flex;
   }
 
-  textarea {
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+  }
+
+  pre {
     width: 100%;
     min-height: 100px;
     margin-bottom: 8px;
     flex: 1;
     padding: 4px;
+  }
+
+  .popover-header {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      background-color: rgba(75, 75, 75, 0.75);
+      color: white;
+    }
+  }
+
+  button {
+    padding: 4px 8px;
+    border: 0 none;
+    border-radius: 4px;
+  }
+
+  .formData-actions {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    gap: 8px;
+
+    button {
+      &:first-child {
+        background-color: rgb(131, 0, 0);
+        color: #fff;
+      }
+      &:last-child {
+        background-color: rgb(0, 124, 0);
+        color: #fff;
+      }
+    }
   }
 }

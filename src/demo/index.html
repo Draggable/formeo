@@ -39,11 +39,18 @@
     </section>
     <div class="container render-btn-wrap" id="editor-action-buttons"></div>
     <div id="formData-popover" popover>
-      <h3>Test formData</h3>
-      <textarea placeholder="Paste formData here..."></textarea>
-      <div>
-        <button popovertarget="formData-popover" popovertargetaction="hide">Cancel</button>
-        <button id="submit-popover">Submit</button>
+      <div class="popover-header">
+        <h3>Test formData</h3>
+        <div>
+          <button type="button" id="format-json">Format</button>
+          <button type="button" id="collapse-json">Collapse</button>
+          <button type="button" id="copy-json">Copy to Clipboard</button>
+        </div>
+      </div>
+      <pre id="formData-editor"></pre>
+      <div class=formData-actions>
+        <button popovertarget="formData-popover" popovertargetaction="hide" type="button">Cancel</button>
+        <button id="submit-formData" type="button">Submit</button>
       </div>
     </div>
     <footer id="demo-footer">
