@@ -1,3 +1,10 @@
+## [3.0.7](https://github.com/Draggable/formeo/compare/v3.0.6...v3.0.7) (2024-11-27)
+
+
+### Bug Fixes
+
+* form does not load after DomCententLoaded event has been fired ([33d0fc4](https://github.com/Draggable/formeo/commit/33d0fc44ce62f5e695a4690cbb61a7f9784744d7))
+
 ## [3.0.6](https://github.com/Draggable/formeo/compare/v3.0.5...v3.0.6) (2024-11-26)
 
 
