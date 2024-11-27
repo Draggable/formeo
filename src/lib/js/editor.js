@@ -52,7 +52,8 @@ export class FormeoEditor {
     return this.Components.formData
   }
   set formData(data = {}) {
-    this.load({ ...this.userFormData, ...data }, this.opts)
+    this.userFormData = cleanFormData(data)
+    this.load(this.userFormData, this.opts)
   }
   get json() {
     return this.Components.json
@@ -106,13 +107,13 @@ export class FormeoEditor {
         },
       }
 
-      this.render()
       this.opts.onLoad?.(this)
     })
   }
 
   load(formData = this.userFormData, opts = this.opts) {
-    return this.Components.load(formData, opts)
+    this.Components.load(formData, opts)
+    this.render()
   }
 
   /**
