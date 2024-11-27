@@ -1,12 +1,11 @@
 import isEqual from 'lodash/isEqual'
 import dom from './common/dom'
-import { uuid, isAddress, isExternalAddress, merge, parseData, clone } from './common/utils/index.mjs'
+import { uuid, isAddress, isExternalAddress, merge, cleanFormData } from './common/utils/index.mjs'
 import { STAGE_CLASSNAME, UUID_REGEXP } from './constants'
 import { fetchDependencies } from './common/loaders'
 
 const RENDER_PREFIX = 'f-'
 
-const cleanFormData = formData => (formData ? clone(parseData(formData)) : {})
 const containerLookup = container => (typeof container === 'string' ? document.querySelector(container) : container)
 const processOptions = ({ editorContainer, renderContainer, formData, ...opts }) => {
   const processedOptions = {

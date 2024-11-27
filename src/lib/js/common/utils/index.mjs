@@ -339,3 +339,6 @@ export function parseData(data = Object.create(null)) {
 
   return data
 }
+
+
+export const cleanFormData = formData => (formData ? clone(parseData(formData)) : {})
