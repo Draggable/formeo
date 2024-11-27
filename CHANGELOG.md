@@ -1,3 +1,10 @@
+## [3.0.8](https://github.com/Draggable/formeo/compare/v3.0.7...v3.0.8) (2024-11-27)
+
+
+### Bug Fixes
+
+* default formData ([ff7b4c3](https://github.com/Draggable/formeo/commit/ff7b4c341d6029326e296d6a7ed196c8eff7bfa9))
+
 ## [3.0.7](https://github.com/Draggable/formeo/compare/v3.0.6...v3.0.7) (2024-11-27)
 
 
