@@ -5,6 +5,7 @@ import {
   CHILD_TYPE_MAP,
   ANIMATION_SPEED_SLOW,
   ANIMATION_SPEED_BASE,
+  DEFAULT_FORMDATA,
 } from '../../constants.js'
 import mergeWith from 'lodash/mergeWith.js'
 
@@ -340,5 +341,4 @@ export function parseData(data = Object.create(null)) {
   return data
 }
 
-
-export const cleanFormData = formData => (formData ? clone(parseData(formData)) : {})
+export const cleanFormData = formData => (formData ? clone(parseData(formData)) : DEFAULT_FORMDATA())

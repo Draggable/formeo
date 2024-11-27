@@ -1,4 +1,5 @@
 import pkg from '../../../package.json' with { type: 'json' }
+import { uuid } from './common/utils/index.mjs'
 
 const isProd = import.meta.env?.PROD
 
@@ -12,7 +13,9 @@ export const POLYFILLS = [
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
   { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
-export const SVG_SPRITE_URL = isProd ? `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg` : `assets/img/${formeoSpriteId}.svg`
+export const SVG_SPRITE_URL = isProd
+  ? `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
+  : `assets/img/${formeoSpriteId}.svg`
 export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`
 export const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formeo.min.css`
 export const FALLBACK_CSS_URL = 'https://draggable.github.io/formeo/assets/css/formeo.min.css'
@@ -199,3 +202,11 @@ export const UUID_REGEXP = /(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}
 export const bsColRegExp = /\bcol-\w+-\d+/g
 
 export const iconPrefix = 'f-i-'
+
+export const DEFAULT_FORMDATA = () => ({
+  id: uuid(),
+  stages: { [uuid()]: {} },
+  rows: {},
+  columns: {},
+  fields: {},
+})

@@ -7,7 +7,7 @@ import RowsData from './rows/index.js'
 import ColumnsData from './columns/index.js'
 import FieldsData from './fields/index.js'
 import ExternalsData from './externals.js'
-import { SESSION_FORMDATA_KEY, version } from '../constants.js'
+import { DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
 
 export const Stages = StagesData
 export const Rows = RowsData
@@ -16,23 +16,15 @@ export const Fields = FieldsData
 export const Controls = ControlsData
 export const Externals = ExternalsData
 
-const defaultFormData = () => ({
-  id: uuid(),
-  stages: { [uuid()]: {} },
-  rows: {},
-  columns: {},
-  fields: {},
-})
-
 const getFormData = (formData, useSessionStorage = false) => {
   if (formData) {
     return clone(parseData(formData))
   }
   if (useSessionStorage) {
-    return sessionStorage.get(SESSION_FORMDATA_KEY) || defaultFormData()
+    return sessionStorage.get(SESSION_FORMDATA_KEY) || DEFAULT_FORMDATA()
   }
 
-  return defaultFormData()
+  return DEFAULT_FORMDATA()
 }
 
 export class Components extends Data {
