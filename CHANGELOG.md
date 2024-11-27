@@ -1,3 +1,16 @@
+# [3.1.0](https://github.com/Draggable/formeo/compare/v3.0.8...v3.1.0) (2024-11-27)
+
+
+### Bug Fixes
+
+* sessionStorage formData ([76650e2](https://github.com/Draggable/formeo/commit/76650e23e1fe7f857ceb1834b432a03a45cbee99))
+
+
+### Features
+
+* add ability to test formData in demo ([0d6ec6a](https://github.com/Draggable/formeo/commit/0d6ec6a8abd7797954866a6188af4ac55f1d96bc))
+* add json editor to the demo ([83f9d8a](https://github.com/Draggable/formeo/commit/83f9d8a02be0e8a38bfd339c8e85aa3154aee693))
+
 ## [3.0.8](https://github.com/Draggable/formeo/compare/v3.0.7...v3.0.8) (2024-11-27)
 
 
