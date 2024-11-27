@@ -8,7 +8,7 @@ import Controls from './components/controls/index.js'
 import Components from './components/index.js'
 import { loadPolyfills, fetchIcons, fetchFormeoStyle } from './common/loaders.js'
 import { SESSION_LOCALE_KEY } from './constants.js'
-import { merge } from './common/utils/index.mjs'
+import { cleanFormData, merge } from './common/utils/index.mjs'
 import { defaults } from './config.js'
 
 /**
@@ -32,7 +32,7 @@ export class FormeoEditor {
     dom.setOptions = opts
     Components.config = config
 
-    this.userFormData = userFormData || formData
+    this.userFormData = cleanFormData(userFormData || formData)
 
     this.Components = Components
     this.dom = dom
@@ -41,7 +41,11 @@ export class FormeoEditor {
     this.tooltip = new SmartTooltip()
 
     // Load remote resources such as css and svg sprite
-    document.addEventListener('DOMContentLoaded', this.loadResources.bind(this))
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', this.loadResources.bind(this))
+    } else {
+      this.loadResources()
+    }
   }
 
   get formData() {
