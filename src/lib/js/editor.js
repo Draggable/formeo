@@ -32,7 +32,7 @@ export class FormeoEditor {
     dom.setOptions = opts
     Components.config = config
 
-    this.userFormData = cleanFormData(userFormData || formData)
+    this.userFormData = userFormData || formData
 
     this.Components = Components
     this.dom = dom
