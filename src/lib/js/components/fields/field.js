@@ -14,6 +14,8 @@ const DEFAULT_DATA = () => ({
   conditions: [CONDITION_TEMPLATE()],
 })
 
+const chackableTypes = new Set(['checkbox', 'radio'])
+
 /**
  * Element/Field class.
  */
@@ -27,6 +29,8 @@ export default class Field extends Component {
     super('field', { ...DEFAULT_DATA(), ...fieldData })
 
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
+    this.debouncedUpdatePreview = debounce(this.updatePreview)
+
     this.label = dom.create(this.labelConfig)
     this.preview = dom.create({})
     this.editPanels = []
@@ -59,6 +63,7 @@ export default class Field extends Component {
     this.dom = field
     this.isEditing = false
     this.onRender(field)
+    this.debouncedUpdatePreview()
   }
 
   get labelConfig() {
@@ -139,7 +144,7 @@ export default class Field extends Component {
    */
   set(path, value) {
     const data = this.setData(path, value)
-    this.updatePreview()
+    this.debouncedUpdatePreview()
 
     return data
   }
@@ -174,12 +179,9 @@ export default class Field extends Component {
    * @return {Object} fresh preview
    */
   updatePreview = () => {
-    if (!this.preview.parentElement) {
-      return null
-    }
     this.updateLabel()
     const newPreview = dom.create(this.fieldPreview(), true)
-    this.preview.parentElement.replaceChild(newPreview, this.preview)
+    this.preview.replaceWith(newPreview)
     this.preview = newPreview
   }
 
@@ -220,7 +222,6 @@ export default class Field extends Component {
     const fieldEdit = {
       className: ['field-edit', 'slide-toggle', 'formeo-panels-wrap'],
     }
-
     this.updateEditPanels()
 
     const editPanelLength = this.editPanels.length
@@ -271,7 +272,7 @@ export default class Field extends Component {
         const { target } = evt
         const { type } = target
         if (['checkbox', 'radio'].includes(type)) {
-          const optionIndex = +target.id.split('-').pop()
+          const optionIndex = indexOfNode(target.parentElement)
           this.toggleCheckedOptions(optionIndex, type)
           this.debouncedUpdateEditPanels()
         }
@@ -362,7 +363,7 @@ export default class Field extends Component {
     return lockedAttrs.includes(propName)
   }
 
-  get isCheckbox() {
-    return this.get('config.controlId') === 'checkbox'
+  get isCheckable() {
+    return chackableTypes.has(this.get('config.controlId'))
   }
 }
