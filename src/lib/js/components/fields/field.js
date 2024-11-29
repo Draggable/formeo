@@ -94,13 +94,6 @@ export default class Field extends Component {
       action: {
         input: ({ target: { innerHTML, innerText, value } }) => {
           super.set('config.label', disableHTML ? value : innerHTML)
-          const reverseConditionField = Components.getConditionMap(`fields.${this.id}`)
-          if (reverseConditionField) {
-            return reverseConditionField.updateConditionSourceLabel(
-              `${this.name}s.${this.id}`,
-              disableHTML ? value : innerText,
-            )
-          }
         },
       },
     }
@@ -261,7 +254,8 @@ export default class Field extends Component {
 
       return option
     })
-    this.set('options', updatedOptionData)
+
+    super.set('options', updatedOptionData)
   }
 
   get defaultPreviewActions() {
@@ -290,6 +284,7 @@ export default class Field extends Component {
           const target = evt.target
           const parentClassList = target.parentElement.classList
           const isOption = parentClassList.contains('f-checkbox') || parentClassList.contains('f-radio')
+
           if (isOption) {
             const option = target.parentElement
             const optionWrap = option.parentElement
