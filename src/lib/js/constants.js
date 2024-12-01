@@ -231,3 +231,6 @@ export const DEFAULT_FORMDATA = () => ({
   columns: {},
   fields: {},
 })
+
+export const CHECKED_TYPES = ['selected', 'checked']
+export const REVERSED_CHECKED_TYPES = CHECKED_TYPES.toReversed()
