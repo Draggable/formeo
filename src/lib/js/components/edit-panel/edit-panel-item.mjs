@@ -7,7 +7,7 @@ import { Condition } from './condition.mjs'
 import { INPUT_TYPE_ACTION, ITEM_INPUT_TYPE_MAP, labelHelper } from './helpers.mjs'
 import { merge } from '../../common/utils/index.mjs'
 import { mergeActions } from '../../common/utils/object.mjs'
-import { CHECKED_TYPES, REVERSED_CHECKED_TYPES } from '../../constants.js'
+import { CHECKED_TYPES, CONDITION_TEMPLATE, REVERSED_CHECKED_TYPES } from '../../constants.js'
 
 const panelDataKeyMap = new Map([
   ['attrs', ({ itemKey }) => itemKey],
@@ -62,6 +62,7 @@ export default class EditPanelItem {
     this.isLocked = field.isLockedProp(key, this.panelName)
     this.address = `${field.indexName}.${field.id}.${key}`
     this.itemSlug = slugifyAddress(key)
+    this.conditionTypeWrap = new Map()
 
     const liClassList = [`field-${this.itemSlug}`, 'prop-wrap']
     if (this.isHidden) {
@@ -75,9 +76,23 @@ export default class EditPanelItem {
     })
   }
 
+  findOrCreateConditionTypeWrap(conditionType) {
+    let conditionTypeWrap = this.conditionTypeWrap.get(conditionType)
+    if (conditionTypeWrap) {
+      return conditionTypeWrap
+    }
+
+    conditionTypeWrap = dom.create({
+      className: `type-conditions-wrap ${conditionType}-conditions-wrap`,
+    })
+
+    this.conditionTypeWrap.set(conditionType, conditionTypeWrap)
+
+    return conditionTypeWrap
+  }
+
   get itemInputs() {
     this.itemFieldGroups = []
-
     const inputs = {
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val]) => {
@@ -92,18 +107,37 @@ export default class EditPanelItem {
     return inputs
   }
 
-  generateConditionFields = (conditionType, conditionVals) => {
-    // console.log('conditionType', conditionType, conditionVals)
-    const conditionFields = conditionVals.map((condition, i) => {
-      const conditionField = new Condition(
-        { conditionValues: condition, conditionType, index: i, conditionCount: conditionVals.length },
-        this,
-      )
+  addConditionType = (conditionType, conditionArg) => {
+    const conditionTypeWrap = this.findOrCreateConditionTypeWrap(conditionType)
+    let condition = conditionArg
+    if (!condition) {
+      const [newConditionTemplate] = CONDITION_TEMPLATE()[conditionType]
+      const conditionCount = conditionTypeWrap.children.length
+      const newConditionData = { logical: '||', ...newConditionTemplate }
 
-      return conditionField.dom
+      condition = { conditionValues: newConditionData, conditionCount, index: conditionCount }
+    }
+
+    const conditionField = new Condition({ conditionType, ...condition }, this)
+
+    conditionTypeWrap.appendChild(conditionField.dom)
+
+    return conditionField
+  }
+
+  removeConditionType = (conditionType, index) => {
+    const conditionTypeWrap = this.conditionTypeWrap.get(conditionType)
+    const conditionField = conditionTypeWrap.children[index]
+    conditionField.destroy()
+    conditionTypeWrap.removeChild(conditionField.dom)
+  }
+
+  generateConditionFields = (conditionType, conditionVals) => {
+    conditionVals.forEach((condition, index) => {
+      this.addConditionType(conditionType, { index, conditionCount: conditionVals.length, conditionValues: condition })
     })
 
-    return conditionFields
+    return this.findOrCreateConditionTypeWrap(conditionType)
   }
 
   get itemControls() {

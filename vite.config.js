@@ -26,10 +26,20 @@ const getExtType = assetInfo => {
 
 const sharedConfig = {
   server: {
-    open: true,
+    // open: true,
     fs: {
       strict: false,
     },
+    host: true,
+    // proxy: {
+    //   '/proxy/5173': {
+    //     target: 'http://localhost:5173',
+    //     changeOrigin: true,
+        // rewrite: path => path.replace(/^\/proxy\/5173/, ''),
+      // },
+    // },
+    
+    
   },
   define: {
     'import.meta.env.enUS': JSON.stringify(enUS),

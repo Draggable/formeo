@@ -1,7 +1,7 @@
-@use "../base/mixins";
+@use '../base/mixins';
 
-@use "../base/colors" as color;
-@use "../base/variables" as var;
+@use '../base/colors' as color;
+@use '../base/variables' as var;
 
 .formeo-panels-wrap {
   h5 {
@@ -50,7 +50,6 @@
         top: 0;
         border-top-right-radius: 0;
 
-        // border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
       }
     }
@@ -61,6 +60,7 @@
   }
 
   .f-panel {
+    height: 0;
     vertical-align: top;
     display: inline-block;
     width: 100%;
@@ -89,6 +89,10 @@
     overflow: hidden;
     text-align: center;
     white-space: nowrap;
+  }
+
+  .active-panel {
+    height: auto;
   }
 }
 

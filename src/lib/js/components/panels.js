@@ -33,6 +33,7 @@ export default class Panels {
     this.panelNav = this.createPanelNav()
     const panelsWrap = this.createPanelsWrap()
     this.nav = this.navActions()
+    this.nav.groupChange(this.activePanelIndex)
 
     const resizeObserver = new window.ResizeObserver(
       ([
@@ -79,10 +80,10 @@ export default class Panels {
    */
   resizePanels = () => {
     this.toggleTabbedLayout()
-    const panelStyle = this.panelsWrap.style
-    const activePanelHeight = dom.getStyle(this.currentPanel, 'height')
-    panelStyle.height = activePanelHeight
-    return activePanelHeight
+    // const panelStyle = this.panelsWrap.style
+    // const activePanelHeight = dom.getStyle(this.currentPanel, 'height')
+    // panelStyle.height = activePanelHeight
+    // return activePanelHeight
   }
 
   /**
@@ -271,7 +272,7 @@ export default class Panels {
       labelWrap.animate(navQueue, animationOptions)
 
       const handleFinish = () => {
-        this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
+        // this.panelsWrap.style.height = dom.getStyle(this.currentPanel, 'height')
         panelTransition.removeEventListener('finish', handleFinish)
         if (!reset) {
           lastOffset = offset

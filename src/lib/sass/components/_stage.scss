@@ -101,6 +101,13 @@
   margin-top: 0;
   margin-bottom: mixins.space(2);
   border-top-left-radius: mixins.space(1);
+
+  .panel-nav {
+    border-bottom: 0 none !important;
+  }
+  .conditions-prop-inputs {
+    border-top: 1px solid color.$gray-lighter;
+  }
 }
 
 .stage-actions {

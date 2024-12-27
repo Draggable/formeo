@@ -11,6 +11,8 @@ import { SESSION_LOCALE_KEY } from './constants.js'
 import { cleanFormData, merge } from './common/utils/index.mjs'
 import { defaults } from './config.js'
 
+
+
 /**
  * Main class
  */

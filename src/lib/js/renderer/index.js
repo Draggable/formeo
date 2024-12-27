@@ -235,6 +235,8 @@ export default class FormeoRenderer {
     return Object.values(this.form.stages).map(stage => {
       stage.children = this.processRows(stage.id)
       stage.className = STAGE_CLASSNAME
+
+      this.components[baseId(stage.id)] = stage
       return stage
     })
   }
@@ -245,6 +247,8 @@ export default class FormeoRenderer {
    */
   handleComponentCondition = (component, ifRest, thenConditions) => {
     const listenerEvent = LISTEN_TYPE_MAP(component)
+
+    console.log(listenerEvent)
 
     if (listenerEvent) {
       component.addEventListener(
@@ -270,20 +274,24 @@ export default class FormeoRenderer {
   }
 
   applyConditions = () => {
+    console.log(this.components)
     for (const { conditions } of Object.values(this.components)) {
       if (conditions) {
         for (const condition of conditions) {
           const { if: ifConditions, then: thenConditions } = condition
 
           for (const ifCondition of ifConditions) {
-            const { source, ...ifRest } = ifCondition
+            console.log('component', ifConditions)
+            const { source, target } = ifCondition
+
             if (isAddress(source)) {
-              const component = this.getComponent(source)
-              this.handleComponentCondition(component, ifRest, thenConditions)
-              // const components = this.getComponents(source)
-              // for (const component of components) {
-              //   this.handleComponentCondition(component, ifRest, thenConditions)
-              // }
+              const sourceComponent = this.getComponent(source)
+              this.handleComponentCondition(sourceComponent, ifCondition, thenConditions)
+            }
+
+            if (isAddress(target)) {
+              const targetComponent = this.getComponent(target)
+              this.handleComponentCondition(targetComponent, ifCondition, thenConditions)
             }
           }
         }
@@ -294,15 +302,18 @@ export default class FormeoRenderer {
   /**
    * Evaulate conditions
    */
-  evaluateCondition = ({ sourceProperty, targetProperty, comparison, target }, evt) => {
+  evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
-    const sourceValue = propertyMap[sourceProperty]?.(evt.target)
+    const sourceValue = this.getComponentProperty(source, sourceProperty)
 
     if (typeof sourceValue === 'boolean') {
       return sourceValue
     }
 
-    const targetValue = String(isAddress(target) ? this.getComponent(target)[targetProperty] : target)
+    const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target)
+
+    // console.log(source, this.getComponent(source))
+    console.log(sourceValue, targetValue)
 
     return comparisonMap[comparison]?.(sourceValue, targetValue)
   }
@@ -313,6 +324,12 @@ export default class FormeoRenderer {
 
       targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
     }
+  }
+
+  getComponentProperty = (address, propertyName) => {
+    const component = this.getComponent(address)
+
+    return propertyMap[propertyName]?.(component) || component[propertyName]
   }
 
   getComponent = address => {

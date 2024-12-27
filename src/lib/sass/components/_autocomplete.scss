@@ -1,8 +1,16 @@
-@use "sass:color" as sass-color;
-@use "../base/mixins";
+@use 'sass:color' as sass-color;
+@use '../base/mixins';
 
-@use "../base/colors" as color;
-@use "../base/variables" as var;
+@use '../base/colors' as color;
+@use '../base/variables' as var;
+
+.f-autocomplete {
+  position: relative;
+}
+
+.f-autocomplete-display-field {
+  width: 100%;
+}
 
 .f-autocomplete-list {
   background-color: color.$white;

@@ -1,6 +1,5 @@
 import pkg from '../../../package.json' with { type: 'json' }
 import { uuid } from './common/utils/index.mjs'
-import { objectFromStringArray } from './common/utils/object.mjs'
 
 const { env, resolve } = import.meta
 
@@ -27,6 +26,7 @@ export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/asset
 export const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formeo.min.css`
 export const FALLBACK_CSS_URL = 'https://draggable.github.io/formeo/assets/css/formeo.min.css'
 
+export const PANEL_CLASSNAME = 'f-panel'
 export const CONTROL_GROUP_CLASSNAME = 'control-group'
 export const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`
 export const ROW_CLASSNAME = `${PACKAGE_NAME}-row`
@@ -168,12 +168,11 @@ export const LOGICAL_OPERATORS = {
   and: '&&',
   or: '||',
 }
-
 export const ASSIGNMENT_OPERATORS = {
   equals: '=',
 }
-
 export const CONDITION_INPUT_ORDER = [
+  'logical',
   'source',
   'sourceProperty',
   'comparison',
@@ -182,20 +181,14 @@ export const CONDITION_INPUT_ORDER = [
   'assignment',
   'value',
 ]
-
-export const FIELD_INPUT_PROPERTY_MAP = objectFromStringArray([
-  'isChecked',
-  'isNotChecked',
-  'value',
-  'isVisible',
-  'isNotVisible',
-])
+export const CHECKABLE_OPTIONS = ['isChecked', 'isNotChecked']
+export const VISIBLE_OPTIONS = ['isVisible', 'isNotVisible']
+export const PROPERTY_OPTIONS = ['value']
 
 export const OPERATORS = {
   comparison: COMPARISON_OPERATORS,
   assignment: ASSIGNMENT_OPERATORS,
   logical: LOGICAL_OPERATORS,
-  property: FIELD_INPUT_PROPERTY_MAP,
 }
 
 export const CONDITION_TEMPLATE = () => ({
