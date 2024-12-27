@@ -5,6 +5,7 @@ import Components from '../index.js'
 import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../../constants.js'
 import { isAddress, noop } from '../../common/utils/index.mjs'
 import {
+  BASE_NAME,
   componentOptions,
   DISPLAY_FIELD_CLASSNAME,
   getComponentLabel,
@@ -195,7 +196,7 @@ export default class Autocomplete {
 
     this.dom = dom.create({
       children: [this.displayField, this.clearButton, this.hiddenField],
-      className: this.className,
+      className: [BASE_NAME, this.className],
       action: {
         onRender: element => {
           this.stage = element.closest('.formeo-stage')

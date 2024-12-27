@@ -99,7 +99,12 @@ export const targetPropertyMap = {
     elem.checked = false
   },
   value: (elem, { assignment, ...rest }) => {
-    return assignmentMap[assignment]?.(elem, rest)
+    const assignmentAction = assignmentMap[assignment]?.(elem, rest)
+
+    const event = new Event('input', { bubbles: true })
+    elem.dispatchEvent(event)
+
+    return assignmentAction
   },
   isNotVisible: elem => {
     if (elem?._required === undefined) {

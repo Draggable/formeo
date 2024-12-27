@@ -8,7 +8,7 @@ import { match, unique, merge, clone } from '../../common/utils/index.mjs'
 import Panels from '../panels.js'
 import Field from '../fields/field.js'
 import Control from './control.js'
-import { CONTROL_GROUP_CLASSNAME } from '../../constants.js'
+import { CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME } from '../../constants.js'
 import Components, { Stages, Rows } from '../index.js'
 
 import defaultOptions from './options.js'
@@ -89,7 +89,7 @@ export class Controls {
       const groupConfig = {
         tag: 'ul',
         attrs: {
-          className: CONTROL_GROUP_CLASSNAME,
+          className: [CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME],
           id: `${group.id}-${CONTROL_GROUP_CLASSNAME}`,
         },
         config: {

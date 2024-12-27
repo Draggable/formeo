@@ -2,18 +2,23 @@ import i18n from '@draggable/i18n'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import dom from '../../common/dom.js'
 import { isExternalAddress, isInternalAddress } from '../../common/utils/index.mjs'
-import { FIELD_INPUT_PROPERTY_MAP, OPERATORS } from '../../constants.js'
+import { PROPERTY_OPTIONS, OPERATORS, VISIBLE_OPTIONS, CHECKABLE_OPTIONS } from '../../constants.js'
 import Components from '../index.js'
 import { ITEM_INPUT_TYPE_MAP } from './helpers.mjs'
+import { objectFromStringArray } from '../../common/utils/object.mjs'
 
 const optionDataMap = {
-  'field.property': FIELD_INPUT_PROPERTY_MAP,
-  'field.input.property': FIELD_INPUT_PROPERTY_MAP,
-  'field.checkbox.property': FIELD_INPUT_PROPERTY_MAP,
-  sourceProperty: FIELD_INPUT_PROPERTY_MAP,
-  targetProperty: FIELD_INPUT_PROPERTY_MAP,
-  ...OPERATORS,
+  'if-sourceProperty': objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
+  'if-targetProperty': objectFromStringArray(PROPERTY_OPTIONS),
+  'then-targetProperty': objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
+  ...Object.entries(OPERATORS).reduce((acc, [key, value]) => {
+    acc[`if-${key}`] = value
+    acc[`then-${key}`] = value
+    return acc
+  }, {}),
 }
+
+console.log(optionDataMap)
 
 export const segmentTypes = {
   assignment: createConditionSelect,
@@ -50,11 +55,13 @@ export function addOptions(select, options) {
   }
 }
 
-export function getOptionConfigs(fieldName, fieldValue) {
+export function getOptionConfigs({ key: fieldName, value: fieldValue, conditionType }) {
   const isExternal = isExternalAddress(fieldName)
   const externalOptionData = address => Components.getAddress(address).getData()
 
-  const data = isExternal ? externalOptionData(fieldName) : optionDataMap[fieldName]
+  const optionDataKey = `${conditionType}-${fieldName}`
+
+  const data = isExternal ? externalOptionData(fieldName) : optionDataMap[optionDataKey]
   return Object.entries(data || {}).map(([key, optionValue]) =>
     makeOptionDomConfig({ fieldName, fieldValue, key, optionValue }),
   )
@@ -68,8 +75,8 @@ function makeOptionDomConfig({ fieldName, fieldValue, key, optionValue }) {
   }
 }
 
-function createConditionSelect({ key, value, onChange }) {
-  const optionConfigs = getOptionConfigs(key, value)
+function createConditionSelect({ key, value, onChange, conditionType }) {
+  const optionConfigs = getOptionConfigs({ key, value, conditionType })
   const propertyFieldConfig = ITEM_INPUT_TYPE_MAP.array({ key: `condition.${key}`, value: optionConfigs })
 
   propertyFieldConfig.action = {
@@ -84,15 +91,95 @@ const hiddenPropertyClassname = 'hidden-property'
 const hiddenOptionClassname = 'hidden-option'
 const optionsAddressRegex = /\.options\[\d+\]$/
 
-const toggleFieldVisibility = (fieldConditions, fields) => {
-  for (const [fieldName, conditions] of Object.entries(fieldConditions)) {
-    fields.get(fieldName)?.classList.toggle(hiddenPropertyClassname, !conditions.every(Boolean))
+const isVisible = elem => {
+  return !elem?.classList.contains(hiddenPropertyClassname)
+}
+
+const fieldVisibilityMap = {
+  sourceProperty: fields => {
+    const source = fields.get('source')
+    const sourceProperty = fields.get('sourceProperty')
+    const sourceHasValue = !!source.value
+    const sourceIsCheckable = !!source.value.match(optionsAddressRegex)
+
+    toggleCheckablePropertyOptions(sourceIsCheckable, sourceProperty)
+
+    return !sourceHasValue
+  },
+  comparison: fields => {
+    const source = fields.get('source')
+    const sourceProperty = fields.get('sourceProperty')
+    const sourceHasValue = !!source.value
+    const sourceValueIsCheckable = !!source.value.match(optionsAddressRegex)
+
+    return !sourceHasValue || sourceValueIsCheckable || sourceProperty.value !== 'value'
+  },
+  assignment: fields => {
+    const target = fields.get('target')
+    const targetProperty = fields.get('targetProperty')
+    const targetHasValue = !!target.value
+
+    return !targetHasValue || targetProperty.value.startsWith('is')
+  },
+  targetProperty: fields => {
+    const source = fields.get('source')
+
+    if (source) {
+      return !source?.value
+    }
+
+    const target = fields.get('target')
+    const targetProperty = fields.get('targetProperty')
+    const targetIsCheckable = !!target.value.match(optionsAddressRegex)
+
+    toggleCheckablePropertyOptions(targetIsCheckable, targetProperty)
+
+    return !isInternalAddress(target.value)
+  },
+  target: fields => {
+    const target = fields.get('target')
+    const source = fields.get('source')
+    const sourceProperty = fields.get('sourceProperty')
+    const sourceHasValue = !!source?.value
+
+    if (sourceProperty && !sourceHasValue) {
+      console.log('should hide target', target)
+      return true
+    }
+
+    return sourceProperty && sourceProperty?.value !== 'value'
+  },
+  value: fields => {
+    const target = fields.get('target')
+    const targetProperty = fields.get('targetProperty')
+
+    if (target && !target.value) {
+      return true
+    }
+
+    if (!isVisible(fields.get('comparison'))) {
+      return true
+    }
+
+    if (targetProperty.value === isCheckedValue) {
+      return true
+    }
+
+    return targetProperty.value.startsWith('is')
+  },
+}
+
+export const toggleFieldVisibility = fields => {
+  for (const [fieldName, field] of fields) {
+    const shouldHide = !!fieldVisibilityMap[fieldName]?.(fields) || false
+
+    field.classList.toggle(hiddenPropertyClassname, shouldHide)
   }
 }
 
 const isCheckedValue = 'isChecked'
 const isCheckedOption = option => option.value.endsWith('Checked')
-const togglePropertyOptions = (isCheckable, propertyField) => {
+const toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
   // don't change if already a checked option
   if (isCheckable && isCheckedOption(propertyField)) {
     return null
@@ -100,44 +187,41 @@ const togglePropertyOptions = (isCheckable, propertyField) => {
 
   const options = Array.from(propertyField.querySelectorAll('option'))
 
+  const hiddenOptionValues = []
+
   for (const option of options) {
     const optionIsChecked = isCheckedOption(option)
     const shouldHide = isCheckable ? !optionIsChecked : optionIsChecked
 
+    if (shouldHide) {
+      hiddenOptionValues.push(option.value)
+    }
+
     option.classList.toggle(hiddenOptionClassname, shouldHide)
   }
 
-  propertyField.value = isCheckable
-    ? isCheckedValue
-    : options.find(opt => !isCheckedOption(opt))?.value || propertyField.value
+  if (hiddenOptionValues.includes(propertyField.value)) {
+    propertyField.value = isCheckable
+      ? isCheckedValue
+      : options.find(opt => !isCheckedOption(opt))?.value || propertyField.value
+  }
 }
 
 export const conditionFieldHandlers = {
   source: (field, fields) => {
-    const hasValue = !!field.value
     const isCheckable = !!field.value.match(optionsAddressRegex)
-    const target = fields.get('target')
-    const visibilityConditions = {
-      sourceProperty: [hasValue],
-      comparison: [hasValue, !isCheckable],
-      target: [hasValue, !isCheckable],
-      targetProperty: [hasValue, target.value],
-    }
 
-    toggleFieldVisibility(visibilityConditions, fields)
-    togglePropertyOptions(isCheckable, fields.get('sourceProperty'))
+    toggleCheckablePropertyOptions(isCheckable, fields.get('sourceProperty'))
   },
   target: (field, fields) => {
     const targetProperty = fields.get('targetProperty')
     const isCheckable = !!field.value.match(optionsAddressRegex)
-    const hasValue = !!field.value
-    const visibilityConditions = {
-      targetProperty: [hasValue, isInternalAddress(field.value)],
-      assignment: [hasValue, !isCheckable],
-      value: [hasValue, targetProperty.value !== isCheckedValue],
-    }
 
-    toggleFieldVisibility(visibilityConditions, fields)
-    togglePropertyOptions(isCheckable, targetProperty)
+    toggleCheckablePropertyOptions(isCheckable, targetProperty)
+  },
+  targetProperty: field => {
+    const isCheckable = !!field.value.match(optionsAddressRegex)
+
+    toggleCheckablePropertyOptions(isCheckable, field)
   },
 }

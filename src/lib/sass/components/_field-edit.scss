@@ -135,6 +135,7 @@
     [contenteditable] {
       font-size: 0.825em;
       flex: 1 1 auto;
+
       &:focus {
         z-index: 1;
       }
@@ -181,20 +182,11 @@
   }
 }
 
-.f-condition-row-wrap {
-  display: flex;
-  width: 100%;
-  // align-items: center;
-  justify-content: space-between;
-  flex: 1;
-}
-
 .f-condition-row {
   display: flex;
   width: 100%;
   position: relative;
   border-bottom: 1px solid color.$gray-lighter;
-  // border-right: 1px solid color.$gray-lighter;
 
   > [class^='condition-'] {
     border-left: 1px solid color.$gray-lighter;
@@ -221,6 +213,13 @@
 
   .add-condition-type {
     bottom: 0;
+    display: none;
+  }
+
+  &:last-child {
+    .add-condition-type {
+      display: flex;
+    }
   }
 
   &:has(.add-condition-type) .remove-condition-type {
@@ -233,7 +232,6 @@
   input,
   select,
   [contenteditable] {
-    width: inherit;
     background-color: color.$white;
     border: 0 none;
     border-radius: 0;
@@ -241,38 +239,31 @@
       box-shadow: 0 0 0 1px color.$input-focus inset;
     }
   }
-  &:first-child {
-    border-top-left-radius: var.$input-border-radius;
-    border-top-right-radius: var.$input-border-radius;
-    input:last-child,
-    select:last-child {
-      border-top-right-radius: var.$input-border-radius;
-    }
-  }
-  &:last-child {
-    border-bottom-left-radius: var.$input-border-radius;
-    border-bottom-right-radius: var.$input-border-radius;
-    input:last-child,
-    select:last-child {
-      border-bottom-right-radius: var.$input-border-radius;
-    }
-  }
-
-  .condition-logical {
-    max-width: mixins.space(7);
-    text-transform: uppercase;
-  }
 
   div.condition-source,
   div.condition-target {
     position: relative;
-    width: 100%;
+    border-left: 1px solid color.$gray-lighter;
   }
 
-  [class^='condition-'] {
+  .condition-logical,
+  .condition-source,
+  .condition-target,
+  .condition-sourceProperty,
+  .condition-targetProperty,
+  .condition-comparison,
+  .condition-assignment,
+  .condition-value {
+    flex: 1 !important;
+    max-width: 100%;
     transition: max-width var.$animation-speed-base;
     will-change: max-width;
     min-height: 31px;
+  }
+
+  .condition-logical {
+    max-width: mixins.space(8);
+    text-transform: uppercase;
   }
 
   .condition-source,
@@ -284,7 +275,7 @@
   }
 
   .hidden-property {
-    max-width: 0%;
+    max-width: 0% !important;
     padding: 0;
     border: 0 none;
     overflow: hidden;
@@ -295,46 +286,34 @@
   .hidden-option {
     display: none;
   }
+}
 
-  &.if-condition-row {
-    .condition-target {
-      input {
-        border-top-right-radius: mixins.space();
-        border-bottom-right-radius: 0;
-      }
+.type-conditions-wrap {
+  width: 100%;
+}
+
+.then-condition-row {
+  &:first-of-type {
+    .remove-condition-type {
+      display: none;
     }
-    &.condition-sourceProperty-isVisible,
-    &.condition-sourceProperty-isNotVisible {
-      .condition-comparison,
-      .condition-target,
-      .condition-assignment,
-      .condition-value,
-      .condition-targetProperty {
-        @include mixins.hideConditionField;
-      }
+  }
+  .condition-target + .condition-targetProperty.hidden-property {
+    // border-right: 1px solid #cccccc;
+  }
+}
+
+.if-condition-row {
+  &:first-of-type {
+    .remove-condition-type {
+      display: none;
     }
   }
 
-  &.then-condition-row {
-    &.condition-targetProperty-isVisible,
-    &.condition-targetProperty-isNotVisible {
-      .condition-comparison,
-      .condition-assignment,
-      .condition-value {
-        @include mixins.hideConditionField;
-      }
-    }
-  }
-
-  &.condition-target {
-    .condition-targetProperty {
-      @include mixins.hideConditionField;
-    }
-  }
-
-  &.condition-source {
-    .condition-sourceProperty {
-      @include mixins.hideConditionField;
+  .condition-target {
+    input {
+      border-top-right-radius: mixins.space();
+      border-bottom-right-radius: 0;
     }
   }
 }
@@ -387,6 +366,7 @@
 .conditions-prop-inputs {
   border-top: 1px solid color.$gray-lighter;
   border-right: 1px solid color.$gray-lighter;
+
   label.condition-label {
     display: inline-flex;
     flex: 0 0 auto;
@@ -396,12 +376,18 @@
     text-transform: uppercase;
     color: color.$gray-dark;
     background-color: color.$white;
-    font-size: 0.7em;
+    width: mixins.space(8);
 
     &.then-condition-label {
       background-color: color.$gray;
       color: color.$white;
     }
+  }
+}
+
+.field-conditions-0 {
+  .conditions-prop-inputs {
+    border-top: 0 none;
   }
 }
 
@@ -487,13 +473,13 @@
     margin-bottom: 0;
   }
 
-  &.attrs-prop-inputs {
-    .f-addon,
-    input:not([type='checkbox']):not([type='radio']),
-    select,
-    textarea,
-    [contenteditable] {
-      flex: 2;
-    }
-  }
+  // &.attrs-prop-inputs {
+  //   .f-addon,
+  //   input:not([type='checkbox']):not([type='radio']),
+  //   select,
+  //   textarea,
+  //   [contenteditable] {
+  //     flex: 2;
+  //   }
+  // }
 }

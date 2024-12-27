@@ -1,10 +1,10 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { CONDITION_INPUT_ORDER } from '../../constants.js'
+import { CONDITION_INPUT_ORDER, CONDITION_TEMPLATE } from '../../constants.js'
 import events from '../../common/events.js'
 import Components from '../index.js'
 import { debounce } from '../../common/utils/index.mjs'
-import { conditionFieldHandlers, segmentTypes } from './condition-helpers.mjs'
+import { segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
 
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
   return fieldOrder.reduce((acc, fieldName) => {
@@ -17,7 +17,6 @@ function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDE
 
 export class Condition {
   constructor({ conditionValues, conditionType, index, conditionCount }, parent) {
-    // return null
     this.values = new Map(orderConditionValues(conditionValues))
     this.conditionType = conditionType
     this.index = index
@@ -27,25 +26,33 @@ export class Condition {
     this.conditionCount = conditionCount
 
     this.conditionLabels = new Map([
-      ['condition-if', [i18n.get('condition.type.if'), i18n.get('condition.type.or')]],
+      ['condition-if', [i18n.get('condition.type.if'), i18n.get('condition.type.and')]],
       ['condition-then', [i18n.get('condition.type.then'), i18n.get('condition.type.and')]],
     ])
 
     this.dom = this.generateDom()
   }
 
+  destroy() {
+    this.dom.remove()
+    // this.fields.forEach(field => {
+    //   field?.destroy()
+    // })
+  }
+
   label() {
-    const conditionTypeLabelIndex = this.index ? 1 : 0
-    return this.conditionLabels.get(`condition-${this.conditionType}`)?.[conditionTypeLabelIndex]
+    if (this.index) {
+      return null
+    }
+
+    return {
+      tag: 'label',
+      className: `condition-label ${this.conditionType}-condition-label`,
+      content: this.conditionLabels.get(`condition-${this.conditionType}`)?.[0],
+    }
   }
 
   generateDom() {
-    const label = {
-      tag: 'label',
-      className: `condition-label ${this.conditionType}-condition-label`,
-      content: this.label(),
-    }
-
     const fieldsDom = []
     for (const [key, value] of this.values) {
       const onChange = evt => this.onChangeCondition({ key, target: evt.target })
@@ -56,40 +63,67 @@ export class Condition {
       fieldsDom.push(conditionFieldDom)
     }
 
-    const conditionRowChildren = [label, ...fieldsDom]
-
-    const isLastItem = this.index === this.conditionCount - 1
-    const isFirstItem = this.index === 0
-
-    if (!isFirstItem) {
-      const removeConditionType = dom.btnTemplate({
-        title: i18n.get(`remove${this.conditionType}Condition`),
-        className: ['manage-condition-type', 'remove-condition-type'],
-        content: dom.icon('minus'),
-      })
-      conditionRowChildren.push(removeConditionType)
-    }
-    if (isLastItem) {
-      const addConditionType = dom.btnTemplate({
-        title: i18n.get(`add${this.conditionType}Condition`),
-        className: ['manage-condition-type', 'add-condition-type'],
-        content: dom.icon('plus'),
-      })
-
-      conditionRowChildren.push(addConditionType)
-    }
+    const conditionRowChildren = [this.label(), ...fieldsDom, ...this.generateConditionTypeActionButtons()]
 
     const conditionTypeRow = {
       children: conditionRowChildren,
       className: `f-condition-row ${this.conditionType}-condition-row`,
       action: {
         onRender: elem => {
-          // this.processUiState()
+          this.processUiState()
         },
       },
     }
 
     return dom.create(conditionTypeRow)
+  }
+
+  generateConditionTypeActionButtons() {
+    const actionButtons = []
+    const isLastItem = this.index === this.conditionCount - 1
+    const isFirstItem = this.index === 0
+
+    const manageConditionClassname = 'manage-condition-type'
+    const manageConditionActionClassname = action => `${action}-condition-type`
+
+    // if (!isFirstItem) {
+    const removeConditionType = dom.btnTemplate({
+      title: i18n.get(`remove${this.conditionType}Condition`),
+      className: [manageConditionClassname, manageConditionActionClassname('remove')],
+      content: dom.icon('minus'),
+      action: {
+        click: () => {
+          console.dir(this)
+          // this.parent.removeCondition(this.conditionType, this.index)
+        },
+      },
+    })
+    actionButtons.push(removeConditionType)
+    // }
+
+    // if (isLastItem) {
+    const addConditionType = dom.btnTemplate({
+      title: i18n.get(`add${this.conditionType}Condition`),
+      className: [manageConditionClassname, manageConditionActionClassname('add')],
+      content: dom.icon('plus'),
+      action: {
+        click: () => {
+          const condition = this.parent.addConditionType(this.conditionType)
+          const evtData = {
+            changedProperty: null,
+            dataPath: condition.address,
+            value: condition.value,
+            src: condition.dom,
+          }
+          this.updateDataDebounced(evtData)
+        },
+      },
+    })
+
+    actionButtons.push(addConditionType)
+    // }
+
+    return actionButtons
   }
 
   get value() {
@@ -100,9 +134,7 @@ export class Condition {
   }
 
   processUiState() {
-    for (const [key, field] of this.fields) {
-      this.onChangeCondition({ target: field, key })
-    }
+    toggleFieldVisibility(this.fields)
   }
 
   updateDataDebounced = debounce(evtData => {
@@ -112,13 +144,13 @@ export class Condition {
 
   onChangeCondition = ({ key, target }) => {
     const evtData = {
+      changedProperty: key,
       dataPath: this.address,
       value: this.value,
       src: target,
     }
 
-    conditionFieldHandlers[key]?.(target, this.fields)
-
+    toggleFieldVisibility(this.fields)
     this.updateDataDebounced(evtData)
   }
 }

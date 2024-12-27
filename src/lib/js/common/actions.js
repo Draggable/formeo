@@ -59,7 +59,7 @@ const actions = {
       return actions.opts.add.option(evt)
     },
     conditions: evt => {
-      evt.template = CONDITION_TEMPLATE()
+      evt.template = evt.template || CONDITION_TEMPLATE()
       // @todo add logging
       return actions.opts.add.condition(evt)
     },

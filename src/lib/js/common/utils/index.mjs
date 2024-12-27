@@ -11,7 +11,6 @@ import {
   ANIMATION_SPEED_FAST,
 } from '../../constants.js'
 import mergeWith from 'lodash/mergeWith.js'
-import { slugify } from './string.mjs'
 
 const uuidv4 = () => crypto.randomUUID().slice(0, 8)
 const shortId = () => uuidv4().slice(0, 8)

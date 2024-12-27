@@ -106,8 +106,8 @@ export function mergeActions(target, source = {}) {
  * @example
  * objectFromStringArray(['foo', 'bar']) // returns { foo: 'foo', bar: 'bar' }
  */
-export function objectFromStringArray(arr) {
-  return arr.reduce((acc, item) => {
+export function objectFromStringArray(...arr) {
+  return arr.flat().reduce((acc, item) => {
     acc[item] = item
     return acc
   }, {})

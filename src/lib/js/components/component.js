@@ -6,7 +6,7 @@ import {
   CHILD_TYPE_MAP,
   PARENT_TYPE_MAP,
   ANIMATION_SPEED_BASE,
-  FIELD_INPUT_PROPERTY_MAP,
+  PROPERTY_OPTIONS,
   COMPONENT_TYPE_CLASSNAMES,
   COLUMN_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
@@ -16,10 +16,12 @@ import Components from './index.js'
 import Data from './data.js'
 import animate from '../common/animation.js'
 import Controls from './controls/index.js'
-import { get, set } from '../common/utils/object.mjs'
+import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
 import { splitAddress, toTitleCase } from '../common/utils/string.mjs'
 import EditPanel from './edit-panel/edit-panel.js'
 import Panels from './panels.js'
+
+const propertyOptions = objectFromStringArray(PROPERTY_OPTIONS)
 
 export default class Component extends Data {
   constructor(name, dataArg = {}) {
@@ -574,13 +576,11 @@ export default class Component extends Data {
     const component = this.getComponent(path)
     const property = component && splitPath.slice(2, splitPath.length).join('.')
 
-    if ([!component, !property, !FIELD_INPUT_PROPERTY_MAP[property]].some(Boolean)) {
+    if ([!component, !property, !propertyOptions[property]].some(Boolean)) {
       return path
     }
 
-    return val
-      ? component.set(FIELD_INPUT_PROPERTY_MAP[property], val)
-      : component.get(FIELD_INPUT_PROPERTY_MAP[property])
+    return val ? component.set(propertyOptions[property], val) : component.get(propertyOptions[property])
   }
 
   /**

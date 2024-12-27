@@ -4,6 +4,7 @@ import actions from '../../common/actions.js'
 import EditPanelItem, { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
 import { slugify, toTitleCase } from '../../common/utils/string.mjs'
+import { PANEL_CLASSNAME } from '../../constants.js'
 
 // @todo convert these hardcoded lists to use
 // the updated event system from #381
@@ -21,14 +22,14 @@ export default class EditPanel {
    * Set defaults and load panelData
    * @param  {Object} panelData existing field ID
    * @param  {String} panelName name of panel
-   * @param  {String} field
+   * @param  {String} component
    * @return {Object} field object
    */
-  constructor(panelData, panelName, field) {
+  constructor(panelData, panelName, component) {
     this.type = dom.childType(panelData)
     this.data = this.type === 'object' ? Object.entries(panelData) : panelData
     this.name = panelName
-    this.field = field
+    this.component = component
 
     this.panelConfig = this.getPanelConfig(this.data)
   }
@@ -41,7 +42,7 @@ export default class EditPanel {
         label: i18n.get(`panel.label.${this.name}`),
       },
       attrs: {
-        className: `f-panel ${this.name}-panel`,
+        className: `${PANEL_CLASSNAME} ${this.name}-panel`,
       },
       children: [this.props, this.editButtons],
     }
@@ -62,7 +63,7 @@ export default class EditPanel {
       return new EditPanelItem({
         key: `${this.name}${key}`,
         data: val,
-        field: this.field,
+        field: this.component,
         index,
         panel: this,
       })
@@ -71,7 +72,7 @@ export default class EditPanel {
     const editGroupConfig = {
       tag: 'ul',
       attrs: {
-        className: ['edit-group', `${this.field.name}-edit-group`, `${this.field.name}-edit-${this.name}`],
+        className: ['edit-group', `${this.component.name}-edit-group`, `${this.component.name}-edit-${this.name}`],
       },
       editGroup: this.name,
       isSortable: this.name === 'options',
@@ -110,8 +111,8 @@ export default class EditPanel {
           }
 
           if (type === 'attrs') {
-            addEvt.isDisabled = this.field.isDisabledProp
-            addEvt.isLocked = this.field.isLockedProp
+            addEvt.isDisabled = this.component.isDisabledProp
+            addEvt.isLocked = this.component.isLockedProp
             addEvt.message = {
               attr: i18n.get(`action.add.${type}.attr`),
               value: i18n.get(`action.add.${type}.value`),
@@ -158,14 +159,14 @@ export default class EditPanel {
       val = JSON.parse(val)
     }
 
-    this.field.set(`attrs.${attr}`, val)
-    addAttributeActions[safeAttr]?.(val, this.field)
+    this.component.set(`attrs.${attr}`, val)
+    addAttributeActions[safeAttr]?.(val, this.component)
 
-    const existingAttr = this.props.querySelector(`.${this.field.name}-attrs-${safeAttr}`)
+    const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`)
     const newAttr = new EditPanelItem({
       key: itemKey,
       data: { [safeAttr]: val },
-      field: this.field,
+      field: this.component,
       panel: this,
     })
 
@@ -175,15 +176,15 @@ export default class EditPanel {
       this.props.appendChild(newAttr.dom)
     }
 
-    this.field.resizePanelWrap()
+    this.component.resizePanelWrap()
   }
 
   /**
    * Add option to options panel
    */
   addOption = () => {
-    const controlId = this.field.data.config.controlId
-    const fieldOptionData = this.field.get('options')
+    const controlId = this.component.data.config.controlId
+    const fieldOptionData = this.component.get('options')
     const type = controlId === 'select' ? 'option' : controlId
     const newOptionLabel = i18n.get('newOptionLabel', { type }) || 'New Option'
     const itemKey = `options[${this.data.length}]`
@@ -197,39 +198,38 @@ export default class EditPanel {
     const newOption = new EditPanelItem({
       key: String(this.data.length),
       data: itemData,
-      field: this.field,
+      field: this.component,
       index: this.props.children.length,
       panel: this,
     })
 
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
-    this.field.set(itemKey, itemData)
-    this.field.debouncedUpdatePreview()
-    this.field.resizePanelWrap()
+    this.component.set(itemKey, itemData)
+    this.component.debouncedUpdatePreview()
+    this.component.resizePanelWrap()
   }
 
   addCondition = evt => {
-    const currentConditions = this.field.get('conditions')
-    const itemKey = `conditions.${currentConditions.length}`
-    const existingCondition = this.props.querySelector(`.${this.field.name}-${itemKey.replace('.', '-')}`)
-    const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.field, panel: this })
+    const currentConditions = this.component.get('conditions')
+    const itemKey = `conditions[${currentConditions.length}]`
+    console.log(itemKey, evt.template)
+    // const existingCondition = this.props.querySelector(`.${this.component.name}-${itemKey.replace('.', '-')}`)
+    const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.component, panel: this })
 
-    if (existingCondition) {
-      this.props.replaceChild(newCondition.dom, existingCondition)
-    } else {
-      this.props.appendChild(newCondition.dom)
-    }
+    // if (existingCondition) {
+    //   this.props.replaceChild(newCondition.dom, existingCondition)
+    // } else {
+    this.props.appendChild(newCondition.dom)
+    // }
 
-    this.field.set(itemKey, evt.template)
-    this.field.debouncedUpdatePreview()
-
-    this.field.resizePanelWrap()
+    this.component.set(itemKey, evt.template)
+    this.component.resizePanelWrap()
   }
 
   setData(val) {
     this.data = val
-    this.field.set(this.name, val)
+    this.component.set(this.name, val)
     this.updateProps(val)
   }
 }
