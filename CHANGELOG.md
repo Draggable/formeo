@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/Draggable/formeo/compare/v3.1.1...v3.1.2) (2024-12-30)
+
+
+### Bug Fixes
+
+* use textarea content instead of value ([d920228](https://github.com/Draggable/formeo/commit/d920228b8daff91013200ed70b4c4138cbd7139c))
+
 ## [3.1.1](https://github.com/Draggable/formeo/compare/v3.1.0...v3.1.1) (2024-12-30)
 
 
