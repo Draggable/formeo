@@ -1,3 +1,11 @@
+## [3.1.1](https://github.com/Draggable/formeo/compare/v3.1.0...v3.1.1) (2024-12-30)
+
+
+### Bug Fixes
+
+* dynamic import breaking build ([66e657d](https://github.com/Draggable/formeo/commit/66e657dc518a24d154b89aaeaa7f73e82808c307))
+* textarea value not saved/rendered ([80e0e8a](https://github.com/Draggable/formeo/commit/80e0e8addc12f31c8e3e539ceae082067f505921)), closes [#388](https://github.com/Draggable/formeo/issues/388)
+
 # [3.1.0](https://github.com/Draggable/formeo/compare/v3.0.8...v3.1.0) (2024-11-27)
 
 
