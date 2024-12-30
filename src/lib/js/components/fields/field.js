@@ -288,17 +288,18 @@ export default class Field extends Component {
         }
 
         if (evt.target.contentEditable) {
-          const parentClassList = evt.target.parentElement.classList
+          const target = evt.target
+          const parentClassList = target.parentElement.classList
           const isOption = parentClassList.contains('f-checkbox') || parentClassList.contains('f-radio')
           if (isOption) {
-            const option = evt.target.parentElement
+            const option = target.parentElement
             const optionWrap = option.parentElement
             const optionIndex = indexOfNode(option, optionWrap)
-            super.set(`options[${optionIndex}].label`, evt.target.innerHTML)
+            this.setData(`options[${optionIndex}].label`, target.innerHTML)
             return this.debouncedUpdateEditPanels()
           }
 
-          super.set('content', evt.target.innerHTML)
+          this.setData('content', target.innerHTML || target.value)
         }
       },
     }
