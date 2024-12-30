@@ -8,26 +8,12 @@ class TextAreaControl extends Control {
       config: {
         label: i18n.get('controls.form.textarea'),
       },
-      // This is the beginning of actions being supported for render
-      // editor field actions should be in config.action
-      // action: {
-      //   mousedown: function(evt) {
-      //     let {target} = evt;
-      //     let startHeight = target.style.height;
-      //     const onMouseup = evt => {
-      //       let {target} = evt;
-      //       let endHeight = target.style.height;
-      //       if (startHeight !== endHeight) {
-      //         //eslint-disable-next-line
-      //         let fieldId = closest(target, '.stage-field').id;
-      //         const field = d.fields.get(fieldId).instance;
-      //         field.addAttribute('style', `height: ${endHeight}`);
-      //       }
-      //       target.removeEventListener('mouseup', onMouseup);
-      //     };
-      //     target.addEventListener('mouseup', onMouseup);
-      //   }
-      // },
+      // actions here will be applied to the preview in the editor
+      action: {
+        input: function ({ target: { value } }) {
+          this.setData?.('value', value)
+        },
+      },
       meta: {
         group: 'common',
         icon: 'textarea',

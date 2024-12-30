@@ -130,13 +130,15 @@ export default class Field extends Component {
     }
   }
 
+  setData = (path, value) => {
+    return super.set(path, value)
+  }
+
   /**
    * wrapper for Data.set
    */
-  set(...args) {
-    const [path, value] = args
-
-    const data = super.set(path, value)
+  set(path, value) {
+    const data = this.setData(path, value)
     this.updatePreview()
 
     return data
@@ -310,7 +312,10 @@ export default class Field extends Component {
     const prevData = clone(this.data)
     const { action = {} } = controls.get(prevData.config.controlId)
     prevData.id = `prev-${this.id}`
-    prevData.action = action
+    prevData.action = Object.entries(action).reduce((acc, [key, value]) => {
+      acc[key] = value.bind(this)
+      return acc
+    }, {})
 
     if (this.data?.config.editableContent) {
       prevData.attrs = { ...prevData.attrs, contenteditable: true }
