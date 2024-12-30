@@ -8,12 +8,6 @@ class TextAreaControl extends Control {
       config: {
         label: i18n.get('controls.form.textarea'),
       },
-      // actions here will be applied to the preview in the editor
-      action: {
-        input: function ({ target: { value } }) {
-          this.setData?.('value', value)
-        },
-      },
       meta: {
         group: 'common',
         icon: 'textarea',
