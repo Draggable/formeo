@@ -11,8 +11,6 @@ import Control from './control.js'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants.js'
 import Components, { Stages, Rows } from '../index.js'
 
-// control configs
-
 import defaultOptions from './options.js'
 import { get, set } from '../../common/utils/object.mjs'
 
@@ -376,9 +374,11 @@ export class Controls {
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.options = options
 
-    const layoutControls = await import('./layout/index.js')
-    const formControls = await import('./form/index.js')
-    const htmlControls = await import('./html/index.js')
+    const [layoutControls, formControls, htmlControls] = await Promise.all([
+      import('./layout/index.js'),
+      import('./form/index.js'),
+      import('./html/index.js'),
+    ])
 
     const allControls = [layoutControls.default, formControls.default, htmlControls.default].flat()
 

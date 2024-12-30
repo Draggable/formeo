@@ -36,6 +36,7 @@ export default defineConfig({
       },
       output: {
         assetFileNames: 'formeo.min.[ext]',
+        inlineDynamicImports: true,
       },
     },
   },
