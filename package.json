@@ -69,7 +69,7 @@
     "prebuild": "npm run build:lib",
     "postbuild": "npm run generate:jsonSchema",
     "build:demo": "vite build --mode demo",
-    "postbuild:demo": "node tools/copy-assets.mjs",
+    "postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
     "build:demo:watch": "vite build --mode demo --watch",
     "build:icons": "node ./tools/generate-sprite",
     "lint": "eslint ./src --ext .js || true",
