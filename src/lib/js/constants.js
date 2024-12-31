@@ -1,7 +1,7 @@
 import pkg from '../../../package.json' with { type: 'json' }
 import { uuid } from './common/utils/index.mjs'
 
-const isProd = import.meta.env?.PROD
+const { env, resolve } = import.meta
 
 const name = pkg.name
 export const version = pkg.version
@@ -13,9 +13,9 @@ export const POLYFILLS = [
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
   { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
-export const SVG_SPRITE_URL = isProd
+export const SVG_SPRITE_URL = env?.PROD
   ? `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
-  : `assets/img/${formeoSpriteId}.svg`
+  : resolve(`../../lib/icons/${formeoSpriteId}.svg`)
 export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`
 export const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formeo.min.css`
 export const FALLBACK_CSS_URL = 'https://draggable.github.io/formeo/assets/css/formeo.min.css'
