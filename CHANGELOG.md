@@ -1,3 +1,11 @@
+## [3.1.3](https://github.com/Draggable/formeo/compare/v3.1.2...v3.1.3) (2024-12-31)
+
+
+### Bug Fixes
+
+* local file fetch in windows ([5aa734c](https://github.com/Draggable/formeo/commit/5aa734c3d7b91e0838581fcb9fba68c28a68134e))
+* windows build issue with vite-plugin-static-copy ([876acaa](https://github.com/Draggable/formeo/commit/876acaa2ac000bde200253d3fbf6ca65dbc2f0f6))
+
 ## [3.1.2](https://github.com/Draggable/formeo/compare/v3.1.1...v3.1.2) (2024-12-30)
 
 
