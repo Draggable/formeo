@@ -1,9 +1,11 @@
-import { join } from 'node:path'
+import { join, dirname, resolve } from 'node:path'
 import { writeFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url';
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 
-const __dirname = join(new URL('.', import.meta.url).pathname)
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const projectRoot = resolve(__dirname, '..');
 
 const htmlAttributesSchema = z.record(
   z.string(),
@@ -168,5 +170,5 @@ const reorderSchema = (schema: object) => {
 
 const jsonSchema = zodToJsonSchema(formDataSchema, { name: 'formData', nameStrategy: 'title' })
 const orderedJsonSchema = reorderSchema(jsonSchema)
-const distDir = join(__dirname, '../dist')
+const distDir = join(projectRoot, 'dist')
 writeFileSync(join(distDir, 'formData_schema.json'), JSON.stringify(orderedJsonSchema, null, 2))

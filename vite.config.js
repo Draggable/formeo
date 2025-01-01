@@ -3,7 +3,6 @@ import { defineConfig } from 'vite'
 import { languageFileOptions, enUS } from '@draggable/formeo-languages'
 import banner from 'vite-plugin-banner'
 import compression from 'vite-plugin-compression'
-import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { createHtmlPlugin } from 'vite-plugin-html'
 
 import pkg from './package.json'
@@ -102,36 +101,6 @@ export default defineConfig({
       minRatio: 0.8,
       ext: '.gz',
       threshold: 10240,
-    }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: resolve('src/lib/icons/formeo-sprite.svg'),
-          dest: './assets/img/',
-        },
-        {
-          src: resolve('src/lib/icons/formeo-sprite.svg'),
-          dest: resolve('dist/'),
-        },
-        {
-          src: resolve('node_modules', '@draggable/formeo-languages/dist/lang/*'),
-          dest: './assets/lang',
-        },
-        {
-          src: resolve('dist/formeo.umd.js'),
-          dest: './assets/js/',
-          rename: 'formeo.min.js',
-        },
-        {
-          src: resolve('dist/formeo.umd.js'),
-          dest: resolve('dist/'),
-          rename: 'formeo.min.js',
-        },
-        {
-          src: resolve('dist/formeo.min.css'),
-          dest: './assets/css/',
-        },
-      ],
     }),
   ],
 })
