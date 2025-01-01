@@ -69,6 +69,7 @@
     "prebuild": "npm run build:lib",
     "postbuild": "npm run generate:jsonSchema",
     "build:demo": "vite build --mode demo",
+    "postbuild:demo": "node tools/copy-assets.mjss",
     "build:demo:watch": "vite build --mode demo --watch",
     "build:icons": "node ./tools/generate-sprite",
     "lint": "eslint ./src --ext .js || true",
@@ -103,7 +104,6 @@
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.2",
-    "vite-plugin-static-copy": "^2.0.0",
     "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.5"
   },
