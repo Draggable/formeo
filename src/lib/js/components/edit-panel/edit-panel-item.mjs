@@ -188,13 +188,8 @@ export default class EditPanelItem {
       name: baseConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
     }
 
-    if (this.isDisabled) {
-      attrs.disabled = true
-    }
-
-    if (this.isLocked) {
-      attrs.locked = true
-    }
+    attrs.disabled = this.isDisabled
+    attrs.locked = this.isLocked
 
     const itemInputAction = itemInputActions.get(this.itemSlug)?.(this)
 

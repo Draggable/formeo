@@ -18,8 +18,6 @@ const optionDataMap = {
   }, {}),
 }
 
-console.log(optionDataMap)
-
 export const segmentTypes = {
   assignment: createConditionSelect,
   comparison: createConditionSelect,
@@ -122,12 +120,6 @@ const fieldVisibilityMap = {
     return !targetHasValue || targetProperty.value.startsWith('is')
   },
   targetProperty: fields => {
-    const source = fields.get('source')
-
-    if (source) {
-      return !source?.value
-    }
-
     const target = fields.get('target')
     const targetProperty = fields.get('targetProperty')
     const targetIsCheckable = !!target.value.match(optionsAddressRegex)
@@ -137,13 +129,11 @@ const fieldVisibilityMap = {
     return !isInternalAddress(target.value)
   },
   target: fields => {
-    const target = fields.get('target')
     const source = fields.get('source')
     const sourceProperty = fields.get('sourceProperty')
     const sourceHasValue = !!source?.value
 
     if (sourceProperty && !sourceHasValue) {
-      console.log('should hide target', target)
       return true
     }
 
