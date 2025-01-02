@@ -680,7 +680,7 @@ export default class Component extends Data {
     if (!propKind) {
       return false
     }
-    const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${toTitleCase(kind)}`))
+    const disabledAttrs = propKind.disabled.concat(this.get('config.disabled'))
     return disabledAttrs.includes(propName)
   }
 
@@ -694,7 +694,7 @@ export default class Component extends Data {
     if (!propKind) {
       return false
     }
-    const lockedAttrs = propKind.locked.concat(this.get(`config.locked${toTitleCase(kind)}`))
+    const lockedAttrs = propKind.locked.concat(this.get('config.locked'))
     return lockedAttrs.includes(propName)
   }
 

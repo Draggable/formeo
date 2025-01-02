@@ -1,6 +1,6 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { CONDITION_INPUT_ORDER, CONDITION_TEMPLATE } from '../../constants.js'
+import { CONDITION_INPUT_ORDER } from '../../constants.js'
 import events from '../../common/events.js'
 import Components from '../index.js'
 import { debounce } from '../../common/utils/index.mjs'
@@ -80,13 +80,10 @@ export class Condition {
 
   generateConditionTypeActionButtons() {
     const actionButtons = []
-    const isLastItem = this.index === this.conditionCount - 1
-    const isFirstItem = this.index === 0
 
     const manageConditionClassname = 'manage-condition-type'
     const manageConditionActionClassname = action => `${action}-condition-type`
 
-    // if (!isFirstItem) {
     const removeConditionType = dom.btnTemplate({
       title: i18n.get(`remove${this.conditionType}Condition`),
       className: [manageConditionClassname, manageConditionActionClassname('remove')],
@@ -99,9 +96,7 @@ export class Condition {
       },
     })
     actionButtons.push(removeConditionType)
-    // }
 
-    // if (isLastItem) {
     const addConditionType = dom.btnTemplate({
       title: i18n.get(`add${this.conditionType}Condition`),
       className: [manageConditionClassname, manageConditionActionClassname('add')],
@@ -121,7 +116,6 @@ export class Condition {
     })
 
     actionButtons.push(addConditionType)
-    // }
 
     return actionButtons
   }

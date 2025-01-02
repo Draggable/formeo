@@ -134,7 +134,7 @@
     textarea,
     [contenteditable] {
       font-size: 0.825em;
-      flex: 1 1 auto;
+      // flex: 1 1 auto;
 
       &:focus {
         z-index: 1;
@@ -376,7 +376,6 @@
     text-transform: uppercase;
     color: color.$gray-dark;
     background-color: color.$white;
-    width: mixins.space(8);
 
     &.then-condition-label {
       background-color: color.$gray;
