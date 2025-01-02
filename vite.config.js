@@ -26,20 +26,10 @@ const getExtType = assetInfo => {
 
 const sharedConfig = {
   server: {
-    // open: true,
+    open: true,
     fs: {
       strict: false,
     },
-    host: true,
-    // proxy: {
-    //   '/proxy/5173': {
-    //     target: 'http://localhost:5173',
-    //     changeOrigin: true,
-        // rewrite: path => path.replace(/^\/proxy\/5173/, ''),
-      // },
-    // },
-    
-    
   },
   define: {
     'import.meta.env.enUS': JSON.stringify(enUS),
@@ -56,7 +46,7 @@ const sharedConfig = {
 export default defineConfig({
   ...sharedConfig,
   root: 'src/demo',
-  base: process.env.NODE_ENV === 'production' ? '/formeo/' : '/',
+  base: process.env.NODE_ENV === 'production' ? '/formeo/' : '/absproxy/5173',
   resolve: {
     alias: {
       formeo: resolve(__dirname, 'src/lib/js/index.js'),
