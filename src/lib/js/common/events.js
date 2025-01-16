@@ -16,12 +16,17 @@ import { throttle } from './utils/index.mjs'
 
 const NO_TRANSITION_CLASS_NAME = 'no-transition'
 
+// @todo
+// Refactor events as part of https://github.com/Draggable/formeo/issues/381
+// should have a consolidated approach to events
+
 // Default options
 const defaults = {
   debug: false, // enable debug mode
   bubbles: true, // bubble events from components
   formeoLoaded: evt => {},
   onAdd: () => {},
+  onChange: (...args) => defaults.onUpdate(...args),
   onUpdate: evt => events.opts?.debug && console.log(evt),
   onUpdateStage: evt => events.opts?.debug && console.log(evt),
   onUpdateRow: evt => events.opts?.debug && console.log(evt),

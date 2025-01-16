@@ -1,8 +1,8 @@
-@use "sass:color" as sass-color;
-@use "mixins";
+@use 'sass:color' as sass-color;
+@use 'mixins';
 
-@use "colors" as color;
-@use "variables" as var;
+@use 'colors' as color;
+@use 'variables' as var;
 
 /*
   Animations
@@ -36,15 +36,6 @@
 
   50% {
     border-color: sass-color.adjust(color.$input-focus, $lightness: 20%);
-  }
-}
-
-@keyframes HIDE_CONDITION_FIELD {
-  0% {
-    display: none;
-  }
-  100% {
-    display: none;
   }
 }
 

@@ -246,9 +246,14 @@ export default class FormeoRenderer {
    * @return {Array} flattened array of conditions
    */
   handleComponentCondition = (component, ifRest, thenConditions) => {
-    const listenerEvent = LISTEN_TYPE_MAP(component)
+    if (component.length) {
+      for (const elem of component) {
+        this.handleComponentCondition(elem, ifRest, thenConditions)
+      }
+      return
+    }
 
-    console.log(listenerEvent)
+    const listenerEvent = LISTEN_TYPE_MAP(component)
 
     if (listenerEvent) {
       component.addEventListener(
@@ -274,23 +279,23 @@ export default class FormeoRenderer {
   }
 
   applyConditions = () => {
-    console.log(this.components)
     for (const { conditions } of Object.values(this.components)) {
       if (conditions) {
         for (const condition of conditions) {
           const { if: ifConditions, then: thenConditions } = condition
 
           for (const ifCondition of ifConditions) {
-            console.log('component', ifConditions)
             const { source, target } = ifCondition
 
             if (isAddress(source)) {
-              const sourceComponent = this.getComponent(source)
+              const { component, options } = this.getComponent(source)
+              const sourceComponent = options || component
               this.handleComponentCondition(sourceComponent, ifCondition, thenConditions)
             }
 
             if (isAddress(target)) {
-              const targetComponent = this.getComponent(target)
+              const { component, options } = this.getComponent(target)
+              const targetComponent = options || component
               this.handleComponentCondition(targetComponent, ifCondition, thenConditions)
             }
           }
@@ -312,48 +317,59 @@ export default class FormeoRenderer {
 
     const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target)
 
-    // console.log(source, this.getComponent(source))
-    console.log(sourceValue, targetValue)
-
     return comparisonMap[comparison]?.(sourceValue, targetValue)
   }
 
   execResult = ({ target, targetProperty, assignment, value }) => {
     if (isAddress(target)) {
-      const elem = this.getComponent(target)
+      const { component, option } = this.getComponent(target)
+
+      const elem = option || component
 
       targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
     }
   }
 
   getComponentProperty = (address, propertyName) => {
-    const component = this.getComponent(address)
+    const { component, option } = this.getComponent(address)
 
-    return propertyMap[propertyName]?.(component) || component[propertyName]
+    const elem = option || component
+
+    return propertyMap[propertyName]?.(elem) || elem[propertyName]
   }
 
   getComponent = address => {
+    const result = {
+      component: null,
+    }
     if (!isAddress(address)) {
       return null
     }
     const [componentIndexType, componentId, optionsKey, optionIndex] = splitAddress(address)
 
     if (componentIndexType === 'external') {
-      return this.external[componentId]
+      result.component = this.external[componentId]
+      return result
     }
 
     const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`)
 
     if (!component) {
-      return null
+      return result
     }
+
+    result.component = component
 
     if (optionsKey) {
       const options = component.querySelectorAll('input')
-      return options[optionIndex]
+      const option = options[optionIndex]
+      result.options = options
+      result.option = option
+
+      return result
     }
 
-    return component
+    return result
   }
 
   getComponents = address => {

@@ -7,6 +7,10 @@ import Components from '../index.js'
 import { ITEM_INPUT_TYPE_MAP } from './helpers.mjs'
 import { objectFromStringArray } from '../../common/utils/object.mjs'
 
+const hiddenPropertyClassname = 'hidden-property'
+const hiddenOptionClassname = 'hidden-option'
+const optionsAddressRegex = /\.options\[\d+\]$/
+
 const optionDataMap = {
   'if-sourceProperty': objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
   'if-targetProperty': objectFromStringArray(PROPERTY_OPTIONS),
@@ -84,10 +88,6 @@ function createConditionSelect({ key, value, onChange, conditionType }) {
 
   return propertyFieldConfig
 }
-
-const hiddenPropertyClassname = 'hidden-property'
-const hiddenOptionClassname = 'hidden-option'
-const optionsAddressRegex = /\.options\[\d+\]$/
 
 const isVisible = elem => {
   return !elem?.classList.contains(hiddenPropertyClassname)

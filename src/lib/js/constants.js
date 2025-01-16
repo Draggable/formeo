@@ -191,8 +191,11 @@ export const OPERATORS = {
   logical: LOGICAL_OPERATORS,
 }
 
+export const conditionTypeIf = 'if'
+export const conditionTypeThen = 'then'
+
 export const CONDITION_TEMPLATE = () => ({
-  if: [
+  [conditionTypeIf]: [
     {
       source: '',
       sourceProperty: '',
@@ -201,7 +204,7 @@ export const CONDITION_TEMPLATE = () => ({
       targetProperty: '',
     },
   ],
-  then: [
+  [conditionTypeThen]: [
     {
       target: '',
       targetProperty: '',

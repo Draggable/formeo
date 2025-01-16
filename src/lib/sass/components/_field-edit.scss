@@ -283,6 +283,10 @@
     margin: 0;
   }
 
+  &.display-none {
+    display: none;
+  }
+
   .hidden-option {
     display: none;
   }
@@ -297,9 +301,6 @@
     .remove-condition-type {
       display: none;
     }
-  }
-  .condition-target + .condition-targetProperty.hidden-property {
-    // border-right: 1px solid #cccccc;
   }
 }
 

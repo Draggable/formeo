@@ -14,7 +14,7 @@ export const isInt = n => Number.isInteger(Number(n))
 export const indexOfNode = node => {
   let index = 0
   let currentNode = node
-  while (currentNode.previousElementSibling) {
+  while (currentNode?.previousElementSibling) {
     currentNode = currentNode.previousElementSibling
     index++
   }
