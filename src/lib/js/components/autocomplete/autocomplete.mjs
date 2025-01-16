@@ -29,7 +29,7 @@ export default class Autocomplete {
    */
   constructor({ key, value, className, onChange = noop }) {
     this.key = key
-    this.className = className || this.key.replace(/\./g, '-')
+    this.className = [className || this.key.replace(/\./g, '-')].flat()
     this.value = value
     this.onChange = onChange || noop
     this.events = []
@@ -133,7 +133,7 @@ export default class Autocomplete {
     const autoCompleteInputActions = {
       focus: ({ target }) => {
         this.updateOptions()
-        target.parentElement.classList.add(`${this.className}-focused`)
+        target.parentElement.classList.add(`${BASE_NAME}-focused`)
         const filteredOptions = dom.toggleElementsByStr(
           this.list.querySelectorAll(`.${LIST_ITEM_CLASSNAME}-depth-0`),
           target.value,
@@ -143,7 +143,7 @@ export default class Autocomplete {
         this.showList(selectedOption)
       },
       blur: ({ target }) => {
-        target.parentElement.classList.remove(`${this.className}-focused`)
+        target.parentElement.classList.remove(`${BASE_NAME}-focused`)
         target.removeEventListener('keydown', keyboardNav)
         this.hideList()
       },
@@ -179,7 +179,7 @@ export default class Autocomplete {
     })
     this.hiddenField = dom.create({
       tag: 'input',
-      attrs: { type: 'hidden', className: this.className, value: this.value },
+      attrs: { type: 'hidden', className: BASE_NAME, value: this.value },
     })
 
     this.list = dom.create({
@@ -196,7 +196,7 @@ export default class Autocomplete {
 
     this.dom = dom.create({
       children: [this.displayField, this.clearButton, this.hiddenField],
-      className: [BASE_NAME, this.className],
+      className: [BASE_NAME, this.className].flat(),
       action: {
         onRender: element => {
           this.stage = element.closest('.formeo-stage')
@@ -334,7 +334,7 @@ export default class Autocomplete {
 
       if (isAddress(value)) {
         const component = Components.getAddress(value)
-        component.dom?.classList.remove(HIGHLIGHT_CLASSNAME)
+        component?.dom?.classList.remove(HIGHLIGHT_CLASSNAME)
       }
     }
     if (selectedOption) {

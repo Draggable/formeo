@@ -106,25 +106,6 @@ export default class Field extends Component {
     return labelWrap
   }
 
-  /**
-   * Updates a source field's label without recreating conditions dom
-   */
-  updateConditionSourceLabel(value, label) {
-    const newConditionsPanel = this.editPanels.get('conditions')
-    if (!newConditionsPanel) {
-      return null
-    }
-
-    for (const { itemFieldGroups } of newConditionsPanel.editPanelItems) {
-      for (const fields of itemFieldGroups) {
-        const autocomplete = fields.find(field => field.value === value)
-        if (autocomplete) {
-          autocomplete.displayField.value = label
-        }
-      }
-    }
-  }
-
   setData = (path, value) => {
     return super.set(path, value)
   }
@@ -204,8 +185,7 @@ export default class Field extends Component {
 
           if (isOption) {
             const option = target.parentElement
-            const optionWrap = option.parentElement
-            const optionIndex = indexOfNode(option, optionWrap)
+            const optionIndex = indexOfNode(option)
             this.setData(`options[${optionIndex}].label`, target.innerHTML)
             return this.debouncedUpdateEditPanels()
           }

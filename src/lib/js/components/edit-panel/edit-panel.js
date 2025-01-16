@@ -37,6 +37,7 @@ export default class EditPanel {
   getPanelConfig(data) {
     this.props = this.createProps(data)
     this.editButtons = this.createEditButtons()
+
     return {
       config: {
         label: i18n.get(`panel.label.${this.name}`),
@@ -213,7 +214,7 @@ export default class EditPanel {
   addCondition = evt => {
     const currentConditions = this.component.get('conditions')
     const itemKey = `conditions[${currentConditions.length}]`
-    console.log(itemKey, evt.template)
+    // console.log(itemKey, evt.template)
     // const existingCondition = this.props.querySelector(`.${this.component.name}-${itemKey.replace('.', '-')}`)
     const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.component, panel: this })
 

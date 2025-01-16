@@ -1,10 +1,11 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { CONDITION_INPUT_ORDER } from '../../constants.js'
+import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
 import events from '../../common/events.js'
 import Components from '../index.js'
 import { debounce } from '../../common/utils/index.mjs'
 import { segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
+import animate from '../../common/animation.js'
 
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
   return fieldOrder.reduce((acc, fieldName) => {
@@ -16,28 +17,43 @@ function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDE
 }
 
 export class Condition {
-  constructor({ conditionValues, conditionType, index, conditionCount }, parent) {
+  constructor({ conditionValues, conditionType, conditionCount, index }, parent) {
     this.values = new Map(orderConditionValues(conditionValues))
     this.conditionType = conditionType
-    this.index = index
     this.parent = parent
-    this.address = `${parent.address}.${conditionType}[${index}]`
+    this.baseAddress = `${parent.address}.${conditionType}`
     this.fields = new Map()
     this.conditionCount = conditionCount
-
-    this.conditionLabels = new Map([
-      ['condition-if', [i18n.get('condition.type.if'), i18n.get('condition.type.and')]],
-      ['condition-then', [i18n.get('condition.type.then'), i18n.get('condition.type.and')]],
-    ])
+    this.index = index
 
     this.dom = this.generateDom()
   }
 
+  setConditionIndex(index) {
+    this.index = index
+  }
+
+  // get index() {
+  //   return indexOfNode(this.dom)
+  // }
+
+  get address() {
+    return `${this.baseAddress}[${this.index}]`
+  }
+
   destroy() {
-    this.dom.remove()
-    // this.fields.forEach(field => {
-    //   field?.destroy()
-    // })
+    console.log(this.baseAddress, this.index)
+    const conditions = Components.getAddress(this.baseAddress)
+    console.log(conditions.length)
+    conditions.splice(this.index, 1)
+    Components.setAddress(this.baseAddress, conditions)
+    console.log(conditions.length)
+    animate.slideUp(this.dom, ANIMATION_SPEED_FAST, () => {
+      this.dom.remove()
+    })
+    // this.parent.panel.updateProps()
+    // this.parent.itemInputs()
+    // debugger
   }
 
   label() {
@@ -48,7 +64,7 @@ export class Condition {
     return {
       tag: 'label',
       className: `condition-label ${this.conditionType}-condition-label`,
-      content: this.conditionLabels.get(`condition-${this.conditionType}`)?.[0],
+      content: i18n.get(`condition.type.${this.conditionType}`),
     }
   }
 
@@ -67,7 +83,7 @@ export class Condition {
 
     const conditionTypeRow = {
       children: conditionRowChildren,
-      className: `f-condition-row ${this.conditionType}-condition-row`,
+      className: `f-condition-row ${this.conditionType}-condition-row display-none`,
       action: {
         onRender: elem => {
           this.processUiState()
@@ -89,10 +105,7 @@ export class Condition {
       className: [manageConditionClassname, manageConditionActionClassname('remove')],
       content: dom.icon('minus'),
       action: {
-        click: () => {
-          console.dir(this)
-          // this.parent.removeCondition(this.conditionType, this.index)
-        },
+        click: () => this.destroy(),
       },
     })
     actionButtons.push(removeConditionType)
@@ -129,6 +142,7 @@ export class Condition {
 
   processUiState() {
     toggleFieldVisibility(this.fields)
+    this.dom.classList.remove('display-none')
   }
 
   updateDataDebounced = debounce(evtData => {

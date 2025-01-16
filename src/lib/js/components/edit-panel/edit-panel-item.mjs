@@ -7,7 +7,13 @@ import { Condition } from './condition.mjs'
 import { INPUT_TYPE_ACTION, ITEM_INPUT_TYPE_MAP, labelHelper } from './helpers.mjs'
 import { merge } from '../../common/utils/index.mjs'
 import { mergeActions } from '../../common/utils/object.mjs'
-import { CHECKED_TYPES, CONDITION_TEMPLATE, REVERSED_CHECKED_TYPES } from '../../constants.js'
+import {
+  ANIMATION_SPEED_BASE,
+  CHECKED_TYPES,
+  CONDITION_TEMPLATE,
+  conditionTypeIf,
+  REVERSED_CHECKED_TYPES,
+} from '../../constants.js'
 
 const panelDataKeyMap = new Map([
   ['attrs', ({ itemKey }) => itemKey],
@@ -50,8 +56,7 @@ export default class EditPanelItem {
    * @param  {String} field
    * @return {Object} field object
    */
-  constructor({ key, data, index, field, panel }) {
-    this.itemValues = orderObjectsBy(Object.entries(data), CHECKED_TYPES, '0')
+  constructor({ key, index, field, panel }) {
     this.field = field
     this.itemKey = key
     this.itemIndex = index
@@ -72,8 +77,12 @@ export default class EditPanelItem {
     this.dom = dom.create({
       tag: 'li',
       className: liClassList,
-      children: { className: 'component-prop', children: [this.itemInputs, this.itemControls] },
+      children: { className: 'component-prop', children: [this.itemInputs(), this.itemControls] },
     })
+  }
+
+  get itemValues() {
+    return orderObjectsBy(Object.entries(this.field.get(this.itemKey)), CHECKED_TYPES, '0')
   }
 
   findOrCreateConditionTypeWrap(conditionType) {
@@ -91,9 +100,8 @@ export default class EditPanelItem {
     return conditionTypeWrap
   }
 
-  get itemInputs() {
-    this.itemFieldGroups = []
-    const inputs = {
+  itemInputs() {
+    const inputs = dom.create({
       className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
       children: this.itemValues.map(([key, val]) => {
         if (this.panelName === 'conditions') {
@@ -102,7 +110,13 @@ export default class EditPanelItem {
 
         return this.itemInput(key, val)
       }),
+    })
+
+    if (this.inputs) {
+      this.inputs.replaceWith(inputs)
     }
+
+    this.inputs = inputs
 
     return inputs
   }
@@ -111,9 +125,12 @@ export default class EditPanelItem {
     const conditionTypeWrap = this.findOrCreateConditionTypeWrap(conditionType)
     let condition = conditionArg
     if (!condition) {
-      const [newConditionTemplate] = CONDITION_TEMPLATE()[conditionType]
+      const [newConditionData] = CONDITION_TEMPLATE()[conditionType]
       const conditionCount = conditionTypeWrap.children.length
-      const newConditionData = { logical: '||', ...newConditionTemplate }
+
+      if (conditionType === conditionTypeIf) {
+        newConditionData.logical = '||'
+      }
 
       condition = { conditionValues: newConditionData, conditionCount, index: conditionCount }
     }
@@ -126,6 +143,7 @@ export default class EditPanelItem {
   }
 
   removeConditionType = (conditionType, index) => {
+    debugger
     const conditionTypeWrap = this.conditionTypeWrap.get(conditionType)
     const conditionField = conditionTypeWrap.children[index]
     conditionField.destroy()
@@ -133,8 +151,15 @@ export default class EditPanelItem {
   }
 
   generateConditionFields = (conditionType, conditionVals) => {
+    this.conditions = new Map()
+
     conditionVals.forEach((condition, index) => {
-      this.addConditionType(conditionType, { index, conditionCount: conditionVals.length, conditionValues: condition })
+      const conditionField = this.addConditionType(conditionType, {
+        index,
+        conditionCount: conditionVals.length,
+        conditionValues: condition,
+      })
+      this.conditions.set(index, conditionField)
     })
 
     return this.findOrCreateConditionTypeWrap(conditionType)
@@ -157,10 +182,10 @@ export default class EditPanelItem {
       },
       action: {
         click: () => {
-          animate.slideUp(this.dom, 250, elem => {
+          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, elem => {
             this.field.remove(this.itemKey)
-            dom.remove(elem)
-            this.field.resizePanelWrap()
+            elem.remove()
+            this.panel.updateProps()
           })
         },
       },

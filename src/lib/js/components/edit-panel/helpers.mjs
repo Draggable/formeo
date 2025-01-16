@@ -11,7 +11,7 @@ function inputConfigBase({ key, value, type = 'text', checked }) {
       value,
       placeholder: i18n.get(`${key}.placeholder`) || toTitleCase(key),
     },
-    className: key.replace(/\./g, '-'),
+    className: [key.replace(/\./g, '-')],
     config: {},
   }
 
@@ -45,7 +45,7 @@ export const ITEM_INPUT_TYPE_MAP = {
       attrs: {
         placeholder: labelHelper(`placeholder.${key}`),
       },
-      className: key.replace(/\./g, '-'),
+      className: [key.replace(/\./g, '-')],
       options: value,
     }
   },
