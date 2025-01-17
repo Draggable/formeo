@@ -22,7 +22,8 @@
       },
       "suspicious": {
         "noImplicitAnyLet": "error",
-        "noConsoleLog": "warn"
+        "noConsoleLog": "warn",
+        "noThenProperty": "off"
       },
       "complexity": {
         "useLiteralKeys": "error",
