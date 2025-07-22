@@ -64,7 +64,10 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build:lib": "vite build --config vite.config.lib.mjs",
+    "build:lib": "npm run build:lib:clean && npm run build:lib:unminified && npm run build:lib:minified",
+    "build:lib:clean": "rm -rf dist",
+    "build:lib:unminified": "vite build --config vite.config.lib.mjs --mode production",
+    "build:lib:minified": "vite build --config vite.config.lib.mjs --mode production-minified",
     "build": "npm-run-all -p build:icons build:demo",
     "prebuild": "npm run build:lib",
     "postbuild": "npm run generate:jsonSchema",
