@@ -13,9 +13,11 @@ export const POLYFILLS = [
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
   { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
-const localSpriteUrl = typeof resolve === 'function' 
-  ? resolve(`../../lib/icons/${formeoSpriteId}.svg`) 
-  : `../../lib/icons/${formeoSpriteId}.svg`
+
+const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`
+const localSpriteUrl = typeof resolve === 'function'
+  ? resolve(relativeSpritePath)
+  : relativeSpritePath
 
 export const SVG_SPRITE_URL = env?.DEV
   ? localSpriteUrl
