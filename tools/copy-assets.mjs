@@ -24,13 +24,12 @@ const targets = [
   },
   {
     src: resolve(projectRoot, 'dist/formeo.umd.js'),
-    dest: resolve(projectRoot, 'dist/demo/assets/js/'),
+    dest: resolve(projectRoot, 'dist/'),
     rename: 'formeo.min.js',
   },
   {
-    src: resolve(projectRoot, 'dist/formeo.umd.js'),
-    dest: resolve(projectRoot, 'dist/'),
-    rename: 'formeo.min.js',
+    src: resolve(projectRoot, 'dist/*.js'),
+    dest: resolve(projectRoot, 'dist/demo/assets/js/'),
   },
   {
     src: resolve(projectRoot, 'dist/formeo.min.css'),

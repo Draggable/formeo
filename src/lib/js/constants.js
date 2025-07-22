@@ -13,9 +13,13 @@ export const POLYFILLS = [
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
   { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
-export const SVG_SPRITE_URL = env?.PROD
-  ? `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
-  : resolve(`../../lib/icons/${formeoSpriteId}.svg`)
+const localSpriteUrl = typeof resolve === 'function' 
+  ? resolve(`../../lib/icons/${formeoSpriteId}.svg`) 
+  : `../../lib/icons/${formeoSpriteId}.svg`
+
+export const SVG_SPRITE_URL = env?.DEV
+  ? localSpriteUrl
+  : `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
 export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`
 export const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formeo.min.css`
 export const FALLBACK_CSS_URL = 'https://draggable.github.io/formeo/assets/css/formeo.min.css'
