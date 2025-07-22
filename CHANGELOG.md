@@ -1,3 +1,10 @@
+## [3.1.4](https://github.com/Draggable/formeo/compare/v3.1.3...v3.1.4) (2025-07-22)
+
+
+### Bug Fixes
+
+* g is not a function ([c8ad9aa](https://github.com/Draggable/formeo/commit/c8ad9aa2ac348670c11c58266f94c818fa609463)), closes [#396](https://github.com/Draggable/formeo/issues/396)
+
 ## [3.1.3](https://github.com/Draggable/formeo/compare/v3.1.2...v3.1.3) (2024-12-31)
 
 
