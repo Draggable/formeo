@@ -1,8 +1,6 @@
 import pkg from '../../../package.json' with { type: 'json' }
 import { uuid } from './common/utils/index.mjs'
 
-const { env, resolve } = import.meta
-
 const name = pkg.name
 export const version = pkg.version
 export const PACKAGE_NAME = name
@@ -15,11 +13,11 @@ export const POLYFILLS = [
 ]
 
 const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`
-const localSpriteUrl = typeof resolve === 'function'
-  ? resolve(relativeSpritePath)
+const localSpriteUrl = typeof import.meta.resolve === 'function'
+  ? import.meta.resolve(relativeSpritePath)
   : relativeSpritePath
 
-export const SVG_SPRITE_URL = env?.DEV
+export const SVG_SPRITE_URL = import.meta.env.DEV
   ? localSpriteUrl
   : `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
 export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`
