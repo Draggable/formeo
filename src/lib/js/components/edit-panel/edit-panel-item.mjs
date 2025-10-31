@@ -82,7 +82,12 @@ export default class EditPanelItem {
   }
 
   get itemValues() {
-    return orderObjectsBy(Object.entries(this.field.get(this.itemKey)), CHECKED_TYPES, '0')
+    const val = this.field.get(this.itemKey)
+    if (typeof val === 'object') {
+      return orderObjectsBy(Object.entries(this.field.get(this.itemKey)), CHECKED_TYPES, '0')
+    }
+
+    return [[this.itemKey, val]]
   }
 
   findOrCreateConditionTypeWrap(conditionType) {
