@@ -1,11 +1,5 @@
 exports[`EditPanelItem snapshots > should match attribute item snapshot 1`] = `
 {
-  "itemValues": [
-    [
-      "type",
-      "checkbox"
-    ]
-  ],
   "field": {
     "indexName": "mockIndex",
     "id": "mockId",
@@ -14,6 +8,13 @@ exports[`EditPanelItem snapshots > should match attribute item snapshot 1`] = `
       "panels": {
         "mockPanel": {
           "hideDisabled": true
+        }
+      }
+    },
+    "_data": {
+      "attrs": {
+        "type": {
+          "type": "checkbox"
         }
       }
     }
@@ -29,27 +30,14 @@ exports[`EditPanelItem snapshots > should match attribute item snapshot 1`] = `
   "isLocked": false,
   "address": "mockIndex.mockId.attrs.type",
   "itemSlug": "attrs-type",
-  "itemFieldGroups": [],
+  "conditionTypeWrap": {},
+  "inputs": {},
   "dom": {}
 }
 `;
 
 exports[`EditPanelItem snapshots > should match option snapshot 1`] = `
 {
-  "itemValues": [
-    [
-      "checked",
-      false
-    ],
-    [
-      "label",
-      "Checkbox 1"
-    ],
-    [
-      "value",
-      "checkbox-1"
-    ]
-  ],
   "field": {
     "indexName": "mockIndex",
     "id": "mockId",
@@ -60,6 +48,15 @@ exports[`EditPanelItem snapshots > should match option snapshot 1`] = `
           "hideDisabled": true
         }
       }
+    },
+    "_data": {
+      "options": [
+        {
+          "label": "Checkbox 1",
+          "value": "checkbox-1",
+          "checked": false
+        }
+      ]
     }
   },
   "itemKey": "options[0]",
@@ -74,7 +71,8 @@ exports[`EditPanelItem snapshots > should match option snapshot 1`] = `
   "isLocked": false,
   "address": "mockIndex.mockId.options[0]",
   "itemSlug": "options-0",
-  "itemFieldGroups": [],
+  "conditionTypeWrap": {},
+  "inputs": {},
   "dom": {}
 }
 `;

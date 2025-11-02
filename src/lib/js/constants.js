@@ -17,7 +17,7 @@ const localSpriteUrl = typeof import.meta.resolve === 'function'
   ? import.meta.resolve(relativeSpritePath)
   : relativeSpritePath
 
-const isDev = import.meta.env.DEV || false
+const isDev = import.meta?.env?.DEV || false
 export const SVG_SPRITE_URL = isDev
   ? localSpriteUrl
   : `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`

@@ -1,16 +1,29 @@
 import { suite, test } from 'node:test'
 import { EditPanelItem } from './edit-panel-item.mjs'
+import { get, set } from '../../common/utils/object.mjs'
 
-// Mock dependencies
-const mockField = {
-  indexName: 'mockIndex',
-  id: 'mockId',
-  remove: () => {},
-  resizePanelWrap: () => {},
-  isDisabledProp: () => false,
-  isLockedProp: () => false,
-  shortId: 'mockShortId',
-  config: { panels: { mockPanel: { hideDisabled: true } } },
+// Create a mock Field class with get/set on prototype
+class MockField {
+  constructor() {
+    this.indexName = 'mockIndex'
+    this.id = 'mockId'
+    this.shortId = 'mockShortId'
+    this.config = { panels: { mockPanel: { hideDisabled: true } } }
+    this._data = {}
+  }
+  
+  get(path) {
+    return get(this._data, path)
+  }
+  
+  set(path, value) {
+    return set(this._data, path, value)
+  }
+  
+  remove() {}
+  resizePanelWrap() {}
+  isDisabledProp() { return false }
+  isLockedProp() { return false }
 }
 
 const mockPanel = {
@@ -20,16 +33,19 @@ const mockPanel = {
 
 suite('EditPanelItem snapshots', () => {
   test('should match attribute item snapshot', t => {
+    const mockField = new MockField()
     const item = new EditPanelItem({ key: 'attrs.type', data: { type: 'checkbox' }, field: mockField, panel: mockPanel })
     t.assert.snapshot(item)
   })
   test('should match option snapshot', t => {
+    const mockField = new MockField()
     const itemData = { label: 'Checkbox 1', value: 'checkbox-1', checked: false }
     const item = new EditPanelItem({ key: 'options[0]', data: itemData, index: 0, field: mockField, panel: mockPanel })
     t.assert.snapshot(item)
   })
 
   test('EditPanelItem constructor', t => {
+    const mockField = new MockField()
     const itemData = { key1: 'value1' }
     const editPanelItem = new EditPanelItem({
       key: 'key1',
@@ -45,6 +61,7 @@ suite('EditPanelItem snapshots', () => {
   })
 
   test('itemInputs getter', t => {
+    const mockField = new MockField()
     const itemData = { key1: 'value1' }
     const editPanelItem = new EditPanelItem({
       key: 'key1',
@@ -59,6 +76,7 @@ suite('EditPanelItem snapshots', () => {
   })
 
   test('generateConditionFields method', t => {
+    const mockField = new MockField()
     const itemData = { conditions: [{ type: 'eq', value: '1' }] }
     const editPanelItem = new EditPanelItem({
       key: 'conditions',
@@ -73,8 +91,9 @@ suite('EditPanelItem snapshots', () => {
   })
 
   test('itemControls getter with isLocked', t => {
-    const itemData = { key1: 'value1' }
+    const mockField = new MockField()
     mockField.isLockedProp = () => true
+    const itemData = { key1: 'value1' }
     const editPanelItem = new EditPanelItem({
       key: 'key1',
       data: itemData,
@@ -88,6 +107,7 @@ suite('EditPanelItem snapshots', () => {
   })
 
   test('itemInput method with checkbox type', t => {
+    const mockField = new MockField()
     const itemData = { key1: 'value1' }
     const editPanelItem = new EditPanelItem({
       key: 'key1',
