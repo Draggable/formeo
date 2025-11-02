@@ -6,8 +6,6 @@
 .component-edit {
   display: none;
   overflow: hidden;
-  margin-top: var.$double-space;
-  border-top: 1px solid color.$gray-lighter;
 
   label {
     font-size: 0.825em;
@@ -32,7 +30,6 @@
     flex-shrink: 0;
     align-items: center;
     display: flex;
-    margin-left: 8px;
 
     .prop-remove {
       z-index: 3;
@@ -41,6 +38,8 @@
     &.conditions-prop-controls {
       display: flex;
       align-items: flex-start;
+      margin-left: mixins.space(2);
+      min-width: mixins.space(2);
 
       .prop-remove {
         margin-top: -1px;
@@ -132,6 +131,16 @@
         z-index: 2;
       }
     }
+
+
+    &:first-child {
+      .conditions-prop-controls {
+        .prop-remove {
+          display: none;
+        }
+      }
+    }
+
   }
 
   .field-edit-group {
