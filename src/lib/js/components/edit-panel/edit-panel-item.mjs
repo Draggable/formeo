@@ -56,7 +56,7 @@ export default class EditPanelItem {
    * @param  {String} field
    * @return {Object} field object
    */
-  constructor({ key, index, field, panel }) {
+  constructor({ key, index, field, panel, data }) {
     this.field = field
     this.itemKey = key
     this.itemIndex = index
@@ -68,6 +68,10 @@ export default class EditPanelItem {
     this.address = `${field.indexName}.${field.id}.${key}`
     this.itemSlug = slugifyAddress(key)
     this.conditionTypeWrap = new Map()
+
+    if (data !== undefined && this.field.get(this.itemKey) === undefined) {
+      this.field.set(this.itemKey, data)
+    }
 
     const liClassList = [`field-${this.itemSlug}`, 'prop-wrap']
     if (this.isHidden) {
