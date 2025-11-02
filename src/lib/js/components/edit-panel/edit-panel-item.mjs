@@ -116,7 +116,6 @@ export default class EditPanelItem {
         if (this.panelName === 'conditions') {
           return this.generateConditionFields(key, val)
         }
-
         return this.itemInput(key, val)
       }),
     })
@@ -197,6 +196,12 @@ export default class EditPanelItem {
             this.panel.updateProps()
           })
         },
+        mouseover: (evt) => {
+          this.dom.classList.add('to-remove')
+        },
+        mouseout: (evt) => {
+          this.dom.classList.remove('to-remove')
+        },
       },
       content: dom.icon('remove'),
     }
@@ -217,6 +222,7 @@ export default class EditPanelItem {
       label: this.panelName !== 'options' && (labelHelper(labelKey) || toTitleCase(labelKey)),
       labelAfter: false,
     }
+
 
     const attrs = {
       name: baseConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
