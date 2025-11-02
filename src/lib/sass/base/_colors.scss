@@ -3,12 +3,20 @@
 // Colors
 $brand-primary: rgb(50, 93, 136) !default;
 $brand-primary-dark: color.adjust($brand-primary, $lightness: -10%) !default;
+$brand-primary-light: color.adjust($brand-primary, $lightness: 20%) !default;
+
 $brand-success: rgb(147, 197, 75) !default;
 $brand-success-dark: color.adjust($brand-success, $lightness: -10%) !default;
+$brand-success-light: color.adjust($brand-success, $lightness: 20%) !default;
+
 $brand-warning: rgb(244, 124, 60) !default;
 $brand-warning-dark: color.adjust($brand-warning, $lightness: -10%) !default;
+$brand-warning-light: color.adjust($brand-warning, $lightness: 20%) !default;
+
 $brand-error: rgb(217, 83, 79) !default;
 $brand-error-dark: color.adjust($brand-error, $lightness: -10%) !default;
+$brand-error-light: color.adjust($brand-error, $lightness: 20%) !default;
+
 $brand-info: rgb(153, 84, 187) !default;
 
 $remove-bg: rgba($brand-error, 0.25) !default;

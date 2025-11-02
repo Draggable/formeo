@@ -188,7 +188,7 @@ export default class EditPanel {
     const fieldOptionData = this.component.get('options')
     const type = controlId === 'select' ? 'option' : controlId
     const newOptionLabel = i18n.get('newOptionLabel', { type }) || 'New Option'
-    const itemKey = `options[${this.data.length}]`
+    const itemKey = `${this.name}[${this.data.length}]`
 
     const lastOptionData = fieldOptionData[fieldOptionData.length - 1]
     const optionTemplate = fieldOptionData.length ? lastOptionData : {}
@@ -196,17 +196,18 @@ export default class EditPanel {
     if (controlId !== 'button') {
       itemData.value = slugify(newOptionLabel)
     }
+
     const newOption = new EditPanelItem({
-      key: String(this.data.length),
+      key: itemKey,
       data: itemData,
       field: this.component,
       index: this.props.children.length,
       panel: this,
     })
-
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
-    this.component.set(itemKey, itemData)
+    // probably dont need the next line anymore after refactorting data management or EditPanelItem
+    // this.component.set(itemKey, itemData)
     this.component.debouncedUpdatePreview()
     this.component.resizePanelWrap()
   }

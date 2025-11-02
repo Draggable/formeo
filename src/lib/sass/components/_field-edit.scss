@@ -17,6 +17,7 @@
     margin-bottom: 0;
     padding: 0;
     overflow: hidden;
+
     button {
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -32,6 +33,10 @@
     align-items: center;
     display: flex;
     margin-left: 8px;
+
+    .prop-remove {
+      z-index: 3;
+    }
 
     &.conditions-prop-controls {
       display: flex;
@@ -104,13 +109,29 @@
       border-radius: var.$input-border-radius;
       margin-right: 0;
     }
+
   }
 
   .prop-wrap {
     position: relative;
-    margin-bottom: mixins.space(1);
+    margin-bottom: mixins.space(2);
     list-style: none;
     margin-left: 0;
+
+    &.to-remove {
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(color.$brand-error, 0.1);
+        z-index: 2;
+      }
+    }
   }
 
   .field-edit-group {
@@ -147,7 +168,7 @@
       &:hover {
         width: var.$prop-btn-width * 2;
 
-        + .prop-inputs {
+        +.prop-inputs {
           width: calc(100% - #{var.$prop-btn-width});
         }
       }
@@ -188,7 +209,7 @@
   position: relative;
   border-bottom: 1px solid color.$gray-lighter;
 
-  > [class^='condition-'] {
+  >[class^='condition-'] {
     border-left: 1px solid color.$gray-lighter;
   }
 
@@ -217,16 +238,19 @@
   }
 
   &:last-child {
+    .remove-condition-type {
+      border-bottom-right-radius: 0;
+    }
+
     .add-condition-type {
       display: flex;
     }
-  }
 
-  &:has(.add-condition-type) .remove-condition-type {
-    border-bottom-right-radius: 0;
-  }
-  &:has(.remove-condition-type) .add-condition-type {
-    border-top-right-radius: 0;
+    &:not(:first-child) {
+      .add-condition-type {
+        border-top-right-radius: 0;
+      }
+    }
   }
 
   input,
@@ -235,6 +259,7 @@
     background-color: color.$white;
     border: 0 none;
     border-radius: 0;
+
     &:focus {
       box-shadow: 0 0 0 1px color.$input-focus inset;
     }
@@ -268,7 +293,8 @@
 
   .condition-source,
   .condition-target {
-    max-width: 50%;
+    // max-width: 50%;
+
     input[type='text'] {
       min-height: 31px;
     }
@@ -321,7 +347,7 @@
 
 .condition-target,
 .condition-source {
-  input.f-autocomplete-display-field:placeholder-shown + span.clear-button {
+  input.f-autocomplete-display-field:placeholder-shown+span.clear-button {
     display: none;
   }
 
