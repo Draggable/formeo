@@ -71,8 +71,8 @@ suite('EditPanelItem snapshots', () => {
       panel: mockPanel,
     })
 
-    const inputs = editPanelItem.itemInputs
-    t.assert.deepEqual(inputs.className, 'mockPanel-prop-inputs prop-inputs f-input-group')
+    const inputs = editPanelItem.itemInputs()
+    t.assert.equal(inputs.className, 'mockPanel-prop-inputs prop-inputs f-input-group')
   })
 
   test('generateConditionFields method', t => {
@@ -87,7 +87,8 @@ suite('EditPanelItem snapshots', () => {
     })
 
     const conditionFields = editPanelItem.generateConditionFields('eq', [{ type: 'eq', value: '1' }])
-    t.assert.equal(conditionFields.length, 1)
+    // generateConditionFields returns a DOM wrapper element, check children count
+    t.assert.equal(conditionFields.children.length, 1)
   })
 
   test('itemControls getter with isLocked', t => {

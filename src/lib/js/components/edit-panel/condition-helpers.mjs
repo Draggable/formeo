@@ -143,6 +143,10 @@ const fieldVisibilityMap = {
     const target = fields.get('target')
     const targetProperty = fields.get('targetProperty')
 
+    if (targetProperty === undefined) {
+      return false
+    }
+
     if (target && !target.value) {
       return true
     }
