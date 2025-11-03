@@ -18,7 +18,6 @@ const localSpriteUrl = typeof import.meta.resolve === 'function'
   : relativeSpritePath
 
 const isDev = import.meta?.env?.DEV || process.env.NODE_ENV === 'development' || false
-console.log('isDev:', isDev) // eslint-disable-line no-console
 export const SVG_SPRITE_URL = isDev
   ? localSpriteUrl
   : `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`

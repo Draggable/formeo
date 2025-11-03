@@ -27,7 +27,7 @@
   overflow: visible;
   border-radius: mixins.space(1) 0 mixins.space(1) mixins.space(1);
 
-  > .children {
+  >.children {
     @include mixins.display-column;
     gap: var.$component-gap;
   }
@@ -38,7 +38,7 @@
     }
   }
 
-  & > .formeo-field {
+  &>.formeo-field {
     background-color: color.$white;
   }
 
@@ -57,7 +57,7 @@
   }
 
   &.empty {
-    border: 1px solid color.$gray-light;
+    border-color: color.$gray-light;
     background-color: color.$shadow;
   }
 
@@ -65,6 +65,7 @@
   &.hovering-stage,
   &.hovering-stage.empty {
     border-color: color.$stage-outline-color;
+    border-style: solid;
 
     .stage-tag {
       display: flex;
@@ -78,6 +79,10 @@
     .stage-handle {
       display: none;
     }
+
+    .formeo-row {
+      box-shadow: none;
+    }
   }
 }
 
@@ -89,7 +94,7 @@
   overflow: hidden;
   padding: 0 var.$action-btn-width + mixins.space(1) 2px mixins.space(1);
   right: -1px;
-  top: -23px;
+  // top: -23px;
   transition: width var.$animation-speed-base ease-in-out;
   width: auto;
   border-bottom-width: 0;
@@ -105,6 +110,7 @@
   .panel-nav {
     border-bottom: 0 none !important;
   }
+
   .conditions-prop-inputs {
     border-top: 1px solid color.$gray-lighter;
   }
@@ -112,11 +118,12 @@
 
 .stage-actions {
   right: -1px;
-  top: -(var.$prop-btn-width - 1);
+  top: -(var.$prop-btn-width);
   text-align: right;
   border-bottom-left-radius: var.$input-border-radius;
   border-bottom-right-radius: 0;
   border-width: 0;
+
   .edit-toggle,
   .edit-toggle:focus {
     border-bottom-left-radius: 0;

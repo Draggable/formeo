@@ -106,6 +106,12 @@ export class Condition {
       content: dom.icon('minus'),
       action: {
         click: () => this.destroy(),
+        mouseover: (evt) => {
+          this.dom.classList.add('to-remove')
+        },
+        mouseout: (evt) => {
+          this.dom.classList.remove('to-remove')
+        },
       },
     })
     actionButtons.push(removeConditionType)
