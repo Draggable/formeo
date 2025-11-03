@@ -21,11 +21,13 @@ $brand-info: rgb(153, 84, 187) !default;
 
 $remove-bg: rgba($brand-error, 0.25) !default;
 
-$stage-outline-color: rgb(255, 94, 0);
-$row-outline-color: rgb(239, 71, 111);
-$column-outline-color: rgb(6, 214, 160);
-$field-outline-color: rgb(38, 84, 124);
-$option-outline-color: rgb(163, 0, 128);
+$stage-outline-color: #4F46E5; // base indigo
+$row-outline-color: adjust-hue($stage-outline-color, -30deg);
+$column-outline-color: adjust-hue($stage-outline-color, -60deg);
+$field-outline-color: adjust-hue($stage-outline-color, -120deg);
+$option-outline-color: adjust-hue($stage-outline-color, 90deg);
+
+
 $stage-highlight-color: color.adjust($stage-outline-color, $lightness: 36%) !default;
 $row-highlight-color: color.adjust($row-outline-color, $lightness: 25%) !default;
 $column-highlight-color: color.adjust($column-outline-color, $lightness: 50%) !default;
