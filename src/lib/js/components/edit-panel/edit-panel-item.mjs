@@ -85,10 +85,24 @@ export default class EditPanelItem {
     })
   }
 
+  // dataType(data) {
+  //   if (content === undefined) {
+  //     return content
+  //   }
+
+  //   return [
+  //     ['array', content => Array.isArray(content)],
+  //     ['component', () => content?.dom],
+  //     [typeof content, () => true],
+  //   ].find(typeCondition => typeCondition[1](content))[0]
+  // }
+
   get itemValues() {
     const val = this.field.get(this.itemKey)
-    if (typeof val === 'object') {
-      return orderObjectsBy(Object.entries(this.field.get(this.itemKey)), CHECKED_TYPES, '0')
+
+
+    if (val?.constructor === Object) {
+      return orderObjectsBy(Object.entries(val), CHECKED_TYPES, '0')
     }
 
     return [[this.itemKey, val]]
@@ -151,7 +165,6 @@ export default class EditPanelItem {
   }
 
   removeConditionType = (conditionType, index) => {
-    debugger
     const conditionTypeWrap = this.conditionTypeWrap.get(conditionType)
     const conditionField = conditionTypeWrap.children[index]
     conditionField.destroy()
@@ -216,6 +229,7 @@ export default class EditPanelItem {
     const valType = dom.childType(value) || 'string'
     const dataKey = panelDataKeyMap.get(this.panelName)?.({ itemKey: this.itemKey, key }) || this.itemKey
     const labelKey = dataKey.split('.').filter(Number.isNaN).join('.') || key
+    // debugger
     const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value })
     const name = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, '-$1')}`
     const config = {
