@@ -75,7 +75,9 @@
     "postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
     "build:demo:watch": "vite build --mode demo --watch",
     "build:icons": "node ./tools/generate-sprite",
-    "lint": "eslint ./src --ext .js || true",
+    "lint": "biome check ./src",
+    "lint:fix": "biome check --write ./src",
+    "format": "biome format --write .",
     "test": "node --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
     "test:watch": "node --watch --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
     "test:updateSnapshots": "node --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
@@ -90,7 +92,7 @@
     "generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.3",
+    "@biomejs/biome": "^2.3.3",
     "@commitlint/cli": "^19.5.0",
     "@commitlint/config-conventional": "^19.5.0",
     "@playwright/test": "^1.49.1",

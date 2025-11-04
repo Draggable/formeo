@@ -1,11 +1,11 @@
-import { join, dirname, resolve } from 'node:path'
 import { writeFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url';
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { z } from 'zod'
 import { zodToJsonSchema } from 'zod-to-json-schema'
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const projectRoot = resolve(__dirname, '..');
+const __dirname = dirname(fileURLToPath(import.meta.url))
+const projectRoot = resolve(__dirname, '..')
 
 const htmlAttributesSchema = z.record(
   z.string(),
@@ -20,9 +20,9 @@ const htmlAttributesSchema = z.record(
         label: z.string(),
         value: z.string(),
         selected: z.boolean().optional(),
-      }),
+      })
     ), // for configurable html elements like h1, h2 etc
-  ]),
+  ])
 )
 
 const formDataSchema = z
@@ -35,7 +35,7 @@ const formDataSchema = z
         z.object({
           id: z.string().uuid(),
           children: z.array(z.string().uuid()),
-        }),
+        })
       )
       .describe('Droppable zones for rows, columns and fields'),
     rows: z
@@ -52,7 +52,7 @@ const formDataSchema = z
               inputGroup: z.boolean().optional(),
             })
             .optional(),
-        }),
+        })
       )
       .describe('Droppable zones for columns and fields'),
     columns: z
@@ -67,7 +67,7 @@ const formDataSchema = z
               width: z.string().optional(),
             })
             .optional(),
-        }),
+        })
       )
       .describe('Droppable zones for fields'),
     fields: z
@@ -109,11 +109,11 @@ const formDataSchema = z
                         label: z.string(),
                         // value: z.string().optional(),
                         selected: z.boolean().optional(),
-                      }),
+                      })
                     )
                     .optional(),
                 })
-                .catchall(z.any()),
+                .catchall(z.any())
             )
             .optional(),
           conditions: z
@@ -127,12 +127,11 @@ const formDataSchema = z
                       comparison: z.string().optional(),
                       target: z.string().optional(),
                       targetProperty: z.string().optional(),
-                    }),
+                    })
                   )
                   .optional(),
                 // "then" is not a keyword when used as a key in
                 // an object and required for the schema
-                // biome-ignore lint/suspicious/noThenProperty:
                 then: z
                   .array(
                     z.object({
@@ -140,13 +139,13 @@ const formDataSchema = z
                       targetProperty: z.string().optional(),
                       assignment: z.string().optional(),
                       value: z.string().optional(),
-                    }),
+                    })
                   )
                   .optional(),
-              }),
+              })
             )
             .optional(),
-        }),
+        })
       )
       .describe('Field and Element definitions'),
   })
@@ -162,7 +161,7 @@ const reorderSchema = (schema: object) => {
         }
         return acc
       },
-      {} as Record<string, unknown>,
+      {} as Record<string, unknown>
     ),
     ...schema,
   }

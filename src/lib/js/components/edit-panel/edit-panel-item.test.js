@@ -1,6 +1,6 @@
 import { suite, test } from 'node:test'
-import { EditPanelItem } from './edit-panel-item.mjs'
 import { get, set } from '../../common/utils/object.mjs'
+import { EditPanelItem } from './edit-panel-item.mjs'
 
 // Create a mock Field class with get/set on prototype
 class MockField {
@@ -11,19 +11,23 @@ class MockField {
     this.config = { panels: { mockPanel: { hideDisabled: true } } }
     this._data = {}
   }
-  
+
   get(path) {
     return get(this._data, path)
   }
-  
+
   set(path, value) {
     return set(this._data, path, value)
   }
-  
+
   remove() {}
   resizePanelWrap() {}
-  isDisabledProp() { return false }
-  isLockedProp() { return false }
+  isDisabledProp() {
+    return false
+  }
+  isLockedProp() {
+    return false
+  }
 }
 
 const mockPanel = {
@@ -34,7 +38,12 @@ const mockPanel = {
 suite('EditPanelItem snapshots', () => {
   test('should match attribute item snapshot', t => {
     const mockField = new MockField()
-    const item = new EditPanelItem({ key: 'attrs.type', data: { type: 'checkbox' }, field: mockField, panel: mockPanel })
+    const item = new EditPanelItem({
+      key: 'attrs.type',
+      data: { type: 'checkbox' },
+      field: mockField,
+      panel: mockPanel,
+    })
     t.assert.snapshot(item)
   })
   test('should match option snapshot', t => {

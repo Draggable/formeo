@@ -4,6 +4,14 @@ pre-push:
     run-tests:
       run: npm test
 
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,mjs,ts,json}"
+      run: npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      stage_fixed: true
+
 commit-msg:
   scripts:
     "commitlint.sh":

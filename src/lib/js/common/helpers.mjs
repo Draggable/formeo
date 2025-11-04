@@ -36,7 +36,7 @@ export const orderObjectsBy = (elements, order, path) => {
       elements.find(elem => {
         const newPath = splitPath.find(p => !!get(elem, p))
         return newPath && get(elem, newPath) === key
-      }),
+      })
     )
     .filter(Boolean)
   const orderedElements = newOrder.concat(elements)

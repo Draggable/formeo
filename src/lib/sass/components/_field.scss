@@ -3,7 +3,7 @@
 @use "../base/variables" as var;
 
 .formeo-field {
-  min-height: var.$icon-size;
+  min-height: mixins.space(3) + 2;
   position: relative;
   list-style: none;
   margin: 0;

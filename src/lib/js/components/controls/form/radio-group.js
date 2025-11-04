@@ -1,6 +1,6 @@
-import { generateOptionConfig } from './shared.js'
 import i18n from '@draggable/i18n'
 import Control from '../control.js'
+import { generateOptionConfig } from './shared.js'
 
 class RadioGroupControl extends Control {
   constructor() {

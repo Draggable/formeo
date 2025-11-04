@@ -1,4 +1,4 @@
-import { IS_SITE, GOOGLE_ANALYTICS } from './constants'
+import { GOOGLE_ANALYTICS, IS_SITE } from './constants'
 
 /**
  * Prepends script tags
@@ -17,10 +17,6 @@ function injectScript(props) {
 if (IS_SITE) {
   if (window.location.protocol !== 'https:') {
     window.location.protocol = 'https:'
-  }
-  ;((window.gitter = {}).chat = {}).options = {
-    room: 'Draggable/formeo',
-    activationElement: '.toggle-gitter',
   }
 
   const scripts = [

@@ -1,5 +1,6 @@
 import i18n from '@draggable/i18n'
 import Control from '../control.js'
+
 // import Components from '../..'
 
 class TextControl extends Control {

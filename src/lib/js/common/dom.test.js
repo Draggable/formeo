@@ -1,7 +1,7 @@
-import { test, describe } from 'node:test'
 import assert from 'node:assert/strict'
-import { dom, getName } from './dom.js'
+import { describe, test } from 'node:test'
 import { UUID_REGEXP } from '../constants.js'
+import { dom, getName } from './dom.js'
 
 // Mock browser globals
 // global.window = {
@@ -41,7 +41,7 @@ import { UUID_REGEXP } from '../constants.js'
 //   },
 // }
 
-describe('DOM Class', async t => {
+describe('DOM Class', async _t => {
   await test('processElemArg', () => {
     // Test string input
     const stringResult = dom.processElemArg('div')
@@ -86,7 +86,7 @@ describe('DOM Class', async t => {
   await test('processAttrValue', () => {
     assert.equal(
       dom.processAttrValue(() => 'test'),
-      'test',
+      'test'
     )
     assert.equal(dom.processAttrValue(true), '')
     assert.equal(dom.processAttrValue(false), false)
@@ -122,7 +122,7 @@ describe('DOM Class', async t => {
     assert.equal(dom.isDOMElement(null), false)
   })
 
-  await test('create', async t => {
+  await test('create', async _t => {
     await test('should return undefined for falsy input', () => {
       assert.equal(dom.create(), undefined)
       assert.equal(dom.create(null), undefined)

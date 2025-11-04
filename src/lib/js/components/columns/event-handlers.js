@@ -1,14 +1,14 @@
 import dom from '../../common/dom.js'
-import Components from '../index.js'
-import { percent, numToPercent } from '../../common/utils/index.mjs'
+import { map } from '../../common/helpers.mjs'
+import { numToPercent, percent } from '../../common/utils/index.mjs'
 import {
+  bsColRegExp,
   COLUMN_PRESET_CLASSNAME,
   COLUMN_RESIZE_CLASSNAME,
   CUSTOM_COLUMN_OPTION_CLASSNAME,
   ROW_CLASSNAME,
-  bsColRegExp,
 } from '../../constants.js'
-import { map } from '../../common/helpers.mjs'
+import Components from '../index.js'
 
 export class ResizeColumn {
   /**

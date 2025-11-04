@@ -1,6 +1,7 @@
-import { test, suite } from 'node:test'
+import { suite, test } from 'node:test'
 
 import { deepClone, mergeActions } from './object.mjs'
+
 suite('object', () => {
   suite('mergeActions', () => {
     test('mergeActions should merge two objects with no conflicts', ({ assert }) => {

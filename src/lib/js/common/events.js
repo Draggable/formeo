@@ -1,17 +1,17 @@
+import components, { Columns, Controls } from '../components/index.js'
 import {
+  ANIMATION_SPEED_BASE,
+  ANIMATION_SPEED_FAST,
+  EVENT_FORMEO_CLEARED,
+  EVENT_FORMEO_CONDITION_UPDATED,
+  EVENT_FORMEO_ON_RENDER,
+  EVENT_FORMEO_SAVED,
   EVENT_FORMEO_UPDATED,
-  EVENT_FORMEO_UPDATED_STAGE,
-  EVENT_FORMEO_UPDATED_ROW,
   EVENT_FORMEO_UPDATED_COLUMN,
   EVENT_FORMEO_UPDATED_FIELD,
-  EVENT_FORMEO_ON_RENDER,
-  EVENT_FORMEO_CONDITION_UPDATED,
-  EVENT_FORMEO_SAVED,
-  EVENT_FORMEO_CLEARED,
-  ANIMATION_SPEED_FAST,
-  ANIMATION_SPEED_BASE,
+  EVENT_FORMEO_UPDATED_ROW,
+  EVENT_FORMEO_UPDATED_STAGE,
 } from '../constants.js'
-import components, { Columns, Controls } from '../components/index.js'
 import { throttle } from './utils/index.mjs'
 
 const NO_TRANSITION_CLASS_NAME = 'no-transition'
@@ -24,7 +24,7 @@ const NO_TRANSITION_CLASS_NAME = 'no-transition'
 const defaults = {
   debug: false, // enable debug mode
   bubbles: true, // bubble events from components
-  formeoLoaded: evt => {},
+  formeoLoaded: _evt => {},
   onAdd: () => {},
   onChange: (...args) => defaults.onUpdate(...args),
   onUpdate: evt => events.opts?.debug && console.log(evt),
@@ -33,7 +33,7 @@ const defaults = {
   onUpdateColumn: evt => events.opts?.debug && console.log(evt),
   onUpdateField: evt => events.opts?.debug && console.log(evt),
   onRender: evt => events.opts?.debug && console.log(evt),
-  onSave: evt => {},
+  onSave: _evt => {},
   confirmClearAll: evt => {
     if (window.confirm(evt.confirmationMessage)) {
       evt.clearAllAction(evt)

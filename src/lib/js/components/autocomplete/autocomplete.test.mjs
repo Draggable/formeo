@@ -1,4 +1,4 @@
-import { test, suite, mock } from 'node:test'
+import { mock, suite, test } from 'node:test'
 import components from '../index.js'
 import { componentOptions, labelCount } from './helpers.mjs'
 

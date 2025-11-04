@@ -1,25 +1,30 @@
 /* global MutationObserver */
-import { uuid, componentType, merge, clone, remove, identity, unique, debounce } from '../common/utils/index.mjs'
-import { isInt, map, forEach, indexOfNode } from '../common/helpers.mjs'
-import dom from '../common/dom.js'
-import {
-  CHILD_TYPE_MAP,
-  PARENT_TYPE_MAP,
-  ANIMATION_SPEED_BASE,
-  PROPERTY_OPTIONS,
-  COMPONENT_TYPE_CLASSNAMES,
-  COLUMN_CLASSNAME,
-  CONTROL_GROUP_CLASSNAME,
-  COMPONENT_TYPE_MAP,
-} from '../constants.js'
-import Components from './index.js'
-import Data from './data.js'
+
 import animate from '../common/animation.js'
-import Controls from './controls/index.js'
+import dom from '../common/dom.js'
+import { forEach, indexOfNode, isInt, map } from '../common/helpers.mjs'
+import { clone, componentType, identity, merge, remove, unique, uuid } from '../common/utils/index.mjs'
 import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
 import { splitAddress, toTitleCase } from '../common/utils/string.mjs'
+import {
+  ANIMATION_SPEED_BASE,
+  CHILD_TYPE_MAP,
+  COLUMN_CLASSNAME,
+  COMPONENT_TYPE_CLASSNAMES,
+  COMPONENT_TYPE_MAP,
+  CONTROL_GROUP_CLASSNAME,
+  PARENT_TYPE_MAP,
+  PROPERTY_OPTIONS,
+} from '../constants.js'
+import Data from './data.js'
 import EditPanel from './edit-panel/edit-panel.js'
+// Components is imported at the end of the file after circular dependencies are resolved
+import Components from './index.js'
 import Panels from './panels.js'
+
+// import Controls from './controls/index.js'
+
+let Controls = null
 
 const propertyOptions = objectFromStringArray(PROPERTY_OPTIONS)
 
@@ -39,11 +44,11 @@ export default class Component extends Data {
     this.editPanels = new Map()
   }
 
-  mutationHandler = mutations =>
-    mutations.map(mutation => {
-      // @todo pull handler form config
-      // see dom.create.onRender for implementation pattern
-    })
+  // mutationHandler = mutations =>
+  //   mutations.map(mutation => {
+  //     @todo pull handler form config
+  //     see dom.create.onRender for implementation pattern
+  //   })
 
   // observe(container) {
   //   this.observer.disconnect()
@@ -67,7 +72,7 @@ export default class Component extends Data {
         } else {
           this.set(
             delPath,
-            parent.filter(item => item !== delItem),
+            parent.filter(item => item !== delItem)
           )
         }
       } else {
@@ -106,6 +111,8 @@ export default class Component extends Data {
   empty() {
     const removed = this.children.map(child => {
       child.remove()
+
+      return child
     })
     this.dom.classList.add('empty')
     return removed
@@ -223,7 +230,7 @@ export default class Component extends Data {
             id: 'remove',
           },
           action: {
-            click: (evt, id) => {
+            click: () => {
               animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
                 if (this.name === 'column') {
                   const row = this.parent
@@ -406,7 +413,13 @@ export default class Component extends Data {
     ])
 
     const onAddConditions = {
-      controls: () => {
+      controls: async () => {
+        if (!Controls) {
+          // Lazy import to avoid circular dependency
+          const { default: ControlsData } = await import('./controls/index.js')
+          Controls = ControlsData
+        }
+
         const {
           controlData: {
             meta: { id: metaId },
@@ -535,7 +548,7 @@ export default class Component extends Data {
     const idConfig = get(config, this.id)
     const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
       (acc, cur) => (cur ? merge(acc, cur) : acc),
-      this.configVal,
+      this.configVal
     )
 
     this.configVal = mergedConfig
@@ -616,7 +629,7 @@ export default class Component extends Data {
     return Promise.all(promises)
   }
 
-  execResult = ({ target, action, value, propertyPath }) => {
+  execResult = ({ target, action, value, _propertyPath }) => {
     return new Promise((resolve, reject) => {
       // we dont know what this will be so try but fail gracefully
       try {

@@ -1,7 +1,7 @@
-import { uuid } from '../common/utils/index.mjs'
-import events from '../common/events.js'
-import { get, set } from '../common/utils/object.mjs'
 import isEqual from 'lodash/isEqual.js'
+import events from '../common/events.js'
+import { uuid } from '../common/utils/index.mjs'
+import { get, set } from '../common/utils/object.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 
 const getChangeType = (oldVal, newVal) => {

@@ -1,11 +1,11 @@
-import Sortable from 'sortablejs'
 import i18n from '@draggable/i18n'
-import dom from '../../common/dom.js'
-import Component from '../component.js'
-import { STAGE_CLASSNAME, ANIMATION_SPEED_BASE, ROW_CLASSNAME, CONDITION_TEMPLATE } from '../../constants.js'
-import Stages from './index.js'
+import Sortable from 'sortablejs'
 import animate from '../../common/animation.js'
+import dom from '../../common/dom.js'
 import { debounce } from '../../common/utils/index.mjs'
+import { ANIMATION_SPEED_BASE, CONDITION_TEMPLATE, ROW_CLASSNAME, STAGE_CLASSNAME } from '../../constants.js'
+import Component from '../component.js'
+import Stages from './index.js'
 
 const DEFAULT_DATA = () => ({ conditions: [CONDITION_TEMPLATE()], children: [] })
 
@@ -27,7 +27,7 @@ export default class Stage extends Component {
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
 
     // @todo move formSettings to its own component
-    const stageSettings = {
+    const _stageSettings = {
       className: 'stage-settings',
       children: [
         {

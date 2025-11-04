@@ -1,6 +1,6 @@
-import Data from './data.js'
-import { uuid, clone, merge, parseData } from '../common/utils/index.mjs'
+import { clone, merge, parseData, uuid } from '../common/utils/index.mjs'
 import { get } from '../common/utils/object.mjs'
+import Data from './data.js'
 
 export default class ComponentData extends Data {
   load = dataArg => {
