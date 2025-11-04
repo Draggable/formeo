@@ -100,7 +100,6 @@ export default class EditPanelItem {
   get itemValues() {
     const val = this.field.get(this.itemKey)
 
-
     if (val?.constructor === Object) {
       return orderObjectsBy(Object.entries(val), CHECKED_TYPES, '0')
     }
@@ -209,10 +208,10 @@ export default class EditPanelItem {
             this.panel.updateProps()
           })
         },
-        mouseover: (evt) => {
+        mouseover: evt => {
           this.dom.classList.add('to-remove')
         },
-        mouseout: (evt) => {
+        mouseout: evt => {
           this.dom.classList.remove('to-remove')
         },
       },
@@ -236,7 +235,6 @@ export default class EditPanelItem {
       label: this.panelName !== 'options' && (labelHelper(labelKey) || toTitleCase(labelKey)),
       labelAfter: false,
     }
-
 
     const attrs = {
       name: baseConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
