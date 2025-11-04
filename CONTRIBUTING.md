@@ -15,7 +15,7 @@ To develop for Formeo you'll need:
 ### Recommended Tooling
 While not required, the following tools are recommended to maintain code quality and consistency in style.
 
-- [ESLint](http://jshint.com/)
+- [Biome](https://biomejs.dev/) - Fast formatter and linter for JavaScript, TypeScript, and JSON
 
 ### Installation
 

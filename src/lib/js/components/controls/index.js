@@ -1,18 +1,17 @@
-import Sortable from 'sortablejs'
 import i18n from '@draggable/i18n'
+import Sortable from 'sortablejs'
 import actions from '../../common/actions.js'
-import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
-import events from '../../common/events.js'
 import dom from '../../common/dom.js'
-import { match, unique, merge, clone } from '../../common/utils/index.mjs'
-import Panels from '../panels.js'
-import Field from '../fields/field.js'
-import Control from './control.js'
-import { CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME } from '../../constants.js'
-import Components, { Stages, Rows } from '../index.js'
-
-import defaultOptions from './options.js'
+import events from '../../common/events.js'
+import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
+import { clone, match, merge, unique } from '../../common/utils/index.mjs'
 import { get, set } from '../../common/utils/object.mjs'
+import { CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME } from '../../constants.js'
+import Panels from '../panels.js'
+import Rows from '../rows/index.js'
+import Stages from '../stages/index.js'
+import Control from './control.js'
+import defaultOptions from './options.js'
 
 /**
  *
@@ -188,7 +187,9 @@ export class Controls {
       ...dom.btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
       className: ['save-form'],
       action: {
-        click: ({ target }) => {
+        click: async ({ target }) => {
+          // Dynamic import to avoid circular dependency
+          const { default: Components } = await import('../index.js')
           const { formData } = Components
           const saveEvt = {
             action: () => {},
@@ -296,9 +297,11 @@ export class Controls {
           pull: 'clone',
           put: false,
         },
-        onStart: ({ item }) => {
+        onStart: async ({ item }) => {
           const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {
+            // Dynamically import Field to avoid circular dependency
+            const { default: Field } = await import('../fields/field.js')
             item.innerHTML = ''
             item.appendChild(new Field(controlData).preview)
           }

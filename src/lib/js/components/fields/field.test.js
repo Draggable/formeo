@@ -1,6 +1,6 @@
-import { describe, it, before, beforeEach, mock } from 'node:test'
-import Field from './field.js'
+import { before, beforeEach, describe, it, mock } from 'node:test'
 import { Controls } from '../controls/index.js'
+import Field from './field.js'
 
 const fieldConfig = {
   tag: 'input',

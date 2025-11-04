@@ -1,5 +1,5 @@
+import { FALLBACK_CSS_URL, FALLBACK_SVG_SPRITE_URL, formeoSpriteId, POLYFILLS, SVG_SPRITE_URL } from '../constants.js'
 import dom from './dom.js'
-import { FALLBACK_CSS_URL, FALLBACK_SVG_SPRITE_URL, POLYFILLS, SVG_SPRITE_URL, formeoSpriteId } from '../constants.js'
 import { noop } from './utils/index.mjs'
 
 const loaded = {
@@ -79,7 +79,7 @@ export const insertStyle = srcs => {
         })
 
         document.head.appendChild(styleLink)
-      }),
+      })
   )
 
   return Promise.all(promises)

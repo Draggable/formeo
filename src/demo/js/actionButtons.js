@@ -1,8 +1,7 @@
-import startCase from 'lodash/startCase'
-
 import aceEditor, { config } from 'ace-builds/src-noconflict/ace'
 import Json from 'ace-builds/src-noconflict/mode-json?url'
 import githubTheme from 'ace-builds/src-noconflict/theme-github_light_default?url'
+import startCase from 'lodash/startCase'
 
 config.setModuleUrl('ace/mode/json', Json)
 config.setModuleUrl('ace/theme/github_light_default', githubTheme)

@@ -40,7 +40,7 @@ const animate = {
       const curHeight = Number.parseFloat(elem.style.height)
       const val = curHeight + increment
       if (curHeight < height) {
-        elem.style.height = val + 'px'
+        elem.style.height = `${val}px`
         window.requestAnimationFrame(slideDown)
       } else {
         // reset height to be used by slideUp
@@ -55,7 +55,7 @@ const animate = {
 
   slideUp: (elem, duration = 250, cb = false) => {
     const style = animate.getStyle(elem)
-    const height = Number.parseInt(style.height)
+    const height = Number.parseInt(style.height, 10)
     const overFlowBack = style.overflow
     elem.style.overflow = 'hidden'
     elem.style.height = `${height}px`
@@ -66,7 +66,7 @@ const animate = {
       const curHeight = Number.parseInt(elem.style.height, 10)
       const val = curHeight - increment
       if (val > 0) {
-        elem.style.height = val + 'px'
+        elem.style.height = `${val}px`
         window.requestAnimationFrame(slideUp)
       } else {
         elem.style.overflow = overFlowBack

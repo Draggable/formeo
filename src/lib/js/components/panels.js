@@ -1,9 +1,9 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
-import h, { indexOfNode } from '../common/helpers.mjs'
 import dom from '../common/dom.js'
-import { ANIMATION_SPEED_SLOW, ANIMATION_SPEED_FAST } from '../constants.js'
+import h, { indexOfNode } from '../common/helpers.mjs'
 import { merge } from '../common/utils/index.mjs'
+import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../constants.js'
 
 const defaults = Object.freeze({
   type: 'field',
@@ -46,7 +46,7 @@ export default class Panels {
           this.currentWidth = width
           this.nav.setTranslateX(this.activePanelIndex, false)
         }
-      },
+      }
     )
 
     const observeTimeout = window.setTimeout(() => {

@@ -1,21 +1,21 @@
-import Data from './data.js'
-import { sessionStorage, isAddress, parseData, clone, buildFlatDataStructure } from '../common/utils/index.mjs'
-import ControlsData from './controls/index.js'
-
-import StagesData from './stages/index.js'
-import RowsData from './rows/index.js'
-import ColumnsData from './columns/index.js'
-import FieldsData from './fields/index.js'
-import ExternalsData from './externals.js'
-import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
+// biome-ignore assist/source/organizeImports: import order necessary for Controls circular dependency
+import { buildFlatDataStructure, clone, isAddress, parseData, sessionStorage } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
+import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
+import ColumnsData from './columns/index.js'
+import Data from './data.js'
+import ExternalsData from './externals.js'
+import FieldsData from './fields/index.js'
+import RowsData from './rows/index.js'
+import StagesData from './stages/index.js'
+import ControlsData from './controls/index.js'
 
 export const Stages = StagesData
 export const Rows = RowsData
 export const Columns = ColumnsData
 export const Fields = FieldsData
-export const Controls = ControlsData
 export const Externals = ExternalsData
+export const Controls = ControlsData
 
 const getFormData = (formData, useSessionStorage = false) => {
   if (formData) {

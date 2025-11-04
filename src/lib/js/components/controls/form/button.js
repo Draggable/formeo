@@ -1,6 +1,6 @@
 import i18n from '@draggable/i18n'
-import Control from '../control.js'
 import { merge } from '../../../common/utils/index.mjs'
+import Control from '../control.js'
 
 const buttonTypes = ['button', 'submit', 'reset'].map(buttonType => ({
   label: buttonType,

@@ -1,11 +1,11 @@
 @use "sass:color";
+@use "sass:math";
 
 @function text-color($bg-color, $light: #f9fafb, $dark: #111827) {
-  $r: red($bg-color);
-  $g: green($bg-color);
-  $b: blue($bg-color);
-  $brightness: (
-    ($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+  $r: color.channel($bg-color, "red", $space: rgb);
+  $g: color.channel($bg-color, "green", $space: rgb);
+  $b: color.channel($bg-color, "blue", $space: rgb);
+  $brightness: math.div(($r * 299) + ($g * 587) + ($b * 114), 1000);
   @return if($brightness > 150, $dark, $light
 );
 }
@@ -33,10 +33,10 @@ $brand-info: rgb(153, 84, 187) !default;
 $remove-bg: rgba($brand-error, 0.25) !default;
 
 $stage-outline-color: #4F46E5; // base indigo
-$row-outline-color: adjust-hue($stage-outline-color, 72deg);
-$column-outline-color: adjust-hue($stage-outline-color, 144deg);
-$field-outline-color: adjust-hue($stage-outline-color, 216deg);
-$option-outline-color: adjust-hue($stage-outline-color, 288deg);
+$row-outline-color: color.adjust($stage-outline-color, $hue: 72deg);
+$column-outline-color: color.adjust($stage-outline-color, $hue: 144deg);
+$field-outline-color: color.adjust($stage-outline-color, $hue: 216deg);
+$option-outline-color: color.adjust($stage-outline-color, $hue: 288deg);
 
 $stage-outline-color-text: text-color($stage-outline-color) !default;
 $row-outline-color-text: text-color($row-outline-color) !default;

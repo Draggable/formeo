@@ -21,7 +21,7 @@ export function toTitleCase(str) {
 
   const newString = str.replace(
     toTitleCaseRegex,
-    txt => txt.charAt(0).toUpperCase() + txt.substring(1).replace(/[A-Z]/g, word => ` ${word}`),
+    txt => txt.charAt(0).toUpperCase() + txt.substring(1).replace(/[A-Z]/g, word => ` ${word}`)
   )
   return newString
 }
@@ -60,7 +60,7 @@ export const splitAddress = str => {
     return str
   }
 
-  const regex = /[.\[\]]/g // Matches '.', '[' or ']'
+  const regex = /[.[\]]/g // Matches '.', '[' or ']'
 
   const matches = []
   let lastIndex = 0

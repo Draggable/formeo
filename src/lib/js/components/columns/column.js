@@ -1,10 +1,10 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
-import Component from '../component.js'
-import h from '../../common/helpers.mjs'
-import events from '../../common/events.js'
 import dom from '../../common/dom.js'
+import events from '../../common/events.js'
+import h from '../../common/helpers.mjs'
 import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants.js'
+import Component from '../component.js'
 import { ResizeColumn } from './event-handlers.js'
 
 const DEFAULT_DATA = () =>

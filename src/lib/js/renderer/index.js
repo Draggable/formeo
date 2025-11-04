@@ -1,8 +1,8 @@
 import dom from '../common/dom.js'
-import { uuid, isAddress, isExternalAddress, merge, cleanFormData } from '../common/utils/index.mjs'
-import { STAGE_CLASSNAME } from '../constants'
 import { fetchDependencies } from '../common/loaders'
+import { cleanFormData, isAddress, isExternalAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
+import { STAGE_CLASSNAME } from '../constants'
 import {
   baseId,
   comparisonMap,
@@ -213,7 +213,7 @@ export default class FormeoRenderer {
 
   processColumns = rowId => {
     return this.orderChildren('columns', this.form.rows[rowId].children).map(column =>
-      this.cacheComponent(this.processColumn(column)),
+      this.cacheComponent(this.processColumn(column))
     )
   }
 
@@ -265,7 +265,7 @@ export default class FormeoRenderer {
             }
           }
         },
-        false,
+        false
       )
     }
 

@@ -1,13 +1,11 @@
 // copyDir.mjs
-import { promises as fs } from 'node:fs';
-import { join, basename, resolve, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { promises as fs } from 'node:fs'
+import { basename, dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const projectRoot = resolve(__dirname, '..');
-
-
+const projectRoot = resolve(__dirname, '..')
 
 const targets = [
   {
@@ -39,9 +37,9 @@ const targets = [
 
 async function copyFile(src, dest, rename = null) {
   for await (const file of fs.glob(src)) {
-    const destPath = rename ? join(dest, rename) : join(dest, basename(file));
-    await fs.mkdir(dirname(destPath), { recursive: true });
-    await fs.copyFile(file, destPath);
+    const destPath = rename ? join(dest, rename) : join(dest, basename(file))
+    await fs.mkdir(dirname(destPath), { recursive: true })
+    await fs.copyFile(file, destPath)
   }
 }
 
@@ -49,12 +47,12 @@ async function copyFile(src, dest, rename = null) {
 async function main() {
   for (const target of targets) {
     try {
-      await copyFile(target.src, target.dest, target.rename);
-      console.log(`Copied ${basename(target.src)} to ${target.dest}`);
+      await copyFile(target.src, target.dest, target.rename)
+      console.log(`Copied ${basename(target.src)} to ${target.dest}`)
     } catch (error) {
-      console.error(`Error copying file: ${error.message}`);
+      console.error(`Error copying file: ${error.message}`)
     }
   }
 }
 
-main();
+main()

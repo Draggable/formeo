@@ -1,9 +1,10 @@
 import i18n from '@draggable/i18n'
 import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
-import Components from '../index.js'
-import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../../constants.js'
 import { isAddress, noop } from '../../common/utils/index.mjs'
+import { splitAddress } from '../../common/utils/string.mjs'
+import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../../constants.js'
+import Components from '../index.js'
 import {
   BASE_NAME,
   componentOptions,
@@ -13,7 +14,6 @@ import {
   LIST_CLASSNAME,
   LIST_ITEM_CLASSNAME,
 } from './helpers.mjs'
-import { splitAddress } from '../../common/utils/string.mjs'
 
 /**
  * Autocomplete class
@@ -136,7 +136,7 @@ export default class Autocomplete {
         target.parentElement.classList.add(`${BASE_NAME}-focused`)
         const filteredOptions = dom.toggleElementsByStr(
           this.list.querySelectorAll(`.${LIST_ITEM_CLASSNAME}-depth-0`),
-          target.value,
+          target.value
         )
         target.addEventListener('keydown', keyboardNav)
         const selectedOption = this.list.querySelector('.active-option') || filteredOptions[0]
@@ -381,7 +381,7 @@ export default class Autocomplete {
           componentAddress: [],
           optionIndex: null,
           isOptionAddress: false,
-        },
+        }
       )
 
       const component = Components.getAddress(componentAddress)

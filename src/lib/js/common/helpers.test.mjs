@@ -1,4 +1,4 @@
-import { test, suite } from 'node:test'
+import { suite, test } from 'node:test'
 import { safeAttrName, subtract } from './helpers.mjs'
 
 suite('Helpers', () => {

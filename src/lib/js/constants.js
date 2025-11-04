@@ -13,9 +13,8 @@ export const POLYFILLS = [
 ]
 
 const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`
-const localSpriteUrl = typeof import.meta.resolve === 'function'
-  ? import.meta.resolve(relativeSpritePath)
-  : relativeSpritePath
+const localSpriteUrl =
+  typeof import.meta.resolve === 'function' ? import.meta.resolve(relativeSpritePath) : relativeSpritePath
 
 const isDev = import.meta?.env?.DEV || process.env.NODE_ENV === 'development' || false
 export const SVG_SPRITE_URL = isDev
@@ -45,13 +44,16 @@ export const CHILD_CLASSNAME_MAP = new Map([
 export const INTERNAL_COMPONENT_TYPES = ['stage', 'row', 'column', 'field']
 export const INTERNAL_COMPONENT_INDEX_TYPES = INTERNAL_COMPONENT_TYPES.map(type => `${type}s`)
 export const INTERNAL_COMPONENT_INDEX_TYPE_MAP = new Map(
-  INTERNAL_COMPONENT_INDEX_TYPES.map((type, index) => [type, INTERNAL_COMPONENT_TYPES[index]]),
+  INTERNAL_COMPONENT_INDEX_TYPES.map((type, index) => [type, INTERNAL_COMPONENT_TYPES[index]])
 )
+export const INTERNAL_COMPONENT_INDEX_REGEX = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPES.join('|')}.`)
+
 export const COMPONENT_TYPES = ['external', ...INTERNAL_COMPONENT_TYPES]
 export const COMPONENT_INDEX_TYPES = ['external', ...INTERNAL_COMPONENT_INDEX_TYPES]
 export const COMPONENT_INDEX_TYPE_MAP = new Map(
-  COMPONENT_INDEX_TYPES.map((type, index) => [type, COMPONENT_TYPES[index]]),
+  COMPONENT_INDEX_TYPES.map((type, index) => [type, COMPONENT_TYPES[index]])
 )
+export const COMPONENT_INDEX_REGEX = new RegExp(`^${COMPONENT_INDEX_TYPES.join('|')}.`)
 
 export const COMPONENT_TYPE_MAP = COMPONENT_TYPES.reduce((acc, type) => {
   acc[type] = type
@@ -79,7 +81,7 @@ export const COMPONENT_TYPE_CLASSNAMES_LOOKUP = Object.entries(COMPONENT_TYPE_CL
     acc[className] = type
     return acc
   },
-  {},
+  {}
 )
 
 export const COMPONENT_TYPE_CLASSNAMES_ARRAY = Object.values(COMPONENT_TYPE_CLASSNAMES)
@@ -95,7 +97,7 @@ const { childTypeMapVals, childTypeIndexMapVals } = COMPONENT_TYPE_CONFIGS.reduc
 
     return acc
   },
-  { childTypeMapVals: [], childTypeIndexMapVals: [] },
+  { childTypeMapVals: [], childTypeIndexMapVals: [] }
 )
 
 const parentTypeMap = childTypeMapVals
@@ -136,7 +138,7 @@ export const COLUMN_TEMPLATES = new Map(
   columnTemplates.reduce((acc, cur, idx) => {
     acc.push([idx, cur])
     return acc
-  }, []),
+  }, [])
 )
 
 export const SESSION_FORMDATA_KEY = `${name}-formData`

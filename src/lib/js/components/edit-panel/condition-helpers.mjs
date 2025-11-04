@@ -1,11 +1,11 @@
 import i18n from '@draggable/i18n'
-import { toTitleCase } from '../../common/utils/string.mjs'
 import dom from '../../common/dom.js'
 import { isExternalAddress, isInternalAddress } from '../../common/utils/index.mjs'
-import { PROPERTY_OPTIONS, OPERATORS, VISIBLE_OPTIONS, CHECKABLE_OPTIONS } from '../../constants.js'
+import { objectFromStringArray } from '../../common/utils/object.mjs'
+import { toTitleCase } from '../../common/utils/string.mjs'
+import { CHECKABLE_OPTIONS, OPERATORS, PROPERTY_OPTIONS, VISIBLE_OPTIONS } from '../../constants.js'
 import Components from '../index.js'
 import { ITEM_INPUT_TYPE_MAP } from './helpers.mjs'
-import { objectFromStringArray } from '../../common/utils/object.mjs'
 
 const hiddenPropertyClassname = 'hidden-property'
 const hiddenOptionClassname = 'hidden-option'
@@ -39,7 +39,7 @@ export const segmentTypes = {
   sourceProperty: createConditionSelect,
   targetProperty: createConditionSelect,
   target: args => segmentTypes.source(args),
-  value: ({ key, value, onChange }, conditionValues) => {
+  value: ({ key, value, onChange }, _conditionValues) => {
     const valueField = ITEM_INPUT_TYPE_MAP.string({ key: `condition.${key}`, value })
 
     valueField.action = {
@@ -65,7 +65,7 @@ export function getOptionConfigs({ key: fieldName, value: fieldValue, conditionT
 
   const data = isExternal ? externalOptionData(fieldName) : optionDataMap[optionDataKey]
   return Object.entries(data || {}).map(([key, optionValue]) =>
-    makeOptionDomConfig({ fieldName, fieldValue, key, optionValue }),
+    makeOptionDomConfig({ fieldName, fieldValue, key, optionValue })
   )
 }
 

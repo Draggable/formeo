@@ -1,7 +1,7 @@
 import i18n from '@draggable/i18n'
+import dom from '../../common/dom.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import Components from '../index.js'
-import dom from '../../common/dom.js'
 
 export const BASE_NAME = 'f-autocomplete'
 export const DISPLAY_FIELD_CLASSNAME = `${BASE_NAME}-display-field`

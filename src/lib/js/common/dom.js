@@ -1,19 +1,19 @@
-import h, { forEach } from './helpers.mjs'
 import i18n from '@draggable/i18n'
-import animate from './animation.js'
 import Components from '../components/index.js'
-import { uuid, componentType, merge } from './utils/index.mjs'
 import {
+  ANIMATION_SPEED_BASE,
+  CHILD_CLASSNAME_MAP,
+  COLUMN_CLASSNAME,
+  CONTROL_GROUP_CLASSNAME,
+  FIELD_CLASSNAME,
+  formeoSpriteId,
+  iconPrefix,
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
-  COLUMN_CLASSNAME,
-  FIELD_CLASSNAME,
-  CONTROL_GROUP_CLASSNAME,
-  CHILD_CLASSNAME_MAP,
-  iconPrefix,
-  formeoSpriteId,
-  ANIMATION_SPEED_BASE,
 } from '../constants.js'
+import animate from './animation.js'
+import h, { forEach } from './helpers.mjs'
+import { componentType, merge, uuid } from './utils/index.mjs'
 import { extractTextFromHtml, slugify, truncateByWord } from './utils/string.mjs'
 
 const iconFontTemplates = {
@@ -489,14 +489,14 @@ class DOM {
     const id = attrs.id || elem.id
 
     const optionMap = (option, i) => {
-      const { label, ...rest } = option
+      const { label, value, ...rest } = option
       const defaultInput = () => {
         const input = {
           tag: 'input',
           attrs: {
             name: id,
             type: fieldType,
-            value: option.value || '',
+            value: value || '',
             id: `${id}-${i}`,
             ...rest,
           },
@@ -507,7 +507,7 @@ class DOM {
           attrs: {
             for: `${id}-${i}`,
           },
-          children: option.label,
+          children: label,
         }
         const inputWrap = {
           children: [input, optionLabel],

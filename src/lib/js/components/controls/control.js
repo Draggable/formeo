@@ -1,9 +1,9 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
+import { indexOfNode } from '../../common/helpers.mjs'
 import { fetchDependencies } from '../../common/loaders.js'
 import { uuid } from '../../common/utils/index.mjs'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants.js'
-import { indexOfNode } from '../../common/helpers.mjs'
 import controls from './index.js'
 
 export default class Control {

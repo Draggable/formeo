@@ -1,15 +1,21 @@
 {
-  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.3/schema.json",
   "files": {
-    "ignore": ["node_modules/**", "dist/**"]
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/dist",
+      "!**/test-results",
+      "!**/playwright-report",
+      "!**/src/demo/index.html"
+    ]
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "vcs": {
     "clientKind": "git",
     "enabled": true,
-    "useIgnoreFile": true
+    "useIgnoreFile": true,
+    "defaultBranch": "master"
   },
   "linter": {
     "enabled": true,
@@ -17,27 +23,32 @@
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "error",
-        "noUnusedVariables": "error",
-        "useExhaustiveDependencies": "error"
+        "noUnusedVariables": "warn",
+        "useExhaustiveDependencies": "error",
+        "noUnusedFunctionParameters": "warn"
       },
       "suspicious": {
         "noImplicitAnyLet": "error",
-        "noConsoleLog": "warn",
-        "noThenProperty": "off"
+        "noThenProperty": "off",
+        "noConsole": { "level": "off", "options": { "allow": ["warn", "error", "info", "debug"] } }
       },
       "complexity": {
         "useLiteralKeys": "error",
         "noUselessFragments": "error"
       },
       "style": {
-        "recommended": true
+        "recommended": true,
+        "useConsistentArrayType": "off"
+      },
+      "nursery": {
+        "useSortedClasses": "off"
       }
     }
   },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": [],
+    "includes": ["**"],
     "indentStyle": "space",
     "indentWidth": 2,
     "lineEnding": "lf",
@@ -47,12 +58,16 @@
     "formatter": {
       "quoteStyle": "single",
       "semicolons": "asNeeded",
-      "arrowParentheses": "asNeeded"
+      "arrowParentheses": "asNeeded",
+      "trailingCommas": "es5",
+      "bracketSpacing": true
     }
   },
   "json": {
     "formatter": {
-      "indentStyle": "space"
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "trailingCommas": "none"
     }
   }
 }

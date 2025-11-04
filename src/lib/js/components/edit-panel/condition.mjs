@@ -1,11 +1,11 @@
 import i18n from '@draggable/i18n'
-import dom from '../../common/dom.js'
-import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
-import events from '../../common/events.js'
-import Components from '../index.js'
-import { debounce } from '../../common/utils/index.mjs'
-import { segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
 import animate from '../../common/animation.js'
+import dom from '../../common/dom.js'
+import events from '../../common/events.js'
+import { debounce } from '../../common/utils/index.mjs'
+import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
+import Components from '../index.js'
+import { segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
 
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
   return fieldOrder.reduce((acc, fieldName) => {
@@ -85,7 +85,7 @@ export class Condition {
       children: conditionRowChildren,
       className: `f-condition-row ${this.conditionType}-condition-row display-none`,
       action: {
-        onRender: elem => {
+        onRender: _elem => {
           this.processUiState()
         },
       },
@@ -106,10 +106,10 @@ export class Condition {
       content: dom.icon('minus'),
       action: {
         click: () => this.destroy(),
-        mouseover: evt => {
+        mouseover: _evt => {
           this.dom.classList.add('to-remove')
         },
-        mouseout: evt => {
+        mouseout: _evt => {
           this.dom.classList.remove('to-remove')
         },
       },

@@ -1,15 +1,15 @@
 import '../sass/formeo.scss'
 import i18n from '@draggable/i18n'
 import { SmartTooltip } from '@draggable/tooltip'
+import Actions from './common/actions.js'
 import dom from './common/dom.js'
 import Events from './common/events.js'
-import Actions from './common/actions.js'
+import { fetchFormeoStyle, fetchIcons, loadPolyfills } from './common/loaders.js'
+import { cleanFormData, merge } from './common/utils/index.mjs'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
-import { loadPolyfills, fetchIcons, fetchFormeoStyle } from './common/loaders.js'
-import { SESSION_LOCALE_KEY } from './constants.js'
-import { cleanFormData, merge } from './common/utils/index.mjs'
 import { defaults } from './config.js'
+import { SESSION_LOCALE_KEY } from './constants.js'
 
 /**
  * Main class

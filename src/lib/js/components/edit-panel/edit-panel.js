@@ -1,10 +1,10 @@
 import i18n from '@draggable/i18n'
-import dom from '../../common/dom.js'
 import actions from '../../common/actions.js'
-import EditPanelItem, { toggleOptionMultiSelect } from './edit-panel-item.mjs'
+import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
 import { slugify, toTitleCase } from '../../common/utils/string.mjs'
 import { PANEL_CLASSNAME } from '../../constants.js'
+import EditPanelItem, { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 
 // @todo convert these hardcoded lists to use
 // the updated event system from #381

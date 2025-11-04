@@ -1,6 +1,7 @@
 import mi18n from '@draggable/i18n'
 import { isIE } from './common/helpers'
 import { CSS_URL, SVG_SPRITE_URL } from './constants'
+
 const enUS = import.meta.env.enUS
 
 mi18n.addLanguage('en-US', enUS)

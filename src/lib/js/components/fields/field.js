@@ -1,10 +1,10 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { clone, debounce } from '../../common/utils/index.mjs'
-import Component from '../component.js'
-import { FIELD_CLASSNAME } from '../../constants.js'
-import controls from '../controls/index.js'
 import { indexOfNode } from '../../common/helpers.mjs'
+import { clone, debounce } from '../../common/utils/index.mjs'
+import { FIELD_CLASSNAME } from '../../constants.js'
+import Component from '../component.js'
+import controls from '../controls/index.js'
 
 const DEFAULT_DATA = () => ({
   // conditions: [CONDITION_TEMPLATE()],

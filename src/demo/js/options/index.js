@@ -1,6 +1,6 @@
-import external from './external'
-import controls from './controls'
 import config from './config'
+import controls from './controls'
+import external from './external'
 
 const editorContainer = '.build-form'
 const renderContainer = '.render-form'
@@ -31,8 +31,8 @@ export const editorOptions = {
   onLoad: () => {
     // const firstField = document.querySelector('.formeo-field')
     // if (firstField) {
-      document.querySelector('.edit-toggle').click()
-      // firstField.querySelector('.panel-labels')?.children[0].lastChild.click()
+    document.querySelector('.edit-toggle').click()
+    // firstField.querySelector('.panel-labels')?.children[0].lastChild.click()
     // }
   },
 }

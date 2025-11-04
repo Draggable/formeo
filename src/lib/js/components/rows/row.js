@@ -1,18 +1,18 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
-import Component from '../component.js'
 import dom from '../../common/dom.js'
 import events from '../../common/events.js'
 import { numToPercent } from '../../common/utils/index.mjs'
 import {
-  ROW_CLASSNAME,
-  COLUMN_TEMPLATES,
   ANIMATION_SPEED_FAST,
-  COLUMN_CLASSNAME,
   bsColRegExp,
-  CUSTOM_COLUMN_OPTION_CLASSNAME,
+  COLUMN_CLASSNAME,
   COLUMN_PRESET_CLASSNAME,
+  COLUMN_TEMPLATES,
+  CUSTOM_COLUMN_OPTION_CLASSNAME,
+  ROW_CLASSNAME,
 } from '../../constants.js'
+import Component from '../component.js'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -228,7 +228,7 @@ export default class Row extends Component {
         tag: 'option',
         content: label,
         attrs,
-      }),
+      })
     )
     this.columnPresetControl.append(...presetOptions)
   }

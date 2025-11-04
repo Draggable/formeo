@@ -1,7 +1,7 @@
 import i18n from '@draggable/i18n'
-import { SESSION_FORMDATA_KEY, CONDITION_TEMPLATE } from '../constants.js'
-import { identity, sessionStorage } from './utils/index.mjs'
+import { CONDITION_TEMPLATE, SESSION_FORMDATA_KEY } from '../constants.js'
 import events from './events.js'
+import { identity, sessionStorage } from './utils/index.mjs'
 
 // Actions are the callbacks for things like adding
 // new attributes, options, field removal confirmations etc.
@@ -43,7 +43,7 @@ const defaultActions = {
  * @todo refactor to handle multiple instances of formeo
  */
 const actions = {
-  init: function(options) {
+  init: function (options) {
     const actionKeys = Object.keys(defaultActions)
     this.opts = actionKeys.reduce((acc, key) => {
       acc[key] = { ...defaultActions[key], ...options[key] }

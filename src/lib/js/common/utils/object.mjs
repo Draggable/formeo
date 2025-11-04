@@ -1,5 +1,5 @@
-import lodashSet from 'lodash/set.js'
 import lodashGet from 'lodash/get.js'
+import lodashSet from 'lodash/set.js'
 
 export const get = lodashGet
 export const set = lodashSet

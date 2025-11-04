@@ -1,16 +1,16 @@
-import {
-  COMPONENT_INDEX_TYPES,
-  COMPONENT_TYPE_CLASSNAMES_REGEXP,
-  COMPONENT_TYPE_CLASSNAMES_LOOKUP,
-  CHILD_TYPE_MAP,
-  ANIMATION_SPEED_SLOW,
-  DEFAULT_FORMDATA,
-  INTERNAL_COMPONENT_INDEX_TYPES,
-  COMPONENT_INDEX_TYPE_MAP,
-  CHILD_TYPE_INDEX_MAP,
-  ANIMATION_SPEED_FAST,
-} from '../../constants.js'
 import mergeWith from 'lodash/mergeWith.js'
+import {
+  ANIMATION_SPEED_FAST,
+  ANIMATION_SPEED_SLOW,
+  CHILD_TYPE_INDEX_MAP,
+  CHILD_TYPE_MAP,
+  COMPONENT_INDEX_REGEX,
+  COMPONENT_INDEX_TYPE_MAP,
+  COMPONENT_TYPE_CLASSNAMES_LOOKUP,
+  COMPONENT_TYPE_CLASSNAMES_REGEXP,
+  DEFAULT_FORMDATA,
+  INTERNAL_COMPONENT_INDEX_REGEX,
+} from '../../constants.js'
 
 const uuidv4 = () => crypto.randomUUID().slice(0, 8)
 const shortId = () => uuidv4().slice(0, 8)
@@ -260,14 +260,12 @@ export const escapeHtml = html => {
   return escapeElement.innerHTML
 }
 
-const componentIndexRegex = new RegExp(`^${COMPONENT_INDEX_TYPES.join('|')}.`)
-
 /**
  * Test if a string is a formeo address
  * @param {String} str
  */
 export const isAddress = str => {
-  return componentIndexRegex.test(str)
+  return COMPONENT_INDEX_REGEX.test(str)
 }
 
 /**
@@ -278,7 +276,7 @@ export const isExternalAddress = str => {
   return /^external./.test(str)
 }
 
-const internalComponentIndexRegex = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPES.join('|')}.`)
+// const internalComponentIndexRegex = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPES.join('|')}.`)
 
 /**
  * Checks if a given string is an internal address.
@@ -290,7 +288,7 @@ const internalComponentIndexRegex = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPE
  * @returns {boolean} - Returns `true` if the string matches an internal address pattern, otherwise `false`.
  */
 export const isInternalAddress = str => {
-  return internalComponentIndexRegex.test(str)
+  return INTERNAL_COMPONENT_INDEX_REGEX.test(str)
 }
 
 /**

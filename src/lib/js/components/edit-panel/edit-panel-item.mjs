@@ -1,12 +1,9 @@
-import { orderObjectsBy } from '../../common/helpers.mjs'
-import dom from '../../common/dom.js'
 import animate from '../../common/animation.js'
-
-import { slugifyAddress, toTitleCase } from '../../common/utils/string.mjs'
-import { Condition } from './condition.mjs'
-import { INPUT_TYPE_ACTION, ITEM_INPUT_TYPE_MAP, labelHelper } from './helpers.mjs'
+import dom from '../../common/dom.js'
+import { orderObjectsBy } from '../../common/helpers.mjs'
 import { merge } from '../../common/utils/index.mjs'
 import { mergeActions } from '../../common/utils/object.mjs'
+import { slugifyAddress, toTitleCase } from '../../common/utils/string.mjs'
 import {
   ANIMATION_SPEED_BASE,
   CHECKED_TYPES,
@@ -14,6 +11,8 @@ import {
   conditionTypeIf,
   REVERSED_CHECKED_TYPES,
 } from '../../constants.js'
+import { Condition } from './condition.mjs'
+import { INPUT_TYPE_ACTION, ITEM_INPUT_TYPE_MAP, labelHelper } from './helpers.mjs'
 
 const panelDataKeyMap = new Map([
   ['attrs', ({ itemKey }) => itemKey],
@@ -208,10 +207,10 @@ export default class EditPanelItem {
             this.panel.updateProps()
           })
         },
-        mouseover: evt => {
+        mouseover: _evt => {
           this.dom.classList.add('to-remove')
         },
-        mouseout: evt => {
+        mouseout: _evt => {
           this.dom.classList.remove('to-remove')
         },
       },
