@@ -1,5 +1,16 @@
 @use "sass:color";
 
+@function text-color($bg-color, $light: #f9fafb, $dark: #111827) {
+  $r: red($bg-color);
+  $g: green($bg-color);
+  $b: blue($bg-color);
+  $brightness: (
+    ($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+  @return if($brightness > 150, $dark, $light
+);
+}
+
+
 // Colors
 $brand-primary: rgb(50, 93, 136) !default;
 $brand-primary-dark: color.adjust($brand-primary, $lightness: -10%) !default;
@@ -22,17 +33,30 @@ $brand-info: rgb(153, 84, 187) !default;
 $remove-bg: rgba($brand-error, 0.25) !default;
 
 $stage-outline-color: #4F46E5; // base indigo
-$row-outline-color: adjust-hue($stage-outline-color, -30deg);
-$column-outline-color: adjust-hue($stage-outline-color, -60deg);
-$field-outline-color: adjust-hue($stage-outline-color, -120deg);
-$option-outline-color: adjust-hue($stage-outline-color, 90deg);
+$row-outline-color: adjust-hue($stage-outline-color, 72deg);
+$column-outline-color: adjust-hue($stage-outline-color, 144deg);
+$field-outline-color: adjust-hue($stage-outline-color, 216deg);
+$option-outline-color: adjust-hue($stage-outline-color, 288deg);
+
+$stage-outline-color-text: text-color($stage-outline-color) !default;
+$row-outline-color-text: text-color($row-outline-color) !default;
+$column-outline-color-text: text-color($column-outline-color) !default;
+$field-outline-color-text: text-color($field-outline-color) !default;
+$option-outline-color-text: text-color($option-outline-color) !default;
 
 
-$stage-highlight-color: color.adjust($stage-outline-color, $lightness: 36%) !default;
+$stage-highlight-color: color.adjust($stage-outline-color, $lightness: 25%) !default;
 $row-highlight-color: color.adjust($row-outline-color, $lightness: 25%) !default;
-$column-highlight-color: color.adjust($column-outline-color, $lightness: 50%) !default;
-$field-highlight-color: color.adjust($field-outline-color, $lightness: 55%) !default;
-$option-highlight-color: color.adjust($option-outline-color, $lightness: 55%) !default;
+$column-highlight-color: color.adjust($column-outline-color, $lightness: 25%) !default;
+$field-highlight-color: color.adjust($field-outline-color, $lightness: 25%) !default;
+$option-highlight-color: color.adjust($option-outline-color, $lightness: 25%) !default;
+
+
+$stage-highlight-color-text: text-color($stage-highlight-color) !default;
+$row-highlight-color-text: text-color($row-highlight-color) !default;
+$column-highlight-color-text: text-color($column-highlight-color) !default;
+$field-highlight-color-text: text-color($field-highlight-color) !default;
+$option-highlight-color-text: text-color($option-highlight-color) !default;
 
 $input-focus: rgba(102, 175, 233, 1);
 

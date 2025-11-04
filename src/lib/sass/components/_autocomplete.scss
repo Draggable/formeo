@@ -40,9 +40,11 @@
     &.component-type-row {
       padding-left: mixins.space();
     }
+
     &.component-type-column {
       padding-left: mixins.space(1);
     }
+
     &.component-type-field {
       padding-left: mixins.space(2);
     }
@@ -50,44 +52,54 @@
     &.active-option {
       &.component-type-stage {
         background-color: color.$stage-outline-color;
-        color: color.$white;
+        color: color.$stage-outline-color-text;
       }
+
       &.component-type-row {
         background-color: color.$row-outline-color;
-        color: color.$white;
+        color: color.$row-outline-color-text;
       }
+
       &.component-type-column {
         background-color: color.$column-outline-color;
-        color: color.$white;
+        color: color.$column-outline-color-text;
       }
+
       &.component-type-field {
         background-color: color.$field-outline-color;
-        color: color.$white;
-        .component-type-option {
-          color: color.$black;
-        }
+        color: color.$field-outline-color-text;
       }
+
       &.component-type-option {
         background-color: color.$option-outline-color;
-        color: color.$white;
+        color: color.$option-outline-color-text;
       }
     }
+
     &:hover {
       &.component-type-stage {
         background-color: color.$stage-highlight-color;
+        color: color.$stage-highlight-color-text;
       }
+
       &.component-type-row {
         background-color: color.$row-highlight-color;
+        color: color.$row-highlight-color-text;
       }
+
       &.component-type-column {
         background-color: color.$column-highlight-color;
+        color: color.$column-highlight-color-text;
       }
+
       &.component-type-field {
         background-color: color.$field-highlight-color;
+        color: color.$field-highlight-color-text;
       }
+
       &.component-type-option {
-        color: color.$black;
         background-color: color.$option-highlight-color;
+        color: color.$option-highlight-color-text;
       }
     }
 
@@ -107,6 +119,7 @@
     top: 0;
     width: 75%;
     min-height: 100%;
+
     li {
       display: block;
     }
