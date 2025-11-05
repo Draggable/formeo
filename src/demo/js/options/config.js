@@ -30,7 +30,7 @@ const config = {
         attrs: {
           hideDisabled: true,
         },
-        disabled: ['options'],
+        // disabled: ['options'],
       },
     },
   },
