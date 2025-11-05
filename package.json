@@ -116,7 +116,7 @@
     "sass-embedded": "^1.80.1",
     "semantic-release": "^24.1.2",
     "svg-sprite": "^2.0.4",
-    "vite": "^5.4.8",
+    "vite": "^7.2.0",
     "vite-plugin-banner": "^0.8.0",
     "vite-plugin-compression": "^0.5.1",
     "vite-plugin-html": "^3.2.2",
