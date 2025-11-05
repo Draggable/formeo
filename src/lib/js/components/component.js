@@ -42,12 +42,106 @@ export default class Component extends Data {
     this.dataPath = `${this.address}.`
     // this.observer = new window.MutationObserver(this.mutationHandler)
     this.editPanels = new Map()
+    this.eventListeners = new Map()
+    this.initEventHandlers()
+  }
+
+  /**
+   * Initialize event handlers based on config
+   */
+  initEventHandlers() {
+    if (!this.config.events) {
+      return
+    }
+
+    // Process each configured event and store them for later dispatch
+    Object.entries(this.config.events).forEach(([eventName, handler]) => {
+      this.addEventListener(eventName, handler)
+    })
+  }
+
+  /**
+   * Add an event listener to this component
+   * @param {string} eventName - Name of the event
+   * @param {function} handler - Event handler function
+   */
+  addEventListener(eventName, handler) {
+    if (!this.eventListeners.has(eventName)) {
+      this.eventListeners.set(eventName, [])
+    }
+    this.eventListeners.get(eventName).push(handler)
+  }
+
+  /**
+   * Remove an event listener from this component
+   * @param {string} eventName - Name of the event
+   * @param {function} handler - Event handler function to remove
+   */
+  removeEventListener(eventName, handler) {
+    if (!this.eventListeners?.has(eventName)) {
+      return
+    }
+    const handlers = this.eventListeners.get(eventName)
+    const index = handlers.indexOf(handler)
+    if (index > -1) {
+      handlers.splice(index, 1)
+    }
+  }
+
+  /**
+   * Dispatch a component event to all registered listeners
+   * @param {string} eventName - Name of the event to dispatch
+   * @param {object} eventData - Data to pass to event handlers
+   */
+  dispatchComponentEvent(eventName, eventData = {}) {
+    // Create event data with component context
+    const fullEventData = {
+      component: this,
+      type: eventName,
+      timestamp: Date.now(),
+      ...eventData,
+    }
+
+    // debugger
+
+    // Call configured event handlers
+    if (this.eventListeners?.has(eventName)) {
+      this.eventListeners.get(eventName).forEach(handler => {
+        try {
+          if (typeof handler === 'function') {
+            handler(fullEventData)
+          }
+        } catch (error) {
+          console.error(`Error in ${eventName} event handler for ${this.name} ${this.id}:`, error)
+        }
+      })
+    }
+
+    return fullEventData
+  }
+
+  /**
+   * Override Data.set to dispatch component update events
+   */
+  set(path, newVal) {
+    const oldVal = this.get(path)
+    const result = super.set(path, newVal)
+
+    // Dispatch update event if value actually changed and it's not during initialization
+    if (oldVal !== newVal && this.dom) {
+      this.dispatchComponentEvent('onUpdate', {
+        path,
+        oldValue: oldVal,
+        newValue: newVal,
+      })
+    }
+
+    return result
   }
 
   // mutationHandler = mutations =>
   //   mutations.map(mutation => {
-  //     @todo pull handler form config
-  //     see dom.create.onRender for implementation pattern
+  //     @todo pull handler form config see dom.create.onRender for implementation pattern
   //   })
 
   // observe(container) {
@@ -87,6 +181,13 @@ export default class Component extends Data {
 
     const parent = this.parent
     const children = this.children
+
+    // Dispatch onRemove event before removal
+    this.dispatchComponentEvent('onRemove', {
+      path,
+      parent,
+      children: [...children], // copy array since children will be modified
+    })
 
     forEach(children, child => child.remove())
 
@@ -343,8 +444,30 @@ export default class Component extends Data {
     const child =
       Components.getAddress(`${childComponentType}.${childId}`) || Components[childComponentType].add(childId, data)
 
-    childWrap.insertBefore(child.dom, childWrap.children[index])
+    if (index >= childWrap.children.length) {
+      childWrap.appendChild(child.dom)
+    } else {
+      childWrap.children[index].before(child.dom)
+    }
 
+    // Dispatch enhanced onAddChild event on the parent
+    this.dispatchComponentEvent('onAddChild', {
+      parent: this,
+      target: this,
+      child,
+      index,
+    })
+
+    // Dispatch onAdd event on the child component itself
+    // This ensures onAdd is called whether the component is added via drag-drop or addChild
+    child.dispatchComponentEvent('onAdd', {
+      parent: this,
+      target: child,
+      index,
+      addedVia: 'addChild', // indicate how the component was added
+    })
+
+    // Keep backwards compatibility
     this.config.events?.onAddChild?.({ parent: this, child })
 
     const grandChildren = child.get('children')
@@ -476,6 +599,18 @@ export default class Component extends Data {
 
     const component = onAddConditions[fromType]?.(item, newIndex)
 
+    // Dispatch the onAdd event to any configured handlers
+    this.dispatchComponentEvent('onAdd', {
+      from,
+      to,
+      item,
+      newIndex,
+      fromType,
+      toType,
+      addedComponent: component,
+      addedVia: 'dragDrop', // indicate how the component was added
+    })
+
     defaultOnAdd()
     return component
   }
@@ -521,6 +656,12 @@ export default class Component extends Data {
    * Callback for onRender, executes any defined onRender for component
    */
   onRender() {
+    // Dispatch onRender event to new event system
+    this.dispatchComponentEvent('onRender', {
+      dom: this.dom,
+    })
+
+    // Keep backwards compatibility
     const { events } = this.config
     if (!events) {
       return null
@@ -654,6 +795,13 @@ export default class Component extends Data {
     if (this.name !== 'field') {
       this.cloneChildren(newClone)
     }
+
+    // Dispatch clone event
+    this.dispatchComponentEvent('onClone', {
+      original: this,
+      clone: newClone,
+      parent,
+    })
 
     return newClone
   }

@@ -126,7 +126,7 @@ class DOM {
 
     const _this = this
     const processed = ['children', 'content']
-    const { className, options, dataset, conditions, ...elem } = this.processElemArg(elemArg)
+    const { className, options, dataset, ...elem } = this.processElemArg(elemArg)
     processed.push('tag')
     let childType
     const { tag } = elem
