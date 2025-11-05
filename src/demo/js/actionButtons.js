@@ -17,10 +17,10 @@ const submitFormData = document.getElementById('submit-formData')
 const popover = document.getElementById('formData-popover')
 
 const editorActionButtonContainer = document.getElementById('editor-action-buttons')
-const renderFormWrap = document.querySelector('.render-form')
 const editorActions = (editor, renderer) => {
   return {
     renderForm: () => {
+      const renderFormWrap = document.querySelector('.render-form')
       renderFormWrap.style.display = 'block'
       renderer.render(editor.formData)
     },

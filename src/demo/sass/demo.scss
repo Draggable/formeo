@@ -149,6 +149,118 @@ body {
   line-height: 1em;
 }
 
+#framework-select {
+  line-height: 1em;
+}
+
+// Framework demo styles
+.angular-demo {
+  padding: 20px;
+  
+  h3 {
+    margin-bottom: 16px;
+    color: #333;
+  }
+  
+  p {
+    margin-bottom: 20px;
+    color: #666;
+    line-height: 1.6;
+  }
+}
+
+.code-example {
+  h4 {
+    margin: 24px 0 12px 0;
+    color: #444;
+    font-size: 16px;
+  }
+  
+  pre {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 16px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    
+    code {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 13px;
+      line-height: 1.4;
+      color: #333;
+    }
+  }
+}
+
+.demo-container {
+  margin-top: 20px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background: #fafafa;
+  
+  .build-form-angular,
+  .render-form-angular {
+    min-height: 300px;
+    margin-bottom: 20px;
+  }
+  
+  .render-form-angular {
+    border: 1px solid #ddd;
+    padding: 15px;
+    background: white;
+    border-radius: 4px;
+  }
+}
+
+.error-message {
+  padding: 20px;
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 6px;
+  color: #721c24;
+  
+  h3 {
+    margin-bottom: 10px;
+  }
+  
+  p {
+    margin: 0 0 15px 0;
+  }
+}
+
+.loading-message {
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+.retry-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  
+  &:hover {
+    background-color: #0056b3;
+  }
+}
+
+// Framework select styling
+#framework-select {
+  line-height: 1em;
+  margin-right: 15px;
+  min-width: 150px;
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%);

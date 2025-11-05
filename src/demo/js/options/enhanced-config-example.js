@@ -62,7 +62,7 @@ const enhancedConfig = {
     // You can also target specific row instances by ID
     'specific-row-id-here': {
       events: {
-        onAdd: eventData => {
+        onAdd: _eventData => {
           console.log('This specific row was added!')
         },
       },
