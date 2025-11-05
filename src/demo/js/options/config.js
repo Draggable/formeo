@@ -2,8 +2,20 @@ const config = {
   rows: {
     all: {
       events: {
-        onRender: element => {
-          console.log(`You just added a new row with the id "${element.id}"`)
+        onAdd: evt => {
+          console.log(`You just added a new row with the id "${evt.target.id}"`, evt.index)
+          if (evt.index === 2) {
+            const actionBtnWrap = evt.target.dom.querySelector('.action-btn-wrap')
+            const addColumnBtn = document.createElement('button')
+            addColumnBtn.type = 'button'
+            addColumnBtn.className = 'btn btn-sm btn-secondary'
+            addColumnBtn.textContent = 'Add Column'
+            addColumnBtn.style = 'border:1px solid #ccc; width: auto;'
+            addColumnBtn.addEventListener('click', () => {
+              evt.target.addChild()
+            })
+            actionBtnWrap.appendChild(addColumnBtn)
+          }
         },
       },
     },
@@ -13,25 +25,11 @@ const config = {
       actionButtons: {
         // buttons: ['edit'], // array of allow action buttons
       },
-    },
-    'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': {
-      events: {
-        onRender: element => {
-          console.log(element)
-          const onRenderTimeout = setTimeout(() => {
-            // formeo.Components.fields.get(element.id).toggleEdit(true)
-            element.querySelector('.next-group').click()
-            clearTimeout(onRenderTimeout)
-          }, 333)
-        },
-      },
       panels: {
         attrs: {
           hideDisabled: true,
         },
-        disabled: [
-          // 'conditions'
-        ],
+        disabled: ['options'],
       },
     },
   },

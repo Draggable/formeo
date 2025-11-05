@@ -75,4 +75,6 @@ Render the form, or update the rendered form to use the given `formData` object.
 
 ## [Options](options/)
 
+## [Component Events](component-events.md)
+
 ## [Build Tools](tools/)

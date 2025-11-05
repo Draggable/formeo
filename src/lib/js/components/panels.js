@@ -57,7 +57,7 @@ export default class Panels {
 
   getPanelDisplay() {
     const column = this.panelsWrap
-    const width = Number.parseInt(dom.getStyle(column, 'width'))
+    const width = Number.parseInt(dom.getStyle(column, 'width'), 10)
     const autoDisplayType = width > 390 ? 'tabbed' : 'slider'
     const isAuto = this.opts.displayType === 'auto'
     this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults.displayType
