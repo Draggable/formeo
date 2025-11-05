@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.1.0
+Version: 4.1.1
 Author: Draggable https://draggable.io
 */
 
@@ -12,6 +12,7 @@ Author: Draggable https://draggable.io
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
+  var _a;
   async function fetchData(url) {
     try {
       const response = await fetch(url);
@@ -88,8 +89,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {String} language string or undefined
      */
     getValue(key, locale = this.locale) {
-      var _a;
-      const value = (_a = this.langs[locale]) == null ? void 0 : _a[key];
+      var _a2;
+      const value = (_a2 = this.langs[locale]) == null ? void 0 : _a2[key];
       return value || this.getFallbackValue(key);
     }
     /**
@@ -438,7 +439,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     window.SmartTooltip = SmartTooltip;
   }
   const name$1 = "formeo";
-  const version$2 = "4.1.0";
+  const version$2 = "4.1.1";
   const type = "module";
   const main = "dist/formeo.cjs.js";
   const module2 = "dist/formeo.es.js";
@@ -1559,14 +1560,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   };
   const componentType = (node) => {
-    var _a;
-    const classMatch = (_a = node.className) == null ? void 0 : _a.match(COMPONENT_TYPE_CLASSNAMES_REGEXP);
+    var _a2;
+    const classMatch = (_a2 = node.className) == null ? void 0 : _a2.match(COMPONENT_TYPE_CLASSNAMES_REGEXP);
     return classMatch && COMPONENT_TYPE_CLASSNAMES_LOOKUP[classMatch[0]];
   };
   const unique = (array) => Array.from(new Set(array));
   const uuid = (elem) => {
-    var _a;
-    return ((_a = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a.id) || (elem == null ? void 0 : elem.id) || shortId();
+    var _a2;
+    return ((_a2 = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a2.id) || (elem == null ? void 0 : elem.id) || shortId();
   };
   const merge = (obj1, obj2) => {
     const customizer = (objValue, srcValue) => {
@@ -1620,8 +1621,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const sessionStorage = Object.create(null, {
     get: {
       value: (key) => {
-        var _a;
-        const itemValue = (_a = window.sessionStorage) == null ? void 0 : _a.getItem(key);
+        var _a2;
+        const itemValue = (_a2 = window.sessionStorage) == null ? void 0 : _a2.getItem(key);
         try {
           return JSON.parse(itemValue);
         } catch (_err) {
@@ -1631,9 +1632,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     },
     set: {
       value: (key, itemValue) => {
-        var _a;
+        var _a2;
         try {
-          return (_a = window.sessionStorage) == null ? void 0 : _a.setItem(key, JSON.stringify(itemValue));
+          return (_a2 = window.sessionStorage) == null ? void 0 : _a2.setItem(key, JSON.stringify(itemValue));
         } catch (error) {
           console.error(error);
         }
@@ -1683,7 +1684,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   const cleanFormData = (formData) => formData ? clone$1(parseData(formData)) : DEFAULT_FORMDATA();
   function buildFlatDataStructure(data, componentId, componentType2, result = {}) {
-    var _a;
+    var _a2;
     if (!componentId || !data[componentType2][componentId]) {
       return result;
     }
@@ -1691,7 +1692,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     result[key] = data[componentType2][componentId];
     const childType = CHILD_TYPE_INDEX_MAP.get(componentType2);
     if (childType) {
-      const childrenIds = ((_a = data[componentType2][componentId].data) == null ? void 0 : _a.children) || [];
+      const childrenIds = ((_a2 = data[componentType2][componentId].data) == null ? void 0 : _a2.children) || [];
       for (const childId of childrenIds) {
         buildFlatDataStructure(data, childId, childType, result);
       }
@@ -1709,7 +1710,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   ];
   const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`;
   const localSpriteUrl = false ? (void 0)(relativeSpritePath) : relativeSpritePath;
-  const isDev = process.env.NODE_ENV === "development" || false;
+  const isDev = typeof process !== "undefined" && ((_a = process.env) == null ? void 0 : _a.NODE_ENV) === "development" || false;
   const SVG_SPRITE_URL = isDev ? localSpriteUrl : `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
   const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`;
   const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formeo.min.css`;
@@ -4956,8 +4957,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const inputTags = /* @__PURE__ */ new Set(["input", "textarea", "select"]);
   const getName = (elem = {}) => {
-    var _a, _b, _c;
-    let name2 = ((_a = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a.name) || (elem == null ? void 0 : elem.name);
+    var _a2, _b, _c;
+    let name2 = ((_a2 = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a2.name) || (elem == null ? void 0 : elem.name);
     if (name2) {
       return name2;
     }
@@ -5291,12 +5292,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {String} icon markup
      */
     icon(name2, config2) {
-      var _a, _b;
+      var _a2, _b;
       if (!name2) {
         return;
       }
       const cacheKey = `${name2}?${new URLSearchParams(config2).toString()}`;
-      if ((_a = this.cachedIcons) == null ? void 0 : _a[cacheKey]) {
+      if ((_a2 = this.cachedIcons) == null ? void 0 : _a2[cacheKey]) {
         return this.cachedIcons[cacheKey];
       }
       const iconConfig = this.icons[name2];
@@ -5367,7 +5368,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const fieldType = attrs.type || elem.tag;
       const id = attrs.id || elem.id;
       const optionMap = (option, i) => {
-        var _a;
+        var _a2;
         const { label, value, ...rest } = option;
         const defaultInput = () => {
           const input = {
@@ -5434,7 +5435,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           checkbox: defaultInput,
           radio: defaultInput
         };
-        return (_a = optionMarkup[fieldType]) == null ? void 0 : _a.call(optionMarkup, option);
+        return (_a2 = optionMarkup[fieldType]) == null ? void 0 : _a2.call(optionMarkup, option);
       };
       const mappedOptions = options.map(optionMap);
       return mappedOptions;
@@ -6109,7 +6110,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @param {Object} selectedOption - option - 'li' element - to be selected in autocomplete list
      */
     selectOption(selectedOption, list = this.list) {
-      var _a;
+      var _a2;
       const options = list.querySelectorAll("li");
       for (const option of options) {
         const {
@@ -6118,7 +6119,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         option.classList.remove("active-option");
         if (isAddress(value)) {
           const component = components.getAddress(value);
-          (_a = component == null ? void 0 : component.dom) == null ? void 0 : _a.classList.remove(HIGHLIGHT_CLASSNAME);
+          (_a2 = component == null ? void 0 : component.dom) == null ? void 0 : _a2.classList.remove(HIGHLIGHT_CLASSNAME);
         }
       }
       if (selectedOption) {
@@ -6139,7 +6140,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * Highlight a component that maps to the option
      */
     highlightComponent(option) {
-      var _a;
+      var _a2;
       const {
         dataset: { value }
       } = option;
@@ -6168,7 +6169,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           component.dom.classList.add(HIGHLIGHT_CLASSNAME);
           if (isOptionAddress) {
             const checkboxes = component.dom.querySelectorAll(".field-preview .f-checkbox, .field-preview .f-radio");
-            (_a = checkboxes[optionIndex]) == null ? void 0 : _a.classList.add(HIGHLIGHT_CLASSNAME);
+            (_a2 = checkboxes[optionIndex]) == null ? void 0 : _a2.classList.add(HIGHLIGHT_CLASSNAME);
           }
         }
       }
@@ -6187,13 +6188,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @param {String} value display text
      */
     setValue(target) {
-      var _a;
+      var _a2;
       const { label, value } = target.dataset;
       this.displayField.value = label;
       this.hiddenField.value = value;
       this.value = value;
       this.clearButton.classList.toggle("hidden", !value.length);
-      (_a = this.onChange) == null ? void 0 : _a.call(this, { target: this.hiddenField });
+      (_a2 = this.onChange) == null ? void 0 : _a2.call(this, { target: this.hiddenField });
     }
   }
   function inputConfigBase({ key, value, type: type2 = "text", checked }) {
@@ -6395,16 +6396,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   };
   const toggleFieldVisibility = (fields2) => {
-    var _a;
+    var _a2;
     for (const [fieldName, field2] of fields2) {
-      const shouldHide = !!((_a = fieldVisibilityMap[fieldName]) == null ? void 0 : _a.call(fieldVisibilityMap, fields2)) || false;
+      const shouldHide = !!((_a2 = fieldVisibilityMap[fieldName]) == null ? void 0 : _a2.call(fieldVisibilityMap, fields2)) || false;
       field2.classList.toggle(hiddenPropertyClassname, shouldHide);
     }
   };
   const isCheckedValue = "isChecked";
   const isCheckedOption = (option) => option.value.endsWith("Checked");
   const toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
-    var _a;
+    var _a2;
     if (isCheckable && isCheckedOption(propertyField)) {
       return null;
     }
@@ -6419,7 +6420,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       option.classList.toggle(hiddenOptionClassname, shouldHide);
     }
     if (hiddenOptionValues.includes(propertyField.value)) {
-      propertyField.value = isCheckable ? isCheckedValue : ((_a = options.find((opt) => !isCheckedOption(opt))) == null ? void 0 : _a.value) || propertyField.value;
+      propertyField.value = isCheckable ? isCheckedValue : ((_a2 = options.find((opt) => !isCheckedOption(opt))) == null ? void 0 : _a2.value) || propertyField.value;
     }
   };
   function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
@@ -6716,9 +6717,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return controls;
     }
     itemInput(key, value) {
-      var _a, _b;
+      var _a2, _b;
       const valType = dom.childType(value) || "string";
-      const dataKey = ((_a = panelDataKeyMap.get(this.panelName)) == null ? void 0 : _a({ itemKey: this.itemKey, key })) || this.itemKey;
+      const dataKey = ((_a2 = panelDataKeyMap.get(this.panelName)) == null ? void 0 : _a2({ itemKey: this.itemKey, key })) || this.itemKey;
       const labelKey = dataKey.split(".").filter(Number.isNaN).join(".") || key;
       const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value });
       const name2 = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, "-$1")}`;
@@ -6763,7 +6764,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
        * @param {String|Array} val
        */
       __publicField(this, "addAttribute", (attr, valArg) => {
-        var _a;
+        var _a2;
         let val = valArg;
         const safeAttr = safeAttrName(attr);
         const itemKey = `attrs.${safeAttr}`;
@@ -6774,7 +6775,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           val = JSON.parse(val);
         }
         this.component.set(`attrs.${attr}`, val);
-        (_a = addAttributeActions[safeAttr]) == null ? void 0 : _a.call(addAttributeActions, val, this.component);
+        (_a2 = addAttributeActions[safeAttr]) == null ? void 0 : _a2.call(addAttributeActions, val, this.component);
         const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`);
         const newAttr = new EditPanelItem({
           key: itemKey,
@@ -6992,10 +6993,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      */
     constructor(options) {
       __publicField(this, "toggleTabbedLayout", () => {
-        var _a;
+        var _a2;
         this.getPanelDisplay();
         const isTabbed = this.isTabbed;
-        (_a = this.panelsWrap.parentElement) == null ? void 0 : _a.classList.toggle("tabbed-panels", isTabbed);
+        (_a2 = this.panelsWrap.parentElement) == null ? void 0 : _a2.classList.toggle("tabbed-panels", isTabbed);
         if (isTabbed) {
           this.panelNav.removeAttribute("style");
         }
@@ -7545,8 +7546,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @param {function} handler - Event handler function to remove
      */
     removeEventListener(eventName, handler) {
-      var _a;
-      if (!((_a = this.eventListeners) == null ? void 0 : _a.has(eventName))) {
+      var _a2;
+      if (!((_a2 = this.eventListeners) == null ? void 0 : _a2.has(eventName))) {
         return;
       }
       const handlers = this.eventListeners.get(eventName);
@@ -7561,14 +7562,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @param {object} eventData - Data to pass to event handlers
      */
     dispatchComponentEvent(eventName, eventData = {}) {
-      var _a;
+      var _a2;
       const fullEventData = {
         component: this,
         type: eventName,
         timestamp: Date.now(),
         ...eventData
       };
-      if ((_a = this.eventListeners) == null ? void 0 : _a.has(eventName)) {
+      if ((_a2 = this.eventListeners) == null ? void 0 : _a2.has(eventName)) {
         this.eventListeners.get(eventName).forEach((handler) => {
           try {
             if (typeof handler === "function") {
@@ -7746,8 +7747,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const { buttons, disabled } = this.config.actionButtons;
       const activeButtons = buttons.filter((btn) => !disabled.includes(btn));
       const actionButtonsConfigs = activeButtons.map((btn) => {
-        var _a;
-        return ((_a = buttonConfig[btn]) == null ? void 0 : _a.call(buttonConfig)) || btn;
+        var _a2;
+        return ((_a2 = buttonConfig[btn]) == null ? void 0 : _a2.call(buttonConfig)) || btn;
       });
       this.actionButtons = actionButtonsConfigs;
       return this.actionButtons;
@@ -7788,7 +7789,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {Object} child DOM element
      */
     addChild(childData = {}, index2 = this.domChildren.length) {
-      var _a, _b;
+      var _a2, _b;
       let data = childData;
       if (typeof childData !== "object") {
         data = { id: data };
@@ -7819,7 +7820,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         addedVia: "addChild"
         // indicate how the component was added
       });
-      (_b = (_a = this.config.events) == null ? void 0 : _a.onAddChild) == null ? void 0 : _b.call(_a, { parent: this, child });
+      (_b = (_a2 = this.config.events) == null ? void 0 : _a2.onAddChild) == null ? void 0 : _b.call(_a2, { parent: this, child });
       const grandChildren = child.get("children");
       if (grandChildren == null ? void 0 : grandChildren.length) {
         child.loadChildren(grandChildren);
@@ -7835,7 +7836,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {Object} Component
      */
     onAdd({ from, to, item, newIndex: newIndex2 }) {
-      var _a;
+      var _a2;
       if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
         from = from.parentElement;
       }
@@ -7926,7 +7927,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           return action == null ? void 0 : action(item.id);
         }
       };
-      const component = (_a = onAddConditions[fromType]) == null ? void 0 : _a.call(onAddConditions, item, newIndex2);
+      const component = (_a2 = onAddConditions[fromType]) == null ? void 0 : _a2.call(onAddConditions, item, newIndex2);
       this.dispatchComponentEvent("onAdd", {
         from,
         to,
@@ -8885,8 +8886,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       this.id = controlData.id || uuid();
     }
     get controlId() {
-      var _a, _b;
-      return ((_a = this.controlData.meta) == null ? void 0 : _a.id) || ((_b = this.controlData.config) == null ? void 0 : _b.controlId);
+      var _a2, _b;
+      return ((_a2 = this.controlData.meta) == null ? void 0 : _a2.id) || ((_b = this.controlData.config) == null ? void 0 : _b.controlId);
     }
     get dom() {
       const { meta, config: config2 } = this.controlData;
@@ -8908,8 +8909,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             return group && Controls$2.panels.nav.refresh(indexOfNode(group));
           },
           click: ({ target }) => {
-            var _a;
-            const controlId = (_a = target.closest(".field-control")) == null ? void 0 : _a.id;
+            var _a2;
+            const controlId = (_a2 = target.closest(".field-control")) == null ? void 0 : _a2.id;
             if (controlId) {
               Controls$2.addElement(controlId);
             }
@@ -8937,9 +8938,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {String} the translated label
      */
     i18n(lookup, args) {
-      var _a, _b;
+      var _a2, _b;
       const locale = mi18n.locale;
-      const controlTranslations = (_a = this.definition) == null ? void 0 : _a.i18n;
+      const controlTranslations = (_a2 = this.definition) == null ? void 0 : _a2.i18n;
       const localeTranslations = (controlTranslations == null ? void 0 : controlTranslations[locale]) || {};
       return (((_b = localeTranslations[lookup]) == null ? void 0 : _b.call(localeTranslations)) ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
     }
@@ -9316,8 +9317,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       this.controlId = this.get("config.controlId") || this.get("meta.id");
       const actionButtons = this.getActionButtons();
       const hasEditButton = this.actionButtons.some((child) => {
-        var _a;
-        return ((_a = child.meta) == null ? void 0 : _a.id) === "edit";
+        var _a2;
+        return ((_a2 = child.meta) == null ? void 0 : _a2.id) === "edit";
       });
       this.updateEditPanels();
       const field2 = dom.create({
@@ -9400,13 +9401,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     get defaultPreviewActions() {
       return {
         change: (evt) => {
-          var _a;
+          var _a2;
           const { target } = evt;
           const { type: type2 } = target;
           if (isSelectableType.has(type2)) {
             const selectedOptions = this.preview.querySelectorAll(":checked");
             const optionsData = this.get("options");
-            const checkedType = ((_a = optionsData == null ? void 0 : optionsData[0]) == null ? void 0 : _a.selected) !== void 0 ? "selected" : "checked";
+            const checkedType = ((_a2 = optionsData == null ? void 0 : optionsData[0]) == null ? void 0 : _a2.selected) !== void 0 ? "selected" : "checked";
             const optionsDataMap = optionsData.reduce((acc, option) => {
               acc[option.value] = option;
               acc[option.value][checkedType] = false;
@@ -9425,12 +9426,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           }
         },
         input: ({ target }) => {
-          var _a;
+          var _a2;
           if (["input", "meter", "progress", "button"].includes(target.tagName.toLowerCase())) {
             super.set("attrs.value", target.value);
             return this.debouncedUpdateEditPanels();
           }
-          if (target.contentEditable && !((_a = target.type) == null ? void 0 : _a.startsWith("select-"))) {
+          if (target.contentEditable && !((_a2 = target.type) == null ? void 0 : _a2.startsWith("select-"))) {
             const parentClassList = target.parentElement.classList;
             const isOption = parentClassList.contains("f-checkbox") || parentClassList.contains("f-radio");
             if (isOption) {
@@ -9449,14 +9450,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {Object} fieldPreview
      */
     fieldPreview() {
-      var _a;
+      var _a2;
       const { action = {}, ...prevData } = clone$1(this.data);
       prevData.id = `prev-${this.id}`;
       prevData.action = Object.entries(action).reduce((acc, [key, value]) => {
         acc[key] = value.bind(this);
         return acc;
       }, {});
-      if ((_a = this.data) == null ? void 0 : _a.config.editableContent) {
+      if ((_a2 = this.data) == null ? void 0 : _a2.config.editableContent) {
         prevData.attrs = { ...prevData.attrs, contenteditable: true };
       }
       const fieldPreview = {
@@ -9676,28 +9677,28 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     },
     onChange: (...args) => defaults$1.onUpdate(...args),
     onUpdate: (evt) => {
-      var _a;
-      return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+      var _a2;
+      return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
     },
     onUpdateStage: (evt) => {
-      var _a;
-      return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+      var _a2;
+      return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
     },
     onUpdateRow: (evt) => {
-      var _a;
-      return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+      var _a2;
+      return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
     },
     onUpdateColumn: (evt) => {
-      var _a;
-      return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+      var _a2;
+      return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
     },
     onUpdateField: (evt) => {
-      var _a;
-      return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+      var _a2;
+      return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
     },
     onRender: (evt) => {
-      var _a;
-      return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+      var _a2;
+      return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
     },
     onSave: (_evt) => {
     },
@@ -9708,10 +9709,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   };
   const defaultCustomEvent = ({ src, ...evtData }, type2 = EVENT_FORMEO_UPDATED) => {
-    var _a, _b;
+    var _a2, _b;
     const evt = new window.CustomEvent(type2, {
       detail: evtData,
-      bubbles: ((_a = events.opts) == null ? void 0 : _a.debug) || ((_b = events.opts) == null ? void 0 : _b.bubbles)
+      bubbles: ((_a2 = events.opts) == null ? void 0 : _a2.debug) || ((_b = events.opts) == null ? void 0 : _b.bubbles)
     });
     evt.data = (src || document).dispatchEvent(evt);
     return evt;
@@ -9972,7 +9973,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * @return {Promise} asynchronously loaded remote resources
      */
     async loadResources() {
-      var _a;
+      var _a2;
       document.removeEventListener("DOMContentLoaded", this.loadResources);
       const promises = [];
       if (this.opts.polyfills) {
@@ -9980,7 +9981,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       await fetchIcons(this.opts.svgSprite);
       promises.push(fetchFormeoStyle(this.opts.style));
-      promises.push(mi18n.init({ ...this.opts.i18n, locale: (_a = window.sessionStorage) == null ? void 0 : _a.getItem(SESSION_LOCALE_KEY) }));
+      promises.push(mi18n.init({ ...this.opts.i18n, locale: (_a2 = window.sessionStorage) == null ? void 0 : _a2.getItem(SESSION_LOCALE_KEY) }));
       const resolvedPromises = await Promise.all(promises);
       if (this.opts.allowEdit) {
         this.init();
@@ -9994,21 +9995,21 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      */
     init() {
       return Controls$2.init(this.opts.controls, this.opts.stickyControls).then((controls) => {
-        var _a, _b;
+        var _a2, _b;
         this.controls = controls;
         this.load(this.userFormData, this.opts);
         this.formId = components.get("id");
         this.i18n = {
           setLang: (formeoLocale) => {
-            var _a2;
-            (_a2 = window.sessionStorage) == null ? void 0 : _a2.setItem(SESSION_LOCALE_KEY, formeoLocale);
+            var _a3;
+            (_a3 = window.sessionStorage) == null ? void 0 : _a3.setItem(SESSION_LOCALE_KEY, formeoLocale);
             const loadLang = mi18n.setCurrent(formeoLocale);
             loadLang.then(() => {
               this.init();
             }, console.error);
           }
         };
-        (_b = (_a = this.opts).onLoad) == null ? void 0 : _b.call(_a, this);
+        (_b = (_a2 = this.opts).onLoad) == null ? void 0 : _b.call(_a2, this);
       });
     }
     load(formData = this.userFormData, opts = this.opts) {
@@ -10133,8 +10134,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       elem.checked = false;
     },
     value: (elem, { assignment, ...rest }) => {
-      var _a;
-      const assignmentAction = (_a = assignmentMap[assignment]) == null ? void 0 : _a.call(assignmentMap, elem, rest);
+      var _a2;
+      const assignmentAction = (_a2 = assignmentMap[assignment]) == null ? void 0 : _a2.call(assignmentMap, elem, rest);
       const event = new Event("input", { bubbles: true });
       elem.dispatchEvent(event);
       return assignmentAction;
@@ -10242,8 +10243,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         );
       });
       __publicField(this, "processFields", (fieldIds) => this.orderChildren("fields", fieldIds).map(({ id, ...field2 }) => {
-        var _a, _b;
-        const controlId = ((_a = field2.config) == null ? void 0 : _a.controlId) || ((_b = field2.meta) == null ? void 0 : _b.id);
+        var _a2, _b;
+        const controlId = ((_a2 = field2.config) == null ? void 0 : _a2.controlId) || ((_b = field2.meta) == null ? void 0 : _b.id);
         const { action = {}, dependencies: dependencies2 = {} } = this.elements[controlId] || {};
         if (dependencies2) {
           fetchDependencies(dependencies2);
@@ -10309,27 +10310,27 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
        * Evaulate conditions
        */
       __publicField(this, "evaluateCondition", ({ source, sourceProperty, targetProperty, comparison, target }) => {
-        var _a;
+        var _a2;
         const sourceValue = this.getComponentProperty(source, sourceProperty);
         if (typeof sourceValue === "boolean") {
           return sourceValue;
         }
         const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target);
-        return (_a = comparisonMap[comparison]) == null ? void 0 : _a.call(comparisonMap, sourceValue, targetValue);
+        return (_a2 = comparisonMap[comparison]) == null ? void 0 : _a2.call(comparisonMap, sourceValue, targetValue);
       });
       __publicField(this, "execResult", ({ target, targetProperty, assignment, value }) => {
-        var _a;
+        var _a2;
         if (isAddress(target)) {
           const { component, option } = this.getComponent(target);
           const elem = option || component;
-          (_a = targetPropertyMap[targetProperty]) == null ? void 0 : _a.call(targetPropertyMap, elem, { targetProperty, assignment, value });
+          (_a2 = targetPropertyMap[targetProperty]) == null ? void 0 : _a2.call(targetPropertyMap, elem, { targetProperty, assignment, value });
         }
       });
       __publicField(this, "getComponentProperty", (address, propertyName) => {
-        var _a;
+        var _a2;
         const { component, option } = this.getComponent(address);
         const elem = option || component;
-        return ((_a = propertyMap[propertyName]) == null ? void 0 : _a.call(propertyMap, elem)) || elem[propertyName];
+        return ((_a2 = propertyMap[propertyName]) == null ? void 0 : _a2.call(propertyMap, elem)) || elem[propertyName];
       });
       __publicField(this, "getComponent", (address) => {
         const result = {
@@ -10703,7 +10704,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   class SelectControl extends Control {
     constructor(controlConfig = {}) {
-      var _a;
+      var _a2;
       const selectConfig = {
         tag: "select",
         config: {
@@ -10719,7 +10720,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           icon: "select",
           id: "select"
         },
-        options: generateOptionConfig({ type: "option", isMultiple: (_a = controlConfig.attrs) == null ? void 0 : _a.multiple })
+        options: generateOptionConfig({ type: "option", isMultiple: (_a2 = controlConfig.attrs) == null ? void 0 : _a2.multiple })
       };
       const mergedConfig = merge(selectConfig, controlConfig);
       super(mergedConfig);

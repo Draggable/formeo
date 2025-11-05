@@ -1,14 +1,14 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.1.0
+Version: 4.1.1
 Author: Draggable https://draggable.io
 */
 
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-var _a, _b;
+var _a, _b, _c;
 async function fetchData(url) {
   try {
     const response = await fetch(url);
@@ -435,7 +435,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "4.1.0";
+const version$2 = "4.1.1";
 const type = "module";
 const main = "dist/formeo.cjs.js";
 const module = "dist/formeo.es.js";
@@ -1706,7 +1706,7 @@ const POLYFILLS = [
 ];
 const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`;
 const localSpriteUrl = typeof import.meta.resolve === "function" ? import.meta.resolve(relativeSpritePath) : relativeSpritePath;
-const isDev = ((_b = (_a = import.meta) == null ? void 0 : _a.env) == null ? void 0 : _b.DEV) || process.env.NODE_ENV === "development" || false;
+const isDev = ((_b = (_a = import.meta) == null ? void 0 : _a.env) == null ? void 0 : _b.DEV) || typeof process !== "undefined" && ((_c = process.env) == null ? void 0 : _c.NODE_ENV) === "development" || false;
 const SVG_SPRITE_URL = isDev ? localSpriteUrl : `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
 const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`;
 const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formeo.min.css`;
@@ -4953,13 +4953,13 @@ const iconFontTemplates = {
 };
 const inputTags = /* @__PURE__ */ new Set(["input", "textarea", "select"]);
 const getName = (elem = {}) => {
-  var _a2, _b2, _c;
+  var _a2, _b2, _c2;
   let name2 = ((_a2 = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a2.name) || (elem == null ? void 0 : elem.name);
   if (name2) {
     return name2;
   }
   const id = uuid(elem);
-  let label = ((_b2 = elem.config) == null ? void 0 : _b2.label) || ((_c = elem.attrs) == null ? void 0 : _c.label) || (elem == null ? void 0 : elem.label);
+  let label = ((_b2 = elem.config) == null ? void 0 : _b2.label) || ((_c2 = elem.attrs) == null ? void 0 : _c2.label) || (elem == null ? void 0 : elem.label);
   if (label) {
     if (typeof label === "object") {
       label = dom.create(label).textContent;
