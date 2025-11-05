@@ -453,7 +453,7 @@ export default class Component extends Data {
     // Dispatch enhanced onAddChild event on the parent
     this.dispatchComponentEvent('onAddChild', {
       parent: this,
-      target: this,
+      target: child,
       child,
       index,
     })
