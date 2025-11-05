@@ -19,7 +19,7 @@ test.skip('get started link', async ({ page }) => {
 })
 
 test.describe('New Condition', () => {
-  test('should allow me to add todo items', async ({ page }) => {
+  test('should allow me to add todo items', async ({ page: _page }) => {
     // // create a new todo locator
     // const newTodo = page.getByPlaceholder('What needs to be done?');
     // // Create 1st todo.
