@@ -1,3 +1,10 @@
+## [4.1.1](https://github.com/Draggable/formeo/compare/v4.1.0...v4.1.1) (2025-11-05)
+
+
+### Bug Fixes
+
+* process not available in browser builds ([a687915](https://github.com/Draggable/formeo/commit/a687915dbd839217156bc8e921dc5c4f4e4b9899))
+
 # [4.1.0](https://github.com/Draggable/formeo/compare/v4.0.0...v4.1.0) (2025-11-05)
 
 
