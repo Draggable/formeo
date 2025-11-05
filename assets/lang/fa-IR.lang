@@ -10,6 +10,8 @@ de-DE = آلمانی (آلمان)
 es-ES = اسپانیایی اروپا
 fi-FI = فنلاندی (فنلاند)
 fr-FR = فرانسوی (فرانسه)
+he-IL = عبری (اسرائیل)
+hi-IN = هندی (هند)
 hu-HU = مجاری (مجارستان)
 it-IT = ایتالیایی (ایتالیا)
 ja-JP = ژاپنی (ژاپن)
@@ -55,6 +57,10 @@ clearAllMessage = آیا مطمئن هستید که می خواهید همه ف�
 close = بستن
 column = ستون
 condition.target.placeholder = هدف
+condition.type.and = و
+condition.type.if = اگر
+condition.type.or = یا
+condition.type.then = سپس
 condition.value.placeholder = مقدار
 confirmClearAll = آیا مطمئن هستید که می خواهید همه فیلدها را حذف کنید؟
 content = محتوا
@@ -91,6 +97,7 @@ editing.row = ویرایش ردیف
 editorTitle = عناصر فرم
 field = فیلد
 field.property.invalid = نادرست
+field.property.isChecked = بررسی می شود
 field.property.isNotVisible = صحیح نیست
 field.property.isVisible = صحیح است
 field.property.label = برچسب
@@ -124,6 +131,8 @@ lang.es = اسپانیایی
 lang.fa = فارسی
 lang.fi = فنلاندی
 lang.fr = فرانسوی
+lang.he = عبری
+lang.hi = هندی
 lang.hu = مجارستانی
 lang.it = ایتالیایی
 lang.ja = ژاپنی

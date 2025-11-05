@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 3.1.4
+Version: 4.0.0
 Author: Draggable https://draggable.io
 */
 
@@ -10,7 +10,6 @@ var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
-var _documentCurrentScript = typeof document !== "undefined" ? document.currentScript : null;
 async function fetchData(url) {
   try {
     const response = await fetch(url);
@@ -25,7 +24,7 @@ async function fetchData(url) {
     throw error;
   }
 }
-const DEFAULT_CONFIG$3 = {
+const DEFAULT_CONFIG$4 = {
   extension: ".lang",
   // local or remote directory containing language files
   location: "assets/lang/",
@@ -40,7 +39,7 @@ class I18N {
    * Process options and start the module
    * @param {Object} options
    */
-  constructor(options = DEFAULT_CONFIG$3) {
+  constructor(options = DEFAULT_CONFIG$4) {
     this.langs = /* @__PURE__ */ Object.create(null);
     this.loaded = [];
     this.processConfig(options);
@@ -50,7 +49,7 @@ class I18N {
    * @param {Object} options
    */
   processConfig(options) {
-    const { location, ...restOptions } = { ...DEFAULT_CONFIG$3, ...options };
+    const { location, ...restOptions } = { ...DEFAULT_CONFIG$4, ...options };
     const parsedLocation = location.replace(/\/?$/, "/");
     this.config = { location: parsedLocation, ...restOptions };
     const { override, preloaded = {} } = this.config;
@@ -182,21 +181,21 @@ class I18N {
    */
   loadLang(locale, useCache = true) {
     const _this = this;
-    return new Promise(function(resolve2, reject) {
+    return new Promise(function(resolve, reject) {
       if (_this.loaded.indexOf(locale) !== -1 && useCache) {
         _this.applyLanguage(_this.langs[locale]);
-        return resolve2(_this.langs[locale]);
+        return resolve(_this.langs[locale]);
       } else {
         const langFile = [_this.config.location, locale, _this.config.extension].join("");
         return fetchData(langFile).then((lang) => {
           const processedFile = I18N.processFile(lang);
           _this.applyLanguage(locale, processedFile);
           _this.loaded.push(locale);
-          return resolve2(_this.langs[locale]);
+          return resolve(_this.langs[locale]);
         }).catch((err) => {
           console.error(err);
           const lang = _this.applyLanguage(locale);
-          resolve2(lang);
+          resolve(lang);
         });
       }
     });
@@ -437,7 +436,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "3.1.4";
+const version$2 = "4.0.0";
 const type = "module";
 const main = "dist/formeo.cjs.js";
 const module$1 = "dist/formeo.es.js";
@@ -447,6 +446,11 @@ const exports$1 = {
     "import": "./dist/formeo.es.js",
     require: "./dist/formeo.cjs.js",
     "default": "./dist/formeo.umd.js"
+  },
+  "./dist/formeo.min.css": {
+    "import": "./dist/formeo.min.css",
+    require: "./dist/formeo.min.css",
+    "default": "./dist/formeo.min.css"
   }
 };
 const files = [
@@ -512,7 +516,9 @@ const scripts = {
   "postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
   "build:demo:watch": "vite build --mode demo --watch",
   "build:icons": "node ./tools/generate-sprite",
-  lint: "eslint ./src --ext .js || true",
+  lint: "biome check ./src",
+  "lint:fix": "biome check --write ./src",
+  format: "biome format --write .",
   test: "node --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
   "test:watch": "node --watch --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
   "test:updateSnapshots": "node --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
@@ -521,18 +527,24 @@ const scripts = {
   "semantic-release": "semantic-release --ci --debug",
   "copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
   "travis-deploy-once": "travis-deploy-once --pro",
+  "playwright:test": "playwright test",
+  "playwright:test:headed": "playwright test --headed",
+  "playwright:test:report": "playwright show-report",
+  "playwright:test:ci": "playwright test --reporter=dot",
   prepush: "npm test",
   prepare: "lefthook install",
   postmerge: "lefthook install",
   "generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
 };
 const devDependencies = {
-  "@biomejs/biome": "^1.9.3",
+  "@biomejs/biome": "^2.3.3",
   "@commitlint/cli": "^19.5.0",
   "@commitlint/config-conventional": "^19.5.0",
+  "@playwright/test": "^1.49.1",
   "@semantic-release/changelog": "^6.0.3",
   "@semantic-release/git": "^10.0.1",
   "@semantic-release/npm": "^12.0.1",
+  "@types/node": "^22.10.7",
   "ace-builds": "^1.36.5",
   jsdom: "^25.0.1",
   lefthook: "^1.7.18",
@@ -548,7 +560,7 @@ const devDependencies = {
   "zod-to-json-schema": "^3.23.5"
 };
 const dependencies = {
-  "@draggable/formeo-languages": "^3.1.3",
+  "@draggable/formeo-languages": "^3.4.1",
   "@draggable/i18n": "^1.0.7",
   "@draggable/tooltip": "^1.2.2",
   lodash: "^4.17.21",
@@ -616,174 +628,6 @@ const pkg = {
   release,
   commitlint
 };
-const { env, resolve } = { url: typeof document === "undefined" ? require("url").pathToFileURL(__filename).href : _documentCurrentScript && _documentCurrentScript.tagName.toUpperCase() === "SCRIPT" && _documentCurrentScript.src || new URL("formeo.cjs.js", document.baseURI).href };
-const name = pkg.name;
-const version$1 = pkg.version;
-const PACKAGE_NAME = name;
-const formeoSpriteId = "formeo-sprite";
-const POLYFILLS = [
-  { name: "cssPreload", src: "//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js" },
-  { name: "mutationObserver", src: "//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js" },
-  { name: "fetch", src: "https://unpkg.com/unfetch/polyfill" }
-];
-const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`;
-const localSpriteUrl = typeof resolve === "function" ? resolve(relativeSpritePath) : relativeSpritePath;
-const SVG_SPRITE_URL = (env == null ? void 0 : env.DEV) ? localSpriteUrl : `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
-const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`;
-const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formeo.min.css`;
-const FALLBACK_CSS_URL = "https://draggable.github.io/formeo/assets/css/formeo.min.css";
-const CONTROL_GROUP_CLASSNAME = "control-group";
-const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`;
-const ROW_CLASSNAME = `${PACKAGE_NAME}-row`;
-const COLUMN_CLASSNAME = `${PACKAGE_NAME}-column`;
-const FIELD_CLASSNAME = `${PACKAGE_NAME}-field`;
-const CUSTOM_COLUMN_OPTION_CLASSNAME = "custom-column-widths";
-const COLUMN_PRESET_CLASSNAME = "column-preset";
-const COLUMN_RESIZE_CLASSNAME = "resizing-columns";
-const CHILD_CLASSNAME_MAP = /* @__PURE__ */ new Map([
-  [STAGE_CLASSNAME, ROW_CLASSNAME],
-  [ROW_CLASSNAME, COLUMN_CLASSNAME],
-  [COLUMN_CLASSNAME, FIELD_CLASSNAME]
-]);
-const COMPONENT_INDEX_TYPES = ["external", "stages", "rows", "columns", "fields"];
-const COMPONENT_TYPES = ["stage", "row", "column", "field"].reduce((acc, type2) => ({ ...acc, [type2]: type2 }), {});
-const COMPONENT_TYPE_CONFIGS = [
-  { name: "controls", className: CONTROL_GROUP_CLASSNAME },
-  { name: "stage", className: STAGE_CLASSNAME },
-  { name: "row", className: ROW_CLASSNAME },
-  { name: "column", className: COLUMN_CLASSNAME },
-  { name: "field", className: FIELD_CLASSNAME }
-];
-const COMPONENT_TYPE_CLASSNAMES = {
-  controls: CONTROL_GROUP_CLASSNAME,
-  stage: STAGE_CLASSNAME,
-  row: ROW_CLASSNAME,
-  column: COLUMN_CLASSNAME,
-  field: FIELD_CLASSNAME
-};
-const COMPONENT_TYPE_CLASSNAMES_LOOKUP = Object.entries(COMPONENT_TYPE_CLASSNAMES).reduce(
-  (acc, [type2, className]) => ({
-    ...acc,
-    [className]: type2
-  }),
-  {}
-);
-const COMPONENT_TYPE_CLASSNAMES_ARRAY = Object.values(COMPONENT_TYPE_CLASSNAMES);
-const COMPONENT_TYPE_CLASSNAMES_REGEXP = new RegExp(`${COMPONENT_TYPE_CLASSNAMES_ARRAY.join("|")}`, "g");
-const childTypeMap = COMPONENT_TYPE_CONFIGS.map(({ name: name2 }, index2, arr) => {
-  const { name: childName } = arr[index2 + 1] || {};
-  return childName && [name2, childName];
-}).filter(Boolean);
-const parentTypeMap = childTypeMap.slice().map((typeMap) => typeMap.slice().reverse()).reverse();
-const CHILD_TYPE_MAP = new Map(childTypeMap);
-const PARENT_TYPE_MAP = new Map(parentTypeMap.slice());
-const columnTemplates = [
-  [{ value: "100.0", label: "100%" }],
-  [
-    { value: "50.0,50.0", label: "50 | 50" },
-    { value: "33.3,66.6", label: "33 | 66" },
-    { value: "66.6,33.3", label: "66 | 33" }
-  ],
-  [
-    { value: "33.3,33.3,33.3", label: "33 | 33 | 33" },
-    { value: "25.0,25.0,50.0", label: "25 | 25 | 50" },
-    { value: "50.0,25.0,25.0", label: "50 | 25 | 25" },
-    { value: "25.0,50.0,25.0", label: "25 | 50 | 25" }
-  ],
-  [{ value: "25.0,25.0,25.0,25.0", label: "25 | 25 | 25 | 25" }],
-  [{ value: "20.0,20.0,20.0,20.0,20.0", label: "20 | 20 | 20 | 20 | 20" }],
-  [{ value: "16.66,16.66,16.66,16.66,16.66,16.66", label: "16.66 | 16.66 | 16.66 | 16.66 | 16.66 | 16.66" }]
-];
-const COLUMN_TEMPLATES = new Map(
-  columnTemplates.reduce((acc, cur, idx) => {
-    acc.push([idx, cur]);
-    return acc;
-  }, [])
-);
-const CHANGE_TYPES = [{ type: "added", condition: (o, n) => Boolean(o === void 0 && n) }];
-const SESSION_FORMDATA_KEY = `${name}-formData`;
-const SESSION_LOCALE_KEY = `${name}-locale`;
-const ANIMATION_SPEED_BASE = 333;
-const ANIMATION_SPEED_FAST = Math.round(ANIMATION_SPEED_BASE / 2);
-const ANIMATION_SPEED_SLOW = Math.round(ANIMATION_SPEED_BASE * 2);
-const EVENT_FORMEO_SAVED = "formeoSaved";
-const EVENT_FORMEO_UPDATED = "formeoUpdated";
-const EVENT_FORMEO_UPDATED_STAGE = "formeoUpdatedStage";
-const EVENT_FORMEO_UPDATED_ROW = "formeoUpdatedRow";
-const EVENT_FORMEO_UPDATED_COLUMN = "formeoUpdatedColumn";
-const EVENT_FORMEO_UPDATED_FIELD = "formeoUpdatedField";
-const EVENT_FORMEO_CLEARED = "formeoCleared";
-const EVENT_FORMEO_ON_RENDER = "formeoOnRender";
-const EVENT_FORMEO_CONDITION_UPDATED = "formeoConditionUpdated";
-const COMPARISON_OPERATORS = {
-  equals: "==",
-  notEquals: "!=",
-  contains: "⊃",
-  notContains: "!⊃"
-};
-const LOGICAL_OPERATORS = {
-  and: "&&",
-  or: "||"
-};
-const visiblityConfigs = {
-  isVisible: "config.isVisible",
-  isNotVisible: "config.isNotVisible"
-};
-const ASSIGNMENT_OPERATORS = {
-  equals: "="
-};
-const CONDITION_INPUT_ORDER = [
-  "label",
-  "logical",
-  "source",
-  "thenTarget",
-  "sourceProperty",
-  "comparison",
-  "target",
-  "targetProperty",
-  "assignment",
-  "value"
-];
-const FIELD_PROPERTY_MAP = {
-  value: "attrs.value",
-  checked: "attrs.checked",
-  ...visiblityConfigs
-};
-const OPERATORS = {
-  comparison: COMPARISON_OPERATORS,
-  assignment: ASSIGNMENT_OPERATORS,
-  logical: LOGICAL_OPERATORS,
-  property: FIELD_PROPERTY_MAP
-};
-const CONDITION_TEMPLATE = () => ({
-  if: [
-    {
-      source: "",
-      sourceProperty: "",
-      comparison: "",
-      target: "",
-      targetProperty: ""
-    }
-  ],
-  then: [
-    {
-      target: "",
-      targetProperty: "",
-      assignment: "",
-      value: ""
-    }
-  ]
-});
-const UUID_REGEXP = /(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)/gi;
-const bsColRegExp = /\bcol-\w+-\d+/g;
-const iconPrefix = "f-i-";
-const DEFAULT_FORMDATA = () => ({
-  id: uuid(),
-  stages: { [uuid()]: {} },
-  rows: {},
-  columns: {},
-  fields: {}
-});
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -1688,7 +1532,8 @@ var mergeWith = createAssigner(function(object, source, srcIndex, customizer) {
 });
 var mergeWith_1 = mergeWith;
 const mergeWith$1 = /* @__PURE__ */ getDefaultExportFromCjs(mergeWith_1);
-const uuidv4 = () => crypto.randomUUID();
+const uuidv4 = () => crypto.randomUUID().slice(0, 8);
+const shortId = () => uuidv4().slice(0, 8);
 const match = (str = "", filter) => {
   if (!filter) {
     console.warn("utils.match missing argument 2.");
@@ -1718,15 +1563,8 @@ const componentType = (node) => {
 };
 const unique = (array) => Array.from(new Set(array));
 const uuid = (elem) => {
-  let id;
-  if (elem) {
-    const { attrs = {} } = elem;
-    id = attrs.id || elem.id || uuidv4();
-    elem.id = id;
-  } else {
-    id = uuidv4();
-  }
-  return id;
+  var _a;
+  return ((_a = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a.id) || (elem == null ? void 0 : elem.id) || shortId();
 };
 const merge = (obj1, obj2) => {
   const customizer = (objValue, srcValue) => {
@@ -1800,9 +1638,12 @@ const sessionStorage = Object.create(null, {
     }
   }
 });
-const isAddress = (str) => COMPONENT_INDEX_TYPES.some((indexType) => new RegExp(`^${indexType}.`).test(str));
-const isExternalAddress = (str) => str.startsWith("external");
-const isBoolKey = (key) => /^is|^has/.test(key);
+const isAddress = (str) => {
+  return /^(stage|row|column|field)s./.test(str);
+};
+const isInternalAddress = (str) => {
+  return INTERNAL_COMPONENT_INDEX_REGEX.test(str);
+};
 function throttle$1(callback, limit = ANIMATION_SPEED_SLOW) {
   let lastCall = 0;
   return function(...args) {
@@ -1813,7 +1654,7 @@ function throttle$1(callback, limit = ANIMATION_SPEED_SLOW) {
     }
   };
 }
-function debounce(fn, delay = ANIMATION_SPEED_BASE) {
+function debounce(fn, delay = ANIMATION_SPEED_FAST) {
   let timeoutID;
   return function(...args) {
     if (timeoutID) {
@@ -1839,6 +1680,259 @@ function parseData(data = /* @__PURE__ */ Object.create(null)) {
   return data;
 }
 const cleanFormData = (formData) => formData ? clone$1(parseData(formData)) : DEFAULT_FORMDATA();
+function buildFlatDataStructure(data, componentId, componentType2, result = {}) {
+  var _a;
+  if (!componentId || !data[componentType2][componentId]) {
+    return result;
+  }
+  const key = `${componentType2}.${componentId}`;
+  result[key] = data[componentType2][componentId];
+  const childType = CHILD_TYPE_INDEX_MAP.get(componentType2);
+  if (childType) {
+    const childrenIds = ((_a = data[componentType2][componentId].data) == null ? void 0 : _a.children) || [];
+    for (const childId of childrenIds) {
+      buildFlatDataStructure(data, childId, childType, result);
+    }
+  }
+  return result;
+}
+const name = pkg.name;
+const version$1 = pkg.version;
+const PACKAGE_NAME = name;
+const formeoSpriteId = "formeo-sprite";
+const POLYFILLS = [
+  { name: "cssPreload", src: "//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js" },
+  { name: "mutationObserver", src: "//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js" },
+  { name: "fetch", src: "https://unpkg.com/unfetch/polyfill" }
+];
+const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`;
+const localSpriteUrl = false ? (void 0)(relativeSpritePath) : relativeSpritePath;
+const isDev = process.env.NODE_ENV === "development" || false;
+const SVG_SPRITE_URL = isDev ? localSpriteUrl : `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
+const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`;
+const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formeo.min.css`;
+const FALLBACK_CSS_URL = "https://draggable.github.io/formeo/assets/css/formeo.min.css";
+const PANEL_CLASSNAME = "f-panel";
+const CONTROL_GROUP_CLASSNAME = "control-group";
+const STAGE_CLASSNAME = `${PACKAGE_NAME}-stage`;
+const ROW_CLASSNAME = `${PACKAGE_NAME}-row`;
+const COLUMN_CLASSNAME = `${PACKAGE_NAME}-column`;
+const FIELD_CLASSNAME = `${PACKAGE_NAME}-field`;
+const CUSTOM_COLUMN_OPTION_CLASSNAME = "custom-column-widths";
+const COLUMN_PRESET_CLASSNAME = "column-preset";
+const COLUMN_RESIZE_CLASSNAME = "resizing-columns";
+const CHILD_CLASSNAME_MAP = /* @__PURE__ */ new Map([
+  [STAGE_CLASSNAME, ROW_CLASSNAME],
+  [ROW_CLASSNAME, COLUMN_CLASSNAME],
+  [COLUMN_CLASSNAME, FIELD_CLASSNAME]
+]);
+const INTERNAL_COMPONENT_TYPES = ["stage", "row", "column", "field"];
+const INTERNAL_COMPONENT_INDEX_TYPES = INTERNAL_COMPONENT_TYPES.map((type2) => `${type2}s`);
+new Map(
+  INTERNAL_COMPONENT_INDEX_TYPES.map((type2, index2) => [type2, INTERNAL_COMPONENT_TYPES[index2]])
+);
+const INTERNAL_COMPONENT_INDEX_REGEX = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPES.join("|")}.`);
+const COMPONENT_TYPES = [...INTERNAL_COMPONENT_TYPES];
+const COMPONENT_INDEX_TYPES = [...INTERNAL_COMPONENT_INDEX_TYPES];
+const COMPONENT_INDEX_TYPE_MAP = new Map(
+  COMPONENT_INDEX_TYPES.map((type2, index2) => [type2, COMPONENT_TYPES[index2]])
+);
+const COMPONENT_TYPE_MAP = COMPONENT_TYPES.reduce((acc, type2) => {
+  acc[type2] = type2;
+  return acc;
+}, {});
+const COMPONENT_TYPE_CONFIGS = [
+  { name: "controls", className: CONTROL_GROUP_CLASSNAME },
+  { name: "stage", className: STAGE_CLASSNAME },
+  { name: "row", className: ROW_CLASSNAME },
+  { name: "column", className: COLUMN_CLASSNAME },
+  { name: "field", className: FIELD_CLASSNAME }
+];
+const COMPONENT_TYPE_CLASSNAMES = {
+  controls: CONTROL_GROUP_CLASSNAME,
+  stage: STAGE_CLASSNAME,
+  row: ROW_CLASSNAME,
+  column: COLUMN_CLASSNAME,
+  field: FIELD_CLASSNAME
+};
+const COMPONENT_TYPE_CLASSNAMES_LOOKUP = Object.entries(COMPONENT_TYPE_CLASSNAMES).reduce(
+  (acc, [type2, className]) => {
+    acc[className] = type2;
+    return acc;
+  },
+  {}
+);
+const COMPONENT_TYPE_CLASSNAMES_ARRAY = Object.values(COMPONENT_TYPE_CLASSNAMES);
+const COMPONENT_TYPE_CLASSNAMES_REGEXP = new RegExp(`${COMPONENT_TYPE_CLASSNAMES_ARRAY.join("|")}`, "g");
+const { childTypeMapVals, childTypeIndexMapVals } = COMPONENT_TYPE_CONFIGS.reduce(
+  (acc, { name: name2 }, index2, arr) => {
+    const { name: childName } = arr[index2 + 1] || {};
+    if (childName) {
+      acc.childTypeMapVals.push([name2, childName]);
+      acc.childTypeIndexMapVals.push([`${name2}s`, `${childName}s`]);
+    }
+    return acc;
+  },
+  { childTypeMapVals: [], childTypeIndexMapVals: [] }
+);
+const parentTypeMap = childTypeMapVals.slice().map((typeMap) => typeMap.slice().reverse()).reverse();
+const CHILD_TYPE_MAP = new Map(childTypeMapVals);
+const CHILD_TYPE_INDEX_MAP = new Map(childTypeIndexMapVals);
+const PARENT_TYPE_MAP = new Map(parentTypeMap.slice());
+const columnTemplates = [
+  [{ value: "100.0", label: "100%" }],
+  [
+    { value: "50.0,50.0", label: "50 | 50" },
+    { value: "33.3,66.6", label: "33 | 66" },
+    { value: "66.6,33.3", label: "66 | 33" }
+  ],
+  [
+    { value: "33.3,33.3,33.3", label: "33 | 33 | 33" },
+    { value: "25.0,25.0,50.0", label: "25 | 25 | 50" },
+    { value: "50.0,25.0,25.0", label: "50 | 25 | 25" },
+    { value: "25.0,50.0,25.0", label: "25 | 50 | 25" }
+  ],
+  [{ value: "25.0,25.0,25.0,25.0", label: "25 | 25 | 25 | 25" }],
+  [{ value: "20.0,20.0,20.0,20.0,20.0", label: "20 | 20 | 20 | 20 | 20" }],
+  [{ value: "16.66,16.66,16.66,16.66,16.66,16.66", label: "16.66 | 16.66 | 16.66 | 16.66 | 16.66 | 16.66" }]
+];
+const COLUMN_TEMPLATES = new Map(
+  columnTemplates.reduce((acc, cur, idx) => {
+    acc.push([idx, cur]);
+    return acc;
+  }, [])
+);
+const SESSION_FORMDATA_KEY = `${name}-formData`;
+const SESSION_LOCALE_KEY = `${name}-locale`;
+const ANIMATION_SPEED_BASE = 333;
+const ANIMATION_SPEED_FAST = Math.round(ANIMATION_SPEED_BASE / 2);
+const ANIMATION_SPEED_SLOW = Math.round(ANIMATION_SPEED_BASE * 2);
+const EVENT_FORMEO_SAVED = "formeoSaved";
+const EVENT_FORMEO_UPDATED = "formeoUpdated";
+const EVENT_FORMEO_UPDATED_STAGE = "formeoUpdatedStage";
+const EVENT_FORMEO_UPDATED_ROW = "formeoUpdatedRow";
+const EVENT_FORMEO_UPDATED_COLUMN = "formeoUpdatedColumn";
+const EVENT_FORMEO_UPDATED_FIELD = "formeoUpdatedField";
+const EVENT_FORMEO_CLEARED = "formeoCleared";
+const EVENT_FORMEO_ON_RENDER = "formeoOnRender";
+const EVENT_FORMEO_CONDITION_UPDATED = "formeoConditionUpdated";
+const COMPARISON_OPERATORS = {
+  equals: "==",
+  notEquals: "!=",
+  contains: "⊃",
+  notContains: "!⊃"
+};
+const LOGICAL_OPERATORS = {
+  and: "&&",
+  or: "||"
+};
+const ASSIGNMENT_OPERATORS = {
+  equals: "="
+};
+const CONDITION_INPUT_ORDER = [
+  "logical",
+  "source",
+  "sourceProperty",
+  "comparison",
+  "target",
+  "targetProperty",
+  "assignment",
+  "value"
+];
+const CHECKABLE_OPTIONS = ["isChecked", "isNotChecked"];
+const VISIBLE_OPTIONS = ["isVisible", "isNotVisible"];
+const PROPERTY_OPTIONS = ["value"];
+const OPERATORS = {
+  comparison: COMPARISON_OPERATORS,
+  assignment: ASSIGNMENT_OPERATORS,
+  logical: LOGICAL_OPERATORS
+};
+const conditionTypeIf = "if";
+const conditionTypeThen = "then";
+const CONDITION_TEMPLATE = () => ({
+  [conditionTypeIf]: [
+    {
+      source: "",
+      sourceProperty: "",
+      comparison: "",
+      target: "",
+      targetProperty: ""
+    }
+  ],
+  [conditionTypeThen]: [
+    {
+      target: "",
+      targetProperty: "",
+      assignment: "",
+      value: ""
+    }
+  ]
+});
+const UUID_REGEXP = /(\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b)|(\b[0-9a-f]{8}\b)/g;
+const bsColRegExp = /\bcol-\w+-\d+/g;
+const iconPrefix = "f-i-";
+const DEFAULT_FORMDATA = () => ({
+  id: uuid(),
+  stages: { [uuid()]: {} },
+  rows: {},
+  columns: {},
+  fields: {}
+});
+const CHECKED_TYPES = ["selected", "checked"];
+const REVERSED_CHECKED_TYPES = CHECKED_TYPES.toReversed();
+const toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => `\\s${lower}\\s`);
+const toTitleCaseRegex = new RegExp(`(?!${toTitleCaseLowers.join("|")})\\w\\S*`, "g");
+const regexSpace = /\s+/g;
+function toTitleCase(str) {
+  if (typeof str !== "string") {
+    return str;
+  }
+  if (str.trim().match(regexSpace)) {
+    return str;
+  }
+  const newString = str.replace(
+    toTitleCaseRegex,
+    (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).replace(/[A-Z]/g, (word) => ` ${word}`)
+  );
+  return newString;
+}
+const slugify = (str, separator = "-") => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, separator);
+const splitAddress = (str) => {
+  if (Array.isArray(str)) {
+    return str;
+  }
+  const regex = /[.[\]]/g;
+  const matches2 = [];
+  let lastIndex = 0;
+  let match2 = regex.exec(str);
+  while (match2 !== null) {
+    matches2.push(str.slice(lastIndex, match2.index));
+    lastIndex = match2.index + match2[0].length;
+    match2 = regex.exec(str);
+  }
+  if (lastIndex < str.length) {
+    matches2.push(str.slice(lastIndex));
+  }
+  return matches2.filter(Boolean);
+};
+const slugifyAddress = (str, separator = "-") => {
+  return splitAddress(str).join(separator);
+};
+const extractTextFromHtml = (htmlString) => {
+  const tempDiv = document.createElement("div");
+  tempDiv.innerHTML = htmlString;
+  return tempDiv.textContent || tempDiv.innerText || "";
+};
+const truncateByWord = (str, maxLength, tail = "…") => {
+  if (str.length <= maxLength) return str;
+  const truncated = str.slice(0, maxLength);
+  const spaceIndex = truncated.lastIndexOf(" ");
+  let truncatedWord = `${spaceIndex > 0 ? truncated.slice(0, spaceIndex) : truncated}`;
+  if (tail) {
+    truncatedWord += tail;
+  }
+  return truncatedWord;
+};
 var baseGetTag$1 = _baseGetTag, isObjectLike$1 = isObjectLike_1;
 var symbolTag$1 = "[object Symbol]";
 function isSymbol$3(value) {
@@ -1953,15 +2047,32 @@ function toKey$2(value) {
   return result == "0" && 1 / value == -INFINITY ? "-0" : result;
 }
 var _toKey = toKey$2;
-var assignValue = _assignValue, castPath$1 = _castPath, isIndex = _isIndex, isObject = isObject_1, toKey$1 = _toKey;
+var castPath$1 = _castPath, toKey$1 = _toKey;
+function baseGet$1(object, path) {
+  path = castPath$1(path, object);
+  var index2 = 0, length = path.length;
+  while (object != null && index2 < length) {
+    object = object[toKey$1(path[index2++])];
+  }
+  return index2 && index2 == length ? object : void 0;
+}
+var _baseGet = baseGet$1;
+var baseGet = _baseGet;
+function get$1(object, path, defaultValue) {
+  var result = object == null ? void 0 : baseGet(object, path);
+  return result === void 0 ? defaultValue : result;
+}
+var get_1 = get$1;
+const lodashGet = /* @__PURE__ */ getDefaultExportFromCjs(get_1);
+var assignValue = _assignValue, castPath = _castPath, isIndex = _isIndex, isObject = isObject_1, toKey = _toKey;
 function baseSet$1(object, path, value, customizer) {
   if (!isObject(object)) {
     return object;
   }
-  path = castPath$1(path, object);
+  path = castPath(path, object);
   var index2 = -1, length = path.length, lastIndex = length - 1, nested = object;
   while (nested != null && ++index2 < length) {
-    var key = toKey$1(path[index2]), newValue = value;
+    var key = toKey(path[index2]), newValue = value;
     if (key === "__proto__" || key === "constructor" || key === "prototype") {
       return object;
     }
@@ -1984,320 +2095,31 @@ function set$1(object, path, value) {
 }
 var set_1 = set$1;
 const lodashSet = /* @__PURE__ */ getDefaultExportFromCjs(set_1);
-var castPath = _castPath, toKey = _toKey;
-function baseGet$1(object, path) {
-  path = castPath(path, object);
-  var index2 = 0, length = path.length;
-  while (object != null && index2 < length) {
-    object = object[toKey(path[index2++])];
-  }
-  return index2 && index2 == length ? object : void 0;
-}
-var _baseGet = baseGet$1;
-var baseGet = _baseGet;
-function get$1(object, path, defaultValue) {
-  var result = object == null ? void 0 : baseGet(object, path);
-  return result === void 0 ? defaultValue : result;
-}
-var get_1 = get$1;
-const lodashGet = /* @__PURE__ */ getDefaultExportFromCjs(get_1);
 const get = lodashGet;
 const set = lodashSet;
-const isInt = (n) => Number.isInteger(Number(n));
-const indexOfNode = (node, parent) => {
-  const parentElement = parent || node.parentElement;
-  const nodeList = Array.prototype.slice.call(parentElement.childNodes);
-  return nodeList.indexOf(node);
-};
-const orderObjectsBy = (elements, order, path) => {
-  const splitPath = path.split("||");
-  const newOrder = unique(order).map(
-    (key) => elements.find((elem) => {
-      const newPath = splitPath.find((p) => !!get(elem, p));
-      return newPath && get(elem, newPath) === key;
-    })
-  ).filter(Boolean);
-  const orderedElements = newOrder.concat(elements);
-  return unique(orderedElements);
-};
-const forEach = (arr, cb, scope) => {
-  for (let i = 0; i < arr.length; i++) {
-    cb.call(scope, arr[i], i);
-  }
-};
-const map = (arr, cb) => {
-  const newArray = [];
-  forEach(arr, (elem, i) => newArray.push(cb(elem, i)));
-  return newArray;
-};
-const sanitizedAttributeNames = {};
-const safeAttrName = (name2) => {
-  const attributeMap = {
-    className: "class"
-  };
-  if (sanitizedAttributeNames[name2]) {
-    return sanitizedAttributeNames[name2];
-  }
-  const attributeName = attributeMap[name2] || name2;
-  const sanitizedAttributeName = attributeName.replace(/^\d+/, "").replace(/[^a-zA-Z0-9-:]/g, "");
-  sanitizedAttributeNames[name2] = sanitizedAttributeName;
-  return sanitizedAttributeName;
-};
-const capitalize = (str) => str.replace(/\b\w/g, (m) => m.toUpperCase());
-const copyObj = (obj) => window.JSON.parse(window.JSON.stringify(obj));
-const subtract = (arr, from) => from.filter((a) => !~arr.indexOf(a));
-const isIE = () => window.navigator.userAgent.indexOf("MSIE ") !== -1;
-const helpers = {
-  capitalize,
-  safeAttrName,
-  forEach,
-  copyObj,
-  // basic map that can be used on nodeList
-  map,
-  subtract,
-  indexOfNode,
-  isInt,
-  get,
-  orderObjectsBy,
-  isIE
-};
-const animate = {
-  /**
-   * Get the computed style for DOM element
-   * @param  {Object}  elem     dom element
-   * @param  {Boolean} property style eg. width, height, opacity
-   * @return {String}           computed style
-   */
-  getStyle: (elem, property = false) => {
-    let style;
-    if (window.getComputedStyle) {
-      style = window.getComputedStyle(elem, null);
-    } else if (elem.currentStyle) {
-      style = elem.currentStyle;
-    }
-    return property ? style[property] : style;
-  },
-  fadeOut: (elem, duration = 250) => {
-    const increment = 1 / (duration / 60);
-    elem.style.opacity = 1;
-    (function fade() {
-      const val = Number(elem.style.opacity) - increment;
-      if (val > 0) {
-        elem.style.opacity = val;
-        window.requestAnimationFrame(fade);
-      } else {
-        elem.remove();
-      }
-    })();
-  },
-  slideDown: (elem, duration = 250, cb = false) => {
-    elem.style.display = "block";
-    const style = animate.getStyle(elem);
-    const height = parseInt(style.height, 10);
-    const increment = height / (duration / 60);
-    elem.style.height = "0px";
-    (function slideDown() {
-      const curHeight = parseFloat(elem.style.height);
-      const val = curHeight + increment;
-      if (curHeight < height) {
-        elem.style.height = val + "px";
-        window.requestAnimationFrame(slideDown);
-      } else {
-        elem.style.height = "auto";
-        if (cb) {
-          cb(elem);
+function mergeActions(target, source = {}) {
+  const result = { ...target };
+  for (const key in source) {
+    if (Object.hasOwn(source, key)) {
+      if (Object.hasOwn(result, key)) {
+        if (Array.isArray(result[key])) {
+          result[key].push(source[key]);
+        } else {
+          result[key] = [result[key], source[key]];
         }
-      }
-    })();
-  },
-  slideUp: (elem, duration = 250, cb = false) => {
-    const style = animate.getStyle(elem);
-    const height = parseInt(style.height);
-    const overFlowBack = style.overflow;
-    elem.style.overflow = "hidden";
-    elem.style.height = height + "px";
-    const defMinHeight = style.minHeight;
-    elem.style.minHeight = "auto";
-    const increment = parseFloat(height / (duration / 60)).toFixed(2);
-    (function slideUp() {
-      const curHeight = parseInt(elem.style.height, 10);
-      const val = curHeight - increment;
-      if (val > 0) {
-        elem.style.height = val + "px";
-        window.requestAnimationFrame(slideUp);
       } else {
-        elem.style.overflow = overFlowBack;
-        elem.style.display = "none";
-        elem.style.minHeight = defMinHeight;
-        delete elem.style.height;
-        if (cb) {
-          cb(elem);
-        }
+        result[key] = source[key];
       }
-    })();
-  },
-  slideToggle: (elem, duration = 250, open = animate.getStyle(elem, "display") === "none") => {
-    if (open) {
-      animate.slideDown(elem, duration);
-    } else {
-      animate.slideUp(elem, duration);
     }
   }
-  // animation.translateX = (distance, duration = 250) => {
-  //   var increment = distance / (duration / 60);
-  //   (function translate() {
-  //     var val = Number(elem.style.opacity) - increment;
-  //     if (val > 0) {
-  //       elem.style.transform = `translate(${distance}px, 0)`;
-  //       requestAnimationFrame(translate);
-  //     }
-  //   })();
-  // }
-};
-const NO_TRANSITION_CLASS_NAME = "no-transition";
-const defaults$3 = {
-  debug: false,
-  // enable debug mode
-  bubbles: true,
-  // bubble events from components
-  formeoLoaded: (evt) => {
-  },
-  onAdd: () => {
-  },
-  onUpdate: (evt) => {
-    var _a;
-    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
-  },
-  onUpdateStage: (evt) => {
-    var _a;
-    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
-  },
-  onUpdateRow: (evt) => {
-    var _a;
-    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
-  },
-  onUpdateColumn: (evt) => {
-    var _a;
-    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
-  },
-  onUpdateField: (evt) => {
-    var _a;
-    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
-  },
-  onRender: (evt) => {
-    var _a;
-    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
-  },
-  onSave: (evt) => {
-  },
-  confirmClearAll: (evt) => {
-    if (window.confirm(evt.confirmationMessage)) {
-      evt.clearAllAction(evt);
-    }
-  }
-};
-const defaultCustomEvent = ({ src, ...evtData }, type2 = EVENT_FORMEO_UPDATED) => {
-  var _a, _b;
-  const evt = new window.CustomEvent(type2, {
-    detail: evtData,
-    bubbles: ((_a = events.opts) == null ? void 0 : _a.debug) || ((_b = events.opts) == null ? void 0 : _b.bubbles)
-  });
-  evt.data = (src || document).dispatchEvent(evt);
-  return evt;
-};
-const events = {
-  init: function(options) {
-    this.opts = { ...defaults$3, ...options };
-    return this;
-  },
-  formeoSaved: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
-  formeoUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
-  formeoCleared: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
-  formeoOnRender: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
-  formeoConditionUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED)
-};
-const formeoUpdatedThrottled = throttle$1(() => {
-  events.opts.onUpdate({
-    timeStamp: window.performance.now(),
-    type: EVENT_FORMEO_UPDATED,
-    detail: components.formData
-  });
-}, ANIMATION_SPEED_FAST);
-document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled);
-document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type: type2,
-    detail
-  });
-});
-document.addEventListener(EVENT_FORMEO_UPDATED_ROW, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type: type2,
-    detail
-  });
-});
-document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type: type2,
-    detail
-  });
-});
-document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type: type2,
-    detail
-  });
-});
-document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
-  events.opts.onRender({
-    timeStamp,
-    type: type2,
-    detail
-  });
-});
-document.addEventListener("confirmClearAll", (evt) => {
-  evt = {
-    timeStamp: evt.timeStamp,
-    type: evt.type,
-    confirmationMessage: evt.detail.confirmationMessage,
-    clearAllAction: evt.detail.clearAllAction,
-    btnCoords: evt.detail.btnCoords
-  };
-  events.opts.confirmClearAll(evt);
-});
-document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type: type2, detail: { formData } }) => {
-  const evt = {
-    timeStamp,
-    type: type2,
-    formData
-  };
-  events.opts.onSave(evt);
-});
-document.addEventListener("formeoLoaded", (evt) => {
-  events.opts.formeoLoaded(evt.detail.formeo);
-});
-let throttling;
-function onResizeWindow() {
-  throttling = throttling || window.requestAnimationFrame(() => {
-    throttling = false;
-    for (const column of Object.values(Columns2.data)) {
-      column.dom.classList.add(NO_TRANSITION_CLASS_NAME);
-      Controls2.dom.classList.add(NO_TRANSITION_CLASS_NAME);
-      Controls2.panels.nav.refresh();
-      column.refreshFieldPanels();
-    }
-  });
+  return result;
 }
-window.addEventListener("resize", onResizeWindow);
+function objectFromStringArray(...arr) {
+  return arr.flat().reduce((acc, item) => {
+    acc[item] = item;
+    return acc;
+  }, {});
+}
 var HASH_UNDEFINED = "__lodash_hash_undefined__";
 function setCacheAdd$1(value) {
   this.__data__.set(value, HASH_UNDEFINED);
@@ -2658,22 +2480,29 @@ function isEqual(value, other) {
 }
 var isEqual_1 = isEqual;
 const isEqual$1 = /* @__PURE__ */ getDefaultExportFromCjs(isEqual_1);
+const getChangeType = (oldVal, newVal) => {
+  if (oldVal === void 0) {
+    return "added";
+  }
+  if (newVal === void 0) {
+    return "removed";
+  }
+  if (isEqual$1(oldVal, newVal)) {
+    return "unchanged";
+  }
+  return "changed";
+};
 class Data {
   constructor(name2, data = /* @__PURE__ */ Object.create(null)) {
     __publicField(this, "toJSON", (data, format) => JSON.stringify(data, null, format));
     __publicField(this, "get", (path) => get(this.data, path));
-    __publicField(this, "getChangeType", (oldVal, newVal) => {
-      const change = CHANGE_TYPES.find(({ condition }) => condition(oldVal, newVal)) || { type: "unknown" };
-      change.desc = change.type === "added" ? `${oldVal} to ${newVal}` : newVal;
-      return change;
-    });
     __publicField(this, "add", (id, data = /* @__PURE__ */ Object.create(null)) => {
       const { id: dataId } = data;
       const elemId = id || dataId || uuid();
       return this.set(elemId, data);
     });
     __publicField(this, "remove", (path) => {
-      const delPath = path.split(".");
+      const delPath = splitAddress(path);
       const delItem = delPath.pop();
       const parent = this.get(delPath);
       if (Array.isArray(parent)) {
@@ -2706,9 +2535,6 @@ class Data {
   }
   set(path, newVal) {
     const oldVal = get(this.data, path);
-    if (isEqual$1(oldVal, newVal)) {
-      return this.data;
-    }
     const data = set(this.data, path, newVal);
     const callbackPath = Array.isArray(path) ? path.join(".") : path;
     const callBackGroups = Object.keys(this.setCallbacks).filter((setKey) => new RegExp(setKey).test(callbackPath));
@@ -2719,14 +2545,13 @@ class Data {
       }
     }
     if (!this.disableEvents) {
-      const change = this.getChangeType(oldVal, newVal);
       const evtData = {
         entity: this,
         dataPath: this.dataPath.replace(/\.+$/, ""),
         changePath: this.dataPath + path,
         value: newVal,
         data,
-        change: `${change.type}: ${change.desc}`,
+        changeType: getChangeType(oldVal, newVal),
         src: this.dom
       };
       if (oldVal) {
@@ -2748,6 +2573,88 @@ class Data {
   }
   empty() {
     this.data = /* @__PURE__ */ Object.create(null);
+  }
+}
+class ComponentData extends Data {
+  constructor() {
+    super(...arguments);
+    __publicField(this, "load", (dataArg) => {
+      const data = parseData(dataArg);
+      this.empty();
+      for (const [key, val] of Object.entries(data)) {
+        this.add(key, val);
+      }
+      return this.data;
+    });
+    /**
+     * Retrieves data from the specified path or adds new data if no path is provided.
+     *
+     * @param {string} [path] - The path to retrieve data from. If not provided, new data will be added.
+     * @returns {*} The data retrieved from the specified path or the result of adding new data.
+     */
+    __publicField(this, "get", (path) => path ? get(this.data, path) : this.add());
+    /**
+     * Adds a new component with the given id and data.
+     *
+     * @param {string} id - The unique identifier for the component. If not provided, a new UUID will be generated.
+     * @param {Object} [data=Object.create(null)] - The data to initialize the component with.
+     * @returns {Object} The newly created component.
+     */
+    __publicField(this, "add", (id, data = /* @__PURE__ */ Object.create(null)) => {
+      const elemId = id || uuid();
+      const component = this.Component({ ...data, id: elemId });
+      this.data[elemId] = component;
+      this.active = component;
+      return component;
+    });
+    /**
+     * removes a component form the index
+     * @param {String|Array} componentId
+     */
+    __publicField(this, "remove", (componentId) => {
+      if (Array.isArray(componentId)) {
+        for (const id of componentId) {
+          this.get(id).remove();
+        }
+      } else {
+        this.get(componentId).remove();
+      }
+      return this.data;
+    });
+    /**
+     * Deletes a component from the data object.
+     *
+     * @param {string} componentId - The ID of the component to delete.
+     * @returns {string} The ID of the deleted component.
+     */
+    __publicField(this, "delete", (componentId) => {
+      delete this.data[componentId];
+      return componentId;
+    });
+    /**
+     * Clears all instances from the store
+     * @param {Object} evt
+     */
+    __publicField(this, "clearAll", (isAnimated = true) => {
+      const promises = Object.values(this.data).map((component) => component.empty(isAnimated));
+      return Promise.all(promises);
+    });
+    __publicField(this, "conditionMap", /* @__PURE__ */ new Map());
+  }
+  /**
+   * Extends the configVal for a component type,
+   * eventually read by Component
+   * @return {Object} configVal
+   */
+  set config(config2) {
+    this.configVal = merge(this.configVal, clone$1(config2));
+  }
+  /**
+   * Reads configVal for a component type
+   * @return {Object} configVal
+   */
+  get config() {
+    return this.configVal;
   }
 }
 /**!
@@ -3059,7 +2966,7 @@ function lastChild(el, selector) {
   }
   return last || null;
 }
-function index$6(el, selector) {
+function index$8(el, selector) {
   var index2 = 0;
   if (!el || !el.parentNode) {
     return -1;
@@ -3288,14 +3195,14 @@ function calculateRealTime(animatingRect, fromRect, toRect, options) {
   return Math.sqrt(Math.pow(fromRect.top - animatingRect.top, 2) + Math.pow(fromRect.left - animatingRect.left, 2)) / Math.sqrt(Math.pow(fromRect.top - toRect.top, 2) + Math.pow(fromRect.left - toRect.left, 2)) * options.animation;
 }
 var plugins = [];
-var defaults$2 = {
+var defaults$3 = {
   initializeByDefault: true
 };
 var PluginManager = {
   mount: function mount(plugin) {
-    for (var option2 in defaults$2) {
-      if (defaults$2.hasOwnProperty(option2) && !(option2 in plugin)) {
-        plugin[option2] = defaults$2[option2];
+    for (var option2 in defaults$3) {
+      if (defaults$3.hasOwnProperty(option2) && !(option2 in plugin)) {
+        plugin[option2] = defaults$3[option2];
       }
     }
     plugins.forEach(function(p) {
@@ -3670,8 +3577,8 @@ Sortable.prototype = /** @lends Sortable.prototype */
     if (lastDownEl === target) {
       return;
     }
-    oldIndex = index$6(target);
-    oldDraggableIndex = index$6(target, options.draggable);
+    oldIndex = index$8(target);
+    oldDraggableIndex = index$8(target, options.draggable);
     if (typeof filter === "function") {
       if (filter.call(this, evt, target, this)) {
         _dispatchEvent({
@@ -4091,8 +3998,8 @@ Sortable.prototype = /** @lends Sortable.prototype */
       return completedFired = true;
     }
     function changed() {
-      newIndex = index$6(dragEl);
-      newDraggableIndex = index$6(dragEl, options.draggable);
+      newIndex = index$8(dragEl);
+      newDraggableIndex = index$8(dragEl, options.draggable);
       _dispatchEvent({
         sortable: _this,
         name: "change",
@@ -4178,7 +4085,7 @@ Sortable.prototype = /** @lends Sortable.prototype */
         direction = _getSwapDirection(evt, target, targetRect, vertical, differentRowCol ? 1 : options.swapThreshold, options.invertedSwapThreshold == null ? options.swapThreshold : options.invertedSwapThreshold, isCircumstantialInvert, lastTarget === target);
         var sibling;
         if (direction !== 0) {
-          var dragIndex = index$6(dragEl);
+          var dragIndex = index$8(dragEl);
           do {
             dragIndex -= direction;
             sibling = parentEl.children[dragIndex];
@@ -4240,14 +4147,14 @@ Sortable.prototype = /** @lends Sortable.prototype */
   },
   _onDrop: function _onDrop(evt) {
     var el = this.el, options = this.options;
-    newIndex = index$6(dragEl);
-    newDraggableIndex = index$6(dragEl, options.draggable);
+    newIndex = index$8(dragEl);
+    newDraggableIndex = index$8(dragEl, options.draggable);
     pluginEvent2("drop", this, {
       evt
     });
     parentEl = dragEl && dragEl.parentNode;
-    newIndex = index$6(dragEl);
-    newDraggableIndex = index$6(dragEl, options.draggable);
+    newIndex = index$8(dragEl);
+    newDraggableIndex = index$8(dragEl, options.draggable);
     if (Sortable.eventCanceled) {
       this._nulling();
       return;
@@ -4594,7 +4501,7 @@ function _getSwapDirection(evt, target, targetRect, vertical, swapThreshold, inv
   return 0;
 }
 function _getInsertDirection(target) {
-  if (index$6(dragEl) < index$6(target)) {
+  if (index$8(dragEl) < index$8(target)) {
     return 1;
   } else {
     return -1;
@@ -4642,7 +4549,7 @@ Sortable.utils = {
   closest,
   toggleClass,
   clone,
-  index: index$6,
+  index: index$8,
   nextTick: _nextTick,
   cancelNextTick: _cancelNextTick,
   detectDirection: _detectDirection,
@@ -4892,3652 +4799,151 @@ _extends(Remove, {
 });
 Sortable.mount(new AutoScrollPlugin());
 Sortable.mount(Remove, Revert);
-const defaultActions = {
-  add: {
-    attr: (evt) => {
-      const attr = window.prompt(evt.message.attr);
-      if (attr && evt.isDisabled(attr)) {
-        window.alert(mi18n.get("attributeNotPermitted", attr || ""));
-        return actions.add.attrs(evt);
-      }
-      let val;
-      if (attr) {
-        val = String(window.prompt(evt.message.value, ""));
-        evt.addAction(attr, val);
-      }
-    },
-    option: (evt) => {
-      evt.addAction();
-    },
-    condition: (evt) => {
-      evt.addAction(evt);
-    }
-  },
-  click: {
-    btn: (evt) => {
-      evt.action();
-    }
-  },
-  save: {
-    form: identity
-  }
-};
-const actions = {
-  init: function(options) {
-    const actionKeys = Object.keys(defaultActions);
-    this.opts = actionKeys.reduce((acc, key) => {
-      acc[key] = { ...defaultActions[key], ...options[key] };
-      return acc;
-    }, options);
-    return this;
-  },
-  add: {
-    attrs: (evt) => {
-      return actions.opts.add.attr(evt);
-    },
-    options: (evt) => {
-      return actions.opts.add.option(evt);
-    },
-    conditions: (evt) => {
-      evt.template = CONDITION_TEMPLATE();
-      return actions.opts.add.condition(evt);
-    }
-  },
-  click: {
-    btn: (evt) => {
-      return actions.opts.click.btn(evt);
-    }
-  },
-  save: {
-    form: (formData) => {
-      if (actions.opts.sessionStorage) {
-        sessionStorage.set(SESSION_FORMDATA_KEY, formData);
-      }
-      events.formeoSaved({ formData });
-      return actions.opts.save.form(formData);
-    }
-  }
-};
-const defaults$1 = Object.freeze({
-  type: "field",
-  displayType: "slider"
-});
-const getTransition = (val) => {
-  const translateXVal = val ? `${val}px` : 0;
-  return { transform: `translateX(${translateXVal})` };
-};
-class Panels {
+const animate = {
   /**
-   * Panels initial setup
-   * @param  {Object} options Panels config
-   * @return {Object} Panels
+   * Get the computed style for DOM element
+   * @param  {Object}  elem     dom element
+   * @param  {Boolean} property style eg. width, height, opacity
+   * @return {String}           computed style
    */
-  constructor(options) {
-    __publicField(this, "toggleTabbedLayout", () => {
-      this.getPanelDisplay();
-      const isTabbed = this.isTabbed;
-      this.panelsWrap.parentElement.classList.toggle("tabbed-panels", isTabbed);
-      if (isTabbed) {
-        this.panelNav.removeAttribute("style");
-      }
-      return isTabbed;
-    });
-    /**
-     * Resize the panel after its contents change in height
-     * @return {String} panel's height in pixels
-     */
-    __publicField(this, "resizePanels", () => {
-      this.toggleTabbedLayout();
-      const panelStyle = this.panelsWrap.style;
-      const activePanelHeight = dom.getStyle(this.currentPanel, "height");
-      panelStyle.height = activePanelHeight;
-      return activePanelHeight;
-    });
-    this.opts = merge(defaults$1, options);
-    this.panelDisplay = this.opts.displayType;
-    this.activePanelIndex = 0;
-    this.panelNav = this.createPanelNav();
-    const panelsWrap = this.createPanelsWrap();
-    this.nav = this.navActions();
-    const resizeObserver = new window.ResizeObserver(
-      ([
-        {
-          contentRect: { width }
-        }
-      ]) => {
-        if (this.currentWidth !== width) {
-          this.toggleTabbedLayout();
-          this.currentWidth = width;
-          this.nav.setTranslateX(this.activePanelIndex, false);
-        }
-      }
-    );
-    const observeTimeout = window.setTimeout(() => {
-      resizeObserver.observe(panelsWrap);
-      window.clearTimeout(observeTimeout);
-    }, ANIMATION_SPEED_SLOW);
-  }
-  getPanelDisplay() {
-    const column = this.panelsWrap;
-    const width = Number.parseInt(dom.getStyle(column, "width"));
-    const autoDisplayType = width > 390 ? "tabbed" : "slider";
-    const isAuto = this.opts.displayType === "auto";
-    this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults$1.displayType;
-    return this.panelDisplay;
-  }
-  /**
-   * Wrap a panel and make properties sortable
-   * if the panel belongs to a field
-   * @return {Object} DOM element
-   */
-  createPanelsWrap() {
-    const panelsWrap = dom.create({
-      className: "panels",
-      content: this.opts.panels.map(({ config: _config, ...panel }) => panel)
-    });
-    if (this.opts.type === "field") {
-      this.sortableProperties(panelsWrap);
+  getStyle: (elem, property = false) => {
+    let style;
+    if (window.getComputedStyle) {
+      style = window.getComputedStyle(elem, null);
+    } else if (elem.currentStyle) {
+      style = elem.currentStyle;
     }
-    this.panelsWrap = panelsWrap;
-    this.panels = panelsWrap.children;
-    this.currentPanel = this.panels[this.activePanelIndex];
-    return panelsWrap;
-  }
-  /**
-   * Sortable panel properties
-   * @param  {Array} panels
-   * @return {Array} panel groups
-   */
-  sortableProperties(panels) {
-    const groups = panels.getElementsByClassName("field-edit-group");
-    return helpers.forEach(groups, (group) => {
-      group.fieldId = this.opts.id;
-      if (group.isSortable) {
-        Sortable.create(group, {
-          animation: 150,
-          group: {
-            name: `edit-${group.editGroup}`,
-            pull: true,
-            put: ["properties"]
-          },
-          sort: true,
-          handle: ".prop-order",
-          onSort: (evt) => {
-            this.propertySave(evt.to);
-            this.resizePanels();
-          }
-        });
-      }
-    });
-  }
-  createPanelNavLabels() {
-    const labels = this.opts.panels.map((panel) => ({
-      tag: "h5",
-      action: {
-        click: (evt) => {
-          const index2 = indexOfNode(evt.target, evt.target.parentElement);
-          this.nav.setTranslateX(index2, false);
-          this.nav.groupChange(index2);
-        }
-      },
-      content: panel.config.label
-    }));
-    const panelLabels = {
-      className: "panel-labels",
-      content: {
-        content: labels
-      }
-    };
-    const [firstLabel] = labels;
-    firstLabel.className = "active-tab";
-    return dom.create(panelLabels);
-  }
-  /**
-   * Panel navigation, tabs and arrow buttons for slider
-   * @return {Object} DOM object for panel navigation wrapper
-   */
-  createPanelNav() {
-    this.labels = this.createPanelNavLabels();
-    const next = {
-      tag: "button",
-      attrs: {
-        className: "next-group",
-        title: mi18n.get("controlGroups.nextGroup"),
-        type: "button"
-      },
-      dataset: {
-        toggle: "tooltip",
-        placement: "top"
-      },
-      action: {
-        click: (e) => this.nav.nextGroup(e)
-      },
-      content: dom.icon("triangle-right")
-    };
-    const prev = {
-      tag: "button",
-      attrs: {
-        className: "prev-group",
-        title: mi18n.get("controlGroups.prevGroup"),
-        type: "button"
-      },
-      dataset: {
-        toggle: "tooltip",
-        placement: "top"
-      },
-      action: {
-        click: (e) => this.nav.prevGroup(e)
-      },
-      content: dom.icon("triangle-left")
-    };
-    return dom.create({
-      tag: "nav",
-      attrs: {
-        className: "panel-nav"
-      },
-      content: [prev, this.labels, next]
-    });
-  }
-  get isTabbed() {
-    return this.panelDisplay === "tabbed";
-  }
-  /**
-   * Handlers for navigating between panel groups
-   * @todo refactor to use requestAnimationFrame instead of css transitions
-   * @return {Object} actions that control panel groups
-   */
-  navActions() {
-    const action = {};
-    const groupParent = this.currentPanel.parentElement;
-    const labelWrap = this.labels.firstChild;
-    const panelTabs = labelWrap.children;
-    const siblingGroups = this.currentPanel.parentElement.childNodes;
-    this.activePanelIndex = indexOfNode(this.currentPanel, groupParent);
-    let offset = { nav: 0, panel: 0 };
-    let lastOffset = { ...offset };
-    action.groupChange = (newIndex2) => {
-      this.activePanelIndex = newIndex2;
-      this.currentPanel = siblingGroups[newIndex2];
-      dom.removeClasses(siblingGroups, "active-panel");
-      dom.removeClasses(panelTabs, "active-tab");
-      this.currentPanel.classList.add("active-panel");
-      panelTabs[newIndex2].classList.add("active-tab");
-      return this.currentPanel;
-    };
-    const getOffset = (index2) => {
-      return {
-        nav: -labelWrap.offsetWidth * index2,
-        panel: -groupParent.offsetWidth * index2
-      };
-    };
-    const translateX = ({ offset: offset2, reset, duration = ANIMATION_SPEED_FAST, animate: animate2 = !this.isTabbed }) => {
-      const panelQueue = [getTransition(lastOffset.panel), getTransition(offset2.panel)];
-      const navQueue = [getTransition(lastOffset.nav), getTransition(this.isTabbed ? 0 : offset2.nav)];
-      if (reset) {
-        const [panelStart] = panelQueue;
-        const [navStart] = navQueue;
-        panelQueue.push(panelStart);
-        navQueue.push(navStart);
-      }
-      const animationOptions = {
-        easing: "ease-in-out",
-        duration: animate2 ? duration : 0,
-        fill: "forwards"
-      };
-      const panelTransition = groupParent.animate(panelQueue, animationOptions);
-      labelWrap.animate(navQueue, animationOptions);
-      const handleFinish = () => {
-        this.panelsWrap.style.height = dom.getStyle(this.currentPanel, "height");
-        panelTransition.removeEventListener("finish", handleFinish);
-        if (!reset) {
-          lastOffset = offset2;
-        }
-      };
-      panelTransition.addEventListener("finish", handleFinish);
-    };
-    action.setTranslateX = (panelIndex = this.activePanelIndex, animate2 = true) => {
-      offset = getOffset(panelIndex);
-      translateX({ offset, animate: animate2 });
-    };
-    action.refresh = (newIndex2 = this.activePanelIndex) => {
-      if (this.activePanelIndex !== newIndex2) {
-        action.groupChange(newIndex2);
-      }
-      action.setTranslateX(this.activePanelIndex, false);
-      this.resizePanels();
-    };
-    action.nextGroup = () => {
-      const newIndex2 = this.activePanelIndex + 1;
-      if (newIndex2 !== siblingGroups.length) {
-        const nextPanel = siblingGroups[newIndex2];
-        offset = {
-          nav: -labelWrap.offsetWidth * newIndex2,
-          panel: -nextPanel.offsetLeft
-        };
-        translateX({ offset });
-        action.groupChange(newIndex2);
+    return property ? style[property] : style;
+  },
+  fadeOut: (elem, duration = 250) => {
+    const increment = 1 / (duration / 60);
+    elem.style.opacity = 1;
+    (function fade() {
+      const val = Number(elem.style.opacity) - increment;
+      if (val > 0) {
+        elem.style.opacity = val;
+        window.requestAnimationFrame(fade);
       } else {
-        offset = {
-          nav: lastOffset.nav - 8,
-          panel: lastOffset.panel - 8
-        };
-        translateX({ offset, reset: true });
+        elem.remove();
       }
-      return this.currentPanel;
-    };
-    action.prevGroup = () => {
-      if (this.activePanelIndex !== 0) {
-        const newIndex2 = this.activePanelIndex - 1;
-        const prevPanel = siblingGroups[newIndex2];
-        offset = {
-          nav: -labelWrap.offsetWidth * newIndex2,
-          panel: -prevPanel.offsetLeft
-        };
-        translateX({ offset });
-        action.groupChange(newIndex2);
-      } else {
-        offset = {
-          nav: 8,
-          panel: 8
-        };
-        translateX({ offset, reset: true });
-      }
-    };
-    return action;
-  }
-}
-const toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => `\\s${lower}\\s`);
-const toTitleCaseRegex = new RegExp(
-  `(?!${toTitleCaseLowers.join("|")})\\w\\S*`,
-  "g"
-);
-const regexSpace = /\s+/g;
-function toTitleCase(str) {
-  if (typeof str !== "string") {
-    return str;
-  }
-  if (str.trim().match(regexSpace)) {
-    return str;
-  }
-  const newString = str.replace(
-    toTitleCaseRegex,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).replace(/[A-Z]/g, (word) => ` ${word}`)
-  );
-  return newString;
-}
-const slugify = (str, separator = "-") => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, separator);
-const BASE_NAME = "f-autocomplete";
-const HIGHLIGHT_CLASS_NAME = "highlight-component";
-const labelCount = (arr, label) => {
-  const count = arr.reduce((n, x) => n + (x === label), 0);
-  return count > 1 ? `(${count})` : "";
-};
-const getComponentLabel = ({ name: name2, id, ...component }) => {
-  const labelPaths = ["config.label", "config.controlId", "meta.id", "attrs.id"];
-  const label = labelPaths.reduce((acc, cur) => {
-    if (!acc) {
-      return component.get(cur);
-    }
-    return acc;
-  }, null);
-  const externalLabel = (...externalAddress) => mi18n.get(externalAddress.join(".")) || toTitleCase(externalAddress.join(" "));
-  return label || name2 === "external" && externalLabel(name2, id);
-};
-const makeOption = ({ id, textLabel, htmlLabel, selectedId }) => {
-  const option2 = {
-    value: id,
-    textLabel,
-    htmlLabel
-  };
-  if (id === selectedId) {
-    option2.selected = true;
-  }
-  return option2;
-};
-const componentOptions = (selectedId) => {
-  const labels = [];
-  const flatList = components.flatList();
-  const options = Object.entries(flatList).map(([id, component]) => {
-    const label = getComponentLabel(component);
-    if (label) {
-      const typeConfig = {
-        tag: "span",
-        content: ` ${toTitleCase(component.name)}`,
-        className: "component-type"
-      };
-      const labelKey = `${component.name}.${label}`;
-      labels.push(labelKey);
-      const count = labelCount(labels, labelKey);
-      const countConfig = {
-        tag: "span",
-        content: count,
-        className: "component-label-count"
-      };
-      const htmlLabel = [`${label} `, countConfig, typeConfig];
-      const textLabel = [label, count].join(" ").trim();
-      return makeOption({ id, textLabel, htmlLabel, selectedId });
-    }
-  });
-  return options.filter(Boolean);
-};
-class Autocomplete {
-  /**
-   * Create an Autocomplete instance
-   * @param {String} key - The key for the autocomplete instance
-   * @param {String} value - The initial value for the autocomplete input
-   * @param {String} i18nKey - The internationalization key for the autocomplete
-   */
-  constructor(key, value, i18nKey) {
-    __publicField(this, "lastCache", Date.now());
-    __publicField(this, "optionsCache", null);
-    this.key = key;
-    this.className = key.replace(/\./g, "-");
-    this.value = value;
-    this.events = [];
-    this.i18nKey = i18nKey;
-    this.build();
-  }
-  /**
-   * build a text DOM element, supporting other jquery text form-control's
-   * @return {Object} DOM Element to be injected into the form.
-   */
-  build() {
-    const keyboardNav = (e) => {
-      const list = this.list;
-      const activeOption = this.getActiveOption();
-      const keyCodeMap = /* @__PURE__ */ new Map([
-        [
-          38,
-          // up arrow
-          () => {
-            const previous = this.getPreviousOption(activeOption);
-            if (previous) {
-              this.selectOption(previous);
-            }
-          }
-        ],
-        [
-          40,
-          // down arrow
-          () => {
-            const next = this.getNextOption(activeOption);
-            if (next) {
-              this.selectOption(next);
-            }
-          }
-        ],
-        [
-          13,
-          // enter
-          () => {
-            if (activeOption) {
-              this.selectOption(activeOption);
-              this.setValue(activeOption);
-              if (list.style.display === "none") {
-                this.showList(activeOption);
-              } else {
-                this.hideList();
-              }
-            }
-            e.preventDefault();
-          }
-        ],
-        [
-          27,
-          // escape
-          () => {
-            this.hideList();
-          }
-        ]
-      ]);
-      let direction = keyCodeMap.get(e.keyCode);
-      if (!direction) {
-        direction = () => false;
-      }
-      return direction();
-    };
-    const autoCompleteInputActions = {
-      focus: ({ target }) => {
-        this.updateOptions();
-        target.parentElement.classList.add(`${this.className}-focused`);
-        const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll("li"), target.value);
-        target.addEventListener("keydown", keyboardNav);
-        const selectedOption = this.list.querySelector(".active-option") || filteredOptions[0];
-        this.showList(selectedOption);
-      },
-      blur: ({ target }) => {
-        target.parentElement.classList.remove(`${this.className}-focused`);
-        target.removeEventListener("keydown", keyboardNav);
-        this.hideList();
-      },
-      input: (evt) => {
-        const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll("li"), evt.target.value);
-        if (evt.target.value.length === 0) {
-          this.clearValue();
-        }
-        if (filteredOptions.length === 0) {
-          this.hideList();
-        } else {
-          const activeOption = this.getActiveOption() || filteredOptions[0];
-          this.showList(activeOption);
-        }
-        const value = evt.target.value.trim();
-        this.hiddenField.value = value;
-        this.value = value;
-        this.setValue({ dataset: { label: value, value } });
-      }
-    };
-    this.displayField = dom.create({
-      tag: "input",
-      autocomplete: "off",
-      action: autoCompleteInputActions,
-      attrs: {
-        type: "text",
-        className: `${BASE_NAME}-display-field`,
-        value: this.label || this.value,
-        placeholder: mi18n.get(`${this.i18nKey}.${this.key}.placeholder`)
-      }
-    });
-    this.hiddenField = dom.create({
-      tag: "input",
-      attrs: { type: "hidden", className: this.className, value: this.value }
-    });
-    this.list = dom.create({
-      tag: "ul",
-      attrs: { className: `${BASE_NAME}-list` }
-    });
-    this.dom = dom.create({
-      children: [this.displayField, this.hiddenField],
-      className: this.className,
-      action: {
-        onRender: (element) => {
-          this.stage = element.closest(".formeo-stage");
-          const component = this.value && components.getAddress(this.value);
-          this.label = component && getComponentLabel(component);
-          if (this.label) {
-            this.displayField.value = this.label;
-          }
-        }
-      }
-    });
-    return this.dom;
-  }
-  updateOptions() {
-    let options = this.optionsCache;
-    const now = Date.now();
-    if (!options || now - this.lastCache > ANIMATION_SPEED_SLOW * 10) {
-      dom.empty(this.list);
-      options = this.generateOptions();
-      this.lastCache = now;
-    }
-    if (!this.list.children.length) {
-      this.list.append(...options);
-    }
-  }
-  generateOptions() {
-    const options = componentOptions();
-    const realTarget = (target) => {
-      const targetClass = `${BASE_NAME}-list-item`;
-      if (!target.classList.contains(targetClass)) {
-        target = target.parentElement;
-      }
-      return target;
-    };
-    this.optionsCache = options.map((optionData) => {
-      const { value, textLabel, htmlLabel } = optionData;
-      const optionConfig = {
-        tag: "li",
-        children: htmlLabel,
-        dataset: {
-          value,
-          label: textLabel
-        },
-        className: `${BASE_NAME}-list-item`,
-        action: {
-          mousedown: ({ target }) => {
-            target = realTarget(target);
-            this.setValue(target);
-            this.selectOption(target);
-            this.hideList();
-          },
-          mouseover: ({ target }) => {
-            target = realTarget(target);
-            this.removeHighlight();
-            this.highlightComponent(target);
-          }
-        }
-      };
-      return dom.create(optionConfig);
-    });
-    return this.optionsCache;
-  }
-  setListPosition() {
-    const { offsetHeight, offsetWidth } = this.displayField;
-    const containerRect = this.displayField.closest(".formeo-stage").getBoundingClientRect();
-    const triggerRect = this.displayField.getBoundingClientRect();
-    const listStyle = {
-      position: "absolute",
-      top: `${triggerRect.y + offsetHeight + window.scrollY - containerRect.y}px`,
-      left: `${triggerRect.x + window.scrollX - containerRect.x}px`,
-      width: `${offsetWidth + 1}px`
-    };
-    Object.assign(this.list.style, listStyle);
-  }
-  /**
-   * Shows autocomplete list. Automatically selects 'selectedOption'
-   * @param {Object} list - list of autocomplete options
-   * @param {Object} selectedOption - option to be selected
-   */
-  showList(selectedOption, list = this.list) {
-    if (!this.stage.contains(this.list)) {
-      this.stage.appendChild(this.list);
-    }
-    this.setListPosition();
-    this.selectOption(selectedOption);
-    animate.slideDown(list, ANIMATION_SPEED_FAST);
-  }
-  /**
-   * Hides autocomplete list and deselects all the options
-   * @param {Object} list - list of autocomplete options
-   */
-  hideList(list = this.list) {
-    animate.slideUp(list, ANIMATION_SPEED_FAST);
-    this.removeHighlight();
-    if (this.stage.contains(this.list)) {
-      this.stage.removeChild(this.list);
-    }
-  }
-  /**
-   * Returns first option from autocomplete list with 'active-option' class
-   * @param {Object} list - list of autocomplete options
-   * @return {Object} first list option with 'active-option' class
-   */
-  getActiveOption(list = this.list) {
-    const activeOption = list.querySelector(".active-option");
-    if ((activeOption == null ? void 0 : activeOption.style.display) !== "none") {
-      return activeOption;
-    }
-    return null;
-  }
-  /**
-   * Previous next option to the current option
-   * @param {Object} current - currently selected option
-   * @return {Object} previous option to the current option or null if previous doesn't exist
-   */
-  getPreviousOption(current) {
-    let previous = current;
-    do {
-      previous = previous ? previous.previousSibling : null;
-    } while (previous != null && previous.style.display === "none");
-    return previous;
-  }
-  /**
-   * Returns next option to the current option
-   * @param {Object} current - currently selected option
-   * @return {Object} next option to the current option or null if next doesn't exist
-   */
-  getNextOption(current) {
-    let next = current;
-    do {
-      next = next ? next.nextSibling : null;
-    } while (next != null && next.style.display === "none");
-    return next;
-  }
-  /**
-   * Selects option in autocomplete list. Removes class 'active-option' from all options
-   * and then adds that class to 'selected' option. If 'selected' is null then no option is selected
-   * @param {Object} list - list of autocomplete options
-   * @param {Object} selectedOption - option - 'li' element - to be selected in autocomplete list
-   */
-  selectOption(selectedOption, list = this.list) {
-    var _a;
-    const options = list.querySelectorAll("li");
-    for (const option2 of options) {
-      const {
-        dataset: { value }
-      } = option2;
-      option2.classList.remove("active-option");
-      if (value) {
-        const component = components.getAddress(value);
-        (_a = component.dom) == null ? void 0 : _a.classList.remove(HIGHLIGHT_CLASS_NAME);
-      }
-    }
-    if (selectedOption) {
-      selectedOption.classList.add("active-option");
-      this.highlightComponent(selectedOption);
-    }
-  }
-  /**
-   * removes the highlight from
-   */
-  removeHighlight() {
-    const highlightedComponents = document.getElementsByClassName(HIGHLIGHT_CLASS_NAME);
-    for (const component of highlightedComponents) {
-      component.classList.remove(HIGHLIGHT_CLASS_NAME);
-    }
-  }
-  /**
-   * Highlight a component that maps to the option
-   */
-  highlightComponent(option2) {
-    var _a;
-    const {
-      dataset: { value }
-    } = option2;
-    if (value) {
-      const component = components.getAddress(value);
-      (_a = component.dom) == null ? void 0 : _a.classList.add(HIGHLIGHT_CLASS_NAME);
-    }
-  }
-  /**
-   * Clears the autocomplete values and fires onChange event
-   */
-  clearValue() {
-    this.selectOption(null);
-    this.displayField.value = "";
-    this.hiddenField.value = "";
-    this.value = "";
-    this.runEvent("onChange", { target: this.hiddenField });
-  }
-  /**
-   * Sets the hidden and display values
-   * @param {String} label display text
-   * @param {String} value display text
-   */
-  setValue(target) {
-    const { label, value } = target.dataset;
-    this.displayField.value = label;
-    this.hiddenField.value = value;
-    this.value = value;
-    this.runEvent("onChange", { target: this.hiddenField });
-  }
-  addEvent(key, event) {
-    this.events.push([key, event]);
-  }
-  runEvent(eventName, evt) {
-    for (const [key, event] of this.events) {
-      if (key === eventName) {
-        event(evt);
-      }
-    }
-  }
-}
-const getOptionData = (key) => {
-  const isExternal = isExternalAddress(key);
-  const optionDataMap = {
-    "field.property": FIELD_PROPERTY_MAP,
-    ...OPERATORS
-  };
-  const externalOptionData = (address) => components.getAddress(address).getData();
-  const data = isExternal ? externalOptionData(key) : optionDataMap[key];
-  return Object.keys(data).reduce((acc, cur) => {
-    acc[cur] = cur;
-    return acc;
-  }, {});
-};
-const createOptions = (fieldVal, selected) => {
-  const data = getOptionData(fieldVal);
-  return Object.entries(data).reduce((acc, [key, value]) => {
-    if (key !== "id") {
-      const option2 = {
-        tag: "option",
-        content: mi18n.get(`${fieldVal}.${key}`) || key.toLowerCase(),
-        attrs: {
-          value
-        }
-      };
-      if (selected === value) {
-        option2.attrs.selected = true;
-      }
-      acc.push(dom.create(option2));
-    }
-    return acc;
-  }, []);
-};
-const addOptions = (select, options) => {
-  dom.empty(select);
-  for (const option2 of options) {
-    select.add(option2);
-  }
-};
-const inputConfigBase = ({ key, value, type: type2 = "text", checked }) => {
-  const config2 = {
-    tag: "input",
-    attrs: {
-      type: type2,
-      value,
-      placeholder: mi18n.get(`${key}.placeholder`) || toTitleCase(key)
-    },
-    className: key.replace(/\./g, "-"),
-    config: {}
-  };
-  if (checked) {
-    config2.attrs.checked = true;
-  }
-  return config2;
-};
-const labelHelper = (key) => {
-  const labelText = mi18n.get(key);
-  if (labelText) {
-    return labelText;
-  }
-  const splitKey = key.split(".");
-  return mi18n.get(splitKey[splitKey.length - 1]);
-};
-const ITEM_INPUT_TYPE_MAP = {
-  autocomplete: (key, val, type2) => new Autocomplete(key, val, type2),
-  string: (key, val) => inputConfigBase({ key, value: val }),
-  boolean: (key, val) => {
-    const type2 = key === "selected" ? "radio" : "checkbox";
-    return inputConfigBase({ key, value: val, type: type2, checked: val });
+    })();
   },
-  number: (key, val) => inputConfigBase({ key, value: val, type: "number" }),
-  array: (key, vals = []) => {
-    return {
-      tag: "select",
-      attrs: {
-        placeholder: labelHelper(`placeholder.${key}`)
-      },
-      className: key.replace(/\./g, "-"),
-      options: vals
-    };
+  slideDown: (elem, duration = 250, cb = false) => {
+    elem.style.display = "block";
+    const style = animate.getStyle(elem);
+    const height = Number.parseInt(style.height, 10);
+    const increment = height / (duration / 60);
+    elem.style.height = "0px";
+    (function slideDown() {
+      const curHeight = Number.parseFloat(elem.style.height);
+      const val = curHeight + increment;
+      if (curHeight < height) {
+        elem.style.height = `${val}px`;
+        window.requestAnimationFrame(slideDown);
+      } else {
+        elem.style.height = "auto";
+        if (cb) {
+          cb(elem);
+        }
+      }
+    })();
   },
-  object: (val) => {
-    return Object.entries(val).map(([key, val2]) => {
-      return ITEM_INPUT_TYPE_MAP[dom.childType(val2)](key, val2);
-    });
-  }
-};
-const INPUT_ORDER = ["selected", "checked"];
-const INPUT_TYPE_ACTION = {
-  boolean: (dataKey, field) => ({
-    click: ({ target: { checked } }) => {
-      var _a, _b;
-      if (((_b = (_a = field.data) == null ? void 0 : _a.attrs) == null ? void 0 : _b.type) === "radio") {
-        field.set(
-          "options",
-          field.data.options.map((option2) => ({ ...option2, selected: false }))
-        );
-      }
-      field.set(dataKey, checked);
-    }
-  }),
-  string: (dataKey, field) => ({
-    input: ({ target: { value } }) => {
-      field.set(dataKey, value);
-    }
-  }),
-  number: (dataKey, field) => ({
-    input: ({ target: { value } }) => {
-      field.set(dataKey, Number(value));
-    }
-  }),
-  array: (dataKey, field) => ({
-    change: ({ target: { value } }) => {
-      field.set(dataKey, value);
-    }
-  }),
-  object: () => ({})
-};
-class EditPanelItem {
-  /**
-   * Set defaults and load panelData
-   * @param  {String} itemKey attribute name or options index
-   * @param  {Object} itemData existing field ID
-   * @param  {String} field
-   * @return {Object} field object
-   */
-  constructor({ key, data, index: index2, field }) {
-    __publicField(this, "generateConditionFields", (type2, vals) => {
-      const label = {
-        tag: "label",
-        className: `condition-label ${type2}-condition-label`,
-        content: mi18n.get(type2) || type2
-      };
-      return vals.map((condition, i) => {
-        const conditionState = [];
-        const fields2 = Object.entries(condition).map(([key, val]) => {
-          const field = this.conditionInput(key, val, type2, i);
-          field && conditionState.push([field.className, val.trim()].filter(Boolean).join("-"));
-          return field;
-        }).filter(Boolean);
-        const orderedFields = orderObjectsBy(
-          fields2,
-          CONDITION_INPUT_ORDER.map((fieldName) => `condition-${fieldName}`),
-          "className||dom.className"
-        );
-        this.processConditionUIState(orderedFields);
-        if (!i) {
-          orderedFields.unshift(label);
-        }
-        this.itemFieldGroups.push(orderedFields);
-        return {
-          children: orderedFields,
-          className: `f-condition-row ${type2}-condition-row ${conditionState.join(" ")}`
-        };
-      });
-    });
-    __publicField(this, "processConditionUIState", (fields2) => {
-      const findFields = (classNames) => {
-        classNames = classNames.split("|");
-        return fields2.filter((field) => classNames.includes(field.className));
-      };
-      const hideFields = (fields3) => {
-        fields3 = Array.isArray(fields3) ? fields3 : [fields3];
-        const hideFieldsTimeout = setTimeout(() => {
-          fields3.forEach((field) => {
-            if (field.dom) {
-              field = field.dom;
-            }
-            field.style.display = "none";
-          });
-          clearTimeout(hideFieldsTimeout);
-        }, ANIMATION_SPEED_BASE);
-      };
-      const showFields = (fields3) => {
-        fields3 = Array.isArray(fields3) ? fields3 : [fields3];
-        const showFieldsTimeout = setTimeout(() => {
-          fields3.forEach((field) => {
-            if (field.dom) {
-              field = field.dom;
-            }
-            field.removeAttribute("style");
-          });
-          clearTimeout(showFieldsTimeout);
-        }, ANIMATION_SPEED_BASE);
-      };
-      const actions2 = /* @__PURE__ */ new Map([
-        [
-          "condition-source",
-          (field) => {
-            const foundFields = findFields("condition-sourceProperty");
-            const sourceProperty = foundFields[0];
-            const key = isExternalAddress(field.value) ? field.value : "field.property";
-            const externalProperties = createOptions(key, sourceProperty.value);
-            addOptions(sourceProperty, externalProperties);
-            if (field.value) {
-              return showFields(foundFields);
-            }
-            return hideFields(foundFields);
-          }
-        ],
-        [
-          "condition-target",
-          (field) => {
-            const foundFields = findFields("condition-targetProperty");
-            if (isAddress(field.value) && field.value) {
-              return showFields(foundFields);
-            }
-            return hideFields(foundFields);
-          }
-        ],
-        [
-          "condition-sourceProperty",
-          (field) => {
-            const foundFields = findFields("condition-comparison|condition-targetProperty|condition-target");
-            const val = field.value;
-            const key = val.substring(val.lastIndexOf(".") + 1, val.length);
-            if (!isBoolKey(key)) {
-              return showFields(foundFields);
-            }
-            return hideFields(foundFields);
-          }
-        ]
-      ]);
-      for (const field of fields2) {
-        const action = actions2.get(field.className);
-        if (action) {
-          action(field);
-        }
-      }
-    });
-    __publicField(this, "conditionInput", (key, val, conditionType, i) => {
-      const field = this.field;
-      const conditionPath = `${this.itemKey}.${conditionType}.${i}`;
-      const conditionAddress = `${this.field.id}.${conditionPath}`;
-      const dataPath = `${field.name}s.${conditionAddress}.${key}`;
-      const createConditionSelect = (key2, propertyValue, i18nKey) => {
-        const options = createOptions(i18nKey || key2, propertyValue);
-        const propertyFieldConfig = ITEM_INPUT_TYPE_MAP.array(`condition.${key2}`);
-        propertyFieldConfig.action = {
-          change: conditionChangeAction,
-          onRender: (elem) => conditionChangeAction({ target: elem })
-        };
-        const field2 = dom.create(propertyFieldConfig);
-        addOptions(field2, options);
-        return field2;
-      };
-      const conditionChangeAction = ({ target }) => {
-        const conditionRow = target.closest(".f-condition-row");
-        const regex = new RegExp(`${target.className}(?:\\S?)+`, "gm");
-        conditionRow.className = conditionRow.className.replace(regex, "");
-        const evtData = {
-          dataPath,
-          value: target.value,
-          src: target
-        };
-        events.formeoUpdated(evtData);
-        components.setAddress(dataPath, target.value);
-        const rowIndex = indexOfNode(conditionRow);
-        this.processConditionUIState(this.itemFieldGroups[rowIndex]);
-      };
-      const segmentTypes = {
-        comparison: (value) => createConditionSelect("comparison", value),
-        logical: (value) => createConditionSelect("logical", value),
-        source: (value, type2 = "source") => {
-          const componentInput = ITEM_INPUT_TYPE_MAP.autocomplete(`condition.${type2}`, value, conditionType);
-          components.setConditionMap(value, field);
-          componentInput.addEvent("onChange", (evt) => {
-            components.removeConditionMap(components.getAddress(dataPath));
-            conditionChangeAction(evt);
-            components.setConditionMap(evt.target.value, field);
-          });
-          return componentInput;
-        },
-        sourceProperty: (value) => createConditionSelect("sourceProperty", value, "field.property"),
-        targetProperty: (value) => createConditionSelect("targetProperty", value, "field.property"),
-        target: (value) => segmentTypes.source(value, "target"),
-        value: (value) => {
-          const valueField = ITEM_INPUT_TYPE_MAP.string("condition.value", value);
-          valueField.action = {
-            input: conditionChangeAction
-          };
-          return dom.create(valueField);
-        },
-        assignment: (value) => createConditionSelect("assignment", value)
-      };
-      const conditionField = segmentTypes[key];
-      if (conditionField) {
-        return segmentTypes[key](val);
-      }
-      console.error(`${key}: invalid condition attribute`);
-    });
-    this.itemValues = orderObjectsBy(Object.entries(data), INPUT_ORDER, "0");
-    const [panelName, item] = key.split(".");
-    this.field = field;
-    this.itemKey = key;
-    this.itemIndex = index2;
-    this.panelName = panelName;
-    this.isDisabled = field.isDisabledProp(item, panelName);
-    this.isHidden = this.isDisabled && field.config.panels[panelName].hideDisabled;
-    this.isLocked = field.isLockedProp(item, panelName);
-    this.dom = dom.create({
-      tag: "li",
-      className: [`field-${key.replace(/\./g, "-")}`, "prop-wrap", this.isHidden && "hidden-property"],
-      children: { className: "field-prop", children: [this.itemInputs, this.itemControls] }
-    });
-  }
-  get itemInputs() {
-    this.itemFieldGroups = [];
-    const inputs = {
-      className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
-      children: this.itemValues.map(([key, val]) => {
-        let inputConfig = this.panelName === "conditions" ? this.generateConditionFields(key, val) : this.itemInput(key, val);
-        if (["selected", "checked"].includes(key)) {
-          inputConfig = {
-            className: "f-addon",
-            children: inputConfig
-          };
-        }
-        return inputConfig;
-      })
-    };
-    return inputs;
-  }
-  get itemControls() {
-    if (this.isLocked) {
-      const controls2 = {
-        className: `${this.panelName}-prop-controls prop-controls`,
-        content: []
-      };
-      return controls2;
-    }
-    const remove2 = {
-      tag: "button",
-      attrs: {
-        type: "button",
-        className: "prop-remove prop-control"
-      },
-      action: {
-        click: () => {
-          animate.slideUp(this.dom, 250, (elem) => {
-            this.field.remove(this.itemKey);
-            dom.remove(elem);
-            this.field.resizePanelWrap();
-          });
-        }
-      },
-      content: dom.icon("remove")
-    };
-    const controls = {
-      className: `${this.panelName}-prop-controls prop-controls`,
-      content: [remove2]
-    };
-    return controls;
-  }
-  itemInput(key, val) {
-    const valType = dom.childType(val) || "string";
-    const inputTypeConfig = { ...{ config: {}, attrs: {} }, ...ITEM_INPUT_TYPE_MAP[valType](key, val) };
-    const dataKey = this.itemKey.replace(/.\d+$/, (index2) => `${index2}.${key}`);
-    const labelKey = dataKey.split(".").filter(Number.isNaN).join(".") || key;
-    const [id, name2] = [[...this.itemKey.split("."), key], [key]].map(
-      (attrVars) => [this.field.id, ...attrVars].filter(Boolean).join("-")
-    );
-    inputTypeConfig.config = {
-      ...inputTypeConfig.config,
-      ...{
-        label: this.panelName !== "options" && (labelHelper(labelKey) || toTitleCase(labelKey)),
-        labelAfter: false
-      }
-    };
-    inputTypeConfig.attrs = {
-      ...inputTypeConfig.attrs,
-      ...{
-        name: inputTypeConfig.attrs.type === "checkbox" ? `${name2}[]` : name2,
-        id,
-        disabled: this.isDisabled,
-        locked: this.isLocked
-      }
-    };
-    inputTypeConfig.action = {
-      ...INPUT_TYPE_ACTION[valType](dataKey, this.field)
-    };
-    return inputTypeConfig;
-  }
-}
-class EditPanel {
-  /**
-   * Set defaults and load panelData
-   * @param  {Object} panelData existing field ID
-   * @param  {String} panelName name of panel
-   * @param  {String} field
-   * @return {Object} field object
-   */
-  constructor(panelData, panelName, field) {
-    /**
-     * Add a new attribute to the attrs panels
-     * @param {String} attr
-     * @param {String|Array} val
-     */
-    __publicField(this, "addAttribute", (attr, valArg) => {
-      let val = valArg;
-      const safeAttr = slugify(attr);
-      const itemKey = `attrs.${safeAttr}`;
-      if (!mi18n.current[itemKey]) {
-        mi18n.put(itemKey, capitalize(attr));
-      }
-      if (typeof val === "string" && ["true", "false"].includes(val)) {
-        val = JSON.parse(val);
-      }
-      this.field.set(`attrs.${attr}`, val);
-      const existingAttr = this.props.querySelector(`.field-attrs-${safeAttr}`);
-      const newAttr = new EditPanelItem({ key: itemKey, data: { [safeAttr]: val }, field: this.field });
-      if (existingAttr) {
-        this.props.replaceChild(newAttr.dom, existingAttr);
+  slideUp: (elem, duration = 250, cb = false) => {
+    const style = animate.getStyle(elem);
+    const height = Number.parseInt(style.height, 10);
+    const overFlowBack = style.overflow;
+    elem.style.overflow = "hidden";
+    elem.style.height = `${height}px`;
+    const defMinHeight = style.minHeight;
+    elem.style.minHeight = "auto";
+    const increment = parseFloat(height / (duration / 60)).toFixed(2);
+    (function slideUp() {
+      const curHeight = Number.parseInt(elem.style.height, 10);
+      const val = curHeight - increment;
+      if (val > 0) {
+        elem.style.height = `${val}px`;
+        window.requestAnimationFrame(slideUp);
       } else {
-        this.props.appendChild(newAttr.dom);
-      }
-      this.field.resizePanelWrap();
-    });
-    /**
-     * Add option to options panel
-     */
-    __publicField(this, "addOption", () => {
-      const controlId = this.field.data.config.controlId;
-      const fieldOptionData = this.field.get("options");
-      const type2 = controlId === "select" ? "option" : controlId;
-      const newOptionLabel = mi18n.get("newOptionLabel", { type: type2 }) || "New Option";
-      const itemKey = `options.${this.data.length}`;
-      const lastOptionData = fieldOptionData[fieldOptionData.length - 1];
-      const optionTemplate = fieldOptionData.length ? lastOptionData : {};
-      const itemData = { ...optionTemplate, label: newOptionLabel };
-      if (controlId !== "button") {
-        itemData.value = slugify(newOptionLabel);
-      }
-      const newOption = new EditPanelItem({
-        key: itemKey,
-        data: itemData,
-        field: this.field,
-        index: this.props.children.length
-      });
-      this.editPanelItems.push(newOption);
-      this.props.appendChild(newOption.dom);
-      this.field.set(itemKey, itemData);
-      this.field.resizePanelWrap();
-    });
-    __publicField(this, "addCondition", (evt) => {
-      const currentConditions = this.field.get("conditions");
-      const itemKey = `conditions.${currentConditions.length}`;
-      const existingCondition = this.props.querySelector(`.field-${itemKey.replace(".", "-")}`);
-      const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.field });
-      if (existingCondition) {
-        this.props.replaceChild(newCondition.dom, existingCondition);
-      } else {
-        this.props.appendChild(newCondition.dom);
-      }
-      this.field.set(itemKey, evt.template);
-      this.field.resizePanelWrap();
-    });
-    this.type = dom.childType(panelData);
-    this.data = this.type === "object" ? Object.entries(panelData) : panelData;
-    this.name = panelName;
-    this.field = field;
-    this.panelConfig = this.getPanelConfig(this.data);
-  }
-  getPanelConfig(data) {
-    this.props = this.createProps(data);
-    this.editButtons = this.createEditButtons();
-    return {
-      id: `${this.field.id}-${this.name}-panel`,
-      config: {
-        label: mi18n.get(`panel.label.${this.name}`)
-      },
-      attrs: {
-        className: `f-panel ${this.name}-panel`
-      },
-      children: [this.props, this.editButtons]
-    };
-  }
-  /**
-   * Generates the edit panel for attrs, meta and options for a fields(s)
-   * @param  {String} panelName
-   * @param  {Object} dataObj   field config object
-   * @return {Object}           formeo DOM config object
-   */
-  createProps(data) {
-    this.editPanelItems = Array.from(data).map((dataVal, index2) => {
-      const isArray2 = this.type === "array";
-      const itemKey = [this.name, isArray2 ? String(index2) : dataVal[0]].join(".");
-      const itemData = isArray2 ? dataVal : { [dataVal[0]]: dataVal[1] };
-      return new EditPanelItem({ key: itemKey, data: itemData, field: this.field });
-    });
-    const editGroupConfig = {
-      tag: "ul",
-      attrs: {
-        className: ["field-edit-group", `field-edit-${this.name}`]
-      },
-      editGroup: this.name,
-      isSortable: this.name === "options",
-      content: this.editPanelItems
-    };
-    return dom.create(editGroupConfig);
-  }
-  /**
-   * Generate edit buttons for interacting with attrs and options panel
-   * @return {Object} panel edit buttons config
-   */
-  createEditButtons() {
-    const _this = this;
-    const type2 = this.name;
-    const btnTitle = mi18n.get(`panelEditButtons.${type2}`);
-    const addActions = {
-      attrs: _this.addAttribute,
-      options: _this.addOption,
-      conditions: _this.addCondition
-    };
-    const addBtn = {
-      ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
-      className: `add-${type2}`,
-      action: {
-        click: (evt) => {
-          const addEvt = {
-            btnCoords: dom.coords(evt.target),
-            addAction: addActions[type2]
-          };
-          if (type2 === "attrs") {
-            addEvt.isDisabled = _this.field.isDisabledProp;
-            addEvt.isLocked = _this.field.isLockedProp;
-            addEvt.message = {
-              attr: mi18n.get(`action.add.${type2}.attr`),
-              value: mi18n.get(`action.add.${type2}.value`)
-            };
-          }
-          const eventType = toTitleCase(type2);
-          const customEvt = new window.CustomEvent(`onAdd${eventType}`, {
-            detail: addEvt
-          });
-          actions.add[type2](addEvt);
-          document.dispatchEvent(customEvt);
+        elem.style.overflow = overFlowBack;
+        elem.style.display = "none";
+        elem.style.minHeight = defMinHeight;
+        delete elem.style.height;
+        if (cb) {
+          cb(elem);
         }
       }
-    };
-    const panelEditButtons = {
-      className: "panel-action-buttons",
-      content: [addBtn]
-    };
-    return panelEditButtons;
-  }
-}
-class Component extends Data {
-  constructor(name2, dataArg = {}, render) {
-    const data = { ...dataArg, id: dataArg.id || uuid() };
-    super(name2, data);
-    __publicField(this, "mutationHandler", (mutations) => mutations.map((mutation) => {
-    }));
-    __publicField(this, "remove", (path) => {
-      if (path) {
-        const delPath = path.split(".");
-        const delItem = delPath.pop();
-        const parent2 = this.get(delPath);
-        if (Array.isArray(parent2)) {
-          if (isInt(delItem)) {
-            parent2.splice(Number(delItem), 1);
-          } else {
-            this.set(
-              delPath,
-              parent2.filter((item) => item !== delItem)
-            );
-          }
-        } else {
-          delete parent2[delItem];
-        }
-        return parent2;
-      }
-      if (this.name === "stage") {
-        return null;
-      }
-      const parent = this.parent;
-      const children = this.children;
-      forEach(children, (child) => child.remove());
-      this.dom.parentElement.removeChild(this.dom);
-      remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
-      if (!parent.children.length) {
-        parent.emptyClass();
-      }
-      if (parent.name === "row") {
-        parent.autoColumnWidths();
-      }
-      return components[`${this.name}s`].delete(this.id);
-    });
-    /**
-     * Apply empty class to element if does not have children
-     */
-    __publicField(this, "emptyClass", () => this.dom.classList.toggle("empty", !this.children.length));
-    __publicField(this, "getComponentTag", () => {
-      return dom.create({
-        tag: "span",
-        className: ["component-tag", `${this.name}-tag`],
-        children: [
-          (this.isColumn || this.isField) && dom.icon("component-corner", { className: "bottom-left" }),
-          dom.icon(`handle-${this.name}`),
-          toTitleCase(this.name),
-          (this.isColumn || this.isRow) && dom.icon("component-corner", { className: "bottom-right" })
-        ].filter(Boolean)
-      });
-    });
-    /**
-     * Removes a class or classes from nodeList
-     * @param  {String | Array} className
-     */
-    __publicField(this, "removeClasses", (className) => {
-      const removeClass = {
-        string: () => this.dom.classList.remove(className),
-        array: () => className.map((name2) => this.dom.classList.remove(name2))
-      };
-      removeClass.object = removeClass.string;
-      return removeClass[dom.childType(className)](this.dom);
-    });
-    __publicField(this, "loadChildren", (children = this.data.children) => children.map((rowId) => this.addChild({ id: rowId })));
-    /**
-     * Updates the children order for the current component
-     */
-    __publicField(this, "saveChildOrder", () => {
-      if (this.render) {
-        return;
-      }
-      const newChildOrder = this.children.map(({ id }) => id);
-      this.set("children", newChildOrder);
-      return newChildOrder;
-    });
-    /**
-     * Save updated child order
-     * @return {Array} updated child order
-     */
-    __publicField(this, "onSort", () => {
-      return this.saveChildOrder();
-    });
-    /**
-     * Callback for when dragging ends
-     * @param  {Object} evt
-     */
-    __publicField(this, "onEnd", ({ to: { parentElement: to }, from: { parentElement: from } }) => {
-      to == null ? void 0 : to.classList.remove(`hovering-${componentType(to)}`);
-      from == null ? void 0 : from.classList.remove(`hovering-${componentType(from)}`);
-    });
-    __publicField(this, "runConditions", () => {
-      const conditionsList = this.get("conditions");
-      if (!(conditionsList == null ? void 0 : conditionsList.length)) {
-        return null;
-      }
-      const processedConditions = conditionsList.map((conditions) => {
-        const ifCondition = this.processConditions(conditions.if);
-        const thenResult = this.processResults(conditions.then);
-        return ifCondition.map((conditions2) => {
-          return this.evaluateConditions(conditions2) && this.execResults(thenResult);
-        });
-      });
-      return processedConditions;
-    });
-    __publicField(this, "value", (path, val) => {
-      const splitPath = path.split(".");
-      const component = this.getComponent(path);
-      const property = component && splitPath.slice(2, splitPath.length).join(".");
-      if ([!component, !property, !FIELD_PROPERTY_MAP[property]].some(Boolean)) {
-        return path;
-      }
-      return val ? component.set(FIELD_PROPERTY_MAP[property], val) : component.get(FIELD_PROPERTY_MAP[property]);
-    });
-    /**
-     * Maps operators to their respective handler
-     * @param {String} operator
-     * @return {Function} action
-     */
-    __publicField(this, "getResult", (operator) => {
-      const operatorMap = {
-        "=": (target, propertyPath, value) => target.set(propertyPath, value)
-      };
-      return operatorMap[operator];
-    });
-    __publicField(this, "processResults", (results) => {
-      return results.map(({ operator, target, value }) => {
-        const targetComponent = this.getComponent(target);
-        const propertyPath = targetComponent && target.split(".").slice(2, target.length).join(".");
-        const processedResult = {
-          target: targetComponent,
-          propertyPath,
-          action: this.getResult(operator),
-          value: this.value(value)
-        };
-        return processedResult;
-      });
-    });
-    __publicField(this, "execResults", (results) => {
-      const promises = results.map((result) => {
-        return this.execResult(result);
-      });
-      return Promise.all(promises);
-    });
-    __publicField(this, "execResult", ({ target, action, value, propertyPath }) => {
-      return new Promise((resolve2, reject) => {
-        try {
-          return resolve2(action(target, value));
-        } catch (err) {
-          return reject(err);
-        }
-      });
-    });
-    __publicField(this, "cloneData", () => {
-      const clonedData = { ...clone$1(this.data), id: uuid() };
-      if (this.name !== "field") {
-        clonedData.children = [];
-      }
-      return clonedData;
-    });
-    __publicField(this, "clone", (parent = this.parent) => {
-      const newClone = parent.addChild(this.cloneData(), this.index + 1);
-      if (this.name !== "field") {
-        this.cloneChildren(newClone);
-      }
-      return newClone;
-    });
-    __publicField(this, "createChildWrap", (children) => dom.create({
-      tag: "ul",
-      attrs: {
-        className: "children"
-      },
-      children
-    }));
-    this.id = data.id;
-    this.name = name2;
-    this.config = components[`${this.name}s`].config;
-    merge(this.config, data.config);
-    this.dataPath = `${this.name}s.${this.id}.`;
-    this.observer = new window.MutationObserver(this.mutationHandler);
-    this.render = render;
-  }
-  observe(container) {
-    this.observer.disconnect();
-    this.observer.observe(container, { childList: true });
-  }
-  get js() {
-    return this.data;
-  }
-  get json() {
-    return this.data;
-  }
-  /**
-   * Removes element from DOM and data
-   * @return  {Object} parent element
-   */
-  empty() {
-    const removed = this.children.map((child) => {
-      child.remove();
-    });
-    this.dom.classList.add("empty");
-    return removed;
-  }
-  /**
-   * Move, close, and edit buttons for row, column and field
-   * @return {Object} element config object
-   */
-  getActionButtons() {
-    const hoverClassnames = [`hovering-${this.name}`, "hovering"];
-    return {
-      className: [`${this.name}-actions`, "group-actions"],
-      action: {
-        mouseenter: () => {
-          components.stages.active.dom.classList.add(`active-hover-${this.name}`);
-          this.dom.classList.add(...hoverClassnames);
-        },
-        mouseleave: ({ target }) => {
-          this.dom.classList.remove(...hoverClassnames);
-          components.stages.active.dom.classList.remove(`active-hover-${this.name}`);
-          target.removeAttribute("style");
-        }
-      },
-      children: [
-        {
-          ...dom.btnTemplate({ content: dom.icon(`handle-${this.name}`) }),
-          className: ["component-handle", `${this.name}-handle`]
-        },
-        {
-          className: ["action-btn-wrap", `${this.name}-action-btn-wrap`],
-          children: this.buttons
-        }
-      ]
-    };
-  }
-  /**
-   * Toggles the edit window
-   * @param {Boolean} open whether to open or close the edit window
-   */
-  toggleEdit(open = !this.isEditing) {
-    this.isEditing = open;
-    const element = this.dom;
-    const editingClassName = "editing";
-    const editingComponentClassname = `${editingClassName}-${this.name}`;
-    const editWindow = this.dom.querySelector(`.${this.name}-edit`);
-    animate.slideToggle(editWindow, ANIMATION_SPEED_BASE, open);
-    if (this.name === "field") {
-      animate.slideToggle(this.preview, ANIMATION_SPEED_BASE, !open);
-      element.parentElement.classList.toggle(`column-${editingComponentClassname}`, open);
-    }
-    element.classList.toggle(editingClassName, open);
-    element.classList.toggle(editingComponentClassname, open);
-  }
-  get buttons() {
-    if (this.actionButtons) {
-      return this.actionButtons;
-    }
-    const buttonConfig = {
-      handle: (icon = `handle-${this.name}`) => ({
-        ...dom.btnTemplate({ content: dom.icon(icon) }),
-        className: ["component-handle"]
-      }),
-      move: (icon = "move") => {
-        return {
-          ...dom.btnTemplate({ content: dom.icon(icon) }),
-          className: ["item-move"],
-          meta: {
-            id: "move"
-          }
-        };
-      },
-      edit: (icon = "edit") => {
-        return {
-          ...dom.btnTemplate({ content: dom.icon(icon) }),
-          className: ["item-edit-toggle"],
-          meta: {
-            id: "edit"
-          },
-          action: {
-            click: (evt) => {
-              this.toggleEdit();
-            }
-          }
-        };
-      },
-      remove: (icon = "remove") => {
-        return {
-          ...dom.btnTemplate({ content: dom.icon(icon) }),
-          className: ["item-remove"],
-          meta: {
-            id: "remove"
-          },
-          action: {
-            click: (evt, id) => {
-              animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
-                if (this.name === "column") {
-                  const row = this.parent;
-                  row.autoColumnWidths();
-                  this.remove();
-                } else {
-                  this.remove();
-                }
-              });
-            }
-          }
-        };
-      },
-      clone: (icon = "copy") => {
-        return {
-          ...dom.btnTemplate({ content: dom.icon(icon) }),
-          className: ["item-clone"],
-          meta: {
-            id: "clone"
-          },
-          action: {
-            click: () => {
-              this.clone(this.parent);
-              if (this.name === "column") {
-                this.parent.autoColumnWidths();
-              }
-            }
-          }
-        };
-      }
-    };
-    const { buttons, disabled } = this.config.actionButtons;
-    const activeButtons = buttons.filter((btn) => !disabled.includes(btn));
-    const actionButtonsConfigs = activeButtons.map((btn) => {
-      var _a;
-      return ((_a = buttonConfig[btn]) == null ? void 0 : _a.call(buttonConfig)) || btn;
-    });
-    this.actionButtons = actionButtonsConfigs;
-    return this.actionButtons;
-  }
-  /**
-   * helper that returns the index of the node minus the offset.
-   */
-  get index() {
-    return indexOfNode(this.dom);
-  }
-  get parentType() {
-    return PARENT_TYPE_MAP.get(this.name);
-  }
-  get parent() {
-    const parentType = this.parentType;
-    if (!this.dom || !parentType) {
-      return null;
-    }
-    const parentDom = this.dom.closest(`.${COMPONENT_TYPE_CLASSNAMES[parentType]}`);
-    return parentDom && dom.asComponent(parentDom);
-  }
-  get children() {
-    if (!this.dom) {
-      return [];
-    }
-    const domChildren = this.domChildren;
-    const childGroup = CHILD_TYPE_MAP.get(this.name);
-    return map(domChildren, (child) => components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean);
-  }
-  get domChildren() {
-    const childWrap = this.dom.querySelector(".children");
-    return childWrap ? childWrap.children : [];
-  }
-  /**
-   * Adds a child to the component
-   * @param {Object|String} childData
-   * @param {Number} index
-   * @return {Object} child DOM element
-   */
-  addChild(childData = {}, index2 = this.domChildren.length) {
-    var _a, _b;
-    let data = childData;
-    if (typeof childData !== "object") {
-      data = { id: data };
-    }
-    const childWrap = this.dom.querySelector(".children");
-    const { id: childId = uuid() } = data;
-    const childGroup = CHILD_TYPE_MAP.get(this.name);
-    if (!childGroup) {
-      return null;
-    }
-    const childComponentType = `${childGroup}s`;
-    const child = components.getAddress(`${childComponentType}.${childId}`) || components[childComponentType].add(childId, data);
-    childWrap.insertBefore(child.dom, childWrap.children[index2]);
-    (_b = (_a = this.config.events) == null ? void 0 : _a.onAddChild) == null ? void 0 : _b.call(_a, { parent: this, child });
-    const grandChildren = child.get("children");
-    if (grandChildren == null ? void 0 : grandChildren.length) {
-      child.loadChildren(grandChildren);
-    }
-    this.removeClasses("empty");
-    this.saveChildOrder();
-    return child;
-  }
-  /**
-   * Method for handling onAdd for all components
-   * @todo improve readability of this method
-   * @param  {Object} evt
-   * @return {Object} Component
-   */
-  onAdd({ from, to, item, newIndex: newIndex2 }) {
-    var _a;
-    if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
-      from = from.parentElement;
-    }
-    const fromType = componentType(from);
-    const toType = componentType(to.parentElement);
-    const defaultOnAdd = () => {
-      this.saveChildOrder();
-      this.removeClasses("empty");
-    };
-    const depthMap = /* @__PURE__ */ new Map([
-      [
-        -2,
-        () => {
-          const newChild = this.addChild({}, newIndex2).addChild();
-          return newChild.addChild.bind(newChild);
-        }
-      ],
-      [
-        -1,
-        () => {
-          const newChild = this.addChild({}, newIndex2);
-          return newChild.addChild.bind(newChild);
-        }
-      ],
-      [0, () => this.addChild.bind(this)],
-      [
-        1,
-        (controlData) => {
-          const currentIndex = indexOfNode(this.dom);
-          return () => this.parent.addChild(controlData, currentIndex + 1);
-        }
-      ],
-      [2, (controlData) => () => this.parent.parent.addChild(controlData)]
-    ]);
-    const onAddConditions = {
-      controls: () => {
-        const {
-          controlData: {
-            meta: { id: metaId },
-            ...elementData
-          }
-        } = Controls$2.get(item.id);
-        set(elementData, "config.controlId", metaId);
-        const controlType = metaId.startsWith("layout-") ? metaId.replace(/^layout-/, "") : "field";
-        const targets = {
-          stage: {
-            row: 0,
-            column: -1,
-            field: -2
-          },
-          row: {
-            row: 1,
-            column: 0,
-            field: -1
-          },
-          column: {
-            row: 2,
-            column: 1,
-            field: 0
-          },
-          field: 1
-        };
-        const depth = get(targets, `${this.name}.${controlType}`);
-        const action = depthMap.get(depth)();
-        dom.remove(item);
-        const component2 = action(elementData, newIndex2);
-        return component2;
-      },
-      row: () => {
-        const targets = {
-          stage: -1,
-          row: 0,
-          column: 1
-        };
-        const action = (depthMap.get(targets[toType]) || identity)();
-        return action == null ? void 0 : action({ id: item.id }, newIndex2);
-      },
-      column: () => {
-        const targets = {
-          stage: -2,
-          row: -1
-        };
-        const action = (depthMap.get(targets[toType]) || identity)();
-        return action == null ? void 0 : action(item.id);
-      }
-    };
-    const component = (_a = onAddConditions[fromType]) == null ? void 0 : _a.call(onAddConditions, item, newIndex2);
-    defaultOnAdd();
-    return component;
-  }
-  /**
-   * Handler for removing content from a sortable component
-   * @param  {Object} evt
-   * @return {Array} updated child order
-   */
-  onRemove({ from: { parentElement: from } }) {
-    if (from.classList.contains(COLUMN_CLASSNAME)) {
-      from.classList.remove("column-editing-field");
-    }
-    if (this.name !== "stage" && !this.children.length) {
-      return this.remove();
-    }
-    this.emptyClass();
-    return this.saveChildOrder();
-  }
-  /**
-   * Callback for onRender, executes any defined onRender for component
-   */
-  onRender() {
-    const { events: events2 } = this.config;
-    if (!events2) {
-      return null;
-    }
-    events2.onRender && dom.onRender(this.dom, events2.onRender);
-  }
-  /**
-   * Sets the configuration for the component. See src/demo/js/options/config.js for example
-   * @param {Object} config - Configuration object with possible structures:
-   * @param {Object} [config.all] - Global configuration applied to all components
-   * @param {Object} [config[controlId]] - Configuration specific to a control type
-   * @param {Object} [config[id]] - Configuration specific to a component instance
-   * @description Merges configurations in order of precedence:
-   * 1. Existing config (this.configVal)
-   * 2. Global config (all)
-   * 3. Control type specific config
-   * 4. Instance specific config
-   * The merged result is stored in this.configVal
-   */
-  set config(config2) {
-    const allConfig = get(config2, "all");
-    const controlId = get(this.data, "config.controlId");
-    const typeConfig = controlId && get(config2, controlId);
-    const idConfig = get(config2, this.id);
-    const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
-      (acc, cur) => cur ? merge(acc, cur) : acc,
-      this.configVal
-    );
-    this.configVal = mergedConfig;
-  }
-  get config() {
-    return this.configVal;
-  }
-  getComponent(path) {
-    const [type2, id] = path.split(".");
-    const group = components[type2];
-    return id === this.id ? this : group == null ? void 0 : group.get(id);
-  }
-  cloneChildren(toParent) {
-    for (const child of this.children) {
-      child == null ? void 0 : child.clone(toParent);
+    })();
+  },
+  slideToggle: (elem, duration = 250, open = animate.getStyle(elem, "display") === "none") => {
+    if (open) {
+      animate.slideDown(elem, duration);
+    } else {
+      animate.slideUp(elem, duration);
     }
   }
-  get isRow() {
-    return this.name === COMPONENT_TYPES.row;
-  }
-  get isColumn() {
-    return this.name === COMPONENT_TYPES.column;
-  }
-  get isField() {
-    return this.name === COMPONENT_TYPES.field;
-  }
-}
-const DEFAULT_DATA$3 = () => ({
-  conditions: [CONDITION_TEMPLATE()]
-});
-class Field extends Component {
-  /**
-   * Set defaults and load fieldData
-   * @param  {Object} fieldData existing field ID
-   * @return {Object} field object
-   */
-  constructor(fieldData = /* @__PURE__ */ Object.create(null)) {
-    super("field", { ...DEFAULT_DATA$3(), ...fieldData });
-    __publicField(this, "setData", (path, value) => {
-      return super.set(path, value);
-    });
-    /**
-     * Updates the conditions panel when linked field data changes
-     */
-    __publicField(this, "updateConditionsPanel", throttle$1(() => {
-      const newConditionsPanel = this.editPanels.find(({ name: name2 }) => name2 === "conditions");
-      if (!newConditionsPanel) {
-        return null;
-      }
-      const newProps = newConditionsPanel.createProps();
-      const currentConditionsProps = this.dom.querySelector(".field-edit-conditions");
-      currentConditionsProps.parentElement.replaceChild(newProps, currentConditionsProps);
-    }, ANIMATION_SPEED_BASE));
-    /**
-     * Updates a field's preview
-     * @return {Object} fresh preview
-     */
-    __publicField(this, "updatePreview", () => {
-      if (!this.preview.parentElement) {
-        return null;
-      }
-      this.updateLabel();
-      const newPreview = dom.create(this.fieldPreview(), true);
-      this.preview.parentElement.replaceChild(newPreview, this.preview);
-      this.preview = newPreview;
-    });
-    __publicField(this, "updateEditPanels", () => {
-      this.editPanels = [];
-      const editable = ["object", "array"];
-      const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)]);
-      const noPanels = ["config", "meta", "action", "events", ...this.config.panels.disabled];
-      const allowedPanels = panelOrder.filter((panelName) => !noPanels.includes(panelName));
-      for (const panelName of allowedPanels) {
-        const panelData = this.get(panelName);
-        const propType = dom.childType(panelData);
-        if (editable.includes(propType)) {
-          const editPanel = new EditPanel(panelData, panelName, this);
-          this.editPanels.push(editPanel);
-        }
-      }
-      const panelsData = {
-        panels: this.editPanels.map(({ panelConfig }) => panelConfig),
-        id: this.id,
-        displayType: "auto"
-      };
-      this.panels = new Panels(panelsData);
-      if (this.dom) {
-        this.dom.querySelector(".panel-nav").replaceWith(this.panels.panelNav);
-        this.dom.querySelector(".panels").replaceWith(this.panels.panelsWrap);
-      }
-    });
-    __publicField(this, "toggleCheckedOptions", (optionIndex, type2) => {
-      const updatedOptionData = this.get("options").map((option2, index2) => {
-        const isCurrentIndex = index2 === optionIndex;
-        if (type2 === "radio") {
-          option2.selected = isCurrentIndex;
-        } else {
-          option2.checked = isCurrentIndex ? !option2.checked : option2.checked;
-        }
-        return option2;
-      });
-      this.set("options", updatedOptionData);
-    });
-    /**
-     * Checks if attribute is allowed to be edited
-     * @param  {String}  propName
-     * @return {Boolean}
-     */
-    __publicField(this, "isDisabledProp", (propName, kind = "attrs") => {
-      const propKind = this.config.panels[kind];
-      if (!propKind) {
-        return false;
-      }
-      const disabledAttrs = propKind.disabled.concat(this.get(`config.disabled${toTitleCase(kind)}`));
-      return disabledAttrs.includes(propName);
-    });
-    /**
-     * Checks if property can be removed
-     * @param  {String}  propName
-     * @return {Boolean}
-     */
-    __publicField(this, "isLockedProp", (propName, kind = "attrs") => {
-      const propKind = this.config.panels[kind];
-      if (!propKind) {
-        return false;
-      }
-      const lockedAttrs = propKind.locked.concat(this.get(`config.locked${toTitleCase(kind)}`));
-      return lockedAttrs.includes(propName);
-    });
-    this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
-    this.label = dom.create(this.labelConfig);
-    this.preview = dom.create({});
-    this.editPanels = [];
-    const actionButtons = this.getActionButtons();
-    const hasEditButton = this.actionButtons.some((child) => {
-      var _a;
-      return ((_a = child.meta) == null ? void 0 : _a.id) === "edit";
-    });
-    let field = {
-      tag: "li",
-      attrs: {
-        className: FIELD_CLASSNAME
-      },
-      id: this.id,
-      children: [
-        this.label,
-        this.getComponentTag(),
-        actionButtons,
-        hasEditButton && this.fieldEdit,
-        // fieldEdit window,
-        this.preview
-      ].filter(Boolean),
-      panelNav: this.panelNav,
-      dataset: {
-        hoverTag: mi18n.get("field")
-      }
-    };
-    field = dom.create(field);
-    this.observe(field);
-    this.dom = field;
-    this.isEditing = false;
-    this.onRender(field);
-  }
-  get labelConfig() {
-    const hideLabel = !!this.get("config.hideLabel");
-    if (hideLabel) {
-      return null;
-    }
-    const labelVal = this.get("config.editorLabel") || this.get("config.label");
-    const required = this.get("attrs.required");
-    const disableHTML = this.config.label.disableHTML;
-    const labelConfig = () => {
-      const config2 = {
-        tag: "label",
-        attrs: {}
-      };
-      if (disableHTML) {
-        config2.tag = "input";
-        config2.attrs.value = labelVal;
-        return config2;
-      }
-      config2.attrs.contenteditable = true;
-      config2.children = labelVal;
-      return config2;
-    };
-    const label = {
-      ...labelConfig(),
-      action: {
-        input: ({ target: { innerHTML, innerText, value } }) => {
-          super.set("config.label", disableHTML ? value : innerHTML);
-          const reverseConditionField = components.getConditionMap(`fields.${this.id}`);
-          if (reverseConditionField) {
-            return reverseConditionField.updateConditionSourceLabel(
-              `${this.name}s.${this.id}`,
-              disableHTML ? value : innerText
-            );
-          }
-        }
-      }
-    };
-    const labelWrap = {
-      className: "prev-label",
-      children: [label, required && dom.requiredMark()]
-    };
-    return labelWrap;
-  }
-  /**
-   * Updates a source field's label without recreating conditions dom
-   */
-  updateConditionSourceLabel(value, label) {
-    const newConditionsPanel = this.editPanels.find(({ name: name2 }) => name2 === "conditions");
-    if (!newConditionsPanel) {
-      return null;
-    }
-    for (const { itemFieldGroups } of newConditionsPanel.editPanelItems) {
-      for (const fields2 of itemFieldGroups) {
-        const autocomplete = fields2.find((field) => field.value === value);
-        if (autocomplete) {
-          autocomplete.displayField.value = label;
-        }
-      }
-    }
-  }
-  /**
-   * wrapper for Data.set
-   */
-  set(path, value) {
-    const data = this.setData(path, value);
-    this.updatePreview();
-    return data;
-  }
-  /**
-   * Update the label dom when label data changes
-   */
-  updateLabel() {
-    if (!this.label) {
-      return null;
-    }
-    const newLabel = dom.create(this.labelConfig);
-    this.label.parentElement.replaceChild(newLabel, this.label);
-    this.label = newLabel;
-  }
-  /**
-   * Generate the markup for field edit mode
-   * @return {Object} fieldEdit element config
-   */
-  get fieldEdit() {
-    const fieldEdit = {
-      className: ["field-edit", "slide-toggle", "formeo-panels-wrap"]
-    };
-    this.updateEditPanels();
-    const editPanelLength = this.editPanels.length;
-    if (editPanelLength) {
-      fieldEdit.className.push(`panel-count-${editPanelLength}`);
-      fieldEdit.content = [this.panels.panelNav, this.panels.panelsWrap];
-      this.panelNav = this.panels.nav;
-      this.resizePanelWrap = this.panels.nav.refresh;
-    }
-    fieldEdit.action = {
-      onRender: () => {
-        if (editPanelLength === 0) {
-          const field = this.dom;
-          const editToggle = field.querySelector(".item-edit-toggle");
-          const fieldActions = field.querySelector(".field-actions");
-          const actionButtons = fieldActions.getElementsByTagName("button");
-          fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`;
-          dom.remove(editToggle);
-        } else {
-          this.resizePanelWrap();
-        }
-      }
-    };
-    return dom.create(fieldEdit);
-  }
-  get defaultPreviewActions() {
-    return {
-      change: (evt) => {
-        const { target } = evt;
-        const { type: type2 } = target;
-        if (["checkbox", "radio"].includes(type2)) {
-          const optionIndex = +target.id.split("-").pop();
-          this.toggleCheckedOptions(optionIndex, type2);
-          this.debouncedUpdateEditPanels();
-        }
-      },
-      click: (evt) => {
-        if (evt.target.contentEditable === "true") {
-          evt.preventDefault();
-        }
-      },
-      input: (evt) => {
-        if (["input", "meter", "progress", "button"].includes(evt.target.tagName.toLowerCase())) {
-          super.set("attrs.value", evt.target.value);
-          return this.debouncedUpdateEditPanels();
-        }
-        if (evt.target.contentEditable) {
-          const target = evt.target;
-          const parentClassList = target.parentElement.classList;
-          const isOption = parentClassList.contains("f-checkbox") || parentClassList.contains("f-radio");
-          if (isOption) {
-            const option2 = target.parentElement;
-            const optionWrap = option2.parentElement;
-            const optionIndex = indexOfNode(option2, optionWrap);
-            this.setData(`options[${optionIndex}].label`, target.innerHTML);
-            return this.debouncedUpdateEditPanels();
-          }
-          this.setData("content", target.innerHTML || target.value);
-        }
-      }
-    };
-  }
-  /**
-   * Generate field preview config
-   * @return {Object} fieldPreview
-   */
-  fieldPreview() {
-    var _a;
-    const prevData = clone$1(this.data);
-    const { action = {} } = Controls$2.get(prevData.config.controlId);
-    prevData.id = `prev-${this.id}`;
-    prevData.action = Object.entries(action).reduce((acc, [key, value]) => {
-      acc[key] = value.bind(this);
-      return acc;
-    }, {});
-    if ((_a = this.data) == null ? void 0 : _a.config.editableContent) {
-      prevData.attrs = { ...prevData.attrs, contenteditable: true };
-    }
-    const fieldPreview = {
-      attrs: {
-        className: "field-preview",
-        style: this.isEditing && "display: none;"
-      },
-      content: dom.create(prevData, true),
-      action: this.defaultPreviewActions
-    };
-    return fieldPreview;
-  }
-}
-const loaded = {
-  js: /* @__PURE__ */ new Set(),
-  css: /* @__PURE__ */ new Set()
 };
-const ajax = (fileUrl, callback, onError = noop) => {
-  return new Promise((resolve2) => {
-    return fetch(fileUrl).then((data) => {
-      if (!data.ok) {
-        return resolve2(onError(data));
-      }
-      resolve2(callback ? callback(data) : data);
-    }).catch((err) => onError(err));
-  });
+const isInt = (n) => Number.isInteger(Number(n));
+const indexOfNode = (node) => {
+  let index2 = 0;
+  let currentNode = node;
+  while (currentNode == null ? void 0 : currentNode.previousElementSibling) {
+    currentNode = currentNode.previousElementSibling;
+    index2++;
+  }
+  return index2;
 };
-const onLoadStylesheet = (elem, cb) => {
-  elem.removeEventListener("load", onLoadStylesheet);
-  cb(elem.src);
-};
-const onLoadJavascript = (elem, cb) => {
-  elem.removeEventListener("load", onLoadJavascript);
-  cb(elem.src);
-};
-const insertScript = (src) => {
-  return new Promise((resolve2, reject) => {
-    if (loaded.js.has(src)) {
-      return resolve2(src);
-    }
-    loaded.js.add(src);
-    const script = dom.create({
-      tag: "script",
-      attrs: {
-        type: "text/javascript",
-        async: true,
-        src
-      },
-      action: {
-        load: () => onLoadJavascript(script, resolve2),
-        error: () => reject(new Error(`${src} failed to load.`))
-      }
-    });
-    document.head.appendChild(script);
-  });
-};
-const insertStyle = (srcs) => {
-  srcs = Array.isArray(srcs) ? srcs : [srcs];
-  const promises = srcs.map(
-    (src) => new Promise((resolve2, reject) => {
-      if (loaded.css.has(src)) {
-        return resolve2(src);
-      }
-      loaded.css.add(src);
-      const styleLink = dom.create({
-        tag: "link",
-        attrs: {
-          rel: "stylesheet",
-          href: src
-        },
-        action: {
-          load: () => onLoadStylesheet(styleLink, resolve2),
-          error: () => reject(new Error(`${(void 0).src} failed to load.`))
-        }
-      });
-      document.head.appendChild(styleLink);
+const orderObjectsBy = (elements, order, path) => {
+  const splitPath = path.split("||");
+  const newOrder = unique(order).map(
+    (key) => elements.find((elem) => {
+      const newPath = splitPath.find((p) => !!get(elem, p));
+      return newPath && get(elem, newPath) === key;
     })
-  );
-  return Promise.all(promises);
+  ).filter(Boolean);
+  const orderedElements = newOrder.concat(elements);
+  return unique(orderedElements);
 };
-const insertScripts = (srcs) => {
-  srcs = Array.isArray(srcs) ? srcs : [srcs];
-  const promises = srcs.map((src) => insertScript(src));
-  return Promise.all(promises);
-};
-const insertStyles = (srcs) => {
-  srcs = Array.isArray(srcs) ? srcs : [srcs];
-  const promises = srcs.map((src) => insertStyle(src));
-  return Promise.all(promises);
-};
-const insertIcons = (iconSvgStr) => {
-  let iconSpriteWrap = document.getElementById(formeoSpriteId);
-  if (!iconSpriteWrap) {
-    iconSpriteWrap = dom.create({
-      id: formeoSpriteId,
-      children: iconSvgStr,
-      attrs: {
-        hidden: true,
-        style: "display: none;"
-      }
-    });
-    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
-  }
-  return iconSpriteWrap;
-};
-const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
-  const formeoSprite = document.getElementById(formeoSpriteId);
-  if (formeoSprite) {
-    return;
-  }
-  const parseResp = async (resp) => insertIcons(await resp.text());
-  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp));
-};
-const loadPolyfills = (polyfillConfig) => {
-  const polyfills = Array.isArray(polyfillConfig) ? POLYFILLS.filter(({ name: name2 }) => polyfillConfig.indexOf(name2) !== -1) : POLYFILLS;
-  return Promise.all(polyfills.map(({ src }) => insertScript(src)));
-};
-const LOADER_MAP = {
-  js: insertScripts,
-  css: insertStyles
-};
-const fetchDependencies = (dependencies2) => {
-  const promises = Object.entries(dependencies2).map(([type2, src]) => {
-    return LOADER_MAP[type2](src);
-  });
-  return Promise.all(promises);
-};
-const isCssLoaded = () => {
-  const formeoSprite = document.getElementById(formeoSpriteId);
-  const computedStyle = window.getComputedStyle(formeoSprite);
-  return computedStyle.visibility === "hidden";
-};
-const fetchFormeoStyle = async (cssUrl) => {
-  if (!isCssLoaded()) {
-    await insertStyle(cssUrl);
-    if (!isCssLoaded()) {
-      return await insertStyle(FALLBACK_CSS_URL);
-    }
+const forEach = (arr, cb, scope) => {
+  for (let i = 0; i < arr.length; i++) {
+    cb.call(scope, arr[i], i);
   }
 };
-class Control {
-  /**
-   * Constructs a new Control instance.
-   *
-   * @param {Object} [config={}] - The configuration object.
-   * @param {Object} [config.events={}] - The events associated with the control. ex { click: () => {} }
-   * @param {Object} [config.dependencies={}] - The dependencies required by the control. ex { js: 'https://example.com/script.js', css: 'https://example.com/style.css' }
-   * @param {...Object} [controlData] - Additional configuration properties. ex { meta: {}, config: { label: 'Control Name' } }
-   */
-  constructor({ events: events2 = {}, dependencies: dependencies2 = {}, controlAction, ...controlData }) {
-    __publicField(this, "controlCache", /* @__PURE__ */ new Set());
-    this.events = events2;
-    this.controlData = controlData;
-    this.controlAction = controlAction;
-    this.dependencies = dependencies2;
-    this.id = controlData.id || uuid();
-  }
-  get controlId() {
-    var _a;
-    return (_a = this.controlData.meta) == null ? void 0 : _a.id;
-  }
-  get dom() {
-    const { meta, config: config2 } = this.controlData;
-    const controlLabel = this.i18n(config2.label) || config2.label;
-    const button = {
-      tag: "button",
-      attrs: {
-        type: "button"
-      },
-      content: [{ tag: "span", className: "control-icon", children: dom.icon(meta.icon) }, controlLabel],
-      action: {
-        // this is used for keyboard navigation. when tabbing through controls it
-        // will auto navigated between the groups
-        focus: ({ target }) => {
-          const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`);
-          return group && Controls$2.panels.nav.refresh(indexOfNode(group));
-        },
-        click: ({ target }) => {
-          Controls$2.addElement(target.parentElement.id);
-        }
-      }
-    };
-    return dom.create({
-      tag: "li",
-      id: this.id,
-      className: ["field-control", `${meta.group}-control`, `${meta.id}-control`],
-      content: button,
-      meta,
-      action: this.controlAction
-    });
-  }
-  promise() {
-    return fetchDependencies(this.dependencies);
-  }
-  /**
-   * Retrieve a translated string
-   * By default looks for translations defined against the class (for plugin controls)
-   * Expects {locale1: {type: label}, locale2: {type: label}}, or {default: label}, or {local1: label, local2: label2}
-   * @param {String} lookup string to retrieve the label / translated string for
-   * @param {Object|Number|String} args - string or key/val pairs for string lookups with variables
-   * @return {String} the translated label
-   */
-  i18n(lookup, args) {
-    var _a, _b;
-    const locale = mi18n.locale;
-    const controlTranslations = (_a = this.definition) == null ? void 0 : _a.i18n;
-    const localeTranslations = (controlTranslations == null ? void 0 : controlTranslations[locale]) || {};
-    return (((_b = localeTranslations[lookup]) == null ? void 0 : _b.call(localeTranslations)) ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
-  }
-}
-const defaultOptions = Object.freeze({
-  sortable: true,
-  elementOrder: {},
-  groupOrder: [],
-  groups: [
-    {
-      id: "layout",
-      label: "controls.groups.layout",
-      elementOrder: ["row", "column"]
-    },
-    {
-      id: "common",
-      label: "controls.groups.form",
-      elementOrder: ["button", "checkbox"]
-    },
-    {
-      id: "html",
-      label: "controls.groups.html",
-      elementOrder: ["header", "block-text"]
-    }
-  ],
-  disable: {
-    groups: [],
-    elements: [],
-    formActions: []
-  },
-  elements: [],
-  container: null,
-  panels: { displayType: "slider" }
-});
-let Controls$1 = class Controls {
-  constructor() {
-    __publicField(this, "groupLabel", (key) => mi18n.get(key) || key || "");
-    __publicField(this, "layoutTypes", {
-      row: () => Stages2.active.addChild(),
-      column: () => this.layoutTypes.row().addChild(),
-      field: (controlData) => this.layoutTypes.column().addChild(controlData)
-    });
-    /**
-     * Append an element to the stage
-     * @param {String} id of elements
-     */
-    __publicField(this, "addElement", (id) => {
-      const {
-        meta: { group, id: metaId },
-        ...elementData
-      } = get(this.get(id), "controlData");
-      set(elementData, "config.controlId", metaId);
-      if (group === "layout") {
-        return this.layoutTypes[metaId.replace("layout-", "")]();
-      }
-      return this.layoutTypes.field(elementData);
-    });
-    __publicField(this, "applyOptions", async (controlOptions = {}) => {
-      const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions);
-      this.container = container;
-      this.groupOrder = unique(groupOrder.concat(["common", "html", "layout"]));
-      this.options = options;
-      const [layoutControls, formControls, htmlControls] = await Promise.all([
-        Promise.resolve().then(() => index$5),
-        Promise.resolve().then(() => index$3),
-        Promise.resolve().then(() => index$1)
-      ]);
-      const allControls = [layoutControls.default, formControls.default, htmlControls.default].flat();
-      return Promise.all(this.registerControls([...allControls, ...elements]));
-    });
-    this.data = /* @__PURE__ */ new Map();
-    this.buttonActions = {
-      // this is used for keyboard navigation. when tabbing through controls it
-      // will auto navigated between the groups
-      focus: ({ target }) => {
-        const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`);
-        return group && this.panels.nav.refresh(indexOfNode(group));
-      },
-      click: ({ target }) => {
-        this.addElement(target.parentElement.id);
-      }
-    };
-  }
-  /**
-   * Methods to be called on initialization
-   * @param {Object} controlOptions
-   */
-  async init(controlOptions, sticky = false) {
-    await this.applyOptions(controlOptions);
-    this.buildDOM(sticky);
-    return this;
-  }
-  /**
-   * Generate control config for UI and bind actions
-   * @return {Array} elementControls
-   */
-  registerControls(elements) {
-    this.controls = [];
-    return elements.map(async (Element) => {
-      const isControl = typeof Element === "function";
-      let control;
-      if (isControl) {
-        control = new Element();
-      } else {
-        control = new Control(Element);
-      }
-      this.add(control);
-      this.controls.push(control.dom);
-      return control.promise();
-    });
-  }
-  /**
-   * Group elements into their respective control group
-   * @return {Array} allGroups
-   */
-  groupElements() {
-    let groups = this.options.groups.slice();
-    let elements = this.controls.slice();
-    let allGroups = [];
-    const usedElementIds = [];
-    groups = orderObjectsBy(groups, this.groupOrder, "id");
-    groups = groups.filter((group) => match(group.id, this.options.disable.groups));
-    allGroups = groups.map((group) => {
-      const groupConfig = {
-        tag: "ul",
-        attrs: {
-          className: CONTROL_GROUP_CLASSNAME,
-          id: `${group.id}-${CONTROL_GROUP_CLASSNAME}`
-        },
-        config: {
-          label: this.groupLabel(group.label)
-        }
-      };
-      if (this.options.elementOrder[group.id]) {
-        const userOrder = this.options.elementOrder[group.id];
-        const newOrder = unique(userOrder.concat(group.elementOrder));
-        group.elementOrder = newOrder;
-      }
-      elements = orderObjectsBy(elements, group.elementOrder, "meta.id");
-      groupConfig.content = elements.filter((control) => {
-        const { controlData: field } = this.get(control.id);
-        const controlId = field.meta.id || "";
-        const filters = [
-          match(controlId, this.options.disable.elements),
-          field.meta.group === group.id,
-          !usedElementIds.includes(controlId)
-        ];
-        let shouldFilter = true;
-        shouldFilter = filters.every((val) => val === true);
-        if (shouldFilter) {
-          usedElementIds.push(controlId);
-        }
-        return shouldFilter;
-      });
-      return groupConfig;
-    });
-    return allGroups;
-  }
-  add(control = /* @__PURE__ */ Object.create(null)) {
-    const controlConfig = clone$1(control);
-    this.data.set(controlConfig.id, controlConfig);
-    if (controlConfig.controlData.meta.id) {
-      this.data.set(controlConfig.controlData.meta.id, controlConfig.controlData);
-    }
-    return controlConfig;
-  }
-  get(controlId) {
-    return clone$1(this.data.get(controlId));
-  }
-  /**
-   * Generate the DOM config for form actions like settings, save and clear
-   * @return {Object} form action buttons config
-   */
-  formActions() {
-    if (this.options.disable.formActions === true) {
-      return null;
-    }
-    const clearBtn = {
-      ...dom.btnTemplate({ content: [dom.icon("bin"), mi18n.get("clear")], title: mi18n.get("clearAll") }),
-      className: ["clear-form"],
-      action: {
-        click: (evt) => {
-          if (Rows2.size) {
-            events.confirmClearAll = new window.CustomEvent("confirmClearAll", {
-              detail: {
-                confirmationMessage: mi18n.get("confirmClearAll"),
-                clearAllAction: () => {
-                  Stages2.clearAll().then(() => {
-                    const evtData = {
-                      src: evt.target
-                    };
-                    events.formeoCleared(evtData);
-                  });
-                },
-                btnCoords: dom.coords(evt.target)
-              }
-            });
-            document.dispatchEvent(events.confirmClearAll);
-          } else {
-            window.alert(mi18n.get("cannotClearFields"));
-          }
-        }
-      }
-    };
-    const saveBtn = {
-      ...dom.btnTemplate({ content: [dom.icon("floppy-disk"), mi18n.get("save")], title: mi18n.get("save") }),
-      className: ["save-form"],
-      action: {
-        click: ({ target }) => {
-          const { formData } = components;
-          const saveEvt = {
-            action: () => {
-            },
-            coords: dom.coords(target),
-            message: "",
-            button: target
-          };
-          actions.click.btn(saveEvt);
-          return actions.save.form(formData);
-        }
-      }
-    };
-    const formActions = {
-      className: "form-actions f-btn-group",
-      content: Object.entries({ clearBtn, saveBtn }).reduce((acc, [key, value]) => {
-        if (!this.options.disable.formActions.includes(key)) {
-          acc.push(value);
-        }
-        return acc;
-      }, [])
-    };
-    return formActions;
-  }
-  /**
-   * Returns the markup for the form controls/fields
-   * @return {DOM}
-   */
-  buildDOM(sticky) {
-    const groupedFields = this.groupElements();
-    const formActions = this.formActions();
-    const { displayType } = this.options.panels;
-    this.panels = new Panels({ panels: groupedFields, type: "controls", displayType });
-    const groupsWrapClasses = ["control-groups", "formeo-panels-wrap", `panel-count-${groupedFields.length}`];
-    const groupsWrap = dom.create({
-      className: groupsWrapClasses,
-      content: [this.panels.panelNav, this.panels.panelsWrap]
-    });
-    const controlClasses = ["formeo-controls"];
-    if (sticky) {
-      controlClasses.push("formeo-sticky");
-    }
-    const element = dom.create({
-      className: controlClasses,
-      content: [groupsWrap, formActions]
-    });
-    const groups = element.getElementsByClassName("control-group");
-    this.dom = element;
-    this.groups = groups;
-    const [firstGroup] = groups;
-    this.currentGroup = firstGroup;
-    this.actions = {
-      filter: (term) => {
-        const filtering = term !== "";
-        const fields2 = this.controls;
-        let filteredTerm = groupsWrap.querySelector(".filtered-term");
-        dom.toggleElementsByStr(fields2, term);
-        if (filtering) {
-          const filteredStr = mi18n.get("controls.filteringTerm", term);
-          element.classList.add("filtered");
-          if (filteredTerm) {
-            filteredTerm.textContent = filteredStr;
-          } else {
-            filteredTerm = dom.create({
-              tag: "h5",
-              className: "filtered-term",
-              content: filteredStr
-            });
-            groupsWrap.insertBefore(filteredTerm, groupsWrap.firstChild);
-          }
-        } else if (filteredTerm) {
-          element.classList.remove("filtered");
-          filteredTerm.remove();
-        }
-      },
-      addElement: this.addElement,
-      // @todo finish the addGroup method
-      addGroup: (group) => console.log(group)
-    };
-    for (let i = groups.length - 1; i >= 0; i--) {
-      const storeID = `formeo-controls-${groups[i]}`;
-      if (!this.options.sortable) {
-        window.localStorage.removeItem(storeID);
-      }
-      Sortable.create(groups[i], {
-        animation: 150,
-        forceFallback: true,
-        fallbackClass: "control-moving",
-        fallbackOnBody: true,
-        group: {
-          name: "controls",
-          pull: "clone",
-          put: false
-        },
-        onStart: ({ item }) => {
-          const { controlData } = this.get(item.id);
-          if (this.options.ghostPreview) {
-            item.innerHTML = "";
-            item.appendChild(new Field(controlData).preview);
-          }
-        },
-        onEnd: ({ from, item, clone: clone2 }) => {
-          if (from.contains(clone2)) {
-            from.replaceChild(item, clone2);
-          }
-        },
-        sort: this.options.sortable,
-        store: {
-          /**
-           * Get the order of elements.
-           * @param   {Sortable}  sortable
-           * @return {Array}
-           */
-          get: () => {
-            const order = window.localStorage.getItem(storeID);
-            return order ? order.split("|") : [];
-          },
-          /**
-           * Save the order of elements.
-           * @param {Sortable}  sortable
-           */
-          set: (sortable) => {
-            const order = sortable.toArray();
-            window.localStorage.setItem(storeID, order.join("|"));
-          }
-        }
-      });
-    }
-    return element;
-  }
+const map = (arr, cb) => {
+  const newArray = [];
+  forEach(arr, (elem, i) => newArray.push(cb(elem, i)));
+  return newArray;
 };
-const Controls$2 = new Controls$1();
-class ComponentData extends Data {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "load", (dataArg) => {
-      const data = parseData(dataArg);
-      this.empty();
-      for (const [key, val] of Object.entries(data)) {
-        this.add(key, val);
-      }
-      return this.data;
-    });
-    /**
-     * Retrieves data from the specified path or adds new data if no path is provided.
-     *
-     * @param {string} [path] - The path to retrieve data from. If not provided, new data will be added.
-     * @returns {*} The data retrieved from the specified path or the result of adding new data.
-     */
-    __publicField(this, "get", (path) => path ? get(this.data, path) : this.add());
-    /**
-     * Adds a new component with the given id and data.
-     *
-     * @param {string} id - The unique identifier for the component. If not provided, a new UUID will be generated.
-     * @param {Object} [data=Object.create(null)] - The data to initialize the component with.
-     * @returns {Object} The newly created component.
-     */
-    __publicField(this, "add", (id, data = /* @__PURE__ */ Object.create(null)) => {
-      const elemId = id || uuid();
-      const component = this.Component({ ...data, id: elemId });
-      this.set(elemId, component);
-      this.active = component;
-      return component;
-    });
-    /**
-     * removes a component form the index
-     * @param {String|Array} componentId
-     */
-    __publicField(this, "remove", (componentId) => {
-      if (Array.isArray(componentId)) {
-        for (const id of componentId) {
-          this.get(id).remove();
-        }
-      } else {
-        this.get(componentId).remove();
-      }
-      return this.data;
-    });
-    /**
-     * Deletes a component from the data object.
-     *
-     * @param {string} componentId - The ID of the component to delete.
-     * @returns {string} The ID of the deleted component.
-     */
-    __publicField(this, "delete", (componentId) => {
-      delete this.data[componentId];
-      return componentId;
-    });
-    /**
-     * Clears all instances from the store
-     * @param {Object} evt
-     */
-    __publicField(this, "clearAll", (isAnimated = true) => {
-      const promises = Object.values(this.data).map((component) => component.empty(isAnimated));
-      return Promise.all(promises);
-    });
-    __publicField(this, "conditionMap", /* @__PURE__ */ new Map());
+const sanitizedAttributeNames = {};
+const safeAttrName = (name2) => {
+  const attributeMap = {
+    className: "class"
+  };
+  if (sanitizedAttributeNames[name2]) {
+    return sanitizedAttributeNames[name2];
   }
-  /**
-   * Extends the configVal for a component type,
-   * eventually read by Component
-   * @return {Object} configVal
-   */
-  set config(config2) {
-    this.configVal = merge(this.configVal, clone$1(config2));
-  }
-  /**
-   * Reads configVal for a component type
-   * @return {Object} configVal
-   */
-  get config() {
-    return this.configVal;
-  }
-}
-const DEFAULT_DATA$2 = () => Object.freeze({ children: [] });
-class Stage extends Component {
-  /**
-   * Process options and load existing fields from data to the stage
-   * @param  {Object} formeoOptions
-   * @param  {String} stageData uuid
-   * @return {Object} DOM element
-   */
-  constructor(stageData, render) {
-    super("stage", { ...DEFAULT_DATA$2(), ...stageData }, render);
-    const children = this.createChildWrap();
-    this.dom = dom.create({
-      attrs: {
-        className: [STAGE_CLASSNAME, "empty"],
-        id: this.id
-      },
-      children
-    });
-    Sortable.create(children, {
-      animation: 150,
-      fallbackClass: "row-moving",
-      forceFallback: true,
-      group: {
-        name: "stage",
-        pull: true,
-        put: ["row", "column", "controls"]
-      },
-      sort: true,
-      disabled: false,
-      onAdd: this.onAdd.bind(this),
-      onRemove: this.onRemove.bind(this),
-      onStart: () => {
-        stages.active = this;
-      },
-      onSort: this.onSort.bind(this),
-      draggable: `.${ROW_CLASSNAME}`,
-      handle: ".item-move"
-    });
-  }
-  empty(isAnimated = true) {
-    return new Promise((resolve2) => {
-      if (isAnimated) {
-        this.dom.classList.add("removing-all-fields");
-        animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
-          resolve2(super.empty(isAnimated));
-          this.dom.classList.remove("removing-all-fields");
-          animate.slideDown(this.dom, ANIMATION_SPEED_BASE);
-        });
-      } else {
-        resolve2(super.empty());
-      }
-    });
-  }
-  onAdd(...args) {
-    const component = super.onAdd(...args);
-    if (component && component.name === "column") {
-      component.parent.autoColumnWidths();
-    }
-  }
-}
-let Stages$1 = class Stages extends ComponentData {
-  constructor(stageData) {
-    super("stages", stageData);
-  }
-  Component(data) {
-    return new Stage(data);
-  }
+  const attributeName = attributeMap[name2] || name2;
+  const sanitizedAttributeName = attributeName.replace(/^\d+/, "").replace(/[^a-zA-Z0-9-:]/g, "");
+  sanitizedAttributeNames[name2] = sanitizedAttributeName;
+  return sanitizedAttributeName;
 };
-const stages = new Stages$1();
-const DEFAULT_DATA$1 = () => Object.freeze({
-  config: {
-    fieldset: false,
-    // wrap contents of row in fieldset
-    legend: "",
-    // Legend for fieldset
-    inputGroup: false
-    // is repeatable input-group?
-  },
-  children: [],
-  className: [ROW_CLASSNAME]
-});
-class Row extends Component {
-  /**
-   * Set default and generate dom for row in editor
-   * @param  {String} dataID
-   * @return {Object}
-   */
-  constructor(rowData) {
-    super("row", { ...DEFAULT_DATA$1(), ...rowData });
-    /**
-     * Read columns and generate bootstrap cols
-     * @param {Object} row DOM element
-     */
-    __publicField(this, "autoColumnWidths", () => {
-      const columns2 = this.children;
-      if (!columns2.length) {
-        return;
-      }
-      const width = Number.parseFloat((100 / columns2.length).toFixed(1)) / 1;
-      for (const column of columns2) {
-        column.removeClasses(bsColRegExp);
-        const colDom = column.dom;
-        const newColWidth = numToPercent(width);
-        column.set("config.width", newColWidth);
-        colDom.style.width = newColWidth;
-        colDom.dataset.colWidth = newColWidth;
-        const refreshTimeout = setTimeout(() => {
-          clearTimeout(refreshTimeout);
-          column.refreshFieldPanels();
-        }, ANIMATION_SPEED_FAST);
-        document.dispatchEvent(events.columnResized);
-      }
-      this.updateColumnPreset();
-    });
-    /**
-     * Updates the column preset <select>
-     * @return {Object} columnPresetConfig
-     */
-    __publicField(this, "updateColumnPreset", () => {
-      this.columnPresetControl.innerHTML = "";
-      const presetOptions = this.getColumnPresetOptions.map(
-        ({ label, ...attrs }) => dom.create({
-          tag: "option",
-          content: label,
-          attrs
-        })
-      );
-      this.columnPresetControl.append(...presetOptions);
-    });
-    /**
-     * Set the widths of columns in a row
-     * @param {Object} row DOM element
-     * @param {String} widths
-     */
-    __publicField(this, "setColumnWidths", (widths) => {
-      if (typeof widths === "string") {
-        widths = widths.split(",");
-      }
-      this.children.forEach((column, i) => {
-        column.setWidth(`${widths[i]}%`);
-        column.refreshFieldPanels();
-      });
-    });
-    const children = this.createChildWrap();
-    this.dom = dom.create({
-      tag: "li",
-      className: [ROW_CLASSNAME, "empty"],
-      dataset: {
-        hoverTag: mi18n.get("row"),
-        editingHoverTag: mi18n.get("editing.row")
-      },
-      id: this.id,
-      content: [this.getComponentTag(), this.getActionButtons(), this.editWindow, children]
-    });
-    Sortable.create(children, {
-      animation: 150,
-      fallbackClass: "column-moving",
-      forceFallback: true,
-      group: {
-        name: "row",
-        pull: true,
-        put: ["row", "column", "controls"]
-      },
-      sort: true,
-      disabled: false,
-      onRemove: this.onRemove.bind(this),
-      onEnd: this.onEnd.bind(this),
-      onAdd: this.onAdd.bind(this),
-      onSort: this.onSort.bind(this),
-      // filter: '.resize-x-handle', // use filter for frozen columns
-      draggable: `.${COLUMN_CLASSNAME}`,
-      handle: ".item-move"
-    });
-  }
-  /**
-   * Edit window for Row
-   * @return {Object} edit window dom config for Row
-   */
-  get editWindow() {
-    const fieldsetInput = {
-      tag: "input",
-      id: `${this.id}-fieldset`,
-      attrs: {
-        type: "checkbox",
-        checked: this.get("config.fieldset"),
-        ariaLabel: mi18n.get("row.settings.fieldsetWrap.aria")
-      },
-      action: {
-        click: ({ target: { checked } }) => {
-          this.set("config.fieldset", Boolean(checked));
-        }
-      },
-      config: {
-        label: mi18n.get("row.settings.fieldsetWrap")
-      }
-    };
-    const inputGroupInput = {
-      tag: "input",
-      id: `${this.id}-inputGroup`,
-      attrs: {
-        type: "checkbox",
-        checked: this.get("config.inputGroup"),
-        ariaLabel: mi18n.get("row.settings.inputGroup.aria")
-      },
-      action: {
-        click: ({ target: { checked } }) => this.set("config.inputGroup", checked)
-      },
-      config: {
-        label: mi18n.get("row.makeInputGroup"),
-        description: mi18n.get("row.makeInputGroupDesc")
-      }
-    };
-    const rowTitleTooltip = {
-      tag: "span",
-      content: " ⓘ",
-      dataset: {
-        tooltip: "Row title will be used as the legend for the fieldset"
-      }
-    };
-    const legendInput = {
-      tag: "input",
-      attrs: {
-        type: "text",
-        ariaLabel: "Legend for fieldset",
-        value: this.get("config.legend"),
-        placeholder: "Title"
-      },
-      config: {
-        label: {
-          children: ["Row Title", rowTitleTooltip]
-        }
-      },
-      action: {
-        input: ({ target: { value } }) => this.set("config.legend", value)
-      },
-      className: ""
-    };
-    const fieldsetInputGroup = {
-      className: "input-group",
-      content: legendInput
-    };
-    const fieldSetControls = dom.formGroup([fieldsetInput, fieldsetInputGroup]);
-    const columnSettingsPresetLabel = {
-      tag: "label",
-      content: mi18n.get("defineColumnWidths"),
-      className: "col-sm-4 form-control-label"
-    };
-    this.columnPresetControl = dom.create(this.columnPresetControlConfig);
-    const columnSettingsPresetSelect = {
-      className: "col-sm-8",
-      content: this.columnPresetControl,
-      action: {
-        onRender: () => {
-          this.updateColumnPreset();
-        }
-      }
-    };
-    const columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], "row");
-    const editWindowContents = [inputGroupInput, "hr", fieldSetControls, "hr", columnSettingsPreset];
-    const editWindow = dom.create({
-      className: `${this.name}-edit group-config`,
-      action: {
-        onRender: (editWindow2) => {
-          const elements = editWindowContents.map((elem) => dom.create(elem));
-          editWindow2.append(...elements);
-        }
-      }
-    });
-    return editWindow;
-  }
-  onAdd(...args) {
-    super.onAdd(...args);
-    this.autoColumnWidths();
-  }
-  onRemove(...args) {
-    super.onRemove(...args);
-    this.autoColumnWidths();
-  }
-  /**
-   * Retrieves the preset options for columns based on the current configuration.
-   *
-   * @returns {Array<Object>} An array of option objects for column presets. Each object contains:
-   * - `value` {string}: The comma-separated string of column widths.
-   * - `label` {string}: The display label for the option, with widths separated by ' | '.
-   * - `className` {string}: The CSS class name for custom column options.
-   * - `selected` {boolean} [optional]: Indicates if the option is the current value.
-   */
-  get getColumnPresetOptions() {
-    const columns2 = this.children;
-    const pMap = COLUMN_TEMPLATES;
-    const pMapVal = pMap.get(columns2.length - 1) || [];
-    const curVal = columns2.map((Column2) => {
-      const width = Column2.get("config.width") || "";
-      return Number(width.replace("%", "")).toFixed(1);
-    }).join(",");
-    if (pMapVal.length) {
-      const options = pMapVal.slice();
-      const isCustomVal = !options.find((val) => val.value === curVal);
-      if (isCustomVal) {
-        options.push({
-          value: curVal,
-          label: curVal.replace(/,/g, " | "),
-          className: CUSTOM_COLUMN_OPTION_CLASSNAME
-        });
-      }
-      return options.map((val) => {
-        const option2 = { ...val };
-        option2.selected = val.value === curVal;
-        return option2;
-      });
-    }
-    return [];
-  }
-  /**
-   * Generates the element config for column layout in row
-   * @return {Object} columnPresetControlConfig
-   */
-  get columnPresetControlConfig() {
-    const layoutPreset = {
-      tag: "select",
-      attrs: {
-        ariaLabel: mi18n.get("defineColumnLayout"),
-        className: COLUMN_PRESET_CLASSNAME
-      },
-      action: {
-        change: ({ target }) => {
-          const { value } = target;
-          this.setColumnWidths(value);
-        }
-      },
-      options: this.getColumnPresetOptions
-    };
-    return layoutPreset;
-  }
-}
-const DEFAULT_CONFIG$2 = {
-  actionButtons: {
-    buttons: ["move", "edit", "clone", "remove"],
-    disabled: []
-  }
+const capitalize = (str) => str.replace(/\b\w/g, (m) => m.toUpperCase());
+const copyObj = (obj) => window.JSON.parse(window.JSON.stringify(obj));
+const subtract = (arr, from) => from.filter((a) => !~arr.indexOf(a));
+const isIE = () => window.navigator.userAgent.indexOf("MSIE ") !== -1;
+const helpers = {
+  capitalize,
+  safeAttrName,
+  forEach,
+  copyObj,
+  // basic map that can be used on nodeList
+  map,
+  subtract,
+  indexOfNode,
+  isInt,
+  get,
+  orderObjectsBy,
+  isIE
 };
-let Rows$1 = class Rows extends ComponentData {
-  constructor(rowData) {
-    super("rows", rowData);
-    this.config = { all: DEFAULT_CONFIG$2 };
-  }
-  Component(data) {
-    return new Row(data);
-  }
-};
-const rows = new Rows$1();
-class ResizeColumn {
-  /**
-   * Binds the event handlers to the instance.
-   */
-  constructor() {
-    this.onMove = this.onMove.bind(this);
-    this.onStop = this.onStop.bind(this);
-    this.cleanup = this.cleanup.bind(this);
-  }
-  /**
-   * Calculates the total width of a row excluding the gaps between columns.
-   * @param {HTMLElement} row - The row element.
-   * @returns {number} - The total width of the row.
-   */
-  getRowWidth(row) {
-    const rowChildren = row.querySelector(".children");
-    if (!rowChildren) return 0;
-    const numberOfColumns = rowChildren.children.length;
-    const gapSize = dom.getStyle(rowChildren, "gap") || "0px";
-    const gapPixels = parseFloat(gapSize, 10) || 0;
-    this.totalGapWidth = gapPixels * (numberOfColumns - 1);
-    return rowChildren.offsetWidth - this.totalGapWidth;
-  }
-  /**
-   * Validates if the resize target columns are valid.
-   * @param {HTMLElement} column - The column being resized.
-   * @param {HTMLElement} sibling - The sibling column.
-   * @returns {boolean} - True if both columns are valid, false otherwise.
-   */
-  validateResizeTarget(column, sibling) {
-    return column && sibling && column.offsetWidth && sibling.offsetWidth;
-  }
-  /**
-   * Handles the start of the resize event.
-   * @param {Event} evt - The event object.
-   */
-  onStart(evt) {
-    evt.preventDefault();
-    this.resized = false;
-    if (evt.button !== 0) return;
-    const column = evt.target.parentElement;
-    const sibling = column.nextSibling || column.previousSibling;
-    const row = column.closest(`.${ROW_CLASSNAME}`);
-    if (!this.validateResizeTarget(column, sibling)) {
-      console.warn("Invalid resize targets");
-      this.cleanup();
-      return;
-    }
-    this.startX = evt.type === "touchstart" ? evt.touches[0].clientX : evt.clientX;
-    row.classList.add(COLUMN_RESIZE_CLASSNAME);
-    this.columnPreset = row.querySelector(`.${COLUMN_PRESET_CLASSNAME}`);
-    this.originalColumnClass = column.className;
-    this.originalSiblingClass = sibling.className;
-    column.className = column.className.replace(bsColRegExp, "");
-    sibling.className = sibling.className.replace(bsColRegExp, "");
-    this.colStartWidth = column.offsetWidth;
-    this.sibStartWidth = sibling.offsetWidth;
-    this.rowWidth = this.getRowWidth(row);
-    if (this.rowWidth <= 0) {
-      console.warn("Invalid row width calculated");
-      this.cleanup();
-      return;
-    }
-    this.column = column;
-    this.sibling = sibling;
-    this.row = row;
-    try {
-      window.addEventListener("pointermove", this.onMove, false);
-      window.addEventListener("pointerup", this.onStop, false);
-    } catch (error) {
-      console.error("Failed to initialize resize listeners:", error);
-      this.cleanup();
-    }
-  }
-  /**
-   * Calculates the new widths for the columns based on the mouse position.
-   * @param {number} clientX - The current X position of the mouse.
-   * @returns {Object|null} - The new widths for the columns or null if invalid.
-   */
-  calculateNewWidths(clientX) {
-    const newColWidth = this.colStartWidth + clientX - this.startX;
-    const newSibWidth = this.sibStartWidth - clientX + this.startX;
-    const colWidthPercent = parseFloat(percent(newColWidth, this.rowWidth));
-    const sibWidthPercent = parseFloat(percent(newSibWidth, this.rowWidth));
-    if (colWidthPercent < 10 || sibWidthPercent < 10) {
-      return null;
-    }
-    return {
-      colWidth: numToPercent(colWidthPercent.toFixed(1)),
-      siblingColWidth: numToPercent(sibWidthPercent.toFixed(1))
-    };
-  }
-  /**
-   * Handles the movement during the resize event.
-   * @param {Event} evt - The event object.
-   */
-  onMove(evt) {
-    evt.preventDefault();
-    const { column, sibling } = this;
-    const clientX = evt.type === "touchmove" ? evt.touches[0].clientX : evt.clientX;
-    const newWidths = this.calculateNewWidths(clientX);
-    if (!newWidths) return;
-    const { colWidth, siblingColWidth } = newWidths;
-    column.dataset.colWidth = colWidth;
-    sibling.dataset.colWidth = siblingColWidth;
-    column.style.width = colWidth;
-    sibling.style.width = siblingColWidth;
-    this.resized = true;
-  }
-  onStop() {
-    const { column, sibling } = this;
-    window.removeEventListener("pointermove", this.onMove);
-    window.removeEventListener("pointerup", this.onStop);
-    if (!this.resized) {
-      return;
-    }
-    this.setCustomWidthValue();
-    components.setAddress(`columns.${column.id}.config.width`, column.dataset.colWidth);
-    components.setAddress(`columns.${sibling.id}.config.width`, sibling.dataset.colWidth);
-    this.row.classList.remove(COLUMN_RESIZE_CLASSNAME);
-    this.resized = false;
-    this.cleanup();
-  }
-  // Helper method to clean up if resize fails
-  cleanup() {
-    if (this.column && this.originalColumnClass) {
-      this.column.className = this.originalColumnClass;
-    }
-    if (this.sibling && this.originalSiblingClass) {
-      this.sibling.className = this.originalSiblingClass;
-    }
-    if (this.row) {
-      this.row.classList.remove(COLUMN_RESIZE_CLASSNAME);
-    }
-    window.removeEventListener("pointermove", this.onMove);
-    window.removeEventListener("pointerup", this.onStop);
-  }
-  /**
-   * Adds a custom option from the column width present selecy
-   * @param {Node} row
-   */
-  setCustomWidthValue() {
-    const columnPreset = this.columnPreset;
-    let customOption = columnPreset.querySelector(`.${CUSTOM_COLUMN_OPTION_CLASSNAME}`);
-    const cols = this.row.querySelector(".children").children;
-    const widths = map(cols, (col) => percent(col.clientWidth, this.rowWidth).toFixed(1));
-    const value = widths.join(",");
-    const content = widths.join(" | ");
-    if (!customOption) {
-      customOption = dom.create({
-        tag: "option",
-        attrs: {
-          className: CUSTOM_COLUMN_OPTION_CLASSNAME,
-          value,
-          selected: true
-        },
-        content
-      });
-      columnPreset.append(customOption);
-    }
-    customOption.value = value;
-    customOption.textContent = content;
-    return value;
-  }
-}
-const DEFAULT_DATA = () => Object.freeze({
-  config: {
-    width: "100%"
-  },
-  children: [],
-  className: [COLUMN_CLASSNAME]
-});
-const DOM_CONFIGS = {
-  resizeHandle: (columnRisizer) => ({
-    className: "resize-x-handle",
-    action: {
-      pointerdown: columnRisizer.onStart.bind(columnRisizer)
-    },
-    content: [dom.icon("triangle-down"), dom.icon("triangle-up")]
-  }),
-  editWindow: () => ({
-    className: "column-edit group-config"
-  })
-};
-class Column extends Component {
-  /**
-   * Set defaults and/or load existing columns
-   * @param  {Object} columnData
-   * @return {Object} Column config object
-   */
-  constructor(columnData) {
-    super("column", { ...DEFAULT_DATA(), ...columnData });
-    // loops through children and refresh their edit panels
-    __publicField(this, "refreshFieldPanels", () => {
-      for (const field of this.children) {
-        field.panels.nav.refresh();
-      }
-    });
-    /**
-     * Sets the width data and style for the column
-     * @param {string} width - The width value to be set for the column
-     * @returns {void}
-     */
-    __publicField(this, "setDomWidth", (width) => {
-      this.dom.dataset.colWidth = width;
-      this.dom.style.width = width;
-    });
-    /**
-     * Sets a columns width
-     * @param {String} width percent or pixel
-     */
-    __publicField(this, "setWidth", (width) => {
-      this.setDomWidth(width);
-      return this.set("config.width", width);
-    });
-    const childWrap = this.createChildWrap();
-    this.dom = dom.create({
-      tag: "li",
-      className: [COLUMN_CLASSNAME, "empty"],
-      dataset: {
-        hoverTag: mi18n.get("column")
-      },
-      id: this.id,
-      content: [
-        this.getComponentTag(),
-        this.getActionButtons(),
-        DOM_CONFIGS.editWindow(),
-        DOM_CONFIGS.resizeHandle(new ResizeColumn()),
-        childWrap
-      ]
-    });
-    this.processConfig();
-    events.columnResized = new window.CustomEvent("columnResized", {
-      detail: {
-        column: this.dom,
-        instance: this
-      }
-    });
-    Sortable.create(childWrap, {
-      animation: 150,
-      fallbackClass: "field-moving",
-      forceFallback: true,
-      group: {
-        name: "column",
-        pull: true,
-        put: ["column", "controls"]
-      },
-      sort: true,
-      disabled: false,
-      onEnd: this.onEnd.bind(this),
-      onAdd: this.onAdd.bind(this),
-      onSort: this.onSort.bind(this),
-      onRemove: this.onRemove.bind(this),
-      // Attempt to drag a filtered element
-      onMove: (evt) => {
-        if (evt.from !== evt.to) {
-          evt.from.classList.remove("hovering-column");
-        }
-      },
-      draggable: `.${FIELD_CLASSNAME}`,
-      handle: ".item-move"
-    });
-  }
-  /**
-   * Process column configuration data
-   * @param  {Object} column
-   */
-  processConfig() {
-    const columnWidth = helpers.get(this.data, "config.width");
-    if (columnWidth) {
-      this.setDomWidth(columnWidth);
-    }
-  }
-}
-const DEFAULT_CONFIG$1 = {
-  actionButtons: {
-    buttons: ["clone", "move", "remove"],
-    disabled: []
-  }
-};
-let Columns$1 = class Columns extends ComponentData {
-  constructor(columnData) {
-    super("columns", columnData);
-    this.config = { all: DEFAULT_CONFIG$1 };
-  }
-  Component(data) {
-    return new Column(data);
-  }
-};
-const columns = new Columns$1();
-const DEFAULT_CONFIG = {
-  actionButtons: {
-    buttons: ["move", "edit", "clone", "remove"],
-    disabled: []
-  },
-  panels: {
-    disabled: [],
-    attrs: {
-      disabled: ["type"],
-      hideDisabled: true,
-      locked: []
-    },
-    order: ["attrs", "options", "conditions"]
-  },
-  label: {
-    disableHTML: false
-  }
-};
-let Fields$1 = class Fields extends ComponentData {
-  constructor(fieldData) {
-    super("fields", fieldData);
-    __publicField(this, "get", (path) => {
-      let found = path && get(this.data, path);
-      if (!found) {
-        const control = Controls$2.get(path);
-        if (control) {
-          found = this.add(null, control.controlData);
-        }
-      }
-      return found;
-    });
-    __publicField(this, "getData", () => {
-      return Object.entries(this.data).reduce((acc, [key, val]) => {
-        const { conditions, ...data } = (val == null ? void 0 : val.getData()) || val;
-        if (conditions == null ? void 0 : conditions.length) {
-          let hasConditions = true;
-          if (conditions.length === 1) {
-            const [firstCondition] = conditions;
-            hasConditions = Boolean(firstCondition.if[0].source && firstCondition.then[0].target);
-          }
-          if (hasConditions) {
-            data.conditions = conditions;
-          }
-        }
-        acc[key] = data;
-        return acc;
-      }, {});
-    });
-    __publicField(this, "load", (dataArg = /* @__PURE__ */ Object.create(null)) => {
-      const allFieldData = parseData(dataArg);
-      this.empty();
-      for (const [key, val] of Object.entries(allFieldData)) {
-        const { meta, ...data } = val;
-        if (meta == null ? void 0 : meta.id) {
-          set(data, "config.controlId", meta == null ? void 0 : meta.id);
-        }
-        this.add(key, data);
-      }
-      return this.data;
-    });
-    this.config = { all: DEFAULT_CONFIG };
-  }
-  Component(data) {
-    return new Field(data);
-  }
-};
-const fields = new Fields$1();
-let Externals$1 = class Externals extends ComponentData {
-  constructor(externalData) {
-    super("externals", externalData);
-  }
-  Component(data) {
-    return new Component("external", data);
-  }
-};
-const externals = new Externals$1();
-const Stages2 = stages;
-const Rows2 = rows;
-const Columns2 = columns;
-const Fields2 = fields;
-const Controls2 = Controls$2;
-const Externals2 = externals;
-const getFormData = (formData, useSessionStorage = false) => {
-  if (formData) {
-    return clone$1(parseData(formData));
-  }
-  if (useSessionStorage) {
-    return sessionStorage.get(SESSION_FORMDATA_KEY) || DEFAULT_FORMDATA();
-  }
-  return DEFAULT_FORMDATA();
-};
-class Components extends Data {
-  constructor() {
-    super("components");
-    __publicField(this, "load", (formDataArg, opts) => {
-      this.empty();
-      const formData = getFormData(formDataArg, opts.sessionStorage);
-      this.opts = opts;
-      this.set("id", formData.id);
-      this.add("stages", Stages2.load(formData.stages));
-      this.add("rows", Rows2.load(formData.rows));
-      this.add("columns", Columns2.load(formData.columns));
-      this.add("fields", Fields2.load(formData.fields));
-      this.add("externals", Externals2.load(this.opts.external));
-      for (const stage of Object.values(this.get("stages"))) {
-        stage.loadChildren();
-      }
-      return this.data;
-    });
-    this.disableEvents = true;
-    this.stages = Stages2;
-    this.rows = Rows2;
-    this.columns = Columns2;
-    this.fields = Fields2;
-    this.controls = Controls2;
-    this.externals = Externals2;
-  }
-  /**
-   * flattens the component tree
-   * @returns {Object} where keys contains component type
-   */
-  flatList(data = this.data, acculumator = /* @__PURE__ */ Object.create(null)) {
-    return Object.entries(data).reduce((acc, [type2, components2]) => {
-      if (typeof components2 === "object") {
-        for (const [id, component] of Object.entries(components2)) {
-          acc[`${type2}.${id}`] = component;
-        }
-      }
-      return acc;
-    }, acculumator);
-  }
-  get json() {
-    return window.JSON.stringify({
-      $schema: `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formData_schema.json`,
-      ...this.formData
-    });
-  }
-  get formData() {
-    return {
-      id: this.get("id"),
-      stages: stages.getData(),
-      rows: rows.getData(),
-      columns: columns.getData(),
-      fields: fields.getData()
-    };
-  }
-  set config(config2) {
-    const { stages: stages2, rows: rows2, columns: columns2, fields: fields2 } = config2;
-    Stages2.config = stages2;
-    Rows2.config = rows2;
-    Columns2.config = columns2;
-    Fields2.config = fields2;
-  }
-  /**
-   * call `set` on a component in memory
-   */
-  setAddress(fullAddress, value) {
-    const [type2, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : fullAddress.split(".");
-    const componentType2 = type2.replace(/s?$/, "s");
-    const component = this[componentType2].get(id);
-    component == null ? void 0 : component.set(localAddress, value);
-    return component;
-  }
-  /**
-   * Fetch a component from memory by address
-   */
-  getAddress(address) {
-    if (!isAddress(address)) {
-      return;
-    }
-    const [type2, id, ...path] = Array.isArray(address) ? address : address.split(".");
-    const componentType2 = type2.replace(/s?$/, "s");
-    const component = this[componentType2].get(id);
-    return path.length ? component.get(path) : component;
-  }
-  getConditionMap(address) {
-    if (isAddress(address)) {
-      const splitAddress = address.split(".");
-      return splitAddress.every((segment) => Boolean(segment)) && this[splitAddress[0]].conditionMap.get(splitAddress[1]);
-    }
-  }
-  setConditionMap(address, component) {
-    if (isAddress(address)) {
-      const splitAddress = address.split(".");
-      return splitAddress.every((segment) => Boolean(segment)) && this[splitAddress[0]].conditionMap.set(splitAddress[1], component);
-    }
-  }
-  removeConditionMap(address) {
-    if (isAddress(address)) {
-      const splitAddress = address.split(".");
-      return splitAddress.every((segment) => Boolean(segment)) && this[splitAddress[0]].conditionMap.delete(splitAddress[1]);
-    }
-  }
-}
-const components = new Components();
 const iconFontTemplates = {
   glyphicons: (icon) => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
   "font-awesome": (icon) => {
@@ -8547,6 +4953,25 @@ const iconFontTemplates = {
   fontello: (icon) => `<i class="${iconPrefix}${icon}">${icon}</i>`
 };
 const inputTags = /* @__PURE__ */ new Set(["input", "textarea", "select"]);
+const getName = (elem = {}) => {
+  var _a, _b, _c;
+  let name2 = ((_a = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a.name) || (elem == null ? void 0 : elem.name);
+  if (name2) {
+    return name2;
+  }
+  const id = uuid(elem);
+  let label = ((_b = elem.config) == null ? void 0 : _b.label) || ((_c = elem.attrs) == null ? void 0 : _c.label) || (elem == null ? void 0 : elem.label);
+  if (label) {
+    if (typeof label === "object") {
+      label = dom.create(label).textContent;
+    }
+    if (/^<.+>.+<.+>$/gim.test(label)) {
+      label = extractTextFromHtml(label);
+    }
+    name2 = `${id}-${slugify(truncateByWord(label, 24, null))}`;
+  }
+  return name2 || id;
+};
 class DOM {
   /**
    * Set defaults, store references to key elements
@@ -8571,16 +4996,19 @@ class DOM {
       if (!elemArg) {
         return;
       }
+      if (this.isDOMElement(elemArg)) {
+        return elemArg;
+      }
       const _this = this;
       const processed = ["children", "content"];
-      const { className, options, dataset, ...elem } = this.processTagName(elemArg);
+      const { className, options, dataset, conditions, ...elem } = this.processElemArg(elemArg);
       processed.push("tag");
       let childType;
       const { tag } = elem;
       let i;
       const wrap = {
         attrs: {},
-        className: [helpers.get(elem, "config.inputWrap") || "f-field-group"],
+        className: [helpers.get(elem, "config.inputWrap")],
         children: [],
         config: {}
       };
@@ -8627,6 +5055,7 @@ class DOM {
           if (elem.attrs.className) {
             wrap.className = elem.attrs.className;
           }
+          wrap.id = elem.id;
           wrap.config = { ...elem.config };
           return this.create(wrap, isPreview);
         }
@@ -8678,12 +5107,16 @@ class DOM {
       }
       return element;
     });
-    __publicField(this, "onRender", (node, cb) => {
-      if (!node.parentElement) {
-        window.requestAnimationFrame(() => this.onRender(node, cb));
-      } else {
-        cb(node);
-      }
+    __publicField(this, "onRender", (node, cb, timeout = ANIMATION_SPEED_BASE) => {
+      const start = Date.now();
+      const checkParent = () => {
+        if (!node.parentElement && Date.now() - start < timeout) {
+          window.requestAnimationFrame(checkParent);
+        } else if (node.parentElement) {
+          cb(node);
+        }
+      };
+      checkParent();
     });
     /**
      * Hide or show an Array or HTMLCollection of elements
@@ -8777,7 +5210,7 @@ class DOM {
    * @param  {Object|String} elem
    * @return {Object} valid element object
    */
-  processTagName(elemArg) {
+  processElemArg(elemArg) {
     let elem = elemArg;
     let tagName;
     if (typeof elem === "string") {
@@ -8885,18 +5318,30 @@ class DOM {
    */
   processAttrs(elem, element, isPreview) {
     const { attrs = {} } = elem;
-    if (!isPreview && !attrs.name && this.isInput(elem.tag)) {
-      element.setAttribute("name", uuid(elem));
+    if (!isPreview && !attrs.name && attrs.name !== null && this.isInput(elem.tag)) {
+      const name2 = getName(elem);
+      if (name2) {
+        element.setAttribute("name", name2);
+      }
     }
     for (const attr of Object.keys(attrs)) {
-      const name2 = helpers.safeAttrName(attr);
+      const safeAttrName2 = helpers.safeAttrName(attr);
       const value = this.processAttrValue(attrs[attr]);
-      if (value) {
-        element.setAttribute(name2, value === true ? "" : value);
+      if (value !== false) {
+        element.setAttribute(safeAttrName2, value);
       }
     }
   }
   processAttrValue(valueArg) {
+    if (typeof valueArg === "function") {
+      return valueArg();
+    }
+    if (typeof valueArg === "boolean") {
+      if (valueArg) {
+        return "";
+      }
+      return valueArg;
+    }
     let value = valueArg || "";
     if (Array.isArray(value)) {
       if (typeof value[0] === "object") {
@@ -8916,19 +5361,19 @@ class DOM {
    * @return {Array} option config objects
    */
   processOptions(options, elem, isPreview) {
-    const { action, attrs } = elem;
+    const { action, attrs = {} } = elem;
     const fieldType = attrs.type || elem.tag;
     const id = attrs.id || elem.id;
     const optionMap = (option2, i) => {
       var _a;
-      const { label, ...rest } = option2;
+      const { label, value, ...rest } = option2;
       const defaultInput = () => {
         const input = {
           tag: "input",
           attrs: {
             name: id,
             type: fieldType,
-            value: option2.value || "",
+            value: value || "",
             id: `${id}-${i}`,
             ...rest
           },
@@ -8939,17 +5384,14 @@ class DOM {
           attrs: {
             for: `${id}-${i}`
           },
-          config: {
-            inputWrap: "form-check"
-          },
-          children: option2.label
+          children: label
         };
         const inputWrap = {
           children: [input, optionLabel],
           className: [`f-${fieldType}`]
         };
-        if (elem.attrs.className) {
-          elem.config.inputWrap = elem.attrs.className;
+        if (attrs.className) {
+          elem.config.inputWrap = attrs.className;
         }
         if (elem.config.inline) {
           inputWrap.className.push(`f-${fieldType}-inline`);
@@ -8964,10 +5406,13 @@ class DOM {
       };
       const optionMarkup = {
         select: () => {
+          const defaultAttrs = option2.attrs || option2;
+          const mergedOption = { attrs: defaultAttrs, ...option2, ...defaultAttrs };
+          const { label: label2, checked, selected, attrs: attrs2 } = mergedOption;
           return {
             tag: "option",
-            attrs: option2,
-            children: option2.label
+            attrs: { ...attrs2, selected: !!(checked || selected) },
+            children: label2
           };
         },
         button: (option3) => {
@@ -9247,8 +5692,4087 @@ class DOM {
     const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)));
     elem.classList.toggle("empty", !children.length);
   }
+  isDOMElement(variable) {
+    return variable instanceof window.Element || variable instanceof window.HTMLElement || !!(variable && typeof variable === "object" && variable.nodeType === 1 && typeof variable.nodeName === "string");
+  }
 }
 const dom = new DOM();
+const BASE_NAME = "f-autocomplete";
+const DISPLAY_FIELD_CLASSNAME = `${BASE_NAME}-display-field`;
+const LIST_CLASSNAME = `${BASE_NAME}-list`;
+const HIGHLIGHT_CLASSNAME = "highlight-component";
+const LIST_ITEM_CLASSNAME = `${LIST_CLASSNAME}-item`;
+const labelCount = (arr, label) => {
+  const count = arr.reduce((n, x) => n + (x === label), 0);
+  return count > 1 ? `(${count})` : "";
+};
+const fieldLabelPaths = ["config.label", "config.controlId"];
+const rowLabelPaths = ["config.legend", "name"];
+const componentLabelPaths = [...fieldLabelPaths, ...rowLabelPaths];
+const resolveFieldLabel = (field2) => {
+  return fieldLabelPaths.reduce((acc, path) => {
+    if (!acc) {
+      return field2.get(path);
+    }
+    return acc;
+  }, null);
+};
+const resolveComponentLabel = (component) => {
+  return componentLabelPaths.reduce((acc, path) => {
+    if (!acc) {
+      return component.get(path);
+    }
+    return acc;
+  }, null) || toTitleCase(component.name);
+};
+const labelResolverMap = /* @__PURE__ */ new Map([
+  ["condition.source", resolveFieldLabel],
+  ["if.condition.source", resolveFieldLabel],
+  ["if.condition.target", resolveFieldLabel],
+  ["then.condition.target", resolveComponentLabel],
+  ["condition.target", resolveComponentLabel]
+]);
+const getComponentLabel = ({ id, ...component }, key) => {
+  const { name: name2, label } = component;
+  if (!name2) {
+    return label;
+  }
+  const labelResolver = labelResolverMap.get(key);
+  const resolvedLabel = labelResolver(component);
+  return resolvedLabel;
+};
+const makeOptionData = ({ selectedId, ...option2 }) => {
+  if (option2.value === selectedId) {
+    option2.selected = true;
+  }
+  return option2;
+};
+const realTarget = (target) => {
+  if (!target.classList.contains(LIST_ITEM_CLASSNAME)) {
+    target = target.parentElement;
+  }
+  return target;
+};
+const makeListItem = ({ value, textLabel, htmlLabel, componentType: componentType2, depth = 0 }, autocomplete) => {
+  const optionConfig = {
+    tag: "li",
+    children: htmlLabel,
+    dataset: {
+      value,
+      label: textLabel
+    },
+    className: [LIST_ITEM_CLASSNAME, `${LIST_ITEM_CLASSNAME}-depth-${depth}`, `component-type-${componentType2}`],
+    action: {
+      mousedown: ({ target }) => {
+        target = realTarget(target);
+        autocomplete.setValue(target);
+        autocomplete.selectOption(target);
+        autocomplete.hideList();
+      },
+      mouseover: ({ target }) => {
+        target = realTarget(target);
+        autocomplete.removeHighlight();
+        autocomplete.highlightComponent(target);
+      },
+      mouseleave: ({ target }) => {
+        target = realTarget(target);
+        autocomplete.removeHighlight();
+      }
+    }
+  };
+  return dom.create(optionConfig);
+};
+const makeComponentOptionsList = (component, autocomplete) => {
+  const items = component.data.options.map((option2, index2) => {
+    const value = `${component.address}.options[${index2}]`;
+    const textLabel = option2.label;
+    const htmlLabel = option2.label;
+    return makeListItem({ value, textLabel, htmlLabel, componentType: "option", depth: 1 }, autocomplete);
+  });
+  const list = dom.create({
+    tag: "ul",
+    attrs: { className: [LIST_CLASSNAME, "options-list"] },
+    children: items
+  });
+  return list;
+};
+const componentOptions = (autocomplete) => {
+  const selectedId = autocomplete.value;
+  const labels = [];
+  const flatList = components.flatList();
+  const options = Object.entries(flatList).reduce((acc, [value, component]) => {
+    const label = getComponentLabel(component, autocomplete.key);
+    if (label) {
+      const componentType2 = component.name;
+      const typeConfig = {
+        tag: "span",
+        content: ` ${toTitleCase(componentType2)}`,
+        className: "component-type"
+      };
+      const labelKey = `${componentType2}.${label}`;
+      labels.push(labelKey);
+      const count = labelCount(labels, labelKey);
+      const countConfig = {
+        tag: "span",
+        content: count,
+        className: "component-label-count"
+      };
+      const htmlLabel = [`${label} `, countConfig, typeConfig];
+      const textLabel = [label, count].join(" ").trim();
+      if (component.isCheckable) {
+        const componentOptionsList = makeComponentOptionsList(component, autocomplete);
+        htmlLabel.push(componentOptionsList);
+      }
+      const optionData = makeOptionData({ value, textLabel, htmlLabel, componentType: componentType2, selectedId });
+      acc.push(makeListItem(optionData, autocomplete));
+    }
+    return acc;
+  }, []);
+  return options;
+};
+class Autocomplete {
+  /**
+   * Create an Autocomplete instance
+   * @param {String} key - The key for the autocomplete instance
+   * @param {String} value - The initial value for the autocomplete input
+   */
+  constructor({ key, value, className, onChange = noop }) {
+    __publicField(this, "lastCache", Date.now());
+    __publicField(this, "optionsCache", null);
+    this.key = key;
+    this.className = [className || this.key.replace(/\./g, "-")].flat();
+    this.value = value;
+    this.onChange = onChange || noop;
+    this.events = [];
+    this.build();
+  }
+  createProxy() {
+    return new Proxy(this, {
+      get(target, prop) {
+        if (prop in target) {
+          return target[prop];
+        }
+        if (prop in target.dom) {
+          const value = target.dom[prop];
+          return typeof value === "function" ? value.bind(target.dom) : value;
+        }
+        return void 0;
+      },
+      set(target, prop, value) {
+        if (prop in target) {
+          target[prop] = value;
+        } else {
+          target.dom[prop] = value;
+        }
+        return true;
+      }
+    });
+  }
+  get isAddress() {
+    return isAddress(this.value);
+  }
+  get valueComponent() {
+    return isAddress(this.value) && components.getAddress(this.value);
+  }
+  /**
+   * build a text DOM element, supporting other jquery text form-control's
+   * @return {Object} DOM Element to be injected into the form.
+   */
+  build() {
+    const keyboardNav = (e) => {
+      const list = this.list;
+      const activeOption = this.getActiveOption();
+      const keyCodeMap = /* @__PURE__ */ new Map([
+        [
+          38,
+          // up arrow
+          () => {
+            const previous = this.getPreviousOption(activeOption);
+            if (previous) {
+              this.selectOption(previous);
+            }
+          }
+        ],
+        [
+          40,
+          // down arrow
+          () => {
+            const next = this.getNextOption(activeOption);
+            if (next) {
+              this.selectOption(next);
+            }
+          }
+        ],
+        [
+          13,
+          // enter
+          () => {
+            if (activeOption) {
+              this.selectOption(activeOption);
+              this.setValue(activeOption);
+              if (list.style.display === "none") {
+                this.showList(activeOption);
+              } else {
+                this.hideList();
+              }
+            }
+            e.preventDefault();
+          }
+        ],
+        [
+          27,
+          // escape
+          () => {
+            this.hideList();
+          }
+        ]
+      ]);
+      let direction = keyCodeMap.get(e.keyCode);
+      if (!direction) {
+        direction = () => false;
+      }
+      return direction();
+    };
+    const autoCompleteInputActions = {
+      focus: ({ target }) => {
+        this.updateOptions();
+        target.parentElement.classList.add(`${BASE_NAME}-focused`);
+        const filteredOptions = dom.toggleElementsByStr(
+          this.list.querySelectorAll(`.${LIST_ITEM_CLASSNAME}-depth-0`),
+          target.value
+        );
+        target.addEventListener("keydown", keyboardNav);
+        const selectedOption = this.list.querySelector(".active-option") || filteredOptions[0];
+        this.showList(selectedOption);
+      },
+      blur: ({ target }) => {
+        target.parentElement.classList.remove(`${BASE_NAME}-focused`);
+        target.removeEventListener("keydown", keyboardNav);
+        this.hideList();
+      },
+      input: (evt) => {
+        const { value } = evt.target;
+        const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll("li"), value);
+        if (value.length === 0) {
+          this.clearValue();
+        }
+        if (filteredOptions.length === 0) {
+          this.hideList();
+        } else {
+          const activeOption = this.getActiveOption() || filteredOptions[0];
+          this.showList(activeOption);
+        }
+        this.setValue({ dataset: { label: value, value } });
+      }
+    };
+    this.displayField = dom.create({
+      tag: "input",
+      autocomplete: "off",
+      action: autoCompleteInputActions,
+      attrs: {
+        type: "text",
+        className: DISPLAY_FIELD_CLASSNAME,
+        value: this.label || this.value,
+        placeholder: mi18n.get(`${this.key}.placeholder`)
+      }
+    });
+    this.hiddenField = dom.create({
+      tag: "input",
+      attrs: { type: "hidden", className: BASE_NAME, value: this.value }
+    });
+    this.list = dom.create({
+      tag: "ul",
+      attrs: { className: LIST_CLASSNAME }
+    });
+    this.clearButton = dom.create({
+      tag: "span",
+      content: dom.icon("remove"),
+      className: "clear-button hidden",
+      action: { click: () => this.clearValue() }
+    });
+    this.dom = dom.create({
+      children: [this.displayField, this.clearButton, this.hiddenField],
+      className: [BASE_NAME, this.className].flat(),
+      action: {
+        onRender: (element) => {
+          this.stage = element.closest(".formeo-stage");
+          if (this.value) {
+            this.displayField.value = this.label;
+          }
+          this.clearButton.classList.toggle("hidden", !this.value.length);
+        }
+      }
+    });
+    return this.dom;
+  }
+  get label() {
+    if (!isAddress(this.value)) {
+      return this.value;
+    }
+    const component = this.value && components.getAddress(this.value);
+    return component && getComponentLabel(component, `${this.key}`) || this.value;
+  }
+  updateOptions() {
+    let options = this.optionsCache;
+    const now = Date.now();
+    if (now - this.lastCache > ANIMATION_SPEED_SLOW * 5 || !options) {
+      dom.empty(this.list);
+      options = this.generateOptions();
+      this.lastCache = now;
+    }
+    if (!this.list.children.length) {
+      this.list.append(...options);
+    }
+  }
+  generateOptions() {
+    this.optionsCache = componentOptions(this);
+    return this.optionsCache;
+  }
+  setListPosition() {
+    const { offsetHeight, offsetWidth } = this.displayField;
+    const containerRect = this.displayField.closest(".formeo-stage").getBoundingClientRect();
+    const triggerRect = this.displayField.getBoundingClientRect();
+    const listStyle = {
+      position: "absolute",
+      top: `${triggerRect.y + offsetHeight - containerRect.y}px`,
+      left: `${triggerRect.x + window.scrollX - containerRect.x + 2}px`,
+      width: `${offsetWidth}px`
+    };
+    Object.assign(this.list.style, listStyle);
+  }
+  /**
+   * Shows autocomplete list. Automatically selects 'selectedOption'
+   * @param {Object} list - list of autocomplete options
+   * @param {Object} selectedOption - option to be selected
+   */
+  showList(selectedOption, list = this.list) {
+    if (!this.stage.contains(this.list)) {
+      this.stage.appendChild(this.list);
+    }
+    this.setListPosition();
+    this.selectOption(selectedOption);
+    animate.slideDown(list, ANIMATION_SPEED_FAST);
+  }
+  /**
+   * Hides autocomplete list and deselects all the options
+   * @param {Object} list - list of autocomplete options
+   */
+  hideList(list = this.list) {
+    animate.slideUp(list, ANIMATION_SPEED_FAST);
+    this.removeHighlight();
+    if (this.stage.contains(this.list)) {
+      this.stage.removeChild(this.list);
+    }
+  }
+  /**
+   * Returns first option from autocomplete list with 'active-option' class
+   * @param {Object} list - list of autocomplete options
+   * @return {Object} first list option with 'active-option' class
+   */
+  getActiveOption(list = this.list) {
+    const activeOption = list.querySelector(".active-option");
+    if ((activeOption == null ? void 0 : activeOption.style.display) !== "none") {
+      return activeOption;
+    }
+    return null;
+  }
+  /**
+   * Previous next option to the current option
+   * @param {Object} current - currently selected option
+   * @return {Object} previous option to the current option or null if previous doesn't exist
+   */
+  getPreviousOption(current) {
+    let previous = current;
+    do {
+      previous = previous ? previous.previousSibling : null;
+    } while (previous != null && previous.style.display === "none");
+    return previous;
+  }
+  /**
+   * Returns next option to the current option
+   * @param {Object} current - currently selected option
+   * @return {Object} next option to the current option or null if next doesn't exist
+   */
+  getNextOption(current) {
+    let next = current;
+    do {
+      next = next ? next.nextSibling : null;
+    } while (next != null && next.style.display === "none");
+    return next;
+  }
+  /**
+   * Selects option in autocomplete list. Removes class 'active-option' from all options
+   * and then adds that class to 'selected' option. If 'selected' is null then no option is selected
+   * @param {Object} list - list of autocomplete options
+   * @param {Object} selectedOption - option - 'li' element - to be selected in autocomplete list
+   */
+  selectOption(selectedOption, list = this.list) {
+    var _a;
+    const options = list.querySelectorAll("li");
+    for (const option2 of options) {
+      const {
+        dataset: { value }
+      } = option2;
+      option2.classList.remove("active-option");
+      if (isAddress(value)) {
+        const component = components.getAddress(value);
+        (_a = component == null ? void 0 : component.dom) == null ? void 0 : _a.classList.remove(HIGHLIGHT_CLASSNAME);
+      }
+    }
+    if (selectedOption) {
+      selectedOption.classList.add("active-option");
+      this.highlightComponent(selectedOption);
+    }
+  }
+  /**
+   * removes the highlight from
+   */
+  removeHighlight() {
+    const highlightedComponents = document.getElementsByClassName(HIGHLIGHT_CLASSNAME);
+    for (const component of highlightedComponents) {
+      component.classList.remove(HIGHLIGHT_CLASSNAME);
+    }
+  }
+  /**
+   * Highlight a component that maps to the option
+   */
+  highlightComponent(option2) {
+    var _a;
+    const {
+      dataset: { value }
+    } = option2;
+    if (isAddress(value)) {
+      const { componentAddress, isOptionAddress, optionIndex } = splitAddress(value).reduce(
+        (acc, cur) => {
+          if (cur === "options") {
+            acc.isOptionAddress = true;
+            return acc;
+          }
+          if (!acc.isOptionAddress) {
+            acc.componentAddress.push(cur);
+            return acc;
+          }
+          acc.optionIndex = +cur;
+          return acc;
+        },
+        {
+          componentAddress: [],
+          optionIndex: null,
+          isOptionAddress: false
+        }
+      );
+      const component = components.getAddress(componentAddress);
+      if (component == null ? void 0 : component.dom) {
+        component.dom.classList.add(HIGHLIGHT_CLASSNAME);
+        if (isOptionAddress) {
+          const checkboxes = component.dom.querySelectorAll(".field-preview .f-checkbox, .field-preview .f-radio");
+          (_a = checkboxes[optionIndex]) == null ? void 0 : _a.classList.add(HIGHLIGHT_CLASSNAME);
+        }
+      }
+    }
+  }
+  /**
+   * Clears the autocomplete values and fires onChange event
+   */
+  clearValue() {
+    this.selectOption(null);
+    this.setValue({ dataset: { label: "", value: "" } });
+    this.displayField.focus();
+  }
+  /**
+   * Sets the hidden and display values
+   * @param {String} label display text
+   * @param {String} value display text
+   */
+  setValue(target) {
+    var _a;
+    const { label, value } = target.dataset;
+    this.displayField.value = label;
+    this.hiddenField.value = value;
+    this.value = value;
+    this.clearButton.classList.toggle("hidden", !value.length);
+    (_a = this.onChange) == null ? void 0 : _a.call(this, { target: this.hiddenField });
+  }
+}
+function inputConfigBase({ key, value, type: type2 = "text", checked }) {
+  const config2 = {
+    tag: "input",
+    attrs: {
+      type: type2,
+      value,
+      placeholder: mi18n.get(`${key}.placeholder`) || toTitleCase(key)
+    },
+    className: [key.replace(/\./g, "-")],
+    config: {}
+  };
+  if (checked) {
+    config2.attrs.checked = true;
+  }
+  return config2;
+}
+function labelHelper(key) {
+  const labelText = mi18n.get(key);
+  if (labelText) {
+    return labelText;
+  }
+  const splitKey = key.split(".");
+  return mi18n.get(splitKey[splitKey.length - 1]);
+}
+const ITEM_INPUT_TYPE_MAP = {
+  autocomplete: (...args) => new Autocomplete(...args).createProxy(),
+  string: ({ key, value }) => inputConfigBase({ key, value }),
+  boolean: ({ key, value }) => {
+    const type2 = key === "selected" ? "radio" : "checkbox";
+    return inputConfigBase({ key, value, type: type2, checked: !!value });
+  },
+  number: ({ key, value }) => inputConfigBase({ key, value, type: "number" }),
+  array: ({ key, value }) => {
+    return {
+      tag: "select",
+      attrs: {
+        placeholder: labelHelper(`placeholder.${key}`)
+      },
+      className: [key.replace(/\./g, "-")],
+      options: value
+    };
+  },
+  object: (valObj) => {
+    return Object.entries(valObj).map(([key, value]) => {
+      return ITEM_INPUT_TYPE_MAP[dom.childType(value)]({ key, value });
+    });
+  }
+};
+const INPUT_TYPE_ACTION = {
+  boolean: (dataKey, field2) => ({
+    click: ({ target }) => {
+      if (target.type === "radio") {
+        const updatedOptions = field2.data.options.map((option2) => ({ ...option2, selected: false }));
+        field2.set("options", updatedOptions);
+      }
+      field2.set(dataKey, target.checked);
+      field2.updatePreview();
+    }
+  }),
+  string: (dataKey, field2) => ({
+    input: ({ target: { value } }) => {
+      field2.set(dataKey, value);
+      field2.debouncedUpdatePreview();
+    }
+  }),
+  number: (dataKey, field2) => ({
+    input: ({ target: { value } }) => {
+      field2.set(dataKey, Number(value));
+      field2.debouncedUpdatePreview();
+    }
+  }),
+  array: (dataKey, field2) => ({
+    change: ({ target: { value } }) => {
+      field2.set(dataKey, value);
+      field2.debouncedUpdatePreview();
+    }
+  }),
+  object: () => ({})
+};
+const hiddenPropertyClassname = "hidden-property";
+const hiddenOptionClassname = "hidden-option";
+const optionsAddressRegex = /\.options\[\d+\]$/;
+const optionDataMap = {
+  "if-sourceProperty": objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
+  "if-targetProperty": objectFromStringArray(PROPERTY_OPTIONS),
+  "then-targetProperty": objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
+  ...Object.entries(OPERATORS).reduce((acc, [key, value]) => {
+    acc[`if-${key}`] = value;
+    acc[`then-${key}`] = value;
+    return acc;
+  }, {})
+};
+const segmentTypes = {
+  assignment: createConditionSelect,
+  comparison: createConditionSelect,
+  logical: createConditionSelect,
+  source: ({ key: keyArg, value, onChange, conditionType }) => {
+    const componentInput = ITEM_INPUT_TYPE_MAP.autocomplete({
+      key: `${conditionType}.condition.${keyArg}`,
+      value,
+      onChange,
+      className: `condition-${keyArg}`
+    });
+    return componentInput;
+  },
+  sourceProperty: createConditionSelect,
+  targetProperty: createConditionSelect,
+  target: (args) => segmentTypes.source(args),
+  value: ({ key, value, onChange }, _conditionValues) => {
+    const valueField = ITEM_INPUT_TYPE_MAP.string({ key: `condition.${key}`, value });
+    valueField.action = {
+      input: onChange
+    };
+    return valueField;
+  }
+};
+function getOptionConfigs({ key: fieldName, value: fieldValue, conditionType }) {
+  const optionDataKey = `${conditionType}-${fieldName}`;
+  const data = optionDataMap[optionDataKey];
+  return Object.entries(data || {}).map(
+    ([key, optionValue]) => makeOptionDomConfig({ fieldName, fieldValue, key, optionValue })
+  );
+}
+function makeOptionDomConfig({ fieldName, fieldValue, key, optionValue }) {
+  return {
+    label: mi18n.get(`${fieldName}.${key}`) || toTitleCase(key).toLowerCase(),
+    value: optionValue,
+    selected: optionValue === fieldValue
+  };
+}
+function createConditionSelect({ key, value, onChange, conditionType }) {
+  const optionConfigs = getOptionConfigs({ key, value, conditionType });
+  const propertyFieldConfig = ITEM_INPUT_TYPE_MAP.array({ key: `condition.${key}`, value: optionConfigs });
+  propertyFieldConfig.action = {
+    change: onChange
+    // onRender: elem => onChangeCondition({ target: elem }),
+  };
+  return propertyFieldConfig;
+}
+const isVisible$1 = (elem) => {
+  return !(elem == null ? void 0 : elem.classList.contains(hiddenPropertyClassname));
+};
+const fieldVisibilityMap = {
+  sourceProperty: (fields2) => {
+    const source = fields2.get("source");
+    const sourceProperty = fields2.get("sourceProperty");
+    const sourceHasValue = !!source.value;
+    const sourceIsCheckable = !!source.value.match(optionsAddressRegex);
+    toggleCheckablePropertyOptions(sourceIsCheckable, sourceProperty);
+    return !sourceHasValue;
+  },
+  comparison: (fields2) => {
+    const source = fields2.get("source");
+    const sourceProperty = fields2.get("sourceProperty");
+    const sourceHasValue = !!source.value;
+    const sourceValueIsCheckable = !!source.value.match(optionsAddressRegex);
+    return !sourceHasValue || sourceValueIsCheckable || sourceProperty.value !== "value";
+  },
+  assignment: (fields2) => {
+    const target = fields2.get("target");
+    const targetProperty = fields2.get("targetProperty");
+    const targetHasValue = !!target.value;
+    return !targetHasValue || targetProperty.value.startsWith("is");
+  },
+  targetProperty: (fields2) => {
+    const target = fields2.get("target");
+    const targetProperty = fields2.get("targetProperty");
+    const targetIsCheckable = !!target.value.match(optionsAddressRegex);
+    toggleCheckablePropertyOptions(targetIsCheckable, targetProperty);
+    return !isInternalAddress(target.value);
+  },
+  target: (fields2) => {
+    const source = fields2.get("source");
+    const sourceProperty = fields2.get("sourceProperty");
+    const sourceHasValue = !!(source == null ? void 0 : source.value);
+    if (sourceProperty && !sourceHasValue) {
+      return true;
+    }
+    return sourceProperty && (sourceProperty == null ? void 0 : sourceProperty.value) !== "value";
+  },
+  value: (fields2) => {
+    const target = fields2.get("target");
+    const targetProperty = fields2.get("targetProperty");
+    if (targetProperty === void 0) {
+      return false;
+    }
+    if (target && !target.value) {
+      return true;
+    }
+    if (!isVisible$1(fields2.get("comparison"))) {
+      return true;
+    }
+    if (targetProperty.value === isCheckedValue) {
+      return true;
+    }
+    return targetProperty.value.startsWith("is");
+  }
+};
+const toggleFieldVisibility = (fields2) => {
+  var _a;
+  for (const [fieldName, field2] of fields2) {
+    const shouldHide = !!((_a = fieldVisibilityMap[fieldName]) == null ? void 0 : _a.call(fieldVisibilityMap, fields2)) || false;
+    field2.classList.toggle(hiddenPropertyClassname, shouldHide);
+  }
+};
+const isCheckedValue = "isChecked";
+const isCheckedOption = (option2) => option2.value.endsWith("Checked");
+const toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
+  var _a;
+  if (isCheckable && isCheckedOption(propertyField)) {
+    return null;
+  }
+  const options = Array.from(propertyField.querySelectorAll("option"));
+  const hiddenOptionValues = [];
+  for (const option2 of options) {
+    const optionIsChecked = isCheckedOption(option2);
+    const shouldHide = isCheckable ? !optionIsChecked : optionIsChecked;
+    if (shouldHide) {
+      hiddenOptionValues.push(option2.value);
+    }
+    option2.classList.toggle(hiddenOptionClassname, shouldHide);
+  }
+  if (hiddenOptionValues.includes(propertyField.value)) {
+    propertyField.value = isCheckable ? isCheckedValue : ((_a = options.find((opt) => !isCheckedOption(opt))) == null ? void 0 : _a.value) || propertyField.value;
+  }
+};
+function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
+  return fieldOrder.reduce((acc, fieldName) => {
+    if (conditionValues[fieldName] !== void 0) {
+      acc.push([fieldName, conditionValues[fieldName]]);
+    }
+    return acc;
+  }, []);
+}
+class Condition {
+  constructor({ conditionValues, conditionType, conditionCount, index: index2 }, parent) {
+    __publicField(this, "updateDataDebounced", debounce((evtData) => {
+      events.formeoUpdated(evtData);
+      components.setAddress(evtData.dataPath, evtData.value);
+    }));
+    __publicField(this, "onChangeCondition", ({ key, target }) => {
+      const evtData = {
+        changedProperty: key,
+        dataPath: this.address,
+        value: this.value,
+        src: target
+      };
+      toggleFieldVisibility(this.fields);
+      this.updateDataDebounced(evtData);
+    });
+    this.values = new Map(orderConditionValues(conditionValues));
+    this.conditionType = conditionType;
+    this.parent = parent;
+    this.baseAddress = `${parent.address}.${conditionType}`;
+    this.fields = /* @__PURE__ */ new Map();
+    this.conditionCount = conditionCount;
+    this.index = index2;
+    this.dom = this.generateDom();
+  }
+  setConditionIndex(index2) {
+    this.index = index2;
+  }
+  get address() {
+    return `${this.baseAddress}[${this.index}]`;
+  }
+  destroy() {
+    const conditions = components.getAddress(this.baseAddress);
+    conditions.splice(this.index, 1);
+    components.setAddress(this.baseAddress, conditions);
+    animate.slideUp(this.dom, ANIMATION_SPEED_FAST, () => {
+      this.dom.remove();
+    });
+  }
+  label() {
+    if (this.index) {
+      return null;
+    }
+    return {
+      tag: "label",
+      className: `condition-label ${this.conditionType}-condition-label`,
+      content: mi18n.get(`condition.type.${this.conditionType}`)
+    };
+  }
+  generateDom() {
+    const fieldsDom = [];
+    for (const [key, value] of this.values) {
+      const onChange = (evt) => this.onChangeCondition({ key, target: evt.target });
+      const fieldArgs = { key, value, conditionType: this.conditionType, onChange };
+      const conditionField = segmentTypes[key](fieldArgs, this.values);
+      const conditionFieldDom = conditionField.dom || dom.create(conditionField);
+      this.fields.set(key, conditionField.dom ? conditionField : conditionFieldDom);
+      fieldsDom.push(conditionFieldDom);
+    }
+    const conditionRowChildren = [this.label(), ...fieldsDom, ...this.generateConditionTypeActionButtons()];
+    const conditionTypeRow = {
+      children: conditionRowChildren,
+      className: `f-condition-row ${this.conditionType}-condition-row display-none`,
+      action: {
+        onRender: (_elem) => {
+          this.processUiState();
+        }
+      }
+    };
+    return dom.create(conditionTypeRow);
+  }
+  generateConditionTypeActionButtons() {
+    const actionButtons = [];
+    const manageConditionClassname = "manage-condition-type";
+    const manageConditionActionClassname = (action) => `${action}-condition-type`;
+    const removeConditionType = dom.btnTemplate({
+      title: mi18n.get(`remove${this.conditionType}Condition`),
+      className: [manageConditionClassname, manageConditionActionClassname("remove")],
+      content: dom.icon("minus"),
+      action: {
+        click: () => this.destroy(),
+        mouseover: (_evt) => {
+          this.dom.classList.add("to-remove");
+        },
+        mouseout: (_evt) => {
+          this.dom.classList.remove("to-remove");
+        }
+      }
+    });
+    actionButtons.push(removeConditionType);
+    const addConditionType = dom.btnTemplate({
+      title: mi18n.get(`add${this.conditionType}Condition`),
+      className: [manageConditionClassname, manageConditionActionClassname("add")],
+      content: dom.icon("plus"),
+      action: {
+        click: () => {
+          const condition = this.parent.addConditionType(this.conditionType);
+          const evtData = {
+            changedProperty: null,
+            dataPath: condition.address,
+            value: condition.value,
+            src: condition.dom
+          };
+          this.updateDataDebounced(evtData);
+        }
+      }
+    });
+    actionButtons.push(addConditionType);
+    return actionButtons;
+  }
+  get value() {
+    return Array.from(this.fields).reduce((acc, [key, field2]) => {
+      acc[key] = field2.value;
+      return acc;
+    }, {});
+  }
+  processUiState() {
+    toggleFieldVisibility(this.fields);
+    this.dom.classList.remove("display-none");
+  }
+}
+const panelDataKeyMap = /* @__PURE__ */ new Map([
+  ["attrs", ({ itemKey }) => itemKey],
+  ["options", ({ itemKey, key }) => `${itemKey}.${key}`]
+]);
+const toggleOptionMultiSelect = (isMultiple, field2) => {
+  if (field2.controlId === "select") {
+    const optionsPanel = field2.editPanels.get("options");
+    const [fromCheckedType, toCheckedType] = isMultiple ? CHECKED_TYPES : REVERSED_CHECKED_TYPES;
+    const updatedOptionsData = optionsPanel.data.map(({ [fromCheckedType]: val, ...option2 }) => ({
+      [toCheckedType]: val,
+      ...option2
+    }));
+    optionsPanel.setData(updatedOptionsData);
+  }
+};
+const itemInputActions = /* @__PURE__ */ new Map([
+  [
+    "attrs-multiple",
+    (editPanelItem) => ({
+      change: ({ target }) => {
+        if (editPanelItem.field.controlId === "select") {
+          toggleOptionMultiSelect(target.checked, editPanelItem.field);
+        }
+      }
+    })
+  ]
+]);
+class EditPanelItem {
+  /**
+   * Set defaults and load panelData
+   * @param  {String} itemKey attribute name or options index
+   * @param  {Object} itemData existing field ID
+   * @param  {String} field
+   * @return {Object} field object
+   */
+  constructor({ key, index: index2, field: field2, panel, data }) {
+    __publicField(this, "addConditionType", (conditionType, conditionArg) => {
+      const conditionTypeWrap = this.findOrCreateConditionTypeWrap(conditionType);
+      let condition = conditionArg;
+      if (!condition) {
+        const [newConditionData] = CONDITION_TEMPLATE()[conditionType];
+        const conditionCount = conditionTypeWrap.children.length;
+        if (conditionType === conditionTypeIf) {
+          newConditionData.logical = "||";
+        }
+        condition = { conditionValues: newConditionData, conditionCount, index: conditionCount };
+      }
+      const conditionField = new Condition({ conditionType, ...condition }, this);
+      conditionTypeWrap.appendChild(conditionField.dom);
+      return conditionField;
+    });
+    __publicField(this, "removeConditionType", (conditionType, index2) => {
+      const conditionTypeWrap = this.conditionTypeWrap.get(conditionType);
+      const conditionField = conditionTypeWrap.children[index2];
+      conditionField.destroy();
+      conditionTypeWrap.removeChild(conditionField.dom);
+    });
+    __publicField(this, "generateConditionFields", (conditionType, conditionVals) => {
+      this.conditions = /* @__PURE__ */ new Map();
+      conditionVals.forEach((condition, index2) => {
+        const conditionField = this.addConditionType(conditionType, {
+          index: index2,
+          conditionCount: conditionVals.length,
+          conditionValues: condition
+        });
+        this.conditions.set(index2, conditionField);
+      });
+      return this.findOrCreateConditionTypeWrap(conditionType);
+    });
+    this.field = field2;
+    this.itemKey = key;
+    this.itemIndex = index2;
+    this.panel = panel;
+    this.panelName = panel.name;
+    this.isDisabled = field2.isDisabledProp(key, this.panelName);
+    this.isHidden = this.isDisabled && field2.config.panels[this.panelName].hideDisabled;
+    this.isLocked = field2.isLockedProp(key, this.panelName);
+    this.address = `${field2.indexName}.${field2.id}.${key}`;
+    this.itemSlug = slugifyAddress(key);
+    this.conditionTypeWrap = /* @__PURE__ */ new Map();
+    if (data !== void 0 && this.field.get(this.itemKey) === void 0) {
+      this.field.set(this.itemKey, data);
+    }
+    const liClassList = [`field-${this.itemSlug}`, "prop-wrap"];
+    if (this.isHidden) {
+      liClassList.push("hidden-property");
+    }
+    this.dom = dom.create({
+      tag: "li",
+      className: liClassList,
+      children: { className: "component-prop", children: [this.itemInputs(), this.itemControls] }
+    });
+  }
+  get itemValues() {
+    const val = this.field.get(this.itemKey);
+    if ((val == null ? void 0 : val.constructor) === Object) {
+      return orderObjectsBy(Object.entries(val), CHECKED_TYPES, "0");
+    }
+    return [[this.itemKey, val]];
+  }
+  findOrCreateConditionTypeWrap(conditionType) {
+    let conditionTypeWrap = this.conditionTypeWrap.get(conditionType);
+    if (conditionTypeWrap) {
+      return conditionTypeWrap;
+    }
+    conditionTypeWrap = dom.create({
+      className: `type-conditions-wrap ${conditionType}-conditions-wrap`
+    });
+    this.conditionTypeWrap.set(conditionType, conditionTypeWrap);
+    return conditionTypeWrap;
+  }
+  itemInputs() {
+    const inputs = dom.create({
+      className: `${this.panelName}-prop-inputs prop-inputs f-input-group`,
+      children: this.itemValues.map(([key, val]) => {
+        if (this.panelName === "conditions") {
+          return this.generateConditionFields(key, val);
+        }
+        return this.itemInput(key, val);
+      })
+    });
+    if (this.inputs) {
+      this.inputs.replaceWith(inputs);
+    }
+    this.inputs = inputs;
+    return inputs;
+  }
+  get itemControls() {
+    if (this.isLocked) {
+      const controls2 = {
+        className: `${this.panelName}-prop-controls prop-controls`,
+        content: []
+      };
+      return controls2;
+    }
+    const remove2 = {
+      tag: "button",
+      attrs: {
+        type: "button",
+        className: "prop-remove prop-control"
+      },
+      action: {
+        click: () => {
+          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, (elem) => {
+            this.field.remove(this.itemKey);
+            elem.remove();
+            this.panel.updateProps();
+          });
+        },
+        mouseover: (_evt) => {
+          this.dom.classList.add("to-remove");
+        },
+        mouseout: (_evt) => {
+          this.dom.classList.remove("to-remove");
+        }
+      },
+      content: dom.icon("remove")
+    };
+    const controls = {
+      className: `${this.panelName}-prop-controls prop-controls`,
+      content: [remove2]
+    };
+    return controls;
+  }
+  itemInput(key, value) {
+    var _a, _b;
+    const valType = dom.childType(value) || "string";
+    const dataKey = ((_a = panelDataKeyMap.get(this.panelName)) == null ? void 0 : _a({ itemKey: this.itemKey, key })) || this.itemKey;
+    const labelKey = dataKey.split(".").filter(Number.isNaN).join(".") || key;
+    const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value });
+    const name2 = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, "-$1")}`;
+    const config2 = {
+      label: this.panelName !== "options" && (labelHelper(labelKey) || toTitleCase(labelKey)),
+      labelAfter: false
+    };
+    const attrs = {
+      name: baseConfig.attrs.type === "checkbox" ? `${name2}[]` : name2
+    };
+    attrs.disabled = this.isDisabled;
+    attrs.locked = this.isLocked;
+    const itemInputAction = (_b = itemInputActions.get(this.itemSlug)) == null ? void 0 : _b(this);
+    const action = mergeActions(INPUT_TYPE_ACTION[valType](dataKey, this.field), itemInputAction || {});
+    const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value }), { action, attrs, config: config2 });
+    if (CHECKED_TYPES.includes(key)) {
+      return {
+        className: "f-addon",
+        children: inputConfig
+      };
+    }
+    return inputConfig;
+  }
+}
+const addAttributeActions = {
+  multiple: (val, field2) => {
+    toggleOptionMultiSelect(!!val, field2);
+  }
+};
+class EditPanel {
+  /**
+   * Set defaults and load panelData
+   * @param  {Object} panelData existing field ID
+   * @param  {String} panelName name of panel
+   * @param  {String} component
+   * @return {Object} field object
+   */
+  constructor(panelData, panelName, component) {
+    /**
+     * Add a new attribute to the attrs panels
+     * @param {String} attr
+     * @param {String|Array} val
+     */
+    __publicField(this, "addAttribute", (attr, valArg) => {
+      var _a;
+      let val = valArg;
+      const safeAttr = safeAttrName(attr);
+      const itemKey = `attrs.${safeAttr}`;
+      if (!mi18n.current[itemKey]) {
+        mi18n.put(itemKey, capitalize(attr));
+      }
+      if (typeof val === "string" && ["true", "false"].includes(val)) {
+        val = JSON.parse(val);
+      }
+      this.component.set(`attrs.${attr}`, val);
+      (_a = addAttributeActions[safeAttr]) == null ? void 0 : _a.call(addAttributeActions, val, this.component);
+      const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`);
+      const newAttr = new EditPanelItem({
+        key: itemKey,
+        data: { [safeAttr]: val },
+        field: this.component,
+        panel: this
+      });
+      if (existingAttr) {
+        existingAttr.replaceWith(newAttr.dom);
+      } else {
+        this.props.appendChild(newAttr.dom);
+      }
+      this.component.resizePanelWrap();
+    });
+    /**
+     * Add option to options panel
+     */
+    __publicField(this, "addOption", () => {
+      const controlId = this.component.data.config.controlId;
+      const fieldOptionData = this.component.get("options");
+      const type2 = controlId === "select" ? "option" : controlId;
+      const newOptionLabel = mi18n.get("newOptionLabel", { type: type2 }) || "New Option";
+      const itemKey = `${this.name}[${this.data.length}]`;
+      const lastOptionData = fieldOptionData[fieldOptionData.length - 1];
+      const optionTemplate = fieldOptionData.length ? lastOptionData : {};
+      const itemData = { ...optionTemplate, label: newOptionLabel };
+      if (controlId !== "button") {
+        itemData.value = slugify(newOptionLabel);
+      }
+      const newOption = new EditPanelItem({
+        key: itemKey,
+        data: itemData,
+        field: this.component,
+        index: this.props.children.length,
+        panel: this
+      });
+      this.editPanelItems.push(newOption);
+      this.props.appendChild(newOption.dom);
+      this.component.debouncedUpdatePreview();
+      this.component.resizePanelWrap();
+    });
+    __publicField(this, "addCondition", (evt) => {
+      const currentConditions = this.component.get("conditions");
+      const itemKey = `conditions[${currentConditions.length}]`;
+      const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.component, panel: this });
+      this.props.appendChild(newCondition.dom);
+      this.component.set(itemKey, evt.template);
+      this.component.resizePanelWrap();
+    });
+    /**
+     * Clears all items from the component property based on its type.
+     * Sets the property to an empty array for 'array' type or empty object for other types.
+     * Executes removal action hooks and dispatches a custom removal event.
+     *
+     * @method clearAllItems
+     * @fires CustomEvent#onRemove{PropertyName} - Dispatched when items are cleared
+     * @returns {void}
+     */
+    __publicField(this, "clearAllItems", () => {
+      const emptyValue = this.type === "array" ? [] : {};
+      const removeEvt = {
+        type: this.name,
+        removeAction: () => {
+          this.component.set(this.name, emptyValue);
+          this.updateProps();
+        }
+      };
+      actions.remove[this.name](removeEvt);
+      const eventType = toTitleCase(this.name);
+      const customEvt = new window.CustomEvent(`onRemove${eventType}`, {
+        detail: removeEvt
+      });
+      document.dispatchEvent(customEvt);
+    });
+    this.type = dom.childType(panelData);
+    this.name = panelName;
+    this.component = component;
+    this.panelConfig = this.getPanelConfig(this.data);
+  }
+  get data() {
+    const data = this.component.get(this.name);
+    return this.type === "object" ? Object.entries(data) : data;
+  }
+  getPanelConfig(data) {
+    this.props = this.createProps(data);
+    this.editButtons = this.createEditButtons();
+    return {
+      config: {
+        label: mi18n.get(`panel.label.${this.name}`)
+      },
+      attrs: {
+        className: `${PANEL_CLASSNAME} ${this.name}-panel`
+      },
+      children: [this.props, this.editButtons]
+    };
+  }
+  /**
+   * Generates the edit panel for attrs, meta and options for a fields(s)
+   * @param  {String} panelName
+   * @param  {Object} dataObj   field config object
+   * @return {Object}           formeo DOM config object
+   */
+  createProps(data = this.data) {
+    this.editPanelItems = Array.from(data).map((dataVal, index2) => {
+      const isArray2 = this.type === "array";
+      const key = isArray2 ? `[${index2}]` : `.${dataVal[0]}`;
+      const val = isArray2 ? dataVal : { [dataVal[0]]: dataVal[1] };
+      return new EditPanelItem({
+        key: `${this.name}${key}`,
+        data: val,
+        field: this.component,
+        index: index2,
+        panel: this
+      });
+    });
+    const editGroupConfig = {
+      tag: "ul",
+      attrs: {
+        className: ["edit-group", `${this.component.name}-edit-group`, `${this.component.name}-edit-${this.name}`]
+      },
+      editGroup: this.name,
+      isSortable: this.name === "options",
+      content: this.editPanelItems
+    };
+    return dom.create(editGroupConfig);
+  }
+  updateProps() {
+    const newProps = this.createProps();
+    this.props.replaceWith(newProps);
+    this.props = newProps;
+  }
+  /**
+   * Generate edit buttons for interacting with attrs and options panel
+   * @return {Object} panel edit buttons config
+   */
+  createEditButtons() {
+    const type2 = this.name;
+    const btnTitle = mi18n.get(`panelEditButtons.${type2}`);
+    const addActions = {
+      attrs: this.addAttribute,
+      options: this.addOption,
+      conditions: this.addCondition
+    };
+    const editPanelButtons = [];
+    if (type2 === "conditions") {
+      if (!mi18n.current.clearAll) {
+        mi18n.put("clearAll", "Clear All");
+      }
+      const clearAllBtn = {
+        ...dom.btnTemplate({
+          content: [dom.icon("bin"), mi18n.get("clearAll")],
+          title: mi18n.get("clearAll")
+        }),
+        className: `clear-all-${type2}`,
+        action: {
+          click: () => {
+            this.clearAllItems();
+          }
+        }
+      };
+      editPanelButtons.push(clearAllBtn);
+    }
+    const addBtn = {
+      ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
+      className: `add-${type2}`,
+      action: {
+        click: (evt) => {
+          const addEvt = {
+            btnCoords: dom.coords(evt.target),
+            addAction: addActions[type2]
+          };
+          if (type2 === "attrs") {
+            addEvt.isDisabled = this.component.isDisabledProp;
+            addEvt.isLocked = this.component.isLockedProp;
+            addEvt.message = {
+              attr: mi18n.get(`action.add.${type2}.attr`),
+              value: mi18n.get(`action.add.${type2}.value`)
+            };
+          }
+          const eventType = toTitleCase(type2);
+          const customEvt = new window.CustomEvent(`onAdd${eventType}`, {
+            detail: addEvt
+          });
+          actions.add[type2](addEvt);
+          document.dispatchEvent(customEvt);
+        }
+      }
+    };
+    editPanelButtons.push(addBtn);
+    const panelEditButtonsWrap = {
+      className: "panel-action-buttons",
+      content: editPanelButtons
+    };
+    return panelEditButtonsWrap;
+  }
+  setData(val) {
+    this.data = val;
+    this.component.set(this.name, val);
+    this.updateProps();
+  }
+}
+const defaults$2 = Object.freeze({
+  type: "field",
+  displayType: "slider"
+});
+const getTransition = (val) => {
+  const translateXVal = val ? `${val}px` : 0;
+  return { transform: `translateX(${translateXVal})` };
+};
+class Panels {
+  /**
+   * Panels initial setup
+   * @param  {Object} options Panels config
+   * @return {Object} Panels
+   */
+  constructor(options) {
+    __publicField(this, "toggleTabbedLayout", () => {
+      var _a;
+      this.getPanelDisplay();
+      const isTabbed = this.isTabbed;
+      (_a = this.panelsWrap.parentElement) == null ? void 0 : _a.classList.toggle("tabbed-panels", isTabbed);
+      if (isTabbed) {
+        this.panelNav.removeAttribute("style");
+      }
+      return isTabbed;
+    });
+    /**
+     * Resize the panel after its contents change in height
+     * @return {String} panel's height in pixels
+     */
+    __publicField(this, "resizePanels", () => {
+      this.toggleTabbedLayout();
+    });
+    this.opts = merge(defaults$2, options);
+    this.panelDisplay = this.opts.displayType;
+    this.activePanelIndex = 0;
+    this.panelNav = this.createPanelNav();
+    const panelsWrap = this.createPanelsWrap();
+    this.nav = this.navActions();
+    this.nav.groupChange(this.activePanelIndex);
+    const resizeObserver = new window.ResizeObserver(
+      ([
+        {
+          contentRect: { width }
+        }
+      ]) => {
+        if (this.currentWidth !== width) {
+          this.toggleTabbedLayout();
+          this.currentWidth = width;
+          this.nav.setTranslateX(this.activePanelIndex, false);
+        }
+      }
+    );
+    const observeTimeout = window.setTimeout(() => {
+      resizeObserver.observe(panelsWrap);
+      window.clearTimeout(observeTimeout);
+    }, ANIMATION_SPEED_SLOW);
+  }
+  getPanelDisplay() {
+    const column = this.panelsWrap;
+    const width = Number.parseInt(dom.getStyle(column, "width"));
+    const autoDisplayType = width > 390 ? "tabbed" : "slider";
+    const isAuto = this.opts.displayType === "auto";
+    this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults$2.displayType;
+    return this.panelDisplay;
+  }
+  /**
+   * Wrap a panel and make properties sortable
+   * if the panel belongs to a field
+   * @return {Object} DOM element
+   */
+  createPanelsWrap() {
+    const panelsWrap = dom.create({
+      className: "panels",
+      content: this.opts.panels.map(({ config: _config, ...panel }) => panel)
+    });
+    if (this.opts.type === "field") {
+      this.sortableProperties(panelsWrap);
+    }
+    this.panelsWrap = panelsWrap;
+    this.panels = panelsWrap.children;
+    this.currentPanel = this.panels[this.activePanelIndex];
+    return panelsWrap;
+  }
+  /**
+   * Sortable panel properties
+   * @param  {Array} panels
+   * @return {Array} panel groups
+   */
+  sortableProperties(panels) {
+    const groups = panels.getElementsByClassName("field-edit-group");
+    return helpers.forEach(groups, (group) => {
+      group.fieldId = this.opts.id;
+      if (group.isSortable) {
+        Sortable.create(group, {
+          animation: 150,
+          group: {
+            name: `edit-${group.editGroup}`,
+            pull: true,
+            put: ["properties"]
+          },
+          sort: true,
+          handle: ".prop-order",
+          onSort: (evt) => {
+            this.propertySave(evt.to);
+            this.resizePanels();
+          }
+        });
+      }
+    });
+  }
+  createPanelNavLabels() {
+    const labels = this.opts.panels.map((panel) => ({
+      tag: "h5",
+      action: {
+        click: (evt) => {
+          const index2 = indexOfNode(evt.target);
+          this.nav.setTranslateX(index2, false);
+          this.nav.groupChange(index2);
+        }
+      },
+      content: panel.config.label
+    }));
+    const panelLabels = {
+      className: "panel-labels",
+      content: {
+        content: labels
+      }
+    };
+    const [firstLabel] = labels;
+    firstLabel.className = "active-tab";
+    return dom.create(panelLabels);
+  }
+  /**
+   * Panel navigation, tabs and arrow buttons for slider
+   * @return {Object} DOM object for panel navigation wrapper
+   */
+  createPanelNav() {
+    this.labels = this.createPanelNavLabels();
+    const next = {
+      tag: "button",
+      attrs: {
+        className: "next-group",
+        title: mi18n.get("controlGroups.nextGroup"),
+        type: "button"
+      },
+      dataset: {
+        toggle: "tooltip",
+        placement: "top"
+      },
+      action: {
+        click: (e) => this.nav.nextGroup(e)
+      },
+      content: dom.icon("triangle-right")
+    };
+    const prev = {
+      tag: "button",
+      attrs: {
+        className: "prev-group",
+        title: mi18n.get("controlGroups.prevGroup"),
+        type: "button"
+      },
+      dataset: {
+        toggle: "tooltip",
+        placement: "top"
+      },
+      action: {
+        click: (e) => this.nav.prevGroup(e)
+      },
+      content: dom.icon("triangle-left")
+    };
+    return dom.create({
+      tag: "nav",
+      attrs: {
+        className: "panel-nav"
+      },
+      content: [prev, this.labels, next]
+    });
+  }
+  get isTabbed() {
+    return this.panelDisplay === "tabbed";
+  }
+  /**
+   * Handlers for navigating between panel groups
+   * @todo refactor to use requestAnimationFrame instead of css transitions
+   * @return {Object} actions that control panel groups
+   */
+  navActions() {
+    const action = {};
+    const groupParent = this.currentPanel.parentElement;
+    const labelWrap = this.labels.firstChild;
+    const panelTabs = labelWrap.children;
+    const siblingGroups = this.currentPanel.parentElement.childNodes;
+    this.activePanelIndex = indexOfNode(this.currentPanel);
+    let offset = { nav: 0, panel: 0 };
+    let lastOffset = { ...offset };
+    action.groupChange = (newIndex2) => {
+      this.activePanelIndex = newIndex2;
+      this.currentPanel = siblingGroups[newIndex2];
+      dom.removeClasses(siblingGroups, "active-panel");
+      dom.removeClasses(panelTabs, "active-tab");
+      this.currentPanel.classList.add("active-panel");
+      panelTabs[newIndex2].classList.add("active-tab");
+      return this.currentPanel;
+    };
+    const getOffset = (index2) => {
+      return {
+        nav: -labelWrap.offsetWidth * index2,
+        panel: -groupParent.offsetWidth * index2
+      };
+    };
+    const translateX = ({ offset: offset2, reset, duration = ANIMATION_SPEED_FAST, animate: animate2 = !this.isTabbed }) => {
+      const panelQueue = [getTransition(lastOffset.panel), getTransition(offset2.panel)];
+      const navQueue = [getTransition(lastOffset.nav), getTransition(this.isTabbed ? 0 : offset2.nav)];
+      if (reset) {
+        const [panelStart] = panelQueue;
+        const [navStart] = navQueue;
+        panelQueue.push(panelStart);
+        navQueue.push(navStart);
+      }
+      const animationOptions = {
+        easing: "ease-in-out",
+        duration: animate2 ? duration : 0,
+        fill: "forwards"
+      };
+      const panelTransition = groupParent.animate(panelQueue, animationOptions);
+      labelWrap.animate(navQueue, animationOptions);
+      const handleFinish = () => {
+        panelTransition.removeEventListener("finish", handleFinish);
+        if (!reset) {
+          lastOffset = offset2;
+        }
+      };
+      panelTransition.addEventListener("finish", handleFinish);
+    };
+    action.setTranslateX = (panelIndex = this.activePanelIndex, animate2 = true) => {
+      offset = getOffset(panelIndex);
+      translateX({ offset, animate: animate2 });
+    };
+    action.refresh = (newIndex2 = this.activePanelIndex) => {
+      if (this.activePanelIndex !== newIndex2) {
+        action.groupChange(newIndex2);
+      }
+      action.setTranslateX(this.activePanelIndex, false);
+      this.resizePanels();
+    };
+    action.nextGroup = () => {
+      const newIndex2 = this.activePanelIndex + 1;
+      if (newIndex2 !== siblingGroups.length) {
+        const nextPanel = siblingGroups[newIndex2];
+        offset = {
+          nav: -labelWrap.offsetWidth * newIndex2,
+          panel: -nextPanel.offsetLeft
+        };
+        translateX({ offset });
+        action.groupChange(newIndex2);
+      } else {
+        offset = {
+          nav: lastOffset.nav - 8,
+          panel: lastOffset.panel - 8
+        };
+        translateX({ offset, reset: true });
+      }
+      return this.currentPanel;
+    };
+    action.prevGroup = () => {
+      if (this.activePanelIndex !== 0) {
+        const newIndex2 = this.activePanelIndex - 1;
+        const prevPanel = siblingGroups[newIndex2];
+        offset = {
+          nav: -labelWrap.offsetWidth * newIndex2,
+          panel: -prevPanel.offsetLeft
+        };
+        translateX({ offset });
+        action.groupChange(newIndex2);
+      } else {
+        offset = {
+          nav: 8,
+          panel: 8
+        };
+        translateX({ offset, reset: true });
+      }
+    };
+    return action;
+  }
+}
+let Controls$3 = null;
+const propertyOptions = objectFromStringArray(PROPERTY_OPTIONS);
+class Component extends Data {
+  constructor(name2, dataArg = {}) {
+    const data = { ...dataArg, id: dataArg.id || uuid() };
+    super(name2, data);
+    __publicField(this, "remove", (path) => {
+      if (path) {
+        const delPath = splitAddress(path);
+        const delItem = delPath.pop();
+        const parent2 = this.get(delPath);
+        if (Array.isArray(parent2)) {
+          if (isInt(delItem)) {
+            parent2.splice(Number(delItem), 1);
+          } else {
+            this.set(
+              delPath,
+              parent2.filter((item) => item !== delItem)
+            );
+          }
+        } else {
+          delete parent2[delItem];
+        }
+        return parent2;
+      }
+      if (this.name === "stage") {
+        return null;
+      }
+      const parent = this.parent;
+      const children = this.children;
+      forEach(children, (child) => child.remove());
+      this.dom.parentElement.removeChild(this.dom);
+      remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
+      if (!parent.children.length) {
+        parent.emptyClass();
+      }
+      if (parent.name === "row") {
+        parent.autoColumnWidths();
+      }
+      return components[`${this.name}s`].delete(this.id);
+    });
+    /**
+     * Apply empty class to element if does not have children
+     */
+    __publicField(this, "emptyClass", () => this.dom.classList.toggle("empty", !this.children.length));
+    __publicField(this, "getComponentTag", () => {
+      return dom.create({
+        tag: "span",
+        className: ["component-tag", `${this.name}-tag`],
+        children: [
+          (this.isColumn || this.isField) && dom.icon("component-corner", { className: "bottom-left" }),
+          dom.icon(`handle-${this.name}`),
+          toTitleCase(this.name),
+          (this.isColumn || this.isRow) && dom.icon("component-corner", { className: "bottom-right" })
+        ].filter(Boolean)
+      });
+    });
+    /**
+     * Removes a class or classes from nodeList
+     * @param  {String | Array} className
+     */
+    __publicField(this, "removeClasses", (className) => {
+      const removeClass = {
+        string: () => this.dom.classList.remove(className),
+        array: () => className.map((name2) => this.dom.classList.remove(name2))
+      };
+      removeClass.object = removeClass.string;
+      return removeClass[dom.childType(className)](this.dom);
+    });
+    __publicField(this, "loadChildren", (children = this.data.children) => children.map((rowId) => this.addChild({ id: rowId })));
+    /**
+     * Updates the children order for the current component
+     */
+    __publicField(this, "saveChildOrder", () => {
+      if (this.render) {
+        return;
+      }
+      const newChildOrder = this.children.map(({ id }) => id);
+      this.set("children", newChildOrder);
+      return newChildOrder;
+    });
+    /**
+     * Save updated child order
+     * @return {Array} updated child order
+     */
+    __publicField(this, "onSort", () => {
+      return this.saveChildOrder();
+    });
+    /**
+     * Callback for when dragging ends
+     * @param  {Object} evt
+     */
+    __publicField(this, "onEnd", ({ to: { parentElement: to }, from: { parentElement: from } }) => {
+      to == null ? void 0 : to.classList.remove(`hovering-${componentType(to)}`);
+      from == null ? void 0 : from.classList.remove(`hovering-${componentType(from)}`);
+    });
+    // @todo remove, but first verify no longer needed
+    __publicField(this, "runConditions", () => {
+      const conditionsList = this.get("conditions");
+      if (!(conditionsList == null ? void 0 : conditionsList.length)) {
+        return null;
+      }
+      const processedConditions = conditionsList.map((conditions) => {
+        const ifCondition = this.processConditions(conditions.if);
+        const thenResult = this.processResults(conditions.then);
+        return ifCondition.map((conditions2) => {
+          return this.evaluateConditions(conditions2) && this.execResults(thenResult);
+        });
+      });
+      return processedConditions;
+    });
+    __publicField(this, "value", (path, val) => {
+      const splitPath = path.split(".");
+      const component = this.getComponent(path);
+      const property = component && splitPath.slice(2, splitPath.length).join(".");
+      if ([!component, !property, !propertyOptions[property]].some(Boolean)) {
+        return path;
+      }
+      return val ? component.set(propertyOptions[property], val) : component.get(propertyOptions[property]);
+    });
+    /**
+     * Maps operators to their respective handler
+     * @param {String} operator
+     * @return {Function} action
+     */
+    __publicField(this, "getResult", (operator) => {
+      const operatorMap = {
+        "=": (target, propertyPath, value) => target.set(propertyPath, value)
+      };
+      return operatorMap[operator];
+    });
+    __publicField(this, "processResults", (results) => {
+      return results.map(({ operator, target, value }) => {
+        const targetComponent = this.getComponent(target);
+        const propertyPath = targetComponent && target.split(".").slice(2, target.length).join(".");
+        const processedResult = {
+          target: targetComponent,
+          propertyPath,
+          action: this.getResult(operator),
+          value: this.value(value)
+        };
+        return processedResult;
+      });
+    });
+    __publicField(this, "execResults", (results) => {
+      const promises = results.map((result) => {
+        return this.execResult(result);
+      });
+      return Promise.all(promises);
+    });
+    __publicField(this, "execResult", ({ target, action, value, _propertyPath }) => {
+      return new Promise((resolve, reject) => {
+        try {
+          return resolve(action(target, value));
+        } catch (err) {
+          return reject(err);
+        }
+      });
+    });
+    __publicField(this, "cloneData", () => {
+      const clonedData = { ...clone$1(this.data), id: uuid() };
+      if (this.name !== "field") {
+        clonedData.children = [];
+      }
+      return clonedData;
+    });
+    __publicField(this, "clone", (parent = this.parent) => {
+      const newClone = parent.addChild(this.cloneData(), this.index + 1);
+      if (this.name !== "field") {
+        this.cloneChildren(newClone);
+      }
+      return newClone;
+    });
+    __publicField(this, "createChildWrap", (children) => dom.create({
+      tag: "ul",
+      attrs: {
+        className: "children"
+      },
+      children
+    }));
+    /**
+     * Checks if attribute is allowed to be edited
+     * @param  {String}  propName
+     * @return {Boolean}
+     */
+    __publicField(this, "isDisabledProp", (propName, kind = "attrs") => {
+      const propKind = this.config.panels[kind];
+      if (!propKind) {
+        return false;
+      }
+      const disabledAttrs = propKind.disabled.concat(this.get("config.disabled"));
+      return disabledAttrs.includes(propName);
+    });
+    /**
+     * Checks if property can be removed
+     * @param  {String}  propName
+     * @return {Boolean}
+     */
+    __publicField(this, "isLockedProp", (propName, kind = "attrs") => {
+      const propKind = this.config.panels[kind];
+      if (!propKind) {
+        return false;
+      }
+      const lockedAttrs = propKind.locked.concat(this.get("config.locked"));
+      return lockedAttrs.includes(propName);
+    });
+    __publicField(this, "updateEditPanels", () => {
+      if (!this.config) {
+        return null;
+      }
+      const editable = ["object", "array"];
+      const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)]);
+      const noPanels = ["children", "config", "meta", "action", "events", ...this.config.panels.disabled];
+      const allowedPanels = panelOrder.filter((panelName) => !noPanels.includes(panelName));
+      for (const panelName of allowedPanels) {
+        const panelData = this.get(panelName);
+        const propType = dom.childType(panelData);
+        if (editable.includes(propType)) {
+          const editPanel = new EditPanel(panelData, panelName, this);
+          this.editPanels.set(editPanel.name, editPanel);
+        }
+      }
+      const panelsData = {
+        panels: Array.from(this.editPanels.values()).map(({ panelConfig }) => panelConfig),
+        id: this.id,
+        displayType: "auto"
+      };
+      this.panels = new Panels(panelsData);
+      if (this.dom) {
+        this.dom.querySelector(".panel-nav").replaceWith(this.panels.panelNav);
+        this.dom.querySelector(".panels").replaceWith(this.panels.panelsWrap);
+      }
+    });
+    this.id = data.id;
+    this.shortId = this.id.slice(0, this.id.indexOf("-"));
+    this.name = name2;
+    this.indexName = `${name2}s`;
+    this.config = components[`${this.name}s`].config;
+    merge(this.config, data.config);
+    this.address = `${this.name}s.${this.id}`;
+    this.dataPath = `${this.address}.`;
+    this.editPanels = /* @__PURE__ */ new Map();
+  }
+  // mutationHandler = mutations =>
+  //   mutations.map(mutation => {
+  //     @todo pull handler form config
+  //     see dom.create.onRender for implementation pattern
+  //   })
+  // observe(container) {
+  //   this.observer.disconnect()
+  //   this.observer.observe(container, { childList: true })
+  // }
+  get js() {
+    return this.data;
+  }
+  get json() {
+    return this.data;
+  }
+  /**
+   * Removes element from DOM and data
+   * @return  {Object} parent element
+   */
+  empty() {
+    const removed = this.children.map((child) => {
+      child.remove();
+      return child;
+    });
+    this.dom.classList.add("empty");
+    return removed;
+  }
+  /**
+   * Move, close, and edit buttons for row, column and field
+   * @return {Object} element config object
+   */
+  getActionButtons() {
+    const hoverClassnames = [`hovering-${this.name}`, "hovering"];
+    return {
+      className: [`${this.name}-actions`, "group-actions"],
+      action: {
+        mouseenter: () => {
+          components.stages.active.dom.classList.add(`active-hover-${this.name}`);
+          this.dom.classList.add(...hoverClassnames);
+        },
+        mouseleave: ({ target }) => {
+          this.dom.classList.remove(...hoverClassnames);
+          components.stages.active.dom.classList.remove(`active-hover-${this.name}`);
+          target.removeAttribute("style");
+        }
+      },
+      children: [
+        {
+          ...dom.btnTemplate({ content: dom.icon(`handle-${this.name}`) }),
+          className: ["component-handle", `${this.name}-handle`]
+        },
+        {
+          className: ["action-btn-wrap", `${this.name}-action-btn-wrap`],
+          children: this.buttons
+        }
+      ]
+    };
+  }
+  /**
+   * Toggles the edit window
+   * @param {Boolean} open whether to open or close the edit window
+   */
+  toggleEdit(open = !this.isEditing) {
+    this.isEditing = open;
+    const element = this.dom;
+    const editingClassName = "editing";
+    const editingComponentClassname = `${editingClassName}-${this.name}`;
+    const editWindow = this.dom.querySelector(`.${this.name}-edit`);
+    animate.slideToggle(editWindow, ANIMATION_SPEED_BASE, open);
+    if (this.name === "field") {
+      animate.slideToggle(this.preview, ANIMATION_SPEED_BASE, !open);
+      element.parentElement.classList.toggle(`column-${editingComponentClassname}`, open);
+    }
+    element.classList.toggle(editingClassName, open);
+    element.classList.toggle(editingComponentClassname, open);
+  }
+  get buttons() {
+    if (this.actionButtons) {
+      return this.actionButtons;
+    }
+    const buttonConfig = {
+      handle: (icon = `handle-${this.name}`) => ({
+        ...dom.btnTemplate({ content: dom.icon(icon) }),
+        className: ["component-handle"]
+      }),
+      move: (icon = "move") => {
+        return {
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
+          className: ["item-move"],
+          meta: {
+            id: "move"
+          }
+        };
+      },
+      edit: (icon = "edit") => {
+        return {
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
+          className: ["edit-toggle"],
+          meta: {
+            id: "edit"
+          },
+          action: {
+            click: () => {
+              this.toggleEdit();
+            }
+          }
+        };
+      },
+      remove: (icon = "remove") => {
+        return {
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
+          className: ["item-remove"],
+          meta: {
+            id: "remove"
+          },
+          action: {
+            click: () => {
+              animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
+                if (this.name === "column") {
+                  const row = this.parent;
+                  row.autoColumnWidths();
+                  this.remove();
+                } else {
+                  this.remove();
+                }
+              });
+            }
+          }
+        };
+      },
+      clone: (icon = "copy") => {
+        return {
+          ...dom.btnTemplate({ content: dom.icon(icon) }),
+          className: ["item-clone"],
+          meta: {
+            id: "clone"
+          },
+          action: {
+            click: () => {
+              this.clone(this.parent);
+              if (this.name === "column") {
+                this.parent.autoColumnWidths();
+              }
+            }
+          }
+        };
+      }
+    };
+    const { buttons, disabled } = this.config.actionButtons;
+    const activeButtons = buttons.filter((btn) => !disabled.includes(btn));
+    const actionButtonsConfigs = activeButtons.map((btn) => {
+      var _a;
+      return ((_a = buttonConfig[btn]) == null ? void 0 : _a.call(buttonConfig)) || btn;
+    });
+    this.actionButtons = actionButtonsConfigs;
+    return this.actionButtons;
+  }
+  /**
+   * helper that returns the index of the node minus the offset.
+   */
+  get index() {
+    return indexOfNode(this.dom);
+  }
+  get parentType() {
+    return PARENT_TYPE_MAP.get(this.name);
+  }
+  get parent() {
+    const parentType = this.parentType;
+    if (!this.dom || !parentType) {
+      return null;
+    }
+    const parentDom = this.dom.closest(`.${COMPONENT_TYPE_CLASSNAMES[parentType]}`);
+    return parentDom && dom.asComponent(parentDom);
+  }
+  get children() {
+    if (!this.dom) {
+      return [];
+    }
+    const domChildren = this.domChildren;
+    const childGroup = CHILD_TYPE_MAP.get(this.name);
+    return map(domChildren, (child) => components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean);
+  }
+  get domChildren() {
+    const childWrap = this.dom.querySelector(".children");
+    return childWrap ? childWrap.children : [];
+  }
+  /**
+   * Adds a child to the component
+   * @param {Object|String} childData
+   * @param {Number} index
+   * @return {Object} child DOM element
+   */
+  addChild(childData = {}, index2 = this.domChildren.length) {
+    var _a, _b;
+    let data = childData;
+    if (typeof childData !== "object") {
+      data = { id: data };
+    }
+    const childWrap = this.dom.querySelector(".children");
+    const { id: childId = uuid() } = data;
+    const childGroup = CHILD_TYPE_MAP.get(this.name);
+    if (!childGroup) {
+      return null;
+    }
+    const childComponentType = `${childGroup}s`;
+    const child = components.getAddress(`${childComponentType}.${childId}`) || components[childComponentType].add(childId, data);
+    childWrap.insertBefore(child.dom, childWrap.children[index2]);
+    (_b = (_a = this.config.events) == null ? void 0 : _a.onAddChild) == null ? void 0 : _b.call(_a, { parent: this, child });
+    const grandChildren = child.get("children");
+    if (grandChildren == null ? void 0 : grandChildren.length) {
+      child.loadChildren(grandChildren);
+    }
+    this.removeClasses("empty");
+    this.saveChildOrder();
+    return child;
+  }
+  /**
+   * Method for handling onAdd for all components
+   * @todo improve readability of this method
+   * @param  {Object} evt
+   * @return {Object} Component
+   */
+  onAdd({ from, to, item, newIndex: newIndex2 }) {
+    var _a;
+    if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
+      from = from.parentElement;
+    }
+    const fromType = componentType(from);
+    const toType = componentType(to.parentElement);
+    const defaultOnAdd = () => {
+      this.saveChildOrder();
+      this.removeClasses("empty");
+    };
+    const depthMap = /* @__PURE__ */ new Map([
+      [
+        -2,
+        () => {
+          const newChild = this.addChild({}, newIndex2).addChild();
+          return newChild.addChild.bind(newChild);
+        }
+      ],
+      [
+        -1,
+        () => {
+          const newChild = this.addChild({}, newIndex2);
+          return newChild.addChild.bind(newChild);
+        }
+      ],
+      [0, () => this.addChild.bind(this)],
+      [
+        1,
+        (controlData) => {
+          const currentIndex = indexOfNode(this.dom);
+          return () => this.parent.addChild(controlData, currentIndex + 1);
+        }
+      ],
+      [2, (controlData) => () => this.parent.parent.addChild(controlData)]
+    ]);
+    const onAddConditions = {
+      controls: async () => {
+        if (!Controls$3) {
+          const { default: ControlsData } = await Promise.resolve().then(() => index$7);
+          Controls$3 = ControlsData;
+        }
+        const {
+          controlData: {
+            meta: { id: metaId },
+            ...elementData
+          }
+        } = Controls$3.get(item.id);
+        set(elementData, "config.controlId", metaId);
+        const controlType = metaId.startsWith("layout-") ? metaId.replace(/^layout-/, "") : "field";
+        const targets = {
+          stage: {
+            row: 0,
+            column: -1,
+            field: -2
+          },
+          row: {
+            row: 1,
+            column: 0,
+            field: -1
+          },
+          column: {
+            row: 2,
+            column: 1,
+            field: 0
+          },
+          field: 1
+        };
+        const depth = get(targets, `${this.name}.${controlType}`);
+        const action = depthMap.get(depth)();
+        dom.remove(item);
+        const component2 = action(elementData, newIndex2);
+        return component2;
+      },
+      row: () => {
+        const targets = {
+          stage: -1,
+          row: 0,
+          column: 1
+        };
+        const action = (depthMap.get(targets[toType]) || identity)();
+        return action == null ? void 0 : action({ id: item.id }, newIndex2);
+      },
+      column: () => {
+        const targets = {
+          stage: -2,
+          row: -1
+        };
+        const action = (depthMap.get(targets[toType]) || identity)();
+        return action == null ? void 0 : action(item.id);
+      }
+    };
+    const component = (_a = onAddConditions[fromType]) == null ? void 0 : _a.call(onAddConditions, item, newIndex2);
+    defaultOnAdd();
+    return component;
+  }
+  /**
+   * Handler for removing content from a sortable component
+   * @param  {Object} evt
+   * @return {Array} updated child order
+   */
+  onRemove({ from: { parentElement: from } }) {
+    if (from.classList.contains(COLUMN_CLASSNAME)) {
+      from.classList.remove("column-editing-field");
+    }
+    if (this.name !== "stage" && !this.children.length) {
+      return this.remove();
+    }
+    this.emptyClass();
+    return this.saveChildOrder();
+  }
+  /**
+   * Callback for onRender, executes any defined onRender for component
+   */
+  onRender() {
+    const { events: events2 } = this.config;
+    if (!events2) {
+      return null;
+    }
+    events2.onRender && dom.onRender(this.dom, events2.onRender);
+  }
+  /**
+   * Sets the configuration for the component. See src/demo/js/options/config.js for example
+   * @param {Object} config - Configuration object with possible structures:
+   * @param {Object} [config.all] - Global configuration applied to all components
+   * @param {Object} [config[controlId]] - Configuration specific to a control type
+   * @param {Object} [config[id]] - Configuration specific to a component instance
+   * @description Merges configurations in order of precedence:
+   * 1. Existing config (this.configVal)
+   * 2. Global config (all)
+   * 3. Control type specific config
+   * 4. Instance specific config
+   * The merged result is stored in this.configVal
+   */
+  set config(config2) {
+    const allConfig = get(config2, "all");
+    const controlId = get(this.data, "config.controlId");
+    const typeConfig = controlId && get(config2, controlId);
+    const idConfig = get(config2, this.id);
+    const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
+      (acc, cur) => cur ? merge(acc, cur) : acc,
+      this.configVal
+    );
+    this.configVal = mergedConfig;
+  }
+  get config() {
+    return this.configVal;
+  }
+  getComponent(path) {
+    const [type2, id] = path.split(".");
+    const group = components[type2];
+    return id === this.id ? this : group == null ? void 0 : group.get(id);
+  }
+  cloneChildren(toParent) {
+    for (const child of this.children) {
+      child == null ? void 0 : child.clone(toParent);
+    }
+  }
+  get isRow() {
+    return this.name === COMPONENT_TYPE_MAP.row;
+  }
+  get isColumn() {
+    return this.name === COMPONENT_TYPE_MAP.column;
+  }
+  get isField() {
+    return this.name === COMPONENT_TYPE_MAP.field;
+  }
+  /**
+   * Generate the markup for field edit mode
+   * @return {Object} fieldEdit element config
+   */
+  get editWindow() {
+    const editWindow = {
+      className: ["component-edit", `${this.name}-edit`, "slide-toggle", "formeo-panels-wrap"]
+    };
+    const editPanelLength = this.editPanels.size;
+    if (editPanelLength) {
+      editWindow.className.push(`panel-count-${editPanelLength}`);
+      editWindow.content = [this.panels.panelNav, this.panels.panelsWrap];
+      this.panelNav = this.panels.nav;
+      this.resizePanelWrap = this.panels.nav.refresh;
+    }
+    editWindow.action = {
+      onRender: () => {
+        if (editPanelLength === 0) {
+          const editToggle = this.dom.querySelector(".edit-toggle");
+          const fieldActions = this.dom.querySelector(`.${this.name}-actions`);
+          const actionButtons = fieldActions.getElementsByTagName("button");
+          fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`;
+          dom.remove(editToggle);
+        } else {
+          this.resizePanelWrap();
+        }
+      }
+    };
+    return dom.create(editWindow);
+  }
+}
+class ResizeColumn {
+  /**
+   * Binds the event handlers to the instance.
+   */
+  constructor() {
+    this.onMove = this.onMove.bind(this);
+    this.onStop = this.onStop.bind(this);
+    this.cleanup = this.cleanup.bind(this);
+  }
+  /**
+   * Calculates the total width of a row excluding the gaps between columns.
+   * @param {HTMLElement} row - The row element.
+   * @returns {number} - The total width of the row.
+   */
+  getRowWidth(row) {
+    const rowChildren = row.querySelector(".children");
+    if (!rowChildren) return 0;
+    const numberOfColumns = rowChildren.children.length;
+    const gapSize = dom.getStyle(rowChildren, "gap") || "0px";
+    const gapPixels = parseFloat(gapSize, 10) || 0;
+    this.totalGapWidth = gapPixels * (numberOfColumns - 1);
+    return rowChildren.offsetWidth - this.totalGapWidth;
+  }
+  /**
+   * Validates if the resize target columns are valid.
+   * @param {HTMLElement} column - The column being resized.
+   * @param {HTMLElement} sibling - The sibling column.
+   * @returns {boolean} - True if both columns are valid, false otherwise.
+   */
+  validateResizeTarget(column, sibling) {
+    return column && sibling && column.offsetWidth && sibling.offsetWidth;
+  }
+  /**
+   * Handles the start of the resize event.
+   * @param {Event} evt - The event object.
+   */
+  onStart(evt) {
+    evt.preventDefault();
+    this.resized = false;
+    if (evt.button !== 0) return;
+    const column = evt.target.parentElement;
+    const sibling = column.nextSibling || column.previousSibling;
+    const row = column.closest(`.${ROW_CLASSNAME}`);
+    if (!this.validateResizeTarget(column, sibling)) {
+      console.warn("Invalid resize targets");
+      this.cleanup();
+      return;
+    }
+    this.startX = evt.type === "touchstart" ? evt.touches[0].clientX : evt.clientX;
+    row.classList.add(COLUMN_RESIZE_CLASSNAME);
+    this.columnPreset = row.querySelector(`.${COLUMN_PRESET_CLASSNAME}`);
+    this.originalColumnClass = column.className;
+    this.originalSiblingClass = sibling.className;
+    column.className = column.className.replace(bsColRegExp, "");
+    sibling.className = sibling.className.replace(bsColRegExp, "");
+    this.colStartWidth = column.offsetWidth;
+    this.sibStartWidth = sibling.offsetWidth;
+    this.rowWidth = this.getRowWidth(row);
+    if (this.rowWidth <= 0) {
+      console.warn("Invalid row width calculated");
+      this.cleanup();
+      return;
+    }
+    this.column = column;
+    this.sibling = sibling;
+    this.row = row;
+    try {
+      window.addEventListener("pointermove", this.onMove, false);
+      window.addEventListener("pointerup", this.onStop, false);
+    } catch (error) {
+      console.error("Failed to initialize resize listeners:", error);
+      this.cleanup();
+    }
+  }
+  /**
+   * Calculates the new widths for the columns based on the mouse position.
+   * @param {number} clientX - The current X position of the mouse.
+   * @returns {Object|null} - The new widths for the columns or null if invalid.
+   */
+  calculateNewWidths(clientX) {
+    const newColWidth = this.colStartWidth + clientX - this.startX;
+    const newSibWidth = this.sibStartWidth - clientX + this.startX;
+    const colWidthPercent = parseFloat(percent(newColWidth, this.rowWidth));
+    const sibWidthPercent = parseFloat(percent(newSibWidth, this.rowWidth));
+    if (colWidthPercent < 10 || sibWidthPercent < 10) {
+      return null;
+    }
+    return {
+      colWidth: numToPercent(colWidthPercent.toFixed(1)),
+      siblingColWidth: numToPercent(sibWidthPercent.toFixed(1))
+    };
+  }
+  /**
+   * Handles the movement during the resize event.
+   * @param {Event} evt - The event object.
+   */
+  onMove(evt) {
+    evt.preventDefault();
+    const { column, sibling } = this;
+    const clientX = evt.type === "touchmove" ? evt.touches[0].clientX : evt.clientX;
+    const newWidths = this.calculateNewWidths(clientX);
+    if (!newWidths) return;
+    const { colWidth, siblingColWidth } = newWidths;
+    column.dataset.colWidth = colWidth;
+    sibling.dataset.colWidth = siblingColWidth;
+    column.style.width = colWidth;
+    sibling.style.width = siblingColWidth;
+    this.resized = true;
+  }
+  onStop() {
+    const { column, sibling } = this;
+    window.removeEventListener("pointermove", this.onMove);
+    window.removeEventListener("pointerup", this.onStop);
+    if (!this.resized) {
+      return;
+    }
+    this.setCustomWidthValue();
+    components.setAddress(`columns.${column.id}.config.width`, column.dataset.colWidth);
+    components.setAddress(`columns.${sibling.id}.config.width`, sibling.dataset.colWidth);
+    this.row.classList.remove(COLUMN_RESIZE_CLASSNAME);
+    this.resized = false;
+    this.cleanup();
+  }
+  // Helper method to clean up if resize fails
+  cleanup() {
+    if (this.column && this.originalColumnClass) {
+      this.column.className = this.originalColumnClass;
+    }
+    if (this.sibling && this.originalSiblingClass) {
+      this.sibling.className = this.originalSiblingClass;
+    }
+    if (this.row) {
+      this.row.classList.remove(COLUMN_RESIZE_CLASSNAME);
+    }
+    window.removeEventListener("pointermove", this.onMove);
+    window.removeEventListener("pointerup", this.onStop);
+  }
+  /**
+   * Adds a custom option from the column width present selecy
+   * @param {Node} row
+   */
+  setCustomWidthValue() {
+    const columnPreset = this.columnPreset;
+    let customOption = columnPreset.querySelector(`.${CUSTOM_COLUMN_OPTION_CLASSNAME}`);
+    const cols = this.row.querySelector(".children").children;
+    const widths = map(cols, (col) => percent(col.clientWidth, this.rowWidth).toFixed(1));
+    const value = widths.join(",");
+    const content = widths.join(" | ");
+    if (!customOption) {
+      customOption = dom.create({
+        tag: "option",
+        attrs: {
+          className: CUSTOM_COLUMN_OPTION_CLASSNAME,
+          value,
+          selected: true
+        },
+        content
+      });
+      columnPreset.append(customOption);
+    }
+    customOption.value = value;
+    customOption.textContent = content;
+    return value;
+  }
+}
+const DEFAULT_DATA$3 = () => Object.freeze({
+  config: {
+    width: "100%"
+  },
+  children: [],
+  className: [COLUMN_CLASSNAME]
+});
+const DOM_CONFIGS = {
+  resizeHandle: (columnRisizer) => ({
+    className: "resize-x-handle",
+    action: {
+      pointerdown: columnRisizer.onStart.bind(columnRisizer)
+    },
+    content: [dom.icon("triangle-down"), dom.icon("triangle-up")]
+  }),
+  editWindow: () => ({
+    className: "column-edit group-config"
+  })
+};
+class Column extends Component {
+  /**
+   * Set defaults and/or load existing columns
+   * @param  {Object} columnData
+   * @return {Object} Column config object
+   */
+  constructor(columnData) {
+    super("column", { ...DEFAULT_DATA$3(), ...columnData });
+    // loops through children and refresh their edit panels
+    __publicField(this, "refreshFieldPanels", () => {
+      for (const field2 of this.children) {
+        field2.panels.nav.refresh();
+      }
+    });
+    /**
+     * Sets the width data and style for the column
+     * @param {string} width - The width value to be set for the column
+     * @returns {void}
+     */
+    __publicField(this, "setDomWidth", (width) => {
+      this.dom.dataset.colWidth = width;
+      this.dom.style.width = width;
+    });
+    /**
+     * Sets a columns width
+     * @param {String} width percent or pixel
+     */
+    __publicField(this, "setWidth", (width) => {
+      this.setDomWidth(width);
+      return this.set("config.width", width);
+    });
+    const childWrap = this.createChildWrap();
+    this.dom = dom.create({
+      tag: "li",
+      className: [COLUMN_CLASSNAME, "empty"],
+      dataset: {
+        hoverTag: mi18n.get("column")
+      },
+      id: this.id,
+      content: [
+        this.getComponentTag(),
+        this.getActionButtons(),
+        DOM_CONFIGS.editWindow(),
+        DOM_CONFIGS.resizeHandle(new ResizeColumn()),
+        childWrap
+      ]
+    });
+    this.processConfig();
+    events.columnResized = new window.CustomEvent("columnResized", {
+      detail: {
+        column: this.dom,
+        instance: this
+      }
+    });
+    Sortable.create(childWrap, {
+      animation: 150,
+      fallbackClass: "field-moving",
+      group: {
+        name: "column",
+        pull: true,
+        put: ["column", "controls"]
+      },
+      sort: true,
+      disabled: false,
+      onEnd: this.onEnd.bind(this),
+      onAdd: this.onAdd.bind(this),
+      onSort: this.onSort.bind(this),
+      onRemove: this.onRemove.bind(this),
+      // Attempt to drag a filtered element
+      onMove: (evt) => {
+        if (evt.from !== evt.to) {
+          evt.from.classList.remove("hovering-column");
+        }
+      },
+      draggable: `.${FIELD_CLASSNAME}`,
+      handle: ".item-move"
+    });
+  }
+  /**
+   * Process column configuration data
+   * @param  {Object} column
+   */
+  processConfig() {
+    const columnWidth = helpers.get(this.data, "config.width");
+    if (columnWidth) {
+      this.setDomWidth(columnWidth);
+    }
+  }
+}
+const DEFAULT_CONFIG$3 = {
+  actionButtons: {
+    buttons: ["clone", "move", "remove"],
+    disabled: []
+  }
+};
+let Columns$1 = class Columns extends ComponentData {
+  constructor(columnData) {
+    super("columns", columnData);
+    this.config = { all: DEFAULT_CONFIG$3 };
+  }
+  Component(data) {
+    return new Column(data);
+  }
+};
+const columns = new Columns$1();
+const DEFAULT_DATA$2 = () => Object.freeze({
+  config: {
+    fieldset: false,
+    // wrap contents of row in fieldset
+    legend: "",
+    // Legend for fieldset
+    inputGroup: false
+    // is repeatable input-group?
+  },
+  children: [],
+  className: [ROW_CLASSNAME]
+});
+class Row extends Component {
+  /**
+   * Set default and generate dom for row in editor
+   * @param  {String} dataID
+   * @return {Object}
+   */
+  constructor(rowData) {
+    super("row", { ...DEFAULT_DATA$2(), ...rowData });
+    /**
+     * Read columns and generate bootstrap cols
+     * @param {Object} row DOM element
+     */
+    __publicField(this, "autoColumnWidths", () => {
+      const columns2 = this.children;
+      if (!columns2.length) {
+        return;
+      }
+      const width = Number.parseFloat((100 / columns2.length).toFixed(1)) / 1;
+      for (const column of columns2) {
+        column.removeClasses(bsColRegExp);
+        const colDom = column.dom;
+        const newColWidth = numToPercent(width);
+        column.set("config.width", newColWidth);
+        colDom.style.width = newColWidth;
+        colDom.dataset.colWidth = newColWidth;
+        const refreshTimeout = setTimeout(() => {
+          clearTimeout(refreshTimeout);
+          column.refreshFieldPanels();
+        }, ANIMATION_SPEED_FAST);
+        document.dispatchEvent(events.columnResized);
+      }
+      this.updateColumnPreset();
+    });
+    /**
+     * Updates the column preset <select>
+     * @return {Object} columnPresetConfig
+     */
+    __publicField(this, "updateColumnPreset", () => {
+      this.columnPresetControl.innerHTML = "";
+      const presetOptions = this.getColumnPresetOptions.map(
+        ({ label, ...attrs }) => dom.create({
+          tag: "option",
+          content: label,
+          attrs
+        })
+      );
+      this.columnPresetControl.append(...presetOptions);
+    });
+    /**
+     * Set the widths of columns in a row
+     * @param {Object} row DOM element
+     * @param {String} widths
+     */
+    __publicField(this, "setColumnWidths", (widths) => {
+      if (typeof widths === "string") {
+        widths = widths.split(",");
+      }
+      this.children.forEach((column, i) => {
+        column.setWidth(`${widths[i]}%`);
+        column.refreshFieldPanels();
+      });
+    });
+    const children = this.createChildWrap();
+    this.dom = dom.create({
+      tag: "li",
+      className: [ROW_CLASSNAME, "empty"],
+      dataset: {
+        hoverTag: mi18n.get("row"),
+        editingHoverTag: mi18n.get("editing.row")
+      },
+      id: this.id,
+      content: [this.getComponentTag(), this.getActionButtons(), this.editWindow, children]
+    });
+    Sortable.create(children, {
+      animation: 150,
+      fallbackClass: "column-moving",
+      group: {
+        name: "row",
+        pull: true,
+        put: ["row", "column", "controls"]
+      },
+      sort: true,
+      disabled: false,
+      onRemove: this.onRemove.bind(this),
+      onEnd: this.onEnd.bind(this),
+      onAdd: this.onAdd.bind(this),
+      onSort: this.onSort.bind(this),
+      // filter: '.resize-x-handle', // use filter for frozen columns
+      draggable: `.${COLUMN_CLASSNAME}`,
+      handle: ".item-move"
+    });
+  }
+  /**
+   * Edit window for Row
+   * @return {Object} edit window dom config for Row
+   */
+  get editWindow() {
+    const fieldsetInput = {
+      tag: "input",
+      id: `${this.id}-fieldset`,
+      attrs: {
+        type: "checkbox",
+        checked: this.get("config.fieldset"),
+        ariaLabel: mi18n.get("row.settings.fieldsetWrap.aria")
+      },
+      action: {
+        click: ({ target: { checked } }) => {
+          this.set("config.fieldset", Boolean(checked));
+        }
+      },
+      config: {
+        label: mi18n.get("row.settings.fieldsetWrap")
+      }
+    };
+    const inputGroupInput = {
+      tag: "input",
+      id: `${this.id}-inputGroup`,
+      attrs: {
+        type: "checkbox",
+        checked: this.get("config.inputGroup"),
+        ariaLabel: mi18n.get("row.settings.inputGroup.aria")
+      },
+      action: {
+        click: ({ target: { checked } }) => this.set("config.inputGroup", checked)
+      },
+      config: {
+        label: mi18n.get("row.makeInputGroup"),
+        description: mi18n.get("row.makeInputGroupDesc")
+      }
+    };
+    const rowTitleTooltip = {
+      tag: "span",
+      content: " ⓘ",
+      dataset: {
+        tooltip: "Row title will be used as the legend for the fieldset"
+      }
+    };
+    const legendInput = {
+      tag: "input",
+      attrs: {
+        type: "text",
+        ariaLabel: "Legend for fieldset",
+        value: this.get("config.legend"),
+        placeholder: "Title"
+      },
+      config: {
+        label: {
+          children: ["Row Title", rowTitleTooltip]
+        }
+      },
+      action: {
+        input: ({ target: { value } }) => this.set("config.legend", value)
+      },
+      className: ""
+    };
+    const fieldsetInputGroup = {
+      className: "input-group",
+      content: legendInput
+    };
+    const fieldSetControls = dom.formGroup([fieldsetInput, fieldsetInputGroup]);
+    const columnSettingsPresetLabel = {
+      tag: "label",
+      content: mi18n.get("defineColumnWidths"),
+      className: "col-sm-4 form-control-label"
+    };
+    this.columnPresetControl = dom.create(this.columnPresetControlConfig);
+    const columnSettingsPresetSelect = {
+      className: "col-sm-8",
+      content: this.columnPresetControl,
+      action: {
+        onRender: () => {
+          this.updateColumnPreset();
+        }
+      }
+    };
+    const columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], "row");
+    const editWindowContents = [inputGroupInput, "hr", fieldSetControls, "hr", columnSettingsPreset];
+    const editWindow = dom.create({
+      className: `${this.name}-edit group-config`,
+      action: {
+        onRender: (editWindow2) => {
+          const elements = editWindowContents.map((elem) => dom.create(elem));
+          editWindow2.append(...elements);
+        }
+      }
+    });
+    return editWindow;
+  }
+  onAdd(...args) {
+    super.onAdd(...args);
+    this.autoColumnWidths();
+  }
+  onRemove(...args) {
+    super.onRemove(...args);
+    this.autoColumnWidths();
+  }
+  /**
+   * Retrieves the preset options for columns based on the current configuration.
+   *
+   * @returns {Array<Object>} An array of option objects for column presets. Each object contains:
+   * - `value` {string}: The comma-separated string of column widths.
+   * - `label` {string}: The display label for the option, with widths separated by ' | '.
+   * - `className` {string}: The CSS class name for custom column options.
+   * - `selected` {boolean} [optional]: Indicates if the option is the current value.
+   */
+  get getColumnPresetOptions() {
+    const columns2 = this.children;
+    const pMap = COLUMN_TEMPLATES;
+    const pMapVal = pMap.get(columns2.length - 1) || [];
+    const curVal = columns2.map((Column2) => {
+      const width = Column2.get("config.width") || "";
+      return Number(width.replace("%", "")).toFixed(1);
+    }).join(",");
+    if (pMapVal.length) {
+      const options = pMapVal.slice();
+      const isCustomVal = !options.find((val) => val.value === curVal);
+      if (isCustomVal) {
+        options.push({
+          value: curVal,
+          label: curVal.replace(/,/g, " | "),
+          className: CUSTOM_COLUMN_OPTION_CLASSNAME
+        });
+      }
+      return options.map((val) => {
+        const option2 = { ...val };
+        option2.selected = val.value === curVal;
+        return option2;
+      });
+    }
+    return [];
+  }
+  /**
+   * Generates the element config for column layout in row
+   * @return {Object} columnPresetControlConfig
+   */
+  get columnPresetControlConfig() {
+    const layoutPreset = {
+      tag: "select",
+      attrs: {
+        ariaLabel: mi18n.get("defineColumnLayout"),
+        className: COLUMN_PRESET_CLASSNAME
+      },
+      action: {
+        change: ({ target }) => {
+          const { value } = target;
+          this.setColumnWidths(value);
+        }
+      },
+      options: this.getColumnPresetOptions
+    };
+    return layoutPreset;
+  }
+}
+const DEFAULT_CONFIG$2 = {
+  actionButtons: {
+    buttons: ["move", "edit", "clone", "remove"],
+    disabled: []
+  }
+};
+let Rows$1 = class Rows extends ComponentData {
+  constructor(rowData) {
+    super("rows", rowData);
+    this.config = { all: DEFAULT_CONFIG$2 };
+  }
+  Component(data) {
+    return new Row(data);
+  }
+};
+const rows = new Rows$1();
+const DEFAULT_DATA$1 = () => ({ conditions: [CONDITION_TEMPLATE()], children: [] });
+class Stage extends Component {
+  /**
+   * Process options and load existing fields from data to the stage
+   * @param  {Object} formeoOptions
+   * @param  {String} stageData uuid
+   * @return {Object} DOM element
+   */
+  constructor(stageData) {
+    super("stage", { ...DEFAULT_DATA$1(), ...stageData });
+    this.updateEditPanels();
+    this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
+    ({
+      children: [
+        {
+          tag: "input",
+          id: "form-title",
+          attrs: {
+            className: "form-title",
+            placeholder: mi18n.get("Untitled Form"),
+            value: mi18n.get("Untitled Form"),
+            type: "text"
+          },
+          config: {
+            label: mi18n.get("Form Title") || "Stage Title"
+          }
+        },
+        {
+          tag: "input",
+          id: "form-novalidate",
+          attrs: {
+            className: "form-novalidate",
+            value: false,
+            type: "checkbox"
+          },
+          config: {
+            label: mi18n.get("Form novalidate")
+          }
+        },
+        {
+          tag: "input",
+          id: "form-tags",
+          attrs: {
+            className: "form-tags",
+            type: "text"
+          },
+          config: {
+            label: mi18n.get("Tags")
+          }
+        }
+      ]
+    });
+    const children = this.createChildWrap();
+    this.dom = dom.create({
+      attrs: {
+        className: [STAGE_CLASSNAME, "empty"],
+        id: this.id
+      },
+      children: [this.getComponentTag(), this.getActionButtons(), this.editWindow, children]
+    });
+    Sortable.create(children, {
+      animation: 150,
+      fallbackClass: "row-moving",
+      group: {
+        name: "stage",
+        pull: true,
+        put: ["row", "column", "controls"]
+      },
+      sort: true,
+      disabled: false,
+      onAdd: this.onAdd.bind(this),
+      onRemove: this.onRemove.bind(this),
+      onStart: () => {
+        stages.active = this;
+      },
+      onSort: this.onSort.bind(this),
+      draggable: `.${ROW_CLASSNAME}`,
+      handle: ".item-move"
+    });
+  }
+  empty(isAnimated = true) {
+    return new Promise((resolve) => {
+      if (isAnimated) {
+        this.dom.classList.add("removing-all-fields");
+        animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
+          resolve(super.empty(isAnimated));
+          this.dom.classList.remove("removing-all-fields");
+          animate.slideDown(this.dom, ANIMATION_SPEED_BASE);
+        });
+      } else {
+        resolve(super.empty());
+      }
+    });
+  }
+  onAdd(...args) {
+    const component = super.onAdd(...args);
+    if (component && component.name === "column") {
+      component.parent.autoColumnWidths();
+    }
+  }
+}
+const DEFAULT_CONFIG$1 = () => ({
+  actionButtons: {
+    buttons: ["edit"],
+    disabled: []
+  },
+  panels: {
+    disabled: [],
+    // The 'order' array specifies the sequence in which the panels should be displayed.
+    // Each string in the array represents a panel type, such as 'attrs', 'options', or 'conditions'.
+    // By default, these panels are ordered as you see below, but can be override via formeo options.
+    order: ["attrs", "options", "conditions"]
+  }
+});
+let Stages$1 = class Stages extends ComponentData {
+  constructor(stageData) {
+    super("stages", stageData);
+    this.config = { all: DEFAULT_CONFIG$1() };
+  }
+  Component(data) {
+    return new Stage(data);
+  }
+};
+const stages = new Stages$1();
+const loaded = {
+  js: /* @__PURE__ */ new Set(),
+  css: /* @__PURE__ */ new Set()
+};
+const ajax = (fileUrl, callback, onError = noop) => {
+  return new Promise((resolve) => {
+    return fetch(fileUrl).then((data) => {
+      if (!data.ok) {
+        return resolve(onError(data));
+      }
+      resolve(callback ? callback(data) : data);
+    }).catch((err) => onError(err));
+  });
+};
+const onLoadStylesheet = (elem, cb) => {
+  elem.removeEventListener("load", onLoadStylesheet);
+  cb(elem.src);
+};
+const onLoadJavascript = (elem, cb) => {
+  elem.removeEventListener("load", onLoadJavascript);
+  cb(elem.src);
+};
+const insertScript = (src) => {
+  return new Promise((resolve, reject) => {
+    if (loaded.js.has(src)) {
+      return resolve(src);
+    }
+    loaded.js.add(src);
+    const script = dom.create({
+      tag: "script",
+      attrs: {
+        type: "text/javascript",
+        async: true,
+        src
+      },
+      action: {
+        load: () => onLoadJavascript(script, resolve),
+        error: () => reject(new Error(`${src} failed to load.`))
+      }
+    });
+    document.head.appendChild(script);
+  });
+};
+const insertStyle = (srcs) => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs];
+  const promises = srcs.map(
+    (src) => new Promise((resolve, reject) => {
+      if (loaded.css.has(src)) {
+        return resolve(src);
+      }
+      loaded.css.add(src);
+      const styleLink = dom.create({
+        tag: "link",
+        attrs: {
+          rel: "stylesheet",
+          href: src
+        },
+        action: {
+          load: () => onLoadStylesheet(styleLink, resolve),
+          error: () => reject(new Error(`${(void 0).src} failed to load.`))
+        }
+      });
+      document.head.appendChild(styleLink);
+    })
+  );
+  return Promise.all(promises);
+};
+const insertScripts = (srcs) => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs];
+  const promises = srcs.map((src) => insertScript(src));
+  return Promise.all(promises);
+};
+const insertStyles = (srcs) => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs];
+  const promises = srcs.map((src) => insertStyle(src));
+  return Promise.all(promises);
+};
+const insertIcons = (iconSvgStr) => {
+  let iconSpriteWrap = document.getElementById(formeoSpriteId);
+  if (!iconSpriteWrap) {
+    iconSpriteWrap = dom.create({
+      id: formeoSpriteId,
+      children: iconSvgStr,
+      attrs: {
+        hidden: true,
+        style: "display: none;"
+      }
+    });
+    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
+  }
+  return iconSpriteWrap;
+};
+const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
+  const formeoSprite = document.getElementById(formeoSpriteId);
+  if (formeoSprite) {
+    return;
+  }
+  const parseResp = async (resp) => insertIcons(await resp.text());
+  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp));
+};
+const loadPolyfills = (polyfillConfig) => {
+  const polyfills = Array.isArray(polyfillConfig) ? POLYFILLS.filter(({ name: name2 }) => polyfillConfig.indexOf(name2) !== -1) : POLYFILLS;
+  return Promise.all(polyfills.map(({ src }) => insertScript(src)));
+};
+const LOADER_MAP = {
+  js: insertScripts,
+  css: insertStyles
+};
+const fetchDependencies = (dependencies2) => {
+  const promises = Object.entries(dependencies2).map(([type2, src]) => {
+    return LOADER_MAP[type2](src);
+  });
+  return Promise.all(promises);
+};
+const isCssLoaded = () => {
+  const formeoSprite = document.getElementById(formeoSpriteId);
+  const computedStyle = window.getComputedStyle(formeoSprite);
+  return computedStyle.visibility === "hidden";
+};
+const fetchFormeoStyle = async (cssUrl) => {
+  if (!isCssLoaded()) {
+    await insertStyle(cssUrl);
+    if (!isCssLoaded()) {
+      return await insertStyle(FALLBACK_CSS_URL);
+    }
+  }
+};
+class Control {
+  /**
+   * Constructs a new Control instance.
+   *
+   * @param {Object} [config={}] - The configuration object.
+   * @param {Object} [config.events={}] - The events associated with the control. ex { click: () => {} }
+   * @param {Object} [config.dependencies={}] - The dependencies required by the control. ex { js: 'https://example.com/script.js', css: 'https://example.com/style.css' }
+   * @param {...Object} [controlData] - Additional configuration properties. ex { meta: {}, config: { label: 'Control Name' } }
+   */
+  constructor({ events: events2 = {}, dependencies: dependencies2 = {}, controlAction, ...controlData }) {
+    __publicField(this, "controlCache", /* @__PURE__ */ new Set());
+    this.events = events2;
+    this.controlData = controlData;
+    this.controlAction = controlAction;
+    this.dependencies = dependencies2;
+    this.id = controlData.id || uuid();
+  }
+  get controlId() {
+    var _a, _b;
+    return ((_a = this.controlData.meta) == null ? void 0 : _a.id) || ((_b = this.controlData.config) == null ? void 0 : _b.controlId);
+  }
+  get dom() {
+    const { meta, config: config2 } = this.controlData;
+    const controlLabel = this.i18n(config2.label) || config2.label;
+    const button = {
+      tag: "button",
+      attrs: {
+        type: "button"
+      },
+      content: [
+        { tag: "span", className: "control-icon", children: dom.icon(meta.icon) },
+        { tag: "span", className: "control-label", content: controlLabel }
+      ],
+      action: {
+        // this is used for keyboard navigation. when tabbing through controls it
+        // will auto navigated between the groups
+        focus: ({ target }) => {
+          const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`);
+          return group && Controls$2.panels.nav.refresh(indexOfNode(group));
+        },
+        click: ({ target }) => {
+          var _a;
+          const controlId = (_a = target.closest(".field-control")) == null ? void 0 : _a.id;
+          if (controlId) {
+            Controls$2.addElement(controlId);
+          }
+        }
+      }
+    };
+    return dom.create({
+      tag: "li",
+      id: this.id,
+      className: ["field-control", `${meta.group}-control`, `${meta.id}-control`],
+      content: button,
+      meta,
+      action: this.controlAction
+    });
+  }
+  promise() {
+    return fetchDependencies(this.dependencies);
+  }
+  /**
+   * Retrieve a translated string
+   * By default looks for translations defined against the class (for plugin controls)
+   * Expects {locale1: {type: label}, locale2: {type: label}}, or {default: label}, or {local1: label, local2: label2}
+   * @param {String} lookup string to retrieve the label / translated string for
+   * @param {Object|Number|String} args - string or key/val pairs for string lookups with variables
+   * @return {String} the translated label
+   */
+  i18n(lookup, args) {
+    var _a, _b;
+    const locale = mi18n.locale;
+    const controlTranslations = (_a = this.definition) == null ? void 0 : _a.i18n;
+    const localeTranslations = (controlTranslations == null ? void 0 : controlTranslations[locale]) || {};
+    return (((_b = localeTranslations[lookup]) == null ? void 0 : _b.call(localeTranslations)) ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
+  }
+}
+const defaultOptions = Object.freeze({
+  sortable: true,
+  elementOrder: {},
+  groupOrder: [],
+  groups: [
+    {
+      id: "layout",
+      label: "controls.groups.layout",
+      elementOrder: ["row", "column"]
+    },
+    {
+      id: "common",
+      label: "controls.groups.form",
+      elementOrder: ["button", "checkbox"]
+    },
+    {
+      id: "html",
+      label: "controls.groups.html",
+      elementOrder: ["header", "block-text"]
+    }
+  ],
+  disable: {
+    groups: [],
+    elements: [],
+    formActions: []
+  },
+  elements: [],
+  container: null,
+  panels: { displayType: "slider" }
+});
+let Controls$1 = class Controls {
+  constructor() {
+    __publicField(this, "groupLabel", (key) => mi18n.get(key) || key || "");
+    __publicField(this, "layoutTypes", {
+      row: () => stages.active.addChild(),
+      column: () => this.layoutTypes.row().addChild(),
+      field: (controlData) => this.layoutTypes.column().addChild(controlData)
+    });
+    /**
+     * Append an element to the stage
+     * @param {String} id of elements
+     */
+    __publicField(this, "addElement", (id) => {
+      const {
+        meta: { group, id: metaId },
+        ...elementData
+      } = get(this.get(id), "controlData");
+      set(elementData, "config.controlId", metaId);
+      if (group === "layout") {
+        return this.layoutTypes[metaId.replace("layout-", "")]();
+      }
+      return this.layoutTypes.field(elementData);
+    });
+    __publicField(this, "applyOptions", async (controlOptions = {}) => {
+      const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions);
+      this.container = container;
+      this.groupOrder = unique(groupOrder.concat(["common", "html", "layout"]));
+      this.options = options;
+      const [layoutControls, formControls, htmlControls] = await Promise.all([
+        Promise.resolve().then(() => index$5),
+        Promise.resolve().then(() => index$3),
+        Promise.resolve().then(() => index$1)
+      ]);
+      const allControls = [layoutControls.default, formControls.default, htmlControls.default].flat();
+      return Promise.all(this.registerControls([...allControls, ...elements]));
+    });
+    this.data = /* @__PURE__ */ new Map();
+    this.buttonActions = {
+      // this is used for keyboard navigation. when tabbing through controls it
+      // will auto navigated between the groups
+      focus: ({ target }) => {
+        const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`);
+        return group && this.panels.nav.refresh(indexOfNode(group));
+      },
+      click: ({ target }) => {
+        this.addElement(target.parentElement.id);
+      }
+    };
+  }
+  /**
+   * Methods to be called on initialization
+   * @param {Object} controlOptions
+   */
+  async init(controlOptions, sticky = false) {
+    await this.applyOptions(controlOptions);
+    this.buildDOM(sticky);
+    return this;
+  }
+  /**
+   * Generate control config for UI and bind actions
+   * @return {Array} elementControls
+   */
+  registerControls(elements) {
+    this.controls = [];
+    return elements.map((Element) => {
+      const isControlClass = typeof Element === "function";
+      const control = isControlClass ? new Element() : new Control(Element);
+      this.add(control);
+      this.controls.push(control.dom);
+      return control.promise();
+    });
+  }
+  /**
+   * Group elements into their respective control group
+   * @return {Array} allGroups
+   */
+  groupElements() {
+    let groups = this.options.groups.slice();
+    let elements = this.controls.slice();
+    let allGroups = [];
+    const usedElementIds = [];
+    groups = orderObjectsBy(groups, this.groupOrder, "id");
+    groups = groups.filter((group) => match(group.id, this.options.disable.groups));
+    allGroups = groups.map((group) => {
+      const groupConfig = {
+        tag: "ul",
+        attrs: {
+          className: [CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME],
+          id: `${group.id}-${CONTROL_GROUP_CLASSNAME}`
+        },
+        config: {
+          label: this.groupLabel(group.label)
+        }
+      };
+      if (this.options.elementOrder[group.id]) {
+        const userOrder = this.options.elementOrder[group.id];
+        const newOrder = unique(userOrder.concat(group.elementOrder));
+        group.elementOrder = newOrder;
+      }
+      elements = orderObjectsBy(elements, group.elementOrder, "meta.id");
+      groupConfig.content = elements.filter((control) => {
+        const { controlData: field2 } = this.get(control.id);
+        const controlId = field2.meta.id || "";
+        const filters = [
+          match(controlId, this.options.disable.elements),
+          field2.meta.group === group.id,
+          !usedElementIds.includes(controlId)
+        ];
+        let shouldFilter = true;
+        shouldFilter = filters.every((val) => val === true);
+        if (shouldFilter) {
+          usedElementIds.push(controlId);
+        }
+        return shouldFilter;
+      });
+      return groupConfig;
+    });
+    return allGroups;
+  }
+  add(control = /* @__PURE__ */ Object.create(null)) {
+    const controlConfig = clone$1(control);
+    this.data.set(controlConfig.id, controlConfig);
+    if (controlConfig.controlData.meta.id) {
+      this.data.set(controlConfig.controlData.meta.id, controlConfig.controlData);
+    }
+    return controlConfig;
+  }
+  get(controlId) {
+    return clone$1(this.data.get(controlId));
+  }
+  /**
+   * Generate the DOM config for form actions like settings, save and clear
+   * @return {Object} form action buttons config
+   */
+  formActions() {
+    if (this.options.disable.formActions === true) {
+      return null;
+    }
+    const clearBtn = {
+      ...dom.btnTemplate({ content: [dom.icon("bin"), mi18n.get("clear")], title: mi18n.get("clearAll") }),
+      className: ["clear-form"],
+      action: {
+        click: (evt) => {
+          if (rows.size) {
+            events.confirmClearAll = new window.CustomEvent("confirmClearAll", {
+              detail: {
+                confirmationMessage: mi18n.get("confirmClearAll"),
+                clearAllAction: () => {
+                  stages.clearAll().then(() => {
+                    const evtData = {
+                      src: evt.target
+                    };
+                    events.formeoCleared(evtData);
+                  });
+                },
+                btnCoords: dom.coords(evt.target)
+              }
+            });
+            document.dispatchEvent(events.confirmClearAll);
+          } else {
+            window.alert(mi18n.get("cannotClearFields"));
+          }
+        }
+      }
+    };
+    const saveBtn = {
+      ...dom.btnTemplate({ content: [dom.icon("floppy-disk"), mi18n.get("save")], title: mi18n.get("save") }),
+      className: ["save-form"],
+      action: {
+        click: async ({ target }) => {
+          const { default: Components2 } = await Promise.resolve().then(() => index$6);
+          const { formData } = Components2;
+          const saveEvt = {
+            action: () => {
+            },
+            coords: dom.coords(target),
+            message: "",
+            button: target
+          };
+          actions.click.btn(saveEvt);
+          return actions.save.form(formData);
+        }
+      }
+    };
+    const formActions = {
+      className: "form-actions f-btn-group",
+      content: Object.entries({ clearBtn, saveBtn }).reduce((acc, [key, value]) => {
+        if (!this.options.disable.formActions.includes(key)) {
+          acc.push(value);
+        }
+        return acc;
+      }, [])
+    };
+    return formActions;
+  }
+  /**
+   * Returns the markup for the form controls/fields
+   * @return {DOM}
+   */
+  buildDOM(sticky) {
+    const groupedFields = this.groupElements();
+    const formActions = this.formActions();
+    const { displayType } = this.options.panels;
+    this.panels = new Panels({ panels: groupedFields, type: "controls", displayType });
+    const groupsWrapClasses = ["control-groups", "formeo-panels-wrap", `panel-count-${groupedFields.length}`];
+    const groupsWrap = dom.create({
+      className: groupsWrapClasses,
+      content: [this.panels.panelNav, this.panels.panelsWrap]
+    });
+    const controlClasses = ["formeo-controls"];
+    if (sticky) {
+      controlClasses.push("formeo-sticky");
+    }
+    const element = dom.create({
+      className: controlClasses,
+      content: [groupsWrap, formActions]
+    });
+    const groups = element.getElementsByClassName("control-group");
+    this.dom = element;
+    this.groups = groups;
+    const [firstGroup] = groups;
+    this.currentGroup = firstGroup;
+    this.actions = {
+      filter: (term) => {
+        const filtering = term !== "";
+        const fields2 = this.controls;
+        let filteredTerm = groupsWrap.querySelector(".filtered-term");
+        dom.toggleElementsByStr(fields2, term);
+        if (filtering) {
+          const filteredStr = mi18n.get("controls.filteringTerm", term);
+          element.classList.add("filtered");
+          if (filteredTerm) {
+            filteredTerm.textContent = filteredStr;
+          } else {
+            filteredTerm = dom.create({
+              tag: "h5",
+              className: "filtered-term",
+              content: filteredStr
+            });
+            groupsWrap.insertBefore(filteredTerm, groupsWrap.firstChild);
+          }
+        } else if (filteredTerm) {
+          element.classList.remove("filtered");
+          filteredTerm.remove();
+        }
+      },
+      addElement: this.addElement,
+      // @todo finish the addGroup method
+      addGroup: (group) => console.log(group)
+    };
+    for (let i = groups.length - 1; i >= 0; i--) {
+      const storeID = `formeo-controls-${groups[i]}`;
+      if (!this.options.sortable) {
+        window.localStorage.removeItem(storeID);
+      }
+      Sortable.create(groups[i], {
+        animation: 150,
+        forceFallback: true,
+        fallbackClass: "control-moving",
+        fallbackOnBody: true,
+        group: {
+          name: "controls",
+          pull: "clone",
+          put: false
+        },
+        onStart: async ({ item }) => {
+          const { controlData } = this.get(item.id);
+          if (this.options.ghostPreview) {
+            const { default: Field2 } = await Promise.resolve().then(() => field);
+            item.innerHTML = "";
+            item.appendChild(new Field2(controlData).preview);
+          }
+        },
+        onEnd: ({ from, item, clone: clone2 }) => {
+          if (from.contains(clone2)) {
+            from.replaceChild(item, clone2);
+          }
+        },
+        sort: this.options.sortable,
+        store: {
+          /**
+           * Get the order of elements.
+           * @param   {Sortable}  sortable
+           * @return {Array}
+           */
+          get: () => {
+            const order = window.localStorage.getItem(storeID);
+            return order ? order.split("|") : [];
+          },
+          /**
+           * Save the order of elements.
+           * @param {Sortable}  sortable
+           */
+          set: (sortable) => {
+            const order = sortable.toArray();
+            window.localStorage.setItem(storeID, order.join("|"));
+          }
+        }
+      });
+    }
+    return element;
+  }
+};
+const Controls$2 = new Controls$1();
+const index$7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  Controls: Controls$1,
+  default: Controls$2
+}, Symbol.toStringTag, { value: "Module" }));
+const DEFAULT_DATA = () => ({
+  // conditions: [CONDITION_TEMPLATE()],
+});
+const checkableTypes = /* @__PURE__ */ new Set(["checkbox", "radio"]);
+const isSelectableType = /* @__PURE__ */ new Set(["radio", "checkbox", "select-one", "select-multiple"]);
+class Field extends Component {
+  /**
+   * Set defaults and load fieldData
+   * @param  {Object} fieldData existing field ID
+   * @return {Object} field object
+   */
+  constructor(fieldData = /* @__PURE__ */ Object.create(null)) {
+    super("field", { ...DEFAULT_DATA(), ...fieldData });
+    __publicField(this, "setData", (path, value) => {
+      return super.set(path, value);
+    });
+    /**
+     * Updates a field's preview
+     * @return {Object} fresh preview
+     */
+    __publicField(this, "updatePreview", () => {
+      this.updateLabel();
+      const newPreview = this.fieldPreview();
+      this.preview.replaceWith(newPreview);
+      this.preview = newPreview;
+    });
+    this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
+    this.debouncedUpdatePreview = debounce(this.updatePreview);
+    this.label = dom.create(this.labelConfig);
+    this.preview = this.fieldPreview();
+    this.controlId = this.get("config.controlId") || this.get("meta.id");
+    const actionButtons = this.getActionButtons();
+    const hasEditButton = this.actionButtons.some((child) => {
+      var _a;
+      return ((_a = child.meta) == null ? void 0 : _a.id) === "edit";
+    });
+    this.updateEditPanels();
+    const field2 = dom.create({
+      tag: "li",
+      attrs: {
+        className: FIELD_CLASSNAME
+      },
+      id: this.id,
+      children: [
+        this.label,
+        this.getComponentTag(),
+        actionButtons,
+        hasEditButton && this.editWindow,
+        // fieldEdit window,
+        this.preview
+      ].filter(Boolean),
+      panelNav: this.panelNav,
+      dataset: {
+        hoverTag: mi18n.get("field")
+      }
+    });
+    this.dom = field2;
+    this.isEditing = false;
+  }
+  get labelConfig() {
+    const hideLabel = !!this.get("config.hideLabel");
+    if (hideLabel) {
+      return null;
+    }
+    const labelVal = this.get("config.editorLabel") || this.get("config.label");
+    const required = this.get("attrs.required");
+    const disableHTML = this.config.label.disableHTML;
+    const labelConfig = () => {
+      const config2 = {
+        tag: "label",
+        attrs: {}
+      };
+      if (disableHTML) {
+        config2.tag = "input";
+        config2.attrs.value = labelVal;
+        return config2;
+      }
+      config2.attrs.contenteditable = true;
+      config2.children = labelVal;
+      return config2;
+    };
+    const label = {
+      ...labelConfig(),
+      action: {
+        input: ({ target: { innerHTML, innerText } }) => {
+          super.set("config.label", disableHTML ? innerText : innerHTML);
+        }
+      }
+    };
+    const labelWrap = {
+      className: "prev-label",
+      children: [label, required && dom.requiredMark()]
+    };
+    return labelWrap;
+  }
+  /**
+   * wrapper for Data.set
+   */
+  set(path, value) {
+    const data = this.setData(path, value);
+    this.debouncedUpdatePreview();
+    return data;
+  }
+  /**
+   * Update the label dom when label data changes
+   */
+  updateLabel() {
+    if (!this.label) {
+      return null;
+    }
+    const newLabel = dom.create(this.labelConfig);
+    this.label.replaceWith(newLabel);
+    this.label = newLabel;
+  }
+  get defaultPreviewActions() {
+    return {
+      change: (evt) => {
+        var _a;
+        const { target } = evt;
+        const { type: type2 } = target;
+        if (isSelectableType.has(type2)) {
+          const selectedOptions = this.preview.querySelectorAll(":checked");
+          const optionsData = this.get("options");
+          const checkedType = ((_a = optionsData == null ? void 0 : optionsData[0]) == null ? void 0 : _a.selected) !== void 0 ? "selected" : "checked";
+          const optionsDataMap = optionsData.reduce((acc, option2) => {
+            acc[option2.value] = option2;
+            acc[option2.value][checkedType] = false;
+            return acc;
+          }, {});
+          for (const option2 of selectedOptions) {
+            optionsDataMap[option2.value][checkedType] = option2.value === optionsDataMap[option2.value].value;
+          }
+          super.set("options", Object.values(optionsDataMap));
+          return this.debouncedUpdateEditPanels();
+        }
+      },
+      click: (evt) => {
+        if (evt.target.contentEditable === "true") {
+          evt.preventDefault();
+        }
+      },
+      input: ({ target }) => {
+        var _a;
+        if (["input", "meter", "progress", "button"].includes(target.tagName.toLowerCase())) {
+          super.set("attrs.value", target.value);
+          return this.debouncedUpdateEditPanels();
+        }
+        if (target.contentEditable && !((_a = target.type) == null ? void 0 : _a.startsWith("select-"))) {
+          const parentClassList = target.parentElement.classList;
+          const isOption = parentClassList.contains("f-checkbox") || parentClassList.contains("f-radio");
+          if (isOption) {
+            const option2 = target.parentElement;
+            const optionIndex = indexOfNode(option2);
+            this.setData(`options[${optionIndex}].label`, target.innerHTML);
+            return this.debouncedUpdateEditPanels();
+          }
+          this.setData("content", target.innerHTML || target.value);
+        }
+      }
+    };
+  }
+  /**
+   * Generate field preview config
+   * @return {Object} fieldPreview
+   */
+  fieldPreview() {
+    var _a;
+    const { action = {}, ...prevData } = clone$1(this.data);
+    prevData.id = `prev-${this.id}`;
+    prevData.action = Object.entries(action).reduce((acc, [key, value]) => {
+      acc[key] = value.bind(this);
+      return acc;
+    }, {});
+    if ((_a = this.data) == null ? void 0 : _a.config.editableContent) {
+      prevData.attrs = { ...prevData.attrs, contenteditable: true };
+    }
+    const fieldPreview = {
+      attrs: {
+        className: "field-preview",
+        style: this.isEditing && "display: none;"
+      },
+      content: dom.create(prevData, true),
+      action: this.defaultPreviewActions
+    };
+    return dom.create(fieldPreview, true);
+  }
+  get isCheckable() {
+    return checkableTypes.has(this.get("config.controlId"));
+  }
+}
+const field = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  default: Field
+}, Symbol.toStringTag, { value: "Module" }));
+const DEFAULT_CONFIG = () => ({
+  actionButtons: {
+    buttons: ["move", "edit", "clone", "remove"],
+    disabled: []
+  },
+  panels: {
+    disabled: [],
+    attrs: {
+      disabled: ["type"],
+      hideDisabled: true,
+      locked: []
+    },
+    order: ["attrs", "options", "conditions"]
+  },
+  label: {
+    disableHTML: false
+  }
+});
+let Fields$1 = class Fields extends ComponentData {
+  constructor(fieldData) {
+    super("fields", fieldData);
+    __publicField(this, "get", (path) => {
+      let found = path && get(this.data, path);
+      if (!found) {
+        const control = Controls$2.get(path);
+        if (control) {
+          found = this.add(null, control.controlData);
+        }
+      }
+      return found;
+    });
+    __publicField(this, "getData", () => {
+      return Object.entries(this.data).reduce((acc, [key, val]) => {
+        const { conditions, ...data } = (val == null ? void 0 : val.getData()) || val;
+        if (conditions == null ? void 0 : conditions.length) {
+          let hasConditions = true;
+          if (conditions.length === 1) {
+            const [firstCondition] = conditions;
+            hasConditions = Boolean(firstCondition.if[0].source);
+          }
+          if (hasConditions) {
+            data.conditions = conditions;
+          }
+        }
+        acc[key] = data;
+        return acc;
+      }, {});
+    });
+    __publicField(this, "load", (dataArg = /* @__PURE__ */ Object.create(null)) => {
+      const allFieldData = parseData(dataArg);
+      this.empty();
+      for (const [key, val] of Object.entries(allFieldData)) {
+        const { meta, ...data } = val;
+        if (meta == null ? void 0 : meta.id) {
+          set(data, "config.controlId", meta == null ? void 0 : meta.id);
+        }
+        this.add(key, data);
+      }
+      return this.data;
+    });
+    this.config = { all: DEFAULT_CONFIG() };
+  }
+  Component(data) {
+    return new Field(data);
+  }
+};
+const fields = new Fields$1();
+const Stages2 = stages;
+const Rows2 = rows;
+const Columns2 = columns;
+const Fields2 = fields;
+const Controls2 = Controls$2;
+const getFormData = (formData, useSessionStorage = false) => {
+  if (formData) {
+    return clone$1(parseData(formData));
+  }
+  if (useSessionStorage) {
+    return sessionStorage.get(SESSION_FORMDATA_KEY) || DEFAULT_FORMDATA();
+  }
+  return DEFAULT_FORMDATA();
+};
+class Components extends Data {
+  constructor() {
+    super("components");
+    __publicField(this, "load", (formDataArg, opts) => {
+      this.empty();
+      const formData = getFormData(formDataArg, opts.sessionStorage);
+      this.opts = opts;
+      this.set("id", formData.id);
+      this.add("stages", Stages2.load(formData.stages));
+      this.add("rows", Rows2.load(formData.rows));
+      this.add("columns", Columns2.load(formData.columns));
+      this.add("fields", Fields2.load(formData.fields));
+      for (const stage of Object.values(this.get("stages"))) {
+        stage.loadChildren();
+      }
+      return this.data;
+    });
+    __publicField(this, "getChildData", ({ type: type2, id }) => {
+      const component = this.get(type2, id);
+      if (component) {
+        return component.getData();
+      }
+    });
+    this.disableEvents = true;
+    this.stages = Stages2;
+    this.rows = Rows2;
+    this.columns = Columns2;
+    this.fields = Fields2;
+    this.controls = Controls2;
+  }
+  /**
+   * flattens the component tree
+   * @returns {Object} where keys contains component type
+   */
+  flatList() {
+    const result = {};
+    for (const stageId of Object.keys(this.data.stages)) {
+      buildFlatDataStructure(this.data, stageId, "stages", result);
+    }
+    return result;
+  }
+  get json() {
+    return window.JSON.stringify({
+      $schema: `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formData_schema.json`,
+      ...this.formData
+    });
+  }
+  get formData() {
+    return {
+      id: this.get("id"),
+      stages: stages.getData(),
+      rows: rows.getData(),
+      columns: columns.getData(),
+      fields: fields.getData()
+    };
+  }
+  set config(config2) {
+    const { stages: stages2, rows: rows2, columns: columns2, fields: fields2 } = config2;
+    Stages2.config = stages2;
+    Rows2.config = rows2;
+    Columns2.config = columns2;
+    Fields2.config = fields2;
+  }
+  getIndex(type2) {
+    return this[type2] || this[COMPONENT_INDEX_TYPE_MAP.get(type2)];
+  }
+  /**
+   * call `set` on a component in memory
+   */
+  setAddress(fullAddress, value) {
+    if (!isAddress(fullAddress)) {
+      return;
+    }
+    const [type2, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : splitAddress(fullAddress);
+    const componentIndex = this.getIndex(type2);
+    const component = componentIndex.get(id);
+    component == null ? void 0 : component.set(localAddress, value);
+    return component;
+  }
+  /**
+   * Fetch a component from memory by address
+   */
+  getAddress(fullAddress) {
+    if (!isAddress(fullAddress)) {
+      return;
+    }
+    const [type2, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : splitAddress(fullAddress);
+    const componentIndex = this.getIndex(type2);
+    const component = componentIndex.get(id);
+    if (localAddress.length && !component) {
+      return;
+    }
+    return localAddress.length ? component.get(localAddress) : component;
+  }
+}
+const components = new Components();
+const index$6 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  Columns: Columns2,
+  Components,
+  Controls: Controls2,
+  Fields: Fields2,
+  Rows: Rows2,
+  Stages: Stages2,
+  default: components
+}, Symbol.toStringTag, { value: "Module" }));
+const NO_TRANSITION_CLASS_NAME = "no-transition";
+const defaults$1 = {
+  debug: false,
+  // enable debug mode
+  bubbles: true,
+  // bubble events from components
+  formeoLoaded: (_evt) => {
+  },
+  onAdd: () => {
+  },
+  onChange: (...args) => defaults$1.onUpdate(...args),
+  onUpdate: (evt) => {
+    var _a;
+    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+  },
+  onUpdateStage: (evt) => {
+    var _a;
+    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+  },
+  onUpdateRow: (evt) => {
+    var _a;
+    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+  },
+  onUpdateColumn: (evt) => {
+    var _a;
+    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+  },
+  onUpdateField: (evt) => {
+    var _a;
+    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+  },
+  onRender: (evt) => {
+    var _a;
+    return ((_a = events.opts) == null ? void 0 : _a.debug) && console.log(evt);
+  },
+  onSave: (_evt) => {
+  },
+  confirmClearAll: (evt) => {
+    if (window.confirm(evt.confirmationMessage)) {
+      evt.clearAllAction(evt);
+    }
+  }
+};
+const defaultCustomEvent = ({ src, ...evtData }, type2 = EVENT_FORMEO_UPDATED) => {
+  var _a, _b;
+  const evt = new window.CustomEvent(type2, {
+    detail: evtData,
+    bubbles: ((_a = events.opts) == null ? void 0 : _a.debug) || ((_b = events.opts) == null ? void 0 : _b.bubbles)
+  });
+  evt.data = (src || document).dispatchEvent(evt);
+  return evt;
+};
+const events = {
+  init: function(options) {
+    this.opts = { ...defaults$1, ...options };
+    return this;
+  },
+  formeoSaved: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
+  formeoUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
+  formeoCleared: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
+  formeoOnRender: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
+  formeoConditionUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED)
+};
+const formeoUpdatedThrottled = throttle$1(() => {
+  events.opts.onUpdate({
+    timeStamp: window.performance.now(),
+    type: EVENT_FORMEO_UPDATED,
+    detail: components.formData
+  });
+}, ANIMATION_SPEED_FAST);
+document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled);
+document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, (evt) => {
+  const { timeStamp, type: type2, detail } = evt;
+  events.opts.onUpdate({
+    timeStamp,
+    type: type2,
+    detail
+  });
+});
+document.addEventListener(EVENT_FORMEO_UPDATED_ROW, (evt) => {
+  const { timeStamp, type: type2, detail } = evt;
+  events.opts.onUpdate({
+    timeStamp,
+    type: type2,
+    detail
+  });
+});
+document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, (evt) => {
+  const { timeStamp, type: type2, detail } = evt;
+  events.opts.onUpdate({
+    timeStamp,
+    type: type2,
+    detail
+  });
+});
+document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
+  const { timeStamp, type: type2, detail } = evt;
+  events.opts.onUpdate({
+    timeStamp,
+    type: type2,
+    detail
+  });
+});
+document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
+  const { timeStamp, type: type2, detail } = evt;
+  events.opts.onRender({
+    timeStamp,
+    type: type2,
+    detail
+  });
+});
+document.addEventListener("confirmClearAll", (evt) => {
+  evt = {
+    timeStamp: evt.timeStamp,
+    type: evt.type,
+    confirmationMessage: evt.detail.confirmationMessage,
+    clearAllAction: evt.detail.clearAllAction,
+    btnCoords: evt.detail.btnCoords
+  };
+  events.opts.confirmClearAll(evt);
+});
+document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type: type2, detail: { formData } }) => {
+  const evt = {
+    timeStamp,
+    type: type2,
+    formData
+  };
+  events.opts.onSave(evt);
+});
+document.addEventListener("formeoLoaded", (evt) => {
+  events.opts.formeoLoaded(evt.detail.formeo);
+});
+let throttling;
+function onResizeWindow() {
+  throttling = throttling || window.requestAnimationFrame(() => {
+    throttling = false;
+    for (const column of Object.values(Columns2.data)) {
+      column.dom.classList.add(NO_TRANSITION_CLASS_NAME);
+      Controls2.dom.classList.add(NO_TRANSITION_CLASS_NAME);
+      Controls2.panels.nav.refresh();
+      column.refreshFieldPanels();
+    }
+  });
+}
+window.addEventListener("resize", onResizeWindow);
+const defaultActions = {
+  add: {
+    attr: (evt) => {
+      const attr = window.prompt(evt.message.attr);
+      if (attr && evt.isDisabled(attr)) {
+        window.alert(mi18n.get("attributeNotPermitted", attr || ""));
+        return actions.add.attrs(evt);
+      }
+      let val;
+      if (attr) {
+        val = String(window.prompt(evt.message.value, ""));
+        evt.addAction(attr, val);
+      }
+    },
+    option: (evt) => {
+      evt.addAction();
+    },
+    condition: (evt) => {
+      evt.addAction(evt);
+    }
+  },
+  remove: {
+    attrs: (evt) => {
+      evt.removeAction();
+    },
+    options: (evt) => {
+      evt.removeAction();
+    },
+    conditions: (evt) => {
+      evt.removeAction();
+    }
+  },
+  click: {
+    btn: (evt) => {
+      evt.action();
+    }
+  },
+  save: {
+    form: identity
+  }
+};
+const actions = {
+  init: function(options) {
+    const actionKeys = Object.keys(defaultActions);
+    this.opts = actionKeys.reduce((acc, key) => {
+      acc[key] = { ...defaultActions[key], ...options[key] };
+      return acc;
+    }, options);
+    return this;
+  },
+  add: {
+    attrs: (evt) => {
+      return actions.opts.add.attr(evt);
+    },
+    options: (evt) => {
+      return actions.opts.add.option(evt);
+    },
+    conditions: (evt) => {
+      evt.template = evt.template || CONDITION_TEMPLATE();
+      return actions.opts.add.condition(evt);
+    }
+  },
+  remove: {
+    attrs: (evt) => {
+      return actions.opts.remove.attrs(evt);
+    },
+    options: (evt) => {
+      return actions.opts.remove.options(evt);
+    },
+    conditions: (evt) => {
+      return actions.opts.remove.conditions(evt);
+    }
+  },
+  click: {
+    btn: (evt) => {
+      return actions.opts.click.btn(evt);
+    }
+  },
+  save: {
+    form: (formData) => {
+      if (actions.opts.sessionStorage) {
+        sessionStorage.set(SESSION_FORMDATA_KEY, formData);
+      }
+      events.formeoSaved({ formData });
+      return actions.opts.save.form(formData);
+    }
+  }
+};
 const enUS = void 0;
 mi18n.addLanguage("en-US", enUS);
 const defaults = {
@@ -9261,8 +9785,6 @@ const defaults = {
       sessionStorage: false,
       editorContainer: null,
       // element or selector to attach editor to
-      external: {},
-      // assign external data to be used in conditions autolinker
       svgSprite: SVG_SPRITE_URL,
       // change to null
       style: CSS_URL,
@@ -9421,43 +9943,92 @@ const processOptions = ({ editorContainer, renderContainer, formData, ...opts })
 };
 const baseId = (id) => {
   const match2 = id.match(UUID_REGEXP);
-  return (match2 == null ? void 0 : match2[0]) || id;
+  return (match2 == null ? void 0 : match2[0]) || id``;
 };
-const newUUID = (id) => id.replace(UUID_REGEXP, uuid());
-const createRemoveButton = () => dom.render(
-  dom.btnTemplate({
-    className: "remove-input-group",
-    children: dom.icon("remove"),
-    action: {
-      mouseover: ({ target }) => target.parentElement.classList.add("will-remove"),
-      mouseleave: ({ target }) => target.parentElement.classList.remove("will-remove"),
-      click: ({ target }) => target.parentElement.remove()
+const isVisible = (elem) => {
+  if (!elem) return false;
+  if (elem.hasAttribute("hidden") || elem.parentElement.hasAttribute("hidden")) {
+    return false;
+  }
+  const computedStyle = window.getComputedStyle(elem);
+  return !(computedStyle.display === "none" || computedStyle.visibility === "hidden" || computedStyle.opacity === "0");
+};
+const propertyMap = {
+  isChecked: (elem) => {
+    return elem.checked;
+  },
+  isNotChecked: (elem) => {
+    return !elem.checked;
+  },
+  value: (elem) => {
+    return elem.value;
+  },
+  isVisible: (elem) => {
+    return isVisible(elem);
+  },
+  isNotVisible: (elem) => {
+    return !isVisible(elem);
+  }
+};
+const createRemoveButton = () => dom.btnTemplate({
+  className: "remove-input-group",
+  children: dom.icon("remove"),
+  action: {
+    mouseover: ({ target }) => target.parentElement.classList.add("will-remove"),
+    mouseleave: ({ target }) => target.parentElement.classList.remove("will-remove"),
+    click: ({ target }) => target.parentElement.remove()
+  }
+});
+const comparisonHandlers = {
+  equals: isEqual$1,
+  notEquals: (source, target) => !isEqual$1(source, target),
+  contains: (source, target) => source.includes(target),
+  notContains: (source, target) => !source.includes(target)
+};
+const comparisonMap = Object.entries(COMPARISON_OPERATORS).reduce((acc, [key, value]) => {
+  acc[value] = comparisonHandlers[key];
+  acc[key] = comparisonHandlers[key];
+  return acc;
+}, {});
+const assignmentHandlers = {
+  equals: (elem, { targetProperty, value }) => {
+    elem[`_${targetProperty}`] = elem[targetProperty];
+    elem[targetProperty] = value;
+  }
+};
+const assignmentMap = Object.entries(ASSIGNMENT_OPERATORS).reduce((acc, [key, value]) => {
+  acc[value] = assignmentHandlers[key];
+  acc[key] = assignmentHandlers[key];
+  return acc;
+}, {});
+const targetPropertyMap = {
+  isChecked: (elem) => {
+    elem.checked = true;
+  },
+  isNotChecked: (elem) => {
+    elem.checked = false;
+  },
+  value: (elem, { assignment, ...rest }) => {
+    var _a;
+    const assignmentAction = (_a = assignmentMap[assignment]) == null ? void 0 : _a.call(assignmentMap, elem, rest);
+    const event = new Event("input", { bubbles: true });
+    elem.dispatchEvent(event);
+    return assignmentAction;
+  },
+  isNotVisible: (elem) => {
+    if ((elem == null ? void 0 : elem._required) === void 0) {
+      elem._required = elem.required;
     }
-  })
-);
+    elem.parentElement.setAttribute("hidden", true);
+    elem.required = false;
+  },
+  isVisible: (elem) => {
+    elem.parentElement.removeAttribute("hidden");
+    elem.required = elem._required;
+  }
+};
 let FormeoRenderer$1 = class FormeoRenderer {
   constructor(opts, formDataArg) {
-    /**
-     * Renders the formData to a target Element
-     * @param {Object} formData
-     */
-    __publicField(this, "render", (formData = this.form) => {
-      this.form = cleanFormData(formData);
-      const renderCount = document.getElementsByClassName("formeo-render").length;
-      const config2 = {
-        id: this.form.id,
-        className: `formeo-render formeo formeo-rendered-${renderCount}`,
-        children: this.processedData
-      };
-      this.renderedForm = dom.render(config2);
-      this.applyConditions();
-      const existingRenderedForm = this.container.querySelector(".formeo-render");
-      if (existingRenderedForm) {
-        existingRenderedForm.replaceWith(this.renderedForm);
-      } else {
-        this.container.appendChild(this.renderedForm);
-      }
-    });
     __publicField(this, "orderChildren", (type2, order) => order.reduce((acc, cur) => {
       acc.push(this.form[type2][cur]);
       return acc;
@@ -9512,19 +10083,19 @@ let FormeoRenderer$1 = class FormeoRenderer {
       }
       return {
         tag: config2.fieldset ? "fieldset" : "div",
-        id: uuid(),
         className,
         children
       };
     });
     __publicField(this, "cloneComponentData", (componentId) => {
       const { children = [], id, ...rest } = this.components[componentId];
-      return Object.assign({}, rest, {
-        id: newUUID(id),
-        children: children.length && children.map(({ id: id2 }) => this.cloneComponentData(baseId(id2)))
-      });
+      return {
+        ...rest,
+        id: uuid(id),
+        children: (children == null ? void 0 : children.length) && children.map(({ id: id2 }) => this.cloneComponentData(baseId(id2)))
+      };
     });
-    __publicField(this, "addButton", (id) => dom.render({
+    __publicField(this, "addButton", (id) => ({
       tag: "button",
       attrs: {
         className: "add-input-group btn pull-right",
@@ -9534,9 +10105,10 @@ let FormeoRenderer$1 = class FormeoRenderer {
       action: {
         click: (e) => {
           const fInputGroup = e.target.parentElement;
-          const elem = dom.render(this.cloneComponentData(id));
+          const elem = dom.create(this.cloneComponentData(id));
           fInputGroup.insertBefore(elem, fInputGroup.lastChild);
-          elem.appendChild(createRemoveButton());
+          const removeButton = dom.create(createRemoveButton());
+          elem.appendChild(removeButton);
         }
       }
     }));
@@ -9545,14 +10117,14 @@ let FormeoRenderer$1 = class FormeoRenderer {
         (column) => this.cacheComponent(this.processColumn(column))
       );
     });
-    __publicField(this, "processFields", (fieldIds) => this.orderChildren("fields", fieldIds).map(({ id, ...field }) => {
+    __publicField(this, "processFields", (fieldIds) => this.orderChildren("fields", fieldIds).map(({ id, ...field2 }) => {
       var _a, _b;
-      const controlId = ((_a = field.config) == null ? void 0 : _a.controlId) || ((_b = field.meta) == null ? void 0 : _b.id);
+      const controlId = ((_a = field2.config) == null ? void 0 : _a.controlId) || ((_b = field2.meta) == null ? void 0 : _b.id);
       const { action = {}, dependencies: dependencies2 = {} } = this.elements[controlId] || {};
       if (dependencies2) {
         fetchDependencies(dependencies2);
       }
-      const mergedFieldData = merge({ action }, field);
+      const mergedFieldData = merge({ action }, field2);
       return this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) });
     }));
     /**
@@ -9560,6 +10132,12 @@ let FormeoRenderer$1 = class FormeoRenderer {
      * @return {Array} flattened array of conditions
      */
     __publicField(this, "handleComponentCondition", (component, ifRest, thenConditions) => {
+      if (component.length) {
+        for (const elem of component) {
+          this.handleComponentCondition(elem, ifRest, thenConditions);
+        }
+        return;
+      }
       const listenerEvent = LISTEN_TYPE_MAP(component);
       if (listenerEvent) {
         component.addEventListener(
@@ -9587,12 +10165,16 @@ let FormeoRenderer$1 = class FormeoRenderer {
           for (const condition of conditions) {
             const { if: ifConditions, then: thenConditions } = condition;
             for (const ifCondition of ifConditions) {
-              const { source, ...ifRest } = ifCondition;
+              const { source, target } = ifCondition;
               if (isAddress(source)) {
-                const components2 = this.getComponents(source);
-                for (const component of components2) {
-                  this.handleComponentCondition(component, ifRest, thenConditions);
-                }
+                const { component, options } = this.getComponent(source);
+                const sourceComponent = options || component;
+                this.handleComponentCondition(sourceComponent, ifCondition, thenConditions);
+              }
+              if (isAddress(target)) {
+                const { component, options } = this.getComponent(target);
+                const targetComponent = options || component;
+                this.handleComponentCondition(targetComponent, ifCondition, thenConditions);
               }
             }
           }
@@ -9602,75 +10184,140 @@ let FormeoRenderer$1 = class FormeoRenderer {
     /**
      * Evaulate conditions
      */
-    __publicField(this, "evaluateCondition", ({ sourceProperty, targetProperty, comparison, target }, evt) => {
+    __publicField(this, "evaluateCondition", ({ source, sourceProperty, targetProperty, comparison, target }) => {
       var _a;
-      const comparisonMap = {
-        equals: isEqual$1,
-        notEquals: (source, target2) => !isEqual$1(source, target2),
-        contains: (source, target2) => source.includes(target2),
-        notContains: (source, target2) => !source.includes(target2)
-      };
-      const sourceValue = String(evt.target[sourceProperty]);
-      const targetValue = String(isAddress(target) ? this.getComponent(target)[targetProperty] : target);
+      const sourceValue = this.getComponentProperty(source, sourceProperty);
+      if (typeof sourceValue === "boolean") {
+        return sourceValue;
+      }
+      const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target);
       return (_a = comparisonMap[comparison]) == null ? void 0 : _a.call(comparisonMap, sourceValue, targetValue);
     });
-    __publicField(this, "execResult", ({ assignment, target, targetProperty, value }) => {
+    __publicField(this, "execResult", ({ target, targetProperty, assignment, value }) => {
       var _a;
-      const assignMap = {
-        equals: (elem) => {
-          var _a2;
-          const propMap = {
-            value: () => {
-              elem[targetProperty] = value;
-            },
-            isNotVisible: () => {
-              elem.parentElement.setAttribute("hidden", true);
-              elem.required = false;
-            },
-            isVisible: () => {
-              elem.parentElement.removeAttribute("hidden");
-              elem.required = elem._required;
-            }
-          };
-          (_a2 = propMap[targetProperty]) == null ? void 0 : _a2.call(propMap);
-        }
-      };
       if (isAddress(target)) {
-        const elem = this.getComponent(target);
-        if (elem && elem._required === void 0) {
-          elem._required = elem.required;
-        }
-        (_a = assignMap[assignment]) == null ? void 0 : _a.call(assignMap, elem);
+        const { component, option: option2 } = this.getComponent(target);
+        const elem = option2 || component;
+        (_a = targetPropertyMap[targetProperty]) == null ? void 0 : _a.call(targetPropertyMap, elem, { targetProperty, assignment, value });
       }
     });
+    __publicField(this, "getComponentProperty", (address, propertyName) => {
+      var _a;
+      const { component, option: option2 } = this.getComponent(address);
+      const elem = option2 || component;
+      return ((_a = propertyMap[propertyName]) == null ? void 0 : _a.call(propertyMap, elem)) || elem[propertyName];
+    });
     __publicField(this, "getComponent", (address) => {
-      const componentId = address.slice(address.indexOf(".") + 1);
-      const component = isExternalAddress(address) ? this.external[componentId] : this.renderedForm.querySelector(`#f-${componentId}`);
-      return component;
+      const result = {
+        component: null
+      };
+      if (!isAddress(address)) {
+        return null;
+      }
+      const [, componentId, optionsKey, optionIndex] = splitAddress(address);
+      const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`);
+      if (!component) {
+        return result;
+      }
+      result.component = component;
+      if (optionsKey) {
+        const options = component.querySelectorAll("input");
+        const option2 = options[optionIndex];
+        result.options = options;
+        result.option = option2;
+        return result;
+      }
+      return result;
     });
     __publicField(this, "getComponents", (address) => {
       const components2 = [];
       const componentId = address.slice(address.indexOf(".") + 1);
-      if (isExternalAddress(address)) {
-        components2.push(this.external[componentId]);
-      } else {
-        components2.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
-      }
+      components2.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
       return components2;
     });
-    const { renderContainer, external, elements, formData } = processOptions(opts);
+    const { renderContainer, elements, formData } = processOptions(opts);
     this.container = renderContainer;
     this.form = cleanFormData(formDataArg || formData);
-    this.external = external;
     this.dom = dom;
     this.components = /* @__PURE__ */ Object.create(null);
     this.elements = elements;
+  }
+  get formData() {
+    return this.form;
+  }
+  set formData(data) {
+    this.form = cleanFormData(data);
+  }
+  get userData() {
+    const userData = new FormData(this.renderedForm);
+    const formDataObj = {};
+    for (const [key, value] of userData.entries()) {
+      if (formDataObj[key]) {
+        if (Array.isArray(formDataObj[key])) {
+          formDataObj[key].push(value);
+        } else {
+          formDataObj[key] = [formDataObj[key], value];
+        }
+      } else {
+        formDataObj[key] = value;
+      }
+    }
+    return formDataObj;
+  }
+  set userData(data = {}) {
+    const form = this.container.querySelector("form");
+    for (const key of Object.keys(data)) {
+      const fields2 = form.elements[key];
+      if (fields2.length && fields2[0].type === "checkbox") {
+        const values = Array.isArray(data[key]) ? data[key] : [data[key]];
+        for (const field2 of fields2) {
+          field2.checked = values.includes(field2.value);
+        }
+      } else if (fields2.length && fields2[0].type === "radio") {
+        for (const field2 of fields2) {
+          field2.checked = field2.value === data[key];
+        }
+      } else if (fields2.type) {
+        fields2.value = data[key];
+      }
+    }
+  }
+  /**
+   * Renders the formData to a target Element
+   * @param {Object} formData
+   */
+  render(formData = this.form) {
+    const renderedForm = this.getRenderedForm(formData);
+    const existingRenderedForm = this.container.querySelector(".formeo-render");
+    if (existingRenderedForm) {
+      existingRenderedForm.replaceWith(renderedForm);
+    } else {
+      this.container.appendChild(renderedForm);
+    }
+  }
+  getRenderedForm(formData = this.form) {
+    this.form = cleanFormData(formData);
+    const renderCount = document.getElementsByClassName("formeo-render").length;
+    const config2 = {
+      tag: "form",
+      id: this.form.id,
+      className: `formeo-render formeo formeo-rendered-${renderCount}`,
+      children: this.processedData
+    };
+    this.renderedForm = dom.render(config2);
+    this.applyConditions();
+    return this.renderedForm;
+  }
+  get html() {
+    const renderedForm = this.renderedForm || this.getRenderedForm();
+    return renderedForm.outerHTML;
   }
   get processedData() {
     return Object.values(this.form.stages).map((stage) => {
       stage.children = this.processRows(stage.id);
       stage.className = STAGE_CLASSNAME;
-      return dom.render(stage);
+      this.components[baseId(stage.id)] = stage;
+      return stage;
     });
   }
 };
@@ -9688,16 +10335,6 @@ if (window !== void 0) {
 }
 const FormeoEditor2 = FormeoEditor$1;
 const FormeoRenderer2 = FormeoRenderer$1;
-const rowControl = {
-  config: {
-    label: "row"
-  },
-  meta: {
-    group: "layout",
-    icon: "rows",
-    id: "layout-row"
-  }
-};
 const columnControl = {
   config: {
     label: "column"
@@ -9708,11 +10345,153 @@ const columnControl = {
     id: "layout-column"
   }
 };
+const rowControl = {
+  config: {
+    label: "row"
+  },
+  meta: {
+    group: "layout",
+    icon: "rows",
+    id: "layout-row"
+  }
+};
 const index$4 = [rowControl, columnControl];
 const index$5 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
   default: index$4
 }, Symbol.toStringTag, { value: "Module" }));
+const buttonTypes = ["button", "submit", "reset"].map((buttonType) => ({
+  label: buttonType,
+  value: buttonType
+}));
+buttonTypes[0].selected = true;
+class ButtonControl extends Control {
+  constructor(controlConfig = {}) {
+    const buttonConfig = {
+      tag: "button",
+      attrs: {
+        className: [
+          { label: "grouped", value: "f-btn-group" },
+          { label: "ungrouped", value: "f-field-group" }
+        ]
+      },
+      config: {
+        label: mi18n.get("controls.form.button"),
+        hideLabel: true
+      },
+      meta: {
+        group: "common",
+        icon: "button",
+        id: "button"
+      },
+      options: [
+        {
+          label: mi18n.get("button"),
+          type: buttonTypes,
+          className: [
+            {
+              label: "default",
+              value: "",
+              selected: true
+            },
+            {
+              label: "primary",
+              value: "primary"
+            },
+            {
+              label: "danger",
+              value: "error"
+            },
+            {
+              label: "success",
+              value: "success"
+            },
+            {
+              label: "warning",
+              value: "warning"
+            }
+          ]
+        }
+      ]
+    };
+    const mergedConfig = merge(buttonConfig, controlConfig);
+    super(mergedConfig);
+  }
+}
+const generateOptionConfig = ({ type: type2, isMultiple = false, count = 3 }) => Array.from({ length: count }, (_v, k) => k + 1).map((i) => {
+  const selectedKey = type2 === "checkbox" || isMultiple ? "checked" : "selected";
+  return {
+    label: mi18n.get("labelCount", {
+      label: toTitleCase(type2),
+      count: i
+    }),
+    value: `${type2}-${i}`,
+    [selectedKey]: !i
+  };
+});
+class CheckboxGroupControl extends Control {
+  constructor() {
+    const checkboxGroup = {
+      tag: "input",
+      attrs: {
+        type: "checkbox",
+        required: false
+      },
+      config: {
+        label: mi18n.get("controls.form.checkbox-group"),
+        disabledAttrs: ["type"]
+      },
+      meta: {
+        group: "common",
+        icon: "checkbox",
+        id: "checkbox"
+      },
+      options: generateOptionConfig({ type: "checkbox", count: 1 })
+    };
+    super(checkboxGroup);
+  }
+}
+class DateControl extends Control {
+  constructor() {
+    const dateInput = {
+      tag: "input",
+      attrs: {
+        type: "date",
+        required: false,
+        className: ""
+      },
+      config: {
+        label: mi18n.get("controls.form.input.date")
+      },
+      meta: {
+        group: "common",
+        icon: "calendar",
+        id: "date-input"
+      }
+    };
+    super(dateInput);
+  }
+}
+class FileControl extends Control {
+  constructor() {
+    const fileInput = {
+      tag: "input",
+      attrs: {
+        type: "file",
+        required: false
+      },
+      config: {
+        label: mi18n.get("fileUpload")
+      },
+      meta: {
+        group: "common",
+        icon: "upload",
+        id: "upload"
+      }
+    };
+    super(fileInput);
+  }
+}
 class HiddenControl extends Control {
   constructor() {
     const hiddenInput = {
@@ -9755,25 +10534,6 @@ class NumberControl extends Control {
     super(numberInput);
   }
 }
-class TextAreaControl extends Control {
-  constructor() {
-    const textAreaConfig = {
-      tag: "textarea",
-      config: {
-        label: mi18n.get("controls.form.textarea")
-      },
-      meta: {
-        group: "common",
-        icon: "textarea",
-        id: "textarea"
-      },
-      attrs: {
-        required: false
-      }
-    };
-    super(textAreaConfig);
-  }
-}
 class TextControl extends Control {
   constructor() {
     const textInput = {
@@ -9795,80 +10555,6 @@ class TextControl extends Control {
     super(textInput);
   }
 }
-class FileControl extends Control {
-  constructor() {
-    const fileInput = {
-      tag: "input",
-      attrs: {
-        type: "file",
-        required: false
-      },
-      config: {
-        label: mi18n.get("fileUpload")
-      },
-      meta: {
-        group: "common",
-        icon: "upload",
-        id: "upload"
-      }
-    };
-    super(fileInput);
-  }
-}
-const generateOptionConfig = (type2, count = 3) => Array.from({ length: count }, (v, k) => k + 1).map((i) => {
-  const selectedKey = type2 === "checkbox" ? "checked" : "selected";
-  return {
-    label: mi18n.get("labelCount", {
-      label: toTitleCase(type2),
-      count: i
-    }),
-    value: `${type2}-${i}`,
-    [selectedKey]: !i
-  };
-});
-class SelectControl extends Control {
-  constructor() {
-    const selectConfig = {
-      tag: "select",
-      config: {
-        label: mi18n.get("controls.form.select")
-      },
-      attrs: {
-        required: false,
-        className: ""
-      },
-      meta: {
-        group: "common",
-        icon: "select",
-        id: "select"
-      },
-      options: generateOptionConfig("option")
-    };
-    super(selectConfig);
-  }
-}
-class CheckboxGroupControl extends Control {
-  constructor() {
-    const checkboxGroup = {
-      tag: "input",
-      attrs: {
-        type: "checkbox",
-        required: false
-      },
-      config: {
-        label: mi18n.get("controls.form.checkbox-group"),
-        disabledAttrs: ["type"]
-      },
-      meta: {
-        group: "common",
-        icon: "checkbox",
-        id: "checkbox"
-      },
-      options: generateOptionConfig("checkbox", 1)
-    };
-    super(checkboxGroup);
-  }
-}
 class RadioGroupControl extends Control {
   constructor() {
     const radioGroup = {
@@ -9879,89 +10565,59 @@ class RadioGroupControl extends Control {
       },
       config: {
         label: mi18n.get("controls.form.radio-group"),
-        disabledAttrs: ["type"]
+        disabled: ["attrs.type"]
       },
       meta: {
         group: "common",
         icon: "radio-group",
         id: "radio"
       },
-      options: generateOptionConfig("radio")
+      options: generateOptionConfig({ type: "radio" })
     };
     super(radioGroup);
   }
 }
-class ButtonControl extends Control {
-  constructor() {
-    const buttonConfig = {
-      tag: "button",
-      attrs: {
-        className: [{ label: "grouped", value: "f-btn-group" }, { label: "ungrouped", value: "f-field-group" }]
-      },
+class SelectControl extends Control {
+  constructor(controlConfig = {}) {
+    var _a;
+    const selectConfig = {
+      tag: "select",
       config: {
-        label: mi18n.get("controls.form.button"),
-        hideLabel: true
+        label: mi18n.get("controls.form.select")
+      },
+      attrs: {
+        required: false,
+        className: "",
+        multiple: false
       },
       meta: {
         group: "common",
-        icon: "button",
-        id: "button"
+        icon: "select",
+        id: "select"
       },
-      options: [
-        {
-          label: mi18n.get("button"),
-          type: ["button", "submit", "reset"].map((buttonType) => ({
-            label: buttonType,
-            type: buttonType
-          })),
-          className: [
-            {
-              label: "default",
-              value: "",
-              selected: true
-            },
-            {
-              label: "primary",
-              value: "primary"
-            },
-            {
-              label: "danger",
-              value: "error"
-            },
-            {
-              label: "success",
-              value: "success"
-            },
-            {
-              label: "warning",
-              value: "warning"
-            }
-          ]
-        }
-      ]
+      options: generateOptionConfig({ type: "option", isMultiple: (_a = controlConfig.attrs) == null ? void 0 : _a.multiple })
     };
-    super(buttonConfig);
+    const mergedConfig = merge(selectConfig, controlConfig);
+    super(mergedConfig);
   }
 }
-class DateControl extends Control {
+class TextAreaControl extends Control {
   constructor() {
-    const dateInput = {
-      tag: "input",
-      attrs: {
-        type: "date",
-        required: false,
-        className: ""
-      },
+    const textAreaConfig = {
+      tag: "textarea",
       config: {
-        label: mi18n.get("controls.form.input.date")
+        label: mi18n.get("controls.form.textarea")
       },
       meta: {
         group: "common",
-        icon: "calendar",
-        id: "date-input"
+        icon: "textarea",
+        id: "textarea"
+      },
+      attrs: {
+        required: false
       }
     };
-    super(dateInput);
+    super(textAreaConfig);
   }
 }
 const index$2 = [
@@ -10029,6 +10685,23 @@ class HeaderControl extends Control {
     return super.i18n(headerKey);
   }
 }
+class HRControl extends Control {
+  constructor() {
+    const hrConfig = {
+      tag: "hr",
+      config: {
+        label: mi18n.get("controls.html.divider"),
+        hideLabel: true
+      },
+      meta: {
+        group: "html",
+        icon: "divider",
+        id: "divider"
+      }
+    };
+    super(hrConfig);
+  }
+}
 class ParagraphControl extends Control {
   constructor() {
     const paragraphConfig = {
@@ -10050,23 +10723,6 @@ class ParagraphControl extends Control {
       content: "Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment."
     };
     super(paragraphConfig);
-  }
-}
-class HRControl extends Control {
-  constructor() {
-    const hrConfig = {
-      tag: "hr",
-      config: {
-        label: mi18n.get("controls.html.divider"),
-        hideLabel: true
-      },
-      meta: {
-        group: "html",
-        icon: "divider",
-        id: "divider"
-      }
-    };
-    super(hrConfig);
   }
 }
 class TinyMCEControl extends Control {

@@ -10,6 +10,8 @@ es-ES = الإسبانية الأوروبية
 fa-IR = الفارسية (إيران)
 fi-FI = الفنلندية (فنلندا)
 fr-FR = الفرنسية (فرنسا)
+he-IL = العبرية (إسرائيل)
+hi-IN = الهندية (الهند)
 hu-HU = الهنغارية (هنغاريا)
 it-IT = الإيطالية (إيطاليا)
 ja-JP = اليابانية (اليابان)
@@ -55,6 +57,10 @@ clearAllMessage = هل أنت متأكد أنك تريد مسح كافة الم�
 close = أغلق
 column = عمود
 condition.target.placeholder = هدف
+condition.type.and = و
+condition.type.if = لو
+condition.type.or = أو
+condition.type.then = ثم
 condition.value.placeholder = قيمة
 confirmClearAll = هل أنت متأكد أنك تريد إزالة كافة الحقول؟
 content = محتوى
@@ -91,6 +97,7 @@ editing.row = تحرير الصف
 editorTitle = عناصر النموذج
 field = مجال
 field.property.invalid = غير صالح
+field.property.isChecked = تم التحقق
 field.property.isNotVisible = غير مرئي
 field.property.isVisible = هو مرئي
 field.property.label = ملصق
@@ -124,6 +131,8 @@ lang.es = الأسبانية
 lang.fa = الفارسية
 lang.fi = الفنلندية
 lang.fr = فرنسي
+lang.he = العبرية
+lang.hi = الهندية
 lang.hu = المجرية
 lang.it = ايطالي
 lang.ja = اليابانية
