@@ -1,10 +1,9 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { isExternalAddress, isInternalAddress } from '../../common/utils/index.mjs'
+import { isInternalAddress } from '../../common/utils/index.mjs'
 import { objectFromStringArray } from '../../common/utils/object.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import { CHECKABLE_OPTIONS, OPERATORS, PROPERTY_OPTIONS, VISIBLE_OPTIONS } from '../../constants.js'
-import Components from '../index.js'
 import { ITEM_INPUT_TYPE_MAP } from './helpers.mjs'
 
 const hiddenPropertyClassname = 'hidden-property'
@@ -58,12 +57,9 @@ export function addOptions(select, options) {
 }
 
 export function getOptionConfigs({ key: fieldName, value: fieldValue, conditionType }) {
-  const isExternal = isExternalAddress(fieldName)
-  const externalOptionData = address => Components.getAddress(address).getData()
-
   const optionDataKey = `${conditionType}-${fieldName}`
 
-  const data = isExternal ? externalOptionData(fieldName) : optionDataMap[optionDataKey]
+  const data = optionDataMap[optionDataKey]
   return Object.entries(data || {}).map(([key, optionValue]) =>
     makeOptionDomConfig({ fieldName, fieldValue, key, optionValue })
   )

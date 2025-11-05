@@ -1,4 +1,3 @@
-import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import Components from '../index.js'
@@ -52,7 +51,7 @@ const labelResolverMap = new Map([
 ])
 
 /**
- * Find or generate a label for components and external data
+ * Find or generate a label for components
  * @param {Object} Component
  * @return {String} component label
  */
@@ -63,10 +62,8 @@ export const getComponentLabel = ({ id, ...component }, key) => {
   }
   const labelResolver = labelResolverMap.get(key)
   const resolvedLabel = labelResolver(component)
-  const externalLabel = (...externalAddress) =>
-    i18n.get(externalAddress.join('.')) || toTitleCase(externalAddress.join(' '))
 
-  return resolvedLabel || (name === 'external' && externalLabel(name, id))
+  return resolvedLabel
 }
 
 const makeOptionData = ({ selectedId, ...option }) => {

@@ -1,6 +1,6 @@
 import dom from '../common/dom.js'
 import { fetchDependencies } from '../common/loaders'
-import { cleanFormData, isAddress, isExternalAddress, merge, uuid } from '../common/utils/index.mjs'
+import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { STAGE_CLASSNAME } from '../constants'
 import {
@@ -15,10 +15,9 @@ import {
 
 export default class FormeoRenderer {
   constructor(opts, formDataArg) {
-    const { renderContainer, external, elements, formData } = processOptions(opts)
+    const { renderContainer, elements, formData } = processOptions(opts)
     this.container = renderContainer
     this.form = cleanFormData(formDataArg || formData)
-    this.external = external
     this.dom = dom
     this.components = Object.create(null)
     this.elements = elements
@@ -345,12 +344,7 @@ export default class FormeoRenderer {
     if (!isAddress(address)) {
       return null
     }
-    const [componentIndexType, componentId, optionsKey, optionIndex] = splitAddress(address)
-
-    if (componentIndexType === 'external') {
-      result.component = this.external[componentId]
-      return result
-    }
+    const [, componentId, optionsKey, optionIndex] = splitAddress(address)
 
     const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`)
 
@@ -375,13 +369,8 @@ export default class FormeoRenderer {
   getComponents = address => {
     const components = []
     const componentId = address.slice(address.indexOf('.') + 1)
-    // const
 
-    if (isExternalAddress(address)) {
-      components.push(this.external[componentId])
-    } else {
-      components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`))
-    }
+    components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`))
 
     return components
   }

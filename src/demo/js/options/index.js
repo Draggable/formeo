@@ -1,6 +1,5 @@
 import config from './config'
 import controls from './controls'
-import external from './external'
 
 const editorContainer = '.build-form'
 const renderContainer = '.render-form'
@@ -13,7 +12,6 @@ export const editorOptions = {
   actions: {
     // save: formData => null, // do something on save action
   },
-  external,
   // allowEdit: false,
   controls,
   config,
@@ -41,7 +39,6 @@ export const editorOptions = {
 
 export const renderOptions = {
   renderContainer,
-  external,
   elements: {
     tinymce: {
       action: {

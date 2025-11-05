@@ -15,7 +15,6 @@ export const defaults = {
       debug: false,
       sessionStorage: false,
       editorContainer: null, // element or selector to attach editor to
-      external: {}, // assign external data to be used in conditions autolinker
       svgSprite: SVG_SPRITE_URL, // change to null
       style: CSS_URL, // change to null
       iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
