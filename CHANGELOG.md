@@ -1,3 +1,47 @@
+# [4.0.0](https://github.com/Draggable/formeo/compare/v3.1.4...v4.0.0) (2025-11-05)
+
+
+### Bug Fixes
+
+* all tests passing ([ac3aea9](https://github.com/Draggable/formeo/commit/ac3aea9dadd8dfeeb4740502ba0f320cb17f566c))
+* attribute input values ([ca619fc](https://github.com/Draggable/formeo/commit/ca619fc8bcd9b56e7ea667efd61622912fecf782))
+* autocomplete label bug ([488da5d](https://github.com/Draggable/formeo/commit/488da5df8166708562f94994de6063d54cf92700))
+* code-server devServer ([5e52eb0](https://github.com/Draggable/formeo/commit/5e52eb08277b15d05c210d193d4cc898fa5ad963))
+* component highlighting to support radio options ([4210258](https://github.com/Draggable/formeo/commit/4210258aafe7a0b43d39c498c4b610a2aad634ea))
+* condition order render ([bed0217](https://github.com/Draggable/formeo/commit/bed02177e05c012872054d00eaf135b19bc202f4))
+* condition row styles ([efb280b](https://github.com/Draggable/formeo/commit/efb280b49e339644b5f4c204e7f17174462735f5))
+* control button bug ([0ca1aef](https://github.com/Draggable/formeo/commit/0ca1aef9ec666386af65adefc3cc74bc9b8d6c9f))
+* control mobile style ([a4f56dc](https://github.com/Draggable/formeo/commit/a4f56dc73df1a9a514b85c55bc67b7a18a42fb35))
+* cyclic imoprt dependency, sortable fallback ([0225ed5](https://github.com/Draggable/formeo/commit/0225ed5c82a6c7451d218c0e4ff29dcc6db29305))
+* data addressing ([3c1db84](https://github.com/Draggable/formeo/commit/3c1db84be3b3aae9c023c7e0b00949a729fbc802))
+* form editor styles ([047f08c](https://github.com/Draggable/formeo/commit/047f08cba9bdcd72c2392adebe520abac2ab735e))
+* form editor styles ([d89625c](https://github.com/Draggable/formeo/commit/d89625cde034fa2191d574763036facf824f91e6))
+* improved name generation, button type value ([9b172a4](https://github.com/Draggable/formeo/commit/9b172a4ceb12c31f990e8c82e99afa9829ea784d))
+* option data key ([502f8be](https://github.com/Draggable/formeo/commit/502f8be0f17bff33b7bb665808ccff9a0f92b16e))
+* reconcile edit panel item data ([6f4cc20](https://github.com/Draggable/formeo/commit/6f4cc20d3a22ffb919f481b427e3207627384a7c))
+* use import.meta correctly ([edc427f](https://github.com/Draggable/formeo/commit/edc427fadb02b6521f733f2bc08588fd140e440c))
+
+
+### chore
+
+* remove external ([cc1190e](https://github.com/Draggable/formeo/commit/cc1190e55b9daa74fc4f1858dfa4160a8c6ccedc))
+* remove external ([9c710fa](https://github.com/Draggable/formeo/commit/9c710fa1fb44e3bf223077b75dd861d4a9176584))
+
+
+### Features
+
+* add basic user data methods to renderer ([5ab5f44](https://github.com/Draggable/formeo/commit/5ab5f444785302ebd6776668cf9b32c2a3c61c00))
+* add clear all for conditions, cleanup ([22011b0](https://github.com/Draggable/formeo/commit/22011b0f0060d547778a09492553daa39d3a3fe7))
+* conditions rewrite WIP ([ee35c10](https://github.com/Draggable/formeo/commit/ee35c1000ed5ced35f66a9c07c3a872c62b1061b))
+* finish source condition field logic ([e16c1f1](https://github.com/Draggable/formeo/commit/e16c1f12a0cb31990501ad33b17777821568b6fa))
+* flat ordered autocomplete options ([65914c4](https://github.com/Draggable/formeo/commit/65914c4436aec02f1d14c44626c094d46997e8e0))
+
+
+### BREAKING CHANGES
+
+* removes external data support from form config
+* removes external data support from form config
+
 ## [3.1.4](https://github.com/Draggable/formeo/compare/v3.1.3...v3.1.4) (2025-07-22)
 
 
