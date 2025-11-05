@@ -467,9 +467,24 @@
 }
 
 .panel-action-buttons {
-  @include mixins.clearfix;
 
+  display: flex;
+  justify-content: end;
+  gap: mixins.space(1);
   padding: 0 mixins.space(1) mixins.space(1);
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: mixins.space(3);
+    gap: mixins.space(0.5);
+  }
+
+  .svg-icon {
+    height: mixins.space(2);
+  }
+
 
   [class^='add-'] {
     float: right;
@@ -510,13 +525,5 @@
     margin-bottom: 0;
   }
 
-  // &.attrs-prop-inputs {
-  //   .f-addon,
-  //   input:not([type='checkbox']):not([type='radio']),
-  //   select,
-  //   textarea,
-  //   [contenteditable] {
-  //     flex: 2;
-  //   }
-  // }
+
 }

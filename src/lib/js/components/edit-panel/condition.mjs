@@ -33,27 +33,17 @@ export class Condition {
     this.index = index
   }
 
-  // get index() {
-  //   return indexOfNode(this.dom)
-  // }
-
   get address() {
     return `${this.baseAddress}[${this.index}]`
   }
 
   destroy() {
-    console.log(this.baseAddress, this.index)
     const conditions = Components.getAddress(this.baseAddress)
-    console.log(conditions.length)
     conditions.splice(this.index, 1)
     Components.setAddress(this.baseAddress, conditions)
-    console.log(conditions.length)
     animate.slideUp(this.dom, ANIMATION_SPEED_FAST, () => {
       this.dom.remove()
     })
-    // this.parent.panel.updateProps()
-    // this.parent.itemInputs()
-    // debugger
   }
 
   label() {
