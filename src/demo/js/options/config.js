@@ -10,7 +10,8 @@ const config = {
             addColumnBtn.type = 'button'
             addColumnBtn.className = 'btn btn-sm btn-secondary'
             addColumnBtn.textContent = 'Add Column'
-            addColumnBtn.style = 'border:1px solid #ccc; width: auto;'
+            addColumnBtn.style.border = '1px solid #ccc'
+            addColumnBtn.style.width = 'auto'
             addColumnBtn.addEventListener('click', () => {
               evt.target.addChild()
             })
