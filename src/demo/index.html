@@ -14,9 +14,14 @@
 <body>
   <div class="site-wrap">
     <header id="demo-header">
-      <nav aria-label="Footer navigation">
+      <nav aria-label="Framework navigation">
         <ul>
           <li>
+            <label for="framework-select">Framework:</label>
+            <select name="framework-select" id="framework-select" class="form-control">
+              <option value="vanilla">Vanilla JavaScript</option>
+              <option value="angular">Angular</option>
+            </select>
             <label for="locale">Language</label>
             <select name="locale" id="locale" class="form-control">
               <% langFiles.forEach(function(langFile) { %>
@@ -34,8 +39,9 @@
       <span id="formeo-logo-wrap"></span>
     </header>
     <section id="main_content" class="inner">
-      <form class="build-form"></form>
-      <div class="render-form"></div>
+      <div id="framework-container">
+        <!-- Framework-specific content will be loaded here -->
+      </div>
     </section>
     <div class="container render-btn-wrap" id="editor-action-buttons"></div>
     <div id="formData-popover" popover>
