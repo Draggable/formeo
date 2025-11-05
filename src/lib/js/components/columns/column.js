@@ -71,7 +71,6 @@ export default class Column extends Component {
     Sortable.create(childWrap, {
       animation: 150,
       fallbackClass: 'field-moving',
-      forceFallback: true,
       group: {
         name: 'column',
         pull: true,

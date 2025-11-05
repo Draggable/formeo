@@ -84,7 +84,6 @@ export default class Stage extends Component {
     Sortable.create(children, {
       animation: 150,
       fallbackClass: 'row-moving',
-      forceFallback: true,
       group: {
         name: 'stage',
         pull: true,
