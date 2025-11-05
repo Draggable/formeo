@@ -2,13 +2,20 @@ import { FormeoEditor, FormeoRenderer } from '../../../lib/js/index.js'
 import { editorOptions, renderOptions } from '../options/index.js'
 
 export async function loadAngularDemo(container) {
-  // Create the Angular demo structure
+  // Create the Angular demo structure with collapsible instructions
   container.innerHTML = `
     <div class="angular-demo">
       <h3>Angular Integration Demo</h3>
-      <p>This demo shows how to integrate Formeo with Angular. Below is a complete Angular component example that you can use in your Angular applications.</p>
+      <p>This demo shows how to integrate Formeo with Angular.</p>
       
-      <div class="code-example">
+      <div class="instructions-toggle">
+        <button class="toggle-button" id="toggle-instructions">
+          <span class="toggle-text">Show Implementation Instructions</span>
+          <span class="toggle-icon">▼</span>
+        </button>
+      </div>
+      
+      <div class="code-example" id="instructions-section" style="display: none;">
         <h4>1. Install Formeo</h4>
         <pre><code>npm install formeo</code></pre>
         
@@ -20,12 +27,12 @@ export async function loadAngularDemo(container) {
         
         <h4>4. Module Setup (app.module.ts)</h4>
         <pre><code>${escapeHtml(angularModuleCode)}</code></pre>
-        
-        <h4>5. Live Demo</h4>
-        <div class="demo-container">
-          <form class="build-form-angular"></form>
-          <div class="render-form-angular"></div>
-        </div>
+      </div>
+      
+      <h4>Live Demo</h4>
+      <div class="demo-container">
+        <form class="build-form-angular"></form>
+        <div class="render-form-angular"></div>
       </div>
     </div>
   `
@@ -69,6 +76,7 @@ export async function loadAngularDemo(container) {
     if (actionButtonsContainer) {
       actionButtonsContainer.innerHTML = `
         <button class="btn btn-primary" onclick="window.angularDemoSave()">Save Form</button>
+        <button class="btn btn-secondary" onclick="window.angularDemoRender()">Render Form</button>
         <button class="btn btn-secondary" onclick="window.angularDemoClear()">Clear Form</button>
       `
     }
@@ -80,9 +88,36 @@ export async function loadAngularDemo(container) {
       alert('Form data saved to console (check dev tools)')
     }
 
+    window.angularDemoRender = () => {
+      const formData = editor.formData
+      if (formData && Object.keys(formData).length > 0) {
+        renderElement.style.display = 'block'
+        renderer.render(formData)
+        console.log('Angular demo render:', formData)
+      } else {
+        alert('Please create a form first before rendering')
+      }
+    }
+
     window.angularDemoClear = () => {
       editor.clear()
       renderer.clear()
+      renderElement.style.display = 'none'
+    }
+
+    // Add toggle functionality for instructions
+    const toggleButton = container.querySelector('#toggle-instructions')
+    const instructionsSection = container.querySelector('#instructions-section')
+    const toggleText = toggleButton.querySelector('.toggle-text')
+    const toggleIcon = toggleButton.querySelector('.toggle-icon')
+
+    if (toggleButton && instructionsSection) {
+      toggleButton.addEventListener('click', () => {
+        const isExpanded = instructionsSection.style.display === 'block'
+        instructionsSection.style.display = isExpanded ? 'none' : 'block'
+        toggleText.textContent = isExpanded ? 'Show Implementation Instructions' : 'Hide Implementation Instructions'
+        toggleIcon.textContent = isExpanded ? '▼' : '▲'
+      })
     }
 
     return {
@@ -97,6 +132,7 @@ export async function loadAngularDemo(container) {
           renderer.destroy()
         }
         delete window.angularDemoSave
+        delete window.angularDemoRender
         delete window.angularDemoClear
         if (actionButtonsContainer) {
           actionButtonsContainer.innerHTML = ''
