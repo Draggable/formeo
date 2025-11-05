@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.0.0
+Version: 4.1.0
 Author: Draggable https://draggable.io
 */
 
@@ -438,7 +438,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     window.SmartTooltip = SmartTooltip;
   }
   const name$1 = "formeo";
-  const version$2 = "4.0.0";
+  const version$2 = "4.1.0";
   const type = "module";
   const main = "dist/formeo.cjs.js";
   const module2 = "dist/formeo.es.js";
@@ -569,7 +569,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     sortablejs: "^1.15.3"
   };
   const release = {
-    branch: "master",
+    branch: "main",
     verifyConditions: [
       "@semantic-release/changelog",
       "@semantic-release/npm",
@@ -5003,7 +5003,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
         const _this = this;
         const processed = ["children", "content"];
-        const { className, options, dataset, conditions, ...elem } = this.processElemArg(elemArg);
+        const { className, options, dataset, ...elem } = this.processElemArg(elemArg);
         processed.push("tag");
         let childType;
         const { tag } = elem;
@@ -7035,7 +7035,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     getPanelDisplay() {
       const column = this.panelsWrap;
-      const width = Number.parseInt(dom.getStyle(column, "width"));
+      const width = Number.parseInt(dom.getStyle(column, "width"), 10);
       const autoDisplayType = width > 390 ? "tabbed" : "slider";
       const isAuto = this.opts.displayType === "auto";
       this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults$2.displayType;
@@ -7291,6 +7291,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
         const parent = this.parent;
         const children = this.children;
+        this.dispatchComponentEvent("onRemove", {
+          path,
+          parent,
+          children: [...children]
+          // copy array since children will be modified
+        });
         forEach(children, (child) => child.remove());
         this.dom.parentElement.removeChild(this.dom);
         remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
@@ -7432,6 +7438,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         if (this.name !== "field") {
           this.cloneChildren(newClone);
         }
+        this.dispatchComponentEvent("onClone", {
+          original: this,
+          clone: newClone,
+          parent
+        });
         return newClone;
       });
       __publicField(this, "createChildWrap", (children) => dom.create({
@@ -7503,11 +7514,91 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       this.address = `${this.name}s.${this.id}`;
       this.dataPath = `${this.address}.`;
       this.editPanels = /* @__PURE__ */ new Map();
+      this.eventListeners = /* @__PURE__ */ new Map();
+      this.initEventHandlers();
+    }
+    /**
+     * Initialize event handlers based on config
+     */
+    initEventHandlers() {
+      if (!this.config.events) {
+        return;
+      }
+      Object.entries(this.config.events).forEach(([eventName, handler]) => {
+        this.addEventListener(eventName, handler);
+      });
+    }
+    /**
+     * Add an event listener to this component
+     * @param {string} eventName - Name of the event
+     * @param {function} handler - Event handler function
+     */
+    addEventListener(eventName, handler) {
+      if (!this.eventListeners.has(eventName)) {
+        this.eventListeners.set(eventName, []);
+      }
+      this.eventListeners.get(eventName).push(handler);
+    }
+    /**
+     * Remove an event listener from this component
+     * @param {string} eventName - Name of the event
+     * @param {function} handler - Event handler function to remove
+     */
+    removeEventListener(eventName, handler) {
+      var _a;
+      if (!((_a = this.eventListeners) == null ? void 0 : _a.has(eventName))) {
+        return;
+      }
+      const handlers = this.eventListeners.get(eventName);
+      const index2 = handlers.indexOf(handler);
+      if (index2 > -1) {
+        handlers.splice(index2, 1);
+      }
+    }
+    /**
+     * Dispatch a component event to all registered listeners
+     * @param {string} eventName - Name of the event to dispatch
+     * @param {object} eventData - Data to pass to event handlers
+     */
+    dispatchComponentEvent(eventName, eventData = {}) {
+      var _a;
+      const fullEventData = {
+        component: this,
+        type: eventName,
+        timestamp: Date.now(),
+        ...eventData
+      };
+      if ((_a = this.eventListeners) == null ? void 0 : _a.has(eventName)) {
+        this.eventListeners.get(eventName).forEach((handler) => {
+          try {
+            if (typeof handler === "function") {
+              handler(fullEventData);
+            }
+          } catch (error) {
+            console.error(`Error in ${eventName} event handler for ${this.name} ${this.id}:`, error);
+          }
+        });
+      }
+      return fullEventData;
+    }
+    /**
+     * Override Data.set to dispatch component update events
+     */
+    set(path, newVal) {
+      const oldVal = this.get(path);
+      const result = super.set(path, newVal);
+      if (oldVal !== newVal && this.dom) {
+        this.dispatchComponentEvent("onUpdate", {
+          path,
+          oldValue: oldVal,
+          newValue: newVal
+        });
+      }
+      return result;
     }
     // mutationHandler = mutations =>
     //   mutations.map(mutation => {
-    //     @todo pull handler form config
-    //     see dom.create.onRender for implementation pattern
+    //     @todo pull handler form config see dom.create.onRender for implementation pattern
     //   })
     // observe(container) {
     //   this.observer.disconnect()
@@ -7710,7 +7801,24 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       const childComponentType = `${childGroup}s`;
       const child = components.getAddress(`${childComponentType}.${childId}`) || components[childComponentType].add(childId, data);
-      childWrap.insertBefore(child.dom, childWrap.children[index2]);
+      if (index2 >= childWrap.children.length) {
+        childWrap.appendChild(child.dom);
+      } else {
+        childWrap.children[index2].before(child.dom);
+      }
+      this.dispatchComponentEvent("onAddChild", {
+        parent: this,
+        target: child,
+        child,
+        index: index2
+      });
+      child.dispatchComponentEvent("onAdd", {
+        parent: this,
+        target: child,
+        index: index2,
+        addedVia: "addChild"
+        // indicate how the component was added
+      });
       (_b = (_a = this.config.events) == null ? void 0 : _a.onAddChild) == null ? void 0 : _b.call(_a, { parent: this, child });
       const grandChildren = child.get("children");
       if (grandChildren == null ? void 0 : grandChildren.length) {
@@ -7819,6 +7927,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
       };
       const component = (_a = onAddConditions[fromType]) == null ? void 0 : _a.call(onAddConditions, item, newIndex2);
+      this.dispatchComponentEvent("onAdd", {
+        from,
+        to,
+        item,
+        newIndex: newIndex2,
+        fromType,
+        toType,
+        addedComponent: component,
+        addedVia: "dragDrop"
+        // indicate how the component was added
+      });
       defaultOnAdd();
       return component;
     }
@@ -7841,6 +7960,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
      * Callback for onRender, executes any defined onRender for component
      */
     onRender() {
+      this.dispatchComponentEvent("onRender", {
+        dom: this.dom
+      });
       const { events: events2 } = this.config;
       if (!events2) {
         return null;
