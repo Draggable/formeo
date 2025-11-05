@@ -1,5 +1,4 @@
-import { before, beforeEach, describe, it, mock } from 'node:test'
-import { Controls } from '../controls/index.js'
+import { beforeEach, describe, it, mock } from 'node:test'
 import Field from './field.js'
 
 const fieldConfig = {
@@ -18,10 +17,6 @@ const fieldConfig = {
 
 describe('Field', () => {
   let field
-
-  before(() => {
-    mock.method(Controls.prototype, 'get', () => fieldConfig)
-  })
 
   beforeEach(() => {
     field = new Field(fieldConfig)

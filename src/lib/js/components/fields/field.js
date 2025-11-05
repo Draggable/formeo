@@ -4,7 +4,6 @@ import { indexOfNode } from '../../common/helpers.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
-import controls from '../controls/index.js'
 
 const DEFAULT_DATA = () => ({
   // conditions: [CONDITION_TEMPLATE()],
@@ -29,6 +28,7 @@ export default class Field extends Component {
     this.debouncedUpdatePreview = debounce(this.updatePreview)
 
     this.label = dom.create(this.labelConfig)
+
     this.preview = this.fieldPreview()
 
     this.controlId = this.get('config.controlId') || this.get('meta.id')
@@ -201,8 +201,7 @@ export default class Field extends Component {
    * @return {Object} fieldPreview
    */
   fieldPreview() {
-    const prevData = clone(this.data)
-    const { action = {} } = controls.get(prevData.config.controlId)
+    const { action = {}, ...prevData } = clone(this.data)
     prevData.id = `prev-${this.id}`
     prevData.action = Object.entries(action).reduce((acc, [key, value]) => {
       acc[key] = value.bind(this)
