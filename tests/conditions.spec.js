@@ -4,14 +4,14 @@ import { conditionalFields } from './conditions.formData'
 
 test.describe('Form Editor', () => {
   test('should load the form editor correctly', async ({ page }) => {
-    await page.goto('http://localhost:5173/absproxy/5173')
+    await page.goto('/')
 
     // Check if the form editor is loaded by verifying the presence of a specific element
     await expect(page.locator('.formeo-editor')).toBeVisible()
   })
 
   test.skip('should load the form editor with the correct form data', async ({ page }) => {
-    await page.goto('http://localhost:5173/absproxy/5173')
+    await page.goto('/')
 
     // Load the form data into the form editor
     await page.evaluate(formData => {
@@ -24,7 +24,7 @@ test.describe('Form Editor', () => {
   })
 
   test('should add fields to the form editor', async ({ page }) => {
-    await page.goto('http://localhost:5173/absproxy/5173')
+    await page.goto('/')
 
     // Add a field to the form editor
     const checkboxControl = page.getByRole('button', { name: 'Checkbox Group' })
