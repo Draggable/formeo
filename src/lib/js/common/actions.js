@@ -29,6 +29,17 @@ const defaultActions = {
       evt.addAction(evt)
     },
   },
+  remove: {
+    attrs: evt => {
+      evt.removeAction()
+    },
+    options: evt => {
+      evt.removeAction()
+    },
+    conditions: evt => {
+      evt.removeAction()
+    },
+  },
   click: {
     btn: evt => {
       evt.action()
@@ -60,8 +71,18 @@ const actions = {
     },
     conditions: evt => {
       evt.template = evt.template || CONDITION_TEMPLATE()
-      // @todo add logging
       return actions.opts.add.condition(evt)
+    },
+  },
+  remove: {
+    attrs: evt => {
+      return actions.opts.remove.attrs(evt)
+    },
+    options: evt => {
+      return actions.opts.remove.options(evt)
+    },
+    conditions: evt => {
+      return actions.opts.remove.conditions(evt)
     },
   },
   click: {

@@ -405,3 +405,32 @@ export function buildFlatDataStructure(data, componentId, componentType, result 
 
   return result
 }
+
+/**
+ * Determines the data type of the provided value with enhanced type checking.
+ *
+ * @param {*} data - The value to determine the type of
+ * @returns {string} The type of the data as a string. Possible values include:
+ *   - 'array' for arrays
+ *   - 'component' for objects with a 'dom' property
+ *   - 'undefined' for undefined values
+ *   - 'null' for null values
+ *   - The result of typeof for all other values
+ *
+ * @example
+ * dataType([1, 2, 3]) // returns 'array'
+ * dataType({ dom: element }) // returns 'component'
+ * dataType(undefined) // returns 'undefined'
+ * dataType(null) // returns 'null'
+ * dataType('hello') // returns 'string'
+ * dataType(42) // returns 'number'
+ */
+export function dataType(data) {
+  return [
+    ['array', () => Array.isArray(data)],
+    ['component', () => data?.dom],
+    ['undefined', () => data === undefined],
+    ['null', () => data === null],
+    [typeof data, () => true],
+  ].find(typeCondition => typeCondition[1](data))[0]
+}

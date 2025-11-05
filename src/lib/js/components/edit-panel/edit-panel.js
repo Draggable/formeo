@@ -27,11 +27,15 @@ export default class EditPanel {
    */
   constructor(panelData, panelName, component) {
     this.type = dom.childType(panelData)
-    this.data = this.type === 'object' ? Object.entries(panelData) : panelData
     this.name = panelName
     this.component = component
 
     this.panelConfig = this.getPanelConfig(this.data)
+  }
+
+  get data() {
+    const data = this.component.get(this.name)
+    return this.type === 'object' ? Object.entries(data) : data
   }
 
   getPanelConfig(data) {
@@ -101,6 +105,29 @@ export default class EditPanel {
       options: this.addOption,
       conditions: this.addCondition,
     }
+    const editPanelButtons = []
+
+    if (type === 'conditions') {
+      // Ensure i18n key exists for clearAll
+      if (!i18n.current.clearAll) {
+        i18n.put('clearAll', 'Clear All')
+      }
+
+      const clearAllBtn = {
+        ...dom.btnTemplate({
+          content: [dom.icon('bin'), i18n.get('clearAll')],
+          title: i18n.get('clearAll'),
+        }),
+        className: `clear-all-${type}`,
+        action: {
+          click: () => {
+            this.clearAllItems()
+          },
+        },
+      }
+      editPanelButtons.push(clearAllBtn)
+    }
+
     const addBtn = {
       ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
       className: `add-${type}`,
@@ -134,12 +161,14 @@ export default class EditPanel {
       },
     }
 
-    const panelEditButtons = {
+    editPanelButtons.push(addBtn)
+
+    const panelEditButtonsWrap = {
       className: 'panel-action-buttons',
-      content: [addBtn],
+      content: editPanelButtons,
     }
 
-    return panelEditButtons
+    return panelEditButtonsWrap
   }
 
   /**
@@ -206,8 +235,6 @@ export default class EditPanel {
     })
     this.editPanelItems.push(newOption)
     this.props.appendChild(newOption.dom)
-    // probably dont need the next line anymore after refactorting data management or EditPanelItem
-    // this.component.set(itemKey, itemData)
     this.component.debouncedUpdatePreview()
     this.component.resizePanelWrap()
   }
@@ -215,23 +242,49 @@ export default class EditPanel {
   addCondition = evt => {
     const currentConditions = this.component.get('conditions')
     const itemKey = `conditions[${currentConditions.length}]`
-    // console.log(itemKey, evt.template)
-    // const existingCondition = this.props.querySelector(`.${this.component.name}-${itemKey.replace('.', '-')}`)
     const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.component, panel: this })
 
-    // if (existingCondition) {
-    //   this.props.replaceChild(newCondition.dom, existingCondition)
-    // } else {
     this.props.appendChild(newCondition.dom)
-    // }
 
     this.component.set(itemKey, evt.template)
     this.component.resizePanelWrap()
   }
 
+  /**
+   * Clears all items from the component property based on its type.
+   * Sets the property to an empty array for 'array' type or empty object for other types.
+   * Executes removal action hooks and dispatches a custom removal event.
+   *
+   * @method clearAllItems
+   * @fires CustomEvent#onRemove{PropertyName} - Dispatched when items are cleared
+   * @returns {void}
+   */
+  clearAllItems = () => {
+    // Use appropriate empty value based on type (array for conditions/options, object for attrs)
+    const emptyValue = this.type === 'array' ? [] : {}
+
+    const removeEvt = {
+      type: this.name,
+      removeAction: () => {
+        this.component.set(this.name, emptyValue)
+        this.updateProps()
+      },
+    }
+
+    // Run Action Hook
+    actions.remove[this.name](removeEvt)
+
+    // Fire Event
+    const eventType = toTitleCase(this.name)
+    const customEvt = new window.CustomEvent(`onRemove${eventType}`, {
+      detail: removeEvt,
+    })
+    document.dispatchEvent(customEvt)
+  }
+
   setData(val) {
     this.data = val
     this.component.set(this.name, val)
-    this.updateProps(val)
+    this.updateProps()
   }
 }

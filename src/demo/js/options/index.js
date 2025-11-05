@@ -29,11 +29,7 @@ export const editorOptions = {
   editPanelOrder: ['attrs', 'options'],
   // controlOnLeft: true,
   onLoad: () => {
-    // const firstField = document.querySelector('.formeo-field')
-    // if (firstField) {
-    document.querySelector('.edit-toggle').click()
-    // firstField.querySelector('.panel-labels')?.children[0].lastChild.click()
-    // }
+    console.log('demo loaded')
   },
 }
 
