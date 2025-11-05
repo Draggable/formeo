@@ -4,7 +4,6 @@ import { splitAddress } from '../common/utils/string.mjs'
 import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
 import ColumnsData from './columns/index.js'
 import Data from './data.js'
-import ExternalsData from './externals.js'
 import FieldsData from './fields/index.js'
 import RowsData from './rows/index.js'
 import StagesData from './stages/index.js'
@@ -14,7 +13,6 @@ export const Stages = StagesData
 export const Rows = RowsData
 export const Columns = ColumnsData
 export const Fields = FieldsData
-export const Externals = ExternalsData
 export const Controls = ControlsData
 
 const getFormData = (formData, useSessionStorage = false) => {
@@ -37,7 +35,6 @@ export class Components extends Data {
     this.columns = Columns
     this.fields = Fields
     this.controls = Controls
-    this.externals = Externals
   }
 
   load = (formDataArg, opts) => {
@@ -51,7 +48,6 @@ export class Components extends Data {
     this.add('rows', Rows.load(formData.rows))
     this.add('columns', Columns.load(formData.columns))
     this.add('fields', Fields.load(formData.fields))
-    this.add('externals', Externals.load(this.opts.external))
 
     for (const stage of Object.values(this.get('stages'))) {
       stage.loadChildren()

@@ -4,7 +4,6 @@ import {
   ANIMATION_SPEED_SLOW,
   CHILD_TYPE_INDEX_MAP,
   CHILD_TYPE_MAP,
-  COMPONENT_INDEX_REGEX,
   COMPONENT_INDEX_TYPE_MAP,
   COMPONENT_TYPE_CLASSNAMES_LOOKUP,
   COMPONENT_TYPE_CLASSNAMES_REGEXP,
@@ -265,15 +264,7 @@ export const escapeHtml = html => {
  * @param {String} str
  */
 export const isAddress = str => {
-  return COMPONENT_INDEX_REGEX.test(str)
-}
-
-/**
- * Test if a string is an external address
- * @param {String} str
- */
-export const isExternalAddress = str => {
-  return /^external./.test(str)
+  return /^(stage|row|column|field)s./.test(str)
 }
 
 // const internalComponentIndexRegex = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPES.join('|')}.`)
