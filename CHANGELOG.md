@@ -1,3 +1,10 @@
+# [4.1.0](https://github.com/Draggable/formeo/compare/v4.0.0...v4.1.0) (2025-11-05)
+
+
+### Features
+
+* component events ([8e1e585](https://github.com/Draggable/formeo/commit/8e1e58518bee143b45f96213394b879d69b5bdd9))
+
 # [4.0.0](https://github.com/Draggable/formeo/compare/v3.1.4...v4.0.0) (2025-11-05)
 
 
