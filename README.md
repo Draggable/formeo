@@ -50,6 +50,6 @@ const renderer = new FormeoRenderer(options)
 renderer.render(formData)
 ```
 
-## [Docs](https://github.com/Draggable/formeo/blob/master/docs/README.md)
+## [Docs](https://github.com/Draggable/formeo/blob/main/docs/README.md)
 
-## [Changelog](https://github.com/Draggable/formeo/blob/master/CHANGELOG.md)
+## [Changelog](https://github.com/Draggable/formeo/blob/main/CHANGELOG.md)
