@@ -1,11 +1,5 @@
 name: Playwright Tests
 
-# Disabled until playwright config is fixed
-# on:
-#   push:
-#     branches: [ main, master ]
-#   pull_request:
-#     branches: [ main, master ]
 on:
   push:
     branches: [ main, master ]
@@ -15,6 +9,8 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    env:
+      CI: true
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-node@v4
@@ -25,7 +21,7 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
     - name: Run Playwright tests
-      run: npx playwright test
+      run: npm run playwright:test:ci
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
