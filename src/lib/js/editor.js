@@ -9,7 +9,7 @@ import { cleanFormData, merge } from './common/utils/index.mjs'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
 import { defaults } from './config.js'
-import { SESSION_LOCALE_KEY } from './constants.js'
+import { DEFAULT_FORMDATA, SESSION_LOCALE_KEY } from './constants.js'
 
 /**
  * Main class
@@ -57,6 +57,21 @@ export class FormeoEditor {
   }
   get json() {
     return this.Components.json
+  }
+
+  /**
+   * Clear the editor and reset to initial state
+   * @return {void}
+   */
+  clear() {
+    // Reset form data to default structure with empty stage
+    this.userFormData = DEFAULT_FORMDATA()
+
+    // Clear components and reload with default data
+    this.Components.load(this.userFormData, this.opts)
+
+    // Re-render the editor
+    this.render()
   }
 
   /**

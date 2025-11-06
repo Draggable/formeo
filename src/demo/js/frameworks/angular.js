@@ -396,9 +396,15 @@ async function initializeAngularApp() {
 
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
-        editor.clear()
-        renderer.clear()
-        renderElement.style.display = 'none'
+        // Clear the editor using the new clear method
+        if (editor) {
+          editor.clear()
+        }
+        // Clear the renderer by setting innerHTML to empty
+        if (renderer && renderElement) {
+          renderElement.innerHTML = ''
+          renderElement.style.display = 'none'
+        }
         console.log('Angular Component - Clear clicked')
       })
     }
@@ -560,12 +566,14 @@ export class FormBuilderComponent implements OnInit, OnDestroy {
   }
 
   clearForm() {
-    if (this.editor && this.renderer) {
+    if (this.editor) {
       this.editor.clear();
-      this.renderer.clear();
-      localStorage.removeItem('formeo-form');
-      console.log('Form cleared');
     }
+    if (this.renderer && this.renderContainer) {
+      this.renderContainer.nativeElement.innerHTML = '';
+    }
+    localStorage.removeItem('formeo-form');
+    console.log('Form cleared');
   }
 
   exportFormData() {

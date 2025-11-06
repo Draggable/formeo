@@ -1,4 +1,5 @@
 import { loadAngularDemo } from './frameworks/angular.js'
+import { loadReactDemo } from './frameworks/react.js'
 import { loadVanillaDemo } from './frameworks/vanilla.js'
 
 /**
@@ -79,6 +80,9 @@ class FrameworkLoader {
           break
         case 'angular':
           this.currentDemo = await loadAngularDemo(this.frameworkContainer)
+          break
+        case 'react':
+          this.currentDemo = await loadReactDemo(this.frameworkContainer)
           break
         default:
           throw new Error(`Unknown framework: ${framework}`)

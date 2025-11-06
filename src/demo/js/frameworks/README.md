@@ -8,6 +8,7 @@ This directory contains framework-specific demos for Formeo, allowing users to s
 src/demo/js/frameworks/
 ├── vanilla.js      # Vanilla JavaScript demo (original implementation)
 ├── angular.js      # Angular integration demo
+├── react.js        # React integration demo
 └── [future-frameworks].js  # Placeholder for future framework demos
 ```
 
@@ -48,12 +49,20 @@ Each framework demo should:
 - Includes TypeScript code with proper typing
 - Demonstrates component lifecycle management
 
+### React
+- Located in: `react.js`
+- Provides modern React hooks and patterns
+- Shows custom hooks for Formeo integration
+- Includes TypeScript examples with proper typing
+- Demonstrates functional components and context patterns
+
 ## Future Framework Ideas
 
-- **React**: Hook-based components with proper state management
 - **Vue.js**: Vue 3 Composition API examples
 - **Svelte**: Modern Svelte component patterns
 - **Lit**: Web Components with Lit library
+- **Next.js**: Server-side rendering with React and Formeo
+- **Nuxt.js**: Server-side rendering with Vue and Formeo
 
 ## Performance Considerations
 
