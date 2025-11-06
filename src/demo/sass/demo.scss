@@ -165,10 +165,6 @@ body {
   line-height: 1em;
 }
 
-#framework-select {
-  line-height: 1em;
-}
-
 // Framework demo styles
 .angular-demo {
   padding: 20px;
@@ -380,16 +376,6 @@ body {
   line-height: 1em;
   margin-right: 15px;
   min-width: 150px;
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-
-  100% {
-    transform: translateX(100%);
-  }
 }
 
 @keyframes shimmer {
