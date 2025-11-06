@@ -57,7 +57,7 @@ export async function loadAngularDemo(container) {
 npm install -g @angular/cli@20
 
 # Create new Angular project
-ng new my-formeo-app --routing --style=scss
+ng new my-formeo-app --routing=true --style=scss
 
 # Navigate to project
 cd my-formeo-app
