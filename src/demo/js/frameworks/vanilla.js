@@ -15,7 +15,7 @@ export async function loadVanillaDemo(container) {
 
   // append action buttons
   editorButtons(editor, renderer)
-  editorEvents(editor, renderer)
+  editorEvents(editor)
 
   return {
     editor,
