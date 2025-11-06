@@ -14,30 +14,37 @@
 <body>
   <div class="site-wrap">
     <header id="demo-header">
-      <nav aria-label="Framework navigation">
-        <ul>
-          <li>
-            <label for="framework-select">Framework:</label>
-            <select name="framework-select" id="framework-select" class="form-control">
-              <option value="vanilla">Vanilla JavaScript</option>
-              <option value="angular">Angular</option>
-              <option value="react">React</option>
-            </select>
-            <label for="locale">Language</label>
-            <select name="locale" id="locale" class="form-control">
-              <% langFiles.forEach(function(langFile) { %>
-                <option value="<%- langFile.locale %>" dir="<%- langFile.dir %>"><%- langFile.nativeName %></option>
-                <% }); %>
-            </select>
-            <label for="control-filter">Control Filter:</label>
-            <input type="text" id="control-filter" placeholder="ex. text" class="form-control" />
-          </li>
-          <li style="float: right;">
-            v<%= version %>
-          </li>
-        </ul>
-      </nav>
-      <span id="formeo-logo-wrap"></span>
+      <div class="header-inner">
+        <img id="formeo-logo" src="assets/img/formeo-logo.svg" alt="Formeo Logo" width="100" />
+
+        <nav aria-label="Framework navigation">
+          <ul>
+            <li>
+              <label for="framework-select">Framework:</label>
+              <select name="framework-select" id="framework-select" class="form-control">
+                <option value="vanilla">Vanilla JavaScript</option>
+                <option value="angular">Angular</option>
+                <option value="react">React</option>
+              </select>
+              </li>
+            <li>
+              <label for="locale">Language</label>
+              <select name="locale" id="locale" class="form-control">
+                <% langFiles.forEach(function(langFile) { %>
+                  <option value="<%- langFile.locale %>" dir="<%- langFile.dir %>"><%- langFile.nativeName %></option>
+                  <% }); %>
+              </select>
+            </li>
+            <li>
+              <label for="control-filter">Control Filter:</label>
+              <input type="text" id="control-filter" placeholder="ex. text" class="form-control" />
+            </li>
+            <li style="float: right;">
+              v<%= version %>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
     <section id="main_content" class="inner">
       <div id="framework-container">

@@ -11,6 +11,8 @@ import { loadVanillaDemo } from './frameworks/vanilla.js'
  * - Error handling with user-friendly messages
  * - Loading states for better UX
  * - Automatic synchronization with framework selector
+ * - URL query parameter support for shareable links
+ * - Browser history integration for back/forward navigation
  */
 class FrameworkLoader {
   constructor() {
@@ -19,6 +21,7 @@ class FrameworkLoader {
     this.frameworkSelect = document.getElementById('framework-select')
     this.currentDemo = null
     this.isLoading = false
+    this.validFrameworks = ['vanilla', 'angular', 'react']
 
     // Validate required DOM elements
     if (!this.frameworkContainer) {
@@ -43,15 +46,26 @@ class FrameworkLoader {
       this.switchFramework(e.target.value)
     })
 
-    // Load initial framework
-    this.switchFramework('vanilla')
+    // Handle browser back/forward navigation
+    window.addEventListener('popstate', () => {
+      const framework = this.getFrameworkFromURL()
+      this.switchFramework(framework, { updateURL: false })
+    })
+
+    // Load initial framework from URL or default to vanilla
+    const initialFramework = this.getFrameworkFromURL()
+    this.switchFramework(initialFramework)
   }
 
   /**
    * Switch to a different framework demo
    * @param {string} framework - The framework to load ('vanilla', 'angular', etc.)
+   * @param {Object} options - Options for framework switching
+   * @param {boolean} options.updateURL - Whether to update the URL (default: true)
    */
-  async switchFramework(framework) {
+  async switchFramework(framework, options = {}) {
+    const { updateURL = true } = options
+
     // Prevent concurrent loading
     if (this.isLoading) {
       console.warn('Framework switch already in progress')
@@ -90,6 +104,12 @@ class FrameworkLoader {
 
       this.currentFramework = framework
       this.syncFrameworkSelector(framework)
+
+      // Update URL if requested
+      if (updateURL) {
+        this.updateURL(framework)
+      }
+
       console.log(`Loaded ${framework} demo successfully`)
     } catch (error) {
       console.error(`Failed to load ${framework} demo:`, error)
@@ -121,6 +141,40 @@ class FrameworkLoader {
     if (this.frameworkSelect.value !== framework) {
       this.frameworkSelect.value = framework
     }
+  }
+
+  /**
+   * Get framework from URL query parameters
+   * @returns {string} The framework from URL or default 'vanilla'
+   */
+  getFrameworkFromURL() {
+    const urlParams = new URLSearchParams(window.location.search)
+    const framework = urlParams.get('framework')
+
+    // Validate framework and return default if invalid
+    if (framework && this.validFrameworks.includes(framework)) {
+      return framework
+    }
+
+    return 'vanilla'
+  }
+
+  /**
+   * Update URL with current framework
+   * @param {string} framework - The framework to set in URL
+   */
+  updateURL(framework) {
+    const url = new URL(window.location)
+
+    if (framework === 'vanilla') {
+      // Remove framework parameter for vanilla (default)
+      url.searchParams.delete('framework')
+    } else {
+      url.searchParams.set('framework', framework)
+    }
+
+    // Update URL without reloading the page
+    window.history.pushState({ framework }, '', url.toString())
   }
 
   /**
