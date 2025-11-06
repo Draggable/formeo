@@ -7,6 +7,7 @@ import { editorOptions, renderOptions } from '../options/index.js'
  * Note: This demo simulates Angular patterns rather than loading the full framework
  * due to browser compatibility and performance considerations. For a real Angular
  * integration, see the complete Angular project example in /docs/angular-integration-example/
+ * Full integration to come in codesandbox.io/angular example in future.
  */
 export async function loadAngularDemo(container) {
   // Show loading state while demo initializes
