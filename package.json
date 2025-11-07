@@ -132,7 +132,9 @@
     "sortablejs": "^1.15.3"
   },
   "release": {
-    "branch": "main",
+    "branches": [
+      "main"
+    ],
     "verifyConditions": [
       "@semantic-release/changelog",
       "@semantic-release/npm",
