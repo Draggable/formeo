@@ -1,14 +1,10 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.1.1
+Version: 4.1.2
 Author: Draggable https://draggable.io
 */
 
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-var _a, _b, _c;
 async function fetchData(url) {
   try {
     const response = await fetch(url);
@@ -85,8 +81,8 @@ class I18N {
    * @return {String} language string or undefined
    */
   getValue(key, locale = this.locale) {
-    var _a2;
-    const value = (_a2 = this.langs[locale]) == null ? void 0 : _a2[key];
+    var _a;
+    const value = (_a = this.langs[locale]) == null ? void 0 : _a[key];
     return value || this.getFallbackValue(key);
   }
   /**
@@ -231,7 +227,7 @@ class I18N {
   }
 }
 const mi18n = new I18N();
-!function() {
+!(function() {
   try {
     if ("undefined" != typeof document) {
       var o = document.createElement("style");
@@ -240,10 +236,10 @@ const mi18n = new I18N();
   } catch (t) {
     console.error("vite-plugin-css-injected-by-js", t);
   }
-}();
-var __defProp2 = Object.defineProperty;
-var __defNormalProp2 = (obj, key, value) => key in obj ? __defProp2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField2 = (obj, key, value) => __defNormalProp2(obj, typeof key !== "symbol" ? key + "" : key, value);
+})();
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 const tooltip = "_3x4ZIcu-";
 const visible = "JIt36hCJ";
 const styles = {
@@ -255,11 +251,11 @@ const defaultOptions$1 = {
 };
 class SmartTooltip {
   constructor(options = defaultOptions$1) {
-    __publicField2(this, "triggerName");
-    __publicField2(this, "tooltip");
-    __publicField2(this, "activeTriggerType", null);
-    __publicField2(this, "spacing", 12);
-    __publicField2(this, "handleClick", (e) => {
+    __publicField(this, "triggerName");
+    __publicField(this, "tooltip");
+    __publicField(this, "activeTriggerType", null);
+    __publicField(this, "spacing", 12);
+    __publicField(this, "handleClick", (e) => {
       const triggerName = this.triggerName;
       const trigger = e.target.closest(`[${triggerName}][${triggerName}-type="click"]`);
       if (trigger) {
@@ -274,7 +270,7 @@ class SmartTooltip {
         this.hide();
       }
     });
-    __publicField2(this, "handleMouseOver", (e) => {
+    __publicField(this, "handleMouseOver", (e) => {
       const triggerName = this.triggerName;
       const trigger = e.target.closest(`[${triggerName}]`);
       if (this.activeTriggerType !== "click" && (trigger == null ? void 0 : trigger.getAttribute(`${triggerName}-type`)) !== "click") {
@@ -285,19 +281,19 @@ class SmartTooltip {
         }
       }
     });
-    __publicField2(this, "handleMouseOut", (e) => {
+    __publicField(this, "handleMouseOut", (e) => {
       const triggerName = this.triggerName;
       const trigger = e.target.closest(`[${triggerName}]`);
       if (this.activeTriggerType !== "click" && (trigger == null ? void 0 : trigger.getAttribute(`${triggerName}-type`)) !== "click") {
         this.hide();
       }
     });
-    __publicField2(this, "handleResize", () => {
+    __publicField(this, "handleResize", () => {
       if (this.isVisible()) {
         this.hide();
       }
     });
-    __publicField2(this, "handleScroll", () => {
+    __publicField(this, "handleScroll", () => {
       if (this.isVisible()) {
         this.hide();
       }
@@ -435,1102 +431,1582 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "4.1.1";
-const type = "module";
-const main = "dist/formeo.cjs.js";
-const module = "dist/formeo.es.js";
-const unpkg = "dist/formeo.umd.js";
-const exports = {
-  ".": {
-    "import": "./dist/formeo.es.js",
-    require: "./dist/formeo.cjs.js",
-    "default": "./dist/formeo.umd.js"
-  },
-  "./dist/formeo.min.css": {
-    "import": "./dist/formeo.min.css",
-    require: "./dist/formeo.min.css",
-    "default": "./dist/formeo.min.css"
-  }
-};
-const files = [
-  "dist/*",
-  "demo/**/*"
-];
-const homepage = "https://formeo.io";
-const repository = {
-  url: "https://github.com/Draggable/formeo",
-  type: "git"
-};
-const author = "Draggable https://draggable.io";
-const contributors = [
-  {
-    name: "Kevin Chappell",
-    email: "kevin.b.chappell@gmail.com",
-    url: "https://kevin-chappell.com"
-  }
-];
-const bugs = {
-  url: "https://github.com/draggable/formeo/issues"
-};
-const description = "A zero dependency JavaScript module for drag and drop form creation.";
-const keywords = [
-  "drag and drop",
-  "form builder",
-  "form maker",
-  "forms"
-];
-const license = "MIT";
-const ignore = [
-  "**/*",
-  "node_modules",
-  "test"
-];
-const config = {
-  files: {
-    test: [
-      "test/**/*.spec.js"
-    ],
-    "formeo-editor": {
-      js: "src/js/editor.js"
-    },
-    "formeo-renderer": {
-      js: "src/js/renderer.js"
-    },
-    site: [
-      "demo/assets/sass/site.scss"
-    ]
-  }
-};
-const scripts = {
-  dev: "vite",
-  preview: "vite preview",
-  "build:lib": "npm run build:lib:clean && npm run build:lib:unminified && npm run build:lib:minified",
-  "build:lib:clean": "rm -rf dist",
-  "build:lib:unminified": "vite build --config vite.config.lib.mjs --mode production",
-  "build:lib:minified": "vite build --config vite.config.lib.mjs --mode production-minified",
-  build: "npm-run-all -p build:icons build:demo",
-  prebuild: "npm run build:lib",
-  postbuild: "npm run generate:jsonSchema",
-  "build:demo": "vite build --mode demo",
-  "postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
-  "build:demo:watch": "vite build --mode demo --watch",
-  "build:icons": "node ./tools/generate-sprite",
-  lint: "biome check ./src",
-  "lint:fix": "biome check --write ./src",
-  format: "biome format --write .",
-  test: "node --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
-  "test:watch": "node --watch --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
-  "test:updateSnapshots": "node --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
-  "test:ci": "npm test --coverage",
-  start: "npm-run-all build:icons dev",
-  "semantic-release": "semantic-release --ci --debug",
-  "copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
-  "travis-deploy-once": "travis-deploy-once --pro",
-  "playwright:test": "playwright test",
-  "playwright:test:headed": "playwright test --headed",
-  "playwright:test:report": "playwright show-report",
-  "playwright:test:ci": "playwright test --reporter=dot",
-  prepush: "npm test",
-  prepare: "lefthook install",
-  postmerge: "lefthook install",
-  "generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
-};
-const devDependencies = {
-  "@biomejs/biome": "^2.3.3",
-  "@commitlint/cli": "^19.5.0",
-  "@commitlint/config-conventional": "^19.5.0",
-  "@playwright/test": "^1.49.1",
-  "@semantic-release/changelog": "^6.0.3",
-  "@semantic-release/git": "^10.0.1",
-  "@semantic-release/npm": "^12.0.1",
-  "@types/node": "^22.10.7",
-  "ace-builds": "^1.36.5",
-  jsdom: "^25.0.1",
-  lefthook: "^1.7.18",
-  "npm-run-all": "^2.1.0",
-  "sass-embedded": "^1.80.1",
-  "semantic-release": "^24.1.2",
-  "svg-sprite": "^2.0.4",
-  vite: "^5.4.8",
-  "vite-plugin-banner": "^0.8.0",
-  "vite-plugin-compression": "^0.5.1",
-  "vite-plugin-html": "^3.2.2",
-  zod: "^3.23.8",
-  "zod-to-json-schema": "^3.23.5"
-};
-const dependencies = {
-  "@draggable/formeo-languages": "^3.4.1",
-  "@draggable/i18n": "^1.0.7",
-  "@draggable/tooltip": "^1.2.2",
-  lodash: "^4.17.21",
-  sortablejs: "^1.15.3"
-};
-const release = {
-  branch: "main",
-  verifyConditions: [
-    "@semantic-release/changelog",
-    "@semantic-release/npm",
-    "@semantic-release/git"
-  ],
-  prepare: [
-    "@semantic-release/changelog",
-    "@semantic-release/npm",
-    "@semantic-release/git"
-  ]
-};
-const commitlint = {
-  "extends": [
-    "@commitlint/config-conventional"
-  ],
-  rules: {
-    "type-enum": [
-      2,
-      "always",
-      [
-        "build",
-        "chore",
-        "ci",
-        "docs",
-        "feat",
-        "fix",
-        "perf",
-        "refactor",
-        "revert",
-        "style",
-        "test"
-      ]
-    ]
-  }
-};
+const version$2 = "4.1.2";
 const pkg = {
   name: name$1,
-  version: version$2,
-  type,
-  main,
-  module,
-  unpkg,
-  exports,
-  files,
-  homepage,
-  repository,
-  author,
-  contributors,
-  bugs,
-  description,
-  keywords,
-  license,
-  ignore,
-  config,
-  scripts,
-  devDependencies,
-  dependencies,
-  release,
-  commitlint
+  version: version$2
 };
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
 }
-function listCacheClear$1() {
-  this.__data__ = [];
-  this.size = 0;
-}
-var _listCacheClear = listCacheClear$1;
-function eq$5(value, other) {
-  return value === other || value !== value && other !== other;
-}
-var eq_1 = eq$5;
-var eq$4 = eq_1;
-function assocIndexOf$4(array, key) {
-  var length = array.length;
-  while (length--) {
-    if (eq$4(array[length][0], key)) {
-      return length;
-    }
+var _listCacheClear;
+var hasRequired_listCacheClear;
+function require_listCacheClear() {
+  if (hasRequired_listCacheClear) return _listCacheClear;
+  hasRequired_listCacheClear = 1;
+  function listCacheClear() {
+    this.__data__ = [];
+    this.size = 0;
   }
-  return -1;
+  _listCacheClear = listCacheClear;
+  return _listCacheClear;
 }
-var _assocIndexOf = assocIndexOf$4;
-var assocIndexOf$3 = _assocIndexOf;
-var arrayProto = Array.prototype;
-var splice = arrayProto.splice;
-function listCacheDelete$1(key) {
-  var data = this.__data__, index2 = assocIndexOf$3(data, key);
-  if (index2 < 0) {
-    return false;
+var eq_1;
+var hasRequiredEq;
+function requireEq() {
+  if (hasRequiredEq) return eq_1;
+  hasRequiredEq = 1;
+  function eq(value, other) {
+    return value === other || value !== value && other !== other;
   }
-  var lastIndex = data.length - 1;
-  if (index2 == lastIndex) {
-    data.pop();
-  } else {
-    splice.call(data, index2, 1);
-  }
-  --this.size;
-  return true;
+  eq_1 = eq;
+  return eq_1;
 }
-var _listCacheDelete = listCacheDelete$1;
-var assocIndexOf$2 = _assocIndexOf;
-function listCacheGet$1(key) {
-  var data = this.__data__, index2 = assocIndexOf$2(data, key);
-  return index2 < 0 ? void 0 : data[index2][1];
-}
-var _listCacheGet = listCacheGet$1;
-var assocIndexOf$1 = _assocIndexOf;
-function listCacheHas$1(key) {
-  return assocIndexOf$1(this.__data__, key) > -1;
-}
-var _listCacheHas = listCacheHas$1;
-var assocIndexOf = _assocIndexOf;
-function listCacheSet$1(key, value) {
-  var data = this.__data__, index2 = assocIndexOf(data, key);
-  if (index2 < 0) {
-    ++this.size;
-    data.push([key, value]);
-  } else {
-    data[index2][1] = value;
-  }
-  return this;
-}
-var _listCacheSet = listCacheSet$1;
-var listCacheClear = _listCacheClear, listCacheDelete = _listCacheDelete, listCacheGet = _listCacheGet, listCacheHas = _listCacheHas, listCacheSet = _listCacheSet;
-function ListCache$4(entries) {
-  var index2 = -1, length = entries == null ? 0 : entries.length;
-  this.clear();
-  while (++index2 < length) {
-    var entry = entries[index2];
-    this.set(entry[0], entry[1]);
-  }
-}
-ListCache$4.prototype.clear = listCacheClear;
-ListCache$4.prototype["delete"] = listCacheDelete;
-ListCache$4.prototype.get = listCacheGet;
-ListCache$4.prototype.has = listCacheHas;
-ListCache$4.prototype.set = listCacheSet;
-var _ListCache = ListCache$4;
-var ListCache$3 = _ListCache;
-function stackClear$1() {
-  this.__data__ = new ListCache$3();
-  this.size = 0;
-}
-var _stackClear = stackClear$1;
-function stackDelete$1(key) {
-  var data = this.__data__, result = data["delete"](key);
-  this.size = data.size;
-  return result;
-}
-var _stackDelete = stackDelete$1;
-function stackGet$1(key) {
-  return this.__data__.get(key);
-}
-var _stackGet = stackGet$1;
-function stackHas$1(key) {
-  return this.__data__.has(key);
-}
-var _stackHas = stackHas$1;
-var freeGlobal$1 = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
-var _freeGlobal = freeGlobal$1;
-var freeGlobal = _freeGlobal;
-var freeSelf = typeof self == "object" && self && self.Object === Object && self;
-var root$8 = freeGlobal || freeSelf || Function("return this")();
-var _root = root$8;
-var root$7 = _root;
-var Symbol$5 = root$7.Symbol;
-var _Symbol = Symbol$5;
-var Symbol$4 = _Symbol;
-var objectProto$e = Object.prototype;
-var hasOwnProperty$b = objectProto$e.hasOwnProperty;
-var nativeObjectToString$1 = objectProto$e.toString;
-var symToStringTag$1 = Symbol$4 ? Symbol$4.toStringTag : void 0;
-function getRawTag$1(value) {
-  var isOwn = hasOwnProperty$b.call(value, symToStringTag$1), tag = value[symToStringTag$1];
-  try {
-    value[symToStringTag$1] = void 0;
-    var unmasked = true;
-  } catch (e) {
-  }
-  var result = nativeObjectToString$1.call(value);
-  if (unmasked) {
-    if (isOwn) {
-      value[symToStringTag$1] = tag;
-    } else {
-      delete value[symToStringTag$1];
-    }
-  }
-  return result;
-}
-var _getRawTag = getRawTag$1;
-var objectProto$d = Object.prototype;
-var nativeObjectToString = objectProto$d.toString;
-function objectToString$1(value) {
-  return nativeObjectToString.call(value);
-}
-var _objectToString = objectToString$1;
-var Symbol$3 = _Symbol, getRawTag = _getRawTag, objectToString = _objectToString;
-var nullTag = "[object Null]", undefinedTag = "[object Undefined]";
-var symToStringTag = Symbol$3 ? Symbol$3.toStringTag : void 0;
-function baseGetTag$6(value) {
-  if (value == null) {
-    return value === void 0 ? undefinedTag : nullTag;
-  }
-  return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
-}
-var _baseGetTag = baseGetTag$6;
-function isObject$8(value) {
-  var type2 = typeof value;
-  return value != null && (type2 == "object" || type2 == "function");
-}
-var isObject_1 = isObject$8;
-var baseGetTag$5 = _baseGetTag, isObject$7 = isObject_1;
-var asyncTag = "[object AsyncFunction]", funcTag$1 = "[object Function]", genTag = "[object GeneratorFunction]", proxyTag = "[object Proxy]";
-function isFunction$3(value) {
-  if (!isObject$7(value)) {
-    return false;
-  }
-  var tag = baseGetTag$5(value);
-  return tag == funcTag$1 || tag == genTag || tag == asyncTag || tag == proxyTag;
-}
-var isFunction_1 = isFunction$3;
-var root$6 = _root;
-var coreJsData$1 = root$6["__core-js_shared__"];
-var _coreJsData = coreJsData$1;
-var coreJsData = _coreJsData;
-var maskSrcKey = function() {
-  var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
-  return uid ? "Symbol(src)_1." + uid : "";
-}();
-function isMasked$1(func) {
-  return !!maskSrcKey && maskSrcKey in func;
-}
-var _isMasked = isMasked$1;
-var funcProto$2 = Function.prototype;
-var funcToString$2 = funcProto$2.toString;
-function toSource$2(func) {
-  if (func != null) {
-    try {
-      return funcToString$2.call(func);
-    } catch (e) {
-    }
-    try {
-      return func + "";
-    } catch (e) {
-    }
-  }
-  return "";
-}
-var _toSource = toSource$2;
-var isFunction$2 = isFunction_1, isMasked = _isMasked, isObject$6 = isObject_1, toSource$1 = _toSource;
-var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
-var reIsHostCtor = /^\[object .+?Constructor\]$/;
-var funcProto$1 = Function.prototype, objectProto$c = Object.prototype;
-var funcToString$1 = funcProto$1.toString;
-var hasOwnProperty$a = objectProto$c.hasOwnProperty;
-var reIsNative = RegExp(
-  "^" + funcToString$1.call(hasOwnProperty$a).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
-);
-function baseIsNative$1(value) {
-  if (!isObject$6(value) || isMasked(value)) {
-    return false;
-  }
-  var pattern = isFunction$2(value) ? reIsNative : reIsHostCtor;
-  return pattern.test(toSource$1(value));
-}
-var _baseIsNative = baseIsNative$1;
-function getValue$1(object, key) {
-  return object == null ? void 0 : object[key];
-}
-var _getValue = getValue$1;
-var baseIsNative = _baseIsNative, getValue = _getValue;
-function getNative$7(object, key) {
-  var value = getValue(object, key);
-  return baseIsNative(value) ? value : void 0;
-}
-var _getNative = getNative$7;
-var getNative$6 = _getNative, root$5 = _root;
-var Map$4 = getNative$6(root$5, "Map");
-var _Map = Map$4;
-var getNative$5 = _getNative;
-var nativeCreate$4 = getNative$5(Object, "create");
-var _nativeCreate = nativeCreate$4;
-var nativeCreate$3 = _nativeCreate;
-function hashClear$1() {
-  this.__data__ = nativeCreate$3 ? nativeCreate$3(null) : {};
-  this.size = 0;
-}
-var _hashClear = hashClear$1;
-function hashDelete$1(key) {
-  var result = this.has(key) && delete this.__data__[key];
-  this.size -= result ? 1 : 0;
-  return result;
-}
-var _hashDelete = hashDelete$1;
-var nativeCreate$2 = _nativeCreate;
-var HASH_UNDEFINED$2 = "__lodash_hash_undefined__";
-var objectProto$b = Object.prototype;
-var hasOwnProperty$9 = objectProto$b.hasOwnProperty;
-function hashGet$1(key) {
-  var data = this.__data__;
-  if (nativeCreate$2) {
-    var result = data[key];
-    return result === HASH_UNDEFINED$2 ? void 0 : result;
-  }
-  return hasOwnProperty$9.call(data, key) ? data[key] : void 0;
-}
-var _hashGet = hashGet$1;
-var nativeCreate$1 = _nativeCreate;
-var objectProto$a = Object.prototype;
-var hasOwnProperty$8 = objectProto$a.hasOwnProperty;
-function hashHas$1(key) {
-  var data = this.__data__;
-  return nativeCreate$1 ? data[key] !== void 0 : hasOwnProperty$8.call(data, key);
-}
-var _hashHas = hashHas$1;
-var nativeCreate = _nativeCreate;
-var HASH_UNDEFINED$1 = "__lodash_hash_undefined__";
-function hashSet$1(key, value) {
-  var data = this.__data__;
-  this.size += this.has(key) ? 0 : 1;
-  data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED$1 : value;
-  return this;
-}
-var _hashSet = hashSet$1;
-var hashClear = _hashClear, hashDelete = _hashDelete, hashGet = _hashGet, hashHas = _hashHas, hashSet = _hashSet;
-function Hash$1(entries) {
-  var index2 = -1, length = entries == null ? 0 : entries.length;
-  this.clear();
-  while (++index2 < length) {
-    var entry = entries[index2];
-    this.set(entry[0], entry[1]);
-  }
-}
-Hash$1.prototype.clear = hashClear;
-Hash$1.prototype["delete"] = hashDelete;
-Hash$1.prototype.get = hashGet;
-Hash$1.prototype.has = hashHas;
-Hash$1.prototype.set = hashSet;
-var _Hash = Hash$1;
-var Hash = _Hash, ListCache$2 = _ListCache, Map$3 = _Map;
-function mapCacheClear$1() {
-  this.size = 0;
-  this.__data__ = {
-    "hash": new Hash(),
-    "map": new (Map$3 || ListCache$2)(),
-    "string": new Hash()
-  };
-}
-var _mapCacheClear = mapCacheClear$1;
-function isKeyable$1(value) {
-  var type2 = typeof value;
-  return type2 == "string" || type2 == "number" || type2 == "symbol" || type2 == "boolean" ? value !== "__proto__" : value === null;
-}
-var _isKeyable = isKeyable$1;
-var isKeyable = _isKeyable;
-function getMapData$4(map2, key) {
-  var data = map2.__data__;
-  return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
-}
-var _getMapData = getMapData$4;
-var getMapData$3 = _getMapData;
-function mapCacheDelete$1(key) {
-  var result = getMapData$3(this, key)["delete"](key);
-  this.size -= result ? 1 : 0;
-  return result;
-}
-var _mapCacheDelete = mapCacheDelete$1;
-var getMapData$2 = _getMapData;
-function mapCacheGet$1(key) {
-  return getMapData$2(this, key).get(key);
-}
-var _mapCacheGet = mapCacheGet$1;
-var getMapData$1 = _getMapData;
-function mapCacheHas$1(key) {
-  return getMapData$1(this, key).has(key);
-}
-var _mapCacheHas = mapCacheHas$1;
-var getMapData = _getMapData;
-function mapCacheSet$1(key, value) {
-  var data = getMapData(this, key), size = data.size;
-  data.set(key, value);
-  this.size += data.size == size ? 0 : 1;
-  return this;
-}
-var _mapCacheSet = mapCacheSet$1;
-var mapCacheClear = _mapCacheClear, mapCacheDelete = _mapCacheDelete, mapCacheGet = _mapCacheGet, mapCacheHas = _mapCacheHas, mapCacheSet = _mapCacheSet;
-function MapCache$3(entries) {
-  var index2 = -1, length = entries == null ? 0 : entries.length;
-  this.clear();
-  while (++index2 < length) {
-    var entry = entries[index2];
-    this.set(entry[0], entry[1]);
-  }
-}
-MapCache$3.prototype.clear = mapCacheClear;
-MapCache$3.prototype["delete"] = mapCacheDelete;
-MapCache$3.prototype.get = mapCacheGet;
-MapCache$3.prototype.has = mapCacheHas;
-MapCache$3.prototype.set = mapCacheSet;
-var _MapCache = MapCache$3;
-var ListCache$1 = _ListCache, Map$2 = _Map, MapCache$2 = _MapCache;
-var LARGE_ARRAY_SIZE = 200;
-function stackSet$1(key, value) {
-  var data = this.__data__;
-  if (data instanceof ListCache$1) {
-    var pairs = data.__data__;
-    if (!Map$2 || pairs.length < LARGE_ARRAY_SIZE - 1) {
-      pairs.push([key, value]);
-      this.size = ++data.size;
-      return this;
-    }
-    data = this.__data__ = new MapCache$2(pairs);
-  }
-  data.set(key, value);
-  this.size = data.size;
-  return this;
-}
-var _stackSet = stackSet$1;
-var ListCache = _ListCache, stackClear = _stackClear, stackDelete = _stackDelete, stackGet = _stackGet, stackHas = _stackHas, stackSet = _stackSet;
-function Stack$2(entries) {
-  var data = this.__data__ = new ListCache(entries);
-  this.size = data.size;
-}
-Stack$2.prototype.clear = stackClear;
-Stack$2.prototype["delete"] = stackDelete;
-Stack$2.prototype.get = stackGet;
-Stack$2.prototype.has = stackHas;
-Stack$2.prototype.set = stackSet;
-var _Stack = Stack$2;
-var getNative$4 = _getNative;
-var defineProperty$2 = function() {
-  try {
-    var func = getNative$4(Object, "defineProperty");
-    func({}, "", {});
-    return func;
-  } catch (e) {
-  }
-}();
-var _defineProperty$1 = defineProperty$2;
-var defineProperty$1 = _defineProperty$1;
-function baseAssignValue$3(object, key, value) {
-  if (key == "__proto__" && defineProperty$1) {
-    defineProperty$1(object, key, {
-      "configurable": true,
-      "enumerable": true,
-      "value": value,
-      "writable": true
-    });
-  } else {
-    object[key] = value;
-  }
-}
-var _baseAssignValue = baseAssignValue$3;
-var baseAssignValue$2 = _baseAssignValue, eq$3 = eq_1;
-function assignMergeValue$2(object, key, value) {
-  if (value !== void 0 && !eq$3(object[key], value) || value === void 0 && !(key in object)) {
-    baseAssignValue$2(object, key, value);
-  }
-}
-var _assignMergeValue = assignMergeValue$2;
-function createBaseFor$1(fromRight) {
-  return function(object, iteratee, keysFunc) {
-    var index2 = -1, iterable = Object(object), props = keysFunc(object), length = props.length;
+var _assocIndexOf;
+var hasRequired_assocIndexOf;
+function require_assocIndexOf() {
+  if (hasRequired_assocIndexOf) return _assocIndexOf;
+  hasRequired_assocIndexOf = 1;
+  var eq = requireEq();
+  function assocIndexOf(array, key) {
+    var length = array.length;
     while (length--) {
-      var key = props[fromRight ? length : ++index2];
-      if (iteratee(iterable[key], key, iterable) === false) {
-        break;
+      if (eq(array[length][0], key)) {
+        return length;
       }
     }
-    return object;
-  };
+    return -1;
+  }
+  _assocIndexOf = assocIndexOf;
+  return _assocIndexOf;
 }
-var _createBaseFor = createBaseFor$1;
-var createBaseFor = _createBaseFor;
-var baseFor$1 = createBaseFor();
-var _baseFor = baseFor$1;
-var _cloneBuffer = { exports: {} };
-_cloneBuffer.exports;
-(function(module2, exports2) {
-  var root2 = _root;
-  var freeExports = exports2 && !exports2.nodeType && exports2;
-  var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
-  var moduleExports = freeModule && freeModule.exports === freeExports;
-  var Buffer2 = moduleExports ? root2.Buffer : void 0, allocUnsafe = Buffer2 ? Buffer2.allocUnsafe : void 0;
-  function cloneBuffer2(buffer, isDeep) {
-    if (isDeep) {
-      return buffer.slice();
+var _listCacheDelete;
+var hasRequired_listCacheDelete;
+function require_listCacheDelete() {
+  if (hasRequired_listCacheDelete) return _listCacheDelete;
+  hasRequired_listCacheDelete = 1;
+  var assocIndexOf = require_assocIndexOf();
+  var arrayProto = Array.prototype;
+  var splice = arrayProto.splice;
+  function listCacheDelete(key) {
+    var data = this.__data__, index2 = assocIndexOf(data, key);
+    if (index2 < 0) {
+      return false;
     }
-    var length = buffer.length, result = allocUnsafe ? allocUnsafe(length) : new buffer.constructor(length);
-    buffer.copy(result);
-    return result;
-  }
-  module2.exports = cloneBuffer2;
-})(_cloneBuffer, _cloneBuffer.exports);
-var _cloneBufferExports = _cloneBuffer.exports;
-var root$4 = _root;
-var Uint8Array$2 = root$4.Uint8Array;
-var _Uint8Array = Uint8Array$2;
-var Uint8Array$1 = _Uint8Array;
-function cloneArrayBuffer$1(arrayBuffer) {
-  var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
-  new Uint8Array$1(result).set(new Uint8Array$1(arrayBuffer));
-  return result;
-}
-var _cloneArrayBuffer = cloneArrayBuffer$1;
-var cloneArrayBuffer = _cloneArrayBuffer;
-function cloneTypedArray$1(typedArray, isDeep) {
-  var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
-  return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
-}
-var _cloneTypedArray = cloneTypedArray$1;
-function copyArray$1(source, array) {
-  var index2 = -1, length = source.length;
-  array || (array = Array(length));
-  while (++index2 < length) {
-    array[index2] = source[index2];
-  }
-  return array;
-}
-var _copyArray = copyArray$1;
-var isObject$5 = isObject_1;
-var objectCreate = Object.create;
-var baseCreate$1 = /* @__PURE__ */ function() {
-  function object() {
-  }
-  return function(proto) {
-    if (!isObject$5(proto)) {
-      return {};
+    var lastIndex = data.length - 1;
+    if (index2 == lastIndex) {
+      data.pop();
+    } else {
+      splice.call(data, index2, 1);
     }
-    if (objectCreate) {
-      return objectCreate(proto);
-    }
-    object.prototype = proto;
-    var result = new object();
-    object.prototype = void 0;
-    return result;
-  };
-}();
-var _baseCreate = baseCreate$1;
-function overArg$2(func, transform) {
-  return function(arg) {
-    return func(transform(arg));
-  };
-}
-var _overArg = overArg$2;
-var overArg$1 = _overArg;
-var getPrototype$2 = overArg$1(Object.getPrototypeOf, Object);
-var _getPrototype = getPrototype$2;
-var objectProto$9 = Object.prototype;
-function isPrototype$3(value) {
-  var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$9;
-  return value === proto;
-}
-var _isPrototype = isPrototype$3;
-var baseCreate = _baseCreate, getPrototype$1 = _getPrototype, isPrototype$2 = _isPrototype;
-function initCloneObject$1(object) {
-  return typeof object.constructor == "function" && !isPrototype$2(object) ? baseCreate(getPrototype$1(object)) : {};
-}
-var _initCloneObject = initCloneObject$1;
-function isObjectLike$7(value) {
-  return value != null && typeof value == "object";
-}
-var isObjectLike_1 = isObjectLike$7;
-var baseGetTag$4 = _baseGetTag, isObjectLike$6 = isObjectLike_1;
-var argsTag$2 = "[object Arguments]";
-function baseIsArguments$1(value) {
-  return isObjectLike$6(value) && baseGetTag$4(value) == argsTag$2;
-}
-var _baseIsArguments = baseIsArguments$1;
-var baseIsArguments = _baseIsArguments, isObjectLike$5 = isObjectLike_1;
-var objectProto$8 = Object.prototype;
-var hasOwnProperty$7 = objectProto$8.hasOwnProperty;
-var propertyIsEnumerable$1 = objectProto$8.propertyIsEnumerable;
-var isArguments$2 = baseIsArguments(/* @__PURE__ */ function() {
-  return arguments;
-}()) ? baseIsArguments : function(value) {
-  return isObjectLike$5(value) && hasOwnProperty$7.call(value, "callee") && !propertyIsEnumerable$1.call(value, "callee");
-};
-var isArguments_1 = isArguments$2;
-var isArray$7 = Array.isArray;
-var isArray_1 = isArray$7;
-var MAX_SAFE_INTEGER$1 = 9007199254740991;
-function isLength$2(value) {
-  return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER$1;
-}
-var isLength_1 = isLength$2;
-var isFunction$1 = isFunction_1, isLength$1 = isLength_1;
-function isArrayLike$4(value) {
-  return value != null && isLength$1(value.length) && !isFunction$1(value);
-}
-var isArrayLike_1 = isArrayLike$4;
-var isArrayLike$3 = isArrayLike_1, isObjectLike$4 = isObjectLike_1;
-function isArrayLikeObject$1(value) {
-  return isObjectLike$4(value) && isArrayLike$3(value);
-}
-var isArrayLikeObject_1 = isArrayLikeObject$1;
-var isBuffer$3 = { exports: {} };
-function stubFalse() {
-  return false;
-}
-var stubFalse_1 = stubFalse;
-isBuffer$3.exports;
-(function(module2, exports2) {
-  var root2 = _root, stubFalse2 = stubFalse_1;
-  var freeExports = exports2 && !exports2.nodeType && exports2;
-  var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
-  var moduleExports = freeModule && freeModule.exports === freeExports;
-  var Buffer2 = moduleExports ? root2.Buffer : void 0;
-  var nativeIsBuffer = Buffer2 ? Buffer2.isBuffer : void 0;
-  var isBuffer2 = nativeIsBuffer || stubFalse2;
-  module2.exports = isBuffer2;
-})(isBuffer$3, isBuffer$3.exports);
-var isBufferExports = isBuffer$3.exports;
-var baseGetTag$3 = _baseGetTag, getPrototype = _getPrototype, isObjectLike$3 = isObjectLike_1;
-var objectTag$3 = "[object Object]";
-var funcProto = Function.prototype, objectProto$7 = Object.prototype;
-var funcToString = funcProto.toString;
-var hasOwnProperty$6 = objectProto$7.hasOwnProperty;
-var objectCtorString = funcToString.call(Object);
-function isPlainObject$1(value) {
-  if (!isObjectLike$3(value) || baseGetTag$3(value) != objectTag$3) {
-    return false;
-  }
-  var proto = getPrototype(value);
-  if (proto === null) {
+    --this.size;
     return true;
   }
-  var Ctor = hasOwnProperty$6.call(proto, "constructor") && proto.constructor;
-  return typeof Ctor == "function" && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
+  _listCacheDelete = listCacheDelete;
+  return _listCacheDelete;
 }
-var isPlainObject_1 = isPlainObject$1;
-var baseGetTag$2 = _baseGetTag, isLength = isLength_1, isObjectLike$2 = isObjectLike_1;
-var argsTag$1 = "[object Arguments]", arrayTag$1 = "[object Array]", boolTag$1 = "[object Boolean]", dateTag$1 = "[object Date]", errorTag$1 = "[object Error]", funcTag = "[object Function]", mapTag$2 = "[object Map]", numberTag$1 = "[object Number]", objectTag$2 = "[object Object]", regexpTag$1 = "[object RegExp]", setTag$2 = "[object Set]", stringTag$1 = "[object String]", weakMapTag$1 = "[object WeakMap]";
-var arrayBufferTag$1 = "[object ArrayBuffer]", dataViewTag$2 = "[object DataView]", float32Tag = "[object Float32Array]", float64Tag = "[object Float64Array]", int8Tag = "[object Int8Array]", int16Tag = "[object Int16Array]", int32Tag = "[object Int32Array]", uint8Tag = "[object Uint8Array]", uint8ClampedTag = "[object Uint8ClampedArray]", uint16Tag = "[object Uint16Array]", uint32Tag = "[object Uint32Array]";
-var typedArrayTags = {};
-typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
-typedArrayTags[argsTag$1] = typedArrayTags[arrayTag$1] = typedArrayTags[arrayBufferTag$1] = typedArrayTags[boolTag$1] = typedArrayTags[dataViewTag$2] = typedArrayTags[dateTag$1] = typedArrayTags[errorTag$1] = typedArrayTags[funcTag] = typedArrayTags[mapTag$2] = typedArrayTags[numberTag$1] = typedArrayTags[objectTag$2] = typedArrayTags[regexpTag$1] = typedArrayTags[setTag$2] = typedArrayTags[stringTag$1] = typedArrayTags[weakMapTag$1] = false;
-function baseIsTypedArray$1(value) {
-  return isObjectLike$2(value) && isLength(value.length) && !!typedArrayTags[baseGetTag$2(value)];
+var _listCacheGet;
+var hasRequired_listCacheGet;
+function require_listCacheGet() {
+  if (hasRequired_listCacheGet) return _listCacheGet;
+  hasRequired_listCacheGet = 1;
+  var assocIndexOf = require_assocIndexOf();
+  function listCacheGet(key) {
+    var data = this.__data__, index2 = assocIndexOf(data, key);
+    return index2 < 0 ? void 0 : data[index2][1];
+  }
+  _listCacheGet = listCacheGet;
+  return _listCacheGet;
 }
-var _baseIsTypedArray = baseIsTypedArray$1;
-function baseUnary$1(func) {
-  return function(value) {
-    return func(value);
-  };
+var _listCacheHas;
+var hasRequired_listCacheHas;
+function require_listCacheHas() {
+  if (hasRequired_listCacheHas) return _listCacheHas;
+  hasRequired_listCacheHas = 1;
+  var assocIndexOf = require_assocIndexOf();
+  function listCacheHas(key) {
+    return assocIndexOf(this.__data__, key) > -1;
+  }
+  _listCacheHas = listCacheHas;
+  return _listCacheHas;
 }
-var _baseUnary = baseUnary$1;
-var _nodeUtil = { exports: {} };
-_nodeUtil.exports;
-(function(module2, exports2) {
-  var freeGlobal2 = _freeGlobal;
-  var freeExports = exports2 && !exports2.nodeType && exports2;
-  var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
-  var moduleExports = freeModule && freeModule.exports === freeExports;
-  var freeProcess = moduleExports && freeGlobal2.process;
-  var nodeUtil2 = function() {
+var _listCacheSet;
+var hasRequired_listCacheSet;
+function require_listCacheSet() {
+  if (hasRequired_listCacheSet) return _listCacheSet;
+  hasRequired_listCacheSet = 1;
+  var assocIndexOf = require_assocIndexOf();
+  function listCacheSet(key, value) {
+    var data = this.__data__, index2 = assocIndexOf(data, key);
+    if (index2 < 0) {
+      ++this.size;
+      data.push([key, value]);
+    } else {
+      data[index2][1] = value;
+    }
+    return this;
+  }
+  _listCacheSet = listCacheSet;
+  return _listCacheSet;
+}
+var _ListCache;
+var hasRequired_ListCache;
+function require_ListCache() {
+  if (hasRequired_ListCache) return _ListCache;
+  hasRequired_ListCache = 1;
+  var listCacheClear = require_listCacheClear(), listCacheDelete = require_listCacheDelete(), listCacheGet = require_listCacheGet(), listCacheHas = require_listCacheHas(), listCacheSet = require_listCacheSet();
+  function ListCache(entries) {
+    var index2 = -1, length = entries == null ? 0 : entries.length;
+    this.clear();
+    while (++index2 < length) {
+      var entry = entries[index2];
+      this.set(entry[0], entry[1]);
+    }
+  }
+  ListCache.prototype.clear = listCacheClear;
+  ListCache.prototype["delete"] = listCacheDelete;
+  ListCache.prototype.get = listCacheGet;
+  ListCache.prototype.has = listCacheHas;
+  ListCache.prototype.set = listCacheSet;
+  _ListCache = ListCache;
+  return _ListCache;
+}
+var _stackClear;
+var hasRequired_stackClear;
+function require_stackClear() {
+  if (hasRequired_stackClear) return _stackClear;
+  hasRequired_stackClear = 1;
+  var ListCache = require_ListCache();
+  function stackClear() {
+    this.__data__ = new ListCache();
+    this.size = 0;
+  }
+  _stackClear = stackClear;
+  return _stackClear;
+}
+var _stackDelete;
+var hasRequired_stackDelete;
+function require_stackDelete() {
+  if (hasRequired_stackDelete) return _stackDelete;
+  hasRequired_stackDelete = 1;
+  function stackDelete(key) {
+    var data = this.__data__, result = data["delete"](key);
+    this.size = data.size;
+    return result;
+  }
+  _stackDelete = stackDelete;
+  return _stackDelete;
+}
+var _stackGet;
+var hasRequired_stackGet;
+function require_stackGet() {
+  if (hasRequired_stackGet) return _stackGet;
+  hasRequired_stackGet = 1;
+  function stackGet(key) {
+    return this.__data__.get(key);
+  }
+  _stackGet = stackGet;
+  return _stackGet;
+}
+var _stackHas;
+var hasRequired_stackHas;
+function require_stackHas() {
+  if (hasRequired_stackHas) return _stackHas;
+  hasRequired_stackHas = 1;
+  function stackHas(key) {
+    return this.__data__.has(key);
+  }
+  _stackHas = stackHas;
+  return _stackHas;
+}
+var _freeGlobal;
+var hasRequired_freeGlobal;
+function require_freeGlobal() {
+  if (hasRequired_freeGlobal) return _freeGlobal;
+  hasRequired_freeGlobal = 1;
+  var freeGlobal = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+  _freeGlobal = freeGlobal;
+  return _freeGlobal;
+}
+var _root;
+var hasRequired_root;
+function require_root() {
+  if (hasRequired_root) return _root;
+  hasRequired_root = 1;
+  var freeGlobal = require_freeGlobal();
+  var freeSelf = typeof self == "object" && self && self.Object === Object && self;
+  var root = freeGlobal || freeSelf || Function("return this")();
+  _root = root;
+  return _root;
+}
+var _Symbol;
+var hasRequired_Symbol;
+function require_Symbol() {
+  if (hasRequired_Symbol) return _Symbol;
+  hasRequired_Symbol = 1;
+  var root = require_root();
+  var Symbol2 = root.Symbol;
+  _Symbol = Symbol2;
+  return _Symbol;
+}
+var _getRawTag;
+var hasRequired_getRawTag;
+function require_getRawTag() {
+  if (hasRequired_getRawTag) return _getRawTag;
+  hasRequired_getRawTag = 1;
+  var Symbol2 = require_Symbol();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  var nativeObjectToString = objectProto.toString;
+  var symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
+  function getRawTag(value) {
+    var isOwn = hasOwnProperty.call(value, symToStringTag), tag = value[symToStringTag];
     try {
-      var types = freeModule && freeModule.require && freeModule.require("util").types;
-      if (types) {
-        return types;
-      }
-      return freeProcess && freeProcess.binding && freeProcess.binding("util");
+      value[symToStringTag] = void 0;
+      var unmasked = true;
     } catch (e) {
     }
-  }();
-  module2.exports = nodeUtil2;
-})(_nodeUtil, _nodeUtil.exports);
-var _nodeUtilExports = _nodeUtil.exports;
-var baseIsTypedArray = _baseIsTypedArray, baseUnary = _baseUnary, nodeUtil = _nodeUtilExports;
-var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
-var isTypedArray$3 = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
-var isTypedArray_1 = isTypedArray$3;
-function safeGet$2(object, key) {
-  if (key === "constructor" && typeof object[key] === "function") {
-    return;
-  }
-  if (key == "__proto__") {
-    return;
-  }
-  return object[key];
-}
-var _safeGet = safeGet$2;
-var baseAssignValue$1 = _baseAssignValue, eq$2 = eq_1;
-var objectProto$6 = Object.prototype;
-var hasOwnProperty$5 = objectProto$6.hasOwnProperty;
-function assignValue$2(object, key, value) {
-  var objValue = object[key];
-  if (!(hasOwnProperty$5.call(object, key) && eq$2(objValue, value)) || value === void 0 && !(key in object)) {
-    baseAssignValue$1(object, key, value);
-  }
-}
-var _assignValue = assignValue$2;
-var assignValue$1 = _assignValue, baseAssignValue = _baseAssignValue;
-function copyObject$1(source, props, object, customizer) {
-  var isNew = !object;
-  object || (object = {});
-  var index2 = -1, length = props.length;
-  while (++index2 < length) {
-    var key = props[index2];
-    var newValue = customizer ? customizer(object[key], source[key], key, object, source) : void 0;
-    if (newValue === void 0) {
-      newValue = source[key];
-    }
-    if (isNew) {
-      baseAssignValue(object, key, newValue);
-    } else {
-      assignValue$1(object, key, newValue);
-    }
-  }
-  return object;
-}
-var _copyObject = copyObject$1;
-function baseTimes$1(n, iteratee) {
-  var index2 = -1, result = Array(n);
-  while (++index2 < n) {
-    result[index2] = iteratee(index2);
-  }
-  return result;
-}
-var _baseTimes = baseTimes$1;
-var MAX_SAFE_INTEGER = 9007199254740991;
-var reIsUint = /^(?:0|[1-9]\d*)$/;
-function isIndex$3(value, length) {
-  var type2 = typeof value;
-  length = length == null ? MAX_SAFE_INTEGER : length;
-  return !!length && (type2 == "number" || type2 != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
-}
-var _isIndex = isIndex$3;
-var baseTimes = _baseTimes, isArguments$1 = isArguments_1, isArray$6 = isArray_1, isBuffer$2 = isBufferExports, isIndex$2 = _isIndex, isTypedArray$2 = isTypedArray_1;
-var objectProto$5 = Object.prototype;
-var hasOwnProperty$4 = objectProto$5.hasOwnProperty;
-function arrayLikeKeys$2(value, inherited) {
-  var isArr = isArray$6(value), isArg = !isArr && isArguments$1(value), isBuff = !isArr && !isArg && isBuffer$2(value), isType = !isArr && !isArg && !isBuff && isTypedArray$2(value), skipIndexes = isArr || isArg || isBuff || isType, result = skipIndexes ? baseTimes(value.length, String) : [], length = result.length;
-  for (var key in value) {
-    if ((inherited || hasOwnProperty$4.call(value, key)) && !(skipIndexes && // Safari 9 has enumerable `arguments.length` in strict mode.
-    (key == "length" || // Node.js 0.10 has enumerable non-index properties on buffers.
-    isBuff && (key == "offset" || key == "parent") || // PhantomJS 2 has enumerable non-index properties on typed arrays.
-    isType && (key == "buffer" || key == "byteLength" || key == "byteOffset") || // Skip index properties.
-    isIndex$2(key, length)))) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-var _arrayLikeKeys = arrayLikeKeys$2;
-function nativeKeysIn$1(object) {
-  var result = [];
-  if (object != null) {
-    for (var key in Object(object)) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-var _nativeKeysIn = nativeKeysIn$1;
-var isObject$4 = isObject_1, isPrototype$1 = _isPrototype, nativeKeysIn = _nativeKeysIn;
-var objectProto$4 = Object.prototype;
-var hasOwnProperty$3 = objectProto$4.hasOwnProperty;
-function baseKeysIn$1(object) {
-  if (!isObject$4(object)) {
-    return nativeKeysIn(object);
-  }
-  var isProto = isPrototype$1(object), result = [];
-  for (var key in object) {
-    if (!(key == "constructor" && (isProto || !hasOwnProperty$3.call(object, key)))) {
-      result.push(key);
-    }
-  }
-  return result;
-}
-var _baseKeysIn = baseKeysIn$1;
-var arrayLikeKeys$1 = _arrayLikeKeys, baseKeysIn = _baseKeysIn, isArrayLike$2 = isArrayLike_1;
-function keysIn$2(object) {
-  return isArrayLike$2(object) ? arrayLikeKeys$1(object, true) : baseKeysIn(object);
-}
-var keysIn_1 = keysIn$2;
-var copyObject = _copyObject, keysIn$1 = keysIn_1;
-function toPlainObject$1(value) {
-  return copyObject(value, keysIn$1(value));
-}
-var toPlainObject_1 = toPlainObject$1;
-var assignMergeValue$1 = _assignMergeValue, cloneBuffer = _cloneBufferExports, cloneTypedArray = _cloneTypedArray, copyArray = _copyArray, initCloneObject = _initCloneObject, isArguments = isArguments_1, isArray$5 = isArray_1, isArrayLikeObject = isArrayLikeObject_1, isBuffer$1 = isBufferExports, isFunction = isFunction_1, isObject$3 = isObject_1, isPlainObject = isPlainObject_1, isTypedArray$1 = isTypedArray_1, safeGet$1 = _safeGet, toPlainObject = toPlainObject_1;
-function baseMergeDeep$1(object, source, key, srcIndex, mergeFunc, customizer, stack) {
-  var objValue = safeGet$1(object, key), srcValue = safeGet$1(source, key), stacked = stack.get(srcValue);
-  if (stacked) {
-    assignMergeValue$1(object, key, stacked);
-    return;
-  }
-  var newValue = customizer ? customizer(objValue, srcValue, key + "", object, source, stack) : void 0;
-  var isCommon = newValue === void 0;
-  if (isCommon) {
-    var isArr = isArray$5(srcValue), isBuff = !isArr && isBuffer$1(srcValue), isTyped = !isArr && !isBuff && isTypedArray$1(srcValue);
-    newValue = srcValue;
-    if (isArr || isBuff || isTyped) {
-      if (isArray$5(objValue)) {
-        newValue = objValue;
-      } else if (isArrayLikeObject(objValue)) {
-        newValue = copyArray(objValue);
-      } else if (isBuff) {
-        isCommon = false;
-        newValue = cloneBuffer(srcValue, true);
-      } else if (isTyped) {
-        isCommon = false;
-        newValue = cloneTypedArray(srcValue, true);
+    var result = nativeObjectToString.call(value);
+    if (unmasked) {
+      if (isOwn) {
+        value[symToStringTag] = tag;
       } else {
-        newValue = [];
+        delete value[symToStringTag];
       }
-    } else if (isPlainObject(srcValue) || isArguments(srcValue)) {
-      newValue = objValue;
-      if (isArguments(objValue)) {
-        newValue = toPlainObject(objValue);
-      } else if (!isObject$3(objValue) || isFunction(objValue)) {
-        newValue = initCloneObject(srcValue);
-      }
-    } else {
-      isCommon = false;
     }
+    return result;
   }
-  if (isCommon) {
-    stack.set(srcValue, newValue);
-    mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
-    stack["delete"](srcValue);
-  }
-  assignMergeValue$1(object, key, newValue);
+  _getRawTag = getRawTag;
+  return _getRawTag;
 }
-var _baseMergeDeep = baseMergeDeep$1;
-var Stack$1 = _Stack, assignMergeValue = _assignMergeValue, baseFor = _baseFor, baseMergeDeep = _baseMergeDeep, isObject$2 = isObject_1, keysIn = keysIn_1, safeGet = _safeGet;
-function baseMerge$1(object, source, srcIndex, customizer, stack) {
-  if (object === source) {
-    return;
+var _objectToString;
+var hasRequired_objectToString;
+function require_objectToString() {
+  if (hasRequired_objectToString) return _objectToString;
+  hasRequired_objectToString = 1;
+  var objectProto = Object.prototype;
+  var nativeObjectToString = objectProto.toString;
+  function objectToString(value) {
+    return nativeObjectToString.call(value);
   }
-  baseFor(source, function(srcValue, key) {
-    stack || (stack = new Stack$1());
-    if (isObject$2(srcValue)) {
-      baseMergeDeep(object, source, key, srcIndex, baseMerge$1, customizer, stack);
-    } else {
-      var newValue = customizer ? customizer(safeGet(object, key), srcValue, key + "", object, source, stack) : void 0;
-      if (newValue === void 0) {
-        newValue = srcValue;
-      }
-      assignMergeValue(object, key, newValue);
+  _objectToString = objectToString;
+  return _objectToString;
+}
+var _baseGetTag;
+var hasRequired_baseGetTag;
+function require_baseGetTag() {
+  if (hasRequired_baseGetTag) return _baseGetTag;
+  hasRequired_baseGetTag = 1;
+  var Symbol2 = require_Symbol(), getRawTag = require_getRawTag(), objectToString = require_objectToString();
+  var nullTag = "[object Null]", undefinedTag = "[object Undefined]";
+  var symToStringTag = Symbol2 ? Symbol2.toStringTag : void 0;
+  function baseGetTag(value) {
+    if (value == null) {
+      return value === void 0 ? undefinedTag : nullTag;
     }
-  }, keysIn);
-}
-var _baseMerge = baseMerge$1;
-function identity$3(value) {
-  return value;
-}
-var identity_1 = identity$3;
-function apply$1(func, thisArg, args) {
-  switch (args.length) {
-    case 0:
-      return func.call(thisArg);
-    case 1:
-      return func.call(thisArg, args[0]);
-    case 2:
-      return func.call(thisArg, args[0], args[1]);
-    case 3:
-      return func.call(thisArg, args[0], args[1], args[2]);
+    return symToStringTag && symToStringTag in Object(value) ? getRawTag(value) : objectToString(value);
   }
-  return func.apply(thisArg, args);
+  _baseGetTag = baseGetTag;
+  return _baseGetTag;
 }
-var _apply = apply$1;
-var apply = _apply;
-var nativeMax = Math.max;
-function overRest$1(func, start, transform) {
-  start = nativeMax(start === void 0 ? func.length - 1 : start, 0);
-  return function() {
-    var args = arguments, index2 = -1, length = nativeMax(args.length - start, 0), array = Array(length);
+var isObject_1;
+var hasRequiredIsObject;
+function requireIsObject() {
+  if (hasRequiredIsObject) return isObject_1;
+  hasRequiredIsObject = 1;
+  function isObject(value) {
+    var type = typeof value;
+    return value != null && (type == "object" || type == "function");
+  }
+  isObject_1 = isObject;
+  return isObject_1;
+}
+var isFunction_1;
+var hasRequiredIsFunction;
+function requireIsFunction() {
+  if (hasRequiredIsFunction) return isFunction_1;
+  hasRequiredIsFunction = 1;
+  var baseGetTag = require_baseGetTag(), isObject = requireIsObject();
+  var asyncTag = "[object AsyncFunction]", funcTag = "[object Function]", genTag = "[object GeneratorFunction]", proxyTag = "[object Proxy]";
+  function isFunction(value) {
+    if (!isObject(value)) {
+      return false;
+    }
+    var tag = baseGetTag(value);
+    return tag == funcTag || tag == genTag || tag == asyncTag || tag == proxyTag;
+  }
+  isFunction_1 = isFunction;
+  return isFunction_1;
+}
+var _coreJsData;
+var hasRequired_coreJsData;
+function require_coreJsData() {
+  if (hasRequired_coreJsData) return _coreJsData;
+  hasRequired_coreJsData = 1;
+  var root = require_root();
+  var coreJsData = root["__core-js_shared__"];
+  _coreJsData = coreJsData;
+  return _coreJsData;
+}
+var _isMasked;
+var hasRequired_isMasked;
+function require_isMasked() {
+  if (hasRequired_isMasked) return _isMasked;
+  hasRequired_isMasked = 1;
+  var coreJsData = require_coreJsData();
+  var maskSrcKey = (function() {
+    var uid = /[^.]+$/.exec(coreJsData && coreJsData.keys && coreJsData.keys.IE_PROTO || "");
+    return uid ? "Symbol(src)_1." + uid : "";
+  })();
+  function isMasked(func) {
+    return !!maskSrcKey && maskSrcKey in func;
+  }
+  _isMasked = isMasked;
+  return _isMasked;
+}
+var _toSource;
+var hasRequired_toSource;
+function require_toSource() {
+  if (hasRequired_toSource) return _toSource;
+  hasRequired_toSource = 1;
+  var funcProto = Function.prototype;
+  var funcToString = funcProto.toString;
+  function toSource(func) {
+    if (func != null) {
+      try {
+        return funcToString.call(func);
+      } catch (e) {
+      }
+      try {
+        return func + "";
+      } catch (e) {
+      }
+    }
+    return "";
+  }
+  _toSource = toSource;
+  return _toSource;
+}
+var _baseIsNative;
+var hasRequired_baseIsNative;
+function require_baseIsNative() {
+  if (hasRequired_baseIsNative) return _baseIsNative;
+  hasRequired_baseIsNative = 1;
+  var isFunction = requireIsFunction(), isMasked = require_isMasked(), isObject = requireIsObject(), toSource = require_toSource();
+  var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
+  var reIsHostCtor = /^\[object .+?Constructor\]$/;
+  var funcProto = Function.prototype, objectProto = Object.prototype;
+  var funcToString = funcProto.toString;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  var reIsNative = RegExp(
+    "^" + funcToString.call(hasOwnProperty).replace(reRegExpChar, "\\$&").replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, "$1.*?") + "$"
+  );
+  function baseIsNative(value) {
+    if (!isObject(value) || isMasked(value)) {
+      return false;
+    }
+    var pattern = isFunction(value) ? reIsNative : reIsHostCtor;
+    return pattern.test(toSource(value));
+  }
+  _baseIsNative = baseIsNative;
+  return _baseIsNative;
+}
+var _getValue;
+var hasRequired_getValue;
+function require_getValue() {
+  if (hasRequired_getValue) return _getValue;
+  hasRequired_getValue = 1;
+  function getValue(object, key) {
+    return object == null ? void 0 : object[key];
+  }
+  _getValue = getValue;
+  return _getValue;
+}
+var _getNative;
+var hasRequired_getNative;
+function require_getNative() {
+  if (hasRequired_getNative) return _getNative;
+  hasRequired_getNative = 1;
+  var baseIsNative = require_baseIsNative(), getValue = require_getValue();
+  function getNative(object, key) {
+    var value = getValue(object, key);
+    return baseIsNative(value) ? value : void 0;
+  }
+  _getNative = getNative;
+  return _getNative;
+}
+var _Map;
+var hasRequired_Map;
+function require_Map() {
+  if (hasRequired_Map) return _Map;
+  hasRequired_Map = 1;
+  var getNative = require_getNative(), root = require_root();
+  var Map2 = getNative(root, "Map");
+  _Map = Map2;
+  return _Map;
+}
+var _nativeCreate;
+var hasRequired_nativeCreate;
+function require_nativeCreate() {
+  if (hasRequired_nativeCreate) return _nativeCreate;
+  hasRequired_nativeCreate = 1;
+  var getNative = require_getNative();
+  var nativeCreate = getNative(Object, "create");
+  _nativeCreate = nativeCreate;
+  return _nativeCreate;
+}
+var _hashClear;
+var hasRequired_hashClear;
+function require_hashClear() {
+  if (hasRequired_hashClear) return _hashClear;
+  hasRequired_hashClear = 1;
+  var nativeCreate = require_nativeCreate();
+  function hashClear() {
+    this.__data__ = nativeCreate ? nativeCreate(null) : {};
+    this.size = 0;
+  }
+  _hashClear = hashClear;
+  return _hashClear;
+}
+var _hashDelete;
+var hasRequired_hashDelete;
+function require_hashDelete() {
+  if (hasRequired_hashDelete) return _hashDelete;
+  hasRequired_hashDelete = 1;
+  function hashDelete(key) {
+    var result = this.has(key) && delete this.__data__[key];
+    this.size -= result ? 1 : 0;
+    return result;
+  }
+  _hashDelete = hashDelete;
+  return _hashDelete;
+}
+var _hashGet;
+var hasRequired_hashGet;
+function require_hashGet() {
+  if (hasRequired_hashGet) return _hashGet;
+  hasRequired_hashGet = 1;
+  var nativeCreate = require_nativeCreate();
+  var HASH_UNDEFINED = "__lodash_hash_undefined__";
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function hashGet(key) {
+    var data = this.__data__;
+    if (nativeCreate) {
+      var result = data[key];
+      return result === HASH_UNDEFINED ? void 0 : result;
+    }
+    return hasOwnProperty.call(data, key) ? data[key] : void 0;
+  }
+  _hashGet = hashGet;
+  return _hashGet;
+}
+var _hashHas;
+var hasRequired_hashHas;
+function require_hashHas() {
+  if (hasRequired_hashHas) return _hashHas;
+  hasRequired_hashHas = 1;
+  var nativeCreate = require_nativeCreate();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function hashHas(key) {
+    var data = this.__data__;
+    return nativeCreate ? data[key] !== void 0 : hasOwnProperty.call(data, key);
+  }
+  _hashHas = hashHas;
+  return _hashHas;
+}
+var _hashSet;
+var hasRequired_hashSet;
+function require_hashSet() {
+  if (hasRequired_hashSet) return _hashSet;
+  hasRequired_hashSet = 1;
+  var nativeCreate = require_nativeCreate();
+  var HASH_UNDEFINED = "__lodash_hash_undefined__";
+  function hashSet(key, value) {
+    var data = this.__data__;
+    this.size += this.has(key) ? 0 : 1;
+    data[key] = nativeCreate && value === void 0 ? HASH_UNDEFINED : value;
+    return this;
+  }
+  _hashSet = hashSet;
+  return _hashSet;
+}
+var _Hash;
+var hasRequired_Hash;
+function require_Hash() {
+  if (hasRequired_Hash) return _Hash;
+  hasRequired_Hash = 1;
+  var hashClear = require_hashClear(), hashDelete = require_hashDelete(), hashGet = require_hashGet(), hashHas = require_hashHas(), hashSet = require_hashSet();
+  function Hash(entries) {
+    var index2 = -1, length = entries == null ? 0 : entries.length;
+    this.clear();
     while (++index2 < length) {
-      array[index2] = args[start + index2];
+      var entry = entries[index2];
+      this.set(entry[0], entry[1]);
     }
-    index2 = -1;
-    var otherArgs = Array(start + 1);
-    while (++index2 < start) {
-      otherArgs[index2] = args[index2];
+  }
+  Hash.prototype.clear = hashClear;
+  Hash.prototype["delete"] = hashDelete;
+  Hash.prototype.get = hashGet;
+  Hash.prototype.has = hashHas;
+  Hash.prototype.set = hashSet;
+  _Hash = Hash;
+  return _Hash;
+}
+var _mapCacheClear;
+var hasRequired_mapCacheClear;
+function require_mapCacheClear() {
+  if (hasRequired_mapCacheClear) return _mapCacheClear;
+  hasRequired_mapCacheClear = 1;
+  var Hash = require_Hash(), ListCache = require_ListCache(), Map2 = require_Map();
+  function mapCacheClear() {
+    this.size = 0;
+    this.__data__ = {
+      "hash": new Hash(),
+      "map": new (Map2 || ListCache)(),
+      "string": new Hash()
+    };
+  }
+  _mapCacheClear = mapCacheClear;
+  return _mapCacheClear;
+}
+var _isKeyable;
+var hasRequired_isKeyable;
+function require_isKeyable() {
+  if (hasRequired_isKeyable) return _isKeyable;
+  hasRequired_isKeyable = 1;
+  function isKeyable(value) {
+    var type = typeof value;
+    return type == "string" || type == "number" || type == "symbol" || type == "boolean" ? value !== "__proto__" : value === null;
+  }
+  _isKeyable = isKeyable;
+  return _isKeyable;
+}
+var _getMapData;
+var hasRequired_getMapData;
+function require_getMapData() {
+  if (hasRequired_getMapData) return _getMapData;
+  hasRequired_getMapData = 1;
+  var isKeyable = require_isKeyable();
+  function getMapData(map2, key) {
+    var data = map2.__data__;
+    return isKeyable(key) ? data[typeof key == "string" ? "string" : "hash"] : data.map;
+  }
+  _getMapData = getMapData;
+  return _getMapData;
+}
+var _mapCacheDelete;
+var hasRequired_mapCacheDelete;
+function require_mapCacheDelete() {
+  if (hasRequired_mapCacheDelete) return _mapCacheDelete;
+  hasRequired_mapCacheDelete = 1;
+  var getMapData = require_getMapData();
+  function mapCacheDelete(key) {
+    var result = getMapData(this, key)["delete"](key);
+    this.size -= result ? 1 : 0;
+    return result;
+  }
+  _mapCacheDelete = mapCacheDelete;
+  return _mapCacheDelete;
+}
+var _mapCacheGet;
+var hasRequired_mapCacheGet;
+function require_mapCacheGet() {
+  if (hasRequired_mapCacheGet) return _mapCacheGet;
+  hasRequired_mapCacheGet = 1;
+  var getMapData = require_getMapData();
+  function mapCacheGet(key) {
+    return getMapData(this, key).get(key);
+  }
+  _mapCacheGet = mapCacheGet;
+  return _mapCacheGet;
+}
+var _mapCacheHas;
+var hasRequired_mapCacheHas;
+function require_mapCacheHas() {
+  if (hasRequired_mapCacheHas) return _mapCacheHas;
+  hasRequired_mapCacheHas = 1;
+  var getMapData = require_getMapData();
+  function mapCacheHas(key) {
+    return getMapData(this, key).has(key);
+  }
+  _mapCacheHas = mapCacheHas;
+  return _mapCacheHas;
+}
+var _mapCacheSet;
+var hasRequired_mapCacheSet;
+function require_mapCacheSet() {
+  if (hasRequired_mapCacheSet) return _mapCacheSet;
+  hasRequired_mapCacheSet = 1;
+  var getMapData = require_getMapData();
+  function mapCacheSet(key, value) {
+    var data = getMapData(this, key), size = data.size;
+    data.set(key, value);
+    this.size += data.size == size ? 0 : 1;
+    return this;
+  }
+  _mapCacheSet = mapCacheSet;
+  return _mapCacheSet;
+}
+var _MapCache;
+var hasRequired_MapCache;
+function require_MapCache() {
+  if (hasRequired_MapCache) return _MapCache;
+  hasRequired_MapCache = 1;
+  var mapCacheClear = require_mapCacheClear(), mapCacheDelete = require_mapCacheDelete(), mapCacheGet = require_mapCacheGet(), mapCacheHas = require_mapCacheHas(), mapCacheSet = require_mapCacheSet();
+  function MapCache(entries) {
+    var index2 = -1, length = entries == null ? 0 : entries.length;
+    this.clear();
+    while (++index2 < length) {
+      var entry = entries[index2];
+      this.set(entry[0], entry[1]);
     }
-    otherArgs[start] = transform(array);
-    return apply(func, this, otherArgs);
-  };
+  }
+  MapCache.prototype.clear = mapCacheClear;
+  MapCache.prototype["delete"] = mapCacheDelete;
+  MapCache.prototype.get = mapCacheGet;
+  MapCache.prototype.has = mapCacheHas;
+  MapCache.prototype.set = mapCacheSet;
+  _MapCache = MapCache;
+  return _MapCache;
 }
-var _overRest = overRest$1;
-function constant$1(value) {
-  return function() {
-    return value;
-  };
-}
-var constant_1 = constant$1;
-var constant = constant_1, defineProperty = _defineProperty$1, identity$2 = identity_1;
-var baseSetToString$1 = !defineProperty ? identity$2 : function(func, string) {
-  return defineProperty(func, "toString", {
-    "configurable": true,
-    "enumerable": false,
-    "value": constant(string),
-    "writable": true
-  });
-};
-var _baseSetToString = baseSetToString$1;
-var HOT_COUNT = 800, HOT_SPAN = 16;
-var nativeNow = Date.now;
-function shortOut$1(func) {
-  var count = 0, lastCalled = 0;
-  return function() {
-    var stamp = nativeNow(), remaining = HOT_SPAN - (stamp - lastCalled);
-    lastCalled = stamp;
-    if (remaining > 0) {
-      if (++count >= HOT_COUNT) {
-        return arguments[0];
+var _stackSet;
+var hasRequired_stackSet;
+function require_stackSet() {
+  if (hasRequired_stackSet) return _stackSet;
+  hasRequired_stackSet = 1;
+  var ListCache = require_ListCache(), Map2 = require_Map(), MapCache = require_MapCache();
+  var LARGE_ARRAY_SIZE = 200;
+  function stackSet(key, value) {
+    var data = this.__data__;
+    if (data instanceof ListCache) {
+      var pairs = data.__data__;
+      if (!Map2 || pairs.length < LARGE_ARRAY_SIZE - 1) {
+        pairs.push([key, value]);
+        this.size = ++data.size;
+        return this;
       }
-    } else {
-      count = 0;
+      data = this.__data__ = new MapCache(pairs);
     }
-    return func.apply(void 0, arguments);
+    data.set(key, value);
+    this.size = data.size;
+    return this;
+  }
+  _stackSet = stackSet;
+  return _stackSet;
+}
+var _Stack;
+var hasRequired_Stack;
+function require_Stack() {
+  if (hasRequired_Stack) return _Stack;
+  hasRequired_Stack = 1;
+  var ListCache = require_ListCache(), stackClear = require_stackClear(), stackDelete = require_stackDelete(), stackGet = require_stackGet(), stackHas = require_stackHas(), stackSet = require_stackSet();
+  function Stack(entries) {
+    var data = this.__data__ = new ListCache(entries);
+    this.size = data.size;
+  }
+  Stack.prototype.clear = stackClear;
+  Stack.prototype["delete"] = stackDelete;
+  Stack.prototype.get = stackGet;
+  Stack.prototype.has = stackHas;
+  Stack.prototype.set = stackSet;
+  _Stack = Stack;
+  return _Stack;
+}
+var _defineProperty$1;
+var hasRequired_defineProperty;
+function require_defineProperty() {
+  if (hasRequired_defineProperty) return _defineProperty$1;
+  hasRequired_defineProperty = 1;
+  var getNative = require_getNative();
+  var defineProperty = (function() {
+    try {
+      var func = getNative(Object, "defineProperty");
+      func({}, "", {});
+      return func;
+    } catch (e) {
+    }
+  })();
+  _defineProperty$1 = defineProperty;
+  return _defineProperty$1;
+}
+var _baseAssignValue;
+var hasRequired_baseAssignValue;
+function require_baseAssignValue() {
+  if (hasRequired_baseAssignValue) return _baseAssignValue;
+  hasRequired_baseAssignValue = 1;
+  var defineProperty = require_defineProperty();
+  function baseAssignValue(object, key, value) {
+    if (key == "__proto__" && defineProperty) {
+      defineProperty(object, key, {
+        "configurable": true,
+        "enumerable": true,
+        "value": value,
+        "writable": true
+      });
+    } else {
+      object[key] = value;
+    }
+  }
+  _baseAssignValue = baseAssignValue;
+  return _baseAssignValue;
+}
+var _assignMergeValue;
+var hasRequired_assignMergeValue;
+function require_assignMergeValue() {
+  if (hasRequired_assignMergeValue) return _assignMergeValue;
+  hasRequired_assignMergeValue = 1;
+  var baseAssignValue = require_baseAssignValue(), eq = requireEq();
+  function assignMergeValue(object, key, value) {
+    if (value !== void 0 && !eq(object[key], value) || value === void 0 && !(key in object)) {
+      baseAssignValue(object, key, value);
+    }
+  }
+  _assignMergeValue = assignMergeValue;
+  return _assignMergeValue;
+}
+var _createBaseFor;
+var hasRequired_createBaseFor;
+function require_createBaseFor() {
+  if (hasRequired_createBaseFor) return _createBaseFor;
+  hasRequired_createBaseFor = 1;
+  function createBaseFor(fromRight) {
+    return function(object, iteratee, keysFunc) {
+      var index2 = -1, iterable = Object(object), props = keysFunc(object), length = props.length;
+      while (length--) {
+        var key = props[fromRight ? length : ++index2];
+        if (iteratee(iterable[key], key, iterable) === false) {
+          break;
+        }
+      }
+      return object;
+    };
+  }
+  _createBaseFor = createBaseFor;
+  return _createBaseFor;
+}
+var _baseFor;
+var hasRequired_baseFor;
+function require_baseFor() {
+  if (hasRequired_baseFor) return _baseFor;
+  hasRequired_baseFor = 1;
+  var createBaseFor = require_createBaseFor();
+  var baseFor = createBaseFor();
+  _baseFor = baseFor;
+  return _baseFor;
+}
+var _cloneBuffer = { exports: {} };
+_cloneBuffer.exports;
+var hasRequired_cloneBuffer;
+function require_cloneBuffer() {
+  if (hasRequired_cloneBuffer) return _cloneBuffer.exports;
+  hasRequired_cloneBuffer = 1;
+  (function(module, exports) {
+    var root = require_root();
+    var freeExports = exports && !exports.nodeType && exports;
+    var freeModule = freeExports && true && module && !module.nodeType && module;
+    var moduleExports = freeModule && freeModule.exports === freeExports;
+    var Buffer = moduleExports ? root.Buffer : void 0, allocUnsafe = Buffer ? Buffer.allocUnsafe : void 0;
+    function cloneBuffer(buffer, isDeep) {
+      if (isDeep) {
+        return buffer.slice();
+      }
+      var length = buffer.length, result = allocUnsafe ? allocUnsafe(length) : new buffer.constructor(length);
+      buffer.copy(result);
+      return result;
+    }
+    module.exports = cloneBuffer;
+  })(_cloneBuffer, _cloneBuffer.exports);
+  return _cloneBuffer.exports;
+}
+var _Uint8Array;
+var hasRequired_Uint8Array;
+function require_Uint8Array() {
+  if (hasRequired_Uint8Array) return _Uint8Array;
+  hasRequired_Uint8Array = 1;
+  var root = require_root();
+  var Uint8Array = root.Uint8Array;
+  _Uint8Array = Uint8Array;
+  return _Uint8Array;
+}
+var _cloneArrayBuffer;
+var hasRequired_cloneArrayBuffer;
+function require_cloneArrayBuffer() {
+  if (hasRequired_cloneArrayBuffer) return _cloneArrayBuffer;
+  hasRequired_cloneArrayBuffer = 1;
+  var Uint8Array = require_Uint8Array();
+  function cloneArrayBuffer(arrayBuffer) {
+    var result = new arrayBuffer.constructor(arrayBuffer.byteLength);
+    new Uint8Array(result).set(new Uint8Array(arrayBuffer));
+    return result;
+  }
+  _cloneArrayBuffer = cloneArrayBuffer;
+  return _cloneArrayBuffer;
+}
+var _cloneTypedArray;
+var hasRequired_cloneTypedArray;
+function require_cloneTypedArray() {
+  if (hasRequired_cloneTypedArray) return _cloneTypedArray;
+  hasRequired_cloneTypedArray = 1;
+  var cloneArrayBuffer = require_cloneArrayBuffer();
+  function cloneTypedArray(typedArray, isDeep) {
+    var buffer = isDeep ? cloneArrayBuffer(typedArray.buffer) : typedArray.buffer;
+    return new typedArray.constructor(buffer, typedArray.byteOffset, typedArray.length);
+  }
+  _cloneTypedArray = cloneTypedArray;
+  return _cloneTypedArray;
+}
+var _copyArray;
+var hasRequired_copyArray;
+function require_copyArray() {
+  if (hasRequired_copyArray) return _copyArray;
+  hasRequired_copyArray = 1;
+  function copyArray(source, array) {
+    var index2 = -1, length = source.length;
+    array || (array = Array(length));
+    while (++index2 < length) {
+      array[index2] = source[index2];
+    }
+    return array;
+  }
+  _copyArray = copyArray;
+  return _copyArray;
+}
+var _baseCreate;
+var hasRequired_baseCreate;
+function require_baseCreate() {
+  if (hasRequired_baseCreate) return _baseCreate;
+  hasRequired_baseCreate = 1;
+  var isObject = requireIsObject();
+  var objectCreate = Object.create;
+  var baseCreate = /* @__PURE__ */ (function() {
+    function object() {
+    }
+    return function(proto) {
+      if (!isObject(proto)) {
+        return {};
+      }
+      if (objectCreate) {
+        return objectCreate(proto);
+      }
+      object.prototype = proto;
+      var result = new object();
+      object.prototype = void 0;
+      return result;
+    };
+  })();
+  _baseCreate = baseCreate;
+  return _baseCreate;
+}
+var _overArg;
+var hasRequired_overArg;
+function require_overArg() {
+  if (hasRequired_overArg) return _overArg;
+  hasRequired_overArg = 1;
+  function overArg(func, transform) {
+    return function(arg) {
+      return func(transform(arg));
+    };
+  }
+  _overArg = overArg;
+  return _overArg;
+}
+var _getPrototype;
+var hasRequired_getPrototype;
+function require_getPrototype() {
+  if (hasRequired_getPrototype) return _getPrototype;
+  hasRequired_getPrototype = 1;
+  var overArg = require_overArg();
+  var getPrototype = overArg(Object.getPrototypeOf, Object);
+  _getPrototype = getPrototype;
+  return _getPrototype;
+}
+var _isPrototype;
+var hasRequired_isPrototype;
+function require_isPrototype() {
+  if (hasRequired_isPrototype) return _isPrototype;
+  hasRequired_isPrototype = 1;
+  var objectProto = Object.prototype;
+  function isPrototype(value) {
+    var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto;
+    return value === proto;
+  }
+  _isPrototype = isPrototype;
+  return _isPrototype;
+}
+var _initCloneObject;
+var hasRequired_initCloneObject;
+function require_initCloneObject() {
+  if (hasRequired_initCloneObject) return _initCloneObject;
+  hasRequired_initCloneObject = 1;
+  var baseCreate = require_baseCreate(), getPrototype = require_getPrototype(), isPrototype = require_isPrototype();
+  function initCloneObject(object) {
+    return typeof object.constructor == "function" && !isPrototype(object) ? baseCreate(getPrototype(object)) : {};
+  }
+  _initCloneObject = initCloneObject;
+  return _initCloneObject;
+}
+var isObjectLike_1;
+var hasRequiredIsObjectLike;
+function requireIsObjectLike() {
+  if (hasRequiredIsObjectLike) return isObjectLike_1;
+  hasRequiredIsObjectLike = 1;
+  function isObjectLike(value) {
+    return value != null && typeof value == "object";
+  }
+  isObjectLike_1 = isObjectLike;
+  return isObjectLike_1;
+}
+var _baseIsArguments;
+var hasRequired_baseIsArguments;
+function require_baseIsArguments() {
+  if (hasRequired_baseIsArguments) return _baseIsArguments;
+  hasRequired_baseIsArguments = 1;
+  var baseGetTag = require_baseGetTag(), isObjectLike = requireIsObjectLike();
+  var argsTag = "[object Arguments]";
+  function baseIsArguments(value) {
+    return isObjectLike(value) && baseGetTag(value) == argsTag;
+  }
+  _baseIsArguments = baseIsArguments;
+  return _baseIsArguments;
+}
+var isArguments_1;
+var hasRequiredIsArguments;
+function requireIsArguments() {
+  if (hasRequiredIsArguments) return isArguments_1;
+  hasRequiredIsArguments = 1;
+  var baseIsArguments = require_baseIsArguments(), isObjectLike = requireIsObjectLike();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+  var isArguments = baseIsArguments(/* @__PURE__ */ (function() {
+    return arguments;
+  })()) ? baseIsArguments : function(value) {
+    return isObjectLike(value) && hasOwnProperty.call(value, "callee") && !propertyIsEnumerable.call(value, "callee");
   };
+  isArguments_1 = isArguments;
+  return isArguments_1;
 }
-var _shortOut = shortOut$1;
-var baseSetToString = _baseSetToString, shortOut = _shortOut;
-var setToString$1 = shortOut(baseSetToString);
-var _setToString = setToString$1;
-var identity$1 = identity_1, overRest = _overRest, setToString = _setToString;
-function baseRest$1(func, start) {
-  return setToString(overRest(func, start, identity$1), func + "");
+var isArray_1;
+var hasRequiredIsArray;
+function requireIsArray() {
+  if (hasRequiredIsArray) return isArray_1;
+  hasRequiredIsArray = 1;
+  var isArray = Array.isArray;
+  isArray_1 = isArray;
+  return isArray_1;
 }
-var _baseRest = baseRest$1;
-var eq$1 = eq_1, isArrayLike$1 = isArrayLike_1, isIndex$1 = _isIndex, isObject$1 = isObject_1;
-function isIterateeCall$1(value, index2, object) {
-  if (!isObject$1(object)) {
+var isLength_1;
+var hasRequiredIsLength;
+function requireIsLength() {
+  if (hasRequiredIsLength) return isLength_1;
+  hasRequiredIsLength = 1;
+  var MAX_SAFE_INTEGER = 9007199254740991;
+  function isLength(value) {
+    return typeof value == "number" && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+  }
+  isLength_1 = isLength;
+  return isLength_1;
+}
+var isArrayLike_1;
+var hasRequiredIsArrayLike;
+function requireIsArrayLike() {
+  if (hasRequiredIsArrayLike) return isArrayLike_1;
+  hasRequiredIsArrayLike = 1;
+  var isFunction = requireIsFunction(), isLength = requireIsLength();
+  function isArrayLike(value) {
+    return value != null && isLength(value.length) && !isFunction(value);
+  }
+  isArrayLike_1 = isArrayLike;
+  return isArrayLike_1;
+}
+var isArrayLikeObject_1;
+var hasRequiredIsArrayLikeObject;
+function requireIsArrayLikeObject() {
+  if (hasRequiredIsArrayLikeObject) return isArrayLikeObject_1;
+  hasRequiredIsArrayLikeObject = 1;
+  var isArrayLike = requireIsArrayLike(), isObjectLike = requireIsObjectLike();
+  function isArrayLikeObject(value) {
+    return isObjectLike(value) && isArrayLike(value);
+  }
+  isArrayLikeObject_1 = isArrayLikeObject;
+  return isArrayLikeObject_1;
+}
+var isBuffer = { exports: {} };
+var stubFalse_1;
+var hasRequiredStubFalse;
+function requireStubFalse() {
+  if (hasRequiredStubFalse) return stubFalse_1;
+  hasRequiredStubFalse = 1;
+  function stubFalse() {
     return false;
   }
-  var type2 = typeof index2;
-  if (type2 == "number" ? isArrayLike$1(object) && isIndex$1(index2, object.length) : type2 == "string" && index2 in object) {
-    return eq$1(object[index2], value);
-  }
-  return false;
+  stubFalse_1 = stubFalse;
+  return stubFalse_1;
 }
-var _isIterateeCall = isIterateeCall$1;
-var baseRest = _baseRest, isIterateeCall = _isIterateeCall;
-function createAssigner$1(assigner) {
-  return baseRest(function(object, sources) {
-    var index2 = -1, length = sources.length, customizer = length > 1 ? sources[length - 1] : void 0, guard = length > 2 ? sources[2] : void 0;
-    customizer = assigner.length > 3 && typeof customizer == "function" ? (length--, customizer) : void 0;
-    if (guard && isIterateeCall(sources[0], sources[1], guard)) {
-      customizer = length < 3 ? void 0 : customizer;
-      length = 1;
+isBuffer.exports;
+var hasRequiredIsBuffer;
+function requireIsBuffer() {
+  if (hasRequiredIsBuffer) return isBuffer.exports;
+  hasRequiredIsBuffer = 1;
+  (function(module, exports) {
+    var root = require_root(), stubFalse = requireStubFalse();
+    var freeExports = exports && !exports.nodeType && exports;
+    var freeModule = freeExports && true && module && !module.nodeType && module;
+    var moduleExports = freeModule && freeModule.exports === freeExports;
+    var Buffer = moduleExports ? root.Buffer : void 0;
+    var nativeIsBuffer = Buffer ? Buffer.isBuffer : void 0;
+    var isBuffer2 = nativeIsBuffer || stubFalse;
+    module.exports = isBuffer2;
+  })(isBuffer, isBuffer.exports);
+  return isBuffer.exports;
+}
+var isPlainObject_1;
+var hasRequiredIsPlainObject;
+function requireIsPlainObject() {
+  if (hasRequiredIsPlainObject) return isPlainObject_1;
+  hasRequiredIsPlainObject = 1;
+  var baseGetTag = require_baseGetTag(), getPrototype = require_getPrototype(), isObjectLike = requireIsObjectLike();
+  var objectTag = "[object Object]";
+  var funcProto = Function.prototype, objectProto = Object.prototype;
+  var funcToString = funcProto.toString;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  var objectCtorString = funcToString.call(Object);
+  function isPlainObject(value) {
+    if (!isObjectLike(value) || baseGetTag(value) != objectTag) {
+      return false;
     }
-    object = Object(object);
+    var proto = getPrototype(value);
+    if (proto === null) {
+      return true;
+    }
+    var Ctor = hasOwnProperty.call(proto, "constructor") && proto.constructor;
+    return typeof Ctor == "function" && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
+  }
+  isPlainObject_1 = isPlainObject;
+  return isPlainObject_1;
+}
+var _baseIsTypedArray;
+var hasRequired_baseIsTypedArray;
+function require_baseIsTypedArray() {
+  if (hasRequired_baseIsTypedArray) return _baseIsTypedArray;
+  hasRequired_baseIsTypedArray = 1;
+  var baseGetTag = require_baseGetTag(), isLength = requireIsLength(), isObjectLike = requireIsObjectLike();
+  var argsTag = "[object Arguments]", arrayTag = "[object Array]", boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", funcTag = "[object Function]", mapTag = "[object Map]", numberTag = "[object Number]", objectTag = "[object Object]", regexpTag = "[object RegExp]", setTag = "[object Set]", stringTag = "[object String]", weakMapTag = "[object WeakMap]";
+  var arrayBufferTag = "[object ArrayBuffer]", dataViewTag = "[object DataView]", float32Tag = "[object Float32Array]", float64Tag = "[object Float64Array]", int8Tag = "[object Int8Array]", int16Tag = "[object Int16Array]", int32Tag = "[object Int32Array]", uint8Tag = "[object Uint8Array]", uint8ClampedTag = "[object Uint8ClampedArray]", uint16Tag = "[object Uint16Array]", uint32Tag = "[object Uint32Array]";
+  var typedArrayTags = {};
+  typedArrayTags[float32Tag] = typedArrayTags[float64Tag] = typedArrayTags[int8Tag] = typedArrayTags[int16Tag] = typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] = typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] = typedArrayTags[uint32Tag] = true;
+  typedArrayTags[argsTag] = typedArrayTags[arrayTag] = typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] = typedArrayTags[dataViewTag] = typedArrayTags[dateTag] = typedArrayTags[errorTag] = typedArrayTags[funcTag] = typedArrayTags[mapTag] = typedArrayTags[numberTag] = typedArrayTags[objectTag] = typedArrayTags[regexpTag] = typedArrayTags[setTag] = typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
+  function baseIsTypedArray(value) {
+    return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[baseGetTag(value)];
+  }
+  _baseIsTypedArray = baseIsTypedArray;
+  return _baseIsTypedArray;
+}
+var _baseUnary;
+var hasRequired_baseUnary;
+function require_baseUnary() {
+  if (hasRequired_baseUnary) return _baseUnary;
+  hasRequired_baseUnary = 1;
+  function baseUnary(func) {
+    return function(value) {
+      return func(value);
+    };
+  }
+  _baseUnary = baseUnary;
+  return _baseUnary;
+}
+var _nodeUtil = { exports: {} };
+_nodeUtil.exports;
+var hasRequired_nodeUtil;
+function require_nodeUtil() {
+  if (hasRequired_nodeUtil) return _nodeUtil.exports;
+  hasRequired_nodeUtil = 1;
+  (function(module, exports) {
+    var freeGlobal = require_freeGlobal();
+    var freeExports = exports && !exports.nodeType && exports;
+    var freeModule = freeExports && true && module && !module.nodeType && module;
+    var moduleExports = freeModule && freeModule.exports === freeExports;
+    var freeProcess = moduleExports && freeGlobal.process;
+    var nodeUtil = (function() {
+      try {
+        var types = freeModule && freeModule.require && freeModule.require("util").types;
+        if (types) {
+          return types;
+        }
+        return freeProcess && freeProcess.binding && freeProcess.binding("util");
+      } catch (e) {
+      }
+    })();
+    module.exports = nodeUtil;
+  })(_nodeUtil, _nodeUtil.exports);
+  return _nodeUtil.exports;
+}
+var isTypedArray_1;
+var hasRequiredIsTypedArray;
+function requireIsTypedArray() {
+  if (hasRequiredIsTypedArray) return isTypedArray_1;
+  hasRequiredIsTypedArray = 1;
+  var baseIsTypedArray = require_baseIsTypedArray(), baseUnary = require_baseUnary(), nodeUtil = require_nodeUtil();
+  var nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
+  var isTypedArray = nodeIsTypedArray ? baseUnary(nodeIsTypedArray) : baseIsTypedArray;
+  isTypedArray_1 = isTypedArray;
+  return isTypedArray_1;
+}
+var _safeGet;
+var hasRequired_safeGet;
+function require_safeGet() {
+  if (hasRequired_safeGet) return _safeGet;
+  hasRequired_safeGet = 1;
+  function safeGet(object, key) {
+    if (key === "constructor" && typeof object[key] === "function") {
+      return;
+    }
+    if (key == "__proto__") {
+      return;
+    }
+    return object[key];
+  }
+  _safeGet = safeGet;
+  return _safeGet;
+}
+var _assignValue;
+var hasRequired_assignValue;
+function require_assignValue() {
+  if (hasRequired_assignValue) return _assignValue;
+  hasRequired_assignValue = 1;
+  var baseAssignValue = require_baseAssignValue(), eq = requireEq();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function assignValue(object, key, value) {
+    var objValue = object[key];
+    if (!(hasOwnProperty.call(object, key) && eq(objValue, value)) || value === void 0 && !(key in object)) {
+      baseAssignValue(object, key, value);
+    }
+  }
+  _assignValue = assignValue;
+  return _assignValue;
+}
+var _copyObject;
+var hasRequired_copyObject;
+function require_copyObject() {
+  if (hasRequired_copyObject) return _copyObject;
+  hasRequired_copyObject = 1;
+  var assignValue = require_assignValue(), baseAssignValue = require_baseAssignValue();
+  function copyObject(source, props, object, customizer) {
+    var isNew = !object;
+    object || (object = {});
+    var index2 = -1, length = props.length;
     while (++index2 < length) {
-      var source = sources[index2];
-      if (source) {
-        assigner(object, source, index2, customizer);
+      var key = props[index2];
+      var newValue = customizer ? customizer(object[key], source[key], key, object, source) : void 0;
+      if (newValue === void 0) {
+        newValue = source[key];
+      }
+      if (isNew) {
+        baseAssignValue(object, key, newValue);
+      } else {
+        assignValue(object, key, newValue);
       }
     }
     return object;
-  });
+  }
+  _copyObject = copyObject;
+  return _copyObject;
 }
-var _createAssigner = createAssigner$1;
-var baseMerge = _baseMerge, createAssigner = _createAssigner;
-var mergeWith = createAssigner(function(object, source, srcIndex, customizer) {
-  baseMerge(object, source, srcIndex, customizer);
-});
-var mergeWith_1 = mergeWith;
-const mergeWith$1 = /* @__PURE__ */ getDefaultExportFromCjs(mergeWith_1);
+var _baseTimes;
+var hasRequired_baseTimes;
+function require_baseTimes() {
+  if (hasRequired_baseTimes) return _baseTimes;
+  hasRequired_baseTimes = 1;
+  function baseTimes(n, iteratee) {
+    var index2 = -1, result = Array(n);
+    while (++index2 < n) {
+      result[index2] = iteratee(index2);
+    }
+    return result;
+  }
+  _baseTimes = baseTimes;
+  return _baseTimes;
+}
+var _isIndex;
+var hasRequired_isIndex;
+function require_isIndex() {
+  if (hasRequired_isIndex) return _isIndex;
+  hasRequired_isIndex = 1;
+  var MAX_SAFE_INTEGER = 9007199254740991;
+  var reIsUint = /^(?:0|[1-9]\d*)$/;
+  function isIndex(value, length) {
+    var type = typeof value;
+    length = length == null ? MAX_SAFE_INTEGER : length;
+    return !!length && (type == "number" || type != "symbol" && reIsUint.test(value)) && (value > -1 && value % 1 == 0 && value < length);
+  }
+  _isIndex = isIndex;
+  return _isIndex;
+}
+var _arrayLikeKeys;
+var hasRequired_arrayLikeKeys;
+function require_arrayLikeKeys() {
+  if (hasRequired_arrayLikeKeys) return _arrayLikeKeys;
+  hasRequired_arrayLikeKeys = 1;
+  var baseTimes = require_baseTimes(), isArguments = requireIsArguments(), isArray = requireIsArray(), isBuffer2 = requireIsBuffer(), isIndex = require_isIndex(), isTypedArray = requireIsTypedArray();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function arrayLikeKeys(value, inherited) {
+    var isArr = isArray(value), isArg = !isArr && isArguments(value), isBuff = !isArr && !isArg && isBuffer2(value), isType = !isArr && !isArg && !isBuff && isTypedArray(value), skipIndexes = isArr || isArg || isBuff || isType, result = skipIndexes ? baseTimes(value.length, String) : [], length = result.length;
+    for (var key in value) {
+      if ((inherited || hasOwnProperty.call(value, key)) && !(skipIndexes && // Safari 9 has enumerable `arguments.length` in strict mode.
+      (key == "length" || // Node.js 0.10 has enumerable non-index properties on buffers.
+      isBuff && (key == "offset" || key == "parent") || // PhantomJS 2 has enumerable non-index properties on typed arrays.
+      isType && (key == "buffer" || key == "byteLength" || key == "byteOffset") || // Skip index properties.
+      isIndex(key, length)))) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  _arrayLikeKeys = arrayLikeKeys;
+  return _arrayLikeKeys;
+}
+var _nativeKeysIn;
+var hasRequired_nativeKeysIn;
+function require_nativeKeysIn() {
+  if (hasRequired_nativeKeysIn) return _nativeKeysIn;
+  hasRequired_nativeKeysIn = 1;
+  function nativeKeysIn(object) {
+    var result = [];
+    if (object != null) {
+      for (var key in Object(object)) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  _nativeKeysIn = nativeKeysIn;
+  return _nativeKeysIn;
+}
+var _baseKeysIn;
+var hasRequired_baseKeysIn;
+function require_baseKeysIn() {
+  if (hasRequired_baseKeysIn) return _baseKeysIn;
+  hasRequired_baseKeysIn = 1;
+  var isObject = requireIsObject(), isPrototype = require_isPrototype(), nativeKeysIn = require_nativeKeysIn();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function baseKeysIn(object) {
+    if (!isObject(object)) {
+      return nativeKeysIn(object);
+    }
+    var isProto = isPrototype(object), result = [];
+    for (var key in object) {
+      if (!(key == "constructor" && (isProto || !hasOwnProperty.call(object, key)))) {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  _baseKeysIn = baseKeysIn;
+  return _baseKeysIn;
+}
+var keysIn_1;
+var hasRequiredKeysIn;
+function requireKeysIn() {
+  if (hasRequiredKeysIn) return keysIn_1;
+  hasRequiredKeysIn = 1;
+  var arrayLikeKeys = require_arrayLikeKeys(), baseKeysIn = require_baseKeysIn(), isArrayLike = requireIsArrayLike();
+  function keysIn(object) {
+    return isArrayLike(object) ? arrayLikeKeys(object, true) : baseKeysIn(object);
+  }
+  keysIn_1 = keysIn;
+  return keysIn_1;
+}
+var toPlainObject_1;
+var hasRequiredToPlainObject;
+function requireToPlainObject() {
+  if (hasRequiredToPlainObject) return toPlainObject_1;
+  hasRequiredToPlainObject = 1;
+  var copyObject = require_copyObject(), keysIn = requireKeysIn();
+  function toPlainObject(value) {
+    return copyObject(value, keysIn(value));
+  }
+  toPlainObject_1 = toPlainObject;
+  return toPlainObject_1;
+}
+var _baseMergeDeep;
+var hasRequired_baseMergeDeep;
+function require_baseMergeDeep() {
+  if (hasRequired_baseMergeDeep) return _baseMergeDeep;
+  hasRequired_baseMergeDeep = 1;
+  var assignMergeValue = require_assignMergeValue(), cloneBuffer = require_cloneBuffer(), cloneTypedArray = require_cloneTypedArray(), copyArray = require_copyArray(), initCloneObject = require_initCloneObject(), isArguments = requireIsArguments(), isArray = requireIsArray(), isArrayLikeObject = requireIsArrayLikeObject(), isBuffer2 = requireIsBuffer(), isFunction = requireIsFunction(), isObject = requireIsObject(), isPlainObject = requireIsPlainObject(), isTypedArray = requireIsTypedArray(), safeGet = require_safeGet(), toPlainObject = requireToPlainObject();
+  function baseMergeDeep(object, source, key, srcIndex, mergeFunc, customizer, stack) {
+    var objValue = safeGet(object, key), srcValue = safeGet(source, key), stacked = stack.get(srcValue);
+    if (stacked) {
+      assignMergeValue(object, key, stacked);
+      return;
+    }
+    var newValue = customizer ? customizer(objValue, srcValue, key + "", object, source, stack) : void 0;
+    var isCommon = newValue === void 0;
+    if (isCommon) {
+      var isArr = isArray(srcValue), isBuff = !isArr && isBuffer2(srcValue), isTyped = !isArr && !isBuff && isTypedArray(srcValue);
+      newValue = srcValue;
+      if (isArr || isBuff || isTyped) {
+        if (isArray(objValue)) {
+          newValue = objValue;
+        } else if (isArrayLikeObject(objValue)) {
+          newValue = copyArray(objValue);
+        } else if (isBuff) {
+          isCommon = false;
+          newValue = cloneBuffer(srcValue, true);
+        } else if (isTyped) {
+          isCommon = false;
+          newValue = cloneTypedArray(srcValue, true);
+        } else {
+          newValue = [];
+        }
+      } else if (isPlainObject(srcValue) || isArguments(srcValue)) {
+        newValue = objValue;
+        if (isArguments(objValue)) {
+          newValue = toPlainObject(objValue);
+        } else if (!isObject(objValue) || isFunction(objValue)) {
+          newValue = initCloneObject(srcValue);
+        }
+      } else {
+        isCommon = false;
+      }
+    }
+    if (isCommon) {
+      stack.set(srcValue, newValue);
+      mergeFunc(newValue, srcValue, srcIndex, customizer, stack);
+      stack["delete"](srcValue);
+    }
+    assignMergeValue(object, key, newValue);
+  }
+  _baseMergeDeep = baseMergeDeep;
+  return _baseMergeDeep;
+}
+var _baseMerge;
+var hasRequired_baseMerge;
+function require_baseMerge() {
+  if (hasRequired_baseMerge) return _baseMerge;
+  hasRequired_baseMerge = 1;
+  var Stack = require_Stack(), assignMergeValue = require_assignMergeValue(), baseFor = require_baseFor(), baseMergeDeep = require_baseMergeDeep(), isObject = requireIsObject(), keysIn = requireKeysIn(), safeGet = require_safeGet();
+  function baseMerge(object, source, srcIndex, customizer, stack) {
+    if (object === source) {
+      return;
+    }
+    baseFor(source, function(srcValue, key) {
+      stack || (stack = new Stack());
+      if (isObject(srcValue)) {
+        baseMergeDeep(object, source, key, srcIndex, baseMerge, customizer, stack);
+      } else {
+        var newValue = customizer ? customizer(safeGet(object, key), srcValue, key + "", object, source, stack) : void 0;
+        if (newValue === void 0) {
+          newValue = srcValue;
+        }
+        assignMergeValue(object, key, newValue);
+      }
+    }, keysIn);
+  }
+  _baseMerge = baseMerge;
+  return _baseMerge;
+}
+var identity_1;
+var hasRequiredIdentity;
+function requireIdentity() {
+  if (hasRequiredIdentity) return identity_1;
+  hasRequiredIdentity = 1;
+  function identity2(value) {
+    return value;
+  }
+  identity_1 = identity2;
+  return identity_1;
+}
+var _apply;
+var hasRequired_apply;
+function require_apply() {
+  if (hasRequired_apply) return _apply;
+  hasRequired_apply = 1;
+  function apply(func, thisArg, args) {
+    switch (args.length) {
+      case 0:
+        return func.call(thisArg);
+      case 1:
+        return func.call(thisArg, args[0]);
+      case 2:
+        return func.call(thisArg, args[0], args[1]);
+      case 3:
+        return func.call(thisArg, args[0], args[1], args[2]);
+    }
+    return func.apply(thisArg, args);
+  }
+  _apply = apply;
+  return _apply;
+}
+var _overRest;
+var hasRequired_overRest;
+function require_overRest() {
+  if (hasRequired_overRest) return _overRest;
+  hasRequired_overRest = 1;
+  var apply = require_apply();
+  var nativeMax = Math.max;
+  function overRest(func, start, transform) {
+    start = nativeMax(start === void 0 ? func.length - 1 : start, 0);
+    return function() {
+      var args = arguments, index2 = -1, length = nativeMax(args.length - start, 0), array = Array(length);
+      while (++index2 < length) {
+        array[index2] = args[start + index2];
+      }
+      index2 = -1;
+      var otherArgs = Array(start + 1);
+      while (++index2 < start) {
+        otherArgs[index2] = args[index2];
+      }
+      otherArgs[start] = transform(array);
+      return apply(func, this, otherArgs);
+    };
+  }
+  _overRest = overRest;
+  return _overRest;
+}
+var constant_1;
+var hasRequiredConstant;
+function requireConstant() {
+  if (hasRequiredConstant) return constant_1;
+  hasRequiredConstant = 1;
+  function constant(value) {
+    return function() {
+      return value;
+    };
+  }
+  constant_1 = constant;
+  return constant_1;
+}
+var _baseSetToString;
+var hasRequired_baseSetToString;
+function require_baseSetToString() {
+  if (hasRequired_baseSetToString) return _baseSetToString;
+  hasRequired_baseSetToString = 1;
+  var constant = requireConstant(), defineProperty = require_defineProperty(), identity2 = requireIdentity();
+  var baseSetToString = !defineProperty ? identity2 : function(func, string) {
+    return defineProperty(func, "toString", {
+      "configurable": true,
+      "enumerable": false,
+      "value": constant(string),
+      "writable": true
+    });
+  };
+  _baseSetToString = baseSetToString;
+  return _baseSetToString;
+}
+var _shortOut;
+var hasRequired_shortOut;
+function require_shortOut() {
+  if (hasRequired_shortOut) return _shortOut;
+  hasRequired_shortOut = 1;
+  var HOT_COUNT = 800, HOT_SPAN = 16;
+  var nativeNow = Date.now;
+  function shortOut(func) {
+    var count = 0, lastCalled = 0;
+    return function() {
+      var stamp = nativeNow(), remaining = HOT_SPAN - (stamp - lastCalled);
+      lastCalled = stamp;
+      if (remaining > 0) {
+        if (++count >= HOT_COUNT) {
+          return arguments[0];
+        }
+      } else {
+        count = 0;
+      }
+      return func.apply(void 0, arguments);
+    };
+  }
+  _shortOut = shortOut;
+  return _shortOut;
+}
+var _setToString;
+var hasRequired_setToString;
+function require_setToString() {
+  if (hasRequired_setToString) return _setToString;
+  hasRequired_setToString = 1;
+  var baseSetToString = require_baseSetToString(), shortOut = require_shortOut();
+  var setToString = shortOut(baseSetToString);
+  _setToString = setToString;
+  return _setToString;
+}
+var _baseRest;
+var hasRequired_baseRest;
+function require_baseRest() {
+  if (hasRequired_baseRest) return _baseRest;
+  hasRequired_baseRest = 1;
+  var identity2 = requireIdentity(), overRest = require_overRest(), setToString = require_setToString();
+  function baseRest(func, start) {
+    return setToString(overRest(func, start, identity2), func + "");
+  }
+  _baseRest = baseRest;
+  return _baseRest;
+}
+var _isIterateeCall;
+var hasRequired_isIterateeCall;
+function require_isIterateeCall() {
+  if (hasRequired_isIterateeCall) return _isIterateeCall;
+  hasRequired_isIterateeCall = 1;
+  var eq = requireEq(), isArrayLike = requireIsArrayLike(), isIndex = require_isIndex(), isObject = requireIsObject();
+  function isIterateeCall(value, index2, object) {
+    if (!isObject(object)) {
+      return false;
+    }
+    var type = typeof index2;
+    if (type == "number" ? isArrayLike(object) && isIndex(index2, object.length) : type == "string" && index2 in object) {
+      return eq(object[index2], value);
+    }
+    return false;
+  }
+  _isIterateeCall = isIterateeCall;
+  return _isIterateeCall;
+}
+var _createAssigner;
+var hasRequired_createAssigner;
+function require_createAssigner() {
+  if (hasRequired_createAssigner) return _createAssigner;
+  hasRequired_createAssigner = 1;
+  var baseRest = require_baseRest(), isIterateeCall = require_isIterateeCall();
+  function createAssigner(assigner) {
+    return baseRest(function(object, sources) {
+      var index2 = -1, length = sources.length, customizer = length > 1 ? sources[length - 1] : void 0, guard = length > 2 ? sources[2] : void 0;
+      customizer = assigner.length > 3 && typeof customizer == "function" ? (length--, customizer) : void 0;
+      if (guard && isIterateeCall(sources[0], sources[1], guard)) {
+        customizer = length < 3 ? void 0 : customizer;
+        length = 1;
+      }
+      object = Object(object);
+      while (++index2 < length) {
+        var source = sources[index2];
+        if (source) {
+          assigner(object, source, index2, customizer);
+        }
+      }
+      return object;
+    });
+  }
+  _createAssigner = createAssigner;
+  return _createAssigner;
+}
+var mergeWith_1;
+var hasRequiredMergeWith;
+function requireMergeWith() {
+  if (hasRequiredMergeWith) return mergeWith_1;
+  hasRequiredMergeWith = 1;
+  var baseMerge = require_baseMerge(), createAssigner = require_createAssigner();
+  var mergeWith2 = createAssigner(function(object, source, srcIndex, customizer) {
+    baseMerge(object, source, srcIndex, customizer);
+  });
+  mergeWith_1 = mergeWith2;
+  return mergeWith_1;
+}
+var mergeWithExports = requireMergeWith();
+const mergeWith = /* @__PURE__ */ getDefaultExportFromCjs(mergeWithExports);
 const uuidv4 = () => crypto.randomUUID().slice(0, 8);
 const shortId = () => uuidv4().slice(0, 8);
 const match = (str = "", filter) => {
@@ -1556,14 +2032,12 @@ const remove = (arr, val) => {
   }
 };
 const componentType = (node) => {
-  var _a2;
-  const classMatch = (_a2 = node.className) == null ? void 0 : _a2.match(COMPONENT_TYPE_CLASSNAMES_REGEXP);
+  const classMatch = node.className?.match(COMPONENT_TYPE_CLASSNAMES_REGEXP);
   return classMatch && COMPONENT_TYPE_CLASSNAMES_LOOKUP[classMatch[0]];
 };
 const unique = (array) => Array.from(new Set(array));
 const uuid = (elem) => {
-  var _a2;
-  return ((_a2 = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a2.id) || (elem == null ? void 0 : elem.id) || shortId();
+  return elem?.attrs?.id || elem?.id || shortId();
 };
 const merge = (obj1, obj2) => {
   const customizer = (objValue, srcValue) => {
@@ -1580,13 +2054,13 @@ const merge = (obj1, obj2) => {
       return srcValue;
     }
   };
-  return mergeWith$1({}, obj1, obj2, customizer);
+  return mergeWith({}, obj1, obj2, customizer);
 };
 const clone$1 = (obj) => {
   let copy;
   const isPromise = obj instanceof Promise;
-  const isObject2 = typeof obj === "object";
-  if (obj === null || !isObject2 || isPromise) {
+  const isObject = typeof obj === "object";
+  if (obj === null || !isObject || isPromise) {
     return obj;
   }
   if (obj instanceof Date) {
@@ -1617,8 +2091,7 @@ const numToPercent = (num) => `${num.toString()}%`;
 const sessionStorage = Object.create(null, {
   get: {
     value: (key) => {
-      var _a2;
-      const itemValue = (_a2 = window.sessionStorage) == null ? void 0 : _a2.getItem(key);
+      const itemValue = window.sessionStorage?.getItem(key);
       try {
         return JSON.parse(itemValue);
       } catch (_err) {
@@ -1628,9 +2101,8 @@ const sessionStorage = Object.create(null, {
   },
   set: {
     value: (key, itemValue) => {
-      var _a2;
       try {
-        return (_a2 = window.sessionStorage) == null ? void 0 : _a2.setItem(key, JSON.stringify(itemValue));
+        return window.sessionStorage?.setItem(key, JSON.stringify(itemValue));
       } catch (error) {
         console.error(error);
       }
@@ -1680,7 +2152,6 @@ function parseData(data = /* @__PURE__ */ Object.create(null)) {
 }
 const cleanFormData = (formData) => formData ? clone$1(parseData(formData)) : DEFAULT_FORMDATA();
 function buildFlatDataStructure(data, componentId, componentType2, result = {}) {
-  var _a2;
   if (!componentId || !data[componentType2][componentId]) {
     return result;
   }
@@ -1688,7 +2159,7 @@ function buildFlatDataStructure(data, componentId, componentType2, result = {}) 
   result[key] = data[componentType2][componentId];
   const childType = CHILD_TYPE_INDEX_MAP.get(componentType2);
   if (childType) {
-    const childrenIds = ((_a2 = data[componentType2][componentId].data) == null ? void 0 : _a2.children) || [];
+    const childrenIds = data[componentType2][componentId].data?.children || [];
     for (const childId of childrenIds) {
       buildFlatDataStructure(data, childId, childType, result);
     }
@@ -1706,7 +2177,7 @@ const POLYFILLS = [
 ];
 const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`;
 const localSpriteUrl = typeof import.meta.resolve === "function" ? import.meta.resolve(relativeSpritePath) : relativeSpritePath;
-const isDev = ((_b = (_a = import.meta) == null ? void 0 : _a.env) == null ? void 0 : _b.DEV) || typeof process !== "undefined" && ((_c = process.env) == null ? void 0 : _c.NODE_ENV) === "development" || false;
+const isDev = typeof process !== "undefined" && process.env?.NODE_ENV === "development" || false;
 const SVG_SPRITE_URL = isDev ? localSpriteUrl : `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
 const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`;
 const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formeo.min.css`;
@@ -1726,18 +2197,18 @@ const CHILD_CLASSNAME_MAP = /* @__PURE__ */ new Map([
   [COLUMN_CLASSNAME, FIELD_CLASSNAME]
 ]);
 const INTERNAL_COMPONENT_TYPES = ["stage", "row", "column", "field"];
-const INTERNAL_COMPONENT_INDEX_TYPES = INTERNAL_COMPONENT_TYPES.map((type2) => `${type2}s`);
+const INTERNAL_COMPONENT_INDEX_TYPES = INTERNAL_COMPONENT_TYPES.map((type) => `${type}s`);
 new Map(
-  INTERNAL_COMPONENT_INDEX_TYPES.map((type2, index2) => [type2, INTERNAL_COMPONENT_TYPES[index2]])
+  INTERNAL_COMPONENT_INDEX_TYPES.map((type, index2) => [type, INTERNAL_COMPONENT_TYPES[index2]])
 );
 const INTERNAL_COMPONENT_INDEX_REGEX = new RegExp(`^${INTERNAL_COMPONENT_INDEX_TYPES.join("|")}.`);
 const COMPONENT_TYPES = [...INTERNAL_COMPONENT_TYPES];
 const COMPONENT_INDEX_TYPES = [...INTERNAL_COMPONENT_INDEX_TYPES];
 const COMPONENT_INDEX_TYPE_MAP = new Map(
-  COMPONENT_INDEX_TYPES.map((type2, index2) => [type2, COMPONENT_TYPES[index2]])
+  COMPONENT_INDEX_TYPES.map((type, index2) => [type, COMPONENT_TYPES[index2]])
 );
-const COMPONENT_TYPE_MAP = COMPONENT_TYPES.reduce((acc, type2) => {
-  acc[type2] = type2;
+const COMPONENT_TYPE_MAP = COMPONENT_TYPES.reduce((acc, type) => {
+  acc[type] = type;
   return acc;
 }, {});
 const COMPONENT_TYPE_CONFIGS = [
@@ -1755,8 +2226,8 @@ const COMPONENT_TYPE_CLASSNAMES = {
   field: FIELD_CLASSNAME
 };
 const COMPONENT_TYPE_CLASSNAMES_LOOKUP = Object.entries(COMPONENT_TYPE_CLASSNAMES).reduce(
-  (acc, [type2, className]) => {
-    acc[className] = type2;
+  (acc, [type, className]) => {
+    acc[className] = type;
     return acc;
   },
   {}
@@ -1932,168 +2403,266 @@ const truncateByWord = (str, maxLength, tail = "…") => {
   }
   return truncatedWord;
 };
-var baseGetTag$1 = _baseGetTag, isObjectLike$1 = isObjectLike_1;
-var symbolTag$1 = "[object Symbol]";
-function isSymbol$3(value) {
-  return typeof value == "symbol" || isObjectLike$1(value) && baseGetTag$1(value) == symbolTag$1;
+var isSymbol_1;
+var hasRequiredIsSymbol;
+function requireIsSymbol() {
+  if (hasRequiredIsSymbol) return isSymbol_1;
+  hasRequiredIsSymbol = 1;
+  var baseGetTag = require_baseGetTag(), isObjectLike = requireIsObjectLike();
+  var symbolTag = "[object Symbol]";
+  function isSymbol(value) {
+    return typeof value == "symbol" || isObjectLike(value) && baseGetTag(value) == symbolTag;
+  }
+  isSymbol_1 = isSymbol;
+  return isSymbol_1;
 }
-var isSymbol_1 = isSymbol$3;
-var isArray$4 = isArray_1, isSymbol$2 = isSymbol_1;
-var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/, reIsPlainProp = /^\w*$/;
-function isKey$1(value, object) {
-  if (isArray$4(value)) {
-    return false;
-  }
-  var type2 = typeof value;
-  if (type2 == "number" || type2 == "symbol" || type2 == "boolean" || value == null || isSymbol$2(value)) {
-    return true;
-  }
-  return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || object != null && value in Object(object);
-}
-var _isKey = isKey$1;
-var MapCache$1 = _MapCache;
-var FUNC_ERROR_TEXT = "Expected a function";
-function memoize$1(func, resolver) {
-  if (typeof func != "function" || resolver != null && typeof resolver != "function") {
-    throw new TypeError(FUNC_ERROR_TEXT);
-  }
-  var memoized = function() {
-    var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache = memoized.cache;
-    if (cache.has(key)) {
-      return cache.get(key);
+var _isKey;
+var hasRequired_isKey;
+function require_isKey() {
+  if (hasRequired_isKey) return _isKey;
+  hasRequired_isKey = 1;
+  var isArray = requireIsArray(), isSymbol = requireIsSymbol();
+  var reIsDeepProp = /\.|\[(?:[^[\]]*|(["'])(?:(?!\1)[^\\]|\\.)*?\1)\]/, reIsPlainProp = /^\w*$/;
+  function isKey(value, object) {
+    if (isArray(value)) {
+      return false;
     }
-    var result = func.apply(this, args);
-    memoized.cache = cache.set(key, result) || cache;
+    var type = typeof value;
+    if (type == "number" || type == "symbol" || type == "boolean" || value == null || isSymbol(value)) {
+      return true;
+    }
+    return reIsPlainProp.test(value) || !reIsDeepProp.test(value) || object != null && value in Object(object);
+  }
+  _isKey = isKey;
+  return _isKey;
+}
+var memoize_1;
+var hasRequiredMemoize;
+function requireMemoize() {
+  if (hasRequiredMemoize) return memoize_1;
+  hasRequiredMemoize = 1;
+  var MapCache = require_MapCache();
+  var FUNC_ERROR_TEXT = "Expected a function";
+  function memoize(func, resolver) {
+    if (typeof func != "function" || resolver != null && typeof resolver != "function") {
+      throw new TypeError(FUNC_ERROR_TEXT);
+    }
+    var memoized = function() {
+      var args = arguments, key = resolver ? resolver.apply(this, args) : args[0], cache = memoized.cache;
+      if (cache.has(key)) {
+        return cache.get(key);
+      }
+      var result = func.apply(this, args);
+      memoized.cache = cache.set(key, result) || cache;
+      return result;
+    };
+    memoized.cache = new (memoize.Cache || MapCache)();
+    return memoized;
+  }
+  memoize.Cache = MapCache;
+  memoize_1 = memoize;
+  return memoize_1;
+}
+var _memoizeCapped;
+var hasRequired_memoizeCapped;
+function require_memoizeCapped() {
+  if (hasRequired_memoizeCapped) return _memoizeCapped;
+  hasRequired_memoizeCapped = 1;
+  var memoize = requireMemoize();
+  var MAX_MEMOIZE_SIZE = 500;
+  function memoizeCapped(func) {
+    var result = memoize(func, function(key) {
+      if (cache.size === MAX_MEMOIZE_SIZE) {
+        cache.clear();
+      }
+      return key;
+    });
+    var cache = result.cache;
     return result;
-  };
-  memoized.cache = new (memoize$1.Cache || MapCache$1)();
-  return memoized;
+  }
+  _memoizeCapped = memoizeCapped;
+  return _memoizeCapped;
 }
-memoize$1.Cache = MapCache$1;
-var memoize_1 = memoize$1;
-var memoize = memoize_1;
-var MAX_MEMOIZE_SIZE = 500;
-function memoizeCapped$1(func) {
-  var result = memoize(func, function(key) {
-    if (cache.size === MAX_MEMOIZE_SIZE) {
-      cache.clear();
+var _stringToPath;
+var hasRequired_stringToPath;
+function require_stringToPath() {
+  if (hasRequired_stringToPath) return _stringToPath;
+  hasRequired_stringToPath = 1;
+  var memoizeCapped = require_memoizeCapped();
+  var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
+  var reEscapeChar = /\\(\\)?/g;
+  var stringToPath = memoizeCapped(function(string) {
+    var result = [];
+    if (string.charCodeAt(0) === 46) {
+      result.push("");
     }
-    return key;
+    string.replace(rePropName, function(match2, number, quote, subString) {
+      result.push(quote ? subString.replace(reEscapeChar, "$1") : number || match2);
+    });
+    return result;
   });
-  var cache = result.cache;
-  return result;
+  _stringToPath = stringToPath;
+  return _stringToPath;
 }
-var _memoizeCapped = memoizeCapped$1;
-var memoizeCapped = _memoizeCapped;
-var rePropName = /[^.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|$))/g;
-var reEscapeChar = /\\(\\)?/g;
-var stringToPath$1 = memoizeCapped(function(string) {
-  var result = [];
-  if (string.charCodeAt(0) === 46) {
-    result.push("");
+var _arrayMap;
+var hasRequired_arrayMap;
+function require_arrayMap() {
+  if (hasRequired_arrayMap) return _arrayMap;
+  hasRequired_arrayMap = 1;
+  function arrayMap(array, iteratee) {
+    var index2 = -1, length = array == null ? 0 : array.length, result = Array(length);
+    while (++index2 < length) {
+      result[index2] = iteratee(array[index2], index2, array);
+    }
+    return result;
   }
-  string.replace(rePropName, function(match2, number, quote, subString) {
-    result.push(quote ? subString.replace(reEscapeChar, "$1") : number || match2);
-  });
-  return result;
-});
-var _stringToPath = stringToPath$1;
-function arrayMap$1(array, iteratee) {
-  var index2 = -1, length = array == null ? 0 : array.length, result = Array(length);
-  while (++index2 < length) {
-    result[index2] = iteratee(array[index2], index2, array);
-  }
-  return result;
+  _arrayMap = arrayMap;
+  return _arrayMap;
 }
-var _arrayMap = arrayMap$1;
-var Symbol$2 = _Symbol, arrayMap = _arrayMap, isArray$3 = isArray_1, isSymbol$1 = isSymbol_1;
-var INFINITY$1 = 1 / 0;
-var symbolProto$1 = Symbol$2 ? Symbol$2.prototype : void 0, symbolToString = symbolProto$1 ? symbolProto$1.toString : void 0;
-function baseToString$1(value) {
-  if (typeof value == "string") {
-    return value;
+var _baseToString;
+var hasRequired_baseToString;
+function require_baseToString() {
+  if (hasRequired_baseToString) return _baseToString;
+  hasRequired_baseToString = 1;
+  var Symbol2 = require_Symbol(), arrayMap = require_arrayMap(), isArray = requireIsArray(), isSymbol = requireIsSymbol();
+  var symbolProto = Symbol2 ? Symbol2.prototype : void 0, symbolToString = symbolProto ? symbolProto.toString : void 0;
+  function baseToString(value) {
+    if (typeof value == "string") {
+      return value;
+    }
+    if (isArray(value)) {
+      return arrayMap(value, baseToString) + "";
+    }
+    if (isSymbol(value)) {
+      return symbolToString ? symbolToString.call(value) : "";
+    }
+    var result = value + "";
+    return result == "0" && 1 / value == -Infinity ? "-0" : result;
   }
-  if (isArray$3(value)) {
-    return arrayMap(value, baseToString$1) + "";
-  }
-  if (isSymbol$1(value)) {
-    return symbolToString ? symbolToString.call(value) : "";
-  }
-  var result = value + "";
-  return result == "0" && 1 / value == -INFINITY$1 ? "-0" : result;
+  _baseToString = baseToString;
+  return _baseToString;
 }
-var _baseToString = baseToString$1;
-var baseToString = _baseToString;
-function toString$1(value) {
-  return value == null ? "" : baseToString(value);
-}
-var toString_1 = toString$1;
-var isArray$2 = isArray_1, isKey = _isKey, stringToPath = _stringToPath, toString = toString_1;
-function castPath$2(value, object) {
-  if (isArray$2(value)) {
-    return value;
+var toString_1;
+var hasRequiredToString;
+function requireToString() {
+  if (hasRequiredToString) return toString_1;
+  hasRequiredToString = 1;
+  var baseToString = require_baseToString();
+  function toString(value) {
+    return value == null ? "" : baseToString(value);
   }
-  return isKey(value, object) ? [value] : stringToPath(toString(value));
+  toString_1 = toString;
+  return toString_1;
 }
-var _castPath = castPath$2;
-var isSymbol = isSymbol_1;
-var INFINITY = 1 / 0;
-function toKey$2(value) {
-  if (typeof value == "string" || isSymbol(value)) {
-    return value;
+var _castPath;
+var hasRequired_castPath;
+function require_castPath() {
+  if (hasRequired_castPath) return _castPath;
+  hasRequired_castPath = 1;
+  var isArray = requireIsArray(), isKey = require_isKey(), stringToPath = require_stringToPath(), toString = requireToString();
+  function castPath(value, object) {
+    if (isArray(value)) {
+      return value;
+    }
+    return isKey(value, object) ? [value] : stringToPath(toString(value));
   }
-  var result = value + "";
-  return result == "0" && 1 / value == -INFINITY ? "-0" : result;
+  _castPath = castPath;
+  return _castPath;
 }
-var _toKey = toKey$2;
-var castPath$1 = _castPath, toKey$1 = _toKey;
-function baseGet$1(object, path) {
-  path = castPath$1(path, object);
-  var index2 = 0, length = path.length;
-  while (object != null && index2 < length) {
-    object = object[toKey$1(path[index2++])];
+var _toKey;
+var hasRequired_toKey;
+function require_toKey() {
+  if (hasRequired_toKey) return _toKey;
+  hasRequired_toKey = 1;
+  var isSymbol = requireIsSymbol();
+  function toKey(value) {
+    if (typeof value == "string" || isSymbol(value)) {
+      return value;
+    }
+    var result = value + "";
+    return result == "0" && 1 / value == -Infinity ? "-0" : result;
   }
-  return index2 && index2 == length ? object : void 0;
+  _toKey = toKey;
+  return _toKey;
 }
-var _baseGet = baseGet$1;
-var baseGet = _baseGet;
-function get$1(object, path, defaultValue) {
-  var result = object == null ? void 0 : baseGet(object, path);
-  return result === void 0 ? defaultValue : result;
-}
-var get_1 = get$1;
-const lodashGet = /* @__PURE__ */ getDefaultExportFromCjs(get_1);
-var assignValue = _assignValue, castPath = _castPath, isIndex = _isIndex, isObject = isObject_1, toKey = _toKey;
-function baseSet$1(object, path, value, customizer) {
-  if (!isObject(object)) {
-    return object;
+var _baseGet;
+var hasRequired_baseGet;
+function require_baseGet() {
+  if (hasRequired_baseGet) return _baseGet;
+  hasRequired_baseGet = 1;
+  var castPath = require_castPath(), toKey = require_toKey();
+  function baseGet(object, path) {
+    path = castPath(path, object);
+    var index2 = 0, length = path.length;
+    while (object != null && index2 < length) {
+      object = object[toKey(path[index2++])];
+    }
+    return index2 && index2 == length ? object : void 0;
   }
-  path = castPath(path, object);
-  var index2 = -1, length = path.length, lastIndex = length - 1, nested = object;
-  while (nested != null && ++index2 < length) {
-    var key = toKey(path[index2]), newValue = value;
-    if (key === "__proto__" || key === "constructor" || key === "prototype") {
+  _baseGet = baseGet;
+  return _baseGet;
+}
+var get_1;
+var hasRequiredGet;
+function requireGet() {
+  if (hasRequiredGet) return get_1;
+  hasRequiredGet = 1;
+  var baseGet = require_baseGet();
+  function get2(object, path, defaultValue) {
+    var result = object == null ? void 0 : baseGet(object, path);
+    return result === void 0 ? defaultValue : result;
+  }
+  get_1 = get2;
+  return get_1;
+}
+var getExports = requireGet();
+const lodashGet = /* @__PURE__ */ getDefaultExportFromCjs(getExports);
+var _baseSet;
+var hasRequired_baseSet;
+function require_baseSet() {
+  if (hasRequired_baseSet) return _baseSet;
+  hasRequired_baseSet = 1;
+  var assignValue = require_assignValue(), castPath = require_castPath(), isIndex = require_isIndex(), isObject = requireIsObject(), toKey = require_toKey();
+  function baseSet(object, path, value, customizer) {
+    if (!isObject(object)) {
       return object;
     }
-    if (index2 != lastIndex) {
-      var objValue = nested[key];
-      newValue = customizer ? customizer(objValue, key, nested) : void 0;
-      if (newValue === void 0) {
-        newValue = isObject(objValue) ? objValue : isIndex(path[index2 + 1]) ? [] : {};
+    path = castPath(path, object);
+    var index2 = -1, length = path.length, lastIndex = length - 1, nested = object;
+    while (nested != null && ++index2 < length) {
+      var key = toKey(path[index2]), newValue = value;
+      if (key === "__proto__" || key === "constructor" || key === "prototype") {
+        return object;
       }
+      if (index2 != lastIndex) {
+        var objValue = nested[key];
+        newValue = customizer ? customizer(objValue, key, nested) : void 0;
+        if (newValue === void 0) {
+          newValue = isObject(objValue) ? objValue : isIndex(path[index2 + 1]) ? [] : {};
+        }
+      }
+      assignValue(nested, key, newValue);
+      nested = nested[key];
     }
-    assignValue(nested, key, newValue);
-    nested = nested[key];
+    return object;
   }
-  return object;
+  _baseSet = baseSet;
+  return _baseSet;
 }
-var _baseSet = baseSet$1;
-var baseSet = _baseSet;
-function set$1(object, path, value) {
-  return object == null ? object : baseSet(object, path, value);
+var set_1;
+var hasRequiredSet;
+function requireSet() {
+  if (hasRequiredSet) return set_1;
+  hasRequiredSet = 1;
+  var baseSet = require_baseSet();
+  function set2(object, path, value) {
+    return object == null ? object : baseSet(object, path, value);
+  }
+  set_1 = set2;
+  return set_1;
 }
-var set_1 = set$1;
-const lodashSet = /* @__PURE__ */ getDefaultExportFromCjs(set_1);
+var setExports = requireSet();
+const lodashSet = /* @__PURE__ */ getDefaultExportFromCjs(setExports);
 const get = lodashGet;
 const set = lodashSet;
 function mergeActions(target, source = {}) {
@@ -2119,366 +2688,556 @@ function objectFromStringArray(...arr) {
     return acc;
   }, {});
 }
-var HASH_UNDEFINED = "__lodash_hash_undefined__";
-function setCacheAdd$1(value) {
-  this.__data__.set(value, HASH_UNDEFINED);
-  return this;
-}
-var _setCacheAdd = setCacheAdd$1;
-function setCacheHas$1(value) {
-  return this.__data__.has(value);
-}
-var _setCacheHas = setCacheHas$1;
-var MapCache = _MapCache, setCacheAdd = _setCacheAdd, setCacheHas = _setCacheHas;
-function SetCache$1(values) {
-  var index2 = -1, length = values == null ? 0 : values.length;
-  this.__data__ = new MapCache();
-  while (++index2 < length) {
-    this.add(values[index2]);
+var _setCacheAdd;
+var hasRequired_setCacheAdd;
+function require_setCacheAdd() {
+  if (hasRequired_setCacheAdd) return _setCacheAdd;
+  hasRequired_setCacheAdd = 1;
+  var HASH_UNDEFINED = "__lodash_hash_undefined__";
+  function setCacheAdd(value) {
+    this.__data__.set(value, HASH_UNDEFINED);
+    return this;
   }
+  _setCacheAdd = setCacheAdd;
+  return _setCacheAdd;
 }
-SetCache$1.prototype.add = SetCache$1.prototype.push = setCacheAdd;
-SetCache$1.prototype.has = setCacheHas;
-var _SetCache = SetCache$1;
-function arraySome$1(array, predicate) {
-  var index2 = -1, length = array == null ? 0 : array.length;
-  while (++index2 < length) {
-    if (predicate(array[index2], index2, array)) {
-      return true;
+var _setCacheHas;
+var hasRequired_setCacheHas;
+function require_setCacheHas() {
+  if (hasRequired_setCacheHas) return _setCacheHas;
+  hasRequired_setCacheHas = 1;
+  function setCacheHas(value) {
+    return this.__data__.has(value);
+  }
+  _setCacheHas = setCacheHas;
+  return _setCacheHas;
+}
+var _SetCache;
+var hasRequired_SetCache;
+function require_SetCache() {
+  if (hasRequired_SetCache) return _SetCache;
+  hasRequired_SetCache = 1;
+  var MapCache = require_MapCache(), setCacheAdd = require_setCacheAdd(), setCacheHas = require_setCacheHas();
+  function SetCache(values) {
+    var index2 = -1, length = values == null ? 0 : values.length;
+    this.__data__ = new MapCache();
+    while (++index2 < length) {
+      this.add(values[index2]);
     }
   }
-  return false;
+  SetCache.prototype.add = SetCache.prototype.push = setCacheAdd;
+  SetCache.prototype.has = setCacheHas;
+  _SetCache = SetCache;
+  return _SetCache;
 }
-var _arraySome = arraySome$1;
-function cacheHas$1(cache, key) {
-  return cache.has(key);
-}
-var _cacheHas = cacheHas$1;
-var SetCache = _SetCache, arraySome = _arraySome, cacheHas = _cacheHas;
-var COMPARE_PARTIAL_FLAG$3 = 1, COMPARE_UNORDERED_FLAG$1 = 2;
-function equalArrays$2(array, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$3, arrLength = array.length, othLength = other.length;
-  if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+var _arraySome;
+var hasRequired_arraySome;
+function require_arraySome() {
+  if (hasRequired_arraySome) return _arraySome;
+  hasRequired_arraySome = 1;
+  function arraySome(array, predicate) {
+    var index2 = -1, length = array == null ? 0 : array.length;
+    while (++index2 < length) {
+      if (predicate(array[index2], index2, array)) {
+        return true;
+      }
+    }
     return false;
   }
-  var arrStacked = stack.get(array);
-  var othStacked = stack.get(other);
-  if (arrStacked && othStacked) {
-    return arrStacked == other && othStacked == array;
+  _arraySome = arraySome;
+  return _arraySome;
+}
+var _cacheHas;
+var hasRequired_cacheHas;
+function require_cacheHas() {
+  if (hasRequired_cacheHas) return _cacheHas;
+  hasRequired_cacheHas = 1;
+  function cacheHas(cache, key) {
+    return cache.has(key);
   }
-  var index2 = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG$1 ? new SetCache() : void 0;
-  stack.set(array, other);
-  stack.set(other, array);
-  while (++index2 < arrLength) {
-    var arrValue = array[index2], othValue = other[index2];
-    if (customizer) {
-      var compared = isPartial ? customizer(othValue, arrValue, index2, other, array, stack) : customizer(arrValue, othValue, index2, array, other, stack);
+  _cacheHas = cacheHas;
+  return _cacheHas;
+}
+var _equalArrays;
+var hasRequired_equalArrays;
+function require_equalArrays() {
+  if (hasRequired_equalArrays) return _equalArrays;
+  hasRequired_equalArrays = 1;
+  var SetCache = require_SetCache(), arraySome = require_arraySome(), cacheHas = require_cacheHas();
+  var COMPARE_PARTIAL_FLAG = 1, COMPARE_UNORDERED_FLAG = 2;
+  function equalArrays(array, other, bitmask, customizer, equalFunc, stack) {
+    var isPartial = bitmask & COMPARE_PARTIAL_FLAG, arrLength = array.length, othLength = other.length;
+    if (arrLength != othLength && !(isPartial && othLength > arrLength)) {
+      return false;
     }
-    if (compared !== void 0) {
-      if (compared) {
-        continue;
+    var arrStacked = stack.get(array);
+    var othStacked = stack.get(other);
+    if (arrStacked && othStacked) {
+      return arrStacked == other && othStacked == array;
+    }
+    var index2 = -1, result = true, seen = bitmask & COMPARE_UNORDERED_FLAG ? new SetCache() : void 0;
+    stack.set(array, other);
+    stack.set(other, array);
+    while (++index2 < arrLength) {
+      var arrValue = array[index2], othValue = other[index2];
+      if (customizer) {
+        var compared = isPartial ? customizer(othValue, arrValue, index2, other, array, stack) : customizer(arrValue, othValue, index2, array, other, stack);
       }
-      result = false;
-      break;
-    }
-    if (seen) {
-      if (!arraySome(other, function(othValue2, othIndex) {
-        if (!cacheHas(seen, othIndex) && (arrValue === othValue2 || equalFunc(arrValue, othValue2, bitmask, customizer, stack))) {
-          return seen.push(othIndex);
+      if (compared !== void 0) {
+        if (compared) {
+          continue;
         }
-      })) {
         result = false;
         break;
       }
-    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
-      result = false;
-      break;
+      if (seen) {
+        if (!arraySome(other, function(othValue2, othIndex) {
+          if (!cacheHas(seen, othIndex) && (arrValue === othValue2 || equalFunc(arrValue, othValue2, bitmask, customizer, stack))) {
+            return seen.push(othIndex);
+          }
+        })) {
+          result = false;
+          break;
+        }
+      } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, bitmask, customizer, stack))) {
+        result = false;
+        break;
+      }
     }
+    stack["delete"](array);
+    stack["delete"](other);
+    return result;
   }
-  stack["delete"](array);
-  stack["delete"](other);
-  return result;
+  _equalArrays = equalArrays;
+  return _equalArrays;
 }
-var _equalArrays = equalArrays$2;
-function mapToArray$1(map2) {
-  var index2 = -1, result = Array(map2.size);
-  map2.forEach(function(value, key) {
-    result[++index2] = [key, value];
-  });
-  return result;
-}
-var _mapToArray = mapToArray$1;
-function setToArray$1(set2) {
-  var index2 = -1, result = Array(set2.size);
-  set2.forEach(function(value) {
-    result[++index2] = value;
-  });
-  return result;
-}
-var _setToArray = setToArray$1;
-var Symbol$1 = _Symbol, Uint8Array2 = _Uint8Array, eq = eq_1, equalArrays$1 = _equalArrays, mapToArray = _mapToArray, setToArray = _setToArray;
-var COMPARE_PARTIAL_FLAG$2 = 1, COMPARE_UNORDERED_FLAG = 2;
-var boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", mapTag$1 = "[object Map]", numberTag = "[object Number]", regexpTag = "[object RegExp]", setTag$1 = "[object Set]", stringTag = "[object String]", symbolTag = "[object Symbol]";
-var arrayBufferTag = "[object ArrayBuffer]", dataViewTag$1 = "[object DataView]";
-var symbolProto = Symbol$1 ? Symbol$1.prototype : void 0, symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
-function equalByTag$1(object, other, tag, bitmask, customizer, equalFunc, stack) {
-  switch (tag) {
-    case dataViewTag$1:
-      if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
-        return false;
-      }
-      object = object.buffer;
-      other = other.buffer;
-    case arrayBufferTag:
-      if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array2(object), new Uint8Array2(other))) {
-        return false;
-      }
-      return true;
-    case boolTag:
-    case dateTag:
-    case numberTag:
-      return eq(+object, +other);
-    case errorTag:
-      return object.name == other.name && object.message == other.message;
-    case regexpTag:
-    case stringTag:
-      return object == other + "";
-    case mapTag$1:
-      var convert = mapToArray;
-    case setTag$1:
-      var isPartial = bitmask & COMPARE_PARTIAL_FLAG$2;
-      convert || (convert = setToArray);
-      if (object.size != other.size && !isPartial) {
-        return false;
-      }
-      var stacked = stack.get(object);
-      if (stacked) {
-        return stacked == other;
-      }
-      bitmask |= COMPARE_UNORDERED_FLAG;
-      stack.set(object, other);
-      var result = equalArrays$1(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
-      stack["delete"](object);
-      return result;
-    case symbolTag:
-      if (symbolValueOf) {
-        return symbolValueOf.call(object) == symbolValueOf.call(other);
-      }
+var _mapToArray;
+var hasRequired_mapToArray;
+function require_mapToArray() {
+  if (hasRequired_mapToArray) return _mapToArray;
+  hasRequired_mapToArray = 1;
+  function mapToArray(map2) {
+    var index2 = -1, result = Array(map2.size);
+    map2.forEach(function(value, key) {
+      result[++index2] = [key, value];
+    });
+    return result;
   }
-  return false;
+  _mapToArray = mapToArray;
+  return _mapToArray;
 }
-var _equalByTag = equalByTag$1;
-function arrayPush$1(array, values) {
-  var index2 = -1, length = values.length, offset = array.length;
-  while (++index2 < length) {
-    array[offset + index2] = values[index2];
+var _setToArray;
+var hasRequired_setToArray;
+function require_setToArray() {
+  if (hasRequired_setToArray) return _setToArray;
+  hasRequired_setToArray = 1;
+  function setToArray(set2) {
+    var index2 = -1, result = Array(set2.size);
+    set2.forEach(function(value) {
+      result[++index2] = value;
+    });
+    return result;
   }
-  return array;
+  _setToArray = setToArray;
+  return _setToArray;
 }
-var _arrayPush = arrayPush$1;
-var arrayPush = _arrayPush, isArray$1 = isArray_1;
-function baseGetAllKeys$1(object, keysFunc, symbolsFunc) {
-  var result = keysFunc(object);
-  return isArray$1(object) ? result : arrayPush(result, symbolsFunc(object));
-}
-var _baseGetAllKeys = baseGetAllKeys$1;
-function arrayFilter$1(array, predicate) {
-  var index2 = -1, length = array == null ? 0 : array.length, resIndex = 0, result = [];
-  while (++index2 < length) {
-    var value = array[index2];
-    if (predicate(value, index2, array)) {
-      result[resIndex++] = value;
+var _equalByTag;
+var hasRequired_equalByTag;
+function require_equalByTag() {
+  if (hasRequired_equalByTag) return _equalByTag;
+  hasRequired_equalByTag = 1;
+  var Symbol2 = require_Symbol(), Uint8Array = require_Uint8Array(), eq = requireEq(), equalArrays = require_equalArrays(), mapToArray = require_mapToArray(), setToArray = require_setToArray();
+  var COMPARE_PARTIAL_FLAG = 1, COMPARE_UNORDERED_FLAG = 2;
+  var boolTag = "[object Boolean]", dateTag = "[object Date]", errorTag = "[object Error]", mapTag = "[object Map]", numberTag = "[object Number]", regexpTag = "[object RegExp]", setTag = "[object Set]", stringTag = "[object String]", symbolTag = "[object Symbol]";
+  var arrayBufferTag = "[object ArrayBuffer]", dataViewTag = "[object DataView]";
+  var symbolProto = Symbol2 ? Symbol2.prototype : void 0, symbolValueOf = symbolProto ? symbolProto.valueOf : void 0;
+  function equalByTag(object, other, tag, bitmask, customizer, equalFunc, stack) {
+    switch (tag) {
+      case dataViewTag:
+        if (object.byteLength != other.byteLength || object.byteOffset != other.byteOffset) {
+          return false;
+        }
+        object = object.buffer;
+        other = other.buffer;
+      case arrayBufferTag:
+        if (object.byteLength != other.byteLength || !equalFunc(new Uint8Array(object), new Uint8Array(other))) {
+          return false;
+        }
+        return true;
+      case boolTag:
+      case dateTag:
+      case numberTag:
+        return eq(+object, +other);
+      case errorTag:
+        return object.name == other.name && object.message == other.message;
+      case regexpTag:
+      case stringTag:
+        return object == other + "";
+      case mapTag:
+        var convert = mapToArray;
+      case setTag:
+        var isPartial = bitmask & COMPARE_PARTIAL_FLAG;
+        convert || (convert = setToArray);
+        if (object.size != other.size && !isPartial) {
+          return false;
+        }
+        var stacked = stack.get(object);
+        if (stacked) {
+          return stacked == other;
+        }
+        bitmask |= COMPARE_UNORDERED_FLAG;
+        stack.set(object, other);
+        var result = equalArrays(convert(object), convert(other), bitmask, customizer, equalFunc, stack);
+        stack["delete"](object);
+        return result;
+      case symbolTag:
+        if (symbolValueOf) {
+          return symbolValueOf.call(object) == symbolValueOf.call(other);
+        }
     }
-  }
-  return result;
-}
-var _arrayFilter = arrayFilter$1;
-function stubArray$1() {
-  return [];
-}
-var stubArray_1 = stubArray$1;
-var arrayFilter = _arrayFilter, stubArray = stubArray_1;
-var objectProto$3 = Object.prototype;
-var propertyIsEnumerable = objectProto$3.propertyIsEnumerable;
-var nativeGetSymbols = Object.getOwnPropertySymbols;
-var getSymbols$1 = !nativeGetSymbols ? stubArray : function(object) {
-  if (object == null) {
-    return [];
-  }
-  object = Object(object);
-  return arrayFilter(nativeGetSymbols(object), function(symbol) {
-    return propertyIsEnumerable.call(object, symbol);
-  });
-};
-var _getSymbols = getSymbols$1;
-var overArg = _overArg;
-var nativeKeys$1 = overArg(Object.keys, Object);
-var _nativeKeys = nativeKeys$1;
-var isPrototype = _isPrototype, nativeKeys = _nativeKeys;
-var objectProto$2 = Object.prototype;
-var hasOwnProperty$2 = objectProto$2.hasOwnProperty;
-function baseKeys$1(object) {
-  if (!isPrototype(object)) {
-    return nativeKeys(object);
-  }
-  var result = [];
-  for (var key in Object(object)) {
-    if (hasOwnProperty$2.call(object, key) && key != "constructor") {
-      result.push(key);
-    }
-  }
-  return result;
-}
-var _baseKeys = baseKeys$1;
-var arrayLikeKeys = _arrayLikeKeys, baseKeys = _baseKeys, isArrayLike = isArrayLike_1;
-function keys$1(object) {
-  return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
-}
-var keys_1 = keys$1;
-var baseGetAllKeys = _baseGetAllKeys, getSymbols = _getSymbols, keys = keys_1;
-function getAllKeys$1(object) {
-  return baseGetAllKeys(object, keys, getSymbols);
-}
-var _getAllKeys = getAllKeys$1;
-var getAllKeys = _getAllKeys;
-var COMPARE_PARTIAL_FLAG$1 = 1;
-var objectProto$1 = Object.prototype;
-var hasOwnProperty$1 = objectProto$1.hasOwnProperty;
-function equalObjects$1(object, other, bitmask, customizer, equalFunc, stack) {
-  var isPartial = bitmask & COMPARE_PARTIAL_FLAG$1, objProps = getAllKeys(object), objLength = objProps.length, othProps = getAllKeys(other), othLength = othProps.length;
-  if (objLength != othLength && !isPartial) {
     return false;
   }
-  var index2 = objLength;
-  while (index2--) {
-    var key = objProps[index2];
-    if (!(isPartial ? key in other : hasOwnProperty$1.call(other, key))) {
-      return false;
-    }
-  }
-  var objStacked = stack.get(object);
-  var othStacked = stack.get(other);
-  if (objStacked && othStacked) {
-    return objStacked == other && othStacked == object;
-  }
-  var result = true;
-  stack.set(object, other);
-  stack.set(other, object);
-  var skipCtor = isPartial;
-  while (++index2 < objLength) {
-    key = objProps[index2];
-    var objValue = object[key], othValue = other[key];
-    if (customizer) {
-      var compared = isPartial ? customizer(othValue, objValue, key, other, object, stack) : customizer(objValue, othValue, key, object, other, stack);
-    }
-    if (!(compared === void 0 ? objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack) : compared)) {
-      result = false;
-      break;
-    }
-    skipCtor || (skipCtor = key == "constructor");
-  }
-  if (result && !skipCtor) {
-    var objCtor = object.constructor, othCtor = other.constructor;
-    if (objCtor != othCtor && ("constructor" in object && "constructor" in other) && !(typeof objCtor == "function" && objCtor instanceof objCtor && typeof othCtor == "function" && othCtor instanceof othCtor)) {
-      result = false;
-    }
-  }
-  stack["delete"](object);
-  stack["delete"](other);
-  return result;
+  _equalByTag = equalByTag;
+  return _equalByTag;
 }
-var _equalObjects = equalObjects$1;
-var getNative$3 = _getNative, root$3 = _root;
-var DataView$1 = getNative$3(root$3, "DataView");
-var _DataView = DataView$1;
-var getNative$2 = _getNative, root$2 = _root;
-var Promise$2 = getNative$2(root$2, "Promise");
-var _Promise = Promise$2;
-var getNative$1 = _getNative, root$1 = _root;
-var Set$2 = getNative$1(root$1, "Set");
-var _Set = Set$2;
-var getNative = _getNative, root = _root;
-var WeakMap$1 = getNative(root, "WeakMap");
-var _WeakMap = WeakMap$1;
-var DataView = _DataView, Map$1 = _Map, Promise$1 = _Promise, Set$1 = _Set, WeakMap = _WeakMap, baseGetTag = _baseGetTag, toSource = _toSource;
-var mapTag = "[object Map]", objectTag$1 = "[object Object]", promiseTag = "[object Promise]", setTag = "[object Set]", weakMapTag = "[object WeakMap]";
-var dataViewTag = "[object DataView]";
-var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map$1), promiseCtorString = toSource(Promise$1), setCtorString = toSource(Set$1), weakMapCtorString = toSource(WeakMap);
-var getTag$1 = baseGetTag;
-if (DataView && getTag$1(new DataView(new ArrayBuffer(1))) != dataViewTag || Map$1 && getTag$1(new Map$1()) != mapTag || Promise$1 && getTag$1(Promise$1.resolve()) != promiseTag || Set$1 && getTag$1(new Set$1()) != setTag || WeakMap && getTag$1(new WeakMap()) != weakMapTag) {
-  getTag$1 = function(value) {
-    var result = baseGetTag(value), Ctor = result == objectTag$1 ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : "";
-    if (ctorString) {
-      switch (ctorString) {
-        case dataViewCtorString:
-          return dataViewTag;
-        case mapCtorString:
-          return mapTag;
-        case promiseCtorString:
-          return promiseTag;
-        case setCtorString:
-          return setTag;
-        case weakMapCtorString:
-          return weakMapTag;
+var _arrayPush;
+var hasRequired_arrayPush;
+function require_arrayPush() {
+  if (hasRequired_arrayPush) return _arrayPush;
+  hasRequired_arrayPush = 1;
+  function arrayPush(array, values) {
+    var index2 = -1, length = values.length, offset = array.length;
+    while (++index2 < length) {
+      array[offset + index2] = values[index2];
+    }
+    return array;
+  }
+  _arrayPush = arrayPush;
+  return _arrayPush;
+}
+var _baseGetAllKeys;
+var hasRequired_baseGetAllKeys;
+function require_baseGetAllKeys() {
+  if (hasRequired_baseGetAllKeys) return _baseGetAllKeys;
+  hasRequired_baseGetAllKeys = 1;
+  var arrayPush = require_arrayPush(), isArray = requireIsArray();
+  function baseGetAllKeys(object, keysFunc, symbolsFunc) {
+    var result = keysFunc(object);
+    return isArray(object) ? result : arrayPush(result, symbolsFunc(object));
+  }
+  _baseGetAllKeys = baseGetAllKeys;
+  return _baseGetAllKeys;
+}
+var _arrayFilter;
+var hasRequired_arrayFilter;
+function require_arrayFilter() {
+  if (hasRequired_arrayFilter) return _arrayFilter;
+  hasRequired_arrayFilter = 1;
+  function arrayFilter(array, predicate) {
+    var index2 = -1, length = array == null ? 0 : array.length, resIndex = 0, result = [];
+    while (++index2 < length) {
+      var value = array[index2];
+      if (predicate(value, index2, array)) {
+        result[resIndex++] = value;
       }
     }
     return result;
-  };
+  }
+  _arrayFilter = arrayFilter;
+  return _arrayFilter;
 }
-var _getTag = getTag$1;
-var Stack = _Stack, equalArrays = _equalArrays, equalByTag = _equalByTag, equalObjects = _equalObjects, getTag = _getTag, isArray = isArray_1, isBuffer = isBufferExports, isTypedArray = isTypedArray_1;
-var COMPARE_PARTIAL_FLAG = 1;
-var argsTag = "[object Arguments]", arrayTag = "[object Array]", objectTag = "[object Object]";
-var objectProto = Object.prototype;
-var hasOwnProperty = objectProto.hasOwnProperty;
-function baseIsEqualDeep$1(object, other, bitmask, customizer, equalFunc, stack) {
-  var objIsArr = isArray(object), othIsArr = isArray(other), objTag = objIsArr ? arrayTag : getTag(object), othTag = othIsArr ? arrayTag : getTag(other);
-  objTag = objTag == argsTag ? objectTag : objTag;
-  othTag = othTag == argsTag ? objectTag : othTag;
-  var objIsObj = objTag == objectTag, othIsObj = othTag == objectTag, isSameTag = objTag == othTag;
-  if (isSameTag && isBuffer(object)) {
-    if (!isBuffer(other)) {
+var stubArray_1;
+var hasRequiredStubArray;
+function requireStubArray() {
+  if (hasRequiredStubArray) return stubArray_1;
+  hasRequiredStubArray = 1;
+  function stubArray() {
+    return [];
+  }
+  stubArray_1 = stubArray;
+  return stubArray_1;
+}
+var _getSymbols;
+var hasRequired_getSymbols;
+function require_getSymbols() {
+  if (hasRequired_getSymbols) return _getSymbols;
+  hasRequired_getSymbols = 1;
+  var arrayFilter = require_arrayFilter(), stubArray = requireStubArray();
+  var objectProto = Object.prototype;
+  var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+  var nativeGetSymbols = Object.getOwnPropertySymbols;
+  var getSymbols = !nativeGetSymbols ? stubArray : function(object) {
+    if (object == null) {
+      return [];
+    }
+    object = Object(object);
+    return arrayFilter(nativeGetSymbols(object), function(symbol) {
+      return propertyIsEnumerable.call(object, symbol);
+    });
+  };
+  _getSymbols = getSymbols;
+  return _getSymbols;
+}
+var _nativeKeys;
+var hasRequired_nativeKeys;
+function require_nativeKeys() {
+  if (hasRequired_nativeKeys) return _nativeKeys;
+  hasRequired_nativeKeys = 1;
+  var overArg = require_overArg();
+  var nativeKeys = overArg(Object.keys, Object);
+  _nativeKeys = nativeKeys;
+  return _nativeKeys;
+}
+var _baseKeys;
+var hasRequired_baseKeys;
+function require_baseKeys() {
+  if (hasRequired_baseKeys) return _baseKeys;
+  hasRequired_baseKeys = 1;
+  var isPrototype = require_isPrototype(), nativeKeys = require_nativeKeys();
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function baseKeys(object) {
+    if (!isPrototype(object)) {
+      return nativeKeys(object);
+    }
+    var result = [];
+    for (var key in Object(object)) {
+      if (hasOwnProperty.call(object, key) && key != "constructor") {
+        result.push(key);
+      }
+    }
+    return result;
+  }
+  _baseKeys = baseKeys;
+  return _baseKeys;
+}
+var keys_1;
+var hasRequiredKeys;
+function requireKeys() {
+  if (hasRequiredKeys) return keys_1;
+  hasRequiredKeys = 1;
+  var arrayLikeKeys = require_arrayLikeKeys(), baseKeys = require_baseKeys(), isArrayLike = requireIsArrayLike();
+  function keys(object) {
+    return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
+  }
+  keys_1 = keys;
+  return keys_1;
+}
+var _getAllKeys;
+var hasRequired_getAllKeys;
+function require_getAllKeys() {
+  if (hasRequired_getAllKeys) return _getAllKeys;
+  hasRequired_getAllKeys = 1;
+  var baseGetAllKeys = require_baseGetAllKeys(), getSymbols = require_getSymbols(), keys = requireKeys();
+  function getAllKeys(object) {
+    return baseGetAllKeys(object, keys, getSymbols);
+  }
+  _getAllKeys = getAllKeys;
+  return _getAllKeys;
+}
+var _equalObjects;
+var hasRequired_equalObjects;
+function require_equalObjects() {
+  if (hasRequired_equalObjects) return _equalObjects;
+  hasRequired_equalObjects = 1;
+  var getAllKeys = require_getAllKeys();
+  var COMPARE_PARTIAL_FLAG = 1;
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function equalObjects(object, other, bitmask, customizer, equalFunc, stack) {
+    var isPartial = bitmask & COMPARE_PARTIAL_FLAG, objProps = getAllKeys(object), objLength = objProps.length, othProps = getAllKeys(other), othLength = othProps.length;
+    if (objLength != othLength && !isPartial) {
       return false;
     }
-    objIsArr = true;
-    objIsObj = false;
-  }
-  if (isSameTag && !objIsObj) {
-    stack || (stack = new Stack());
-    return objIsArr || isTypedArray(object) ? equalArrays(object, other, bitmask, customizer, equalFunc, stack) : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
-  }
-  if (!(bitmask & COMPARE_PARTIAL_FLAG)) {
-    var objIsWrapped = objIsObj && hasOwnProperty.call(object, "__wrapped__"), othIsWrapped = othIsObj && hasOwnProperty.call(other, "__wrapped__");
-    if (objIsWrapped || othIsWrapped) {
-      var objUnwrapped = objIsWrapped ? object.value() : object, othUnwrapped = othIsWrapped ? other.value() : other;
-      stack || (stack = new Stack());
-      return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
+    var index2 = objLength;
+    while (index2--) {
+      var key = objProps[index2];
+      if (!(isPartial ? key in other : hasOwnProperty.call(other, key))) {
+        return false;
+      }
     }
+    var objStacked = stack.get(object);
+    var othStacked = stack.get(other);
+    if (objStacked && othStacked) {
+      return objStacked == other && othStacked == object;
+    }
+    var result = true;
+    stack.set(object, other);
+    stack.set(other, object);
+    var skipCtor = isPartial;
+    while (++index2 < objLength) {
+      key = objProps[index2];
+      var objValue = object[key], othValue = other[key];
+      if (customizer) {
+        var compared = isPartial ? customizer(othValue, objValue, key, other, object, stack) : customizer(objValue, othValue, key, object, other, stack);
+      }
+      if (!(compared === void 0 ? objValue === othValue || equalFunc(objValue, othValue, bitmask, customizer, stack) : compared)) {
+        result = false;
+        break;
+      }
+      skipCtor || (skipCtor = key == "constructor");
+    }
+    if (result && !skipCtor) {
+      var objCtor = object.constructor, othCtor = other.constructor;
+      if (objCtor != othCtor && ("constructor" in object && "constructor" in other) && !(typeof objCtor == "function" && objCtor instanceof objCtor && typeof othCtor == "function" && othCtor instanceof othCtor)) {
+        result = false;
+      }
+    }
+    stack["delete"](object);
+    stack["delete"](other);
+    return result;
   }
-  if (!isSameTag) {
-    return false;
-  }
-  stack || (stack = new Stack());
-  return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
+  _equalObjects = equalObjects;
+  return _equalObjects;
 }
-var _baseIsEqualDeep = baseIsEqualDeep$1;
-var baseIsEqualDeep = _baseIsEqualDeep, isObjectLike = isObjectLike_1;
-function baseIsEqual$1(value, other, bitmask, customizer, stack) {
-  if (value === other) {
-    return true;
-  }
-  if (value == null || other == null || !isObjectLike(value) && !isObjectLike(other)) {
-    return value !== value && other !== other;
-  }
-  return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual$1, stack);
+var _DataView;
+var hasRequired_DataView;
+function require_DataView() {
+  if (hasRequired_DataView) return _DataView;
+  hasRequired_DataView = 1;
+  var getNative = require_getNative(), root = require_root();
+  var DataView = getNative(root, "DataView");
+  _DataView = DataView;
+  return _DataView;
 }
-var _baseIsEqual = baseIsEqual$1;
-var baseIsEqual = _baseIsEqual;
-function isEqual(value, other) {
-  return baseIsEqual(value, other);
+var _Promise;
+var hasRequired_Promise;
+function require_Promise() {
+  if (hasRequired_Promise) return _Promise;
+  hasRequired_Promise = 1;
+  var getNative = require_getNative(), root = require_root();
+  var Promise2 = getNative(root, "Promise");
+  _Promise = Promise2;
+  return _Promise;
 }
-var isEqual_1 = isEqual;
-const isEqual$1 = /* @__PURE__ */ getDefaultExportFromCjs(isEqual_1);
+var _Set;
+var hasRequired_Set;
+function require_Set() {
+  if (hasRequired_Set) return _Set;
+  hasRequired_Set = 1;
+  var getNative = require_getNative(), root = require_root();
+  var Set2 = getNative(root, "Set");
+  _Set = Set2;
+  return _Set;
+}
+var _WeakMap;
+var hasRequired_WeakMap;
+function require_WeakMap() {
+  if (hasRequired_WeakMap) return _WeakMap;
+  hasRequired_WeakMap = 1;
+  var getNative = require_getNative(), root = require_root();
+  var WeakMap = getNative(root, "WeakMap");
+  _WeakMap = WeakMap;
+  return _WeakMap;
+}
+var _getTag;
+var hasRequired_getTag;
+function require_getTag() {
+  if (hasRequired_getTag) return _getTag;
+  hasRequired_getTag = 1;
+  var DataView = require_DataView(), Map2 = require_Map(), Promise2 = require_Promise(), Set2 = require_Set(), WeakMap = require_WeakMap(), baseGetTag = require_baseGetTag(), toSource = require_toSource();
+  var mapTag = "[object Map]", objectTag = "[object Object]", promiseTag = "[object Promise]", setTag = "[object Set]", weakMapTag = "[object WeakMap]";
+  var dataViewTag = "[object DataView]";
+  var dataViewCtorString = toSource(DataView), mapCtorString = toSource(Map2), promiseCtorString = toSource(Promise2), setCtorString = toSource(Set2), weakMapCtorString = toSource(WeakMap);
+  var getTag = baseGetTag;
+  if (DataView && getTag(new DataView(new ArrayBuffer(1))) != dataViewTag || Map2 && getTag(new Map2()) != mapTag || Promise2 && getTag(Promise2.resolve()) != promiseTag || Set2 && getTag(new Set2()) != setTag || WeakMap && getTag(new WeakMap()) != weakMapTag) {
+    getTag = function(value) {
+      var result = baseGetTag(value), Ctor = result == objectTag ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : "";
+      if (ctorString) {
+        switch (ctorString) {
+          case dataViewCtorString:
+            return dataViewTag;
+          case mapCtorString:
+            return mapTag;
+          case promiseCtorString:
+            return promiseTag;
+          case setCtorString:
+            return setTag;
+          case weakMapCtorString:
+            return weakMapTag;
+        }
+      }
+      return result;
+    };
+  }
+  _getTag = getTag;
+  return _getTag;
+}
+var _baseIsEqualDeep;
+var hasRequired_baseIsEqualDeep;
+function require_baseIsEqualDeep() {
+  if (hasRequired_baseIsEqualDeep) return _baseIsEqualDeep;
+  hasRequired_baseIsEqualDeep = 1;
+  var Stack = require_Stack(), equalArrays = require_equalArrays(), equalByTag = require_equalByTag(), equalObjects = require_equalObjects(), getTag = require_getTag(), isArray = requireIsArray(), isBuffer2 = requireIsBuffer(), isTypedArray = requireIsTypedArray();
+  var COMPARE_PARTIAL_FLAG = 1;
+  var argsTag = "[object Arguments]", arrayTag = "[object Array]", objectTag = "[object Object]";
+  var objectProto = Object.prototype;
+  var hasOwnProperty = objectProto.hasOwnProperty;
+  function baseIsEqualDeep(object, other, bitmask, customizer, equalFunc, stack) {
+    var objIsArr = isArray(object), othIsArr = isArray(other), objTag = objIsArr ? arrayTag : getTag(object), othTag = othIsArr ? arrayTag : getTag(other);
+    objTag = objTag == argsTag ? objectTag : objTag;
+    othTag = othTag == argsTag ? objectTag : othTag;
+    var objIsObj = objTag == objectTag, othIsObj = othTag == objectTag, isSameTag = objTag == othTag;
+    if (isSameTag && isBuffer2(object)) {
+      if (!isBuffer2(other)) {
+        return false;
+      }
+      objIsArr = true;
+      objIsObj = false;
+    }
+    if (isSameTag && !objIsObj) {
+      stack || (stack = new Stack());
+      return objIsArr || isTypedArray(object) ? equalArrays(object, other, bitmask, customizer, equalFunc, stack) : equalByTag(object, other, objTag, bitmask, customizer, equalFunc, stack);
+    }
+    if (!(bitmask & COMPARE_PARTIAL_FLAG)) {
+      var objIsWrapped = objIsObj && hasOwnProperty.call(object, "__wrapped__"), othIsWrapped = othIsObj && hasOwnProperty.call(other, "__wrapped__");
+      if (objIsWrapped || othIsWrapped) {
+        var objUnwrapped = objIsWrapped ? object.value() : object, othUnwrapped = othIsWrapped ? other.value() : other;
+        stack || (stack = new Stack());
+        return equalFunc(objUnwrapped, othUnwrapped, bitmask, customizer, stack);
+      }
+    }
+    if (!isSameTag) {
+      return false;
+    }
+    stack || (stack = new Stack());
+    return equalObjects(object, other, bitmask, customizer, equalFunc, stack);
+  }
+  _baseIsEqualDeep = baseIsEqualDeep;
+  return _baseIsEqualDeep;
+}
+var _baseIsEqual;
+var hasRequired_baseIsEqual;
+function require_baseIsEqual() {
+  if (hasRequired_baseIsEqual) return _baseIsEqual;
+  hasRequired_baseIsEqual = 1;
+  var baseIsEqualDeep = require_baseIsEqualDeep(), isObjectLike = requireIsObjectLike();
+  function baseIsEqual(value, other, bitmask, customizer, stack) {
+    if (value === other) {
+      return true;
+    }
+    if (value == null || other == null || !isObjectLike(value) && !isObjectLike(other)) {
+      return value !== value && other !== other;
+    }
+    return baseIsEqualDeep(value, other, bitmask, customizer, baseIsEqual, stack);
+  }
+  _baseIsEqual = baseIsEqual;
+  return _baseIsEqual;
+}
+var isEqual_1;
+var hasRequiredIsEqual;
+function requireIsEqual() {
+  if (hasRequiredIsEqual) return isEqual_1;
+  hasRequiredIsEqual = 1;
+  var baseIsEqual = require_baseIsEqual();
+  function isEqual2(value, other) {
+    return baseIsEqual(value, other);
+  }
+  isEqual_1 = isEqual2;
+  return isEqual_1;
+}
+var isEqualExports = requireIsEqual();
+const isEqual = /* @__PURE__ */ getDefaultExportFromCjs(isEqualExports);
 const getChangeType = (oldVal, newVal) => {
   if (oldVal === void 0) {
     return "added";
@@ -2486,39 +3245,13 @@ const getChangeType = (oldVal, newVal) => {
   if (newVal === void 0) {
     return "removed";
   }
-  if (isEqual$1(oldVal, newVal)) {
+  if (isEqual(oldVal, newVal)) {
     return "unchanged";
   }
   return "changed";
 };
 class Data {
   constructor(name2, data = /* @__PURE__ */ Object.create(null)) {
-    __publicField(this, "toJSON", (data, format) => JSON.stringify(data, null, format));
-    __publicField(this, "get", (path) => get(this.data, path));
-    __publicField(this, "add", (id, data = /* @__PURE__ */ Object.create(null)) => {
-      const { id: dataId } = data;
-      const elemId = id || dataId || uuid();
-      return this.set(elemId, data);
-    });
-    __publicField(this, "remove", (path) => {
-      const delPath = splitAddress(path);
-      const delItem = delPath.pop();
-      const parent = this.get(delPath);
-      if (Array.isArray(parent)) {
-        parent.splice(Number(delItem), 1);
-      } else if (parent) {
-        delete parent[delItem];
-      }
-      return parent;
-    });
-    __publicField(this, "getData", () => {
-      return Object.entries(this.data).reduce((acc, [key, val]) => {
-        acc[key] = (val == null ? void 0 : val.data) ? val.getData() : val;
-        return acc;
-      }, {});
-    });
-    __publicField(this, "setCallbacks", {});
-    __publicField(this, "configVal", /* @__PURE__ */ Object.create(null));
     this.name = name2;
     this.data = data;
     this.dataPath = "";
@@ -2532,6 +3265,8 @@ class Data {
   get json() {
     return this.data;
   }
+  toJSON = (data, format) => JSON.stringify(data, null, format);
+  get = (path) => get(this.data, path);
   set(path, newVal) {
     const oldVal = get(this.data, path);
     const data = set(this.data, path, newVal);
@@ -2570,83 +3305,103 @@ class Data {
   removeSetCallback(path, cb) {
     this.setCallbacks[path] = this.setCallbacks[path].filter((setCb) => setCb !== cb);
   }
+  add = (id, data = /* @__PURE__ */ Object.create(null)) => {
+    const { id: dataId } = data;
+    const elemId = id || dataId || uuid();
+    return this.set(elemId, data);
+  };
+  remove = (path) => {
+    const delPath = splitAddress(path);
+    const delItem = delPath.pop();
+    const parent = this.get(delPath);
+    if (Array.isArray(parent)) {
+      parent.splice(Number(delItem), 1);
+    } else if (parent) {
+      delete parent[delItem];
+    }
+    return parent;
+  };
   empty() {
     this.data = /* @__PURE__ */ Object.create(null);
   }
+  getData = () => {
+    return Object.entries(this.data).reduce((acc, [key, val]) => {
+      acc[key] = val?.data ? val.getData() : val;
+      return acc;
+    }, {});
+  };
+  setCallbacks = {};
+  configVal = /* @__PURE__ */ Object.create(null);
 }
 class ComponentData extends Data {
-  constructor() {
-    super(...arguments);
-    __publicField(this, "load", (dataArg) => {
-      const data = parseData(dataArg);
-      this.empty();
-      for (const [key, val] of Object.entries(data)) {
-        this.add(key, val);
+  load = (dataArg) => {
+    const data = parseData(dataArg);
+    this.empty();
+    for (const [key, val] of Object.entries(data)) {
+      this.add(key, val);
+    }
+    return this.data;
+  };
+  /**
+   * Retrieves data from the specified path or adds new data if no path is provided.
+   *
+   * @param {string} [path] - The path to retrieve data from. If not provided, new data will be added.
+   * @returns {*} The data retrieved from the specified path or the result of adding new data.
+   */
+  get = (path) => path ? get(this.data, path) : this.add();
+  /**
+   * Adds a new component with the given id and data.
+   *
+   * @param {string} id - The unique identifier for the component. If not provided, a new UUID will be generated.
+   * @param {Object} [data=Object.create(null)] - The data to initialize the component with.
+   * @returns {Object} The newly created component.
+   */
+  add = (id, data = /* @__PURE__ */ Object.create(null)) => {
+    const elemId = id || uuid();
+    const component = this.Component({ ...data, id: elemId });
+    this.data[elemId] = component;
+    this.active = component;
+    return component;
+  };
+  /**
+   * removes a component form the index
+   * @param {String|Array} componentId
+   */
+  remove = (componentId) => {
+    if (Array.isArray(componentId)) {
+      for (const id of componentId) {
+        this.get(id).remove();
       }
-      return this.data;
-    });
-    /**
-     * Retrieves data from the specified path or adds new data if no path is provided.
-     *
-     * @param {string} [path] - The path to retrieve data from. If not provided, new data will be added.
-     * @returns {*} The data retrieved from the specified path or the result of adding new data.
-     */
-    __publicField(this, "get", (path) => path ? get(this.data, path) : this.add());
-    /**
-     * Adds a new component with the given id and data.
-     *
-     * @param {string} id - The unique identifier for the component. If not provided, a new UUID will be generated.
-     * @param {Object} [data=Object.create(null)] - The data to initialize the component with.
-     * @returns {Object} The newly created component.
-     */
-    __publicField(this, "add", (id, data = /* @__PURE__ */ Object.create(null)) => {
-      const elemId = id || uuid();
-      const component = this.Component({ ...data, id: elemId });
-      this.data[elemId] = component;
-      this.active = component;
-      return component;
-    });
-    /**
-     * removes a component form the index
-     * @param {String|Array} componentId
-     */
-    __publicField(this, "remove", (componentId) => {
-      if (Array.isArray(componentId)) {
-        for (const id of componentId) {
-          this.get(id).remove();
-        }
-      } else {
-        this.get(componentId).remove();
-      }
-      return this.data;
-    });
-    /**
-     * Deletes a component from the data object.
-     *
-     * @param {string} componentId - The ID of the component to delete.
-     * @returns {string} The ID of the deleted component.
-     */
-    __publicField(this, "delete", (componentId) => {
-      delete this.data[componentId];
-      return componentId;
-    });
-    /**
-     * Clears all instances from the store
-     * @param {Object} evt
-     */
-    __publicField(this, "clearAll", (isAnimated = true) => {
-      const promises = Object.values(this.data).map((component) => component.empty(isAnimated));
-      return Promise.all(promises);
-    });
-    __publicField(this, "conditionMap", /* @__PURE__ */ new Map());
-  }
+    } else {
+      this.get(componentId).remove();
+    }
+    return this.data;
+  };
+  /**
+   * Deletes a component from the data object.
+   *
+   * @param {string} componentId - The ID of the component to delete.
+   * @returns {string} The ID of the deleted component.
+   */
+  delete = (componentId) => {
+    delete this.data[componentId];
+    return componentId;
+  };
+  /**
+   * Clears all instances from the store
+   * @param {Object} evt
+   */
+  clearAll = (isAnimated = true) => {
+    const promises = Object.values(this.data).map((component) => component.empty(isAnimated));
+    return Promise.all(promises);
+  };
   /**
    * Extends the configVal for a component type,
    * eventually read by Component
    * @return {Object} configVal
    */
-  set config(config2) {
-    this.configVal = merge(this.configVal, clone$1(config2));
+  set config(config) {
+    this.configVal = merge(this.configVal, clone$1(config));
   }
   /**
    * Reads configVal for a component type
@@ -2655,15 +3410,10 @@ class ComponentData extends Data {
   get config() {
     return this.configVal;
   }
+  conditionMap = /* @__PURE__ */ new Map();
 }
-/**!
- * Sortable 1.15.3
- * @author	RubaXa   <trash@rubaxa.org>
- * @author	owenm    <owen23355@gmail.com>
- * @license MIT
- */
 function ownKeys(object, enumerableOnly) {
-  var keys2 = Object.keys(object);
+  var keys = Object.keys(object);
   if (Object.getOwnPropertySymbols) {
     var symbols = Object.getOwnPropertySymbols(object);
     if (enumerableOnly) {
@@ -2671,9 +3421,9 @@ function ownKeys(object, enumerableOnly) {
         return Object.getOwnPropertyDescriptor(object, sym).enumerable;
       });
     }
-    keys2.push.apply(keys2, symbols);
+    keys.push.apply(keys, symbols);
   }
-  return keys2;
+  return keys;
 }
 function _objectSpread2(target) {
   for (var i = 1; i < arguments.length; i++) {
@@ -3354,7 +4104,7 @@ function _dispatchEvent(info) {
   }, info));
 }
 var dragEl, parentEl, ghostEl, rootEl, nextEl, lastDownEl, cloneEl, cloneHidden, oldIndex, newIndex, oldDraggableIndex, newDraggableIndex, activeGroup, putSortable, awaitingDragStarted = false, ignoreNextClick = false, sortables = [], tapEvt, touchEvt, lastDx, lastDy, tapDistanceLeft, tapDistanceTop, moved, lastTarget, lastDirection, pastFirstInvertThresh = false, isCircumstantialInvert = false, targetMoveDistance, ghostRelativeParent, ghostRelativeParentInitialScroll = [], _silent = false, savedInputChecked = [];
-var documentExists = typeof document !== "undefined", PositionGhostAbsolutely = IOS, CSSFloatProperty = Edge || IE11OrLess ? "cssFloat" : "float", supportDraggable = documentExists && !ChromeForAndroid && !IOS && "draggable" in document.createElement("div"), supportCssPointerEvents = function() {
+var documentExists = typeof document !== "undefined", PositionGhostAbsolutely = IOS, CSSFloatProperty = Edge || IE11OrLess ? "cssFloat" : "float", supportDraggable = documentExists && !ChromeForAndroid && !IOS && "draggable" in document.createElement("div"), supportCssPointerEvents = (function() {
   if (!documentExists) return;
   if (IE11OrLess) {
     return false;
@@ -3362,7 +4112,7 @@ var documentExists = typeof document !== "undefined", PositionGhostAbsolutely = 
   var el = document.createElement("x");
   el.style.cssText = "pointer-events:auto";
   return el.style.pointerEvents === "auto";
-}(), _detectDirection = function _detectDirection2(el, options) {
+})(), _detectDirection = function _detectDirection2(el, options) {
   var elCSS = css(el), elWidth = parseInt(elCSS.width) - parseInt(elCSS.paddingLeft) - parseInt(elCSS.paddingRight) - parseInt(elCSS.borderLeftWidth) - parseInt(elCSS.borderRightWidth), child1 = getChild(el, 0, options), child2 = getChild(el, 1, options), firstChildCSS = child1 && css(child1), secondChildCSS = child2 && css(child2), firstChildWidth = firstChildCSS && parseInt(firstChildCSS.marginLeft) + parseInt(firstChildCSS.marginRight) + getRect(child1).width, secondChildWidth = secondChildCSS && parseInt(secondChildCSS.marginLeft) + parseInt(secondChildCSS.marginRight) + getRect(child2).width;
   if (elCSS.display === "flex") {
     return elCSS.flexDirection === "column" || elCSS.flexDirection === "column-reverse" ? "vertical" : "horizontal";
@@ -3555,12 +4305,12 @@ Sortable.prototype = /** @lends Sortable.prototype */
   },
   _onTapStart: function _onTapStart(evt) {
     if (!evt.cancelable) return;
-    var _this = this, el = this.el, options = this.options, preventOnFilter = options.preventOnFilter, type2 = evt.type, touch = evt.touches && evt.touches[0] || evt.pointerType && evt.pointerType === "touch" && evt, target = (touch || evt).target, originalTarget = evt.target.shadowRoot && (evt.path && evt.path[0] || evt.composedPath && evt.composedPath()[0]) || target, filter = options.filter;
+    var _this = this, el = this.el, options = this.options, preventOnFilter = options.preventOnFilter, type = evt.type, touch = evt.touches && evt.touches[0] || evt.pointerType && evt.pointerType === "touch" && evt, target = (touch || evt).target, originalTarget = evt.target.shadowRoot && (evt.path && evt.path[0] || evt.composedPath && evt.composedPath()[0]) || target, filter = options.filter;
     _saveInputCheckedState(el);
     if (dragEl) {
       return;
     }
-    if (/mousedown|pointerdown/.test(type2) && evt.button !== 0 || options.disabled) {
+    if (/mousedown|pointerdown/.test(type) && evt.button !== 0 || options.disabled) {
       return;
     }
     if (originalTarget.isContentEditable) {
@@ -4513,9 +5263,9 @@ function _generateId(el) {
   }
   return sum.toString(36);
 }
-function _saveInputCheckedState(root2) {
+function _saveInputCheckedState(root) {
   savedInputChecked.length = 0;
-  var inputs = root2.getElementsByTagName("input");
+  var inputs = root.getElementsByTagName("input");
   var idx = inputs.length;
   while (idx--) {
     var el = inputs[idx];
@@ -4885,7 +5635,7 @@ const isInt = (n) => Number.isInteger(Number(n));
 const indexOfNode = (node) => {
   let index2 = 0;
   let currentNode = node;
-  while (currentNode == null ? void 0 : currentNode.previousElementSibling) {
+  while (currentNode?.previousElementSibling) {
     currentNode = currentNode.previousElementSibling;
     index2++;
   }
@@ -4953,13 +5703,12 @@ const iconFontTemplates = {
 };
 const inputTags = /* @__PURE__ */ new Set(["input", "textarea", "select"]);
 const getName = (elem = {}) => {
-  var _a2, _b2, _c2;
-  let name2 = ((_a2 = elem == null ? void 0 : elem.attrs) == null ? void 0 : _a2.name) || (elem == null ? void 0 : elem.name);
+  let name2 = elem?.attrs?.name || elem?.name;
   if (name2) {
     return name2;
   }
   const id = uuid(elem);
-  let label = ((_b2 = elem.config) == null ? void 0 : _b2.label) || ((_c2 = elem.attrs) == null ? void 0 : _c2.label) || (elem == null ? void 0 : elem.label);
+  let label = elem.config?.label || elem.attrs?.label || elem?.label;
   if (label) {
     if (typeof label === "object") {
       label = dom.create(label).textContent;
@@ -4977,228 +5726,6 @@ class DOM {
    * like stages, rows, columns etc
    */
   constructor(options = /* @__PURE__ */ Object.create(null)) {
-    /**
-     * Wraps dom.create to modify data
-     * Used when rendering components in form- not editor
-     */
-    __publicField(this, "render", (elem) => {
-      elem.id = `f-${elem.id || uuid()}`;
-      return this.create(elem);
-    });
-    /**
-     * Creates DOM elements
-     * @param  {Object}  elem      element config object
-     * @param  {Boolean} isPreview generating element for preview or render?
-     * @return {Object}            DOM Object
-     */
-    __publicField(this, "create", (elemArg, isPreview = false) => {
-      if (!elemArg) {
-        return;
-      }
-      if (this.isDOMElement(elemArg)) {
-        return elemArg;
-      }
-      const _this = this;
-      const processed = ["children", "content"];
-      const { className, options, dataset, ...elem } = this.processElemArg(elemArg);
-      processed.push("tag");
-      let childType;
-      const { tag } = elem;
-      let i;
-      const wrap = {
-        attrs: {},
-        className: [helpers.get(elem, "config.inputWrap")],
-        children: [],
-        config: {}
-      };
-      let element = document.createElement(tag);
-      const appendChildren = {
-        string: (children) => {
-          element.innerHTML += children;
-        },
-        object: (children) => {
-          return children && element.appendChild(_this.create(children, isPreview));
-        },
-        node: (children) => {
-          return element.appendChild(children);
-        },
-        component: (children) => {
-          return element.appendChild(children.dom);
-        },
-        array: (children) => {
-          for (const child of children) {
-            childType = _this.childType(child);
-            appendChildren[childType](child);
-          }
-        },
-        function: (children) => {
-          children = children();
-          childType = _this.childType(children);
-          appendChildren[childType](children);
-        },
-        undefined: () => null,
-        boolean: () => null
-      };
-      if (className) {
-        elem.attrs = merge(elem.attrs, { className });
-      }
-      if (options) {
-        const processedOptions = this.processOptions(options, elem, isPreview);
-        if (this.holdsContent(element) && tag !== "button") {
-          appendChildren.array.call(this, processedOptions);
-          elem.content = void 0;
-        } else {
-          helpers.forEach(processedOptions, (option2) => {
-            wrap.children.push(_this.create(option2, isPreview));
-          });
-          if (elem.attrs.className) {
-            wrap.className = elem.attrs.className;
-          }
-          wrap.id = elem.id;
-          wrap.config = { ...elem.config };
-          return this.create(wrap, isPreview);
-        }
-        processed.push("options");
-      }
-      if (elem.attrs) {
-        _this.processAttrs(elem, element, isPreview);
-        processed.push("attrs");
-      }
-      if (elem.config) {
-        if (elem.config.label && (elem.config.label && tag !== "button" || ["radio", "checkbox"].includes(helpers.get(elem, "attrs.type"))) && !isPreview) {
-          const label = _this.label(elem);
-          if (!elem.config.hideLabel) {
-            const wrapContent = [label, element];
-            if (_this.labelAfter(elem)) {
-              wrapContent.reverse();
-            }
-            wrap.children.push(wrapContent);
-          }
-        }
-        processed.push("config");
-      }
-      if (elem.content || elem.children) {
-        const children = elem.content || elem.children;
-        childType = _this.childType(children);
-        if (!appendChildren[childType]) {
-          console.error(`childType: ${childType} is not supported`);
-        }
-        appendChildren[childType].call(this, children);
-      }
-      if (dataset) {
-        for (const data in dataset) {
-          if (Object.hasOwn(dataset, data)) {
-            element.dataset[data] = typeof dataset[data] === "function" ? dataset[data]() : dataset[data];
-          }
-        }
-        processed.push("dataset");
-      }
-      if (elem.action) {
-        this.actionHandler(element, elem.action);
-        processed.push("action");
-      }
-      const remaining = helpers.subtract(processed, Object.keys(elem));
-      for (i = remaining.length - 1; i >= 0; i--) {
-        element[remaining[i]] = elem[remaining[i]];
-      }
-      if (wrap.children.length) {
-        element = this.create(wrap);
-      }
-      return element;
-    });
-    __publicField(this, "onRender", (node, cb, timeout = ANIMATION_SPEED_BASE) => {
-      const start = Date.now();
-      const checkParent = () => {
-        if (!node.parentElement && Date.now() - start < timeout) {
-          window.requestAnimationFrame(checkParent);
-        } else if (node.parentElement) {
-          cb(node);
-        }
-      };
-      checkParent();
-    });
-    /**
-     * Hide or show an Array or HTMLCollection of elements
-     * @param  {Array} elems
-     * @param  {String} term  match textContent to this term
-     * @return {Array}        filtered elements
-     */
-    __publicField(this, "toggleElementsByStr", (elems, term) => {
-      const filteredElems = [];
-      const containsTextCb = (elem, contains) => {
-        if (contains) {
-          elem.style.display = "block";
-          filteredElems.push(elem);
-        } else {
-          elem.style.display = "none";
-        }
-      };
-      dom.elementsContainText(elems, term, containsTextCb);
-      return filteredElems;
-    });
-    __publicField(this, "elementsContainText", (collection, term, cb) => {
-      const elementsContainingText = [];
-      forEach(collection, (elem) => {
-        const txt = elem.textContent.toLowerCase();
-        const contains = txt.indexOf(term.toLowerCase()) !== -1;
-        cb == null ? void 0 : cb(elem, contains);
-        contains && elementsContainingText.push(elem);
-      });
-      return elementsContainingText;
-    });
-    __publicField(this, "generateOption", ({ type: type2 = "option", label, value, i = 0, selected }) => {
-      const isOption = type2 === "option";
-      return {
-        tag: isOption ? "option" : "input",
-        attrs: {
-          type: type2,
-          value: value || `${type2}-${i}`,
-          [type2 === "option" ? "selected" : "checked"]: selected || !i
-        },
-        config: {
-          label: label || mi18n.get("labelCount", {
-            label: mi18n.get("option"),
-            count: i
-          })
-        }
-      };
-    });
-    __publicField(this, "requiredMark", () => ({
-      tag: "span",
-      className: "text-error",
-      children: "*"
-    }));
-    /**
-     * Remove elements without f children
-     * @param  {Object} element DOM element
-     * @return {Object} formData
-     */
-    __publicField(this, "removeEmpty", (element) => {
-      const parent = element.parentElement;
-      const type2 = componentType(element);
-      const children = parent.getElementsByClassName(`formeo-${type2}`);
-      this.remove(element);
-      if (!children.length) {
-        if (!this.isStage(parent)) {
-          return this.removeEmpty(parent);
-        }
-        return this.emptyClass(parent);
-      }
-    });
-    __publicField(this, "btnTemplate", ({ title = "", ...rest }) => ({
-      tag: "button",
-      attrs: {
-        type: "button",
-        title
-      },
-      ...rest
-    }));
-    __publicField(this, "isControls", (node) => componentType(node) === CONTROL_GROUP_CLASSNAME);
-    __publicField(this, "isStage", (node) => componentType(node) === STAGE_CLASSNAME);
-    __publicField(this, "isRow", (node) => componentType(node) === ROW_CLASSNAME);
-    __publicField(this, "isColumn", (node) => componentType(node) === COLUMN_CLASSNAME);
-    __publicField(this, "isField", (node) => componentType(node) === FIELD_CLASSNAME);
-    __publicField(this, "asComponent", (elem) => components[`${componentType(elem)}s`].get(elem.id));
     this.options = options;
   }
   set setOptions(options) {
@@ -5232,6 +5759,146 @@ class DOM {
     elem.tag = tagName || elem.tag || "div";
     return elem;
   }
+  /**
+   * Wraps dom.create to modify data
+   * Used when rendering components in form- not editor
+   */
+  render = (elem) => {
+    elem.id = `f-${elem.id || uuid()}`;
+    return this.create(elem);
+  };
+  /**
+   * Creates DOM elements
+   * @param  {Object}  elem      element config object
+   * @param  {Boolean} isPreview generating element for preview or render?
+   * @return {Object}            DOM Object
+   */
+  create = (elemArg, isPreview = false) => {
+    if (!elemArg) {
+      return;
+    }
+    if (this.isDOMElement(elemArg)) {
+      return elemArg;
+    }
+    const _this = this;
+    const processed = ["children", "content"];
+    const { className, options, dataset, ...elem } = this.processElemArg(elemArg);
+    processed.push("tag");
+    let childType;
+    const { tag } = elem;
+    let i;
+    const wrap = {
+      attrs: {},
+      className: [helpers.get(elem, "config.inputWrap")],
+      children: [],
+      config: {}
+    };
+    let element = document.createElement(tag);
+    const appendChildren = {
+      string: (children) => {
+        element.innerHTML += children;
+      },
+      object: (children) => {
+        return children && element.appendChild(_this.create(children, isPreview));
+      },
+      node: (children) => {
+        return element.appendChild(children);
+      },
+      component: (children) => {
+        return element.appendChild(children.dom);
+      },
+      array: (children) => {
+        for (const child of children) {
+          childType = _this.childType(child);
+          appendChildren[childType](child);
+        }
+      },
+      function: (children) => {
+        children = children();
+        childType = _this.childType(children);
+        appendChildren[childType](children);
+      },
+      undefined: () => null,
+      boolean: () => null
+    };
+    if (className) {
+      elem.attrs = merge(elem.attrs, { className });
+    }
+    if (options) {
+      const processedOptions = this.processOptions(options, elem, isPreview);
+      if (this.holdsContent(element) && tag !== "button") {
+        appendChildren.array.call(this, processedOptions);
+        elem.content = void 0;
+      } else {
+        helpers.forEach(processedOptions, (option2) => {
+          wrap.children.push(_this.create(option2, isPreview));
+        });
+        if (elem.attrs.className) {
+          wrap.className = elem.attrs.className;
+        }
+        wrap.id = elem.id;
+        wrap.config = { ...elem.config };
+        return this.create(wrap, isPreview);
+      }
+      processed.push("options");
+    }
+    if (elem.attrs) {
+      _this.processAttrs(elem, element, isPreview);
+      processed.push("attrs");
+    }
+    if (elem.config) {
+      if (elem.config.label && (elem.config.label && tag !== "button" || ["radio", "checkbox"].includes(helpers.get(elem, "attrs.type"))) && !isPreview) {
+        const label = _this.label(elem);
+        if (!elem.config.hideLabel) {
+          const wrapContent = [label, element];
+          if (_this.labelAfter(elem)) {
+            wrapContent.reverse();
+          }
+          wrap.children.push(wrapContent);
+        }
+      }
+      processed.push("config");
+    }
+    if (elem.content || elem.children) {
+      const children = elem.content || elem.children;
+      childType = _this.childType(children);
+      if (!appendChildren[childType]) {
+        console.error(`childType: ${childType} is not supported`);
+      }
+      appendChildren[childType].call(this, children);
+    }
+    if (dataset) {
+      for (const data in dataset) {
+        if (Object.hasOwn(dataset, data)) {
+          element.dataset[data] = typeof dataset[data] === "function" ? dataset[data]() : dataset[data];
+        }
+      }
+      processed.push("dataset");
+    }
+    if (elem.action) {
+      this.actionHandler(element, elem.action);
+      processed.push("action");
+    }
+    const remaining = helpers.subtract(processed, Object.keys(elem));
+    for (i = remaining.length - 1; i >= 0; i--) {
+      element[remaining[i]] = elem[remaining[i]];
+    }
+    if (wrap.children.length) {
+      element = this.create(wrap);
+    }
+    return element;
+  };
+  onRender = (node, cb, timeout = ANIMATION_SPEED_BASE) => {
+    const start = Date.now();
+    const checkParent = () => {
+      if (!node.parentElement && Date.now() - start < timeout) {
+        window.requestAnimationFrame(checkParent);
+      } else if (node.parentElement) {
+        cb(node);
+      }
+    };
+    checkParent();
+  };
   /**
    * Processes element config object actions (click, onRender etc)
    */
@@ -5287,26 +5954,25 @@ class DOM {
    * @param  {Function} config - dom element config object
    * @return {String} icon markup
    */
-  icon(name2, config2) {
-    var _a2, _b2;
+  icon(name2, config) {
     if (!name2) {
       return;
     }
-    const cacheKey = `${name2}?${new URLSearchParams(config2).toString()}`;
-    if ((_a2 = this.cachedIcons) == null ? void 0 : _a2[cacheKey]) {
+    const cacheKey = `${name2}?${new URLSearchParams(config).toString()}`;
+    if (this.cachedIcons?.[cacheKey]) {
       return this.cachedIcons[cacheKey];
     }
     const iconConfig = this.icons[name2];
     if (iconConfig) {
-      if (config2) {
-        const mergedConfig = merge(iconConfig, config2);
+      if (config) {
+        const mergedConfig = merge(iconConfig, config);
         this.cachedIcons[cacheKey] = dom.create(mergedConfig).outerHTML;
         return this.cachedIcons[cacheKey];
       }
       this.cachedIcons[cacheKey] = dom.create(iconConfig).outerHTML;
       return this.cachedIcons[cacheKey];
     }
-    return ((_b2 = iconFontTemplates[dom.options.iconFont]) == null ? void 0 : _b2.call(iconFontTemplates, name2)) || name2;
+    return iconFontTemplates[dom.options.iconFont]?.(name2) || name2;
   }
   /**
    * JS Object to DOM attributes
@@ -5353,6 +6019,52 @@ class DOM {
     return value;
   }
   /**
+   * Hide or show an Array or HTMLCollection of elements
+   * @param  {Array} elems
+   * @param  {String} term  match textContent to this term
+   * @return {Array}        filtered elements
+   */
+  toggleElementsByStr = (elems, term) => {
+    const filteredElems = [];
+    const containsTextCb = (elem, contains) => {
+      if (contains) {
+        elem.style.display = "block";
+        filteredElems.push(elem);
+      } else {
+        elem.style.display = "none";
+      }
+    };
+    dom.elementsContainText(elems, term, containsTextCb);
+    return filteredElems;
+  };
+  elementsContainText = (collection, term, cb) => {
+    const elementsContainingText = [];
+    forEach(collection, (elem) => {
+      const txt = elem.textContent.toLowerCase();
+      const contains = txt.indexOf(term.toLowerCase()) !== -1;
+      cb?.(elem, contains);
+      contains && elementsContainingText.push(elem);
+    });
+    return elementsContainingText;
+  };
+  generateOption = ({ type = "option", label, value, i = 0, selected }) => {
+    const isOption = type === "option";
+    return {
+      tag: isOption ? "option" : "input",
+      attrs: {
+        type,
+        value: value || `${type}-${i}`,
+        [type === "option" ? "selected" : "checked"]: selected || !i
+      },
+      config: {
+        label: label || mi18n.get("labelCount", {
+          label: mi18n.get("option"),
+          count: i
+        })
+      }
+    };
+  };
+  /**
    * Extend Array of option config objects
    * @param  {Array} options
    * @param  {Object} elem element config object
@@ -5364,7 +6076,6 @@ class DOM {
     const fieldType = attrs.type || elem.tag;
     const id = attrs.id || elem.id;
     const optionMap = (option2, i) => {
-      var _a2;
       const { label, value, ...rest } = option2;
       const defaultInput = () => {
         const input = {
@@ -5415,11 +6126,11 @@ class DOM {
           };
         },
         button: (option3) => {
-          const { type: type2, label: label2, className, id: id2 } = option3;
+          const { type, label: label2, className, id: id2 } = option3;
           return {
             ...elem,
             attrs: {
-              type: type2
+              type
             },
             className,
             id: id2 || uuid(),
@@ -5431,7 +6142,7 @@ class DOM {
         checkbox: defaultInput,
         radio: defaultInput
       };
-      return (_a2 = optionMarkup[fieldType]) == null ? void 0 : _a2.call(optionMarkup, option2);
+      return optionMarkup[fieldType]?.(option2);
     };
     const mappedOptions = options.map(optionMap);
     return mappedOptions;
@@ -5481,11 +6192,16 @@ class DOM {
    * @return {Boolean} labelAfter
    */
   labelAfter(elem) {
-    const type2 = helpers.get(elem, "attrs.type");
+    const type = helpers.get(elem, "attrs.type");
     const labelAfter = helpers.get(elem, "config.labelAfter");
-    const isCB = type2 === "checkbox" || type2 === "radio";
+    const isCB = type === "checkbox" || type === "radio";
     return labelAfter !== void 0 ? labelAfter : isCB;
   }
+  requiredMark = () => ({
+    tag: "span",
+    className: "text-error",
+    children: "*"
+  });
   /**
    * Generate a label
    * @param  {Object} elem config object
@@ -5504,7 +6220,7 @@ class DOM {
     const fieldLabel = {
       tag: "label",
       attrs: {
-        for: elemId || (attrs == null ? void 0 : attrs.id)
+        for: elemId || attrs?.id
       },
       className: [],
       children: [labelText, required && this.requiredMark()],
@@ -5529,7 +6245,7 @@ class DOM {
     return [
       ["array", (content2) => Array.isArray(content2)],
       ["node", (content2) => content2 instanceof window.Node || content2 instanceof window.HTMLElement],
-      ["component", () => content == null ? void 0 : content.dom],
+      ["component", () => content?.dom],
       [typeof content, () => true]
     ].find((typeCondition) => typeCondition[1](content))[0];
   }
@@ -5560,8 +6276,8 @@ class DOM {
       object: () => document.getElementById(elem.id),
       string: () => document.getElementById(elem)
     };
-    const type2 = this.childType(elem);
-    const element = getElement[type2]();
+    const type = this.childType(elem);
+    const element = getElement[type]();
     return element;
   }
   /**
@@ -5576,14 +6292,31 @@ class DOM {
     return elem;
   }
   /**
+   * Remove elements without f children
+   * @param  {Object} element DOM element
+   * @return {Object} formData
+   */
+  removeEmpty = (element) => {
+    const parent = element.parentElement;
+    const type = componentType(element);
+    const children = parent.getElementsByClassName(`formeo-${type}`);
+    this.remove(element);
+    if (!children.length) {
+      if (!this.isStage(parent)) {
+        return this.removeEmpty(parent);
+      }
+      return this.emptyClass(parent);
+    }
+  };
+  /**
    * Removes element from DOM and data
    * @param  {Object} elem
    * @return  {Object} parent element
    */
   remove(elem) {
-    const type2 = componentType(elem);
-    if (type2) {
-      return components.remove(`${type2}s.${elem.id}`);
+    const type = componentType(elem);
+    if (type) {
+      return components.remove(`${type}s.${elem.id}`);
     }
     return elem.parentElement.removeChild(elem);
   }
@@ -5691,6 +6424,20 @@ class DOM {
     const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)));
     elem.classList.toggle("empty", !children.length);
   }
+  btnTemplate = ({ title = "", ...rest }) => ({
+    tag: "button",
+    attrs: {
+      type: "button",
+      title
+    },
+    ...rest
+  });
+  isControls = (node) => componentType(node) === CONTROL_GROUP_CLASSNAME;
+  isStage = (node) => componentType(node) === STAGE_CLASSNAME;
+  isRow = (node) => componentType(node) === ROW_CLASSNAME;
+  isColumn = (node) => componentType(node) === COLUMN_CLASSNAME;
+  isField = (node) => componentType(node) === FIELD_CLASSNAME;
+  asComponent = (elem) => components[`${componentType(elem)}s`].get(elem.id);
   isDOMElement(variable) {
     return variable instanceof window.Element || variable instanceof window.HTMLElement || !!(variable && typeof variable === "object" && variable.nodeType === 1 && typeof variable.nodeName === "string");
   }
@@ -5830,14 +6577,14 @@ const componentOptions = (autocomplete) => {
   return options;
 };
 class Autocomplete {
+  lastCache = Date.now();
+  optionsCache = null;
   /**
    * Create an Autocomplete instance
    * @param {String} key - The key for the autocomplete instance
    * @param {String} value - The initial value for the autocomplete input
    */
   constructor({ key, value, className, onChange = noop }) {
-    __publicField(this, "lastCache", Date.now());
-    __publicField(this, "optionsCache", null);
     this.key = key;
     this.className = [className || this.key.replace(/\./g, "-")].flat();
     this.value = value;
@@ -6070,7 +6817,7 @@ class Autocomplete {
    */
   getActiveOption(list = this.list) {
     const activeOption = list.querySelector(".active-option");
-    if ((activeOption == null ? void 0 : activeOption.style.display) !== "none") {
+    if (activeOption?.style.display !== "none") {
       return activeOption;
     }
     return null;
@@ -6106,7 +6853,6 @@ class Autocomplete {
    * @param {Object} selectedOption - option - 'li' element - to be selected in autocomplete list
    */
   selectOption(selectedOption, list = this.list) {
-    var _a2;
     const options = list.querySelectorAll("li");
     for (const option2 of options) {
       const {
@@ -6115,7 +6861,7 @@ class Autocomplete {
       option2.classList.remove("active-option");
       if (isAddress(value)) {
         const component = components.getAddress(value);
-        (_a2 = component == null ? void 0 : component.dom) == null ? void 0 : _a2.classList.remove(HIGHLIGHT_CLASSNAME);
+        component?.dom?.classList.remove(HIGHLIGHT_CLASSNAME);
       }
     }
     if (selectedOption) {
@@ -6136,7 +6882,6 @@ class Autocomplete {
    * Highlight a component that maps to the option
    */
   highlightComponent(option2) {
-    var _a2;
     const {
       dataset: { value }
     } = option2;
@@ -6161,11 +6906,11 @@ class Autocomplete {
         }
       );
       const component = components.getAddress(componentAddress);
-      if (component == null ? void 0 : component.dom) {
+      if (component?.dom) {
         component.dom.classList.add(HIGHLIGHT_CLASSNAME);
         if (isOptionAddress) {
           const checkboxes = component.dom.querySelectorAll(".field-preview .f-checkbox, .field-preview .f-radio");
-          (_a2 = checkboxes[optionIndex]) == null ? void 0 : _a2.classList.add(HIGHLIGHT_CLASSNAME);
+          checkboxes[optionIndex]?.classList.add(HIGHLIGHT_CLASSNAME);
         }
       }
     }
@@ -6184,20 +6929,19 @@ class Autocomplete {
    * @param {String} value display text
    */
   setValue(target) {
-    var _a2;
     const { label, value } = target.dataset;
     this.displayField.value = label;
     this.hiddenField.value = value;
     this.value = value;
     this.clearButton.classList.toggle("hidden", !value.length);
-    (_a2 = this.onChange) == null ? void 0 : _a2.call(this, { target: this.hiddenField });
+    this.onChange?.({ target: this.hiddenField });
   }
 }
-function inputConfigBase({ key, value, type: type2 = "text", checked }) {
-  const config2 = {
+function inputConfigBase({ key, value, type = "text", checked }) {
+  const config = {
     tag: "input",
     attrs: {
-      type: type2,
+      type,
       value,
       placeholder: mi18n.get(`${key}.placeholder`) || toTitleCase(key)
     },
@@ -6205,9 +6949,9 @@ function inputConfigBase({ key, value, type: type2 = "text", checked }) {
     config: {}
   };
   if (checked) {
-    config2.attrs.checked = true;
+    config.attrs.checked = true;
   }
-  return config2;
+  return config;
 }
 function labelHelper(key) {
   const labelText = mi18n.get(key);
@@ -6221,8 +6965,8 @@ const ITEM_INPUT_TYPE_MAP = {
   autocomplete: (...args) => new Autocomplete(...args).createProxy(),
   string: ({ key, value }) => inputConfigBase({ key, value }),
   boolean: ({ key, value }) => {
-    const type2 = key === "selected" ? "radio" : "checkbox";
-    return inputConfigBase({ key, value, type: type2, checked: !!value });
+    const type = key === "selected" ? "radio" : "checkbox";
+    return inputConfigBase({ key, value, type, checked: !!value });
   },
   number: ({ key, value }) => inputConfigBase({ key, value, type: "number" }),
   array: ({ key, value }) => {
@@ -6333,7 +7077,7 @@ function createConditionSelect({ key, value, onChange, conditionType }) {
   return propertyFieldConfig;
 }
 const isVisible$1 = (elem) => {
-  return !(elem == null ? void 0 : elem.classList.contains(hiddenPropertyClassname));
+  return !elem?.classList.contains(hiddenPropertyClassname);
 };
 const fieldVisibilityMap = {
   sourceProperty: (fields2) => {
@@ -6367,11 +7111,11 @@ const fieldVisibilityMap = {
   target: (fields2) => {
     const source = fields2.get("source");
     const sourceProperty = fields2.get("sourceProperty");
-    const sourceHasValue = !!(source == null ? void 0 : source.value);
+    const sourceHasValue = !!source?.value;
     if (sourceProperty && !sourceHasValue) {
       return true;
     }
-    return sourceProperty && (sourceProperty == null ? void 0 : sourceProperty.value) !== "value";
+    return sourceProperty && sourceProperty?.value !== "value";
   },
   value: (fields2) => {
     const target = fields2.get("target");
@@ -6392,16 +7136,14 @@ const fieldVisibilityMap = {
   }
 };
 const toggleFieldVisibility = (fields2) => {
-  var _a2;
   for (const [fieldName, field2] of fields2) {
-    const shouldHide = !!((_a2 = fieldVisibilityMap[fieldName]) == null ? void 0 : _a2.call(fieldVisibilityMap, fields2)) || false;
+    const shouldHide = !!fieldVisibilityMap[fieldName]?.(fields2) || false;
     field2.classList.toggle(hiddenPropertyClassname, shouldHide);
   }
 };
 const isCheckedValue = "isChecked";
 const isCheckedOption = (option2) => option2.value.endsWith("Checked");
 const toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
-  var _a2;
   if (isCheckable && isCheckedOption(propertyField)) {
     return null;
   }
@@ -6416,7 +7158,7 @@ const toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
     option2.classList.toggle(hiddenOptionClassname, shouldHide);
   }
   if (hiddenOptionValues.includes(propertyField.value)) {
-    propertyField.value = isCheckable ? isCheckedValue : ((_a2 = options.find((opt) => !isCheckedOption(opt))) == null ? void 0 : _a2.value) || propertyField.value;
+    propertyField.value = isCheckable ? isCheckedValue : options.find((opt) => !isCheckedOption(opt))?.value || propertyField.value;
   }
 };
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
@@ -6429,20 +7171,6 @@ function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDE
 }
 class Condition {
   constructor({ conditionValues, conditionType, conditionCount, index: index2 }, parent) {
-    __publicField(this, "updateDataDebounced", debounce((evtData) => {
-      events.formeoUpdated(evtData);
-      components.setAddress(evtData.dataPath, evtData.value);
-    }));
-    __publicField(this, "onChangeCondition", ({ key, target }) => {
-      const evtData = {
-        changedProperty: key,
-        dataPath: this.address,
-        value: this.value,
-        src: target
-      };
-      toggleFieldVisibility(this.fields);
-      this.updateDataDebounced(evtData);
-    });
     this.values = new Map(orderConditionValues(conditionValues));
     this.conditionType = conditionType;
     this.parent = parent;
@@ -6547,6 +7275,20 @@ class Condition {
     toggleFieldVisibility(this.fields);
     this.dom.classList.remove("display-none");
   }
+  updateDataDebounced = debounce((evtData) => {
+    events.formeoUpdated(evtData);
+    components.setAddress(evtData.dataPath, evtData.value);
+  });
+  onChangeCondition = ({ key, target }) => {
+    const evtData = {
+      changedProperty: key,
+      dataPath: this.address,
+      value: this.value,
+      src: target
+    };
+    toggleFieldVisibility(this.fields);
+    this.updateDataDebounced(evtData);
+  };
 }
 const panelDataKeyMap = /* @__PURE__ */ new Map([
   ["attrs", ({ itemKey }) => itemKey],
@@ -6584,39 +7326,6 @@ class EditPanelItem {
    * @return {Object} field object
    */
   constructor({ key, index: index2, field: field2, panel, data }) {
-    __publicField(this, "addConditionType", (conditionType, conditionArg) => {
-      const conditionTypeWrap = this.findOrCreateConditionTypeWrap(conditionType);
-      let condition = conditionArg;
-      if (!condition) {
-        const [newConditionData] = CONDITION_TEMPLATE()[conditionType];
-        const conditionCount = conditionTypeWrap.children.length;
-        if (conditionType === conditionTypeIf) {
-          newConditionData.logical = "||";
-        }
-        condition = { conditionValues: newConditionData, conditionCount, index: conditionCount };
-      }
-      const conditionField = new Condition({ conditionType, ...condition }, this);
-      conditionTypeWrap.appendChild(conditionField.dom);
-      return conditionField;
-    });
-    __publicField(this, "removeConditionType", (conditionType, index2) => {
-      const conditionTypeWrap = this.conditionTypeWrap.get(conditionType);
-      const conditionField = conditionTypeWrap.children[index2];
-      conditionField.destroy();
-      conditionTypeWrap.removeChild(conditionField.dom);
-    });
-    __publicField(this, "generateConditionFields", (conditionType, conditionVals) => {
-      this.conditions = /* @__PURE__ */ new Map();
-      conditionVals.forEach((condition, index2) => {
-        const conditionField = this.addConditionType(conditionType, {
-          index: index2,
-          conditionCount: conditionVals.length,
-          conditionValues: condition
-        });
-        this.conditions.set(index2, conditionField);
-      });
-      return this.findOrCreateConditionTypeWrap(conditionType);
-    });
     this.field = field2;
     this.itemKey = key;
     this.itemIndex = index2;
@@ -6643,7 +7352,7 @@ class EditPanelItem {
   }
   get itemValues() {
     const val = this.field.get(this.itemKey);
-    if ((val == null ? void 0 : val.constructor) === Object) {
+    if (val?.constructor === Object) {
       return orderObjectsBy(Object.entries(val), CHECKED_TYPES, "0");
     }
     return [[this.itemKey, val]];
@@ -6675,6 +7384,39 @@ class EditPanelItem {
     this.inputs = inputs;
     return inputs;
   }
+  addConditionType = (conditionType, conditionArg) => {
+    const conditionTypeWrap = this.findOrCreateConditionTypeWrap(conditionType);
+    let condition = conditionArg;
+    if (!condition) {
+      const [newConditionData] = CONDITION_TEMPLATE()[conditionType];
+      const conditionCount = conditionTypeWrap.children.length;
+      if (conditionType === conditionTypeIf) {
+        newConditionData.logical = "||";
+      }
+      condition = { conditionValues: newConditionData, conditionCount, index: conditionCount };
+    }
+    const conditionField = new Condition({ conditionType, ...condition }, this);
+    conditionTypeWrap.appendChild(conditionField.dom);
+    return conditionField;
+  };
+  removeConditionType = (conditionType, index2) => {
+    const conditionTypeWrap = this.conditionTypeWrap.get(conditionType);
+    const conditionField = conditionTypeWrap.children[index2];
+    conditionField.destroy();
+    conditionTypeWrap.removeChild(conditionField.dom);
+  };
+  generateConditionFields = (conditionType, conditionVals) => {
+    this.conditions = /* @__PURE__ */ new Map();
+    conditionVals.forEach((condition, index2) => {
+      const conditionField = this.addConditionType(conditionType, {
+        index: index2,
+        conditionCount: conditionVals.length,
+        conditionValues: condition
+      });
+      this.conditions.set(index2, conditionField);
+    });
+    return this.findOrCreateConditionTypeWrap(conditionType);
+  };
   get itemControls() {
     if (this.isLocked) {
       const controls2 = {
@@ -6713,13 +7455,12 @@ class EditPanelItem {
     return controls;
   }
   itemInput(key, value) {
-    var _a2, _b2;
     const valType = dom.childType(value) || "string";
-    const dataKey = ((_a2 = panelDataKeyMap.get(this.panelName)) == null ? void 0 : _a2({ itemKey: this.itemKey, key })) || this.itemKey;
+    const dataKey = panelDataKeyMap.get(this.panelName)?.({ itemKey: this.itemKey, key }) || this.itemKey;
     const labelKey = dataKey.split(".").filter(Number.isNaN).join(".") || key;
     const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value });
     const name2 = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, "-$1")}`;
-    const config2 = {
+    const config = {
       label: this.panelName !== "options" && (labelHelper(labelKey) || toTitleCase(labelKey)),
       labelAfter: false
     };
@@ -6728,9 +7469,9 @@ class EditPanelItem {
     };
     attrs.disabled = this.isDisabled;
     attrs.locked = this.isLocked;
-    const itemInputAction = (_b2 = itemInputActions.get(this.itemSlug)) == null ? void 0 : _b2(this);
+    const itemInputAction = itemInputActions.get(this.itemSlug)?.(this);
     const action = mergeActions(INPUT_TYPE_ACTION[valType](dataKey, this.field), itemInputAction || {});
-    const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value }), { action, attrs, config: config2 });
+    const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value }), { action, attrs, config });
     if (CHECKED_TYPES.includes(key)) {
       return {
         className: "f-addon",
@@ -6754,98 +7495,6 @@ class EditPanel {
    * @return {Object} field object
    */
   constructor(panelData, panelName, component) {
-    /**
-     * Add a new attribute to the attrs panels
-     * @param {String} attr
-     * @param {String|Array} val
-     */
-    __publicField(this, "addAttribute", (attr, valArg) => {
-      var _a2;
-      let val = valArg;
-      const safeAttr = safeAttrName(attr);
-      const itemKey = `attrs.${safeAttr}`;
-      if (!mi18n.current[itemKey]) {
-        mi18n.put(itemKey, capitalize(attr));
-      }
-      if (typeof val === "string" && ["true", "false"].includes(val)) {
-        val = JSON.parse(val);
-      }
-      this.component.set(`attrs.${attr}`, val);
-      (_a2 = addAttributeActions[safeAttr]) == null ? void 0 : _a2.call(addAttributeActions, val, this.component);
-      const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`);
-      const newAttr = new EditPanelItem({
-        key: itemKey,
-        data: { [safeAttr]: val },
-        field: this.component,
-        panel: this
-      });
-      if (existingAttr) {
-        existingAttr.replaceWith(newAttr.dom);
-      } else {
-        this.props.appendChild(newAttr.dom);
-      }
-      this.component.resizePanelWrap();
-    });
-    /**
-     * Add option to options panel
-     */
-    __publicField(this, "addOption", () => {
-      const controlId = this.component.data.config.controlId;
-      const fieldOptionData = this.component.get("options");
-      const type2 = controlId === "select" ? "option" : controlId;
-      const newOptionLabel = mi18n.get("newOptionLabel", { type: type2 }) || "New Option";
-      const itemKey = `${this.name}[${this.data.length}]`;
-      const lastOptionData = fieldOptionData[fieldOptionData.length - 1];
-      const optionTemplate = fieldOptionData.length ? lastOptionData : {};
-      const itemData = { ...optionTemplate, label: newOptionLabel };
-      if (controlId !== "button") {
-        itemData.value = slugify(newOptionLabel);
-      }
-      const newOption = new EditPanelItem({
-        key: itemKey,
-        data: itemData,
-        field: this.component,
-        index: this.props.children.length,
-        panel: this
-      });
-      this.editPanelItems.push(newOption);
-      this.props.appendChild(newOption.dom);
-      this.component.debouncedUpdatePreview();
-      this.component.resizePanelWrap();
-    });
-    __publicField(this, "addCondition", (evt) => {
-      const currentConditions = this.component.get("conditions");
-      const itemKey = `conditions[${currentConditions.length}]`;
-      const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.component, panel: this });
-      this.props.appendChild(newCondition.dom);
-      this.component.set(itemKey, evt.template);
-      this.component.resizePanelWrap();
-    });
-    /**
-     * Clears all items from the component property based on its type.
-     * Sets the property to an empty array for 'array' type or empty object for other types.
-     * Executes removal action hooks and dispatches a custom removal event.
-     *
-     * @method clearAllItems
-     * @fires CustomEvent#onRemove{PropertyName} - Dispatched when items are cleared
-     * @returns {void}
-     */
-    __publicField(this, "clearAllItems", () => {
-      const emptyValue = this.type === "array" ? [] : {};
-      const removeEvt = {
-        type: this.name,
-        removeAction: () => {
-          this.component.set(this.name, emptyValue);
-          this.updateProps();
-        }
-      };
-      actions.remove[this.name](removeEvt);
-      const eventType = toTitleCase(this.name);
-      const customEvt = new window.CustomEvent(`onRemove${eventType}`, {
-        detail: removeEvt
-      });
-      document.dispatchEvent(customEvt);
-    });
     this.type = dom.childType(panelData);
     this.name = panelName;
     this.component = component;
@@ -6876,9 +7525,9 @@ class EditPanel {
    */
   createProps(data = this.data) {
     this.editPanelItems = Array.from(data).map((dataVal, index2) => {
-      const isArray2 = this.type === "array";
-      const key = isArray2 ? `[${index2}]` : `.${dataVal[0]}`;
-      const val = isArray2 ? dataVal : { [dataVal[0]]: dataVal[1] };
+      const isArray = this.type === "array";
+      const key = isArray ? `[${index2}]` : `.${dataVal[0]}`;
+      const val = isArray ? dataVal : { [dataVal[0]]: dataVal[1] };
       return new EditPanelItem({
         key: `${this.name}${key}`,
         data: val,
@@ -6908,15 +7557,15 @@ class EditPanel {
    * @return {Object} panel edit buttons config
    */
   createEditButtons() {
-    const type2 = this.name;
-    const btnTitle = mi18n.get(`panelEditButtons.${type2}`);
+    const type = this.name;
+    const btnTitle = mi18n.get(`panelEditButtons.${type}`);
     const addActions = {
       attrs: this.addAttribute,
       options: this.addOption,
       conditions: this.addCondition
     };
     const editPanelButtons = [];
-    if (type2 === "conditions") {
+    if (type === "conditions") {
       if (!mi18n.current.clearAll) {
         mi18n.put("clearAll", "Clear All");
       }
@@ -6925,7 +7574,7 @@ class EditPanel {
           content: [dom.icon("bin"), mi18n.get("clearAll")],
           title: mi18n.get("clearAll")
         }),
-        className: `clear-all-${type2}`,
+        className: `clear-all-${type}`,
         action: {
           click: () => {
             this.clearAllItems();
@@ -6936,26 +7585,26 @@ class EditPanel {
     }
     const addBtn = {
       ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
-      className: `add-${type2}`,
+      className: `add-${type}`,
       action: {
         click: (evt) => {
           const addEvt = {
             btnCoords: dom.coords(evt.target),
-            addAction: addActions[type2]
+            addAction: addActions[type]
           };
-          if (type2 === "attrs") {
+          if (type === "attrs") {
             addEvt.isDisabled = this.component.isDisabledProp;
             addEvt.isLocked = this.component.isLockedProp;
             addEvt.message = {
-              attr: mi18n.get(`action.add.${type2}.attr`),
-              value: mi18n.get(`action.add.${type2}.value`)
+              attr: mi18n.get(`action.add.${type}.attr`),
+              value: mi18n.get(`action.add.${type}.value`)
             };
           }
-          const eventType = toTitleCase(type2);
+          const eventType = toTitleCase(type);
           const customEvt = new window.CustomEvent(`onAdd${eventType}`, {
             detail: addEvt
           });
-          actions.add[type2](addEvt);
+          actions.add[type](addEvt);
           document.dispatchEvent(customEvt);
         }
       }
@@ -6967,6 +7616,97 @@ class EditPanel {
     };
     return panelEditButtonsWrap;
   }
+  /**
+   * Add a new attribute to the attrs panels
+   * @param {String} attr
+   * @param {String|Array} val
+   */
+  addAttribute = (attr, valArg) => {
+    let val = valArg;
+    const safeAttr = safeAttrName(attr);
+    const itemKey = `attrs.${safeAttr}`;
+    if (!mi18n.current[itemKey]) {
+      mi18n.put(itemKey, capitalize(attr));
+    }
+    if (typeof val === "string" && ["true", "false"].includes(val)) {
+      val = JSON.parse(val);
+    }
+    this.component.set(`attrs.${attr}`, val);
+    addAttributeActions[safeAttr]?.(val, this.component);
+    const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`);
+    const newAttr = new EditPanelItem({
+      key: itemKey,
+      data: { [safeAttr]: val },
+      field: this.component,
+      panel: this
+    });
+    if (existingAttr) {
+      existingAttr.replaceWith(newAttr.dom);
+    } else {
+      this.props.appendChild(newAttr.dom);
+    }
+    this.component.resizePanelWrap();
+  };
+  /**
+   * Add option to options panel
+   */
+  addOption = () => {
+    const controlId = this.component.data.config.controlId;
+    const fieldOptionData = this.component.get("options");
+    const type = controlId === "select" ? "option" : controlId;
+    const newOptionLabel = mi18n.get("newOptionLabel", { type }) || "New Option";
+    const itemKey = `${this.name}[${this.data.length}]`;
+    const lastOptionData = fieldOptionData[fieldOptionData.length - 1];
+    const optionTemplate = fieldOptionData.length ? lastOptionData : {};
+    const itemData = { ...optionTemplate, label: newOptionLabel };
+    if (controlId !== "button") {
+      itemData.value = slugify(newOptionLabel);
+    }
+    const newOption = new EditPanelItem({
+      key: itemKey,
+      data: itemData,
+      field: this.component,
+      index: this.props.children.length,
+      panel: this
+    });
+    this.editPanelItems.push(newOption);
+    this.props.appendChild(newOption.dom);
+    this.component.debouncedUpdatePreview();
+    this.component.resizePanelWrap();
+  };
+  addCondition = (evt) => {
+    const currentConditions = this.component.get("conditions");
+    const itemKey = `conditions[${currentConditions.length}]`;
+    const newCondition = new EditPanelItem({ key: itemKey, data: evt.template, field: this.component, panel: this });
+    this.props.appendChild(newCondition.dom);
+    this.component.set(itemKey, evt.template);
+    this.component.resizePanelWrap();
+  };
+  /**
+   * Clears all items from the component property based on its type.
+   * Sets the property to an empty array for 'array' type or empty object for other types.
+   * Executes removal action hooks and dispatches a custom removal event.
+   *
+   * @method clearAllItems
+   * @fires CustomEvent#onRemove{PropertyName} - Dispatched when items are cleared
+   * @returns {void}
+   */
+  clearAllItems = () => {
+    const emptyValue = this.type === "array" ? [] : {};
+    const removeEvt = {
+      type: this.name,
+      removeAction: () => {
+        this.component.set(this.name, emptyValue);
+        this.updateProps();
+      }
+    };
+    actions.remove[this.name](removeEvt);
+    const eventType = toTitleCase(this.name);
+    const customEvt = new window.CustomEvent(`onRemove${eventType}`, {
+      detail: removeEvt
+    });
+    document.dispatchEvent(customEvt);
+  };
   setData(val) {
     this.data = val;
     this.component.set(this.name, val);
@@ -6988,23 +7728,6 @@ class Panels {
    * @return {Object} Panels
    */
   constructor(options) {
-    __publicField(this, "toggleTabbedLayout", () => {
-      var _a2;
-      this.getPanelDisplay();
-      const isTabbed = this.isTabbed;
-      (_a2 = this.panelsWrap.parentElement) == null ? void 0 : _a2.classList.toggle("tabbed-panels", isTabbed);
-      if (isTabbed) {
-        this.panelNav.removeAttribute("style");
-      }
-      return isTabbed;
-    });
-    /**
-     * Resize the panel after its contents change in height
-     * @return {String} panel's height in pixels
-     */
-    __publicField(this, "resizePanels", () => {
-      this.toggleTabbedLayout();
-    });
     this.opts = merge(defaults$2, options);
     this.panelDisplay = this.opts.displayType;
     this.activePanelIndex = 0;
@@ -7038,6 +7761,22 @@ class Panels {
     this.panelDisplay = isAuto ? autoDisplayType : this.opts.displayType || defaults$2.displayType;
     return this.panelDisplay;
   }
+  toggleTabbedLayout = () => {
+    this.getPanelDisplay();
+    const isTabbed = this.isTabbed;
+    this.panelsWrap.parentElement?.classList.toggle("tabbed-panels", isTabbed);
+    if (isTabbed) {
+      this.panelNav.removeAttribute("style");
+    }
+    return isTabbed;
+  };
+  /**
+   * Resize the panel after its contents change in height
+   * @return {String} panel's height in pixels
+   */
+  resizePanels = () => {
+    this.toggleTabbedLayout();
+  };
   /**
    * Wrap a panel and make properties sortable
    * if the panel belongs to a field
@@ -7264,244 +8003,6 @@ class Component extends Data {
   constructor(name2, dataArg = {}) {
     const data = { ...dataArg, id: dataArg.id || uuid() };
     super(name2, data);
-    __publicField(this, "remove", (path) => {
-      if (path) {
-        const delPath = splitAddress(path);
-        const delItem = delPath.pop();
-        const parent2 = this.get(delPath);
-        if (Array.isArray(parent2)) {
-          if (isInt(delItem)) {
-            parent2.splice(Number(delItem), 1);
-          } else {
-            this.set(
-              delPath,
-              parent2.filter((item) => item !== delItem)
-            );
-          }
-        } else {
-          delete parent2[delItem];
-        }
-        return parent2;
-      }
-      if (this.name === "stage") {
-        return null;
-      }
-      const parent = this.parent;
-      const children = this.children;
-      this.dispatchComponentEvent("onRemove", {
-        path,
-        parent,
-        children: [...children]
-        // copy array since children will be modified
-      });
-      forEach(children, (child) => child.remove());
-      this.dom.parentElement.removeChild(this.dom);
-      remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
-      if (!parent.children.length) {
-        parent.emptyClass();
-      }
-      if (parent.name === "row") {
-        parent.autoColumnWidths();
-      }
-      return components[`${this.name}s`].delete(this.id);
-    });
-    /**
-     * Apply empty class to element if does not have children
-     */
-    __publicField(this, "emptyClass", () => this.dom.classList.toggle("empty", !this.children.length));
-    __publicField(this, "getComponentTag", () => {
-      return dom.create({
-        tag: "span",
-        className: ["component-tag", `${this.name}-tag`],
-        children: [
-          (this.isColumn || this.isField) && dom.icon("component-corner", { className: "bottom-left" }),
-          dom.icon(`handle-${this.name}`),
-          toTitleCase(this.name),
-          (this.isColumn || this.isRow) && dom.icon("component-corner", { className: "bottom-right" })
-        ].filter(Boolean)
-      });
-    });
-    /**
-     * Removes a class or classes from nodeList
-     * @param  {String | Array} className
-     */
-    __publicField(this, "removeClasses", (className) => {
-      const removeClass = {
-        string: () => this.dom.classList.remove(className),
-        array: () => className.map((name2) => this.dom.classList.remove(name2))
-      };
-      removeClass.object = removeClass.string;
-      return removeClass[dom.childType(className)](this.dom);
-    });
-    __publicField(this, "loadChildren", (children = this.data.children) => children.map((rowId) => this.addChild({ id: rowId })));
-    /**
-     * Updates the children order for the current component
-     */
-    __publicField(this, "saveChildOrder", () => {
-      if (this.render) {
-        return;
-      }
-      const newChildOrder = this.children.map(({ id }) => id);
-      this.set("children", newChildOrder);
-      return newChildOrder;
-    });
-    /**
-     * Save updated child order
-     * @return {Array} updated child order
-     */
-    __publicField(this, "onSort", () => {
-      return this.saveChildOrder();
-    });
-    /**
-     * Callback for when dragging ends
-     * @param  {Object} evt
-     */
-    __publicField(this, "onEnd", ({ to: { parentElement: to }, from: { parentElement: from } }) => {
-      to == null ? void 0 : to.classList.remove(`hovering-${componentType(to)}`);
-      from == null ? void 0 : from.classList.remove(`hovering-${componentType(from)}`);
-    });
-    // @todo remove, but first verify no longer needed
-    __publicField(this, "runConditions", () => {
-      const conditionsList = this.get("conditions");
-      if (!(conditionsList == null ? void 0 : conditionsList.length)) {
-        return null;
-      }
-      const processedConditions = conditionsList.map((conditions) => {
-        const ifCondition = this.processConditions(conditions.if);
-        const thenResult = this.processResults(conditions.then);
-        return ifCondition.map((conditions2) => {
-          return this.evaluateConditions(conditions2) && this.execResults(thenResult);
-        });
-      });
-      return processedConditions;
-    });
-    __publicField(this, "value", (path, val) => {
-      const splitPath = path.split(".");
-      const component = this.getComponent(path);
-      const property = component && splitPath.slice(2, splitPath.length).join(".");
-      if ([!component, !property, !propertyOptions[property]].some(Boolean)) {
-        return path;
-      }
-      return val ? component.set(propertyOptions[property], val) : component.get(propertyOptions[property]);
-    });
-    /**
-     * Maps operators to their respective handler
-     * @param {String} operator
-     * @return {Function} action
-     */
-    __publicField(this, "getResult", (operator) => {
-      const operatorMap = {
-        "=": (target, propertyPath, value) => target.set(propertyPath, value)
-      };
-      return operatorMap[operator];
-    });
-    __publicField(this, "processResults", (results) => {
-      return results.map(({ operator, target, value }) => {
-        const targetComponent = this.getComponent(target);
-        const propertyPath = targetComponent && target.split(".").slice(2, target.length).join(".");
-        const processedResult = {
-          target: targetComponent,
-          propertyPath,
-          action: this.getResult(operator),
-          value: this.value(value)
-        };
-        return processedResult;
-      });
-    });
-    __publicField(this, "execResults", (results) => {
-      const promises = results.map((result) => {
-        return this.execResult(result);
-      });
-      return Promise.all(promises);
-    });
-    __publicField(this, "execResult", ({ target, action, value, _propertyPath }) => {
-      return new Promise((resolve, reject) => {
-        try {
-          return resolve(action(target, value));
-        } catch (err) {
-          return reject(err);
-        }
-      });
-    });
-    __publicField(this, "cloneData", () => {
-      const clonedData = { ...clone$1(this.data), id: uuid() };
-      if (this.name !== "field") {
-        clonedData.children = [];
-      }
-      return clonedData;
-    });
-    __publicField(this, "clone", (parent = this.parent) => {
-      const newClone = parent.addChild(this.cloneData(), this.index + 1);
-      if (this.name !== "field") {
-        this.cloneChildren(newClone);
-      }
-      this.dispatchComponentEvent("onClone", {
-        original: this,
-        clone: newClone,
-        parent
-      });
-      return newClone;
-    });
-    __publicField(this, "createChildWrap", (children) => dom.create({
-      tag: "ul",
-      attrs: {
-        className: "children"
-      },
-      children
-    }));
-    /**
-     * Checks if attribute is allowed to be edited
-     * @param  {String}  propName
-     * @return {Boolean}
-     */
-    __publicField(this, "isDisabledProp", (propName, kind = "attrs") => {
-      const propKind = this.config.panels[kind];
-      if (!propKind) {
-        return false;
-      }
-      const disabledAttrs = propKind.disabled.concat(this.get("config.disabled"));
-      return disabledAttrs.includes(propName);
-    });
-    /**
-     * Checks if property can be removed
-     * @param  {String}  propName
-     * @return {Boolean}
-     */
-    __publicField(this, "isLockedProp", (propName, kind = "attrs") => {
-      const propKind = this.config.panels[kind];
-      if (!propKind) {
-        return false;
-      }
-      const lockedAttrs = propKind.locked.concat(this.get("config.locked"));
-      return lockedAttrs.includes(propName);
-    });
-    __publicField(this, "updateEditPanels", () => {
-      if (!this.config) {
-        return null;
-      }
-      const editable = ["object", "array"];
-      const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)]);
-      const noPanels = ["children", "config", "meta", "action", "events", ...this.config.panels.disabled];
-      const allowedPanels = panelOrder.filter((panelName) => !noPanels.includes(panelName));
-      for (const panelName of allowedPanels) {
-        const panelData = this.get(panelName);
-        const propType = dom.childType(panelData);
-        if (editable.includes(propType)) {
-          const editPanel = new EditPanel(panelData, panelName, this);
-          this.editPanels.set(editPanel.name, editPanel);
-        }
-      }
-      const panelsData = {
-        panels: Array.from(this.editPanels.values()).map(({ panelConfig }) => panelConfig),
-        id: this.id,
-        displayType: "auto"
-      };
-      this.panels = new Panels(panelsData);
-      if (this.dom) {
-        this.dom.querySelector(".panel-nav").replaceWith(this.panels.panelNav);
-        this.dom.querySelector(".panels").replaceWith(this.panels.panelsWrap);
-      }
-    });
     this.id = data.id;
     this.shortId = this.id.slice(0, this.id.indexOf("-"));
     this.name = name2;
@@ -7542,8 +8043,7 @@ class Component extends Data {
    * @param {function} handler - Event handler function to remove
    */
   removeEventListener(eventName, handler) {
-    var _a2;
-    if (!((_a2 = this.eventListeners) == null ? void 0 : _a2.has(eventName))) {
+    if (!this.eventListeners?.has(eventName)) {
       return;
     }
     const handlers = this.eventListeners.get(eventName);
@@ -7558,14 +8058,13 @@ class Component extends Data {
    * @param {object} eventData - Data to pass to event handlers
    */
   dispatchComponentEvent(eventName, eventData = {}) {
-    var _a2;
     const fullEventData = {
       component: this,
       type: eventName,
       timestamp: Date.now(),
       ...eventData
     };
-    if ((_a2 = this.eventListeners) == null ? void 0 : _a2.has(eventName)) {
+    if (this.eventListeners?.has(eventName)) {
       this.eventListeners.get(eventName).forEach((handler) => {
         try {
           if (typeof handler === "function") {
@@ -7607,6 +8106,47 @@ class Component extends Data {
   get json() {
     return this.data;
   }
+  remove = (path) => {
+    if (path) {
+      const delPath = splitAddress(path);
+      const delItem = delPath.pop();
+      const parent2 = this.get(delPath);
+      if (Array.isArray(parent2)) {
+        if (isInt(delItem)) {
+          parent2.splice(Number(delItem), 1);
+        } else {
+          this.set(
+            delPath,
+            parent2.filter((item) => item !== delItem)
+          );
+        }
+      } else {
+        delete parent2[delItem];
+      }
+      return parent2;
+    }
+    if (this.name === "stage") {
+      return null;
+    }
+    const parent = this.parent;
+    const children = this.children;
+    this.dispatchComponentEvent("onRemove", {
+      path,
+      parent,
+      children: [...children]
+      // copy array since children will be modified
+    });
+    forEach(children, (child) => child.remove());
+    this.dom.parentElement.removeChild(this.dom);
+    remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
+    if (!parent.children.length) {
+      parent.emptyClass();
+    }
+    if (parent.name === "row") {
+      parent.autoColumnWidths();
+    }
+    return components[`${this.name}s`].delete(this.id);
+  };
   /**
    * Removes element from DOM and data
    * @return  {Object} parent element
@@ -7619,6 +8159,10 @@ class Component extends Data {
     this.dom.classList.add("empty");
     return removed;
   }
+  /**
+   * Apply empty class to element if does not have children
+   */
+  emptyClass = () => this.dom.classList.toggle("empty", !this.children.length);
   /**
    * Move, close, and edit buttons for row, column and field
    * @return {Object} element config object
@@ -7650,6 +8194,18 @@ class Component extends Data {
       ]
     };
   }
+  getComponentTag = () => {
+    return dom.create({
+      tag: "span",
+      className: ["component-tag", `${this.name}-tag`],
+      children: [
+        (this.isColumn || this.isField) && dom.icon("component-corner", { className: "bottom-left" }),
+        dom.icon(`handle-${this.name}`),
+        toTitleCase(this.name),
+        (this.isColumn || this.isRow) && dom.icon("component-corner", { className: "bottom-right" })
+      ].filter(Boolean)
+    });
+  };
   /**
    * Toggles the edit window
    * @param {Boolean} open whether to open or close the edit window
@@ -7742,10 +8298,7 @@ class Component extends Data {
     };
     const { buttons, disabled } = this.config.actionButtons;
     const activeButtons = buttons.filter((btn) => !disabled.includes(btn));
-    const actionButtonsConfigs = activeButtons.map((btn) => {
-      var _a2;
-      return ((_a2 = buttonConfig[btn]) == null ? void 0 : _a2.call(buttonConfig)) || btn;
-    });
+    const actionButtonsConfigs = activeButtons.map((btn) => buttonConfig[btn]?.() || btn);
     this.actionButtons = actionButtonsConfigs;
     return this.actionButtons;
   }
@@ -7755,6 +8308,18 @@ class Component extends Data {
   get index() {
     return indexOfNode(this.dom);
   }
+  /**
+   * Removes a class or classes from nodeList
+   * @param  {String | Array} className
+   */
+  removeClasses = (className) => {
+    const removeClass = {
+      string: () => this.dom.classList.remove(className),
+      array: () => className.map((name2) => this.dom.classList.remove(name2))
+    };
+    removeClass.object = removeClass.string;
+    return removeClass[dom.childType(className)](this.dom);
+  };
   get parentType() {
     return PARENT_TYPE_MAP.get(this.name);
   }
@@ -7774,6 +8339,7 @@ class Component extends Data {
     const childGroup = CHILD_TYPE_MAP.get(this.name);
     return map(domChildren, (child) => components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean);
   }
+  loadChildren = (children = this.data.children) => children.map((rowId) => this.addChild({ id: rowId }));
   get domChildren() {
     const childWrap = this.dom.querySelector(".children");
     return childWrap ? childWrap.children : [];
@@ -7785,7 +8351,6 @@ class Component extends Data {
    * @return {Object} child DOM element
    */
   addChild(childData = {}, index2 = this.domChildren.length) {
-    var _a2, _b2;
     let data = childData;
     if (typeof childData !== "object") {
       data = { id: data };
@@ -7816,9 +8381,9 @@ class Component extends Data {
       addedVia: "addChild"
       // indicate how the component was added
     });
-    (_b2 = (_a2 = this.config.events) == null ? void 0 : _a2.onAddChild) == null ? void 0 : _b2.call(_a2, { parent: this, child });
+    this.config.events?.onAddChild?.({ parent: this, child });
     const grandChildren = child.get("children");
-    if (grandChildren == null ? void 0 : grandChildren.length) {
+    if (grandChildren?.length) {
       child.loadChildren(grandChildren);
     }
     this.removeClasses("empty");
@@ -7826,13 +8391,23 @@ class Component extends Data {
     return child;
   }
   /**
+   * Updates the children order for the current component
+   */
+  saveChildOrder = () => {
+    if (this.render) {
+      return;
+    }
+    const newChildOrder = this.children.map(({ id }) => id);
+    this.set("children", newChildOrder);
+    return newChildOrder;
+  };
+  /**
    * Method for handling onAdd for all components
    * @todo improve readability of this method
    * @param  {Object} evt
    * @return {Object} Component
    */
   onAdd({ from, to, item, newIndex: newIndex2 }) {
-    var _a2;
     if (!from.classList.contains(CONTROL_GROUP_CLASSNAME)) {
       from = from.parentElement;
     }
@@ -7912,7 +8487,7 @@ class Component extends Data {
           column: 1
         };
         const action = (depthMap.get(targets[toType]) || identity)();
-        return action == null ? void 0 : action({ id: item.id }, newIndex2);
+        return action?.({ id: item.id }, newIndex2);
       },
       column: () => {
         const targets = {
@@ -7920,10 +8495,10 @@ class Component extends Data {
           row: -1
         };
         const action = (depthMap.get(targets[toType]) || identity)();
-        return action == null ? void 0 : action(item.id);
+        return action?.(item.id);
       }
     };
-    const component = (_a2 = onAddConditions[fromType]) == null ? void 0 : _a2.call(onAddConditions, item, newIndex2);
+    const component = onAddConditions[fromType]?.(item, newIndex2);
     this.dispatchComponentEvent("onAdd", {
       from,
       to,
@@ -7939,6 +8514,13 @@ class Component extends Data {
     return component;
   }
   /**
+   * Save updated child order
+   * @return {Array} updated child order
+   */
+  onSort = () => {
+    return this.saveChildOrder();
+  };
+  /**
    * Handler for removing content from a sortable component
    * @param  {Object} evt
    * @return {Array} updated child order
@@ -7953,6 +8535,14 @@ class Component extends Data {
     this.emptyClass();
     return this.saveChildOrder();
   }
+  /**
+   * Callback for when dragging ends
+   * @param  {Object} evt
+   */
+  onEnd = ({ to: { parentElement: to }, from: { parentElement: from } }) => {
+    to?.classList.remove(`hovering-${componentType(to)}`);
+    from?.classList.remove(`hovering-${componentType(from)}`);
+  };
   /**
    * Callback for onRender, executes any defined onRender for component
    */
@@ -7979,11 +8569,11 @@ class Component extends Data {
    * 4. Instance specific config
    * The merged result is stored in this.configVal
    */
-  set config(config2) {
-    const allConfig = get(config2, "all");
+  set config(config) {
+    const allConfig = get(config, "all");
     const controlId = get(this.data, "config.controlId");
-    const typeConfig = controlId && get(config2, controlId);
-    const idConfig = get(config2, this.id);
+    const typeConfig = controlId && get(config, controlId);
+    const idConfig = get(config, this.id);
     const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
       (acc, cur) => cur ? merge(acc, cur) : acc,
       this.configVal
@@ -7993,16 +8583,105 @@ class Component extends Data {
   get config() {
     return this.configVal;
   }
+  // @todo remove, but first verify no longer needed
+  runConditions = () => {
+    const conditionsList = this.get("conditions");
+    if (!conditionsList?.length) {
+      return null;
+    }
+    const processedConditions = conditionsList.map((conditions) => {
+      const ifCondition = this.processConditions(conditions.if);
+      const thenResult = this.processResults(conditions.then);
+      return ifCondition.map((conditions2) => {
+        return this.evaluateConditions(conditions2) && this.execResults(thenResult);
+      });
+    });
+    return processedConditions;
+  };
   getComponent(path) {
-    const [type2, id] = path.split(".");
-    const group = components[type2];
-    return id === this.id ? this : group == null ? void 0 : group.get(id);
+    const [type, id] = path.split(".");
+    const group = components[type];
+    return id === this.id ? this : group?.get(id);
   }
+  value = (path, val) => {
+    const splitPath = path.split(".");
+    const component = this.getComponent(path);
+    const property = component && splitPath.slice(2, splitPath.length).join(".");
+    if ([!component, !property, !propertyOptions[property]].some(Boolean)) {
+      return path;
+    }
+    return val ? component.set(propertyOptions[property], val) : component.get(propertyOptions[property]);
+  };
+  /**
+   * Maps operators to their respective handler
+   * @param {String} operator
+   * @return {Function} action
+   */
+  getResult = (operator) => {
+    const operatorMap = {
+      "=": (target, propertyPath, value) => target.set(propertyPath, value)
+    };
+    return operatorMap[operator];
+  };
+  processResults = (results) => {
+    return results.map(({ operator, target, value }) => {
+      const targetComponent = this.getComponent(target);
+      const propertyPath = targetComponent && target.split(".").slice(2, target.length).join(".");
+      const processedResult = {
+        target: targetComponent,
+        propertyPath,
+        action: this.getResult(operator),
+        value: this.value(value)
+      };
+      return processedResult;
+    });
+  };
+  execResults = (results) => {
+    const promises = results.map((result) => {
+      return this.execResult(result);
+    });
+    return Promise.all(promises);
+  };
+  execResult = ({ target, action, value, _propertyPath }) => {
+    return new Promise((resolve, reject) => {
+      try {
+        return resolve(action(target, value));
+      } catch (err) {
+        return reject(err);
+      }
+    });
+  };
+  cloneData = () => {
+    const clonedData = { ...clone$1(this.data), id: uuid() };
+    if (this.name !== "field") {
+      clonedData.children = [];
+    }
+    return clonedData;
+  };
+  clone = (parent = this.parent) => {
+    const newClone = parent.addChild(this.cloneData(), this.index + 1);
+    if (this.name !== "field") {
+      this.cloneChildren(newClone);
+    }
+    this.dispatchComponentEvent("onClone", {
+      original: this,
+      clone: newClone,
+      parent
+    });
+    return newClone;
+  };
   cloneChildren(toParent) {
     for (const child of this.children) {
-      child == null ? void 0 : child.clone(toParent);
+      child?.clone(toParent);
     }
   }
+  createChildWrap = (children) => dom.create({
+    tag: "ul",
+    attrs: {
+      className: "children"
+    },
+    children
+  });
   get isRow() {
     return this.name === COMPONENT_TYPE_MAP.row;
   }
@@ -8012,6 +8691,32 @@ class Component extends Data {
   get isField() {
     return this.name === COMPONENT_TYPE_MAP.field;
   }
+  /**
+   * Checks if attribute is allowed to be edited
+   * @param  {String}  propName
+   * @return {Boolean}
+   */
+  isDisabledProp = (propName, kind = "attrs") => {
+    const propKind = this.config.panels[kind];
+    if (!propKind) {
+      return false;
+    }
+    const disabledAttrs = propKind.disabled.concat(this.get("config.disabled"));
+    return disabledAttrs.includes(propName);
+  };
+  /**
+   * Checks if property can be removed
+   * @param  {String}  propName
+   * @return {Boolean}
+   */
+  isLockedProp = (propName, kind = "attrs") => {
+    const propKind = this.config.panels[kind];
+    if (!propKind) {
+      return false;
+    }
+    const lockedAttrs = propKind.locked.concat(this.get("config.locked"));
+    return lockedAttrs.includes(propName);
+  };
   /**
    * Generate the markup for field edit mode
    * @return {Object} fieldEdit element config
@@ -8042,6 +8747,33 @@ class Component extends Data {
     };
     return dom.create(editWindow);
   }
+  updateEditPanels = () => {
+    if (!this.config) {
+      return null;
+    }
+    const editable = ["object", "array"];
+    const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)]);
+    const noPanels = ["children", "config", "meta", "action", "events", ...this.config.panels.disabled];
+    const allowedPanels = panelOrder.filter((panelName) => !noPanels.includes(panelName));
+    for (const panelName of allowedPanels) {
+      const panelData = this.get(panelName);
+      const propType = dom.childType(panelData);
+      if (editable.includes(propType)) {
+        const editPanel = new EditPanel(panelData, panelName, this);
+        this.editPanels.set(editPanel.name, editPanel);
+      }
+    }
+    const panelsData = {
+      panels: Array.from(this.editPanels.values()).map(({ panelConfig }) => panelConfig),
+      id: this.id,
+      displayType: "auto"
+    };
+    this.panels = new Panels(panelsData);
+    if (this.dom) {
+      this.dom.querySelector(".panel-nav").replaceWith(this.panels.panelNav);
+      this.dom.querySelector(".panels").replaceWith(this.panels.panelsWrap);
+    }
+  };
 }
 class ResizeColumn {
   /**
@@ -8235,29 +8967,6 @@ class Column extends Component {
    */
   constructor(columnData) {
     super("column", { ...DEFAULT_DATA$3(), ...columnData });
-    // loops through children and refresh their edit panels
-    __publicField(this, "refreshFieldPanels", () => {
-      for (const field2 of this.children) {
-        field2.panels.nav.refresh();
-      }
-    });
-    /**
-     * Sets the width data and style for the column
-     * @param {string} width - The width value to be set for the column
-     * @returns {void}
-     */
-    __publicField(this, "setDomWidth", (width) => {
-      this.dom.dataset.colWidth = width;
-      this.dom.style.width = width;
-    });
-    /**
-     * Sets a columns width
-     * @param {String} width percent or pixel
-     */
-    __publicField(this, "setWidth", (width) => {
-      this.setDomWidth(width);
-      return this.set("config.width", width);
-    });
     const childWrap = this.createChildWrap();
     this.dom = dom.create({
       tag: "li",
@@ -8315,6 +9024,29 @@ class Column extends Component {
       this.setDomWidth(columnWidth);
     }
   }
+  // loops through children and refresh their edit panels
+  refreshFieldPanels = () => {
+    for (const field2 of this.children) {
+      field2.panels.nav.refresh();
+    }
+  };
+  /**
+   * Sets the width data and style for the column
+   * @param {string} width - The width value to be set for the column
+   * @returns {void}
+   */
+  setDomWidth = (width) => {
+    this.dom.dataset.colWidth = width;
+    this.dom.style.width = width;
+  };
+  /**
+   * Sets a columns width
+   * @param {String} width percent or pixel
+   */
+  setWidth = (width) => {
+    this.setDomWidth(width);
+    return this.set("config.width", width);
+  };
 }
 const DEFAULT_CONFIG$3 = {
   actionButtons: {
@@ -8352,60 +9084,6 @@ class Row extends Component {
    */
   constructor(rowData) {
     super("row", { ...DEFAULT_DATA$2(), ...rowData });
-    /**
-     * Read columns and generate bootstrap cols
-     * @param {Object} row DOM element
-     */
-    __publicField(this, "autoColumnWidths", () => {
-      const columns2 = this.children;
-      if (!columns2.length) {
-        return;
-      }
-      const width = Number.parseFloat((100 / columns2.length).toFixed(1)) / 1;
-      for (const column of columns2) {
-        column.removeClasses(bsColRegExp);
-        const colDom = column.dom;
-        const newColWidth = numToPercent(width);
-        column.set("config.width", newColWidth);
-        colDom.style.width = newColWidth;
-        colDom.dataset.colWidth = newColWidth;
-        const refreshTimeout = setTimeout(() => {
-          clearTimeout(refreshTimeout);
-          column.refreshFieldPanels();
-        }, ANIMATION_SPEED_FAST);
-        document.dispatchEvent(events.columnResized);
-      }
-      this.updateColumnPreset();
-    });
-    /**
-     * Updates the column preset <select>
-     * @return {Object} columnPresetConfig
-     */
-    __publicField(this, "updateColumnPreset", () => {
-      this.columnPresetControl.innerHTML = "";
-      const presetOptions = this.getColumnPresetOptions.map(
-        ({ label, ...attrs }) => dom.create({
-          tag: "option",
-          content: label,
-          attrs
-        })
-      );
-      this.columnPresetControl.append(...presetOptions);
-    });
-    /**
-     * Set the widths of columns in a row
-     * @param {Object} row DOM element
-     * @param {String} widths
-     */
-    __publicField(this, "setColumnWidths", (widths) => {
-      if (typeof widths === "string") {
-        widths = widths.split(",");
-      }
-      this.children.forEach((column, i) => {
-        column.setWidth(`${widths[i]}%`);
-        column.refreshFieldPanels();
-      });
-    });
     const children = this.createChildWrap();
     this.dom = dom.create({
       tag: "li",
@@ -8540,6 +9218,60 @@ class Row extends Component {
     super.onRemove(...args);
     this.autoColumnWidths();
   }
+  /**
+   * Read columns and generate bootstrap cols
+   * @param {Object} row DOM element
+   */
+  autoColumnWidths = () => {
+    const columns2 = this.children;
+    if (!columns2.length) {
+      return;
+    }
+    const width = Number.parseFloat((100 / columns2.length).toFixed(1)) / 1;
+    for (const column of columns2) {
+      column.removeClasses(bsColRegExp);
+      const colDom = column.dom;
+      const newColWidth = numToPercent(width);
+      column.set("config.width", newColWidth);
+      colDom.style.width = newColWidth;
+      colDom.dataset.colWidth = newColWidth;
+      const refreshTimeout = setTimeout(() => {
+        clearTimeout(refreshTimeout);
+        column.refreshFieldPanels();
+      }, ANIMATION_SPEED_FAST);
+      document.dispatchEvent(events.columnResized);
+    }
+    this.updateColumnPreset();
+  };
+  /**
+   * Updates the column preset <select>
+   * @return {Object} columnPresetConfig
+   */
+  updateColumnPreset = () => {
+    this.columnPresetControl.innerHTML = "";
+    const presetOptions = this.getColumnPresetOptions.map(
+      ({ label, ...attrs }) => dom.create({
+        tag: "option",
+        content: label,
+        attrs
+      })
+    );
+    this.columnPresetControl.append(...presetOptions);
+  };
+  /**
+   * Set the widths of columns in a row
+   * @param {Object} row DOM element
+   * @param {String} widths
+   */
+  setColumnWidths = (widths) => {
+    if (typeof widths === "string") {
+      widths = widths.split(",");
+    }
+    this.children.forEach((column, i) => {
+      column.setWidth(`${widths[i]}%`);
+      column.refreshFieldPanels();
+    });
+  };
   /**
    * Retrieves the preset options for columns based on the current configuration.
    *
@@ -8845,9 +9577,9 @@ const LOADER_MAP = {
   js: insertScripts,
   css: insertStyles
 };
-const fetchDependencies = (dependencies2) => {
-  const promises = Object.entries(dependencies2).map(([type2, src]) => {
-    return LOADER_MAP[type2](src);
+const fetchDependencies = (dependencies) => {
+  const promises = Object.entries(dependencies).map(([type, src]) => {
+    return LOADER_MAP[type](src);
   });
   return Promise.all(promises);
 };
@@ -8865,6 +9597,7 @@ const fetchFormeoStyle = async (cssUrl) => {
   }
 };
 class Control {
+  controlCache = /* @__PURE__ */ new Set();
   /**
    * Constructs a new Control instance.
    *
@@ -8873,21 +9606,19 @@ class Control {
    * @param {Object} [config.dependencies={}] - The dependencies required by the control. ex { js: 'https://example.com/script.js', css: 'https://example.com/style.css' }
    * @param {...Object} [controlData] - Additional configuration properties. ex { meta: {}, config: { label: 'Control Name' } }
    */
-  constructor({ events: events2 = {}, dependencies: dependencies2 = {}, controlAction, ...controlData }) {
-    __publicField(this, "controlCache", /* @__PURE__ */ new Set());
+  constructor({ events: events2 = {}, dependencies = {}, controlAction, ...controlData }) {
     this.events = events2;
     this.controlData = controlData;
     this.controlAction = controlAction;
-    this.dependencies = dependencies2;
+    this.dependencies = dependencies;
     this.id = controlData.id || uuid();
   }
   get controlId() {
-    var _a2, _b2;
-    return ((_a2 = this.controlData.meta) == null ? void 0 : _a2.id) || ((_b2 = this.controlData.config) == null ? void 0 : _b2.controlId);
+    return this.controlData.meta?.id || this.controlData.config?.controlId;
   }
   get dom() {
-    const { meta, config: config2 } = this.controlData;
-    const controlLabel = this.i18n(config2.label) || config2.label;
+    const { meta, config } = this.controlData;
+    const controlLabel = this.i18n(config.label) || config.label;
     const button = {
       tag: "button",
       attrs: {
@@ -8905,8 +9636,7 @@ class Control {
           return group && Controls$2.panels.nav.refresh(indexOfNode(group));
         },
         click: ({ target }) => {
-          var _a2;
-          const controlId = (_a2 = target.closest(".field-control")) == null ? void 0 : _a2.id;
+          const controlId = target.closest(".field-control")?.id;
           if (controlId) {
             Controls$2.addElement(controlId);
           }
@@ -8934,11 +9664,10 @@ class Control {
    * @return {String} the translated label
    */
   i18n(lookup, args) {
-    var _a2, _b2;
     const locale = mi18n.locale;
-    const controlTranslations = (_a2 = this.definition) == null ? void 0 : _a2.i18n;
-    const localeTranslations = (controlTranslations == null ? void 0 : controlTranslations[locale]) || {};
-    return (((_b2 = localeTranslations[lookup]) == null ? void 0 : _b2.call(localeTranslations)) ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
+    const controlTranslations = this.definition?.i18n;
+    const localeTranslations = controlTranslations?.[locale] || {};
+    return (localeTranslations[lookup]?.() ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
   }
 }
 const defaultOptions = Object.freeze({
@@ -8973,40 +9702,6 @@ const defaultOptions = Object.freeze({
 });
 let Controls$1 = class Controls {
   constructor() {
-    __publicField(this, "groupLabel", (key) => mi18n.get(key) || key || "");
-    __publicField(this, "layoutTypes", {
-      row: () => stages.active.addChild(),
-      column: () => this.layoutTypes.row().addChild(),
-      field: (controlData) => this.layoutTypes.column().addChild(controlData)
-    });
-    /**
-     * Append an element to the stage
-     * @param {String} id of elements
-     */
-    __publicField(this, "addElement", (id) => {
-      const {
-        meta: { group, id: metaId },
-        ...elementData
-      } = get(this.get(id), "controlData");
-      set(elementData, "config.controlId", metaId);
-      if (group === "layout") {
-        return this.layoutTypes[metaId.replace("layout-", "")]();
-      }
-      return this.layoutTypes.field(elementData);
-    });
-    __publicField(this, "applyOptions", async (controlOptions = {}) => {
-      const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions);
-      this.container = container;
-      this.groupOrder = unique(groupOrder.concat(["common", "html", "layout"]));
-      this.options = options;
-      const [layoutControls, formControls, htmlControls] = await Promise.all([
-        Promise.resolve().then(() => index$5),
-        Promise.resolve().then(() => index$3),
-        Promise.resolve().then(() => index$1)
-      ]);
-      const allControls = [layoutControls.default, formControls.default, htmlControls.default].flat();
-      return Promise.all(this.registerControls([...allControls, ...elements]));
-    });
     this.data = /* @__PURE__ */ new Map();
     this.buttonActions = {
       // this is used for keyboard navigation. when tabbing through controls it
@@ -9043,6 +9738,7 @@ let Controls$1 = class Controls {
       return control.promise();
     });
   }
+  groupLabel = (key) => mi18n.get(key) || key || "";
   /**
    * Group elements into their respective control group
    * @return {Array} allGroups
@@ -9273,6 +9969,39 @@ let Controls$1 = class Controls {
     }
     return element;
   }
+  layoutTypes = {
+    row: () => stages.active.addChild(),
+    column: () => this.layoutTypes.row().addChild(),
+    field: (controlData) => this.layoutTypes.column().addChild(controlData)
+  };
+  /**
+   * Append an element to the stage
+   * @param {String} id of elements
+   */
+  addElement = (id) => {
+    const {
+      meta: { group, id: metaId },
+      ...elementData
+    } = get(this.get(id), "controlData");
+    set(elementData, "config.controlId", metaId);
+    if (group === "layout") {
+      return this.layoutTypes[metaId.replace("layout-", "")]();
+    }
+    return this.layoutTypes.field(elementData);
+  };
+  applyOptions = async (controlOptions = {}) => {
+    const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions);
+    this.container = container;
+    this.groupOrder = unique(groupOrder.concat(["common", "html", "layout"]));
+    this.options = options;
+    const [layoutControls, formControls, htmlControls] = await Promise.all([
+      Promise.resolve().then(() => index$5),
+      Promise.resolve().then(() => index$3),
+      Promise.resolve().then(() => index$1)
+    ]);
+    const allControls = [layoutControls.default, formControls.default, htmlControls.default].flat();
+    return Promise.all(this.registerControls([...allControls, ...elements]));
+  };
 };
 const Controls$2 = new Controls$1();
 const index$7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
@@ -9293,29 +10022,13 @@ class Field extends Component {
    */
   constructor(fieldData = /* @__PURE__ */ Object.create(null)) {
     super("field", { ...DEFAULT_DATA(), ...fieldData });
-    __publicField(this, "setData", (path, value) => {
-      return super.set(path, value);
-    });
-    /**
-     * Updates a field's preview
-     * @return {Object} fresh preview
-     */
-    __publicField(this, "updatePreview", () => {
-      this.updateLabel();
-      const newPreview = this.fieldPreview();
-      this.preview.replaceWith(newPreview);
-      this.preview = newPreview;
-    });
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
     this.debouncedUpdatePreview = debounce(this.updatePreview);
     this.label = dom.create(this.labelConfig);
     this.preview = this.fieldPreview();
     this.controlId = this.get("config.controlId") || this.get("meta.id");
     const actionButtons = this.getActionButtons();
-    const hasEditButton = this.actionButtons.some((child) => {
-      var _a2;
-      return ((_a2 = child.meta) == null ? void 0 : _a2.id) === "edit";
-    });
+    const hasEditButton = this.actionButtons.some((child) => child.meta?.id === "edit");
     this.updateEditPanels();
     const field2 = dom.create({
       tag: "li",
@@ -9348,18 +10061,18 @@ class Field extends Component {
     const required = this.get("attrs.required");
     const disableHTML = this.config.label.disableHTML;
     const labelConfig = () => {
-      const config2 = {
+      const config = {
         tag: "label",
         attrs: {}
       };
       if (disableHTML) {
-        config2.tag = "input";
-        config2.attrs.value = labelVal;
-        return config2;
+        config.tag = "input";
+        config.attrs.value = labelVal;
+        return config;
       }
-      config2.attrs.contenteditable = true;
-      config2.children = labelVal;
-      return config2;
+      config.attrs.contenteditable = true;
+      config.children = labelVal;
+      return config;
     };
     const label = {
       ...labelConfig(),
@@ -9375,6 +10088,9 @@ class Field extends Component {
     };
     return labelWrap;
   }
+  setData = (path, value) => {
+    return super.set(path, value);
+  };
   /**
    * wrapper for Data.set
    */
@@ -9394,16 +10110,25 @@ class Field extends Component {
     this.label.replaceWith(newLabel);
     this.label = newLabel;
   }
+  /**
+   * Updates a field's preview
+   * @return {Object} fresh preview
+   */
+  updatePreview = () => {
+    this.updateLabel();
+    const newPreview = this.fieldPreview();
+    this.preview.replaceWith(newPreview);
+    this.preview = newPreview;
+  };
   get defaultPreviewActions() {
     return {
       change: (evt) => {
-        var _a2;
         const { target } = evt;
-        const { type: type2 } = target;
-        if (isSelectableType.has(type2)) {
+        const { type } = target;
+        if (isSelectableType.has(type)) {
           const selectedOptions = this.preview.querySelectorAll(":checked");
           const optionsData = this.get("options");
-          const checkedType = ((_a2 = optionsData == null ? void 0 : optionsData[0]) == null ? void 0 : _a2.selected) !== void 0 ? "selected" : "checked";
+          const checkedType = optionsData?.[0]?.selected !== void 0 ? "selected" : "checked";
           const optionsDataMap = optionsData.reduce((acc, option2) => {
             acc[option2.value] = option2;
             acc[option2.value][checkedType] = false;
@@ -9422,12 +10147,11 @@ class Field extends Component {
         }
       },
       input: ({ target }) => {
-        var _a2;
         if (["input", "meter", "progress", "button"].includes(target.tagName.toLowerCase())) {
           super.set("attrs.value", target.value);
           return this.debouncedUpdateEditPanels();
         }
-        if (target.contentEditable && !((_a2 = target.type) == null ? void 0 : _a2.startsWith("select-"))) {
+        if (target.contentEditable && !target.type?.startsWith("select-")) {
           const parentClassList = target.parentElement.classList;
           const isOption = parentClassList.contains("f-checkbox") || parentClassList.contains("f-radio");
           if (isOption) {
@@ -9446,14 +10170,13 @@ class Field extends Component {
    * @return {Object} fieldPreview
    */
   fieldPreview() {
-    var _a2;
     const { action = {}, ...prevData } = clone$1(this.data);
     prevData.id = `prev-${this.id}`;
     prevData.action = Object.entries(action).reduce((acc, [key, value]) => {
       acc[key] = value.bind(this);
       return acc;
     }, {});
-    if ((_a2 = this.data) == null ? void 0 : _a2.config.editableContent) {
+    if (this.data?.config.editableContent) {
       prevData.attrs = { ...prevData.attrs, contenteditable: true };
     }
     const fieldPreview = {
@@ -9495,50 +10218,50 @@ const DEFAULT_CONFIG = () => ({
 let Fields$1 = class Fields extends ComponentData {
   constructor(fieldData) {
     super("fields", fieldData);
-    __publicField(this, "get", (path) => {
-      let found = path && get(this.data, path);
-      if (!found) {
-        const control = Controls$2.get(path);
-        if (control) {
-          found = this.add(null, control.controlData);
-        }
-      }
-      return found;
-    });
-    __publicField(this, "getData", () => {
-      return Object.entries(this.data).reduce((acc, [key, val]) => {
-        const { conditions, ...data } = (val == null ? void 0 : val.getData()) || val;
-        if (conditions == null ? void 0 : conditions.length) {
-          let hasConditions = true;
-          if (conditions.length === 1) {
-            const [firstCondition] = conditions;
-            hasConditions = Boolean(firstCondition.if[0].source);
-          }
-          if (hasConditions) {
-            data.conditions = conditions;
-          }
-        }
-        acc[key] = data;
-        return acc;
-      }, {});
-    });
-    __publicField(this, "load", (dataArg = /* @__PURE__ */ Object.create(null)) => {
-      const allFieldData = parseData(dataArg);
-      this.empty();
-      for (const [key, val] of Object.entries(allFieldData)) {
-        const { meta, ...data } = val;
-        if (meta == null ? void 0 : meta.id) {
-          set(data, "config.controlId", meta == null ? void 0 : meta.id);
-        }
-        this.add(key, data);
-      }
-      return this.data;
-    });
     this.config = { all: DEFAULT_CONFIG() };
   }
   Component(data) {
     return new Field(data);
   }
+  get = (path) => {
+    let found = path && get(this.data, path);
+    if (!found) {
+      const control = Controls$2.get(path);
+      if (control) {
+        found = this.add(null, control.controlData);
+      }
+    }
+    return found;
+  };
+  getData = () => {
+    return Object.entries(this.data).reduce((acc, [key, val]) => {
+      const { conditions, ...data } = val?.getData() || val;
+      if (conditions?.length) {
+        let hasConditions = true;
+        if (conditions.length === 1) {
+          const [firstCondition] = conditions;
+          hasConditions = Boolean(firstCondition.if[0].source);
+        }
+        if (hasConditions) {
+          data.conditions = conditions;
+        }
+      }
+      acc[key] = data;
+      return acc;
+    }, {});
+  };
+  load = (dataArg = /* @__PURE__ */ Object.create(null)) => {
+    const allFieldData = parseData(dataArg);
+    this.empty();
+    for (const [key, val] of Object.entries(allFieldData)) {
+      const { meta, ...data } = val;
+      if (meta?.id) {
+        set(data, "config.controlId", meta?.id);
+      }
+      this.add(key, data);
+    }
+    return this.data;
+  };
 };
 const fields = new Fields$1();
 const Stages2 = stages;
@@ -9558,26 +10281,6 @@ const getFormData = (formData, useSessionStorage = false) => {
 class Components extends Data {
   constructor() {
     super("components");
-    __publicField(this, "load", (formDataArg, opts) => {
-      this.empty();
-      const formData = getFormData(formDataArg, opts.sessionStorage);
-      this.opts = opts;
-      this.set("id", formData.id);
-      this.add("stages", Stages2.load(formData.stages));
-      this.add("rows", Rows2.load(formData.rows));
-      this.add("columns", Columns2.load(formData.columns));
-      this.add("fields", Fields2.load(formData.fields));
-      for (const stage of Object.values(this.get("stages"))) {
-        stage.loadChildren();
-      }
-      return this.data;
-    });
-    __publicField(this, "getChildData", ({ type: type2, id }) => {
-      const component = this.get(type2, id);
-      if (component) {
-        return component.getData();
-      }
-    });
     this.disableEvents = true;
     this.stages = Stages2;
     this.rows = Rows2;
@@ -9585,6 +10288,20 @@ class Components extends Data {
     this.fields = Fields2;
     this.controls = Controls2;
   }
+  load = (formDataArg, opts) => {
+    this.empty();
+    const formData = getFormData(formDataArg, opts.sessionStorage);
+    this.opts = opts;
+    this.set("id", formData.id);
+    this.add("stages", Stages2.load(formData.stages));
+    this.add("rows", Rows2.load(formData.rows));
+    this.add("columns", Columns2.load(formData.columns));
+    this.add("fields", Fields2.load(formData.fields));
+    for (const stage of Object.values(this.get("stages"))) {
+      stage.loadChildren();
+    }
+    return this.data;
+  };
   /**
    * flattens the component tree
    * @returns {Object} where keys contains component type
@@ -9596,6 +10313,12 @@ class Components extends Data {
     }
     return result;
   }
+  getChildData = ({ type, id }) => {
+    const component = this.get(type, id);
+    if (component) {
+      return component.getData();
+    }
+  };
   get json() {
     return window.JSON.stringify({
       $schema: `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formData_schema.json`,
@@ -9611,15 +10334,15 @@ class Components extends Data {
       fields: fields.getData()
     };
   }
-  set config(config2) {
-    const { stages: stages2, rows: rows2, columns: columns2, fields: fields2 } = config2;
+  set config(config) {
+    const { stages: stages2, rows: rows2, columns: columns2, fields: fields2 } = config;
     Stages2.config = stages2;
     Rows2.config = rows2;
     Columns2.config = columns2;
     Fields2.config = fields2;
   }
-  getIndex(type2) {
-    return this[type2] || this[COMPONENT_INDEX_TYPE_MAP.get(type2)];
+  getIndex(type) {
+    return this[type] || this[COMPONENT_INDEX_TYPE_MAP.get(type)];
   }
   /**
    * call `set` on a component in memory
@@ -9628,10 +10351,10 @@ class Components extends Data {
     if (!isAddress(fullAddress)) {
       return;
     }
-    const [type2, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : splitAddress(fullAddress);
-    const componentIndex = this.getIndex(type2);
+    const [type, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : splitAddress(fullAddress);
+    const componentIndex = this.getIndex(type);
     const component = componentIndex.get(id);
-    component == null ? void 0 : component.set(localAddress, value);
+    component?.set(localAddress, value);
     return component;
   }
   /**
@@ -9641,8 +10364,8 @@ class Components extends Data {
     if (!isAddress(fullAddress)) {
       return;
     }
-    const [type2, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : splitAddress(fullAddress);
-    const componentIndex = this.getIndex(type2);
+    const [type, id, ...localAddress] = Array.isArray(fullAddress) ? fullAddress : splitAddress(fullAddress);
+    const componentIndex = this.getIndex(type);
     const component = componentIndex.get(id);
     if (localAddress.length && !component) {
       return;
@@ -9672,30 +10395,12 @@ const defaults$1 = {
   onAdd: () => {
   },
   onChange: (...args) => defaults$1.onUpdate(...args),
-  onUpdate: (evt) => {
-    var _a2;
-    return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
-  },
-  onUpdateStage: (evt) => {
-    var _a2;
-    return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
-  },
-  onUpdateRow: (evt) => {
-    var _a2;
-    return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
-  },
-  onUpdateColumn: (evt) => {
-    var _a2;
-    return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
-  },
-  onUpdateField: (evt) => {
-    var _a2;
-    return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
-  },
-  onRender: (evt) => {
-    var _a2;
-    return ((_a2 = events.opts) == null ? void 0 : _a2.debug) && console.log(evt);
-  },
+  onUpdate: (evt) => events.opts?.debug && console.log(evt),
+  onUpdateStage: (evt) => events.opts?.debug && console.log(evt),
+  onUpdateRow: (evt) => events.opts?.debug && console.log(evt),
+  onUpdateColumn: (evt) => events.opts?.debug && console.log(evt),
+  onUpdateField: (evt) => events.opts?.debug && console.log(evt),
+  onRender: (evt) => events.opts?.debug && console.log(evt),
   onSave: (_evt) => {
   },
   confirmClearAll: (evt) => {
@@ -9704,11 +10409,10 @@ const defaults$1 = {
     }
   }
 };
-const defaultCustomEvent = ({ src, ...evtData }, type2 = EVENT_FORMEO_UPDATED) => {
-  var _a2, _b2;
-  const evt = new window.CustomEvent(type2, {
+const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
+  const evt = new window.CustomEvent(type, {
     detail: evtData,
-    bubbles: ((_a2 = events.opts) == null ? void 0 : _a2.debug) || ((_b2 = events.opts) == null ? void 0 : _b2.bubbles)
+    bubbles: events.opts?.debug || events.opts?.bubbles
   });
   evt.data = (src || document).dispatchEvent(evt);
   return evt;
@@ -9733,42 +10437,42 @@ const formeoUpdatedThrottled = throttle$1(() => {
 }, ANIMATION_SPEED_FAST);
 document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled);
 document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
+  const { timeStamp, type, detail } = evt;
   events.opts.onUpdate({
     timeStamp,
-    type: type2,
+    type,
     detail
   });
 });
 document.addEventListener(EVENT_FORMEO_UPDATED_ROW, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
+  const { timeStamp, type, detail } = evt;
   events.opts.onUpdate({
     timeStamp,
-    type: type2,
+    type,
     detail
   });
 });
 document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
+  const { timeStamp, type, detail } = evt;
   events.opts.onUpdate({
     timeStamp,
-    type: type2,
+    type,
     detail
   });
 });
 document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
+  const { timeStamp, type, detail } = evt;
   events.opts.onUpdate({
     timeStamp,
-    type: type2,
+    type,
     detail
   });
 });
 document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
-  const { timeStamp, type: type2, detail } = evt;
+  const { timeStamp, type, detail } = evt;
   events.opts.onRender({
     timeStamp,
-    type: type2,
+    type,
     detail
   });
 });
@@ -9782,10 +10486,10 @@ document.addEventListener("confirmClearAll", (evt) => {
   };
   events.opts.confirmClearAll(evt);
 });
-document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type: type2, detail: { formData } }) => {
+document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { formData } }) => {
   const evt = {
     timeStamp,
-    type: type2,
+    type,
     formData
   };
   events.opts.onSave(evt);
@@ -9935,13 +10639,13 @@ let FormeoEditor$1 = class FormeoEditor {
    */
   constructor({ formData, ...options }, userFormData) {
     const mergedOptions = merge(defaults.editor, options);
-    const { actions: actions$1, events: events$1, debug, config: config2, editorContainer, ...opts } = mergedOptions;
+    const { actions: actions$1, events: events$1, debug, config, editorContainer, ...opts } = mergedOptions;
     if (editorContainer) {
       this.editorContainer = typeof editorContainer === "string" ? document.querySelector(editorContainer) : editorContainer;
     }
     this.opts = opts;
     dom.setOptions = opts;
-    components.config = config2;
+    components.config = config;
     this.userFormData = userFormData || formData;
     this.Components = components;
     this.dom = dom;
@@ -9965,11 +10669,19 @@ let FormeoEditor$1 = class FormeoEditor {
     return this.Components.json;
   }
   /**
+   * Clear the editor and reset to initial state
+   * @return {void}
+   */
+  clear() {
+    this.userFormData = DEFAULT_FORMDATA();
+    this.Components.load(this.userFormData, this.opts);
+    this.render();
+  }
+  /**
    * Load remote resources
    * @return {Promise} asynchronously loaded remote resources
    */
   async loadResources() {
-    var _a2;
     document.removeEventListener("DOMContentLoaded", this.loadResources);
     const promises = [];
     if (this.opts.polyfills) {
@@ -9977,7 +10689,7 @@ let FormeoEditor$1 = class FormeoEditor {
     }
     await fetchIcons(this.opts.svgSprite);
     promises.push(fetchFormeoStyle(this.opts.style));
-    promises.push(mi18n.init({ ...this.opts.i18n, locale: (_a2 = window.sessionStorage) == null ? void 0 : _a2.getItem(SESSION_LOCALE_KEY) }));
+    promises.push(mi18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }));
     const resolvedPromises = await Promise.all(promises);
     if (this.opts.allowEdit) {
       this.init();
@@ -9991,21 +10703,19 @@ let FormeoEditor$1 = class FormeoEditor {
    */
   init() {
     return Controls$2.init(this.opts.controls, this.opts.stickyControls).then((controls) => {
-      var _a2, _b2;
       this.controls = controls;
       this.load(this.userFormData, this.opts);
       this.formId = components.get("id");
       this.i18n = {
         setLang: (formeoLocale) => {
-          var _a3;
-          (_a3 = window.sessionStorage) == null ? void 0 : _a3.setItem(SESSION_LOCALE_KEY, formeoLocale);
+          window.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale);
           const loadLang = mi18n.setCurrent(formeoLocale);
           loadLang.then(() => {
             this.init();
           }, console.error);
         }
       };
-      (_b2 = (_a2 = this.opts).onLoad) == null ? void 0 : _b2.call(_a2, this);
+      this.opts.onLoad?.(this);
     });
   }
   load(formData = this.userFormData, opts = this.opts) {
@@ -10064,7 +10774,7 @@ const processOptions = ({ editorContainer, renderContainer, formData, ...opts })
 };
 const baseId = (id) => {
   const match2 = id.match(UUID_REGEXP);
-  return (match2 == null ? void 0 : match2[0]) || id``;
+  return match2?.[0] || id``;
 };
 const isVisible = (elem) => {
   if (!elem) return false;
@@ -10101,8 +10811,8 @@ const createRemoveButton = () => dom.btnTemplate({
   }
 });
 const comparisonHandlers = {
-  equals: isEqual$1,
-  notEquals: (source, target) => !isEqual$1(source, target),
+  equals: isEqual,
+  notEquals: (source, target) => !isEqual(source, target),
   contains: (source, target) => source.includes(target),
   notContains: (source, target) => !source.includes(target)
 };
@@ -10130,14 +10840,13 @@ const targetPropertyMap = {
     elem.checked = false;
   },
   value: (elem, { assignment, ...rest }) => {
-    var _a2;
-    const assignmentAction = (_a2 = assignmentMap[assignment]) == null ? void 0 : _a2.call(assignmentMap, elem, rest);
+    const assignmentAction = assignmentMap[assignment]?.(elem, rest);
     const event = new Event("input", { bubbles: true });
     elem.dispatchEvent(event);
     return assignmentAction;
   },
   isNotVisible: (elem) => {
-    if ((elem == null ? void 0 : elem._required) === void 0) {
+    if (elem?._required === void 0) {
       elem._required = elem.required;
     }
     elem.parentElement.setAttribute("hidden", true);
@@ -10150,212 +10859,6 @@ const targetPropertyMap = {
 };
 let FormeoRenderer$1 = class FormeoRenderer {
   constructor(opts, formDataArg) {
-    __publicField(this, "orderChildren", (type2, order) => order.reduce((acc, cur) => {
-      acc.push(this.form[type2][cur]);
-      return acc;
-    }, []));
-    __publicField(this, "prefixId", (id) => RENDER_PREFIX + id);
-    /**
-     * Convert sizes, apply styles for render
-     * @param  {Object} columnData
-     * @return {Object} processed column data
-     */
-    __publicField(this, "processColumn", ({ id, ...columnData }) => ({
-      ...columnData,
-      ...{
-        id: this.prefixId(id),
-        children: this.processFields(columnData.children),
-        style: `width: ${columnData.config.width || "100%"}`
-      }
-    }));
-    __publicField(this, "processRows", (stageId) => this.orderChildren("rows", this.form.stages[stageId].children).reduce((acc, row) => {
-      if (row) {
-        acc.push(this.processRow(row));
-      }
-      return acc;
-    }, []));
-    __publicField(this, "cacheComponent", (data) => {
-      this.components[baseId(data.id)] = data;
-      return data;
-    });
-    /**
-     * Applies a row's config
-     * @param {Object} row data
-     * @return {Object} row config object
-     */
-    __publicField(this, "processRow", (data, type2 = "row") => {
-      const { config: config2, id } = data;
-      const className = [`formeo-${type2}-wrap`];
-      const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) };
-      this.cacheComponent(rowData);
-      const configConditions = [
-        { condition: config2.legend, result: () => ({ tag: config2.fieldset ? "legend" : "h3", children: config2.legend }) },
-        { condition: true, result: () => rowData },
-        { condition: config2.inputGroup, result: () => this.addButton(id) }
-      ];
-      const children = configConditions.reduce((acc, { condition, result }) => {
-        if (condition) {
-          acc.push(result());
-        }
-        return acc;
-      }, []);
-      if (config2.inputGroup) {
-        className.push(`${RENDER_PREFIX}input-group-wrap`);
-      }
-      return {
-        tag: config2.fieldset ? "fieldset" : "div",
-        className,
-        children
-      };
-    });
-    __publicField(this, "cloneComponentData", (componentId) => {
-      const { children = [], id, ...rest } = this.components[componentId];
-      return {
-        ...rest,
-        id: uuid(id),
-        children: (children == null ? void 0 : children.length) && children.map(({ id: id2 }) => this.cloneComponentData(baseId(id2)))
-      };
-    });
-    __publicField(this, "addButton", (id) => ({
-      tag: "button",
-      attrs: {
-        className: "add-input-group btn pull-right",
-        type: "button"
-      },
-      children: "Add +",
-      action: {
-        click: (e) => {
-          const fInputGroup = e.target.parentElement;
-          const elem = dom.create(this.cloneComponentData(id));
-          fInputGroup.insertBefore(elem, fInputGroup.lastChild);
-          const removeButton = dom.create(createRemoveButton());
-          elem.appendChild(removeButton);
-        }
-      }
-    }));
-    __publicField(this, "processColumns", (rowId) => {
-      return this.orderChildren("columns", this.form.rows[rowId].children).map(
-        (column) => this.cacheComponent(this.processColumn(column))
-      );
-    });
-    __publicField(this, "processFields", (fieldIds) => this.orderChildren("fields", fieldIds).map(({ id, ...field2 }) => {
-      var _a2, _b2;
-      const controlId = ((_a2 = field2.config) == null ? void 0 : _a2.controlId) || ((_b2 = field2.meta) == null ? void 0 : _b2.id);
-      const { action = {}, dependencies: dependencies2 = {} } = this.elements[controlId] || {};
-      if (dependencies2) {
-        fetchDependencies(dependencies2);
-      }
-      const mergedFieldData = merge({ action }, field2);
-      return this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) });
-    }));
-    /**
-     * Evaulate and execute conditions for fields by creating listeners for input and changes
-     * @return {Array} flattened array of conditions
-     */
-    __publicField(this, "handleComponentCondition", (component, ifRest, thenConditions) => {
-      if (component.length) {
-        for (const elem of component) {
-          this.handleComponentCondition(elem, ifRest, thenConditions);
-        }
-        return;
-      }
-      const listenerEvent = LISTEN_TYPE_MAP(component);
-      if (listenerEvent) {
-        component.addEventListener(
-          listenerEvent,
-          (evt) => {
-            if (this.evaluateCondition(ifRest, evt)) {
-              for (const thenCondition of thenConditions) {
-                this.execResult(thenCondition, evt);
-              }
-            }
-          },
-          false
-        );
-      }
-      const fakeEvt = { target: component };
-      if (this.evaluateCondition(ifRest, fakeEvt)) {
-        for (const thenCondition of thenConditions) {
-          this.execResult(thenCondition, fakeEvt);
-        }
-      }
-    });
-    __publicField(this, "applyConditions", () => {
-      for (const { conditions } of Object.values(this.components)) {
-        if (conditions) {
-          for (const condition of conditions) {
-            const { if: ifConditions, then: thenConditions } = condition;
-            for (const ifCondition of ifConditions) {
-              const { source, target } = ifCondition;
-              if (isAddress(source)) {
-                const { component, options } = this.getComponent(source);
-                const sourceComponent = options || component;
-                this.handleComponentCondition(sourceComponent, ifCondition, thenConditions);
-              }
-              if (isAddress(target)) {
-                const { component, options } = this.getComponent(target);
-                const targetComponent = options || component;
-                this.handleComponentCondition(targetComponent, ifCondition, thenConditions);
-              }
-            }
-          }
-        }
-      }
-    });
-    /**
-     * Evaulate conditions
-     */
-    __publicField(this, "evaluateCondition", ({ source, sourceProperty, targetProperty, comparison, target }) => {
-      var _a2;
-      const sourceValue = this.getComponentProperty(source, sourceProperty);
-      if (typeof sourceValue === "boolean") {
-        return sourceValue;
-      }
-      const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target);
-      return (_a2 = comparisonMap[comparison]) == null ? void 0 : _a2.call(comparisonMap, sourceValue, targetValue);
-    });
-    __publicField(this, "execResult", ({ target, targetProperty, assignment, value }) => {
-      var _a2;
-      if (isAddress(target)) {
-        const { component, option: option2 } = this.getComponent(target);
-        const elem = option2 || component;
-        (_a2 = targetPropertyMap[targetProperty]) == null ? void 0 : _a2.call(targetPropertyMap, elem, { targetProperty, assignment, value });
-      }
-    });
-    __publicField(this, "getComponentProperty", (address, propertyName) => {
-      var _a2;
-      const { component, option: option2 } = this.getComponent(address);
-      const elem = option2 || component;
-      return ((_a2 = propertyMap[propertyName]) == null ? void 0 : _a2.call(propertyMap, elem)) || elem[propertyName];
-    });
-    __publicField(this, "getComponent", (address) => {
-      const result = {
-        component: null
-      };
-      if (!isAddress(address)) {
-        return null;
-      }
-      const [, componentId, optionsKey, optionIndex] = splitAddress(address);
-      const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`);
-      if (!component) {
-        return result;
-      }
-      result.component = component;
-      if (optionsKey) {
-        const options = component.querySelectorAll("input");
-        const option2 = options[optionIndex];
-        result.options = options;
-        result.option = option2;
-        return result;
-      }
-      return result;
-    });
-    __publicField(this, "getComponents", (address) => {
-      const components2 = [];
-      const componentId = address.slice(address.indexOf(".") + 1);
-      components2.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
-      return components2;
-    });
     const { renderContainer, elements, formData } = processOptions(opts);
     this.container = renderContainer;
     this.form = cleanFormData(formDataArg || formData);
@@ -10419,13 +10922,13 @@ let FormeoRenderer$1 = class FormeoRenderer {
   getRenderedForm(formData = this.form) {
     this.form = cleanFormData(formData);
     const renderCount = document.getElementsByClassName("formeo-render").length;
-    const config2 = {
+    const config = {
       tag: "form",
       id: this.form.id,
       className: `formeo-render formeo formeo-rendered-${renderCount}`,
       children: this.processedData
     };
-    this.renderedForm = dom.render(config2);
+    this.renderedForm = dom.render(config);
     this.applyConditions();
     return this.renderedForm;
   }
@@ -10433,6 +10936,103 @@ let FormeoRenderer$1 = class FormeoRenderer {
     const renderedForm = this.renderedForm || this.getRenderedForm();
     return renderedForm.outerHTML;
   }
+  orderChildren = (type, order) => order.reduce((acc, cur) => {
+    acc.push(this.form[type][cur]);
+    return acc;
+  }, []);
+  prefixId = (id) => RENDER_PREFIX + id;
+  /**
+   * Convert sizes, apply styles for render
+   * @param  {Object} columnData
+   * @return {Object} processed column data
+   */
+  processColumn = ({ id, ...columnData }) => ({
+    ...columnData,
+    ...{
+      id: this.prefixId(id),
+      children: this.processFields(columnData.children),
+      style: `width: ${columnData.config.width || "100%"}`
+    }
+  });
+  processRows = (stageId) => this.orderChildren("rows", this.form.stages[stageId].children).reduce((acc, row) => {
+    if (row) {
+      acc.push(this.processRow(row));
+    }
+    return acc;
+  }, []);
+  cacheComponent = (data) => {
+    this.components[baseId(data.id)] = data;
+    return data;
+  };
+  /**
+   * Applies a row's config
+   * @param {Object} row data
+   * @return {Object} row config object
+   */
+  processRow = (data, type = "row") => {
+    const { config, id } = data;
+    const className = [`formeo-${type}-wrap`];
+    const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) };
+    this.cacheComponent(rowData);
+    const configConditions = [
+      { condition: config.legend, result: () => ({ tag: config.fieldset ? "legend" : "h3", children: config.legend }) },
+      { condition: true, result: () => rowData },
+      { condition: config.inputGroup, result: () => this.addButton(id) }
+    ];
+    const children = configConditions.reduce((acc, { condition, result }) => {
+      if (condition) {
+        acc.push(result());
+      }
+      return acc;
+    }, []);
+    if (config.inputGroup) {
+      className.push(`${RENDER_PREFIX}input-group-wrap`);
+    }
+    return {
+      tag: config.fieldset ? "fieldset" : "div",
+      className,
+      children
+    };
+  };
+  cloneComponentData = (componentId) => {
+    const { children = [], id, ...rest } = this.components[componentId];
+    return {
+      ...rest,
+      id: uuid(id),
+      children: children?.length && children.map(({ id: id2 }) => this.cloneComponentData(baseId(id2)))
+    };
+  };
+  addButton = (id) => ({
+    tag: "button",
+    attrs: {
+      className: "add-input-group btn pull-right",
+      type: "button"
+    },
+    children: "Add +",
+    action: {
+      click: (e) => {
+        const fInputGroup = e.target.parentElement;
+        const elem = dom.create(this.cloneComponentData(id));
+        fInputGroup.insertBefore(elem, fInputGroup.lastChild);
+        const removeButton = dom.create(createRemoveButton());
+        elem.appendChild(removeButton);
+      }
+    }
+  });
+  processColumns = (rowId) => {
+    return this.orderChildren("columns", this.form.rows[rowId].children).map(
+      (column) => this.cacheComponent(this.processColumn(column))
+    );
+  };
+  processFields = (fieldIds) => this.orderChildren("fields", fieldIds).map(({ id, ...field2 }) => {
+    const controlId = field2.config?.controlId || field2.meta?.id;
+    const { action = {}, dependencies = {} } = this.elements[controlId] || {};
+    if (dependencies) {
+      fetchDependencies(dependencies);
+    }
+    const mergedFieldData = merge({ action }, field2);
+    return this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) });
+  });
   get processedData() {
     return Object.values(this.form.stages).map((stage) => {
       stage.children = this.processRows(stage.id);
@@ -10441,6 +11041,111 @@ let FormeoRenderer$1 = class FormeoRenderer {
       return stage;
     });
   }
+  /**
+   * Evaulate and execute conditions for fields by creating listeners for input and changes
+   * @return {Array} flattened array of conditions
+   */
+  handleComponentCondition = (component, ifRest, thenConditions) => {
+    if (component.length) {
+      for (const elem of component) {
+        this.handleComponentCondition(elem, ifRest, thenConditions);
+      }
+      return;
+    }
+    const listenerEvent = LISTEN_TYPE_MAP(component);
+    if (listenerEvent) {
+      component.addEventListener(
+        listenerEvent,
+        (evt) => {
+          if (this.evaluateCondition(ifRest, evt)) {
+            for (const thenCondition of thenConditions) {
+              this.execResult(thenCondition, evt);
+            }
+          }
+        },
+        false
+      );
+    }
+    const fakeEvt = { target: component };
+    if (this.evaluateCondition(ifRest, fakeEvt)) {
+      for (const thenCondition of thenConditions) {
+        this.execResult(thenCondition, fakeEvt);
+      }
+    }
+  };
+  applyConditions = () => {
+    for (const { conditions } of Object.values(this.components)) {
+      if (conditions) {
+        for (const condition of conditions) {
+          const { if: ifConditions, then: thenConditions } = condition;
+          for (const ifCondition of ifConditions) {
+            const { source, target } = ifCondition;
+            if (isAddress(source)) {
+              const { component, options } = this.getComponent(source);
+              const sourceComponent = options || component;
+              this.handleComponentCondition(sourceComponent, ifCondition, thenConditions);
+            }
+            if (isAddress(target)) {
+              const { component, options } = this.getComponent(target);
+              const targetComponent = options || component;
+              this.handleComponentCondition(targetComponent, ifCondition, thenConditions);
+            }
+          }
+        }
+      }
+    }
+  };
+  /**
+   * Evaulate conditions
+   */
+  evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
+    const sourceValue = this.getComponentProperty(source, sourceProperty);
+    if (typeof sourceValue === "boolean") {
+      return sourceValue;
+    }
+    const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target);
+    return comparisonMap[comparison]?.(sourceValue, targetValue);
+  };
+  execResult = ({ target, targetProperty, assignment, value }) => {
+    if (isAddress(target)) {
+      const { component, option: option2 } = this.getComponent(target);
+      const elem = option2 || component;
+      targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value });
+    }
+  };
+  getComponentProperty = (address, propertyName) => {
+    const { component, option: option2 } = this.getComponent(address);
+    const elem = option2 || component;
+    return propertyMap[propertyName]?.(elem) || elem[propertyName];
+  };
+  getComponent = (address) => {
+    const result = {
+      component: null
+    };
+    if (!isAddress(address)) {
+      return null;
+    }
+    const [, componentId, optionsKey, optionIndex] = splitAddress(address);
+    const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`);
+    if (!component) {
+      return result;
+    }
+    result.component = component;
+    if (optionsKey) {
+      const options = component.querySelectorAll("input");
+      const option2 = options[optionIndex];
+      result.options = options;
+      result.option = option2;
+      return result;
+    }
+    return result;
+  };
+  getComponents = (address) => {
+    const components2 = [];
+    const componentId = address.slice(address.indexOf(".") + 1);
+    components2.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
+    return components2;
+  };
 };
 const LISTEN_TYPE_MAP = (component) => {
   const typesMap = [
@@ -10539,14 +11244,14 @@ class ButtonControl extends Control {
     super(mergedConfig);
   }
 }
-const generateOptionConfig = ({ type: type2, isMultiple = false, count = 3 }) => Array.from({ length: count }, (_v, k) => k + 1).map((i) => {
-  const selectedKey = type2 === "checkbox" || isMultiple ? "checked" : "selected";
+const generateOptionConfig = ({ type, isMultiple = false, count = 3 }) => Array.from({ length: count }, (_v, k) => k + 1).map((i) => {
+  const selectedKey = type === "checkbox" || isMultiple ? "checked" : "selected";
   return {
     label: mi18n.get("labelCount", {
-      label: toTitleCase(type2),
+      label: toTitleCase(type),
       count: i
     }),
-    value: `${type2}-${i}`,
+    value: `${type}-${i}`,
     [selectedKey]: !i
   };
 });
@@ -10700,7 +11405,6 @@ class RadioGroupControl extends Control {
 }
 class SelectControl extends Control {
   constructor(controlConfig = {}) {
-    var _a2;
     const selectConfig = {
       tag: "select",
       config: {
@@ -10716,7 +11420,7 @@ class SelectControl extends Control {
         icon: "select",
         id: "select"
       },
-      options: generateOptionConfig({ type: "option", isMultiple: (_a2 = controlConfig.attrs) == null ? void 0 : _a2.multiple })
+      options: generateOptionConfig({ type: "option", isMultiple: controlConfig.attrs?.multiple })
     };
     const mergedConfig = merge(selectConfig, controlConfig);
     super(mergedConfig);
