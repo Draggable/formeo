@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.1.3
+Version: 4.1.4
 Author: Draggable https://draggable.io
 */
 
@@ -431,7 +431,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "4.1.3";
+const version$2 = "4.1.4";
 const pkg = {
   name: name$1,
   version: version$2
