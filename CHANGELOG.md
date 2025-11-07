@@ -1,3 +1,10 @@
+## [4.1.4](https://github.com/Draggable/formeo/compare/v4.1.3...v4.1.4) (2025-11-07)
+
+
+### Bug Fixes
+
+* releases marked as prelease in github ([a429e5d](https://github.com/Draggable/formeo/commit/a429e5d7424a2e8acbab327772a2042dad72ab68))
+
 ## [4.1.3](https://github.com/Draggable/formeo/compare/v4.1.2...v4.1.3) (2025-11-07)
 
 
