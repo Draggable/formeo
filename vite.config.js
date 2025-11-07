@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
+import { enUS, languageFileOptions } from '@draggable/formeo-languages'
 import { defineConfig } from 'vite'
-import { languageFileOptions, enUS } from '@draggable/formeo-languages'
 import banner from 'vite-plugin-banner'
 import compression from 'vite-plugin-compression'
 import { createHtmlPlugin } from 'vite-plugin-html'
@@ -70,16 +70,9 @@ export default defineConfig({
       external: ['formeo'],
     },
     outDir: resolve(__dirname, 'dist/demo'),
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true,
-      },
-      output: {
-        comments: false,
-        beautify: false,
-      },
+    minify: 'esbuild',
+    esbuild: {
+      drop: ['console', 'debugger'],
     },
   },
   plugins: [
