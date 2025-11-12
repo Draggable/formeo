@@ -1,6 +1,8 @@
 import pkg from '../../../package.json' with { type: 'json' }
 import { uuid } from './common/utils/index.mjs'
 
+export { default as BUNDLED_SVG_SPRITE } from '../../lib/icons/formeo-sprite.svg?raw'
+
 const name = pkg.name
 export const version = pkg.version
 export const PACKAGE_NAME = name
@@ -11,17 +13,8 @@ export const POLYFILLS = [
   { name: 'mutationObserver', src: '//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js' },
   { name: 'fetch', src: 'https://unpkg.com/unfetch/polyfill' },
 ]
-
-const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`
-const localSpriteUrl =
-  typeof import.meta.resolve === 'function' ? import.meta.resolve(relativeSpritePath) : relativeSpritePath
-
-const isDev =
-  import.meta?.env?.DEV || (typeof process !== 'undefined' && process.env?.NODE_ENV === 'development') || false
-export const SVG_SPRITE_URL = isDev
-  ? localSpriteUrl
-  : `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
-export const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`
+export const SVG_SPRITE_URL = null // No longer fetching by default - using bundled sprite
+export const FALLBACK_SVG_SPRITE_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/${formeoSpriteId}.svg`
 export const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version}/dist/formeo.min.css`
 export const FALLBACK_CSS_URL = 'https://draggable.github.io/formeo/assets/css/formeo.min.css'
 

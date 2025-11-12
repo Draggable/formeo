@@ -100,8 +100,6 @@ export const copyObj = obj => window.JSON.parse(window.JSON.stringify(obj))
 // subtract the contents of 1 array from another
 export const subtract = (arr, from) => from.filter(a => !~arr.indexOf(a))
 
-export const isIE = () => window.navigator.userAgent.indexOf('MSIE ') !== -1
-
 export const helpers = {
   capitalize,
   safeAttrName,
@@ -116,7 +114,6 @@ export const helpers = {
   get,
 
   orderObjectsBy,
-  isIE,
 }
 
 export default helpers

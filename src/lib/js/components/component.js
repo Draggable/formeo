@@ -284,12 +284,7 @@ export default class Component extends Data {
     return dom.create({
       tag: 'span',
       className: ['component-tag', `${this.name}-tag`],
-      children: [
-        (this.isColumn || this.isField) && dom.icon('component-corner', { className: 'bottom-left' }),
-        dom.icon(`handle-${this.name}`),
-        toTitleCase(this.name),
-        (this.isColumn || this.isRow) && dom.icon('component-corner', { className: 'bottom-right' }),
-      ].filter(Boolean),
+      children: [dom.icon(`handle-${this.name}`), toTitleCase(this.name)].filter(Boolean),
     })
   }
 

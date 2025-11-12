@@ -13,18 +13,13 @@
   will-change: width;
   max-width: 100%;
 
-  > .children {
+  >.children {
     @include mixins.display-column;
     gap: var.$component-gap;
   }
 
   .column-tag {
     border-color: color.$column-outline-color;
-
-    .f-i-component-corner {
-      fill: color.$white;
-      stroke: color.$column-outline-color;
-    }
   }
 
   .column-tag,
@@ -42,6 +37,7 @@
 
   &:last-child {
     border-bottom-right-radius: var.$border-radius;
+
     .resize-x-handle {
       display: none !important;
     }
@@ -69,8 +65,7 @@
     &::before {
       width: 0;
       right: 6px;
-      border: 1px dashed
-        sass-color.adjust(color.$column-outline-color, $lightness: 15%);
+      border: 1px dashed sass-color.adjust(color.$column-outline-color, $lightness: 15%);
       border-width: 0 2px;
       display: block;
       top: 0;
@@ -93,10 +88,12 @@
         bottom: -14px;
       }
     }
+
     &:hover {
       &::before {
         border-color: color.$column-outline-color;
       }
+
       svg {
         fill: color.$column-outline-color;
       }
@@ -120,6 +117,7 @@
   &.sortable-ghost {
     background-color: color.$column-highlight-color;
     box-shadow: 0 0 0 1px color.$column-outline-color;
+
     * {
       opacity: 0;
     }
@@ -138,6 +136,7 @@
 
 // this is column styleing in the row edit window
 .editing-row {
+
   .formeo-column,
   .empty {
     border-radius: var.$border-radius;
@@ -188,12 +187,9 @@
       background-color: color.$column-highlight-color;
     }
   }
+
   .column-tag {
     background-color: color.$column-highlight-color;
-
-    .f-i-component-corner {
-      fill: color.$column-highlight-color;
-    }
   }
 }
 
@@ -205,9 +201,11 @@ button.column-handle {
   .column-tag {
     display: flex;
   }
+
   .column-handle {
     display: none;
   }
+
   .column-action-btn-wrap {
     display: flex;
   }

@@ -1,10 +1,11 @@
-import { FALLBACK_CSS_URL, FALLBACK_SVG_SPRITE_URL, formeoSpriteId, POLYFILLS, SVG_SPRITE_URL } from '../constants.js'
+import { BUNDLED_SVG_SPRITE, FALLBACK_CSS_URL, FALLBACK_SVG_SPRITE_URL, SVG_SPRITE_URL } from '../constants.js'
 import dom from './dom.js'
 import { noop } from './utils/index.mjs'
 
-const loaded = {
+export const loaded = {
   js: new Set(),
   css: new Set(),
+  formeoSprite: null,
 }
 
 export const ajax = (fileUrl, callback, onError = noop) => {
@@ -110,50 +111,45 @@ export const insertStyles = srcs => {
 }
 
 /**
- * Inserts SVG icons into the document if they are not already present.
+ * Parses SVG sprite and keeps it in memory without inserting into the DOM.
+ * Icons will be inlined when used, eliminating the need for xlink:href references.
  *
  * @param {string} iconSvgStr - A string containing SVG icons.
- * @returns {HTMLElement} The element wrapping the inserted SVG icons.
+ * @returns {HTMLElement} The in-memory element wrapping the SVG sprite.
  */
 export const insertIcons = iconSvgStr => {
-  let iconSpriteWrap = document.getElementById(formeoSpriteId)
-  if (!iconSpriteWrap) {
-    iconSpriteWrap = dom.create({
-      id: formeoSpriteId,
-      children: iconSvgStr,
-      attrs: {
-        hidden: true,
-        style: 'display: none;',
-      },
-    })
+  // Create an in-memory DOM element to parse the SVG sprite
+  const parser = new DOMParser()
+  const svgDoc = parser.parseFromString(iconSvgStr, 'image/svg+xml')
 
-    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0])
-  }
-  return iconSpriteWrap
+  // Store the parsed SVG in memory (not in the document)
+  loaded.formeoSprite = svgDoc.documentElement
+
+  return loaded.formeoSprite
 }
 
 /**
- * Fetches icons from the provided URL and inserts them into the document.
- * If the primary URL fails, it attempts to fetch from a fallback URL.
+ * Fetches icons from the provided URL or uses bundled sprite, keeping them in memory.
+ * If a URL is provided and fails, it attempts to fetch from a fallback URL.
+ * If no URL is provided, uses the bundled sprite included in the package.
+ * The sprite is not inserted into the DOM; icons are inlined when used.
  *
- * @param {string} iconSpriteUrl - The URL to fetch the icon sprite from.
- * @returns {Promise<void>} A promise that resolves when the icons are fetched and inserted.
+ * @param {string|null} iconSpriteUrl - Optional URL to fetch the icon sprite from. If null, uses bundled sprite.
+ * @returns {Promise<void>} A promise that resolves when the icons are fetched and parsed.
  */
 export const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
-  const formeoSprite = document.getElementById(formeoSpriteId)
-  if (formeoSprite) {
+  if (loaded.formeoSprite) {
     return
   }
 
-  const parseResp = async resp => insertIcons(await resp.text())
-  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp))
-}
+  // If no sprite url provided, use the bundled sprite
+  if (!iconSpriteUrl) {
+    return insertIcons(BUNDLED_SVG_SPRITE)
+  }
 
-export const loadPolyfills = polyfillConfig => {
-  const polyfills = Array.isArray(polyfillConfig)
-    ? POLYFILLS.filter(({ name }) => polyfillConfig.indexOf(name) !== -1)
-    : POLYFILLS
-  return Promise.all(polyfills.map(({ src }) => insertScript(src)))
+  const parseResp = async resp => insertIcons(await resp.text())
+
+  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp))
 }
 
 export const LOADER_MAP = {
@@ -175,22 +171,6 @@ export const fetchDependencies = dependencies => {
 }
 
 /**
- * Checks if the CSS for the Formeo sprite is loaded.
- *
- * This function determines if the CSS for the Formeo sprite is loaded by checking
- * the visibility property of the sprite's computed style. If the visibility is
- * 'hidden', it is assumed that the CSS is loaded.
- *
- * @returns {boolean} True if formeo CSS is loaded, false otherwise.
- */
-export const isCssLoaded = () => {
-  const formeoSprite = document.getElementById(formeoSpriteId)
-  const computedStyle = window.getComputedStyle(formeoSprite)
-
-  return computedStyle.visibility === 'hidden'
-}
-
-/**
  * Fetches and inserts the Formeo style sheet from the given URL.
  * If the necessary styles are not loaded, it attempts to insert the style sheet.
  * If the styles are still not loaded, it uses a fallback URL to insert the style sheet.
@@ -200,10 +180,10 @@ export const isCssLoaded = () => {
  */
 export const fetchFormeoStyle = async cssUrl => {
   // check if necessary styles were loaded
-  if (!isCssLoaded()) {
+  if (!loaded.css.has(cssUrl)) {
     await insertStyle(cssUrl)
     // check again and use fallback if necessary styles were not loaded
-    if (!isCssLoaded()) {
+    if (!loaded.css.has(FALLBACK_CSS_URL)) {
       return await insertStyle(FALLBACK_CSS_URL)
     }
   }
