@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.1.4
+Version: 4.2.0
 Author: Draggable https://draggable.io
 */
 
@@ -431,7 +431,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "4.1.4";
+const version$2 = "4.2.0";
 const pkg = {
   name: name$1,
   version: version$2
@@ -2279,6 +2279,7 @@ const ANIMATION_SPEED_FAST = Math.round(ANIMATION_SPEED_BASE / 2);
 const ANIMATION_SPEED_SLOW = Math.round(ANIMATION_SPEED_BASE * 2);
 const EVENT_FORMEO_SAVED = "formeoSaved";
 const EVENT_FORMEO_UPDATED = "formeoUpdated";
+const EVENT_FORMEO_CHANGED = "formeoChanged";
 const EVENT_FORMEO_UPDATED_STAGE = "formeoUpdatedStage";
 const EVENT_FORMEO_UPDATED_ROW = "formeoUpdatedRow";
 const EVENT_FORMEO_UPDATED_COLUMN = "formeoUpdatedColumn";
@@ -2286,6 +2287,12 @@ const EVENT_FORMEO_UPDATED_FIELD = "formeoUpdatedField";
 const EVENT_FORMEO_CLEARED = "formeoCleared";
 const EVENT_FORMEO_ON_RENDER = "formeoOnRender";
 const EVENT_FORMEO_CONDITION_UPDATED = "formeoConditionUpdated";
+const EVENT_FORMEO_ADDED_ROW = "formeoAddedRow";
+const EVENT_FORMEO_ADDED_COLUMN = "formeoAddedColumn";
+const EVENT_FORMEO_ADDED_FIELD = "formeoAddedField";
+const EVENT_FORMEO_REMOVED_ROW = "formeoRemovedRow";
+const EVENT_FORMEO_REMOVED_COLUMN = "formeoRemovedColumn";
+const EVENT_FORMEO_REMOVED_FIELD = "formeoRemovedField";
 const COMPARISON_OPERATORS = {
   equals: "==",
   notEquals: "!=",
@@ -3292,6 +3299,18 @@ class Data {
         evtData.previousValue = oldVal;
       }
       events.formeoUpdated(evtData);
+      if (this.name) {
+        const componentEventMap = {
+          stage: EVENT_FORMEO_UPDATED_STAGE,
+          row: EVENT_FORMEO_UPDATED_ROW,
+          column: EVENT_FORMEO_UPDATED_COLUMN,
+          field: EVENT_FORMEO_UPDATED_FIELD
+        };
+        const specificEvent = componentEventMap[this.name];
+        if (specificEvent) {
+          events.formeoUpdated(evtData, specificEvent);
+        }
+      }
     }
     return data;
   }
@@ -3361,6 +3380,23 @@ class ComponentData extends Data {
     const component = this.Component({ ...data, id: elemId });
     this.data[elemId] = component;
     this.active = component;
+    const componentEventMap = {
+      row: EVENT_FORMEO_ADDED_ROW,
+      column: EVENT_FORMEO_ADDED_COLUMN,
+      field: EVENT_FORMEO_ADDED_FIELD
+    };
+    const addEvent = componentEventMap[this.name];
+    if (addEvent) {
+      events.formeoUpdated(
+        {
+          entity: component,
+          componentId: elemId,
+          componentType: this.name,
+          data: component.data
+        },
+        addEvent
+      );
+    }
     return component;
   };
   /**
@@ -7566,7 +7602,7 @@ class EditPanel {
     };
     const editPanelButtons = [];
     if (type === "conditions") {
-      if (!mi18n.current.clearAll) {
+      if (mi18n.current && !mi18n.current.clearAll) {
         mi18n.put("clearAll", "Clear All");
       }
       const clearAllBtn = {
@@ -8060,6 +8096,7 @@ class Component extends Data {
   dispatchComponentEvent(eventName, eventData = {}) {
     const fullEventData = {
       component: this,
+      target: this,
       type: eventName,
       timestamp: Date.now(),
       ...eventData
@@ -8144,6 +8181,22 @@ class Component extends Data {
     }
     if (parent.name === "row") {
       parent.autoColumnWidths();
+    }
+    const componentEventMap = {
+      row: EVENT_FORMEO_REMOVED_ROW,
+      column: EVENT_FORMEO_REMOVED_COLUMN,
+      field: EVENT_FORMEO_REMOVED_FIELD
+    };
+    const removeEvent = componentEventMap[this.name];
+    if (removeEvent) {
+      events.formeoUpdated(
+        {
+          componentId: this.id,
+          componentType: this.name,
+          parent
+        },
+        removeEvent
+      );
     }
     return components[`${this.name}s`].delete(this.id);
   };
@@ -9441,7 +9494,7 @@ class Stage extends Component {
   }
   onAdd(...args) {
     const component = super.onAdd(...args);
-    if (component && component.name === "column") {
+    if (component?.name === "column") {
       component.parent.autoColumnWidths();
     }
   }
@@ -10394,12 +10447,18 @@ const defaults$1 = {
   },
   onAdd: () => {
   },
-  onChange: (...args) => defaults$1.onUpdate(...args),
+  onChange: (evt) => events.opts?.debug && console.log(evt),
   onUpdate: (evt) => events.opts?.debug && console.log(evt),
   onUpdateStage: (evt) => events.opts?.debug && console.log(evt),
   onUpdateRow: (evt) => events.opts?.debug && console.log(evt),
   onUpdateColumn: (evt) => events.opts?.debug && console.log(evt),
   onUpdateField: (evt) => events.opts?.debug && console.log(evt),
+  onAddRow: (evt) => events.opts?.debug && console.log(evt),
+  onAddColumn: (evt) => events.opts?.debug && console.log(evt),
+  onAddField: (evt) => events.opts?.debug && console.log(evt),
+  onRemoveRow: (evt) => events.opts?.debug && console.log(evt),
+  onRemoveColumn: (evt) => events.opts?.debug && console.log(evt),
+  onRemoveField: (evt) => events.opts?.debug && console.log(evt),
   onRender: (evt) => events.opts?.debug && console.log(evt),
   onSave: (_evt) => {
   },
@@ -10415,6 +10474,13 @@ const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) =>
     bubbles: events.opts?.debug || events.opts?.bubbles
   });
   evt.data = (src || document).dispatchEvent(evt);
+  if (type === EVENT_FORMEO_UPDATED) {
+    const changedEvt = new window.CustomEvent(EVENT_FORMEO_CHANGED, {
+      detail: evtData,
+      bubbles: events.opts?.debug || events.opts?.bubbles
+    });
+    (src || document).dispatchEvent(changedEvt);
+  }
   return evt;
 };
 const events = {
@@ -10423,50 +10489,82 @@ const events = {
     return this;
   },
   formeoSaved: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
-  formeoUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
+  formeoUpdated: (evt, eventType) => defaultCustomEvent(evt, eventType || EVENT_FORMEO_UPDATED),
   formeoCleared: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
   formeoOnRender: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
-  formeoConditionUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED)
+  formeoConditionUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
+  formeoAddedRow: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_ROW),
+  formeoAddedColumn: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_COLUMN),
+  formeoAddedField: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_FIELD),
+  formeoRemovedRow: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_ROW),
+  formeoRemovedColumn: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_COLUMN),
+  formeoRemovedField: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_FIELD)
 };
 const formeoUpdatedThrottled = throttle$1(() => {
-  events.opts.onUpdate({
+  const eventData = {
     timeStamp: window.performance.now(),
     type: EVENT_FORMEO_UPDATED,
     detail: components.formData
-  });
+  };
+  events.opts.onUpdate(eventData);
+  if (events.opts.onChange !== events.opts.onUpdate) {
+    events.opts.onChange(eventData);
+  }
 }, ANIMATION_SPEED_FAST);
 document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled);
 document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, (evt) => {
   const { timeStamp, type, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail
-  });
+  const eventData = { timeStamp, type, detail };
+  events.opts.onUpdate(eventData);
+  events.opts.onUpdateStage(eventData);
 });
 document.addEventListener(EVENT_FORMEO_UPDATED_ROW, (evt) => {
   const { timeStamp, type, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail
-  });
+  const eventData = { timeStamp, type, detail };
+  events.opts.onUpdate(eventData);
+  events.opts.onUpdateRow(eventData);
 });
 document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, (evt) => {
   const { timeStamp, type, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail
-  });
+  const eventData = { timeStamp, type, detail };
+  events.opts.onUpdate(eventData);
+  events.opts.onUpdateColumn(eventData);
 });
 document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
   const { timeStamp, type, detail } = evt;
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail
-  });
+  const eventData = { timeStamp, type, detail };
+  events.opts.onUpdate(eventData);
+  events.opts.onUpdateField(eventData);
+});
+document.addEventListener(EVENT_FORMEO_ADDED_ROW, (evt) => {
+  const { timeStamp, type, detail } = evt;
+  const eventData = { timeStamp, type, detail };
+  events.opts.onAddRow(eventData);
+});
+document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, (evt) => {
+  const { timeStamp, type, detail } = evt;
+  const eventData = { timeStamp, type, detail };
+  events.opts.onAddColumn(eventData);
+});
+document.addEventListener(EVENT_FORMEO_ADDED_FIELD, (evt) => {
+  const { timeStamp, type, detail } = evt;
+  const eventData = { timeStamp, type, detail };
+  events.opts.onAddField(eventData);
+});
+document.addEventListener(EVENT_FORMEO_REMOVED_ROW, (evt) => {
+  const { timeStamp, type, detail } = evt;
+  const eventData = { timeStamp, type, detail };
+  events.opts.onRemoveRow(eventData);
+});
+document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, (evt) => {
+  const { timeStamp, type, detail } = evt;
+  const eventData = { timeStamp, type, detail };
+  events.opts.onRemoveColumn(eventData);
+});
+document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, (evt) => {
+  const { timeStamp, type, detail } = evt;
+  const eventData = { timeStamp, type, detail };
+  events.opts.onRemoveField(eventData);
 });
 document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
   const { timeStamp, type, detail } = evt;
@@ -10664,6 +10762,9 @@ let FormeoEditor$1 = class FormeoEditor {
   set formData(data = {}) {
     this.userFormData = cleanFormData(data);
     this.load(this.userFormData, this.opts);
+  }
+  loadData(data = {}) {
+    this.formData = data;
   }
   get json() {
     return this.Components.json;
