@@ -4,7 +4,6 @@
  */
 
 import { strict as assert } from 'node:assert'
-import { clear } from 'node:console'
 import { afterEach, beforeEach, describe, it, mock } from 'node:test'
 import {
   EVENT_FORMEO_ADDED_COLUMN,
