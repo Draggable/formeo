@@ -1,10 +1,10 @@
 import '../sass/formeo.scss'
 import i18n from '@draggable/i18n'
-import { SmartTooltip } from '@draggable/tooltip'
+// import { SmartTooltip } from '@draggable/tooltip'
 import Actions from './common/actions.js'
 import dom from './common/dom.js'
 import Events from './common/events.js'
-import { fetchFormeoStyle, fetchIcons, loadPolyfills } from './common/loaders.js'
+import { fetchFormeoStyle, fetchIcons } from './common/loaders.js'
 import { cleanFormData, merge } from './common/utils/index.mjs'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
@@ -38,7 +38,7 @@ export class FormeoEditor {
     this.dom = dom
     Events.init({ debug, ...events })
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
-    this.tooltip = new SmartTooltip()
+    // this.tooltip = new SmartTooltip()
 
     // Load remote resources such as css and svg sprite
     if (document.readyState === 'loading') {
@@ -87,10 +87,6 @@ export class FormeoEditor {
     document.removeEventListener('DOMContentLoaded', this.loadResources)
 
     const promises = []
-
-    if (this.opts.polyfills) {
-      loadPolyfills(this.opts.polyfills)
-    }
 
     // Ajax load svgSprite and inject into markup.
     await fetchIcons(this.opts.svgSprite)

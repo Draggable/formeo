@@ -55,6 +55,7 @@
       border-bottom-color: transparent;
       outline: none;
       box-shadow: 0 0 0 1px color.$input-focus inset;
+
       &::after {
         display: none;
       }
@@ -76,6 +77,7 @@
   &.sortable-ghost {
     background-color: color.$field-highlight-color;
     box-shadow: 0 0 0 1px color.$field-outline-color;
+
     * {
       opacity: 0;
     }
@@ -90,10 +92,7 @@
   border-color: color.$field-outline-color;
   background-color: color.$white;
 
-  .f-i-component-corner {
-    fill: color.$white;
-    stroke: color.$field-outline-color;
-  }
+
 }
 
 .editing-field,
@@ -130,17 +129,17 @@
 
 .field-moving {
   background-color: color.$field-highlight-color;
+
   .action-btn-wrap {
     button {
       background-color: color.$field-highlight-color;
     }
   }
+
   .field-tag {
     background-color: color.$field-highlight-color;
 
-    .f-i-component-corner {
-      fill: color.$field-highlight-color;
-    }
+
   }
 }
 

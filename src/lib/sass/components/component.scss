@@ -28,20 +28,7 @@
     height: calc(var.$half-space * 3);
   }
 
-  .f-i-component-corner {
-    position: absolute;
-    width: var.$base-space;
-    height: var.$base-space;
-    &.bottom-right {
-      bottom: 0;
-      right: -(var.$base-space);
-    }
-    &.bottom-left {
-      bottom: 0;
-      left: -(var.$base-space);
-      transform: scaleX(-1);
-    }
-  }
+
 }
 
 .children {

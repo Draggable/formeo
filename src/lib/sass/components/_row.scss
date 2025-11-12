@@ -4,7 +4,7 @@
 @use "../base/variables" as var;
 
 .formeo-row {
-  > .children {
+  >.children {
     @include mixins.display-row;
     gap: var.$component-gap;
     min-height: mixins.space(4);
@@ -29,6 +29,7 @@
     &:not(.editing-row, .hovering-row) {
       border-top-left-radius: var.$border-radius;
     }
+
     border-top-right-radius: var.$border-radius;
   }
 
@@ -62,13 +63,11 @@
     left: -1px;
     border-color: color.$row-outline-color;
 
-    .f-i-component-corner {
-      fill: color.$white;
-      stroke: color.$row-outline-color;
-    }
+
   }
 
   &:has(.hovering-column) {
+
     .row-actions,
     .field-actions {
       display: none;
@@ -78,6 +77,7 @@
   &.sortable-ghost {
     background-color: color.$row-highlight-color;
     box-shadow: 0 0 0 1px color.$row-outline-color;
+
     * {
       opacity: 0;
     }
@@ -97,17 +97,17 @@
 
 .row-moving {
   background-color: color.$row-highlight-color !important;
+
   .action-btn-wrap {
     button {
       background-color: color.$row-highlight-color;
     }
   }
+
   .row-tag {
     background-color: color.$row-highlight-color;
 
-    .f-i-component-corner {
-      fill: color.$row-highlight-color;
-    }
+
   }
 }
 
@@ -116,6 +116,7 @@
 }
 
 .hovering-row {
+
   .column-actions,
   .field-actions {
     display: none;
@@ -149,15 +150,18 @@
   &:first-child {
     border-top-left-radius: 0;
   }
+
   .row-handle {
     display: none;
   }
+
   .row-tag {
     display: flex;
   }
 
   .row-action-btn-wrap {
     display: flex;
+
     button:last-child {
       border-bottom-right-radius: var.$border-radius;
     }

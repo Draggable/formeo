@@ -1,4 +1,6 @@
 import i18n from '@draggable/i18n'
+import { SmartTooltip } from '@draggable/tooltip'
+
 import Components from '../components/index.js'
 import {
   ANIMATION_SPEED_BASE,
@@ -13,8 +15,11 @@ import {
 } from '../constants.js'
 import animate from './animation.js'
 import h, { forEach } from './helpers.mjs'
+import { loaded } from './loaders.js'
 import { componentType, merge, uuid } from './utils/index.mjs'
 import { extractTextFromHtml, slugify, truncateByWord } from './utils/string.mjs'
+
+new SmartTooltip()
 
 const iconFontTemplates = {
   glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
@@ -303,27 +308,37 @@ class DOM {
       return this.iconSymbols
     }
 
-    const iconSymbolNodes = document.querySelectorAll(`#${formeoSpriteId} svg symbol`)
+    const iconSymbolNodes = loaded.formeoSprite.querySelectorAll('svg symbol')
 
-    const createSvgIconConfig = symbolId => ({
-      tag: 'svg',
-      attrs: {
-        className: ['svg-icon', symbolId],
-      },
-      children: [
-        {
-          tag: 'use',
-          attrs: {
-            'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-            'xlink:href': `#${symbolId}`,
-          },
+    /**
+     * Creates an SVG icon config by inlining the symbol's content
+     * This allows icons to work without the sprite being in the DOM
+     */
+    const createSvgIconConfig = symbol => {
+      const viewBox = symbol.getAttribute('viewBox') || '0 0 24 24'
+
+      // Clone the symbol's children to inline them directly
+      const children = Array.from(symbol.children)
+        .map(child => {
+          const clonedNode = child.cloneNode(true)
+          return clonedNode.outerHTML
+        })
+        .join('')
+
+      return {
+        tag: 'svg',
+        attrs: {
+          className: ['svg-icon', symbol.id],
+          viewBox,
+          xmlns: 'http://www.w3.org/2000/svg',
         },
-      ],
-    })
+        children: children,
+      }
+    }
 
     this.iconSymbols = Array.from(iconSymbolNodes).reduce((acc, symbol) => {
       const name = symbol.id.replace(iconPrefix, '')
-      acc[name] = createSvgIconConfig(symbol.id)
+      acc[name] = createSvgIconConfig(symbol)
       return acc
     }, {})
     this.cachedIcons = {}

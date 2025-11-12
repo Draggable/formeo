@@ -1,7 +1,7 @@
-import { fileURLToPath } from 'url'
-import { dirname, resolve, join } from 'path'
 import fs from 'fs-extra'
+import { dirname, join, resolve } from 'path'
 import SVGSpriter from 'svg-sprite'
+import { fileURLToPath } from 'url'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -41,6 +41,12 @@ function generateSprite() {
               'removeStyleElement',
               'removeNonInheritableGroupAttrs',
               {
+                name: 'prefixIds',
+                params: {
+                  prefixClassname: false,
+                },
+              },
+              {
                 name: 'removeAttrs',
                 params: { attrs: '(style|^font-*)' },
               },
@@ -62,7 +68,7 @@ function generateSprite() {
   })
 
   // Compile the sprite
-  spriter.compile(function (error, result) {
+  spriter.compile((error, result) => {
     if (error) {
       throw new Error(error)
     }
