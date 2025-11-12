@@ -1,3 +1,15 @@
+# [4.2.0](https://github.com/Draggable/formeo/compare/v4.1.4...v4.2.0) (2025-11-12)
+
+
+### Bug Fixes
+
+* update events ([4ec4206](https://github.com/Draggable/formeo/commit/4ec4206562842160633bec4acd6d4d1f8279c1a9))
+
+
+### Features
+
+* onRemove and onAdd events ([dd68e62](https://github.com/Draggable/formeo/commit/dd68e6230e8e20d79a93b1f6297035b64c7f4fe4))
+
 ## [4.1.4](https://github.com/Draggable/formeo/compare/v4.1.3...v4.1.4) (2025-11-07)
 
 
