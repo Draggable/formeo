@@ -2,6 +2,7 @@ import components, { Columns, Controls } from '../components/index.js'
 import {
   ANIMATION_SPEED_BASE,
   ANIMATION_SPEED_FAST,
+  EVENT_FORMEO_CHANGED,
   EVENT_FORMEO_CLEARED,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_ON_RENDER,
@@ -26,7 +27,7 @@ const defaults = {
   bubbles: true, // bubble events from components
   formeoLoaded: _evt => {},
   onAdd: () => {},
-  onChange: (...args) => defaults.onUpdate(...args),
+  onChange: evt => events.opts?.debug && console.log(evt),
   onUpdate: evt => events.opts?.debug && console.log(evt),
   onUpdateStage: evt => events.opts?.debug && console.log(evt),
   onUpdateRow: evt => events.opts?.debug && console.log(evt),
@@ -47,6 +48,16 @@ const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) =>
     bubbles: events.opts?.debug || events.opts?.bubbles,
   })
   evt.data = (src || document).dispatchEvent(evt)
+
+  // Also dispatch formeoChanged as an alias for formeoUpdated
+  if (type === EVENT_FORMEO_UPDATED) {
+    const changedEvt = new window.CustomEvent(EVENT_FORMEO_CHANGED, {
+      detail: evtData,
+      bubbles: events.opts?.debug || events.opts?.bubbles,
+    })
+    ;(src || document).dispatchEvent(changedEvt)
+  }
+
   return evt
 }
 
@@ -59,52 +70,65 @@ const events = {
     return this
   },
   formeoSaved: evt => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
-  formeoUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_UPDATED),
+  formeoUpdated: (evt, eventType) => defaultCustomEvent(evt, eventType || EVENT_FORMEO_UPDATED),
   formeoCleared: evt => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
   formeoOnRender: evt => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
   formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
 }
 
 const formeoUpdatedThrottled = throttle(() => {
-  events.opts.onUpdate({
+  const eventData = {
     timeStamp: window.performance.now(),
     type: EVENT_FORMEO_UPDATED,
     detail: components.formData,
-  })
+  }
+  events.opts.onUpdate(eventData)
+  // Also call onChange if it's different from onUpdate
+  if (events.opts.onChange !== events.opts.onUpdate) {
+    events.opts.onChange(eventData)
+  }
 }, ANIMATION_SPEED_FAST)
 
 document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled)
 document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, evt => {
   const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
+  const eventData = { timeStamp, type, detail }
+  events.opts.onUpdate(eventData)
+  events.opts.onUpdateStage(eventData)
+  // Also call onChange if it's different from onUpdate
+  // if (events.opts.onChange !== events.opts.onUpdate) {
+  //   events.opts.onChange(eventData)
+  // }
 })
 document.addEventListener(EVENT_FORMEO_UPDATED_ROW, evt => {
   const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
+  const eventData = { timeStamp, type, detail }
+  events.opts.onUpdate(eventData)
+  events.opts.onUpdateRow(eventData)
+  // Also call onChange if it's different from onUpdate
+  // if (events.opts.onChange !== events.opts.onUpdate) {
+  //   events.opts.onChange(eventData)
+  // }
 })
 document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, evt => {
   const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
+  const eventData = { timeStamp, type, detail }
+  events.opts.onUpdate(eventData)
+  events.opts.onUpdateColumn(eventData)
+  // Also call onChange if it's different from onUpdate
+  // if (events.opts.onChange !== events.opts.onUpdate) {
+  //   events.opts.onChange(eventData)
+  // }
 })
 document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
   const { timeStamp, type, detail } = evt
-  events.opts.onUpdate({
-    timeStamp,
-    type,
-    detail,
-  })
+  const eventData = { timeStamp, type, detail }
+  events.opts.onUpdate(eventData)
+  events.opts.onUpdateField(eventData)
+  // Also call onChange if it's different from onUpdate
+  // if (events.opts.onChange !== events.opts.onUpdate) {
+  //   events.opts.onChange(eventData)
+  // }
 })
 
 document.addEventListener(EVENT_FORMEO_ON_RENDER, evt => {
