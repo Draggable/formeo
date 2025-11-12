@@ -7,10 +7,16 @@ import { strict as assert } from 'node:assert'
 import { clear } from 'node:console'
 import { afterEach, beforeEach, describe, it, mock } from 'node:test'
 import {
+  EVENT_FORMEO_ADDED_COLUMN,
+  EVENT_FORMEO_ADDED_FIELD,
+  EVENT_FORMEO_ADDED_ROW,
   EVENT_FORMEO_CHANGED,
   EVENT_FORMEO_CLEARED,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_ON_RENDER,
+  EVENT_FORMEO_REMOVED_COLUMN,
+  EVENT_FORMEO_REMOVED_FIELD,
+  EVENT_FORMEO_REMOVED_ROW,
   EVENT_FORMEO_SAVED,
   EVENT_FORMEO_UPDATED,
   EVENT_FORMEO_UPDATED_COLUMN,
@@ -378,6 +384,172 @@ describe('Events System', () => {
       }, 100)
 
       consoleSpy.mock.restore()
+    })
+  })
+
+  describe('Add events', () => {
+    it('should dispatch formeoAddedRow event', () => {
+      return new Promise(resolve => {
+        const testData = { componentId: 'row-123', componentType: 'row' }
+
+        addTestListener(EVENT_FORMEO_ADDED_ROW, evt => {
+          assert.ok(evt.type === EVENT_FORMEO_ADDED_ROW)
+          assert.deepEqual(evt.detail, testData)
+          resolve()
+        })
+
+        Events.formeoAddedRow(testData)
+      })
+    })
+
+    it('should dispatch formeoAddedColumn event', () => {
+      return new Promise(resolve => {
+        const testData = { componentId: 'column-123', componentType: 'column' }
+
+        addTestListener(EVENT_FORMEO_ADDED_COLUMN, evt => {
+          assert.ok(evt.type === EVENT_FORMEO_ADDED_COLUMN)
+          assert.deepEqual(evt.detail, testData)
+          resolve()
+        })
+
+        Events.formeoAddedColumn(testData)
+      })
+    })
+
+    it('should dispatch formeoAddedField event', () => {
+      return new Promise(resolve => {
+        const testData = { componentId: 'field-123', componentType: 'field' }
+
+        addTestListener(EVENT_FORMEO_ADDED_FIELD, evt => {
+          assert.ok(evt.type === EVENT_FORMEO_ADDED_FIELD)
+          assert.deepEqual(evt.detail, testData)
+          resolve()
+        })
+
+        Events.formeoAddedField(testData)
+      })
+    })
+
+    it('should call onAddRow callback for row additions', () => {
+      return new Promise(resolve => {
+        const onAddRow = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_ROW)
+          resolve()
+        })
+
+        Events.init({ onAddRow })
+
+        Events.formeoAddedRow({ componentId: 'row-test' })
+      })
+    })
+
+    it('should call onAddColumn callback for column additions', () => {
+      return new Promise(resolve => {
+        const onAddColumn = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_COLUMN)
+          resolve()
+        })
+
+        Events.init({ onAddColumn })
+
+        Events.formeoAddedColumn({ componentId: 'column-test' })
+      })
+    })
+
+    it('should call onAddField callback for field additions', () => {
+      return new Promise(resolve => {
+        const onAddField = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_FIELD)
+          resolve()
+        })
+
+        Events.init({ onAddField })
+
+        Events.formeoAddedField({ componentId: 'field-test' })
+      })
+    })
+  })
+
+  describe('Remove events', () => {
+    it('should dispatch formeoRemovedRow event', () => {
+      return new Promise(resolve => {
+        const testData = { componentId: 'row-123', componentType: 'row' }
+
+        addTestListener(EVENT_FORMEO_REMOVED_ROW, evt => {
+          assert.ok(evt.type === EVENT_FORMEO_REMOVED_ROW)
+          assert.deepEqual(evt.detail, testData)
+          resolve()
+        })
+
+        Events.formeoRemovedRow(testData)
+      })
+    })
+
+    it('should dispatch formeoRemovedColumn event', () => {
+      return new Promise(resolve => {
+        const testData = { componentId: 'column-123', componentType: 'column' }
+
+        addTestListener(EVENT_FORMEO_REMOVED_COLUMN, evt => {
+          assert.ok(evt.type === EVENT_FORMEO_REMOVED_COLUMN)
+          assert.deepEqual(evt.detail, testData)
+          resolve()
+        })
+
+        Events.formeoRemovedColumn(testData)
+      })
+    })
+
+    it('should dispatch formeoRemovedField event', () => {
+      return new Promise(resolve => {
+        const testData = { componentId: 'field-123', componentType: 'field' }
+
+        addTestListener(EVENT_FORMEO_REMOVED_FIELD, evt => {
+          assert.ok(evt.type === EVENT_FORMEO_REMOVED_FIELD)
+          assert.deepEqual(evt.detail, testData)
+          resolve()
+        })
+
+        Events.formeoRemovedField(testData)
+      })
+    })
+
+    it('should call onRemoveRow callback for row removals', () => {
+      return new Promise(resolve => {
+        const onRemoveRow = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_ROW)
+          resolve()
+        })
+
+        Events.init({ onRemoveRow })
+
+        Events.formeoRemovedRow({ componentId: 'row-test' })
+      })
+    })
+
+    it('should call onRemoveColumn callback for column removals', () => {
+      return new Promise(resolve => {
+        const onRemoveColumn = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_COLUMN)
+          resolve()
+        })
+
+        Events.init({ onRemoveColumn })
+
+        Events.formeoRemovedColumn({ componentId: 'column-test' })
+      })
+    })
+
+    it('should call onRemoveField callback for field removals', () => {
+      return new Promise(resolve => {
+        const onRemoveField = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_FIELD)
+          resolve()
+        })
+
+        Events.init({ onRemoveField })
+
+        Events.formeoRemovedField({ componentId: 'field-test' })
+      })
     })
   })
 })
