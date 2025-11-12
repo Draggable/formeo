@@ -26,7 +26,7 @@ npm test                                # Run unit tests with Node.js native tes
 npm run test:watch                      # Run tests in watch mode
 npm run test:updateSnapshots            # Update test snapshots
 npm run playwright:test                 # Run e2e tests
-npm run playwright:test:headed          # Run e2e tests with browser UI
+npm run playwright:test:ui          # Run e2e tests with browser UI
 npm run playwright:test:report          # View Playwright test report
 ```
 
