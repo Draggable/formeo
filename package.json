@@ -92,7 +92,7 @@
     "copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
     "travis-deploy-once": "travis-deploy-once --pro",
     "playwright:test": "playwright test",
-    "playwright:test:headed": "playwright test --headed",
+    "playwright:test:ui": "playwright test --ui",
     "playwright:test:report": "playwright show-report",
     "playwright:test:ci": "playwright test --reporter=dot",
     "prepush": "npm test",
