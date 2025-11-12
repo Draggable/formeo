@@ -74,8 +74,14 @@ document.addEventListener('formeoUpdatedField', (event) => {
 | `formeoChanged`          | Form data has changed (alias for updated)|
 | `formeoUpdatedStage`     | Stage component was updated              |
 | `formeoUpdatedRow`       | Row component was updated                |
+| `formeoAddedRow`         | Row component was added                  |
+| `formeoRemovedRow`       | Row component was removed                |
 | `formeoUpdatedColumn`    | Column component was updated             |
+| `formeoAddedColumn`      | Column component was added               |
+| `formeoRemovedColumn`    | Column component was removed             |
 | `formeoUpdatedField`     | Field component was updated              |
+| `formeoAddedField`       | Field component was added                |
+| `formeoRemovedField`     | Field component was removed              |
 | `formeoCleared`          | Form has been cleared                    |
 | `formeoOnRender`         | Component has been rendered              |
 | `formeoConditionUpdated` | Conditional logic has been updated       |
