@@ -39,6 +39,12 @@ const editor = new FormeoEditor({
 | `onUpdateRow`        | Function | Fires when row is updated                |
 | `onUpdateColumn`     | Function | Fires when column is updated             |
 | `onUpdateField`      | Function | Fires when field is updated              |
+| `onAddRow`           | Function | Fires when row is added                  |
+| `onAddColumn`        | Function | Fires when column is added               |
+| `onAddField`         | Function | Fires when field is added                |
+| `onRemoveRow`        | Function | Fires when row is removed                |
+| `onRemoveColumn`     | Function | Fires when column is removed             |
+| `onRemoveField`      | Function | Fires when field is removed              |
 | `onSave`             | Function | Fires when form is saved                 |
 | `onRender`           | Function | Fires when an element is rendered        |
 | `confirmClearAll`    | Function | Fires when form is cleared               |
