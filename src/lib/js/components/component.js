@@ -2,6 +2,7 @@
 
 import animate from '../common/animation.js'
 import dom from '../common/dom.js'
+import events from '../common/events.js'
 import { forEach, indexOfNode, isInt, map } from '../common/helpers.mjs'
 import { clone, componentType, identity, merge, remove, unique, uuid } from '../common/utils/index.mjs'
 import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
@@ -13,6 +14,9 @@ import {
   COMPONENT_TYPE_CLASSNAMES,
   COMPONENT_TYPE_MAP,
   CONTROL_GROUP_CLASSNAME,
+  EVENT_FORMEO_REMOVED_COLUMN,
+  EVENT_FORMEO_REMOVED_FIELD,
+  EVENT_FORMEO_REMOVED_ROW,
   PARENT_TYPE_MAP,
   PROPERTY_OPTIONS,
 } from '../constants.js'
@@ -97,6 +101,7 @@ export default class Component extends Data {
     // Create event data with component context
     const fullEventData = {
       component: this,
+      target: this,
       type: eventName,
       timestamp: Date.now(),
       ...eventData,
@@ -200,6 +205,25 @@ export default class Component extends Data {
 
     if (parent.name === 'row') {
       parent.autoColumnWidths()
+    }
+
+    // Dispatch remove events based on component type
+    const componentEventMap = {
+      row: EVENT_FORMEO_REMOVED_ROW,
+      column: EVENT_FORMEO_REMOVED_COLUMN,
+      field: EVENT_FORMEO_REMOVED_FIELD,
+    }
+
+    const removeEvent = componentEventMap[this.name]
+    if (removeEvent) {
+      events.formeoUpdated(
+        {
+          componentId: this.id,
+          componentType: this.name,
+          parent: parent,
+        },
+        removeEvent
+      )
     }
 
     return Components[`${this.name}s`].delete(this.id)

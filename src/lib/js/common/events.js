@@ -2,10 +2,16 @@ import components, { Columns, Controls } from '../components/index.js'
 import {
   ANIMATION_SPEED_BASE,
   ANIMATION_SPEED_FAST,
+  EVENT_FORMEO_ADDED_COLUMN,
+  EVENT_FORMEO_ADDED_FIELD,
+  EVENT_FORMEO_ADDED_ROW,
   EVENT_FORMEO_CHANGED,
   EVENT_FORMEO_CLEARED,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_ON_RENDER,
+  EVENT_FORMEO_REMOVED_COLUMN,
+  EVENT_FORMEO_REMOVED_FIELD,
+  EVENT_FORMEO_REMOVED_ROW,
   EVENT_FORMEO_SAVED,
   EVENT_FORMEO_UPDATED,
   EVENT_FORMEO_UPDATED_COLUMN,
@@ -33,6 +39,12 @@ const defaults = {
   onUpdateRow: evt => events.opts?.debug && console.log(evt),
   onUpdateColumn: evt => events.opts?.debug && console.log(evt),
   onUpdateField: evt => events.opts?.debug && console.log(evt),
+  onAddRow: evt => events.opts?.debug && console.log(evt),
+  onAddColumn: evt => events.opts?.debug && console.log(evt),
+  onAddField: evt => events.opts?.debug && console.log(evt),
+  onRemoveRow: evt => events.opts?.debug && console.log(evt),
+  onRemoveColumn: evt => events.opts?.debug && console.log(evt),
+  onRemoveField: evt => events.opts?.debug && console.log(evt),
   onRender: evt => events.opts?.debug && console.log(evt),
   onSave: _evt => {},
   confirmClearAll: evt => {
@@ -74,6 +86,12 @@ const events = {
   formeoCleared: evt => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
   formeoOnRender: evt => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
   formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
+  formeoAddedRow: evt => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_ROW),
+  formeoAddedColumn: evt => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_COLUMN),
+  formeoAddedField: evt => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_FIELD),
+  formeoRemovedRow: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_ROW),
+  formeoRemovedColumn: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_COLUMN),
+  formeoRemovedField: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_FIELD),
 }
 
 const formeoUpdatedThrottled = throttle(() => {
@@ -113,6 +131,42 @@ document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
   const eventData = { timeStamp, type, detail }
   events.opts.onUpdate(eventData)
   events.opts.onUpdateField(eventData)
+})
+
+document.addEventListener(EVENT_FORMEO_ADDED_ROW, evt => {
+  const { timeStamp, type, detail } = evt
+  const eventData = { timeStamp, type, detail }
+  events.opts.onAddRow(eventData)
+})
+
+document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, evt => {
+  const { timeStamp, type, detail } = evt
+  const eventData = { timeStamp, type, detail }
+  events.opts.onAddColumn(eventData)
+})
+
+document.addEventListener(EVENT_FORMEO_ADDED_FIELD, evt => {
+  const { timeStamp, type, detail } = evt
+  const eventData = { timeStamp, type, detail }
+  events.opts.onAddField(eventData)
+})
+
+document.addEventListener(EVENT_FORMEO_REMOVED_ROW, evt => {
+  const { timeStamp, type, detail } = evt
+  const eventData = { timeStamp, type, detail }
+  events.opts.onRemoveRow(eventData)
+})
+
+document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, evt => {
+  const { timeStamp, type, detail } = evt
+  const eventData = { timeStamp, type, detail }
+  events.opts.onRemoveColumn(eventData)
+})
+
+document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, evt => {
+  const { timeStamp, type, detail } = evt
+  const eventData = { timeStamp, type, detail }
+  events.opts.onRemoveField(eventData)
 })
 
 document.addEventListener(EVENT_FORMEO_ON_RENDER, evt => {

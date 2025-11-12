@@ -1,5 +1,7 @@
+import events from '../common/events.js'
 import { clone, merge, parseData, uuid } from '../common/utils/index.mjs'
 import { get } from '../common/utils/object.mjs'
+import { EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_ADDED_ROW } from '../constants.js'
 import Data from './data.js'
 
 export default class ComponentData extends Data {
@@ -33,6 +35,26 @@ export default class ComponentData extends Data {
     this.data[elemId] = component
     // this.set(elemId, component)
     this.active = component
+
+    // Dispatch add events based on component type
+    const componentEventMap = {
+      row: EVENT_FORMEO_ADDED_ROW,
+      column: EVENT_FORMEO_ADDED_COLUMN,
+      field: EVENT_FORMEO_ADDED_FIELD,
+    }
+
+    const addEvent = componentEventMap[this.name]
+    if (addEvent) {
+      events.formeoUpdated(
+        {
+          entity: component,
+          componentId: elemId,
+          componentType: this.name,
+          data: component.data,
+        },
+        addEvent
+      )
+    }
 
     return component
   }

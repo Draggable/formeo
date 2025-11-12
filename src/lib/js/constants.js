@@ -161,6 +161,12 @@ export const EVENT_FORMEO_UPDATED_FIELD = 'formeoUpdatedField'
 export const EVENT_FORMEO_CLEARED = 'formeoCleared'
 export const EVENT_FORMEO_ON_RENDER = 'formeoOnRender'
 export const EVENT_FORMEO_CONDITION_UPDATED = 'formeoConditionUpdated'
+export const EVENT_FORMEO_ADDED_ROW = 'formeoAddedRow'
+export const EVENT_FORMEO_ADDED_COLUMN = 'formeoAddedColumn'
+export const EVENT_FORMEO_ADDED_FIELD = 'formeoAddedField'
+export const EVENT_FORMEO_REMOVED_ROW = 'formeoRemovedRow'
+export const EVENT_FORMEO_REMOVED_COLUMN = 'formeoRemovedColumn'
+export const EVENT_FORMEO_REMOVED_FIELD = 'formeoRemovedField'
 export const COMPARISON_OPERATORS = {
   equals: '==',
   notEquals: '!=',
