@@ -55,6 +55,11 @@ export class FormeoEditor {
     this.userFormData = cleanFormData(data)
     this.load(this.userFormData, this.opts)
   }
+
+  loadData(data = {}) {
+    this.formData = data
+  }
+
   get json() {
     return this.Components.json
   }

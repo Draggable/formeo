@@ -118,7 +118,7 @@ export default class Stage extends Component {
 
   onAdd(...args) {
     const component = super.onAdd(...args)
-    if (component && component.name === 'column') {
+    if (component?.name === 'column') {
       component.parent.autoColumnWidths()
     }
   }

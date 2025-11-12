@@ -109,7 +109,7 @@ export default class EditPanel {
 
     if (type === 'conditions') {
       // Ensure i18n key exists for clearAll
-      if (!i18n.current.clearAll) {
+      if (i18n.current && !i18n.current.clearAll) {
         i18n.put('clearAll', 'Clear All')
       }
 

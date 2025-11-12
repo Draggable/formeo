@@ -3,6 +3,12 @@ import events from '../common/events.js'
 import { uuid } from '../common/utils/index.mjs'
 import { get, set } from '../common/utils/object.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
+import {
+  EVENT_FORMEO_UPDATED_COLUMN,
+  EVENT_FORMEO_UPDATED_FIELD,
+  EVENT_FORMEO_UPDATED_ROW,
+  EVENT_FORMEO_UPDATED_STAGE,
+} from '../constants.js'
 
 const getChangeType = (oldVal, newVal) => {
   if (oldVal === undefined) {
@@ -62,7 +68,23 @@ export default class Data {
         evtData.previousValue = oldVal
       }
 
+      // Dispatch the generic formeoUpdated event
       events.formeoUpdated(evtData)
+
+      // Dispatch component-specific events based on the component type
+      if (this.name) {
+        const componentEventMap = {
+          stage: EVENT_FORMEO_UPDATED_STAGE,
+          row: EVENT_FORMEO_UPDATED_ROW,
+          column: EVENT_FORMEO_UPDATED_COLUMN,
+          field: EVENT_FORMEO_UPDATED_FIELD,
+        }
+
+        const specificEvent = componentEventMap[this.name]
+        if (specificEvent) {
+          events.formeoUpdated(evtData, specificEvent)
+        }
+      }
     }
 
     return data
