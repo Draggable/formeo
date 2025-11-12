@@ -95,40 +95,24 @@ document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, evt => {
   const eventData = { timeStamp, type, detail }
   events.opts.onUpdate(eventData)
   events.opts.onUpdateStage(eventData)
-  // Also call onChange if it's different from onUpdate
-  // if (events.opts.onChange !== events.opts.onUpdate) {
-  //   events.opts.onChange(eventData)
-  // }
 })
 document.addEventListener(EVENT_FORMEO_UPDATED_ROW, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
   events.opts.onUpdate(eventData)
   events.opts.onUpdateRow(eventData)
-  // Also call onChange if it's different from onUpdate
-  // if (events.opts.onChange !== events.opts.onUpdate) {
-  //   events.opts.onChange(eventData)
-  // }
 })
 document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
   events.opts.onUpdate(eventData)
   events.opts.onUpdateColumn(eventData)
-  // Also call onChange if it's different from onUpdate
-  // if (events.opts.onChange !== events.opts.onUpdate) {
-  //   events.opts.onChange(eventData)
-  // }
 })
 document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
   events.opts.onUpdate(eventData)
   events.opts.onUpdateField(eventData)
-  // Also call onChange if it's different from onUpdate
-  // if (events.opts.onChange !== events.opts.onUpdate) {
-  //   events.opts.onChange(eventData)
-  // }
 })
 
 document.addEventListener(EVENT_FORMEO_ON_RENDER, evt => {
