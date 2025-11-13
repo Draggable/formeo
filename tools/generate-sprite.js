@@ -43,7 +43,7 @@ function generateSprite() {
               {
                 name: 'prefixIds',
                 params: {
-                  prefixClassname: false,
+                  prefixClassNames: false,
                 },
               },
               {
