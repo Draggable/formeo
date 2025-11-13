@@ -7,7 +7,6 @@ import {
   COLUMN_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
   FIELD_CLASSNAME,
-  formeoSpriteId,
   iconPrefix,
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
