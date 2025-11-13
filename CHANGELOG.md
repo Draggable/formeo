@@ -1,3 +1,10 @@
+## [4.2.2](https://github.com/Draggable/formeo/compare/v4.2.1...v4.2.2) (2025-11-13)
+
+
+### Bug Fixes
+
+* svg icons not displaying in prod build ([a35aeaa](https://github.com/Draggable/formeo/commit/a35aeaaf8fa122072a8f9f9a784f6efa03b0074e))
+
 ## [4.2.1](https://github.com/Draggable/formeo/compare/v4.2.0...v4.2.1) (2025-11-13)
 
 
