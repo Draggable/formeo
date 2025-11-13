@@ -1,3 +1,12 @@
+## [4.2.1](https://github.com/Draggable/formeo/compare/v4.2.0...v4.2.1) (2025-11-13)
+
+
+### Bug Fixes
+
+* ensure all promises resolve before init, loader no longer experimental ([5511592](https://github.com/Draggable/formeo/commit/5511592b4f4d608f031cd96be36de6eab1452812))
+* loadResources, multiple tooltip dom ([0a87b4a](https://github.com/Draggable/formeo/commit/0a87b4a695b1a606aab1da479c30b650991c777e))
+* svg icon fetching ([9157574](https://github.com/Draggable/formeo/commit/9157574fc24a41b851c11aa1f529d348392d41fc))
+
 # [4.2.0](https://github.com/Draggable/formeo/compare/v4.1.4...v4.2.0) (2025-11-12)
 
 
