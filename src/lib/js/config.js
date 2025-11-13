@@ -1,9 +1,10 @@
+import { enUS } from '@draggable/formeo-languages'
 import mi18n from '@draggable/i18n'
 import { CSS_URL } from './constants'
 
-const enUS = import.meta.env.enUS
-
-mi18n.addLanguage('en-US', enUS)
+const locale = 'en-US'
+mi18n.addLanguage(locale, enUS)
+mi18n.setCurrent(locale)
 
 export const defaults = {
   get editor() {

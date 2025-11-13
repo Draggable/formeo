@@ -139,7 +139,7 @@ export const insertIcons = iconSvgStr => {
  */
 export const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
   if (loaded.formeoSprite) {
-    return
+    return loaded.formeoSprite
   }
 
   // If no sprite url provided, use the bundled sprite
