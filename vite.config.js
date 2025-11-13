@@ -46,7 +46,7 @@ const sharedConfig = {
 export default defineConfig({
   ...sharedConfig,
   root: 'src/demo',
-  base: process.env.NODE_ENV === 'production' ? '/formeo/' : '/',
+  base: '/',
   resolve: {
     alias: {
       formeo: resolve(__dirname, 'src/lib/js/index.js'),
