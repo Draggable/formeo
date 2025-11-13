@@ -1,17 +1,7 @@
 import pkg from '../../../package.json' with { type: 'json' }
 import { uuid } from './common/utils/index.mjs'
 
-// NOTE: The following import uses Vite's '?raw' query parameter to import the SVG as a string.
-// This will only work in Vite environments. In non-Vite environments, BUNDLED_SVG_SPRITE will be null.
-let BUNDLED_SVG_SPRITE = null;
-try {
-  // Vite-specific import. Will fail in non-Vite environments.
-  // eslint-disable-next-line import/no-unresolved
-  BUNDLED_SVG_SPRITE = require('../../lib/icons/formeo-sprite.svg?raw');
-} catch (e) {
-  // Fallback: BUNDLED_SVG_SPRITE remains null.
-}
-export { BUNDLED_SVG_SPRITE };
+export { default as BUNDLED_SVG_SPRITE } from '../../lib/icons/formeo-sprite.svg?raw'
 
 const name = pkg.name
 export const version = pkg.version
