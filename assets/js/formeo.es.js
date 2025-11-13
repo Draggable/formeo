@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.2.0
+Version: 4.2.1
 Author: Draggable https://draggable.io
 */
 
@@ -49,8 +49,8 @@ class I18N {
     this.config = { location: parsedLocation, ...restOptions };
     const { override, preloaded = {} } = this.config;
     const allLangs = Object.entries(this.langs).concat(Object.entries(override || preloaded));
-    this.langs = allLangs.reduce((acc, [locale, lang]) => {
-      acc[locale] = this.applyLanguage(locale, lang);
+    this.langs = allLangs.reduce((acc, [locale2, lang]) => {
+      acc[locale2] = this.applyLanguage(locale2, lang);
       return acc;
     }, {});
     this.locale = this.config.locale || this.config.langs[0];
@@ -69,9 +69,9 @@ class I18N {
    * @param {String} locale
    * @param {String|Object} lang
    */
-  addLanguage(locale, lang = {}) {
+  addLanguage(locale2, lang = {}) {
     lang = typeof lang === "string" ? I18N.processFile(lang) : lang;
-    this.applyLanguage(locale, lang);
+    this.applyLanguage(locale2, lang);
     this.config.langs.push("locale");
   }
   /**
@@ -80,9 +80,9 @@ class I18N {
    * @param  {String} locale - locale to check for value
    * @return {String} language string or undefined
    */
-  getValue(key, locale = this.locale) {
+  getValue(key, locale2 = this.locale) {
     var _a;
-    const value = (_a = this.langs[locale]) == null ? void 0 : _a[key];
+    const value = (_a = this.langs[locale2]) == null ? void 0 : _a[key];
     return value || this.getFallbackValue(key);
   }
   /**
@@ -159,9 +159,9 @@ class I18N {
   static fromFile(rawText) {
     const lines = rawText.split("\n");
     const lang = {};
-    for (let matches2, i = 0; i < lines.length; i++) {
+    for (let matches2, i2 = 0; i2 < lines.length; i2++) {
       const regex = /^(.+?) *?= *?([^\n]+)/;
-      matches2 = regex.exec(lines[i]);
+      matches2 = regex.exec(lines[i2]);
       if (matches2) {
         lang[matches2[1]] = matches2[2].replace(/(^\s+|\s+$)/g, "");
       }
@@ -174,22 +174,22 @@ class I18N {
    * @param  {Boolean} useCache
    * @return {Promise}       resolves response
    */
-  loadLang(locale, useCache = true) {
+  loadLang(locale2, useCache = true) {
     const _this = this;
     return new Promise(function(resolve, reject) {
-      if (_this.loaded.indexOf(locale) !== -1 && useCache) {
-        _this.applyLanguage(_this.langs[locale]);
-        return resolve(_this.langs[locale]);
+      if (_this.loaded.indexOf(locale2) !== -1 && useCache) {
+        _this.applyLanguage(_this.langs[locale2]);
+        return resolve(_this.langs[locale2]);
       } else {
-        const langFile = [_this.config.location, locale, _this.config.extension].join("");
+        const langFile = [_this.config.location, locale2, _this.config.extension].join("");
         return fetchData(langFile).then((lang) => {
           const processedFile = I18N.processFile(lang);
-          _this.applyLanguage(locale, processedFile);
-          _this.loaded.push(locale);
-          return resolve(_this.langs[locale]);
+          _this.applyLanguage(locale2, processedFile);
+          _this.loaded.push(locale2);
+          return resolve(_this.langs[locale2]);
         }).catch((err) => {
           console.error(err);
-          const lang = _this.applyLanguage(locale);
+          const lang = _this.applyLanguage(locale2);
           resolve(lang);
         });
       }
@@ -201,11 +201,11 @@ class I18N {
    * @param {Object} lang
    * @return {Object} overriden language
    */
-  applyLanguage(locale, lang = {}) {
-    const override = this.config.override[locale] || {};
-    const existingLang = this.langs[locale] || {};
-    this.langs[locale] = { ...existingLang, ...lang, ...override };
-    return this.langs[locale];
+  applyLanguage(locale2, lang = {}) {
+    const override = this.config.override[locale2] || {};
+    const existingLang = this.langs[locale2] || {};
+    this.langs[locale2] = { ...existingLang, ...lang, ...override };
+    return this.langs[locale2];
   }
   /**
    * return currently available languages
@@ -219,10 +219,10 @@ class I18N {
    * @param {String}   locale
    * @return {Promise} language
    */
-  async setCurrent(locale = "en-US") {
-    await this.loadLang(locale);
-    this.locale = locale;
-    this.current = this.langs[locale];
+  async setCurrent(locale2 = "en-US") {
+    await this.loadLang(locale2);
+    this.locale = locale2;
+    this.current = this.langs[locale2];
     return this.current;
   }
 }
@@ -255,9 +255,9 @@ class SmartTooltip {
     __publicField(this, "tooltip");
     __publicField(this, "activeTriggerType", null);
     __publicField(this, "spacing", 12);
-    __publicField(this, "handleClick", (e) => {
+    __publicField(this, "handleClick", (e2) => {
       const triggerName = this.triggerName;
-      const trigger = e.target.closest(`[${triggerName}][${triggerName}-type="click"]`);
+      const trigger = e2.target.closest(`[${triggerName}][${triggerName}-type="click"]`);
       if (trigger) {
         if (this.isVisible()) {
           this.hide();
@@ -270,9 +270,9 @@ class SmartTooltip {
         this.hide();
       }
     });
-    __publicField(this, "handleMouseOver", (e) => {
+    __publicField(this, "handleMouseOver", (e2) => {
       const triggerName = this.triggerName;
-      const trigger = e.target.closest(`[${triggerName}]`);
+      const trigger = e2.target.closest(`[${triggerName}]`);
       if (this.activeTriggerType !== "click" && (trigger == null ? void 0 : trigger.getAttribute(`${triggerName}-type`)) !== "click") {
         const content = trigger == null ? void 0 : trigger.getAttribute(`${triggerName}`);
         if (content) {
@@ -281,9 +281,9 @@ class SmartTooltip {
         }
       }
     });
-    __publicField(this, "handleMouseOut", (e) => {
+    __publicField(this, "handleMouseOut", (e2) => {
       const triggerName = this.triggerName;
-      const trigger = e.target.closest(`[${triggerName}]`);
+      const trigger = e2.target.closest(`[${triggerName}]`);
       if (this.activeTriggerType !== "click" && (trigger == null ? void 0 : trigger.getAttribute(`${triggerName}-type`)) !== "click") {
         this.hide();
       }
@@ -431,7 +431,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "4.2.0";
+const version$2 = "4.2.1";
 const pkg = {
   name: name$1,
   version: version$2
@@ -665,7 +665,7 @@ function require_getRawTag() {
     try {
       value[symToStringTag] = void 0;
       var unmasked = true;
-    } catch (e) {
+    } catch (e2) {
     }
     var result = nativeObjectToString.call(value);
     if (unmasked) {
@@ -776,11 +776,11 @@ function require_toSource() {
     if (func != null) {
       try {
         return funcToString.call(func);
-      } catch (e) {
+      } catch (e2) {
       }
       try {
         return func + "";
-      } catch (e) {
+      } catch (e2) {
       }
     }
     return "";
@@ -1126,7 +1126,7 @@ function require_defineProperty() {
       var func = getNative(Object, "defineProperty");
       func({}, "", {});
       return func;
-    } catch (e) {
+    } catch (e2) {
     }
   })();
   _defineProperty$1 = defineProperty;
@@ -1537,7 +1537,7 @@ function require_nodeUtil() {
           return types;
         }
         return freeProcess && freeProcess.binding && freeProcess.binding("util");
-      } catch (e) {
+      } catch (e2) {
       }
     })();
     module.exports = nodeUtil;
@@ -2070,8 +2070,8 @@ const clone$1 = (obj) => {
   }
   if (Array.isArray(obj)) {
     copy = [];
-    for (let i = 0, len = obj.length; i < len; i++) {
-      copy[i] = clone$1(obj[i]);
+    for (let i2 = 0, len = obj.length; i2 < len; i2++) {
+      copy[i2] = clone$1(obj[i2]);
     }
     return copy;
   }
@@ -2143,8 +2143,8 @@ function parseData(data = /* @__PURE__ */ Object.create(null)) {
   if (typeof data === "string") {
     try {
       return JSON.parse(data);
-    } catch (e) {
-      console.error("Invalid JSON string provided:", e);
+    } catch (e2) {
+      console.error("Invalid JSON string provided:", e2);
       return /* @__PURE__ */ Object.create(null);
     }
   }
@@ -2166,20 +2166,17 @@ function buildFlatDataStructure(data, componentId, componentType2, result = {}) 
   }
   return result;
 }
+let BUNDLED_SVG_SPRITE = null;
+try {
+  BUNDLED_SVG_SPRITE = require("../../lib/icons/formeo-sprite.svg?raw");
+} catch (e2) {
+}
 const name = pkg.name;
 const version$1 = pkg.version;
 const PACKAGE_NAME = name;
 const formeoSpriteId = "formeo-sprite";
-const POLYFILLS = [
-  { name: "cssPreload", src: "//cdnjs.cloudflare.com/ajax/libs/loadCSS/2.0.1/cssrelpreload.min.js" },
-  { name: "mutationObserver", src: "//cdn.jsdelivr.net/npm/mutationobserver-shim/dist/mutationobserver.min.js" },
-  { name: "fetch", src: "https://unpkg.com/unfetch/polyfill" }
-];
-const relativeSpritePath = `../../lib/icons/${formeoSpriteId}.svg`;
-const localSpriteUrl = typeof import.meta.resolve === "function" ? import.meta.resolve(relativeSpritePath) : relativeSpritePath;
-const isDev = typeof process !== "undefined" && process.env?.NODE_ENV === "development" || false;
-const SVG_SPRITE_URL = isDev ? localSpriteUrl : `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
-const FALLBACK_SVG_SPRITE_URL = `https://draggable.github.io/formeo/assets/img/${formeoSpriteId}.svg`;
+const SVG_SPRITE_URL = null;
+const FALLBACK_SVG_SPRITE_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/${formeoSpriteId}.svg`;
 const CSS_URL = `https://cdn.jsdelivr.net/npm/formeo@${version$1}/dist/formeo.min.css`;
 const FALLBACK_CSS_URL = "https://draggable.github.io/formeo/assets/css/formeo.min.css";
 const PANEL_CLASSNAME = "f-panel";
@@ -3462,9 +3459,9 @@ function ownKeys(object, enumerableOnly) {
   return keys;
 }
 function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-    if (i % 2) {
+  for (var i2 = 1; i2 < arguments.length; i2++) {
+    var source = arguments[i2] != null ? arguments[i2] : {};
+    if (i2 % 2) {
       ownKeys(Object(source), true).forEach(function(key) {
         _defineProperty(target, key, source[key]);
       });
@@ -3506,8 +3503,8 @@ function _defineProperty(obj, key, value) {
 }
 function _extends() {
   _extends = Object.assign || function(target) {
-    for (var i = 1; i < arguments.length; i++) {
-      var source = arguments[i];
+    for (var i2 = 1; i2 < arguments.length; i2++) {
+      var source = arguments[i2];
       for (var key in source) {
         if (Object.prototype.hasOwnProperty.call(source, key)) {
           target[key] = source[key];
@@ -3522,9 +3519,9 @@ function _objectWithoutPropertiesLoose(source, excluded) {
   if (source == null) return {};
   var target = {};
   var sourceKeys = Object.keys(source);
-  var key, i;
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
+  var key, i2;
+  for (i2 = 0; i2 < sourceKeys.length; i2++) {
+    key = sourceKeys[i2];
     if (excluded.indexOf(key) >= 0) continue;
     target[key] = source[key];
   }
@@ -3533,11 +3530,11 @@ function _objectWithoutPropertiesLoose(source, excluded) {
 function _objectWithoutProperties(source, excluded) {
   if (source == null) return {};
   var target = _objectWithoutPropertiesLoose(source, excluded);
-  var key, i;
+  var key, i2;
   if (Object.getOwnPropertySymbols) {
     var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
+    for (i2 = 0; i2 < sourceSymbolKeys.length; i2++) {
+      key = sourceSymbolKeys[i2];
       if (excluded.indexOf(key) >= 0) continue;
       if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
       target[key] = source[key];
@@ -3646,10 +3643,10 @@ function matrix(el, selfOnly) {
 }
 function find(ctx, tagName, iterator) {
   if (ctx) {
-    var list = ctx.getElementsByTagName(tagName), i = 0, n = list.length;
+    var list = ctx.getElementsByTagName(tagName), i2 = 0, n = list.length;
     if (iterator) {
-      for (; i < n; i++) {
-        iterator(list[i], i);
+      for (; i2 < n; i2++) {
+        iterator(list[i2], i2);
       }
     }
     return list;
@@ -3732,15 +3729,15 @@ function isScrolledPast(el, elSide, parentSide) {
   return false;
 }
 function getChild(el, childNum, options, includeDragEl) {
-  var currentChild = 0, i = 0, children = el.children;
-  while (i < children.length) {
-    if (children[i].style.display !== "none" && children[i] !== Sortable.ghost && (includeDragEl || children[i] !== Sortable.dragged) && closest(children[i], options.draggable, el, false)) {
+  var currentChild = 0, i2 = 0, children = el.children;
+  while (i2 < children.length) {
+    if (children[i2].style.display !== "none" && children[i2] !== Sortable.ghost && (includeDragEl || children[i2] !== Sortable.dragged) && closest(children[i2], options.draggable, el, false)) {
       if (currentChild === childNum) {
-        return children[i];
+        return children[i2];
       }
       currentChild++;
     }
-    i++;
+    i2++;
   }
   return null;
 }
@@ -3775,10 +3772,10 @@ function getRelativeScrollOffset(el) {
   return [offsetLeft, offsetTop];
 }
 function indexOfObject(arr, obj) {
-  for (var i in arr) {
-    if (!arr.hasOwnProperty(i)) continue;
+  for (var i2 in arr) {
+    if (!arr.hasOwnProperty(i2)) continue;
     for (var key in obj) {
-      if (obj.hasOwnProperty(key) && obj[key] === arr[i][key]) return Number(i);
+      if (obj.hasOwnProperty(key) && obj[key] === arr[i2][key]) return Number(i2);
     }
   }
   return -1;
@@ -4231,9 +4228,9 @@ var nearestEmptyInsertDetectEvent = function nearestEmptyInsertDetectEvent2(evt)
     var nearest = _detectNearestEmptySortable(evt.clientX, evt.clientY);
     if (nearest) {
       var event = {};
-      for (var i in evt) {
-        if (evt.hasOwnProperty(i)) {
-          event[i] = evt[i];
+      for (var i2 in evt) {
+        if (evt.hasOwnProperty(i2)) {
+          event[i2] = evt[i2];
         }
       }
       event.target = event.rootEl = nearest;
@@ -4482,8 +4479,8 @@ Sortable.prototype = /** @lends Sortable.prototype */
       }
     }
   },
-  _delayedDragTouchMoveHandler: function _delayedDragTouchMoveHandler(e) {
-    var touch = e.touches ? e.touches[0] : e;
+  _delayedDragTouchMoveHandler: function _delayedDragTouchMoveHandler(e2) {
+    var touch = e2.touches ? e2.touches[0] : e2;
     if (Math.max(Math.abs(touch.clientX - this._lastX), Math.abs(touch.clientY - this._lastY)) >= Math.floor(this.options.touchStartThreshold / (this.nativeDraggable && window.devicePixelRatio || 1))) {
       this._disableDelayedDrag();
     }
@@ -5084,9 +5081,9 @@ Sortable.prototype = /** @lends Sortable.prototype */
    * @returns {String[]}
    */
   toArray: function toArray() {
-    var order = [], el, children = this.el.children, i = 0, n = children.length, options = this.options;
-    for (; i < n; i++) {
-      el = children[i];
+    var order = [], el, children = this.el.children, i2 = 0, n = children.length, options = this.options;
+    for (; i2 < n; i2++) {
+      el = children[i2];
       if (closest(el, options.draggable, this.el, false)) {
         order.push(el.getAttribute(options.dataIdAttr) || _generateId(el));
       }
@@ -5099,8 +5096,8 @@ Sortable.prototype = /** @lends Sortable.prototype */
    */
   sort: function sort(order, useAnimation) {
     var items = {}, rootEl2 = this.el;
-    this.toArray().forEach(function(id, i) {
-      var el = rootEl2.children[i];
+    this.toArray().forEach(function(id, i2) {
+      var el = rootEl2.children[i2];
       if (closest(el, this.options.draggable, rootEl2, false)) {
         items[id] = el;
       }
@@ -5293,9 +5290,9 @@ function _getInsertDirection(target) {
   }
 }
 function _generateId(el) {
-  var str = el.tagName + el.className + el.src + el.href + el.textContent, i = str.length, sum = 0;
-  while (i--) {
-    sum += str.charCodeAt(i);
+  var str = el.tagName + el.className + el.src + el.href + el.textContent, i2 = str.length, sum = 0;
+  while (i2--) {
+    sum += str.charCodeAt(i2);
   }
   return sum.toString(36);
 }
@@ -5487,9 +5484,9 @@ var autoScroll = throttle(function(evt, options, rootEl2, isFallback) {
     var vx = canScrollX && (Math.abs(right - x) <= sens && scrollPosX + width < scrollWidth) - (Math.abs(left - x) <= sens && !!scrollPosX);
     var vy = canScrollY && (Math.abs(bottom - y) <= sens && scrollPosY + height < scrollHeight) - (Math.abs(top - y) <= sens && !!scrollPosY);
     if (!autoScrolls[layersOut]) {
-      for (var i = 0; i <= layersOut; i++) {
-        if (!autoScrolls[i]) {
-          autoScrolls[i] = {};
+      for (var i2 = 0; i2 <= layersOut; i2++) {
+        if (!autoScrolls[i2]) {
+          autoScrolls[i2] = {};
         }
       }
     }
@@ -5689,13 +5686,13 @@ const orderObjectsBy = (elements, order, path) => {
   return unique(orderedElements);
 };
 const forEach = (arr, cb, scope) => {
-  for (let i = 0; i < arr.length; i++) {
-    cb.call(scope, arr[i], i);
+  for (let i2 = 0; i2 < arr.length; i2++) {
+    cb.call(scope, arr[i2], i2);
   }
 };
 const map = (arr, cb) => {
   const newArray = [];
-  forEach(arr, (elem, i) => newArray.push(cb(elem, i)));
+  forEach(arr, (elem, i2) => newArray.push(cb(elem, i2)));
   return newArray;
 };
 const sanitizedAttributeNames = {};
@@ -5714,7 +5711,6 @@ const safeAttrName = (name2) => {
 const capitalize = (str) => str.replace(/\b\w/g, (m) => m.toUpperCase());
 const copyObj = (obj) => window.JSON.parse(window.JSON.stringify(obj));
 const subtract = (arr, from) => from.filter((a) => !~arr.indexOf(a));
-const isIE = () => window.navigator.userAgent.indexOf("MSIE ") !== -1;
 const helpers = {
   capitalize,
   safeAttrName,
@@ -5726,8 +5722,119 @@ const helpers = {
   indexOfNode,
   isInt,
   get,
-  orderObjectsBy,
-  isIE
+  orderObjectsBy
+};
+const loaded = {
+  js: /* @__PURE__ */ new Set(),
+  css: /* @__PURE__ */ new Set(),
+  formeoSprite: null
+};
+const ajax = (fileUrl, callback, onError = noop) => {
+  return new Promise((resolve) => {
+    return fetch(fileUrl).then((data) => {
+      if (!data.ok) {
+        return resolve(onError(data));
+      }
+      resolve(callback ? callback(data) : data);
+    }).catch((err) => onError(err));
+  });
+};
+const onLoadStylesheet = (elem, cb) => {
+  elem.removeEventListener("load", onLoadStylesheet);
+  cb(elem.src);
+};
+const onLoadJavascript = (elem, cb) => {
+  elem.removeEventListener("load", onLoadJavascript);
+  cb(elem.src);
+};
+const insertScript = (src) => {
+  return new Promise((resolve, reject) => {
+    if (loaded.js.has(src)) {
+      return resolve(src);
+    }
+    loaded.js.add(src);
+    const script = dom.create({
+      tag: "script",
+      attrs: {
+        type: "text/javascript",
+        async: true,
+        src
+      },
+      action: {
+        load: () => onLoadJavascript(script, resolve),
+        error: () => reject(new Error(`${src} failed to load.`))
+      }
+    });
+    document.head.appendChild(script);
+  });
+};
+const insertStyle = (srcs) => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs];
+  const promises = srcs.map(
+    (src) => new Promise((resolve, reject) => {
+      if (loaded.css.has(src)) {
+        return resolve(src);
+      }
+      loaded.css.add(src);
+      const styleLink = dom.create({
+        tag: "link",
+        attrs: {
+          rel: "stylesheet",
+          href: src
+        },
+        action: {
+          load: () => onLoadStylesheet(styleLink, resolve),
+          error: () => reject(new Error(`${(void 0).src} failed to load.`))
+        }
+      });
+      document.head.appendChild(styleLink);
+    })
+  );
+  return Promise.all(promises);
+};
+const insertScripts = (srcs) => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs];
+  const promises = srcs.map((src) => insertScript(src));
+  return Promise.all(promises);
+};
+const insertStyles = (srcs) => {
+  srcs = Array.isArray(srcs) ? srcs : [srcs];
+  const promises = srcs.map((src) => insertStyle(src));
+  return Promise.all(promises);
+};
+const insertIcons = (iconSvgStr) => {
+  const parser = new DOMParser();
+  const svgDoc = parser.parseFromString(iconSvgStr, "image/svg+xml");
+  loaded.formeoSprite = svgDoc.documentElement;
+  return loaded.formeoSprite;
+};
+const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
+  if (loaded.formeoSprite) {
+    return loaded.formeoSprite;
+  }
+  if (!iconSpriteUrl) {
+    return insertIcons(BUNDLED_SVG_SPRITE);
+  }
+  const parseResp = async (resp) => insertIcons(await resp.text());
+  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp));
+};
+const LOADER_MAP = {
+  js: insertScripts,
+  css: insertStyles
+};
+const fetchDependencies = (dependencies) => {
+  const promises = Object.entries(dependencies).map(([type, src]) => {
+    return LOADER_MAP[type](src);
+  });
+  return Promise.all(promises);
+};
+const fetchFormeoStyle = async (cssUrl) => {
+  if (!loaded.css.has(cssUrl)) {
+    await insertStyle(cssUrl);
+    if (!loaded.css.has(FALLBACK_CSS_URL)) {
+      return await insertStyle(FALLBACK_CSS_URL);
+    }
+  }
 };
 const iconFontTemplates = {
   glyphicons: (icon) => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
@@ -5822,7 +5929,7 @@ class DOM {
     processed.push("tag");
     let childType;
     const { tag } = elem;
-    let i;
+    let i2;
     const wrap = {
       attrs: {},
       className: [helpers.get(elem, "config.inputWrap")],
@@ -5916,8 +6023,8 @@ class DOM {
       processed.push("action");
     }
     const remaining = helpers.subtract(processed, Object.keys(elem));
-    for (i = remaining.length - 1; i >= 0; i--) {
-      element[remaining[i]] = elem[remaining[i]];
+    for (i2 = remaining.length - 1; i2 >= 0; i2--) {
+      element[remaining[i2]] = elem[remaining[i2]];
     }
     if (wrap.children.length) {
       element = this.create(wrap);
@@ -5957,25 +6064,26 @@ class DOM {
     if (this.iconSymbols) {
       return this.iconSymbols;
     }
-    const iconSymbolNodes = document.querySelectorAll(`#${formeoSpriteId} svg symbol`);
-    const createSvgIconConfig = (symbolId) => ({
-      tag: "svg",
-      attrs: {
-        className: ["svg-icon", symbolId]
-      },
-      children: [
-        {
-          tag: "use",
-          attrs: {
-            "xmlns:xlink": "http://www.w3.org/1999/xlink",
-            "xlink:href": `#${symbolId}`
-          }
-        }
-      ]
-    });
+    const iconSymbolNodes = loaded.formeoSprite.querySelectorAll("svg symbol");
+    const createSvgIconConfig = (symbol) => {
+      const viewBox = symbol.getAttribute("viewBox") || "0 0 24 24";
+      const children = Array.from(symbol.children).map((child) => {
+        const clonedNode = child.cloneNode(true);
+        return clonedNode.outerHTML;
+      }).join("");
+      return {
+        tag: "svg",
+        attrs: {
+          className: ["svg-icon", symbol.id],
+          viewBox,
+          xmlns: "http://www.w3.org/2000/svg"
+        },
+        children
+      };
+    };
     this.iconSymbols = Array.from(iconSymbolNodes).reduce((acc, symbol) => {
       const name2 = symbol.id.replace(iconPrefix, "");
-      acc[name2] = createSvgIconConfig(symbol.id);
+      acc[name2] = createSvgIconConfig(symbol);
       return acc;
     }, {});
     this.cachedIcons = {};
@@ -6083,19 +6191,19 @@ class DOM {
     });
     return elementsContainingText;
   };
-  generateOption = ({ type = "option", label, value, i = 0, selected }) => {
+  generateOption = ({ type = "option", label, value, i: i2 = 0, selected }) => {
     const isOption = type === "option";
     return {
       tag: isOption ? "option" : "input",
       attrs: {
         type,
-        value: value || `${type}-${i}`,
-        [type === "option" ? "selected" : "checked"]: selected || !i
+        value: value || `${type}-${i2}`,
+        [type === "option" ? "selected" : "checked"]: selected || !i2
       },
       config: {
         label: label || mi18n.get("labelCount", {
           label: mi18n.get("option"),
-          count: i
+          count: i2
         })
       }
     };
@@ -6111,7 +6219,7 @@ class DOM {
     const { action, attrs = {} } = elem;
     const fieldType = attrs.type || elem.tag;
     const id = attrs.id || elem.id;
-    const optionMap = (option2, i) => {
+    const optionMap = (option2, i2) => {
       const { label, value, ...rest } = option2;
       const defaultInput = () => {
         const input = {
@@ -6120,7 +6228,7 @@ class DOM {
             name: id,
             type: fieldType,
             value: value || "",
-            id: `${id}-${i}`,
+            id: `${id}-${i2}`,
             ...rest
           },
           action
@@ -6128,7 +6236,7 @@ class DOM {
         const optionLabel = {
           tag: "label",
           attrs: {
-            for: `${id}-${i}`
+            for: `${id}-${i2}`
           },
           children: label
         };
@@ -6661,7 +6769,7 @@ class Autocomplete {
    * @return {Object} DOM Element to be injected into the form.
    */
   build() {
-    const keyboardNav = (e) => {
+    const keyboardNav = (e2) => {
       const list = this.list;
       const activeOption = this.getActiveOption();
       const keyCodeMap = /* @__PURE__ */ new Map([
@@ -6698,7 +6806,7 @@ class Autocomplete {
                 this.hideList();
               }
             }
-            e.preventDefault();
+            e2.preventDefault();
           }
         ],
         [
@@ -6709,7 +6817,7 @@ class Autocomplete {
           }
         ]
       ]);
-      let direction = keyCodeMap.get(e.keyCode);
+      let direction = keyCodeMap.get(e2.keyCode);
       if (!direction) {
         direction = () => false;
       }
@@ -7898,7 +8006,7 @@ class Panels {
         placement: "top"
       },
       action: {
-        click: (e) => this.nav.nextGroup(e)
+        click: (e2) => this.nav.nextGroup(e2)
       },
       content: dom.icon("triangle-right")
     };
@@ -7914,7 +8022,7 @@ class Panels {
         placement: "top"
       },
       action: {
-        click: (e) => this.nav.prevGroup(e)
+        click: (e2) => this.nav.prevGroup(e2)
       },
       content: dom.icon("triangle-left")
     };
@@ -8251,12 +8359,7 @@ class Component extends Data {
     return dom.create({
       tag: "span",
       className: ["component-tag", `${this.name}-tag`],
-      children: [
-        (this.isColumn || this.isField) && dom.icon("component-corner", { className: "bottom-left" }),
-        dom.icon(`handle-${this.name}`),
-        toTitleCase(this.name),
-        (this.isColumn || this.isRow) && dom.icon("component-corner", { className: "bottom-right" })
-      ].filter(Boolean)
+      children: [dom.icon(`handle-${this.name}`), toTitleCase(this.name)].filter(Boolean)
     });
   };
   /**
@@ -9320,8 +9423,8 @@ class Row extends Component {
     if (typeof widths === "string") {
       widths = widths.split(",");
     }
-    this.children.forEach((column, i) => {
-      column.setWidth(`${widths[i]}%`);
+    this.children.forEach((column, i2) => {
+      column.setWidth(`${widths[i2]}%`);
       column.refreshFieldPanels();
     });
   };
@@ -9522,133 +9625,6 @@ let Stages$1 = class Stages extends ComponentData {
   }
 };
 const stages = new Stages$1();
-const loaded = {
-  js: /* @__PURE__ */ new Set(),
-  css: /* @__PURE__ */ new Set()
-};
-const ajax = (fileUrl, callback, onError = noop) => {
-  return new Promise((resolve) => {
-    return fetch(fileUrl).then((data) => {
-      if (!data.ok) {
-        return resolve(onError(data));
-      }
-      resolve(callback ? callback(data) : data);
-    }).catch((err) => onError(err));
-  });
-};
-const onLoadStylesheet = (elem, cb) => {
-  elem.removeEventListener("load", onLoadStylesheet);
-  cb(elem.src);
-};
-const onLoadJavascript = (elem, cb) => {
-  elem.removeEventListener("load", onLoadJavascript);
-  cb(elem.src);
-};
-const insertScript = (src) => {
-  return new Promise((resolve, reject) => {
-    if (loaded.js.has(src)) {
-      return resolve(src);
-    }
-    loaded.js.add(src);
-    const script = dom.create({
-      tag: "script",
-      attrs: {
-        type: "text/javascript",
-        async: true,
-        src
-      },
-      action: {
-        load: () => onLoadJavascript(script, resolve),
-        error: () => reject(new Error(`${src} failed to load.`))
-      }
-    });
-    document.head.appendChild(script);
-  });
-};
-const insertStyle = (srcs) => {
-  srcs = Array.isArray(srcs) ? srcs : [srcs];
-  const promises = srcs.map(
-    (src) => new Promise((resolve, reject) => {
-      if (loaded.css.has(src)) {
-        return resolve(src);
-      }
-      loaded.css.add(src);
-      const styleLink = dom.create({
-        tag: "link",
-        attrs: {
-          rel: "stylesheet",
-          href: src
-        },
-        action: {
-          load: () => onLoadStylesheet(styleLink, resolve),
-          error: () => reject(new Error(`${(void 0).src} failed to load.`))
-        }
-      });
-      document.head.appendChild(styleLink);
-    })
-  );
-  return Promise.all(promises);
-};
-const insertScripts = (srcs) => {
-  srcs = Array.isArray(srcs) ? srcs : [srcs];
-  const promises = srcs.map((src) => insertScript(src));
-  return Promise.all(promises);
-};
-const insertStyles = (srcs) => {
-  srcs = Array.isArray(srcs) ? srcs : [srcs];
-  const promises = srcs.map((src) => insertStyle(src));
-  return Promise.all(promises);
-};
-const insertIcons = (iconSvgStr) => {
-  let iconSpriteWrap = document.getElementById(formeoSpriteId);
-  if (!iconSpriteWrap) {
-    iconSpriteWrap = dom.create({
-      id: formeoSpriteId,
-      children: iconSvgStr,
-      attrs: {
-        hidden: true,
-        style: "display: none;"
-      }
-    });
-    document.body.insertBefore(iconSpriteWrap, document.body.childNodes[0]);
-  }
-  return iconSpriteWrap;
-};
-const fetchIcons = async (iconSpriteUrl = SVG_SPRITE_URL) => {
-  const formeoSprite = document.getElementById(formeoSpriteId);
-  if (formeoSprite) {
-    return;
-  }
-  const parseResp = async (resp) => insertIcons(await resp.text());
-  return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp));
-};
-const loadPolyfills = (polyfillConfig) => {
-  const polyfills = Array.isArray(polyfillConfig) ? POLYFILLS.filter(({ name: name2 }) => polyfillConfig.indexOf(name2) !== -1) : POLYFILLS;
-  return Promise.all(polyfills.map(({ src }) => insertScript(src)));
-};
-const LOADER_MAP = {
-  js: insertScripts,
-  css: insertStyles
-};
-const fetchDependencies = (dependencies) => {
-  const promises = Object.entries(dependencies).map(([type, src]) => {
-    return LOADER_MAP[type](src);
-  });
-  return Promise.all(promises);
-};
-const isCssLoaded = () => {
-  const formeoSprite = document.getElementById(formeoSpriteId);
-  const computedStyle = window.getComputedStyle(formeoSprite);
-  return computedStyle.visibility === "hidden";
-};
-const fetchFormeoStyle = async (cssUrl) => {
-  if (!isCssLoaded()) {
-    await insertStyle(cssUrl);
-    if (!isCssLoaded()) {
-      return await insertStyle(FALLBACK_CSS_URL);
-    }
-  }
-};
 class Control {
   controlCache = /* @__PURE__ */ new Set();
   /**
@@ -9717,9 +9693,9 @@ class Control {
    * @return {String} the translated label
    */
   i18n(lookup, args) {
-    const locale = mi18n.locale;
+    const locale2 = mi18n.locale;
     const controlTranslations = this.definition?.i18n;
-    const localeTranslations = controlTranslations?.[locale] || {};
+    const localeTranslations = controlTranslations?.[locale2] || {};
     return (localeTranslations[lookup]?.() ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
   }
 }
@@ -9970,12 +9946,12 @@ let Controls$1 = class Controls {
       // @todo finish the addGroup method
       addGroup: (group) => console.log(group)
     };
-    for (let i = groups.length - 1; i >= 0; i--) {
-      const storeID = `formeo-controls-${groups[i]}`;
+    for (let i2 = groups.length - 1; i2 >= 0; i2--) {
+      const storeID = `formeo-controls-${groups[i2]}`;
       if (!this.options.sortable) {
         window.localStorage.removeItem(storeID);
       }
-      Sortable.create(groups[i], {
+      Sortable.create(groups[i2], {
         animation: 150,
         forceFallback: true,
         fallbackClass: "control-moving",
@@ -10696,8 +10672,10 @@ const actions = {
     }
   }
 };
-const enUS = void 0;
-mi18n.addLanguage("en-US", enUS);
+const e = { "en-US": { "en-US": "English", dir: "ltr", "af-ZA": "Afrikaans (South Africa)", "ar-TN": "Arabic (Tunisia)", "cs-CZ": "Czech (Czechia)", "de-DE": "German (Germany)", "es-ES": "European Spanish", "fa-IR": "Persian (Iran)", "fi-FI": "Finnish (Finland)", "fr-FR": "French (France)", "hu-HU": "Hungarian (Hungary)", "it-IT": "Italian (Italy)", "ja-JP": "Japanese (Japan)", "nb-NO": "Norwegian Bokmål (Norway)", "pl-PL": "Polish (Poland)", "pt-BR": "Brazilian Portuguese", "pt-PT": "European Portuguese", "ro-RO": "Romanian (Romania)", "ru-RU": "Russian (Russia)", "th-TH": "Thai (Thailand)", "tr-TR": "Turkish (Türkiye)", "zh-CN": "Chinese (China)", "zh-HK": "Chinese (Hong Kong SAR China)", "action.add.attrs.attr": "What attribute would you like to add?", "action.add.attrs.value": "Default Value", addOption: "Add Option", allFieldsRemoved: "All fields were removed.", allowSelect: "Allow Select", and: "and", attribute: "Attribute", attributeNotPermitted: 'Attribute "{attribute}" is not permitted, please choose another.', attributes: "Attributes", "attrs.class": "Class", "attrs.className": "Class", "attrs.dir": "Direction", "attrs.id": "Id", "attrs.required": "Required", "attrs.style": "Style", "attrs.title": "Title", "attrs.type": "Type", "attrs.value": "Value", autocomplete: "Autocomplete", button: "Button", cannotBeEmpty: "This field cannot be empty", cannotClearFields: "There are no fields to clear", checkbox: "Checkbox", checkboxes: "Checkboxes", class: "Class", clear: "Clear", clearAllMessage: "Are you sure you want to clear all fields?", close: "Close", column: "Column", "condition.target.placeholder": "target", "condition.type.and": "And", "condition.type.if": "If", "condition.type.or": "Or", "condition.type.then": "Then", "condition.value.placeholder": "value", confirmClearAll: "Are you sure you want to remove all fields?", content: "Content", control: "Control", "controlGroups.nextGroup": "Next Group", "controlGroups.prevGroup": "Previous Group", "controls.filteringTerm": 'Filtering "{term}"', "controls.form.button": "Button", "controls.form.checkbox-group": "Checkbox Group", "controls.form.input.date": "Date", "controls.form.input.email": "Email", "controls.form.input.file": "File Upload", "controls.form.input.hidden": "Hidden Input", "controls.form.input.number": "Number", "controls.form.input.text": "Text Input", "controls.form.radio-group": "Radio Group", "controls.form.select": "Select", "controls.form.textarea": "TextArea", "controls.groups.form": "Form Fields", "controls.groups.html": "HTML Elements", "controls.groups.layout": "Layout", "controls.html.divider": "Divider", "controls.html.header": "Header", "controls.html.paragraph": "Paragraph", "controls.layout.column": "Column", "controls.layout.row": "Row", copy: "Copy To Clipboard", danger: "Danger", defineColumnLayout: "Define a column layout", defineColumnWidths: "Define column widths", description: "Help Text", descriptionField: "Description", "editing.row": "Editing Row", editorTitle: "Form Elements", field: "Field", "field.property.invalid": "not valid", "field.property.isChecked": "is checked", "field.property.isNotVisible": "is not visible", "field.property.isVisible": "is visible", "field.property.label": "label", "field.property.valid": "valid", "field.property.value": "value", fieldNonEditable: "This field cannot be edited.", fieldRemoveWarning: "Are you sure you want to remove this field?", fileUpload: "File Upload", formUpdated: "Form Updated", getStarted: "Drag a field from the right to get started.", group: "Group", grouped: "Grouped", hidden: "Hidden Input", hide: "Edit", htmlElements: "HTML Elements", if: "If", "if.condition.source.placeholder": "source", "if.condition.target.placeholder": "target / value", info: "Info", "input.date": "Date", "input.text": "Text", label: "Label", labelCount: "{label} {count}", labelEmpty: "Field Label cannot be empty", "lang.af": "Afrikaans", "lang.ar": "Arabic", "lang.cs": "Czech", "lang.de": "German", "lang.en": "English", "lang.es": "Spanish", "lang.fa": "Persian", "lang.fi": "Finnish", "lang.fr": "French", "lang.hu": "Hungarian", "lang.it": "Italian", "lang.ja": "Japanese", "lang.nb": "Norwegian Bokmål", "lang.pl": "Polish", "lang.pt": "Portuguese", "lang.ro": "Romanian", "lang.ru": "Russian", "lang.th": "Thai", "lang.tr": "Turkish", "lang.zh": "Chinese", layout: "Layout", limitRole: "Limit access to one or more of the following roles:", mandatory: "Mandatory", maxlength: "Max Length", "meta.group": "Group", "meta.icon": "Ico", "meta.label": "Label", minOptionMessage: "This field requires a minimum of 2 options", name: "Name", newOptionLabel: "New {type}", no: "No", number: "Number", off: "Off", on: "On", "operator.contains": "contains", "operator.equals": "equals", "operator.notContains": "not contains", "operator.notEquals": "not equal", "operator.notVisible": "not visible", "operator.visible": "visible", option: "Option", optional: "optional", optionEmpty: "Option value required", optionLabel: "Option {count}", options: "Options", or: "or", order: "Order", "panel.label.attrs": "Attributes", "panel.label.conditions": "Conditions", "panel.label.config": "Configuration", "panel.label.meta": "Meta", "panel.label.options": "Options", "panelEditButtons.attrs": "+ Attribute", "panelEditButtons.conditions": "+ Condition", "panelEditButtons.options": "+ Option", placeholder: "Placeholder", "placeholder.className": "space separated classes", "placeholder.email": "Enter you email", "placeholder.label": "Label", "placeholder.password": "Enter your password", "placeholder.placeholder": "Placeholder", "placeholder.text": "Enter some Text", "placeholder.textarea": "Enter a lot of text", "placeholder.value": "Value", preview: "Preview", primary: "Primary", remove: "Remove", removeMessage: "Remove Element", removeType: "Remove {type}", required: "Required", reset: "Reset", richText: "Rich Text Editor", roles: "Access", row: "Row", "row.makeInputGroup": "Make this row an input group.", "row.makeInputGroupDesc": "Input Groups enable users to add sets of inputs at a time.", "row.settings.fieldsetWrap": "Wrap row in a &lt;fieldset&gt; tag", "row.settings.fieldsetWrap.aria": "Wrap Row in Fieldset", save: "Save", secondary: "Secondary", select: "Select", selectColor: "Select Color", selectionsMessage: "Allow Multiple Selections", selectOptions: "Options", separator: "Separator", settings: "Settings", size: "Size", sizes: "Sizes", "sizes.lg": "Large", "sizes.m": "Default", "sizes.sm": "Small", "sizes.xs": "Extra Small", style: "Style", styles: "Styles", "styles.btn": "Button Style", "styles.btn.danger": "Danger", "styles.btn.default": "Default", "styles.btn.info": "Info", "styles.btn.primary": "Primary", "styles.btn.success": "Success", "styles.btn.warning": "Warning", subtype: "Type", success: "Success", text: "Text Field", then: "Then", "then.condition.target.placeholder": "target", toggle: "Toggle", ungrouped: "Un-Grouped", warning: "Warning", yes: "Yes" } }, i = e["en-US"];
+const locale = "en-US";
+mi18n.addLanguage(locale, i);
+mi18n.setCurrent(locale);
 const defaults = {
   get editor() {
     return {
@@ -10708,8 +10686,8 @@ const defaults = {
       sessionStorage: false,
       editorContainer: null,
       // element or selector to attach editor to
-      svgSprite: SVG_SPRITE_URL,
-      // change to null
+      svgSprite: null,
+      // null = use bundled sprite, or provide custom URL
       style: CSS_URL,
       // change to null
       iconFont: null,
@@ -10719,8 +10697,6 @@ const defaults = {
       events: {},
       actions: {},
       controls: {},
-      polyfills: isIE(),
-      // loads csspreloadrel
       i18n: {
         location: "https://draggable.github.io/formeo/assets/lang/"
       },
@@ -10729,6 +10705,7 @@ const defaults = {
     };
   }
 };
+new SmartTooltip();
 let FormeoEditor$1 = class FormeoEditor {
   /**
    * @param  {Object} options  formeo options
@@ -10749,7 +10726,6 @@ let FormeoEditor$1 = class FormeoEditor {
     this.dom = dom;
     events.init({ debug, ...events$1 });
     actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions$1 });
-    this.tooltip = new SmartTooltip();
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", this.loadResources.bind(this));
     } else {
@@ -10785,17 +10761,15 @@ let FormeoEditor$1 = class FormeoEditor {
   async loadResources() {
     document.removeEventListener("DOMContentLoaded", this.loadResources);
     const promises = [];
-    if (this.opts.polyfills) {
-      loadPolyfills(this.opts.polyfills);
-    }
-    await fetchIcons(this.opts.svgSprite);
-    promises.push(fetchFormeoStyle(this.opts.style));
-    promises.push(mi18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }));
-    const resolvedPromises = await Promise.all(promises);
+    promises.push(
+      fetchIcons(this.opts.svgSprite),
+      fetchFormeoStyle(this.opts.style),
+      mi18n.init({ ...this.opts.i18n, locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY) })
+    );
+    await Promise.all(promises);
     if (this.opts.allowEdit) {
       this.init();
     }
-    return resolvedPromises;
   }
   /**
    * Formeo initializer
@@ -10855,7 +10829,7 @@ let FormeoEditor$1 = class FormeoEditor {
       dom.empty(this.editorContainer);
       this.editorContainer.appendChild(this.editor);
     }
-    events.formeoLoaded = new window.CustomEvent("formeoLoaded", {
+    events.formeoLoaded = new globalThis.CustomEvent("formeoLoaded", {
       detail: {
         formeo: this
       }
@@ -11111,8 +11085,8 @@ let FormeoRenderer$1 = class FormeoRenderer {
     },
     children: "Add +",
     action: {
-      click: (e) => {
-        const fInputGroup = e.target.parentElement;
+      click: (e2) => {
+        const fInputGroup = e2.target.parentElement;
         const elem = dom.create(this.cloneComponentData(id));
         fInputGroup.insertBefore(elem, fInputGroup.lastChild);
         const removeButton = dom.create(createRemoveButton());
@@ -11345,15 +11319,15 @@ class ButtonControl extends Control {
     super(mergedConfig);
   }
 }
-const generateOptionConfig = ({ type, isMultiple = false, count = 3 }) => Array.from({ length: count }, (_v, k) => k + 1).map((i) => {
+const generateOptionConfig = ({ type, isMultiple = false, count = 3 }) => Array.from({ length: count }, (_v, k) => k + 1).map((i2) => {
   const selectedKey = type === "checkbox" || isMultiple ? "checked" : "selected";
   return {
     label: mi18n.get("labelCount", {
       label: toTitleCase(type),
-      count: i
+      count: i2
     }),
-    value: `${type}-${i}`,
-    [selectedKey]: !i
+    value: `${type}-${i2}`,
+    [selectedKey]: !i2
   };
 });
 class CheckboxGroupControl extends Control {
