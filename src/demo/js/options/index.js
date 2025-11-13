@@ -6,9 +6,9 @@ const renderContainer = '.render-form'
 
 export const editorOptions = {
   editorContainer,
-  i18n: {
-    location: './assets/lang',
-  },
+  // i18n: {
+  //   location: './assets/lang', // path to language files
+  // },
   actions: {
     // save: formData => null, // do something on save action
   },

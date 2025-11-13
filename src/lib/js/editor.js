@@ -1,15 +1,17 @@
 import '../sass/formeo.scss'
 import i18n from '@draggable/i18n'
-// import { SmartTooltip } from '@draggable/tooltip'
+import { SmartTooltip } from '@draggable/tooltip'
 import Actions from './common/actions.js'
 import dom from './common/dom.js'
 import Events from './common/events.js'
-import { fetchFormeoStyle, fetchIcons } from './common/loaders.js'
+import { fetchFormeoStyle, fetchIcons, loaded } from './common/loaders.js'
 import { cleanFormData, merge } from './common/utils/index.mjs'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
 import { defaults } from './config.js'
 import { DEFAULT_FORMDATA, SESSION_LOCALE_KEY } from './constants.js'
+
+new SmartTooltip()
 
 /**
  * Main class
@@ -38,7 +40,6 @@ export class FormeoEditor {
     this.dom = dom
     Events.init({ debug, ...events })
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
-    // this.tooltip = new SmartTooltip()
 
     // Load remote resources such as css and svg sprite
     if (document.readyState === 'loading') {
@@ -86,21 +87,14 @@ export class FormeoEditor {
   async loadResources() {
     document.removeEventListener('DOMContentLoaded', this.loadResources)
 
-    const promises = []
+    fetchIcons(this.opts.svgSprite)
+    fetchFormeoStyle(this.opts.style)
 
-    // Ajax load svgSprite and inject into markup.
-    await fetchIcons(this.opts.svgSprite)
-    promises.push(fetchFormeoStyle(this.opts.style))
-
-    promises.push(i18n.init({ ...this.opts.i18n, locale: window.sessionStorage?.getItem(SESSION_LOCALE_KEY) }))
-
-    const resolvedPromises = await Promise.all(promises)
+    await i18n.init({ ...this.opts.i18n, locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY) })
 
     if (this.opts.allowEdit) {
       this.init()
     }
-
-    return resolvedPromises
   }
 
   /**
@@ -170,7 +164,7 @@ export class FormeoEditor {
       this.editorContainer.appendChild(this.editor)
     }
 
-    Events.formeoLoaded = new window.CustomEvent('formeoLoaded', {
+    Events.formeoLoaded = new globalThis.CustomEvent('formeoLoaded', {
       detail: {
         formeo: this,
       },

@@ -1,5 +1,4 @@
 import i18n from '@draggable/i18n'
-import { SmartTooltip } from '@draggable/tooltip'
 
 import Components from '../components/index.js'
 import {
@@ -18,8 +17,6 @@ import h, { forEach } from './helpers.mjs'
 import { loaded } from './loaders.js'
 import { componentType, merge, uuid } from './utils/index.mjs'
 import { extractTextFromHtml, slugify, truncateByWord } from './utils/string.mjs'
-
-new SmartTooltip()
 
 const iconFontTemplates = {
   glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,

@@ -53,5 +53,11 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    resolve: {
+      dedupe: ['@draggable/i18n'], // Prevents multiple bundling instances of the linked package
+    },
+    optimizeDeps: {
+      exclude: ['@draggable/i18n'], // Excludes the linked package from pre-bundling for live updates
+    },
   }
 })
