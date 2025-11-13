@@ -4,7 +4,7 @@ import { SmartTooltip } from '@draggable/tooltip'
 import Actions from './common/actions.js'
 import dom from './common/dom.js'
 import Events from './common/events.js'
-import { fetchFormeoStyle, fetchIcons, loaded } from './common/loaders.js'
+import { fetchFormeoStyle, fetchIcons } from './common/loaders.js'
 import { cleanFormData, merge } from './common/utils/index.mjs'
 import Controls from './components/controls/index.js'
 import Components from './components/index.js'
@@ -87,10 +87,14 @@ export class FormeoEditor {
   async loadResources() {
     document.removeEventListener('DOMContentLoaded', this.loadResources)
 
-    fetchIcons(this.opts.svgSprite)
-    fetchFormeoStyle(this.opts.style)
+    const promises = []
+    promises.push(
+      fetchIcons(this.opts.svgSprite),
+      fetchFormeoStyle(this.opts.style),
+      i18n.init({ ...this.opts.i18n, locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY) })
+    )
 
-    await i18n.init({ ...this.opts.i18n, locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY) })
+    await Promise.all(promises)
 
     if (this.opts.allowEdit) {
       this.init()
