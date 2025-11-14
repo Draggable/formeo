@@ -1,3 +1,10 @@
+## [4.2.3](https://github.com/Draggable/formeo/compare/v4.2.2...v4.2.3) (2025-11-14)
+
+
+### Bug Fixes
+
+* gh pages demo ([e03336c](https://github.com/Draggable/formeo/commit/e03336c3bd6ad0ed8f6c58ef3b6e4546c4f88773))
+
 ## [4.2.2](https://github.com/Draggable/formeo/compare/v4.2.1...v4.2.2) (2025-11-13)
 
 
