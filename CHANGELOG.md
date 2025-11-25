@@ -1,3 +1,10 @@
+## [4.2.4](https://github.com/Draggable/formeo/compare/v4.2.3...v4.2.4) (2025-11-25)
+
+
+### Bug Fixes
+
+* cannot drag control to stage ([95e3146](https://github.com/Draggable/formeo/commit/95e3146be1f8332c18c0b20f6fae79063256d34f))
+
 ## [4.2.3](https://github.com/Draggable/formeo/compare/v4.2.2...v4.2.3) (2025-11-14)
 
 
