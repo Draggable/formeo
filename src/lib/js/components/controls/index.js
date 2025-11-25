@@ -285,31 +285,42 @@ export class Controls {
     for (let i = groups.length - 1; i >= 0; i--) {
       const storeID = `formeo-controls-${groups[i]}`
       if (!this.options.sortable) {
-        window.localStorage.removeItem(storeID)
+        globalThis.localStorage.removeItem(storeID)
       }
       Sortable.create(groups[i], {
         animation: 150,
-        forceFallback: true,
         fallbackClass: 'control-moving',
         fallbackOnBody: true,
+        forceFallback: true,
+        fallbackTolerance: 5,
         group: {
           name: 'controls',
           pull: 'clone',
           put: false,
+          revertClone: true,
         },
-        onStart: async ({ item }) => {
-          const { controlData } = this.get(item.id)
+        onClone: ({ clone, item }) => {
+          // Copy the item's id to the clone so we can identify what control it represents
+          clone.id = item.id
+
           if (this.options.ghostPreview) {
+            const { controlData } = this.get(item.id)
             // Dynamically import Field to avoid circular dependency
-            const { default: Field } = await import('../fields/field.js')
-            item.innerHTML = ''
-            item.appendChild(new Field(controlData).preview)
+            import('../fields/field.js').then(({ default: Field }) => {
+              clone.innerHTML = ''
+              clone.appendChild(new Field(controlData).preview)
+            })
           }
         },
-        onEnd: ({ from, item, clone }) => {
-          if (from.contains(clone)) {
-            from.replaceChild(item, clone)
-          }
+        onStart: () => {
+          // Prevent scrollbar flashing during drag by hiding overflow
+          this.originalDocumentOverflow = document.documentElement.style.overflow
+          document.documentElement.style.overflow = 'hidden'
+        },
+        onEnd: () => {
+          // Restore overflow after drag completes
+          document.documentElement.style.overflow = this.originalDocumentOverflow
+          this.originalDocumentOverflow = null
         },
         sort: this.options.sortable,
         store: {
@@ -319,7 +330,7 @@ export class Controls {
            * @return {Array}
            */
           get: () => {
-            const order = window.localStorage.getItem(storeID)
+            const order = globalThis.localStorage.getItem(storeID)
             return order ? order.split('|') : []
           },
 
@@ -329,7 +340,7 @@ export class Controls {
            */
           set: sortable => {
             const order = sortable.toArray()
-            window.localStorage.setItem(storeID, order.join('|'))
+            globalThis.localStorage.setItem(storeID, order.join('|'))
           },
         },
       })

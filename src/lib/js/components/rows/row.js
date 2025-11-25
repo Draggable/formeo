@@ -53,6 +53,7 @@ export default class Row extends Component {
     Sortable.create(children, {
       animation: 150,
       fallbackClass: 'column-moving',
+      forceFallback: true,
       group: {
         name: 'row',
         pull: true,

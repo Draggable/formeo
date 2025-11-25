@@ -30,6 +30,7 @@
   >.children {
     @include mixins.display-column;
     gap: var.$component-gap;
+    min-height: 100%;
   }
 
   &.removing-all-fields {
