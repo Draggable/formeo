@@ -19,11 +19,16 @@ import defaultOptions from './options.js'
 export class Controls {
   constructor() {
     this.data = new Map()
+    this.isDragging = false
 
     this.buttonActions = {
       // this is used for keyboard navigation. when tabbing through controls it
       // will auto navigated between the groups
       focus: ({ target }) => {
+        // Prevent panel switching during drag operations
+        if (this.isDragging) {
+          return
+        }
         const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
         return group && this.panels.nav.refresh(indexOfNode(group))
       },
@@ -298,6 +303,7 @@ export class Controls {
           put: false,
         },
         onStart: async ({ item }) => {
+          this.isDragging = true
           const { controlData } = this.get(item.id)
           if (this.options.ghostPreview) {
             // Dynamically import Field to avoid circular dependency
@@ -310,6 +316,11 @@ export class Controls {
           if (from.contains(clone)) {
             from.replaceChild(item, clone)
           }
+          // Use setTimeout to ensure all events (focus, click, etc.) have already fired
+          // before we reset the dragging state. Increased delay to handle all browser events.
+          window.setTimeout(() => {
+            this.isDragging = false
+          }, 100)
         },
         sort: this.options.sortable,
         store: {

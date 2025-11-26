@@ -11,12 +11,14 @@
     font-weight: normal;
     display: inline-block;
     width: 100%;
+    line-height: 1;
   }
 
   nav {
     position: relative;
     padding: 0;
     overflow: hidden;
+    margin-bottom: 0;
 
     button {
       position: absolute;
@@ -66,6 +68,10 @@
     width: 100%;
     flex-direction: column;
     flex: 1 0 100%;
+    overflow: hidden;
+    visibility: hidden;
+    margin: 0;
+    padding: 0;
 
     > li {
       &:last-child {
@@ -75,12 +81,15 @@
   }
 
   .panels {
-    white-space: nowrap;
+    white-space: normal;
     transition-property: height;
     transition-duration: 150ms;
     transition-timing-function: ease-in-out;
     will-change: transform;
-    flex-direction: row;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    display: block;
   }
 
   .panel-labels {
@@ -89,16 +98,21 @@
     overflow: hidden;
     text-align: center;
     white-space: nowrap;
+    margin-bottom: 0;
   }
 
   .active-panel {
     height: auto;
+    visibility: visible;
   }
 }
 
 .tabbed-panels {
   .panel-nav {
-    height: auto;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
 
     button {
       display: none;
