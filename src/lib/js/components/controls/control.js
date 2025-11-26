@@ -43,9 +43,18 @@ export default class Control {
         { tag: 'span', className: 'control-label', content: controlLabel },
       ],
       action: {
+        // Prevent button from receiving focus on mousedown (which would trigger panel switch)
+        // but still allow keyboard focus for accessibility
+        mousedown: evt => {
+          evt.preventDefault()
+        },
         // this is used for keyboard navigation. when tabbing through controls it
         // will auto navigated between the groups
         focus: ({ target }) => {
+          // Prevent panel switching during drag operations
+          if (controls.isDragging) {
+            return
+          }
           const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
           return group && controls.panels.nav.refresh(indexOfNode(group))
         },

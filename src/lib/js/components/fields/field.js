@@ -2,11 +2,11 @@ import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { indexOfNode } from '../../common/helpers.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
-import { FIELD_CLASSNAME } from '../../constants.js'
+import { CONDITION_TEMPLATE, FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
 
 const DEFAULT_DATA = () => ({
-  // conditions: [CONDITION_TEMPLATE()],
+  conditions: [CONDITION_TEMPLATE()],
 })
 
 const checkableTypes = new Set(['checkbox', 'radio'])

@@ -1,11 +1,13 @@
+@use "sass:color" as sass-color;
 @use "../base/mixins";
 
 @use "../base/colors" as color;
 @use "../base/variables" as var;
 
 .formeo-controls {
-  width: 26%;
-  max-width: mixins.space(28);
+  width: 30%;
+  max-width: mixins.space(40);
+  min-width: mixins.space(30);
   overflow: hidden;
   container-type: inline-size;
   container-name: controls;
@@ -41,10 +43,13 @@
     position: relative;
     padding: 0 var.$action-btn-width;
     overflow: hidden;
+    margin-bottom: 0;
 
     h5 {
       font-size: 13px;
-      line-height: 22px;
+      line-height: 1;
+      margin-bottom: 0;
+      padding: 0.55em 0;
     }
 
     button {
@@ -76,13 +81,15 @@
 
   .formeo-panels-wrap {
     font-size: 0.85em;
-    line-height: 1.8em;
+    line-height: 1;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
   }
 
   .panel-labels {
-    border-top: 1px solid color.$gray-lighter;
-
-    // border-radius: $border-radius;
+    border-top: 0 none;
+    margin-bottom: 0;
   }
 
   .panel-count-1 {
@@ -94,7 +101,7 @@
 
     .control-group {
       li:first-child {
-        border-radius: var.$border-radius var.$border-radius 0 0;
+        border-radius: var.$border-radius;
       }
     }
   }
@@ -105,17 +112,27 @@
 
   .control-group {
     vertical-align: top;
-    display: inline-block;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: mixins.space(1.5);
     width: 100%;
-    border-top: 1px solid color.$gray-lighter;
+    padding: mixins.space(2);
+    border-top: 0 none;
+    background-color: color.$white;
+    margin-top: 0;
+
+    &:not(.active-panel) {
+      padding: 0;
+    }
 
     > li {
       &:first-child {
-        border-top-right-radius: 0;
+        border-top-right-radius: var.$border-radius;
       }
 
       &:last-child {
-        border-radius: 0 0 var.$border-radius var.$border-radius;
+        border-radius: var.$border-radius;
+        margin-bottom: 0;
       }
     }
   }
@@ -126,38 +143,42 @@
     }
 
     .control-group {
-      display: block;
+      display: grid;
 
       > li {
-        border-radius: 0;
-      }
-
-      &:last-child {
-        > li {
-          &:last-child {
-            border-radius: 0 0 0 var.$input-border-radius;
-          }
-        }
+        border-radius: var.$border-radius;
       }
     }
   }
 
   .control-groups {
-    white-space: nowrap;
+    white-space: normal;
+    margin: 0;
+    padding: 0;
+    display: block;
   }
 
   .control-group-labels {
     height: 100%;
     background: color.$white;
     overflow: hidden;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
 
     div {
       white-space: nowrap;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
     }
 
     h4 {
       display: inline-block;
       width: 100%;
+      margin: 0;
+      padding: 0;
+      line-height: 1;
     }
   }
 
@@ -195,10 +216,13 @@
   }
 
   @include mixins.breakpoint("phone-lrg") {
-    width: 45px;
+    width: 100%;
+    max-width: 100%;
 
     .control-group {
-      text-indent: -9999px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: mixins.space(0.75);
+      padding: mixins.space(1);
     }
 
     .form-actions {
@@ -247,6 +271,12 @@
     }
   }
 
+  @include mixins.breakpoint("tablet-md") {
+    .control-group {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
   .field-control {
     @include mixins.field-control;
 
@@ -260,9 +290,19 @@
   }
 }
 
-@container controls (max-width: 46px) {
-  .control-label {
-    display: none;
+@container controls (max-width: 300px) {
+  .control-group {
+    grid-template-columns: 1fr !important;
+  }
+
+  .field-control button {
+    min-height: 80px;
+    padding: mixins.space(1);
+  }
+
+  .control-icon {
+    width: calc(var.$icon-size * 1.4) !important;
+    height: calc(var.$icon-size * 1.4) !important;
   }
 
   .form-actions {
