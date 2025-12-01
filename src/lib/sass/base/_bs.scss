@@ -186,3 +186,16 @@ button {
     color: color.$brand-error;
   }
 }
+
+.f-checkbox,
+.f-radio {
+  display: flex;
+  align-items: center;
+  gap: mixins.space();
+  @include mixins.custom-checkbox;
+
+  label {
+    cursor: pointer;
+    user-select: none;
+  }
+}
