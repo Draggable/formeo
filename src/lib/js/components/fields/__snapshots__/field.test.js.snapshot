@@ -1,5 +1,26 @@
 exports[`Field > should have data property matching snapshot 1`] = `
 {
+  "conditions": [
+    {
+      "if": [
+        {
+          "source": "",
+          "sourceProperty": "",
+          "comparison": "",
+          "target": "",
+          "targetProperty": ""
+        }
+      ],
+      "then": [
+        {
+          "target": "",
+          "targetProperty": "",
+          "assignment": "",
+          "value": ""
+        }
+      ]
+    }
+  ],
   "tag": "input",
   "attrs": {
     "required": false,
