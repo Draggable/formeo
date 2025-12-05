@@ -225,24 +225,8 @@ export default class FormeoRenderer {
         fetchDependencies(dependencies)
       }
 
-      console.log(`[Formeo] processFields: field ${id} before merge:`, {
-        hasConditions: !!field.conditions,
-        fieldConditions: field.conditions,
-      })
-
       const mergedFieldData = merge({ action }, field)
-
-      console.log(`[Formeo] processFields: field ${id} after merge:`, {
-        hasConditions: !!mergedFieldData.conditions,
-        mergedConditions: mergedFieldData.conditions,
-      })
-
       const cached = this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) })
-
-      console.log(`[Formeo] processFields: cached component ${baseId(cached.id)}:`, {
-        hasConditions: !!cached.conditions,
-        cachedConditions: cached.conditions,
-      })
 
       return cached
     })
@@ -263,7 +247,6 @@ export default class FormeoRenderer {
    */
   handleComponentCondition = (component, ifRest, thenConditions) => {
     if (component.length) {
-      console.log(`[Formeo] handleComponentCondition: processing ${component.length} components`)
       for (const elem of component) {
         this.handleComponentCondition(elem, ifRest, thenConditions)
       }
@@ -271,20 +254,16 @@ export default class FormeoRenderer {
     }
 
     const listenerEvent = LISTEN_TYPE_MAP(component)
-    console.log(`[Formeo] handleComponentCondition: component type=${component.type}, event=${listenerEvent}`)
 
     if (listenerEvent) {
       component.addEventListener(
         listenerEvent,
         evt => {
-          console.log(`[Formeo] Condition event triggered: ${listenerEvent}`)
           if (this.evaluateCondition(ifRest, evt)) {
-            console.log('[Formeo] Condition TRUE, executing actions')
             for (const thenCondition of thenConditions) {
               this.execResult(thenCondition, evt)
             }
           } else {
-            console.log('[Formeo] Condition FALSE, executing opposite actions')
             for (const thenCondition of thenConditions) {
               this.execResult(thenCondition, evt, true) // Pass true to execute opposite action
             }
@@ -295,17 +274,13 @@ export default class FormeoRenderer {
     }
 
     // Evaluate conditions on load.
-    console.log('[Formeo] Evaluating condition on initial load...')
     const fakeEvt = { target: component }
     const result = this.evaluateCondition(ifRest, fakeEvt)
-    console.log(`[Formeo] Initial evaluation result: ${result}`)
     if (result) {
-      console.log(`[Formeo] Executing ${thenConditions.length} action(s)`)
       for (const thenCondition of thenConditions) {
         this.execResult(thenCondition, fakeEvt)
       }
     } else {
-      console.log('[Formeo] Condition FALSE on load, executing opposite actions')
       for (const thenCondition of thenConditions) {
         this.execResult(thenCondition, fakeEvt, true) // Pass true to execute opposite action
       }
@@ -313,28 +288,20 @@ export default class FormeoRenderer {
   }
 
   applyConditions = () => {
-    console.log('[Formeo] applyConditions called, components:', Object.keys(this.components))
-    console.log('[Formeo] Full components data:', JSON.stringify(this.components, null, 2))
     for (const [componentId, componentData] of Object.entries(this.components)) {
       const { conditions } = componentData
-      console.log(`[Formeo] Checking component ${componentId}:`, { hasConditions: !!conditions, componentData })
       if (conditions) {
-        console.log(`[Formeo] Component ${componentId} has ${conditions.length} condition(s)`)
         for (const condition of conditions) {
           const { if: ifConditions, then: thenConditions } = condition
 
           for (const ifCondition of ifConditions) {
             const { source, target } = ifCondition
-            console.log(`[Formeo] Processing condition: source=${source}, target=${target}`)
 
             if (isAddress(source)) {
               const { component, options } = this.getComponent(source)
               const sourceComponent = options || component
               if (sourceComponent) {
-                console.log(`[Formeo] Setting up condition listener on source: ${source}`)
                 this.handleComponentCondition(sourceComponent, ifCondition, thenConditions)
-              } else {
-                console.warn(`[Formeo] Source component not found: ${source}`)
               }
             }
 
@@ -342,17 +309,13 @@ export default class FormeoRenderer {
               const { component, options } = this.getComponent(target)
               const targetComponent = options || component
               if (targetComponent) {
-                console.log(`[Formeo] Setting up condition listener on target: ${target}`)
                 this.handleComponentCondition(targetComponent, ifCondition, thenConditions)
-              } else {
-                console.warn(`[Formeo] Target component not found: ${target}`)
               }
             }
           }
         }
       }
     }
-    console.log('[Formeo] applyConditions completed')
   }
 
   /**
@@ -361,32 +324,22 @@ export default class FormeoRenderer {
   evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
     const sourceValue = this.getComponentProperty(source, sourceProperty)
-    console.log(
-      `[Formeo] evaluateCondition: source=${source}, sourceProperty=${sourceProperty}, sourceValue=${sourceValue} (type: ${typeof sourceValue})`
-    )
 
     if (typeof sourceValue === 'boolean') {
-      console.log(`[Formeo] Boolean property, returning: ${sourceValue}`)
       return sourceValue
     }
 
     const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target)
-    console.log(`[Formeo] Comparing: "${sourceValue}" ${comparison} "${targetValue}"`)
 
     const result = comparisonMap[comparison]?.(sourceValue, targetValue)
-    console.log(`[Formeo] Comparison result: ${result}`)
     return result
   }
 
   execResult = ({ target, targetProperty, assignment, value }, _evt, executeOpposite = false) => {
-    console.log(
-      `[Formeo] execResult: target=${target}, targetProperty=${targetProperty}, executeOpposite=${executeOpposite}`
-    )
     if (isAddress(target)) {
       const { component, option } = this.getComponent(target)
 
       const elem = option || component
-      console.log(`[Formeo] Found target element:`, elem)
 
       // Map opposite actions for visibility toggles
       const oppositePropertyMap = {
@@ -399,13 +352,8 @@ export default class FormeoRenderer {
       const effectiveProperty =
         executeOpposite && oppositePropertyMap[targetProperty] ? oppositePropertyMap[targetProperty] : targetProperty
 
-      console.log(`[Formeo] Using property: ${effectiveProperty} (original: ${targetProperty})`)
-
       if (elem && targetPropertyMap[effectiveProperty]) {
         targetPropertyMap[effectiveProperty](elem, { targetProperty: effectiveProperty, assignment, value })
-        console.log(`[Formeo] Action executed: ${effectiveProperty}`)
-      } else {
-        console.warn(`[Formeo] Could not execute action: element or property handler not found`)
       }
     }
   }
