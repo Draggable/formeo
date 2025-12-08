@@ -1,0 +1,8 @@
+
+/**
+formeo - https://formeo.io
+Version: 4.2.3
+Author: Draggable https://draggable.io
+*/
+
+import{C as o,m as r,a as d}from"./demo.min.js";const c=Array.from(Array(5).keys()).slice(1).map(t=>`h${t}`),i="controls.html.header";class g extends o{constructor(){const e={tag:c[0],attrs:{tag:c.map((a,n)=>({label:a.toUpperCase(),value:a,selected:!n})),className:""},config:{label:r.get(i),hideLabel:!0,editableContent:!0},meta:{group:"html",icon:"header",id:"html.header"},content:r.get(i),action:{}};super(e)}static get definition(){return{i18n:{"en-US":{header:"Custom English Header"}}}}get content(){return super.i18n(i)}}class p extends o{constructor(){const e={tag:"hr",config:{label:r.get("controls.html.divider"),hideLabel:!0},meta:{group:"html",icon:"divider",id:"divider"}};super(e)}}class h extends o{constructor(){const e={tag:"p",attrs:{className:""},config:{label:r.get("controls.html.paragraph"),hideLabel:!0,editableContent:!0},meta:{group:"html",icon:"paragraph",id:"paragraph"},content:"Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment."};super(e)}}class m extends o{constructor(e){const n=d({tag:"textarea",config:{label:"WYSIWYG",editableContent:!0},meta:{group:"html",icon:"rich-text",id:"tinymce"},attrs:{required:!1},dependencies:{js:"https://cdnjs.cloudflare.com/ajax/libs/tinymce/4.9.11/tinymce.min.js"},action:{onRender:l=>{const s=`#${l.id}`;window.tinymce.remove(s),window.tinymce.init({selector:s})}},controlAction:{click:()=>{},onRender:()=>{}}},e);super(n)}}const f=[g,h,p,m];export{f as default};
