@@ -289,6 +289,12 @@ export default class Field extends Component {
           }
 
           if (evt.target.contentEditable) {
+            const forAttribute = evt.target.getAttribute('for')
+            if (forAttribute) {
+              const optionIndex = +forAttribute.split('-').pop()
+              super.set(`options.${optionIndex}.label`, evt.target.textContent)
+              return
+            }
             super.set('content', evt.target.innerHTML)
           }
         },
