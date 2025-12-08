@@ -96,7 +96,7 @@
     "playwright:test:report": "playwright show-report",
     "playwright:test:ci": "playwright test --reporter=dot",
     "prepush": "npm test",
-    "prepare": "lefthook install",
+    "prepare": "lefthook install || true",
     "postmerge": "lefthook install",
     "generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
   },
