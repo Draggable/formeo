@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.2.3
+Version: 4.2.4
 Author: Draggable https://draggable.io
 */
 
@@ -1684,6 +1684,7 @@ button[class*=-clone]:hover .svg-icon {
   flex-direction: column;
   justify-content: flex-start;
   gap: 16px;
+  min-height: 100%;
 }
 .formeo.formeo-editor .formeo-stage.removing-all-fields .formeo-row {
   transition: margin-top 250ms ease-in;

@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.2.3
+Version: 4.2.4
 Author: Draggable https://draggable.io
 */
 
@@ -435,7 +435,7 @@ Author: Draggable https://draggable.io
     window.SmartTooltip = SmartTooltip;
   }
   const name$1 = "formeo";
-  const version$2 = "4.2.3";
+  const version$2 = "4.2.4";
   const pkg = {
     name: name$1,
     version: version$2
@@ -9149,6 +9149,7 @@ Author: Draggable https://draggable.io
       Sortable.create(childWrap, {
         animation: 150,
         fallbackClass: "field-moving",
+        forceFallback: true,
         group: {
           name: "column",
           pull: true,
@@ -9254,6 +9255,7 @@ Author: Draggable https://draggable.io
       Sortable.create(children, {
         animation: 150,
         fallbackClass: "column-moving",
+        forceFallback: true,
         group: {
           name: "row",
           pull: true,
@@ -9961,31 +9963,41 @@ Author: Draggable https://draggable.io
       for (let i2 = groups.length - 1; i2 >= 0; i2--) {
         const storeID = `formeo-controls-${groups[i2]}`;
         if (!this.options.sortable) {
-          window.localStorage.removeItem(storeID);
+          globalThis.localStorage.removeItem(storeID);
         }
         Sortable.create(groups[i2], {
           animation: 150,
-          forceFallback: true,
           fallbackClass: "control-moving",
           fallbackOnBody: true,
+          forceFallback: true,
+          fallbackTolerance: 5,
           group: {
             name: "controls",
             pull: "clone",
-            put: false
+            put: false,
+            revertClone: true
           },
-          onStart: async ({ item }) => {
-            this.isDragging = true;
-            const { controlData } = this.get(item.id);
+          onClone: ({ clone: clone2, item }) => {
+            clone2.id = item.id;
             if (this.options.ghostPreview) {
-              const { default: Field2 } = await Promise.resolve().then(() => field);
-              item.innerHTML = "";
-              item.appendChild(new Field2(controlData).preview);
+              const { controlData } = this.get(item.id);
+              Promise.resolve().then(() => field).then(({ default: Field2 }) => {
+                clone2.innerHTML = "";
+                clone2.appendChild(new Field2(controlData).preview);
+              });
             }
+          },
+          onStart: () => {
+            this.isDragging = true;
+            this.originalDocumentOverflow = document.documentElement.style.overflow;
+            document.documentElement.style.overflow = "hidden";
           },
           onEnd: ({ from, item, clone: clone2 }) => {
             if (from.contains(clone2)) {
               from.replaceChild(item, clone2);
             }
+            document.documentElement.style.overflow = this.originalDocumentOverflow;
+            this.originalDocumentOverflow = null;
             window.setTimeout(() => {
               this.isDragging = false;
             }, 100);
@@ -9998,7 +10010,7 @@ Author: Draggable https://draggable.io
              * @return {Array}
              */
             get: () => {
-              const order = window.localStorage.getItem(storeID);
+              const order = globalThis.localStorage.getItem(storeID);
               return order ? order.split("|") : [];
             },
             /**
@@ -10007,7 +10019,7 @@ Author: Draggable https://draggable.io
              */
             set: (sortable) => {
               const order = sortable.toArray();
-              window.localStorage.setItem(storeID, order.join("|"));
+              globalThis.localStorage.setItem(storeID, order.join("|"));
             }
           }
         });
