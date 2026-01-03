@@ -1,7 +1,7 @@
-import isEqual from 'lodash/isEqual'
+import isEqual from 'lodash/isEqual.js'
 import dom from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
-import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, UUID_REGEXP } from '../constants'
+import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, UUID_REGEXP } from '../constants.js'
 
 export const RENDER_PREFIX = 'f-'
 
@@ -19,7 +19,7 @@ export const processOptions = ({ editorContainer, renderContainer, formData, ...
 
 export const baseId = id => {
   const match = id.match(UUID_REGEXP)
-  return match?.[0] || id``
+  return match?.[0] || id
 }
 
 const isVisible = elem => {

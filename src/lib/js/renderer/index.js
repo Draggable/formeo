@@ -1,8 +1,8 @@
-import dom from '../common/dom.js'
-import { fetchDependencies } from '../common/loaders'
+import dom, { getName } from '../common/dom.js'
+import { fetchDependencies } from '../common/loaders.js'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
-import { STAGE_CLASSNAME } from '../constants'
+import { STAGE_CLASSNAME } from '../constants.js'
 import {
   baseId,
   comparisonMap,
@@ -11,24 +11,43 @@ import {
   propertyMap,
   RENDER_PREFIX,
   targetPropertyMap,
-} from './helpers'
+} from './helpers.js'
 
 export default class FormeoRenderer {
   constructor(opts, formDataArg) {
-    const { renderContainer, elements, formData } = processOptions(opts)
-    this.container = renderContainer
+    const { renderContainer: container, elements, formData, config } = processOptions(opts)
+    this.container = container
     this.form = cleanFormData(formDataArg || formData)
-    this.dom = dom
-    this.components = Object.create(null)
     this.elements = elements
+    this.config = config
+    this.components = Object.create(null)
+    this.dom = dom
   }
 
   get formData() {
     return this.form
   }
+
   set formData(data) {
     this.form = cleanFormData(data)
   }
+
+  /**
+   * Gets the user data from the rendered form as a plain object.
+   * Converts FormData to an object, handling multiple values for the same key
+   * by converting them into arrays.
+   *
+   * @returns {Object.<string, string|string[]>} An object containing form field names as keys
+   * and their values. Fields with multiple values are stored as arrays.
+   *
+   * @example
+   * // Form with single values
+   * { username: 'john', email: 'john@example.com' }
+   *
+   * @example
+   * // Form with multiple values for same key
+   * { username: 'john', hobbies: ['reading', 'gaming'] }
+   */
   get userData() {
     const userData = new FormData(this.renderedForm)
 
@@ -47,6 +66,30 @@ export default class FormeoRenderer {
 
     return formDataObj
   }
+
+  /**
+   * Gets the user form data as an array of field objects.
+   * Combines user input values with component metadata to create structured field data.
+   *
+   * @returns {Array<{key: string, value: any, label: string}>} An array of field data objects, where each object contains:
+   *   - key: The field identifier
+   *   - value: The user's input value for the field
+   *   - label: The field's label from component configuration (empty string if not found)
+   */
+  get userFormData() {
+    const userFormData = []
+    for (const [key, value] of Object.entries(this.userData)) {
+      const fieldData = {
+        key,
+        value,
+        label: this.components[baseId(key)]?.config?.label || '',
+      }
+      userFormData.push(fieldData)
+    }
+
+    return userFormData
+  }
+
   set userData(data = {}) {
     const form = this.container.querySelector('form')
     for (const key of Object.keys(data)) {
@@ -79,6 +122,7 @@ export default class FormeoRenderer {
    * @param {Object} formData
    */
   render(formData = this.form) {
+    this.form = cleanFormData(formData)
     const renderedForm = this.getRenderedForm(formData)
     const existingRenderedForm = this.container.querySelector('.formeo-render')
 
@@ -94,6 +138,7 @@ export default class FormeoRenderer {
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
+      ...this.config,
       tag: 'form',
       id: this.form.id,
       className: `formeo-render formeo formeo-rendered-${renderCount}`,
@@ -127,11 +172,9 @@ export default class FormeoRenderer {
    */
   processColumn = ({ id, ...columnData }) => ({
     ...columnData,
-    ...{
-      id: this.prefixId(id),
-      children: this.processFields(columnData.children),
-      style: `width: ${columnData.config.width || '100%'}`,
-    },
+    id: this.prefixId(id),
+    children: this.processFields(columnData.children),
+    style: `width: ${columnData.config.width || '100%'}`,
   })
 
   processRows = stageId =>
@@ -183,11 +226,18 @@ export default class FormeoRenderer {
   }
 
   cloneComponentData = componentId => {
-    const { children = [], id, ...rest } = this.components[componentId]
+    const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
+    const updatedAttrs = { ...attrs, 'data-clone-of': id }
+
+    if (rest.tag === 'input') {
+      updatedAttrs.name = getName(this.components[componentId])
+    }
+
     return {
       ...rest,
-      id: uuid(id),
+      id: RENDER_PREFIX + uuid(id),
       children: children?.length && children.map(({ id }) => this.cloneComponentData(baseId(id))),
+      attrs: updatedAttrs,
     }
   }
 
@@ -376,13 +426,13 @@ export default class FormeoRenderer {
   }
 }
 
-const LISTEN_TYPE_MAP = component => {
-  const typesMap = [
-    ['input', c => ['textarea', 'text'].includes(c.type)],
-    ['change', c => ['select'].includes(c.tagName.toLowerCase()) || ['checkbox', 'radio'].includes(c.type)],
-  ]
+const listenTypeMap = [
+  ['input', c => ['textarea', 'text'].includes(c.type)],
+  ['change', c => ['select'].includes(c.tagName.toLowerCase()) || ['checkbox', 'radio'].includes(c.type)],
+]
 
-  const [listenerEvent] = typesMap.find(typeMap => typeMap[1](component)) || [false]
+const LISTEN_TYPE_MAP = component => {
+  const [listenerEvent] = listenTypeMap.find(typeMap => typeMap[1](component)) || [false]
 
   return listenerEvent
 }
