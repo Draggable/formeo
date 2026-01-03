@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.2.4
+Version: 4.2.5
 Author: Draggable https://draggable.io
 */
 
@@ -435,7 +435,7 @@ Author: Draggable https://draggable.io
     window.SmartTooltip = SmartTooltip;
   }
   const name$1 = "formeo";
-  const version$2 = "4.2.4";
+  const version$2 = "4.2.5";
   const pkg = {
     name: name$1,
     version: version$2
@@ -5845,6 +5845,12 @@ Author: Draggable https://draggable.io
     fontello: (icon) => `<i class="${iconPrefix}${icon}">${icon}</i>`
   };
   const inputTags = /* @__PURE__ */ new Set(["input", "textarea", "select"]);
+  const stripOn = (str) => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase());
+  const useCaptureEvts = /* @__PURE__ */ new Set(["focus", "blur"]);
+  const defaultActionHandler = (event) => {
+    const eventName = stripOn(event);
+    return (node, cb) => node.addEventListener(eventName, cb, useCaptureEvts.has(eventName));
+  };
   const getName = (elem = {}) => {
     let name2 = elem?.attrs?.name || elem?.name;
     if (name2) {
@@ -6050,12 +6056,10 @@ Author: Draggable https://draggable.io
         onRender: dom.onRender,
         render: dom.onRender
       };
-      const useCaptureEvts = ["focus", "blur"];
-      const defaultHandler = (event) => (node2, cb) => node2.addEventListener(event, cb, useCaptureEvts.includes(event));
       return Object.entries(actions2).map(([event, cb]) => {
         const cbs = Array.isArray(cb) ? cb : [cb];
         return cbs.map((cb2) => {
-          const action = handlers[event] || defaultHandler(event);
+          const action = handlers[event] || defaultActionHandler(event);
           return action(node, cb2);
         });
       });
@@ -10858,7 +10862,7 @@ Author: Draggable https://draggable.io
   };
   const baseId = (id) => {
     const match2 = id.match(UUID_REGEXP);
-    return match2?.[0] || id``;
+    return match2?.[0] || id;
   };
   const isVisible = (elem) => {
     if (!elem) return false;
@@ -10943,12 +10947,13 @@ Author: Draggable https://draggable.io
   };
   let FormeoRenderer$1 = class FormeoRenderer {
     constructor(opts, formDataArg) {
-      const { renderContainer, elements, formData } = processOptions(opts);
-      this.container = renderContainer;
+      const { renderContainer: container, elements, formData, config } = processOptions(opts);
+      this.container = container;
       this.form = cleanFormData(formDataArg || formData);
-      this.dom = dom;
-      this.components = /* @__PURE__ */ Object.create(null);
       this.elements = elements;
+      this.config = config;
+      this.components = /* @__PURE__ */ Object.create(null);
+      this.dom = dom;
     }
     get formData() {
       return this.form;
@@ -10956,10 +10961,30 @@ Author: Draggable https://draggable.io
     set formData(data) {
       this.form = cleanFormData(data);
     }
+    /**
+     * Gets the user data from the rendered form as a plain object.
+     * Converts FormData to an object, handling multiple values for the same key
+     * by converting them into arrays.
+     *
+     * @returns {Object.<string, string|string[]>} An object containing form field names as keys
+     * and their values. Fields with multiple values are stored as arrays.
+     *
+     * @example
+     * // Form with single values
+     * { username: 'john', email: 'john@example.com' }
+     *
+     * @example
+     * // Form with multiple values for same key
+     * { username: 'john', hobbies: ['reading', 'gaming'] }
+     */
     get userData() {
-      const userData = new FormData(this.renderedForm);
+      const form = this.container.querySelector(".formeo-render") || this.renderedForm;
+      if (!form) {
+        return {};
+      }
+      const formEntries = new FormData(form);
       const formDataObj = {};
-      for (const [key, value] of userData.entries()) {
+      for (const [key, value] of formEntries.entries()) {
         if (formDataObj[key]) {
           if (Array.isArray(formDataObj[key])) {
             formDataObj[key].push(value);
@@ -10971,6 +10996,27 @@ Author: Draggable https://draggable.io
         }
       }
       return formDataObj;
+    }
+    /**
+     * Gets the user form data as an array of field objects.
+     * Combines user input values with component metadata to create structured field data.
+     *
+     * @returns {Array<{key: string, value: any, label: string}>} An array of field data objects, where each object contains:
+     *   - key: The field identifier
+     *   - value: The user's input value for the field
+     *   - label: The field's label from component configuration (empty string if not found)
+     */
+    get userFormData() {
+      const userFormData = [];
+      for (const [key, value] of Object.entries(this.userData)) {
+        const fieldData = {
+          key,
+          value,
+          label: this.components[baseId(key)]?.config?.label || ""
+        };
+        userFormData.push(fieldData);
+      }
+      return userFormData;
     }
     set userData(data = {}) {
       const form = this.container.querySelector("form");
@@ -10995,6 +11041,7 @@ Author: Draggable https://draggable.io
      * @param {Object} formData
      */
     render(formData = this.form) {
+      this.form = cleanFormData(formData);
       const renderedForm = this.getRenderedForm(formData);
       const existingRenderedForm = this.container.querySelector(".formeo-render");
       if (existingRenderedForm) {
@@ -11007,6 +11054,7 @@ Author: Draggable https://draggable.io
       this.form = cleanFormData(formData);
       const renderCount = document.getElementsByClassName("formeo-render").length;
       const config = {
+        ...this.config,
         tag: "form",
         id: this.form.id,
         className: `formeo-render formeo formeo-rendered-${renderCount}`,
@@ -11032,11 +11080,9 @@ Author: Draggable https://draggable.io
      */
     processColumn = ({ id, ...columnData }) => ({
       ...columnData,
-      ...{
-        id: this.prefixId(id),
-        children: this.processFields(columnData.children),
-        style: `width: ${columnData.config.width || "100%"}`
-      }
+      id: this.prefixId(id),
+      children: this.processFields(columnData.children),
+      style: `width: ${columnData.config.width || "100%"}`
     });
     processRows = (stageId) => this.orderChildren("rows", this.form.stages[stageId].children).reduce((acc, row) => {
       if (row) {
@@ -11079,11 +11125,16 @@ Author: Draggable https://draggable.io
       };
     };
     cloneComponentData = (componentId) => {
-      const { children = [], id, ...rest } = this.components[componentId];
+      const { children = [], id, attrs = {}, ...rest } = this.components[componentId];
+      const updatedAttrs = { ...attrs, "data-clone-of": id };
+      if (rest.tag === "input") {
+        updatedAttrs.name = getName(this.components[componentId]);
+      }
       return {
         ...rest,
-        id: uuid(id),
-        children: children?.length && children.map(({ id: id2 }) => this.cloneComponentData(baseId(id2)))
+        id: RENDER_PREFIX + uuid(id),
+        children: children?.length && children.map(({ id: id2 }) => this.cloneComponentData(baseId(id2))),
+        attrs: updatedAttrs
       };
     };
     addButton = (id) => ({
@@ -11231,12 +11282,12 @@ Author: Draggable https://draggable.io
       return components2;
     };
   };
+  const listenTypeMap = [
+    ["input", (c) => ["textarea", "text"].includes(c.type)],
+    ["change", (c) => ["select"].includes(c.tagName.toLowerCase()) || ["checkbox", "radio"].includes(c.type)]
+  ];
   const LISTEN_TYPE_MAP = (component) => {
-    const typesMap = [
-      ["input", (c) => ["textarea", "text"].includes(c.type)],
-      ["change", (c) => ["select"].includes(c.tagName.toLowerCase()) || ["checkbox", "radio"].includes(c.type)]
-    ];
-    const [listenerEvent] = typesMap.find((typeMap) => typeMap[1](component)) || [false];
+    const [listenerEvent] = listenTypeMap.find((typeMap) => typeMap[1](component)) || [false];
     return listenerEvent;
   };
   if (window !== void 0) {
