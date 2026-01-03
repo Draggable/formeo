@@ -1,3 +1,10 @@
+## [4.2.5](https://github.com/Draggable/formeo/compare/v4.2.4...v4.2.5) (2026-01-03)
+
+
+### Bug Fixes
+
+* userFormData, user input data with labels ([88a88b2](https://github.com/Draggable/formeo/commit/88a88b242d592009e715077db8189caa3c27ae98)), closes [#314](https://github.com/Draggable/formeo/issues/314)
+
 ## [4.2.4](https://github.com/Draggable/formeo/compare/v4.2.3...v4.2.4) (2025-11-25)
 
 
