@@ -39,6 +39,7 @@ const editorActions = (editor, renderer) => {
     getUserData: () => {
       // renderer.getRenderedForm(editor.formData)
       console.log(renderer.userData)
+      console.log('User Form Data:', renderer.userFormData)
     },
     resetEditor: () => {
       window.sessionStorage.removeItem('formeo-formData')

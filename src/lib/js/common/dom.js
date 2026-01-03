@@ -28,6 +28,13 @@ const iconFontTemplates = {
 
 const inputTags = new Set(['input', 'textarea', 'select'])
 
+const stripOn = str => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase())
+const useCaptureEvts = new Set(['focus', 'blur'])
+const defaultActionHandler = event => {
+  const eventName = stripOn(event)
+  return (node, cb) => node.addEventListener(eventName, cb, useCaptureEvts.has(eventName))
+}
+
 export const getName = (elem = {}) => {
   let name = elem?.attrs?.name || elem?.name
 
@@ -286,14 +293,12 @@ class DOM {
       onRender: dom.onRender,
       render: dom.onRender,
     }
-    const useCaptureEvts = ['focus', 'blur']
-    const defaultHandler = event => (node, cb) => node.addEventListener(event, cb, useCaptureEvts.includes(event))
 
     return Object.entries(actions).map(([event, cb]) => {
       const cbs = Array.isArray(cb) ? cb : [cb]
 
       return cbs.map(cb => {
-        const action = handlers[event] || defaultHandler(event)
+        const action = handlers[event] || defaultActionHandler(event)
         return action(node, cb)
       })
     })
@@ -857,22 +862,7 @@ class DOM {
       animate.slideDown(stage, 300)
     }
 
-    // var markEmptyArray = [];
-
-    // if (opts.prepend) {
-    //   markEmptyArray.push(true);
-    // }
-
-    // if (opts.append) {
-    //   markEmptyArray.push(true);
-    // }
-
-    // if (!markEmptyArray.some(elem => elem === true)) {
-    // stage.classList.add('empty-stages');
-    // }
-
     animate.slideUp(stage, 600, resetStage)
-    // animate.slideUp(stage, 2000);
   }
 
   /**
