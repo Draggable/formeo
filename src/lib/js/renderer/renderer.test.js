@@ -23,7 +23,9 @@ describe('FormeoRenderer', () => {
     global.window = window
     global.Element = window.Element
     global.HTMLElement = window.HTMLElement
+    global.HTMLFormElement = window.HTMLFormElement
     global.Node = window.Node
+    global.FormData = window.FormData
 
     container = document.getElementById('container')
   })
@@ -34,7 +36,9 @@ describe('FormeoRenderer', () => {
     delete global.window
     delete global.Element
     delete global.HTMLElement
+    delete global.HTMLFormElement
     delete global.Node
+    delete global.FormData
   })
 
   describe('userFormData getter', () => {

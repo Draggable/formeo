@@ -49,10 +49,14 @@ export default class FormeoRenderer {
    * { username: 'john', hobbies: ['reading', 'gaming'] }
    */
   get userData() {
-    const userData = new FormData(this.renderedForm)
+    const form = this.container.querySelector('.formeo-render') || this.renderedForm
+    if (!form) {
+      return {}
+    }
+    const formEntries = new FormData(form)
 
     const formDataObj = {}
-    for (const [key, value] of userData.entries()) {
+    for (const [key, value] of formEntries.entries()) {
       if (formDataObj[key]) {
         if (Array.isArray(formDataObj[key])) {
           formDataObj[key].push(value)
