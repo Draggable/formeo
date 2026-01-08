@@ -211,11 +211,46 @@ export default class EditPanelItem {
     return controls
   }
 
+  /**
+   * Get config-provided options for an attribute
+   * @param {String} attrKey - The attribute key (e.g., 'attrs.type')
+   * @returns {Array|null} Array of options if config provides them, null otherwise
+   */
+  getConfigAttrOptions(attrKey) {
+    // Extract the attribute name from the key (e.g., 'attrs.type' -> 'type')
+    const attrName = attrKey.split('.').pop()
+    // Config is already merged by Component.config setter, so type-specific
+    // config (e.g., config.fields['text-input'].attrs) is merged into this.field.config.attrs
+    const configValue = this.field.config?.attrs?.[attrName]
+
+    // Only return if it's an array of options
+    if (Array.isArray(configValue)) {
+      return configValue
+    }
+
+    return null
+  }
+
   itemInput(key, value) {
-    const valType = dom.childType(value) || 'string'
+    let valType = dom.childType(value) || 'string'
+    let effectiveValue = value
+
+    // Check if config provides options for this attr (for attrs panel only)
+    if (this.panelName === 'attrs') {
+      const configAttrOptions = this.getConfigAttrOptions(key)
+      if (configAttrOptions) {
+        // Config provides dropdown options - mark current value as selected
+        effectiveValue = configAttrOptions.map(opt => ({
+          ...opt,
+          selected: opt.value === value,
+        }))
+        valType = 'array'
+      }
+    }
+
     const dataKey = panelDataKeyMap.get(this.panelName)?.({ itemKey: this.itemKey, key }) || this.itemKey
     const labelKey = dataKey.split('.').filter(Number.isNaN).join('.') || key
-    const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value })
+    const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue })
     const name = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, '-$1')}`
     const config = {
       label: this.panelName !== 'options' && (labelHelper(labelKey) || toTitleCase(labelKey)),
@@ -233,7 +268,7 @@ export default class EditPanelItem {
 
     const action = mergeActions(INPUT_TYPE_ACTION[valType](dataKey, this.field), itemInputAction || {})
 
-    const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value }), { action, attrs, config })
+    const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue }), { action, attrs, config })
     if (CHECKED_TYPES.includes(key)) {
       return {
         className: 'f-addon',

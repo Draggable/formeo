@@ -148,7 +148,7 @@ export default class EditPanel {
           }
 
           const eventType = toTitleCase(type)
-          const customEvt = new window.CustomEvent(`onAdd${eventType}`, {
+          const customEvt = new globalThis.CustomEvent(`onAdd${eventType}`, {
             detail: addEvt,
           })
 
