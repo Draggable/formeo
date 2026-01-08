@@ -40,8 +40,7 @@ export default class Component extends Data {
     this.shortId = this.id.slice(0, this.id.indexOf('-'))
     this.name = name
     this.indexName = `${name}s`
-    this.config = Components[`${this.name}s`].config
-    merge(this.config, data.config)
+    this.config = { ...data.config, ...Components[`${this.name}s`].config }
     this.address = `${this.name}s.${this.id}`
     this.dataPath = `${this.address}.`
     // this.observer = new window.MutationObserver(this.mutationHandler)
@@ -856,6 +855,7 @@ export default class Component extends Data {
    * @return {Boolean}
    */
   isDisabledProp = (propName, kind = 'attrs') => {
+    console.log(this.config)
     const propKind = this.config.panels[kind]
     if (!propKind) {
       return false
@@ -918,15 +918,15 @@ export default class Component extends Data {
     if (!this.config) {
       return null
     }
-    const editable = ['object', 'array']
+    const editable = new Set(['object', 'array'])
     const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
-    const noPanels = ['children', 'config', 'meta', 'action', 'events', ...this.config.panels.disabled]
-    const allowedPanels = panelOrder.filter(panelName => !noPanels.includes(panelName))
+    const noPanels = new Set(['children', 'config', 'meta', 'action', 'events', ...this.config.panels.disabled])
+    const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {
       const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
-      if (editable.includes(propType)) {
+      if (editable.has(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
         this.editPanels.set(editPanel.name, editPanel)
       }

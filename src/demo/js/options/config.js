@@ -29,6 +29,15 @@ const config = {
         },
       },
     },
+    'text-input': {
+      attrs: {
+        type: [
+          { label: 'text', value: 'text' },
+          { label: 'phone', value: 'phone' },
+          { label: 'email', value: 'email' },
+        ],
+      },
+    },
     checkbox: {
       actionButtons: {
         // buttons: ['edit'], // array of allow action buttons
