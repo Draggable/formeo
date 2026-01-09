@@ -23,6 +23,17 @@ const config = {
   },
   fields: {
     all: {
+      panels: {
+        attrs: {
+          // disabled: ['type'],
+          // locked: ['type'],
+        },
+      },
+
+      // multiple ways to disable/lock fields
+      // disabled: ['attrs.type'],
+      // locked: ['attrs.type'],
+
       events: {
         onRemove: evt => {
           console.log(`You just removed the field with the id "${evt.target.id}"`, evt)
@@ -37,6 +48,7 @@ const config = {
           { label: 'email', value: 'email' },
         ],
       },
+      // disabled: ['attrs.type'],
     },
     checkbox: {
       actionButtons: {

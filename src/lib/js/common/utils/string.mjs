@@ -1,7 +1,7 @@
 const toTitleCaseLowers = 'a an and as at but by for for from in into near nor of on onto or the to with'
   .split(' ')
-  .map(lower => `\\s${lower}\\s`)
-const toTitleCaseRegex = new RegExp(`(?!${toTitleCaseLowers.join('|')})\\w\\S*`, 'g')
+  .map(lower => String.raw`\s${lower}\s`)
+const toTitleCaseRegex = new RegExp(String.raw`(?!${toTitleCaseLowers.join('|')})\w\S*`, 'g')
 const regexSpace = /\s+/g
 
 /**
@@ -108,4 +108,9 @@ export const truncateByWord = (str, maxLength, tail = '…') => {
   }
 
   return truncatedWord
+}
+
+const keyPrefixRegex = /^attrs\.|^meta\.|^options\./g
+export function trimKeyPrefix(key) {
+  return key.replaceAll(keyPrefixRegex, '')
 }
