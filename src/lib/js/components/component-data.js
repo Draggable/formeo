@@ -33,7 +33,6 @@ export default class ComponentData extends Data {
     const elemId = id || uuid()
     const component = this.Component({ ...data, id: elemId })
     this.data[elemId] = component
-    // this.set(elemId, component)
     this.active = component
 
     // Dispatch add events based on component type

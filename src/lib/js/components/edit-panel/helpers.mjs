@@ -1,7 +1,10 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { toTitleCase } from '../../common/utils/string.mjs'
+import { toTitleCase, trimKeyPrefix } from '../../common/utils/string.mjs'
 import Autocomplete from '../autocomplete/autocomplete.mjs'
+
+const keyToPlaceHolder = key => i18n.get(`${key}.placeholder`) || toTitleCase(trimKeyPrefix(key))
+const keyToClassName = key => key.replaceAll('.', '-')
 
 function inputConfigBase({ key, value, type = 'text', checked }) {
   const config = {
@@ -9,9 +12,9 @@ function inputConfigBase({ key, value, type = 'text', checked }) {
     attrs: {
       type,
       value,
-      placeholder: i18n.get(`${key}.placeholder`) || toTitleCase(key),
+      placeholder: keyToPlaceHolder(key),
     },
-    className: [key.replace(/\./g, '-')],
+    className: [keyToClassName(key)],
     config: {},
   }
 
@@ -27,8 +30,8 @@ export function labelHelper(key) {
   if (labelText) {
     return labelText
   }
-  const splitKey = key.split('.')
-  return i18n.get(splitKey[splitKey.length - 1])
+  const trimmedKey = trimKeyPrefix(key)
+  return i18n.get(trimmedKey) || toTitleCase(trimmedKey)
 }
 
 export const ITEM_INPUT_TYPE_MAP = {
@@ -45,7 +48,7 @@ export const ITEM_INPUT_TYPE_MAP = {
       attrs: {
         placeholder: labelHelper(`placeholder.${key}`),
       },
-      className: [key.replace(/\./g, '-')],
+      className: [keyToClassName(key)],
       options: value,
     }
   },

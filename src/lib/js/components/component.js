@@ -6,7 +6,7 @@ import events from '../common/events.js'
 import { forEach, indexOfNode, isInt, map } from '../common/helpers.mjs'
 import { clone, componentType, identity, merge, remove, unique, uuid } from '../common/utils/index.mjs'
 import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
-import { splitAddress, toTitleCase } from '../common/utils/string.mjs'
+import { splitAddress, toTitleCase, trimKeyPrefix } from '../common/utils/string.mjs'
 import {
   ANIMATION_SPEED_BASE,
   CHILD_TYPE_MAP,
@@ -106,8 +106,6 @@ export default class Component extends Data {
       ...eventData,
     }
 
-    // debugger
-
     // Call configured event handlers
     if (this.eventListeners?.has(eventName)) {
       this.eventListeners.get(eventName).forEach(handler => {
@@ -195,7 +193,7 @@ export default class Component extends Data {
 
     forEach(children, child => child.remove())
 
-    this.dom.parentElement.removeChild(this.dom)
+    this.dom.remove()
     remove(Components.getAddress(`${parent.name}s.${parent.id}.children`), this.id)
 
     if (!parent.children.length) {
@@ -855,13 +853,23 @@ export default class Component extends Data {
    * @return {Boolean}
    */
   isDisabledProp = (propName, kind = 'attrs') => {
-    console.log(this.config)
-    const propKind = this.config.panels[kind]
-    if (!propKind) {
+    // if developer is explicitly setting a value, do not disable
+    if (get(this.config, propName)) {
       return false
     }
-    const disabledAttrs = propKind.disabled.concat(this.get('config.disabled'))
-    return disabledAttrs.includes(propName)
+
+    const disabledConfigProps = this.config?.disabled || []
+    const isDisabledConfigProp = disabledConfigProps.includes(propName)
+
+    if (isDisabledConfigProp) {
+      return true
+    }
+
+    const basePropName = trimKeyPrefix(propName)
+    const disabledPanelProps = this.config?.panels[kind]?.disabled || []
+    const isDisabledPanelProp = disabledPanelProps.includes(basePropName)
+
+    return isDisabledPanelProp
   }
 
   /**
@@ -870,12 +878,22 @@ export default class Component extends Data {
    * @return {Boolean}
    */
   isLockedProp = (propName, kind = 'attrs') => {
-    const propKind = this.config.panels[kind]
-    if (!propKind) {
-      return false
+    const lockedConfigProps = this.config?.locked || []
+    const isLockedConfigProp = lockedConfigProps.includes(propName)
+
+    if (isLockedConfigProp) {
+      return true
     }
-    const lockedAttrs = propKind.locked.concat(this.get('config.locked'))
-    return lockedAttrs.includes(propName)
+
+    const basePropName = trimKeyPrefix(propName)
+    const lockedPanelProps = this.config?.panels[kind]?.locked || []
+    const isLockedPanelProp = lockedPanelProps.includes(basePropName)
+
+    if (isLockedPanelProp) {
+      return true
+    }
+
+    return false
   }
 
   /**

@@ -154,7 +154,7 @@ export default class EditPanelItem {
     const conditionTypeWrap = this.conditionTypeWrap.get(conditionType)
     const conditionField = conditionTypeWrap.children[index]
     conditionField.destroy()
-    conditionTypeWrap.removeChild(conditionField.dom)
+    conditionField.dom.remove()
   }
 
   generateConditionFields = (conditionType, conditionVals) => {
@@ -232,6 +232,9 @@ export default class EditPanelItem {
   }
 
   itemInput(key, value) {
+    if (this.isDisabled) {
+      return null
+    }
     let valType = dom.childType(value) || 'string'
     let effectiveValue = value
 
@@ -255,6 +258,9 @@ export default class EditPanelItem {
     const config = {
       label: this.panelName !== 'options' && (labelHelper(labelKey) || toTitleCase(labelKey)),
       labelAfter: false,
+      inputWrap: ['f-input-wrap', this.isLocked && 'locked-prop', this.isDisabled && 'disabled-prop']
+        .filter(Boolean)
+        .join(' '),
     }
 
     const attrs = {
@@ -262,7 +268,7 @@ export default class EditPanelItem {
     }
 
     attrs.disabled = this.isDisabled
-    attrs.locked = this.isLocked
+    attrs.readonly = this.isLocked
 
     const itemInputAction = itemInputActions.get(this.itemSlug)?.(this)
 

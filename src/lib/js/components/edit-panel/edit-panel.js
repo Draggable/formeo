@@ -60,19 +60,25 @@ export default class EditPanel {
    * @return {Object}           formeo DOM config object
    */
   createProps(data = this.data) {
-    this.editPanelItems = Array.from(data).map((dataVal, index) => {
-      const isArray = this.type === 'array'
-      const key = isArray ? `[${index}]` : `.${dataVal[0]}`
-      const val = isArray ? dataVal : { [dataVal[0]]: dataVal[1] }
+    this.editPanelItems = Array.from(data)
+      .map((dataVal, index) => {
+        const isArray = this.type === 'array'
+        const key = isArray ? `[${index}]` : `.${dataVal[0]}`
+        const val = isArray ? dataVal : { [dataVal[0]]: dataVal[1] }
 
-      return new EditPanelItem({
-        key: `${this.name}${key}`,
-        data: val,
-        field: this.component,
-        index,
-        panel: this,
+        if (this.component.isDisabledProp(`${this.name}${key}`, this.name)) {
+          return null
+        }
+
+        return new EditPanelItem({
+          key: `${this.name}${key}`,
+          data: val,
+          field: this.component,
+          index,
+          panel: this,
+        })
       })
-    })
+      .filter(Boolean)
 
     const editGroupConfig = {
       tag: 'ul',

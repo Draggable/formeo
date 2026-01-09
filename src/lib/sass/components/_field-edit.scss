@@ -24,6 +24,7 @@
 
   .component-prop {
     display: flex;
+    gap: mixins.space(1);
   }
 
   .prop-controls {
@@ -166,10 +167,41 @@
     textarea,
     [contenteditable] {
       font-size: 0.825em;
-      // flex: 1 1 auto;
 
       &:focus {
         z-index: 1;
+      }
+    }
+  }
+
+
+
+  .attrs-prop-inputs {
+
+    [disabled] {
+      .f-input-wrap & {
+        display: none;
+      }
+    }
+
+
+    .f-input-wrap {
+      display: flex;
+      align-items: center;
+      flex: 1;
+
+
+      &.disabled-prop {
+        display: none;
+      }
+
+      &.locked-prop {
+        pointer-events: none;
+        opacity: 0.7;
+
+        select {
+          background-image: none;
+        }
       }
     }
   }
