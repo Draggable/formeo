@@ -1,10 +1,4 @@
-import { enUS } from '@draggable/formeo-languages'
-import mi18n from '@draggable/i18n'
 import { CSS_URL } from './constants'
-
-const locale = 'en-US'
-mi18n.addLanguage(locale, enUS)
-mi18n.setCurrent(locale)
 
 export const defaults = {
   get editor() {
@@ -16,7 +10,7 @@ export const defaults = {
       sessionStorage: false,
       editorContainer: null, // element or selector to attach editor to
       svgSprite: null, // null = use bundled sprite, or provide custom URL
-      style: null, // null = use bundled styles
+      style: CSS_URL,
       iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
       config: {}, // stages, rows, columns, fields
       events: {},
