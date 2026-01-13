@@ -37,9 +37,9 @@ test.describe('Form Editor', () => {
     // click the options panel label
     await page.locator('.field-edit').first().getByRole('heading', { name: 'Options' }).click()
 
-    await page.getByPlaceholder('Label').click()
-    await page.getByPlaceholder('Label').press('ControlOrMeta+a')
-    await page.getByPlaceholder('Label').fill('Field One')
+    await page.locator('.field-edit-options .label').click()
+    await page.locator('.field-edit-options .label').press('ControlOrMeta+a')
+    await page.locator('.field-edit-options .label').fill('Field One')
     await page.getByRole('button', { name: '+ Option' }).click()
   })
 })

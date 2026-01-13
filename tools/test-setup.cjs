@@ -10,6 +10,7 @@ window.ResizeObserver = ResizeObserver
 global.window = window
 global.document = window.document
 global.navigator = window.navigator
+global.CustomEvent = window.CustomEvent
 
 // Prepare the SVG sprite data for sprite-init.mjs (imported via --import flag)
 const spritePath = resolve(__dirname, '..', 'src', 'lib', 'icons', 'formeo-sprite.svg')
