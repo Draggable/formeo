@@ -412,7 +412,6 @@ class DOM {
         try {
           element.setAttribute(safeAttrName, value)
         } catch (e) {
-          // debugger
           console.warn(`Could not set attribute ${safeAttrName} with value ${value}`, e)
         }
       }
@@ -663,7 +662,7 @@ class DOM {
 
   helpText = helpText => ({
     tag: 'small',
-    className: 'help-text',
+    className: 'f-help-text',
     children: helpText,
   })
 
@@ -693,7 +692,7 @@ class DOM {
         labelText,
         required && this.requiredMark(),
         tooltip && this.tooltip(tooltip),
-        helpText && { tag: 'small', className: 'help-text', children: helpText },
+        helpText && this.helpText(helpText),
       ],
       action: {},
     }
