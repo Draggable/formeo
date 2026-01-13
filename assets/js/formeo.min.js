@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 4.2.5
+Version: 5.0.0
 Author: Draggable https://draggable.io
 */
 
@@ -9,6 +9,7 @@ Author: Draggable https://draggable.io
   typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.formeo = {}));
 })(this, (function(exports2) {
   "use strict";
+  const e = { "en-US": { "en-US": "English", dir: "ltr", "af-ZA": "Afrikaans (South Africa)", "ar-TN": "Arabic (Tunisia)", "cs-CZ": "Czech (Czechia)", "de-DE": "German (Germany)", "es-ES": "European Spanish", "fa-IR": "Persian (Iran)", "fi-FI": "Finnish (Finland)", "fr-FR": "French (France)", "hu-HU": "Hungarian (Hungary)", "it-IT": "Italian (Italy)", "ja-JP": "Japanese (Japan)", "nb-NO": "Norwegian Bokmål (Norway)", "pl-PL": "Polish (Poland)", "pt-BR": "Brazilian Portuguese", "pt-PT": "European Portuguese", "ro-RO": "Romanian (Romania)", "ru-RU": "Russian (Russia)", "th-TH": "Thai (Thailand)", "tr-TR": "Turkish (Türkiye)", "zh-CN": "Chinese (China)", "zh-HK": "Chinese (Hong Kong SAR China)", "action.add.attrs.attr": "What attribute would you like to add?", "action.add.attrs.value": "Default Value", addOption: "Add Option", allFieldsRemoved: "All fields were removed.", allowSelect: "Allow Select", and: "and", attribute: "Attribute", attributeNotPermitted: 'Attribute "{attribute}" is not permitted, please choose another.', attributes: "Attributes", "attrs.class": "Class", "attrs.className": "Class", "attrs.dir": "Direction", "attrs.id": "Id", "attrs.required": "Required", "attrs.style": "Style", "attrs.title": "Title", "attrs.type": "Type", "attrs.value": "Value", autocomplete: "Autocomplete", button: "Button", cannotBeEmpty: "This field cannot be empty", cannotClearFields: "There are no fields to clear", checkbox: "Checkbox", checkboxes: "Checkboxes", class: "Class", clear: "Clear", clearAllMessage: "Are you sure you want to clear all fields?", close: "Close", column: "Column", "condition.target.placeholder": "target", "condition.type.and": "And", "condition.type.if": "If", "condition.type.or": "Or", "condition.type.then": "Then", "condition.value.placeholder": "value", confirmClearAll: "Are you sure you want to remove all fields?", content: "Content", control: "Control", "controlGroups.nextGroup": "Next Group", "controlGroups.prevGroup": "Previous Group", "controls.filteringTerm": 'Filtering "{term}"', "controls.form.button": "Button", "controls.form.checkbox-group": "Checkbox Group", "controls.form.input.date": "Date", "controls.form.input.email": "Email", "controls.form.input.file": "File Upload", "controls.form.input.hidden": "Hidden Input", "controls.form.input.number": "Number", "controls.form.input.text": "Text Input", "controls.form.radio-group": "Radio Group", "controls.form.select": "Select", "controls.form.textarea": "TextArea", "controls.groups.form": "Form Fields", "controls.groups.html": "HTML Elements", "controls.groups.layout": "Layout", "controls.html.divider": "Divider", "controls.html.header": "Header", "controls.html.paragraph": "Paragraph", "controls.layout.column": "Column", "controls.layout.row": "Row", copy: "Copy To Clipboard", danger: "Danger", defineColumnLayout: "Define a column layout", defineColumnWidths: "Define column widths", description: "Help Text", descriptionField: "Description", "editing.row": "Editing Row", editorTitle: "Form Elements", field: "Field", "field.property.invalid": "not valid", "field.property.isChecked": "is checked", "field.property.isNotVisible": "is not visible", "field.property.isVisible": "is visible", "field.property.label": "label", "field.property.valid": "valid", "field.property.value": "value", fieldNonEditable: "This field cannot be edited.", fieldRemoveWarning: "Are you sure you want to remove this field?", fileUpload: "File Upload", formUpdated: "Form Updated", getStarted: "Drag a field from the right to get started.", group: "Group", grouped: "Grouped", hidden: "Hidden Input", hide: "Edit", htmlElements: "HTML Elements", if: "If", "if.condition.source.placeholder": "source", "if.condition.target.placeholder": "target / value", info: "Info", "input.date": "Date", "input.text": "Text", label: "Label", labelCount: "{label} {count}", labelEmpty: "Field Label cannot be empty", "lang.af": "Afrikaans", "lang.ar": "Arabic", "lang.cs": "Czech", "lang.de": "German", "lang.en": "English", "lang.es": "Spanish", "lang.fa": "Persian", "lang.fi": "Finnish", "lang.fr": "French", "lang.hu": "Hungarian", "lang.it": "Italian", "lang.ja": "Japanese", "lang.nb": "Norwegian Bokmål", "lang.pl": "Polish", "lang.pt": "Portuguese", "lang.ro": "Romanian", "lang.ru": "Russian", "lang.th": "Thai", "lang.tr": "Turkish", "lang.zh": "Chinese", layout: "Layout", limitRole: "Limit access to one or more of the following roles:", mandatory: "Mandatory", maxlength: "Max Length", "meta.group": "Group", "meta.icon": "Ico", "meta.label": "Label", minOptionMessage: "This field requires a minimum of 2 options", name: "Name", newOptionLabel: "New {type}", no: "No", number: "Number", off: "Off", on: "On", "operator.contains": "contains", "operator.equals": "equals", "operator.notContains": "not contains", "operator.notEquals": "not equal", "operator.notVisible": "not visible", "operator.visible": "visible", option: "Option", optional: "optional", optionEmpty: "Option value required", optionLabel: "Option {count}", options: "Options", or: "or", order: "Order", "panel.label.attrs": "Attributes", "panel.label.conditions": "Conditions", "panel.label.config": "Configuration", "panel.label.meta": "Meta", "panel.label.options": "Options", "panelEditButtons.attrs": "+ Attribute", "panelEditButtons.conditions": "+ Condition", "panelEditButtons.options": "+ Option", placeholder: "Placeholder", "placeholder.className": "space separated classes", "placeholder.email": "Enter you email", "placeholder.label": "Label", "placeholder.password": "Enter your password", "placeholder.placeholder": "Placeholder", "placeholder.text": "Enter some Text", "placeholder.textarea": "Enter a lot of text", "placeholder.value": "Value", preview: "Preview", primary: "Primary", remove: "Remove", removeMessage: "Remove Element", removeType: "Remove {type}", required: "Required", reset: "Reset", richText: "Rich Text Editor", roles: "Access", row: "Row", "row.makeInputGroup": "Make this row an input group.", "row.makeInputGroupDesc": "Input Groups enable users to add sets of inputs at a time.", "row.settings.fieldsetWrap": "Wrap row in a &lt;fieldset&gt; tag", "row.settings.fieldsetWrap.aria": "Wrap Row in Fieldset", save: "Save", secondary: "Secondary", select: "Select", selectColor: "Select Color", selectionsMessage: "Allow Multiple Selections", selectOptions: "Options", separator: "Separator", settings: "Settings", size: "Size", sizes: "Sizes", "sizes.lg": "Large", "sizes.m": "Default", "sizes.sm": "Small", "sizes.xs": "Extra Small", style: "Style", styles: "Styles", "styles.btn": "Button Style", "styles.btn.danger": "Danger", "styles.btn.default": "Default", "styles.btn.info": "Info", "styles.btn.primary": "Primary", "styles.btn.success": "Success", "styles.btn.warning": "Warning", subtype: "Type", success: "Success", text: "Text Field", then: "Then", "then.condition.target.placeholder": "target", toggle: "Toggle", ungrouped: "Un-Grouped", warning: "Warning", yes: "Yes" } }, i = e["en-US"];
   async function fetchData(url) {
     try {
       const response = await fetch(url);
@@ -53,8 +54,8 @@ Author: Draggable https://draggable.io
       this.config = { location: parsedLocation, ...restOptions };
       const { override, preloaded = {} } = this.config;
       const allLangs = Object.entries(this.langs).concat(Object.entries(override || preloaded));
-      this.langs = allLangs.reduce((acc, [locale2, lang]) => {
-        acc[locale2] = this.applyLanguage(locale2, lang);
+      this.langs = allLangs.reduce((acc, [locale, lang]) => {
+        acc[locale] = this.applyLanguage(locale, lang);
         return acc;
       }, {});
       this.locale = this.config.locale || this.config.langs[0];
@@ -73,9 +74,9 @@ Author: Draggable https://draggable.io
      * @param {String} locale
      * @param {String|Object} lang
      */
-    addLanguage(locale2, lang = {}) {
+    addLanguage(locale, lang = {}) {
       lang = typeof lang === "string" ? I18N.processFile(lang) : lang;
-      this.applyLanguage(locale2, lang);
+      this.applyLanguage(locale, lang);
       this.config.langs.push("locale");
     }
     /**
@@ -84,9 +85,9 @@ Author: Draggable https://draggable.io
      * @param  {String} locale - locale to check for value
      * @return {String} language string or undefined
      */
-    getValue(key, locale2 = this.locale) {
+    getValue(key, locale = this.locale) {
       var _a;
-      const value = (_a = this.langs[locale2]) == null ? void 0 : _a[key];
+      const value = (_a = this.langs[locale]) == null ? void 0 : _a[key];
       return value || this.getFallbackValue(key);
     }
     /**
@@ -178,22 +179,22 @@ Author: Draggable https://draggable.io
      * @param  {Boolean} useCache
      * @return {Promise}       resolves response
      */
-    loadLang(locale2, useCache = true) {
+    loadLang(locale, useCache = true) {
       const _this = this;
       return new Promise(function(resolve, reject) {
-        if (_this.loaded.indexOf(locale2) !== -1 && useCache) {
-          _this.applyLanguage(_this.langs[locale2]);
-          return resolve(_this.langs[locale2]);
+        if (_this.loaded.indexOf(locale) !== -1 && useCache) {
+          _this.applyLanguage(_this.langs[locale]);
+          return resolve(_this.langs[locale]);
         } else {
-          const langFile = [_this.config.location, locale2, _this.config.extension].join("");
+          const langFile = [_this.config.location, locale, _this.config.extension].join("");
           return fetchData(langFile).then((lang) => {
             const processedFile = I18N.processFile(lang);
-            _this.applyLanguage(locale2, processedFile);
-            _this.loaded.push(locale2);
-            return resolve(_this.langs[locale2]);
+            _this.applyLanguage(locale, processedFile);
+            _this.loaded.push(locale);
+            return resolve(_this.langs[locale]);
           }).catch((err) => {
             console.error(err);
-            const lang = _this.applyLanguage(locale2);
+            const lang = _this.applyLanguage(locale);
             resolve(lang);
           });
         }
@@ -205,11 +206,11 @@ Author: Draggable https://draggable.io
      * @param {Object} lang
      * @return {Object} overriden language
      */
-    applyLanguage(locale2, lang = {}) {
-      const override = this.config.override[locale2] || {};
-      const existingLang = this.langs[locale2] || {};
-      this.langs[locale2] = { ...existingLang, ...lang, ...override };
-      return this.langs[locale2];
+    applyLanguage(locale, lang = {}) {
+      const override = this.config.override[locale] || {};
+      const existingLang = this.langs[locale] || {};
+      this.langs[locale] = { ...existingLang, ...lang, ...override };
+      return this.langs[locale];
     }
     /**
      * return currently available languages
@@ -223,10 +224,10 @@ Author: Draggable https://draggable.io
      * @param {String}   locale
      * @return {Promise} language
      */
-    async setCurrent(locale2 = "en-US") {
-      await this.loadLang(locale2);
-      this.locale = locale2;
-      this.current = this.langs[locale2];
+    async setCurrent(locale = "en-US") {
+      await this.loadLang(locale);
+      this.locale = locale;
+      this.current = this.langs[locale];
       return this.current;
     }
   }
@@ -435,7 +436,7 @@ Author: Draggable https://draggable.io
     window.SmartTooltip = SmartTooltip;
   }
   const name$1 = "formeo";
-  const version$2 = "4.2.5";
+  const version$2 = "5.0.0";
   const pkg = {
     name: name$1,
     version: version$2
@@ -2170,7 +2171,7 @@ Author: Draggable https://draggable.io
     }
     return result;
   }
-  const BUNDLED_SVG_SPRITE = '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="f-i-autocomplete" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M6,5h1v1H6V5z M4,4H3v1h1V4z M6,4H5v1h1V4z M2,5v1h1V5H2z M3,7h1V6H3V7z M5,7h1V6H5V7z M4,5v1h1V5H4z M2,14h1v-1H2V14z M4,14h1v-1H4V14z M6,14h1v-1H6V14z M9,13H8v1h1V13z M16,3.5v4C16,8.3,15.3,9,14.5,9H14v3v3c0,0.6-0.4,1-1,1H1c-0.6,0-1-0.4-1-1V3.5 C0,2.7,0.7,2,1.5,2h3H8V1.5V1H7H6V0.5V0h2.5H11v0.5V1h-1H9v0.5V2h3h2.5C15.3,2,16,2.7,16,3.5z M13,12H7H1v3h12V12z M3,11v-1H2v1H3z M5,11v-1H4v1H5z M15,3.5C15,3.2,14.8,3,14.5,3H9v2.5V8H8.5H8V7.5V7H7V6h1V5.5V5H7V4h1V3.5V3H1.5C1.2,3,1,3.2,1,3.5v4 C1,7.8,1.2,8,1.5,8H8v1H6v0.5V10h2.5H11V9.5V9H9V8h5.5C14.8,8,15,7.8,15,7.5V3.5z"/></symbol><symbol viewBox="0 0 32 32" id="f-i-bin" xmlns="http://www.w3.org/2000/svg"><path d="M4 10v20c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-20h-22zM10 28h-2v-14h2v14zM14 28h-2v-14h2v14zM18 28h-2v-14h2v14zM22 28h-2v-14h2v14zM26.5 4h-6.5v-2.5c0-.825-.675-1.5-1.5-1.5h-7c-.825 0-1.5.675-1.5 1.5v2.5h-6.5c-.825 0-1.5.675-1.5 1.5v2.5h26v-2.5c0-.825-.675-1.5-1.5-1.5zM18 4h-6v-1.975h6v1.975z"/></symbol><symbol id="f-i-button" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><metadata id="acprefix__metadata8"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><path id="acprefix__rect4140" d="M 0.4765625,4 A 0.47706934,0.47706934 0 0 0 0,4.4765625 L 0,11.523438 A 0.47706934,0.47706934 0 0 0 0.4765625,12 L 15.523438,12 A 0.47706934,0.47706934 0 0 0 16,11.523438 L 16,4.4765625 A 0.47706934,0.47706934 0 0 0 15.523438,4 L 0.4765625,4 Z m 0.4765625,0.953125 14.09375,0 0,6.09375 -14.09375,0 0,-6.09375 z"/><g id="acprefix__layer1"><g id="acprefix__text4203"><g id="acprefix__g4212" transform="translate(0.10112835,0.1001358)"><path id="acprefix__path4208" d="m 6.0690374,6.4093857 q -0.5371093,0 -0.8544922,0.4003906 -0.3149414,0.4003906 -0.3149414,1.0913086 0,0.6884766 0.3149414,1.0888672 0.3173829,0.4003906 0.8544922,0.4003906 0.5371094,0 0.8496094,-0.4003906 0.3149414,-0.4003906 0.3149414,-1.0888672 0,-0.690918 -0.3149414,-1.0913086 -0.3125,-0.4003906 -0.8496094,-0.4003906 z m 0,-0.4003906 q 0.7666016,0 1.225586,0.5151367 0.4589843,0.5126953 0.4589843,1.3769531 0,0.8618164 -0.4589843,1.3769531 -0.4589844,0.5126953 -1.225586,0.5126953 -0.7690429,0 -1.2304687,-0.5126953 -0.4589844,-0.5126953 -0.4589844,-1.3769531 0,-0.8642578 0.4589844,-1.3769531 0.4614258,-0.5151367 1.2304687,-0.5151367 z"/><path id="acprefix__path4210" d="m 8.5250921,6.074913 0.4931641,0 0,1.5405274 1.6357418,-1.5405274 0.634766,0 -1.809082,1.6992188 1.938477,1.9458008 -0.649415,0 -1.7504878,-1.7553711 0,1.7553711 -0.4931641,0 0,-3.6450196 z"/></g></g></g></symbol><symbol viewBox="0 0 32 32" id="f-i-calendar" xmlns="http://www.w3.org/2000/svg"><path d="M12.048 16.961c-0.178 0.257-0.395 0.901-0.652 1.059-0.257 0.157-0.547 0.267-0.869 0.328-0.323 0.062-0.657 0.089-1.002 0.079v1.527h2.467v6.046h1.991v-9.996h-1.584c-0.056 0.381-0.173 0.7-0.351 0.957zM23 8h2c0.553 0 1-0.448 1-1v-6c0-0.552-0.447-1-1-1h-2c-0.553 0-1 0.448-1 1v6c0 0.552 0.447 1 1 1zM7 8h2c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1h-2c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1zM30 4h-2v5c0 0.552-0.447 1-1 1h-6c-0.553 0-1-0.448-1-1v-5h-8v5c0 0.552-0.448 1-1 1h-6c-0.552 0-1-0.448-1-1v-5h-2c-1.104 0-2 0.896-2 2v24c0 1.104 0.896 2 2 2h28c1.104 0 2-0.896 2-2v-24c0-1.104-0.896-2-2-2zM30 29c0 0.553-0.447 1-1 1h-26c-0.552 0-1-0.447-1-1v-16c0-0.552 0.448-1 1-1h26c0.553 0 1 0.448 1 1v16zM15.985 17.982h4.968c-0.936 1.152-1.689 2.325-2.265 3.705-0.575 1.381-0.638 2.818-0.749 4.312h2.131c0.009-0.666-0.195-1.385-0.051-2.156 0.146-0.771 0.352-1.532 0.617-2.285 0.267-0.752 0.598-1.461 0.996-2.127 0.396-0.667 0.853-1.229 1.367-1.686v-1.742h-7.015v1.979z"/></symbol><symbol id="f-i-checkbox" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M13.5,5v8c0,0.8-0.7,1.5-1.5,1.5H3c-0.8,0-1.5-0.7-1.5-1.5V4c0-0.8,0.7-1.5,1.5-1.5h9c0.7,0,1.3,0.5,1.5,1.2l2.4-1.4L13.5,5 z M12.5,6.2L7.7,12L2.8,5.5l4.9,1.6l4.8-2.9V4c0-0.3-0.2-0.5-0.5-0.5H3C2.7,3.5,2.5,3.7,2.5,4v9c0,0.3,0.2,0.5,0.5,0.5h9 c0.3,0,0.5-0.2,0.5-0.5V6.2z"/></symbol><symbol id="f-i-checkbox-group" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M0,1h16V0H0V1z M0,3h16V2H0V3z M6,5v1h9V5H6z M15,14v-1H6v1H15z M6,10h9V9H6V10z M4,12l-2.5,1.5L0,13l1.5,2L4,12z M4,8 L1.5,9.5L0,9l1.5,2L4,8z M4,4L1.5,5.5L0,5l1.5,2L4,4z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-columns" xmlns="http://www.w3.org/2000/svg"><metadata id="agprefix__metadata4318"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><path id="agprefix__rect4860-3-5" d="M 16,0.5 A 0.50004997,0.50004997 0 0 0 15.5,0 l -5,0 -5,0 -5,0 A 0.50004997,0.50004997 0 0 0 0,0.5 l 0,15 A 0.50004997,0.50004997 0 0 0 0.5,16 l 5,0 5,0 5,0 A 0.50004997,0.50004997 0 0 0 16,15.5 l 0,-15 z M 15,1 15,15 11,15 11,1 15,1 Z M 10,1 10,15 6,15 6,1 10,1 Z M 5,1 5,15 1,15 1,1 5,1 Z"/></symbol><symbol viewBox="0 0 32 32" id="f-i-copy" xmlns="http://www.w3.org/2000/svg"><path d="M20 8v-8h-14l-6 6v18h12v8h20v-24h-12zM6 2.828v3.172h-3.172l3.172-3.172zM2 22v-14h6v-6h10v6l-6 6v8h-10zM18 10.828v3.172h-3.172l3.172-3.172zM30 30h-16v-14h6v-6h10v20z"/></symbol><symbol id="f-i-divider" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg"><metadata id="aiprefix__metadata10"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><rect y="7" x="0" height="1" width="15" id="aiprefix__rect4182"/></symbol><symbol viewBox="0 0 28 32" id="f-i-edit" xmlns="http://www.w3.org/2000/svg"><path d="M22 2l-4 4 6 6 4-4-6-6zM0 24l0.021 6.018 5.979-0.018 16-16-6-6-16 16zM6 28h-4v-4h2v2h2v2z"/></symbol><symbol fill="#000000" viewBox="0 0 24 24" id="f-i-email" xmlns="http://www.w3.org/2000/svg"><path d="M12,2 C17.4292399,2 21.8479317,6.32667079 21.9961582,11.7200952 L22,12 L22,13 C22,15.1729208 20.477434,17 18.5,17 C17.3269391,17 16.3139529,16.3570244 15.6839382,15.3803024 C14.770593,16.3757823 13.4581934,17 12,17 C9.23857625,17 7,14.7614237 7,12 C7,9.23857625 9.23857625,7 12,7 C14.6887547,7 16.8818181,9.12230671 16.9953805,11.7831104 L17,12 L17,13 C17,14.1407877 17.7160103,15 18.5,15 C19.2447902,15 19.928229,14.2245609 19.9947109,13.1689341 L20,13 L20,12 C20,7.581722 16.418278,4 12,4 C7.581722,4 4,7.581722 4,12 C4,16.418278 7.581722,20 12,20 C13.1630948,20 14.2892822,19.7522618 15.3225159,19.2798331 C15.8247876,19.0501777 16.4181317,19.271177 16.647787,19.7734487 C16.8774423,20.2757205 16.656443,20.8690646 16.1541713,21.0987199 C14.861218,21.689901 13.4515463,22 12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 Z M12,9 C10.3431458,9 9,10.3431458 9,12 C9,13.6568542 10.3431458,15 12,15 C13.6568542,15 15,13.6568542 15,12 C15,10.3431458 13.6568542,9 12,9 Z"/></symbol><symbol viewBox="0 0 32 32" id="f-i-floppy-disk" xmlns="http://www.w3.org/2000/svg"><path d="M28 0h-28v32h32v-28l-4-4zM16 4h4v8h-4v-8zM28 28h-24v-24h2v10h18v-10h2.343l1.657 1.657v22.343z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle" xmlns="http://www.w3.org/2000/svg"><metadata id="aqprefix__metadata8"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><g transform="translate(0,-2)" id="aqprefix__g4220"><rect id="aqprefix__rect4191" width="2" height="2" x="2" y="7"/><rect id="aqprefix__rect4191-2" width="2" height="2" x="7" y="7"/><rect id="aqprefix__rect4191-4" width="2" height="2" x="12" y="7"/></g><g transform="translate(0,2)" id="aqprefix__g4220-6"><rect id="aqprefix__rect4191-40" width="2" height="2" x="2" y="7"/><rect id="aqprefix__rect4191-2-3" width="2" height="2" x="7" y="7"/><rect id="aqprefix__rect4191-4-9" width="2" height="2" x="12" y="7"/></g></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-column" xmlns="http://www.w3.org/2000/svg"><path d="M2 7h2v2H2zM7 7h2v2H7zM12 7h2v2h-2zM2 12h2v2H2zM7 12h2v2H7zM12 12h2v2h-2z" transform="rotate(90 9.25 9.25)"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-field" xmlns="http://www.w3.org/2000/svg"><path d="M9.5-6.5h2v2h-2zm-5 0h2v2h-2zm5-5h2v2h-2zm-5 0h2v2h-2z" transform="rotate(90)"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-row" xmlns="http://www.w3.org/2000/svg"><path d="M12 9.5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Zm10-5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-stage" xmlns="http://www.w3.org/2000/svg"><path d="M2 4.5h2v2H2zM7 4.5h2v2H7zM12 4.5h2v2h-2zM2 9.5h2v2H2zM7 9.5h2v2H7zM12 9.5h2v2h-2zM2-.5h2v2H2zM7-.5h2v2H7zM12-.5h2v2h-2z" transform="translate(0 2.5)"/></symbol><symbol viewBox="0 0 448 512" id="f-i-hash" xmlns="http://www.w3.org/2000/svg"><g id="arprefix__icomoon-ignore"/><path fill="#000" d="M448 192v-64h-80.064l16-128h-64l-16 128h-127.968l16-128h-64l-16 128h-111.968v64h103.968l-15.968 128h-88v64h80l-16 128h64l16-128h127.968l-16 128h64.032l16-128h112v-64h-104l15.936-128h88.064zM279.968 320h-127.968l15.968-128h127.968l-15.968 128z"/></symbol><symbol viewBox="0 0 28 28" id="f-i-header" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M26.281 26q-0.688 0-2.070-0.055t-2.086-0.055q-0.688 0-2.063 0.055t-2.063 0.055q-0.375 0-0.578-0.32t-0.203-0.711q0-0.484 0.266-0.719t0.609-0.266 0.797-0.109 0.703-0.234q0.516-0.328 0.516-2.188l-0.016-6.109q0-0.328-0.016-0.484-0.203-0.063-0.781-0.063h-10.547q-0.594 0-0.797 0.063-0.016 0.156-0.016 0.484l-0.016 5.797q0 2.219 0.578 2.562 0.25 0.156 0.75 0.203t0.891 0.055 0.703 0.234 0.313 0.711q0 0.406-0.195 0.75t-0.57 0.344q-0.734 0-2.18-0.055t-2.164-0.055q-0.672 0-2 0.055t-1.984 0.055q-0.359 0-0.555-0.328t-0.195-0.703q0-0.469 0.242-0.703t0.562-0.273 0.742-0.117 0.656-0.234q0.516-0.359 0.516-2.234l-0.016-0.891v-12.703q0-0.047 0.008-0.406t0-0.57-0.023-0.602-0.055-0.656-0.102-0.57-0.172-0.492-0.25-0.281q-0.234-0.156-0.703-0.187t-0.828-0.031-0.641-0.219-0.281-0.703q0-0.406 0.187-0.75t0.562-0.344q0.719 0 2.164 0.055t2.164 0.055q0.656 0 1.977-0.055t1.977-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.266 0.68t-0.602 0.227-0.773 0.063-0.672 0.203q-0.547 0.328-0.547 2.5l0.016 5q0 0.328 0.016 0.5 0.203 0.047 0.609 0.047h10.922q0.391 0 0.594-0.047 0.016-0.172 0.016-0.5l0.016-5q0-2.172-0.547-2.5-0.281-0.172-0.914-0.195t-1.031-0.203-0.398-0.773q0-0.406 0.195-0.75t0.586-0.344q0.688 0 2.063 0.055t2.063 0.055q0.672 0 2.016-0.055t2.016-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.273 0.688t-0.625 0.227-0.805 0.047-0.688 0.195q-0.547 0.359-0.547 2.516l0.016 14.734q0 1.859 0.531 2.188 0.25 0.156 0.719 0.211t0.836 0.070 0.648 0.242 0.281 0.695q0 0.406-0.187 0.75t-0.562 0.344z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-hidden" xmlns="http://www.w3.org/2000/svg"><path d="M0 12h1v-1H0Zm15-7h1V4h-1zm-1 7h1v-1h-1zm-2 0h1v-1h-1zm-2 0h1v-1h-1Zm-2 0h1v-1H8Zm-2 0h1v-1H6Zm-2 0h1v-1H4Zm-2 0h1v-1H2Zm13-1h1v-1h-1ZM0 10h1V9H0Zm15-1h1V8h-1ZM0 8h1V7H0Zm15-1h1V6h-1ZM0 6h1V5H0Zm13-1h1V4h-1zm-2 0h1V4h-1ZM9 5h1V4H9ZM7 5h1V4H7ZM5 5h1V4H5ZM3 5h1V4H3ZM1 5h1V4H1Z"/></symbol><symbol viewBox="0 0 384 512" id="f-i-menu" xmlns="http://www.w3.org/2000/svg"><g id="auprefix__icomoon-ignore"/><path d="M0 96v64h384v-64h-384zM0 288h384v-64h-384v64zM0 416h384v-64h-384v64z"/></symbol><symbol viewBox="0 0 24 24" fill="none" id="f-i-minus" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L18 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol viewBox="0 0 512 512" id="f-i-move" xmlns="http://www.w3.org/2000/svg"><path d="M287.744 94.736v129.008h128v-64l96.256 96.256-96.256 96.24v-65.488h-128v129.008h64.496l-96.24 96.24-96.256-96.24h64v-129.008h-128v64.992l-95.744-95.744 95.744-95.744v63.488h128v-129.008h-62.496l94.752-94.736 94.752 94.736h-63.008z"/></symbol><symbol viewBox="0 0 512 512" id="f-i-move-vertical" xmlns="http://www.w3.org/2000/svg"><metadata id="awprefix__metadata10"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="3440" inkscape:window-height="1416" id="awprefix__namedview6" showgrid="false" inkscape:zoom="1.84375" inkscape:cx="421.4312" inkscape:cy="218.56484" inkscape:window-x="0" inkscape:window-y="24" inkscape:window-maximized="1" inkscape:current-layer="svg2" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"/><path d="m 287.744,94.736 0,321.024 64.496,0 L 256,512 l -96.256,-96.24 64,0 0,-321.024 -62.496,0 L 256,0 350.752,94.736 Z" id="awprefix__path4" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:connector-curvature="0" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" sodipodi:nodetypes="ccccccccccc"/></symbol><symbol viewBox="0 0 20 28" id="f-i-paragraph" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M19.969 2.953v1.141q0 0.453-0.289 0.953t-0.664 0.5q-0.781 0-0.844 0.016-0.406 0.094-0.5 0.484-0.047 0.172-0.047 1v18q0 0.391-0.281 0.672t-0.672 0.281h-1.687q-0.391 0-0.672-0.281t-0.281-0.672v-19.031h-2.234v19.031q0 0.391-0.273 0.672t-0.68 0.281h-1.687q-0.406 0-0.68-0.281t-0.273-0.672v-7.75q-2.297-0.187-3.828-0.922-1.969-0.906-3-2.797-1-1.828-1-4.047 0-2.594 1.375-4.469 1.375-1.844 3.266-2.484 1.734-0.578 6.516-0.578h7.484q0.391 0 0.672 0.281t0.281 0.672z"/></symbol><symbol id="f-i-phone-receiver" viewBox="0 0 578.106 578.106" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><g><g><path d="M577.83,456.128c1.225,9.385-1.635,17.545-8.568,24.48l-81.396,80.781 c-3.672,4.08-8.465,7.551-14.381,10.404c-5.916,2.857-11.729,4.693-17.439,5.508c-0.408,0-1.635,0.105-3.676,0.309 c-2.037,0.203-4.689,0.307-7.953,0.307c-7.754,0-20.301-1.326-37.641-3.979s-38.555-9.182-63.645-19.584 c-25.096-10.404-53.553-26.012-85.376-46.818c-31.823-20.805-65.688-49.367-101.592-85.68 c-28.56-28.152-52.224-55.08-70.992-80.783c-18.768-25.705-33.864-49.471-45.288-71.299 c-11.425-21.828-19.993-41.616-25.705-59.364S4.59,177.362,2.55,164.51s-2.856-22.95-2.448-30.294 c0.408-7.344,0.612-11.424,0.612-12.24c0.816-5.712,2.652-11.526,5.508-17.442s6.324-10.71,10.404-14.382L98.022,8.756 c5.712-5.712,12.24-8.568,19.584-8.568c5.304,0,9.996,1.53,14.076,4.59s7.548,6.834,10.404,11.322l65.484,124.236 c3.672,6.528,4.692,13.668,3.06,21.42c-1.632,7.752-5.1,14.28-10.404,19.584l-29.988,29.988c-0.816,0.816-1.53,2.142-2.142,3.978 s-0.918,3.366-0.918,4.59c1.632,8.568,5.304,18.36,11.016,29.376c4.896,9.792,12.444,21.726,22.644,35.802 s24.684,30.293,43.452,48.653c18.36,18.77,34.68,33.354,48.96,43.76c14.277,10.4,26.215,18.053,35.803,22.949 c9.588,4.896,16.932,7.854,22.031,8.871l7.648,1.531c0.816,0,2.145-0.307,3.979-0.918c1.836-0.613,3.162-1.326,3.979-2.143 l34.883-35.496c7.348-6.527,15.912-9.791,25.705-9.791c6.938,0,12.443,1.223,16.523,3.672h0.611l118.115,69.768 C571.098,441.238,576.197,447.968,577.83,456.128z"/></g></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></symbol><symbol viewBox="0 0 24 24" fill="none" id="f-i-plus" xmlns="http://www.w3.org/2000/svg"><path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="f-i-radio-group" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M0,1h16V0H0V1z M0,3h16V2H0V3z M5,6h10V5H5V6z M15,9H5v1h10V9z M15,14v-1H5v1H15z M1.5,7C0.7,7,0,6.3,0,5.5S0.7,4,1.5,4 S3,4.7,3,5.5S2.3,7,1.5,7z M1.5,5C1.2,5,1,5.2,1,5.5S1.2,6,1.5,6S2,5.8,2,5.5S1.8,5,1.5,5z M1.5,11.1C0.7,11.1,0,10.4,0,9.6 s0.7-1.5,1.5-1.5S3,8.7,3,9.6S2.3,11.1,1.5,11.1z M1.5,9.1C1.2,9.1,1,9.3,1,9.6s0.2,0.5,0.5,0.5S2,9.8,2,9.6S1.8,9.1,1.5,9.1z M1.5,15C0.7,15,0,14.3,0,13.5S0.7,12,1.5,12S3,12.7,3,13.5S2.3,15,1.5,15z M1.5,13C1.2,13,1,13.2,1,13.5S1.2,14,1.5,14 S2,13.8,2,13.5S1.8,13,1.5,13z"/></symbol><symbol viewBox="0 0 512 512" id="f-i-remove" xmlns="http://www.w3.org/2000/svg"><path d="M193.694-139.2h87.322v510.916h-87.322zM-18.103 159.92V72.597h510.915v87.322z" transform="rotate(45 77.994 208.636)"/></symbol><symbol id="f-i-rich-text" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M15,1H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14c0.6,0,1-0.4,1-1V2C16,1.4,15.6,1,15,1z M1,3.1h0.8v0.3H1V3.1z M1,3.6h0.8 v0.3H1V3.6z M15,14H1V5.1h14V14z M15,4.9H1V4.6h14V4.9z M15,4.4H1V4.1h0.8v0.2h1.5V4.1h1.3v0.2H6V4.1h1.3v0.2h1.5V4.1H10v0.2h1.5 V4.1h1.3v0.2h1.5V4.1H15V4.4z M4.5,3.6v0.3H3.3V3.6H4.5z M3.3,3.4V3.1h1.3v0.3H3.3z M7.3,3.6v0.3H6V3.6H7.3z M6,3.4V3.1h1.3v0.3H6z M10,3.6v0.3H8.8V3.6H10z M8.8,3.4V3.1H10v0.3H8.8z M12.8,3.6v0.3h-1.3V3.6H12.8z M11.5,3.4V3.1h1.3v0.3H11.5z M15,3.9h-0.8V3.6H15 V3.9z M15,3.4h-0.8V3.1H15V3.4z M15,2.9h-0.8V2.8h-1.5v0.2h-1.3V2.8H10v0.2H8.8V2.8H7.3v0.2H6V2.8H4.5v0.2H3.3V2.8H1.8v0.2H1V2.6h14 V2.9z M15,2.4H1V2.1h14V2.4z M3,12v-1h10v1H3z M13,10H3V9h10V10z M11,8H3V7h8V8z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-rows" xmlns="http://www.w3.org/2000/svg"><metadata id="beprefix__metadata4318"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><g transform="matrix(0,1,-1,0,3.0984025,11.835155)" id="beprefix__g7209"><path id="beprefix__rect4860-3-5" d="m 4.1640625,-12.402344 a 0.50004997,0.50004997 0 0 0 -0.5,-0.5 l -5,0 -5,0 -5.0000005,0 a 0.50004997,0.50004997 0 0 0 -0.5,0.5 l 0,15.0000002 a 0.50004997,0.50004997 0 0 0 0.5,0.5 l 4.9648442,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 4.9648437,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 5,0 a 0.50004997,0.50004997 0 0 0 0.5,-0.5 l 0,-15.0000002 z m -1,0.5 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4.0000005,0 0,-14.0000002 4.0000005,0 z"/></g></symbol><symbol id="f-i-select" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path id="bfprefix__XMLID_1_" d="M0,0v14h0c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1h0V5h4V0H0z M1,1h10v3H1V1z M1,7h10v3H1V7z M1,14v-3h10v3H1z M15,4h-3V1h3V4z M2,2h1v1H2V2z M2,12h1v1H2V12z M4,12h1v1H4V12z M6,12h1v1H6V12z M9,12v1H8v-1H9z M2,8h1v1H2V8z M4,8h1v1H4V8z M6,8 h1v1H6V8z M13.5,3.1l-1-1.1h1.9L13.5,3.1z M2,6V5h1v1H2L2,6z M4,6V5h1v1H4L4,6z"/></symbol><symbol viewBox="0 0 448 512" id="f-i-settings" xmlns="http://www.w3.org/2000/svg"><g id="bgprefix__icomoon-ignore"/><path d="M223.969 175c-44.703 0-80.969 36.266-80.969 81 0 44.688 36.266 81.031 80.969 81.031 44.719 0 80.719-36.344 80.719-81.031-0-44.734-36-81-80.719-81zM386.313 302.531l-14.594 35.156 29.469 57.875-36.094 36.094-59.218-27.969-35.156 14.438-17.844 54.625-2.281 7.25h-51.016l-22.078-61.656-35.156-14.5-57.952 29.344-36.078-36.063 27.938-59.25-14.484-35.125-61.767-20.156v-50.984l61.703-22.109 14.485-35.094-25.953-51.234-3.422-6.719 36.031-36.031 59.297 27.922 35.109-14.516 17.828-54.594 2.297-7.234h51l22.094 61.734 35.063 14.516 58.031-29.406 36.063 36.031-27.938 59.203 14.438 35.172 61.875 20.125v50.969l-61.688 22.187z"/></symbol><symbol id="f-i-text-input" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path id="bhprefix__XMLID_10_" d="M15,4H4.5V3H6V2H4.5h-1H2v1h1.5v1H1C0.4,4,0,4.5,0,5v6c0,0.6,0.4,1,1,1h2.5v1H2v1h4v-1H4.5v-1H15 c0.6,0,1-0.4,1-1V5C16,4.5,15.6,4,15,4z M1,11V5h2.5v6H1z M15,11H4.5V5H15V11z"/></symbol><symbol id="f-i-textarea" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path id="biprefix__XMLID_1_" d="M3,11v-1h8v1H3L3,11z M3,7h10V6H3V7L3,7z M3,8v1h10V8H3L3,8z M13,4H3v1h10V4L13,4z M16,14V2c0-0.6-0.4-1-1-1 H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14C15.6,15,16,14.6,16,14z M15,2v12H1V2H15z"/></symbol><symbol viewBox="0 0 24 32" id="f-i-triangle-down" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M0 12l11.992 11.992 11.992-11.992h-23.984z"/></symbol><symbol viewBox="0 0 12 32" id="f-i-triangle-left" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M0 15.996l11.992 11.992v-23.984l-11.992 11.992z"/></symbol><symbol viewBox="0 0 12 32" id="f-i-triangle-right" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M0.002 4.008l11.992 11.992-11.992 11.992v-23.984z"/></symbol><symbol viewBox="0 0 24 32" id="f-i-triangle-up" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M11.992 8l-11.992 11.992h23.984l-11.992-11.992z"/></symbol><symbol viewBox="0 0 512 512" id="f-i-upload" xmlns="http://www.w3.org/2000/svg"><g id="bnprefix__icomoon-ignore"/><path d="M240 352h-240v128h480v-128h-240zM448 416h-64v-32h64v32zM112 160l128-128 128 128h-80v160h-96v-160z"/></symbol></svg>';
+  const BUNDLED_SVG_SPRITE = '<?xml version="1.0" encoding="utf-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><symbol id="f-i-autocomplete" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M6,5h1v1H6V5z M4,4H3v1h1V4z M6,4H5v1h1V4z M2,5v1h1V5H2z M3,7h1V6H3V7z M5,7h1V6H5V7z M4,5v1h1V5H4z M2,14h1v-1H2V14z M4,14h1v-1H4V14z M6,14h1v-1H6V14z M9,13H8v1h1V13z M16,3.5v4C16,8.3,15.3,9,14.5,9H14v3v3c0,0.6-0.4,1-1,1H1c-0.6,0-1-0.4-1-1V3.5 C0,2.7,0.7,2,1.5,2h3H8V1.5V1H7H6V0.5V0h2.5H11v0.5V1h-1H9v0.5V2h3h2.5C15.3,2,16,2.7,16,3.5z M13,12H7H1v3h12V12z M3,11v-1H2v1H3z M5,11v-1H4v1H5z M15,3.5C15,3.2,14.8,3,14.5,3H9v2.5V8H8.5H8V7.5V7H7V6h1V5.5V5H7V4h1V3.5V3H1.5C1.2,3,1,3.2,1,3.5v4 C1,7.8,1.2,8,1.5,8H8v1H6v0.5V10h2.5H11V9.5V9H9V8h5.5C14.8,8,15,7.8,15,7.5V3.5z"/></symbol><symbol viewBox="0 0 32 32" id="f-i-bin" xmlns="http://www.w3.org/2000/svg"><path d="M4 10v20c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-20h-22zM10 28h-2v-14h2v14zM14 28h-2v-14h2v14zM18 28h-2v-14h2v14zM22 28h-2v-14h2v14zM26.5 4h-6.5v-2.5c0-.825-.675-1.5-1.5-1.5h-7c-.825 0-1.5.675-1.5 1.5v2.5h-6.5c-.825 0-1.5.675-1.5 1.5v2.5h26v-2.5c0-.825-.675-1.5-1.5-1.5zM18 4h-6v-1.975h6v1.975z"/></symbol><symbol id="f-i-button" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><metadata id="acprefix__metadata8"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><path id="acprefix__rect4140" d="M 0.4765625,4 A 0.47706934,0.47706934 0 0 0 0,4.4765625 L 0,11.523438 A 0.47706934,0.47706934 0 0 0 0.4765625,12 L 15.523438,12 A 0.47706934,0.47706934 0 0 0 16,11.523438 L 16,4.4765625 A 0.47706934,0.47706934 0 0 0 15.523438,4 L 0.4765625,4 Z m 0.4765625,0.953125 14.09375,0 0,6.09375 -14.09375,0 0,-6.09375 z"/><g id="acprefix__layer1"><g id="acprefix__text4203"><g id="acprefix__g4212" transform="translate(0.10112835,0.1001358)"><path id="acprefix__path4208" d="m 6.0690374,6.4093857 q -0.5371093,0 -0.8544922,0.4003906 -0.3149414,0.4003906 -0.3149414,1.0913086 0,0.6884766 0.3149414,1.0888672 0.3173829,0.4003906 0.8544922,0.4003906 0.5371094,0 0.8496094,-0.4003906 0.3149414,-0.4003906 0.3149414,-1.0888672 0,-0.690918 -0.3149414,-1.0913086 -0.3125,-0.4003906 -0.8496094,-0.4003906 z m 0,-0.4003906 q 0.7666016,0 1.225586,0.5151367 0.4589843,0.5126953 0.4589843,1.3769531 0,0.8618164 -0.4589843,1.3769531 -0.4589844,0.5126953 -1.225586,0.5126953 -0.7690429,0 -1.2304687,-0.5126953 -0.4589844,-0.5126953 -0.4589844,-1.3769531 0,-0.8642578 0.4589844,-1.3769531 0.4614258,-0.5151367 1.2304687,-0.5151367 z"/><path id="acprefix__path4210" d="m 8.5250921,6.074913 0.4931641,0 0,1.5405274 1.6357418,-1.5405274 0.634766,0 -1.809082,1.6992188 1.938477,1.9458008 -0.649415,0 -1.7504878,-1.7553711 0,1.7553711 -0.4931641,0 0,-3.6450196 z"/></g></g></g></symbol><symbol viewBox="0 0 32 32" id="f-i-calendar" xmlns="http://www.w3.org/2000/svg"><path d="M12.048 16.961c-0.178 0.257-0.395 0.901-0.652 1.059-0.257 0.157-0.547 0.267-0.869 0.328-0.323 0.062-0.657 0.089-1.002 0.079v1.527h2.467v6.046h1.991v-9.996h-1.584c-0.056 0.381-0.173 0.7-0.351 0.957zM23 8h2c0.553 0 1-0.448 1-1v-6c0-0.552-0.447-1-1-1h-2c-0.553 0-1 0.448-1 1v6c0 0.552 0.447 1 1 1zM7 8h2c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1h-2c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1zM30 4h-2v5c0 0.552-0.447 1-1 1h-6c-0.553 0-1-0.448-1-1v-5h-8v5c0 0.552-0.448 1-1 1h-6c-0.552 0-1-0.448-1-1v-5h-2c-1.104 0-2 0.896-2 2v24c0 1.104 0.896 2 2 2h28c1.104 0 2-0.896 2-2v-24c0-1.104-0.896-2-2-2zM30 29c0 0.553-0.447 1-1 1h-26c-0.552 0-1-0.447-1-1v-16c0-0.552 0.448-1 1-1h26c0.553 0 1 0.448 1 1v16zM15.985 17.982h4.968c-0.936 1.152-1.689 2.325-2.265 3.705-0.575 1.381-0.638 2.818-0.749 4.312h2.131c0.009-0.666-0.195-1.385-0.051-2.156 0.146-0.771 0.352-1.532 0.617-2.285 0.267-0.752 0.598-1.461 0.996-2.127 0.396-0.667 0.853-1.229 1.367-1.686v-1.742h-7.015v1.979z"/></symbol><symbol id="f-i-checkbox" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M13.5,5v8c0,0.8-0.7,1.5-1.5,1.5H3c-0.8,0-1.5-0.7-1.5-1.5V4c0-0.8,0.7-1.5,1.5-1.5h9c0.7,0,1.3,0.5,1.5,1.2l2.4-1.4L13.5,5 z M12.5,6.2L7.7,12L2.8,5.5l4.9,1.6l4.8-2.9V4c0-0.3-0.2-0.5-0.5-0.5H3C2.7,3.5,2.5,3.7,2.5,4v9c0,0.3,0.2,0.5,0.5,0.5h9 c0.3,0,0.5-0.2,0.5-0.5V6.2z"/></symbol><symbol id="f-i-checkbox-group" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M0,1h16V0H0V1z M0,3h16V2H0V3z M6,5v1h9V5H6z M15,14v-1H6v1H15z M6,10h9V9H6V10z M4,12l-2.5,1.5L0,13l1.5,2L4,12z M4,8 L1.5,9.5L0,9l1.5,2L4,8z M4,4L1.5,5.5L0,5l1.5,2L4,4z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-columns" xmlns="http://www.w3.org/2000/svg"><metadata id="agprefix__metadata4318"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><path id="agprefix__rect4860-3-5" d="M 16,0.5 A 0.50004997,0.50004997 0 0 0 15.5,0 l -5,0 -5,0 -5,0 A 0.50004997,0.50004997 0 0 0 0,0.5 l 0,15 A 0.50004997,0.50004997 0 0 0 0.5,16 l 5,0 5,0 5,0 A 0.50004997,0.50004997 0 0 0 16,15.5 l 0,-15 z M 15,1 15,15 11,15 11,1 15,1 Z M 10,1 10,15 6,15 6,1 10,1 Z M 5,1 5,15 1,15 1,1 5,1 Z"/></symbol><symbol viewBox="0 0 32 32" id="f-i-copy" xmlns="http://www.w3.org/2000/svg"><path d="M20 8v-8h-14l-6 6v18h12v8h20v-24h-12zM6 2.828v3.172h-3.172l3.172-3.172zM2 22v-14h6v-6h10v6l-6 6v8h-10zM18 10.828v3.172h-3.172l3.172-3.172zM30 30h-16v-14h6v-6h10v20z"/></symbol><symbol id="f-i-divider" viewBox="0 0 15 15" xmlns="http://www.w3.org/2000/svg"><metadata id="aiprefix__metadata10"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><rect y="7" x="0" height="1" width="15" id="aiprefix__rect4182"/></symbol><symbol viewBox="0 0 28 32" id="f-i-edit" xmlns="http://www.w3.org/2000/svg"><path d="M22 2l-4 4 6 6 4-4-6-6zM0 24l0.021 6.018 5.979-0.018 16-16-6-6-16 16zM6 28h-4v-4h2v2h2v2z"/></symbol><symbol fill="#000000" viewBox="0 0 24 24" id="f-i-email" xmlns="http://www.w3.org/2000/svg"><path d="M12,2 C17.4292399,2 21.8479317,6.32667079 21.9961582,11.7200952 L22,12 L22,13 C22,15.1729208 20.477434,17 18.5,17 C17.3269391,17 16.3139529,16.3570244 15.6839382,15.3803024 C14.770593,16.3757823 13.4581934,17 12,17 C9.23857625,17 7,14.7614237 7,12 C7,9.23857625 9.23857625,7 12,7 C14.6887547,7 16.8818181,9.12230671 16.9953805,11.7831104 L17,12 L17,13 C17,14.1407877 17.7160103,15 18.5,15 C19.2447902,15 19.928229,14.2245609 19.9947109,13.1689341 L20,13 L20,12 C20,7.581722 16.418278,4 12,4 C7.581722,4 4,7.581722 4,12 C4,16.418278 7.581722,20 12,20 C13.1630948,20 14.2892822,19.7522618 15.3225159,19.2798331 C15.8247876,19.0501777 16.4181317,19.271177 16.647787,19.7734487 C16.8774423,20.2757205 16.656443,20.8690646 16.1541713,21.0987199 C14.861218,21.689901 13.4515463,22 12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 Z M12,9 C10.3431458,9 9,10.3431458 9,12 C9,13.6568542 10.3431458,15 12,15 C13.6568542,15 15,13.6568542 15,12 C15,10.3431458 13.6568542,9 12,9 Z"/></symbol><symbol viewBox="0 0 32 32" id="f-i-floppy-disk" xmlns="http://www.w3.org/2000/svg"><path d="M28 0h-28v32h32v-28l-4-4zM16 4h4v8h-4v-8zM28 28h-24v-24h2v10h18v-10h2.343l1.657 1.657v22.343z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle" xmlns="http://www.w3.org/2000/svg"><metadata id="aqprefix__metadata8"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><g transform="translate(0,-2)" id="aqprefix__g4220"><rect id="aqprefix__rect4191" width="2" height="2" x="2" y="7"/><rect id="aqprefix__rect4191-2" width="2" height="2" x="7" y="7"/><rect id="aqprefix__rect4191-4" width="2" height="2" x="12" y="7"/></g><g transform="translate(0,2)" id="aqprefix__g4220-6"><rect id="aqprefix__rect4191-40" width="2" height="2" x="2" y="7"/><rect id="aqprefix__rect4191-2-3" width="2" height="2" x="7" y="7"/><rect id="aqprefix__rect4191-4-9" width="2" height="2" x="12" y="7"/></g></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-column" xmlns="http://www.w3.org/2000/svg"><path d="M2 7h2v2H2zM7 7h2v2H7zM12 7h2v2h-2zM2 12h2v2H2zM7 12h2v2H7zM12 12h2v2h-2z" transform="rotate(90 9.25 9.25)"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-field" xmlns="http://www.w3.org/2000/svg"><path d="M9.5-6.5h2v2h-2zm-5 0h2v2h-2zm5-5h2v2h-2zm-5 0h2v2h-2z" transform="rotate(90)"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-row" xmlns="http://www.w3.org/2000/svg"><path d="M12 9.5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Zm10-5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-handle-stage" xmlns="http://www.w3.org/2000/svg"><path d="M2 4.5h2v2H2zM7 4.5h2v2H7zM12 4.5h2v2h-2zM2 9.5h2v2H2zM7 9.5h2v2H7zM12 9.5h2v2h-2zM2-.5h2v2H2zM7-.5h2v2H7zM12-.5h2v2h-2z" transform="translate(0 2.5)"/></symbol><symbol viewBox="0 0 448 512" id="f-i-hash" xmlns="http://www.w3.org/2000/svg"><g id="arprefix__icomoon-ignore"/><path fill="#000" d="M448 192v-64h-80.064l16-128h-64l-16 128h-127.968l16-128h-64l-16 128h-111.968v64h103.968l-15.968 128h-88v64h80l-16 128h64l16-128h127.968l-16 128h64.032l16-128h112v-64h-104l15.936-128h88.064zM279.968 320h-127.968l15.968-128h127.968l-15.968 128z"/></symbol><symbol viewBox="0 0 28 28" id="f-i-header" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M26.281 26q-0.688 0-2.070-0.055t-2.086-0.055q-0.688 0-2.063 0.055t-2.063 0.055q-0.375 0-0.578-0.32t-0.203-0.711q0-0.484 0.266-0.719t0.609-0.266 0.797-0.109 0.703-0.234q0.516-0.328 0.516-2.188l-0.016-6.109q0-0.328-0.016-0.484-0.203-0.063-0.781-0.063h-10.547q-0.594 0-0.797 0.063-0.016 0.156-0.016 0.484l-0.016 5.797q0 2.219 0.578 2.562 0.25 0.156 0.75 0.203t0.891 0.055 0.703 0.234 0.313 0.711q0 0.406-0.195 0.75t-0.57 0.344q-0.734 0-2.18-0.055t-2.164-0.055q-0.672 0-2 0.055t-1.984 0.055q-0.359 0-0.555-0.328t-0.195-0.703q0-0.469 0.242-0.703t0.562-0.273 0.742-0.117 0.656-0.234q0.516-0.359 0.516-2.234l-0.016-0.891v-12.703q0-0.047 0.008-0.406t0-0.57-0.023-0.602-0.055-0.656-0.102-0.57-0.172-0.492-0.25-0.281q-0.234-0.156-0.703-0.187t-0.828-0.031-0.641-0.219-0.281-0.703q0-0.406 0.187-0.75t0.562-0.344q0.719 0 2.164 0.055t2.164 0.055q0.656 0 1.977-0.055t1.977-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.266 0.68t-0.602 0.227-0.773 0.063-0.672 0.203q-0.547 0.328-0.547 2.5l0.016 5q0 0.328 0.016 0.5 0.203 0.047 0.609 0.047h10.922q0.391 0 0.594-0.047 0.016-0.172 0.016-0.5l0.016-5q0-2.172-0.547-2.5-0.281-0.172-0.914-0.195t-1.031-0.203-0.398-0.773q0-0.406 0.195-0.75t0.586-0.344q0.688 0 2.063 0.055t2.063 0.055q0.672 0 2.016-0.055t2.016-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.273 0.688t-0.625 0.227-0.805 0.047-0.688 0.195q-0.547 0.359-0.547 2.516l0.016 14.734q0 1.859 0.531 2.188 0.25 0.156 0.719 0.211t0.836 0.070 0.648 0.242 0.281 0.695q0 0.406-0.187 0.75t-0.562 0.344z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-hidden" xmlns="http://www.w3.org/2000/svg"><path d="M0 12h1v-1H0Zm15-7h1V4h-1zm-1 7h1v-1h-1zm-2 0h1v-1h-1zm-2 0h1v-1h-1Zm-2 0h1v-1H8Zm-2 0h1v-1H6Zm-2 0h1v-1H4Zm-2 0h1v-1H2Zm13-1h1v-1h-1ZM0 10h1V9H0Zm15-1h1V8h-1ZM0 8h1V7H0Zm15-1h1V6h-1ZM0 6h1V5H0Zm13-1h1V4h-1zm-2 0h1V4h-1ZM9 5h1V4H9ZM7 5h1V4H7ZM5 5h1V4H5ZM3 5h1V4H3ZM1 5h1V4H1Z"/></symbol><symbol xml:space="preserve" viewBox="0 0 32 32" id="f-i-info-circle" xmlns="http://www.w3.org/2000/svg"><path d="m17.962 24.725 1.806.096v2.531h-7.534v-2.406l1.045-.094c.568-.063.916-.254.916-1.014v-8.801c0-.699-.188-.92-.791-.92l-1.106-.062v-2.626h5.666zM15.747 4.648c1.394 0 2.405 1.047 2.405 2.374 0 1.331-1.014 2.313-2.438 2.313-1.454 0-2.404-.982-2.404-2.313 0-1.327.95-2.374 2.437-2.374M16 32C7.178 32 0 24.822 0 16S7.178 0 16 0c8.82 0 16 7.178 16 16s-7.18 16-16 16m0-29C8.832 3 3 8.832 3 16s5.832 13 13 13 13-5.832 13-13S23.168 3 16 3"/></symbol><symbol viewBox="0 0 384 512" id="f-i-menu" xmlns="http://www.w3.org/2000/svg"><g id="avprefix__icomoon-ignore"/><path d="M0 96v64h384v-64h-384zM0 288h384v-64h-384v64zM0 416h384v-64h-384v64z"/></symbol><symbol viewBox="0 0 24 24" fill="none" id="f-i-minus" xmlns="http://www.w3.org/2000/svg"><path d="M6 12L18 12" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol viewBox="0 0 512 512" id="f-i-move" xmlns="http://www.w3.org/2000/svg"><path d="M287.744 94.736v129.008h128v-64l96.256 96.256-96.256 96.24v-65.488h-128v129.008h64.496l-96.24 96.24-96.256-96.24h64v-129.008h-128v64.992l-95.744-95.744 95.744-95.744v63.488h128v-129.008h-62.496l94.752-94.736 94.752 94.736h-63.008z"/></symbol><symbol viewBox="0 0 512 512" id="f-i-move-vertical" xmlns="http://www.w3.org/2000/svg"><metadata id="axprefix__metadata10"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="3440" inkscape:window-height="1416" id="axprefix__namedview6" showgrid="false" inkscape:zoom="1.84375" inkscape:cx="421.4312" inkscape:cy="218.56484" inkscape:window-x="0" inkscape:window-y="24" inkscape:window-maximized="1" inkscape:current-layer="svg2" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"/><path d="m 287.744,94.736 0,321.024 64.496,0 L 256,512 l -96.256,-96.24 64,0 0,-321.024 -62.496,0 L 256,0 350.752,94.736 Z" id="axprefix__path4" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" inkscape:connector-curvature="0" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" sodipodi:nodetypes="ccccccccccc"/></symbol><symbol viewBox="0 0 20 28" id="f-i-paragraph" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M19.969 2.953v1.141q0 0.453-0.289 0.953t-0.664 0.5q-0.781 0-0.844 0.016-0.406 0.094-0.5 0.484-0.047 0.172-0.047 1v18q0 0.391-0.281 0.672t-0.672 0.281h-1.687q-0.391 0-0.672-0.281t-0.281-0.672v-19.031h-2.234v19.031q0 0.391-0.273 0.672t-0.68 0.281h-1.687q-0.406 0-0.68-0.281t-0.273-0.672v-7.75q-2.297-0.187-3.828-0.922-1.969-0.906-3-2.797-1-1.828-1-4.047 0-2.594 1.375-4.469 1.375-1.844 3.266-2.484 1.734-0.578 6.516-0.578h7.484q0.391 0 0.672 0.281t0.281 0.672z"/></symbol><symbol id="f-i-phone-receiver" viewBox="0 0 578.106 578.106" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><g><g><path d="M577.83,456.128c1.225,9.385-1.635,17.545-8.568,24.48l-81.396,80.781 c-3.672,4.08-8.465,7.551-14.381,10.404c-5.916,2.857-11.729,4.693-17.439,5.508c-0.408,0-1.635,0.105-3.676,0.309 c-2.037,0.203-4.689,0.307-7.953,0.307c-7.754,0-20.301-1.326-37.641-3.979s-38.555-9.182-63.645-19.584 c-25.096-10.404-53.553-26.012-85.376-46.818c-31.823-20.805-65.688-49.367-101.592-85.68 c-28.56-28.152-52.224-55.08-70.992-80.783c-18.768-25.705-33.864-49.471-45.288-71.299 c-11.425-21.828-19.993-41.616-25.705-59.364S4.59,177.362,2.55,164.51s-2.856-22.95-2.448-30.294 c0.408-7.344,0.612-11.424,0.612-12.24c0.816-5.712,2.652-11.526,5.508-17.442s6.324-10.71,10.404-14.382L98.022,8.756 c5.712-5.712,12.24-8.568,19.584-8.568c5.304,0,9.996,1.53,14.076,4.59s7.548,6.834,10.404,11.322l65.484,124.236 c3.672,6.528,4.692,13.668,3.06,21.42c-1.632,7.752-5.1,14.28-10.404,19.584l-29.988,29.988c-0.816,0.816-1.53,2.142-2.142,3.978 s-0.918,3.366-0.918,4.59c1.632,8.568,5.304,18.36,11.016,29.376c4.896,9.792,12.444,21.726,22.644,35.802 s24.684,30.293,43.452,48.653c18.36,18.77,34.68,33.354,48.96,43.76c14.277,10.4,26.215,18.053,35.803,22.949 c9.588,4.896,16.932,7.854,22.031,8.871l7.648,1.531c0.816,0,2.145-0.307,3.979-0.918c1.836-0.613,3.162-1.326,3.979-2.143 l34.883-35.496c7.348-6.527,15.912-9.791,25.705-9.791c6.938,0,12.443,1.223,16.523,3.672h0.611l118.115,69.768 C571.098,441.238,576.197,447.968,577.83,456.128z"/></g></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></symbol><symbol viewBox="0 0 24 24" fill="none" id="f-i-plus" xmlns="http://www.w3.org/2000/svg"><path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol><symbol id="f-i-radio-group" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M0,1h16V0H0V1z M0,3h16V2H0V3z M5,6h10V5H5V6z M15,9H5v1h10V9z M15,14v-1H5v1H15z M1.5,7C0.7,7,0,6.3,0,5.5S0.7,4,1.5,4 S3,4.7,3,5.5S2.3,7,1.5,7z M1.5,5C1.2,5,1,5.2,1,5.5S1.2,6,1.5,6S2,5.8,2,5.5S1.8,5,1.5,5z M1.5,11.1C0.7,11.1,0,10.4,0,9.6 s0.7-1.5,1.5-1.5S3,8.7,3,9.6S2.3,11.1,1.5,11.1z M1.5,9.1C1.2,9.1,1,9.3,1,9.6s0.2,0.5,0.5,0.5S2,9.8,2,9.6S1.8,9.1,1.5,9.1z M1.5,15C0.7,15,0,14.3,0,13.5S0.7,12,1.5,12S3,12.7,3,13.5S2.3,15,1.5,15z M1.5,13C1.2,13,1,13.2,1,13.5S1.2,14,1.5,14 S2,13.8,2,13.5S1.8,13,1.5,13z"/></symbol><symbol viewBox="0 0 512 512" id="f-i-remove" xmlns="http://www.w3.org/2000/svg"><path d="M193.694-139.2h87.322v510.916h-87.322zM-18.103 159.92V72.597h510.915v87.322z" transform="rotate(45 77.994 208.636)"/></symbol><symbol id="f-i-rich-text" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path d="M15,1H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14c0.6,0,1-0.4,1-1V2C16,1.4,15.6,1,15,1z M1,3.1h0.8v0.3H1V3.1z M1,3.6h0.8 v0.3H1V3.6z M15,14H1V5.1h14V14z M15,4.9H1V4.6h14V4.9z M15,4.4H1V4.1h0.8v0.2h1.5V4.1h1.3v0.2H6V4.1h1.3v0.2h1.5V4.1H10v0.2h1.5 V4.1h1.3v0.2h1.5V4.1H15V4.4z M4.5,3.6v0.3H3.3V3.6H4.5z M3.3,3.4V3.1h1.3v0.3H3.3z M7.3,3.6v0.3H6V3.6H7.3z M6,3.4V3.1h1.3v0.3H6z M10,3.6v0.3H8.8V3.6H10z M8.8,3.4V3.1H10v0.3H8.8z M12.8,3.6v0.3h-1.3V3.6H12.8z M11.5,3.4V3.1h1.3v0.3H11.5z M15,3.9h-0.8V3.6H15 V3.9z M15,3.4h-0.8V3.1H15V3.4z M15,2.9h-0.8V2.8h-1.5v0.2h-1.3V2.8H10v0.2H8.8V2.8H7.3v0.2H6V2.8H4.5v0.2H3.3V2.8H1.8v0.2H1V2.6h14 V2.9z M15,2.4H1V2.1h14V2.4z M3,12v-1h10v1H3z M13,10H3V9h10V10z M11,8H3V7h8V8z"/></symbol><symbol xml:space="preserve" viewBox="0 0 16 16" id="f-i-rows" xmlns="http://www.w3.org/2000/svg"><metadata id="bfprefix__metadata4318"><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><cc:Work rdf:about="" xmlns:cc="http://creativecommons.org/ns#"><dc:format xmlns:dc="http://purl.org/dc/elements/1.1/">image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage" xmlns:dc="http://purl.org/dc/elements/1.1/"/><dc:title xmlns:dc="http://purl.org/dc/elements/1.1/"/></cc:Work></rdf:RDF></metadata><g transform="matrix(0,1,-1,0,3.0984025,11.835155)" id="bfprefix__g7209"><path id="bfprefix__rect4860-3-5" d="m 4.1640625,-12.402344 a 0.50004997,0.50004997 0 0 0 -0.5,-0.5 l -5,0 -5,0 -5.0000005,0 a 0.50004997,0.50004997 0 0 0 -0.5,0.5 l 0,15.0000002 a 0.50004997,0.50004997 0 0 0 0.5,0.5 l 4.9648442,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 4.9648437,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 5,0 a 0.50004997,0.50004997 0 0 0 0.5,-0.5 l 0,-15.0000002 z m -1,0.5 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4.0000005,0 0,-14.0000002 4.0000005,0 z"/></g></symbol><symbol id="f-i-select" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path id="bgprefix__XMLID_1_" d="M0,0v14h0c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1h0V5h4V0H0z M1,1h10v3H1V1z M1,7h10v3H1V7z M1,14v-3h10v3H1z M15,4h-3V1h3V4z M2,2h1v1H2V2z M2,12h1v1H2V12z M4,12h1v1H4V12z M6,12h1v1H6V12z M9,12v1H8v-1H9z M2,8h1v1H2V8z M4,8h1v1H4V8z M6,8 h1v1H6V8z M13.5,3.1l-1-1.1h1.9L13.5,3.1z M2,6V5h1v1H2L2,6z M4,6V5h1v1H4L4,6z"/></symbol><symbol viewBox="0 0 448 512" id="f-i-settings" xmlns="http://www.w3.org/2000/svg"><g id="bhprefix__icomoon-ignore"/><path d="M223.969 175c-44.703 0-80.969 36.266-80.969 81 0 44.688 36.266 81.031 80.969 81.031 44.719 0 80.719-36.344 80.719-81.031-0-44.734-36-81-80.719-81zM386.313 302.531l-14.594 35.156 29.469 57.875-36.094 36.094-59.218-27.969-35.156 14.438-17.844 54.625-2.281 7.25h-51.016l-22.078-61.656-35.156-14.5-57.952 29.344-36.078-36.063 27.938-59.25-14.484-35.125-61.767-20.156v-50.984l61.703-22.109 14.485-35.094-25.953-51.234-3.422-6.719 36.031-36.031 59.297 27.922 35.109-14.516 17.828-54.594 2.297-7.234h51l22.094 61.734 35.063 14.516 58.031-29.406 36.063 36.031-27.938 59.203 14.438 35.172 61.875 20.125v50.969l-61.688 22.187z"/></symbol><symbol id="f-i-text-input" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path id="biprefix__XMLID_10_" d="M15,4H4.5V3H6V2H4.5h-1H2v1h1.5v1H1C0.4,4,0,4.5,0,5v6c0,0.6,0.4,1,1,1h2.5v1H2v1h4v-1H4.5v-1H15 c0.6,0,1-0.4,1-1V5C16,4.5,15.6,4,15,4z M1,11V5h2.5v6H1z M15,11H4.5V5H15V11z"/></symbol><symbol id="f-i-textarea" viewBox="0 0 16 16" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><path id="bjprefix__XMLID_1_" d="M3,11v-1h8v1H3L3,11z M3,7h10V6H3V7L3,7z M3,8v1h10V8H3L3,8z M13,4H3v1h10V4L13,4z M16,14V2c0-0.6-0.4-1-1-1 H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14C15.6,15,16,14.6,16,14z M15,2v12H1V2H15z"/></symbol><symbol viewBox="0 0 24 32" id="f-i-triangle-down" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M0 12l11.992 11.992 11.992-11.992h-23.984z"/></symbol><symbol viewBox="0 0 12 32" id="f-i-triangle-left" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M0 15.996l11.992 11.992v-23.984l-11.992 11.992z"/></symbol><symbol viewBox="0 0 12 32" id="f-i-triangle-right" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M0.002 4.008l11.992 11.992-11.992 11.992v-23.984z"/></symbol><symbol viewBox="0 0 24 32" id="f-i-triangle-up" xmlns="http://www.w3.org/2000/svg"><path fill="#444" d="M11.992 8l-11.992 11.992h23.984l-11.992-11.992z"/></symbol><symbol viewBox="0 0 512 512" id="f-i-upload" xmlns="http://www.w3.org/2000/svg"><g id="boprefix__icomoon-ignore"/><path d="M240 352h-240v128h480v-128h-240zM448 416h-64v-32h64v32zM112 160l128-128 128 128h-80v160h-96v-160z"/></symbol></svg>';
   const name = pkg.name;
   const version$1 = pkg.version;
   const PACKAGE_NAME = name;
@@ -2354,8 +2355,11 @@ Author: Draggable https://draggable.io
   });
   const CHECKED_TYPES = ["selected", "checked"];
   const REVERSED_CHECKED_TYPES = CHECKED_TYPES.toReversed();
-  const toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => `\\s${lower}\\s`);
-  const toTitleCaseRegex = new RegExp(`(?!${toTitleCaseLowers.join("|")})\\w\\S*`, "g");
+  const FILTERED_PANEL_DATA_KEYS = /* @__PURE__ */ new Map([
+    ["config", /* @__PURE__ */ new Set(["label", "helpText", "hideLabel", "labelAfter", "disableHtmlLabel", "tooltip"])]
+  ]);
+  const toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => String.raw`\s${lower}\s`);
+  const toTitleCaseRegex = new RegExp(String.raw`(?!${toTitleCaseLowers.join("|")})\w\S*`, "g");
   const regexSpace = /\s+/g;
   function toTitleCase(str) {
     if (typeof str !== "string") {
@@ -2407,6 +2411,10 @@ Author: Draggable https://draggable.io
     }
     return truncatedWord;
   };
+  const keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
+  function trimKeyPrefix(key) {
+    return key.replaceAll(keyPrefixRegex, "");
+  }
   var isSymbol_1;
   var hasRequiredIsSymbol;
   function requireIsSymbol() {
@@ -3977,14 +3985,14 @@ Author: Draggable https://draggable.io
     return Math.sqrt(Math.pow(fromRect.top - animatingRect.top, 2) + Math.pow(fromRect.left - animatingRect.left, 2)) / Math.sqrt(Math.pow(fromRect.top - toRect.top, 2) + Math.pow(fromRect.left - toRect.left, 2)) * options.animation;
   }
   var plugins = [];
-  var defaults$3 = {
+  var defaults$4 = {
     initializeByDefault: true
   };
   var PluginManager = {
     mount: function mount(plugin) {
-      for (var option in defaults$3) {
-        if (defaults$3.hasOwnProperty(option) && !(option in plugin)) {
-          plugin[option] = defaults$3[option];
+      for (var option in defaults$4) {
+        if (defaults$4.hasOwnProperty(option) && !(option in plugin)) {
+          plugin[option] = defaults$4[option];
         }
       }
       plugins.forEach(function(p) {
@@ -5784,7 +5792,7 @@ Author: Draggable https://draggable.io
           },
           action: {
             load: () => onLoadStylesheet(styleLink, resolve),
-            error: () => reject(new Error(`${(void 0).src} failed to load.`))
+            error: () => reject(new Error(`${src} failed to load.`))
           }
         });
         document.head.appendChild(styleLink);
@@ -5829,9 +5837,9 @@ Author: Draggable https://draggable.io
     return Promise.all(promises);
   };
   const fetchFormeoStyle = async (cssUrl) => {
-    if (!loaded.css.has(cssUrl)) {
+    if (cssUrl && !loaded.css.has(cssUrl)) {
       await insertStyle(cssUrl);
-      if (!loaded.css.has(FALLBACK_CSS_URL)) {
+      if (!loaded.css.has(cssUrl) && !loaded.css.has(FALLBACK_CSS_URL)) {
         return await insertStyle(FALLBACK_CSS_URL);
       }
     }
@@ -6141,7 +6149,11 @@ Author: Draggable https://draggable.io
         const safeAttrName2 = helpers.safeAttrName(attr);
         const value = this.processAttrValue(attrs[attr]);
         if (value !== false) {
-          element.setAttribute(safeAttrName2, value);
+          try {
+            element.setAttribute(safeAttrName2, value);
+          } catch (e2) {
+            console.warn(`Could not set attribute ${safeAttrName2} with value ${value}`, e2);
+          }
         }
       }
     }
@@ -6301,7 +6313,7 @@ Author: Draggable https://draggable.io
      * @return {Boolean} holdsContent
      */
     holdsContent(element) {
-      return element.outerHTML.indexOf("/") !== -1;
+      return element.outerHTML.includes("/");
     }
     /**
      * Is this a textarea, select or other block input
@@ -6343,12 +6355,25 @@ Author: Draggable https://draggable.io
       const type = helpers.get(elem, "attrs.type");
       const labelAfter = helpers.get(elem, "config.labelAfter");
       const isCB = type === "checkbox" || type === "radio";
-      return labelAfter !== void 0 ? labelAfter : isCB;
+      return labelAfter === void 0 ? isCB : labelAfter;
     }
     requiredMark = () => ({
       tag: "span",
       className: "text-error",
       children: "*"
+    });
+    tooltip = (tooltip2) => ({
+      tag: "span",
+      className: "f-tooltip",
+      dataset: {
+        tooltip: tooltip2
+      },
+      content: dom.icon("info-circle")
+    });
+    helpText = (helpText) => ({
+      tag: "small",
+      className: "f-help-text",
+      children: helpText
     });
     /**
      * Generate a label
@@ -6359,7 +6384,7 @@ Author: Draggable https://draggable.io
     label(elem, fMap) {
       const required = helpers.get(elem, "attrs.required");
       let {
-        config: { label: labelText = "" }
+        config: { label: labelText = "", helpText = "", tooltip: tooltip2 = null }
       } = elem;
       const { id: elemId, attrs } = elem;
       if (typeof labelText === "function") {
@@ -6371,7 +6396,12 @@ Author: Draggable https://draggable.io
           for: elemId || attrs?.id
         },
         className: [],
-        children: [labelText, required && this.requiredMark()],
+        children: [
+          labelText,
+          required && this.requiredMark(),
+          tooltip2 && this.tooltip(tooltip2),
+          helpText && this.helpText(helpText)
+        ],
         action: {}
       };
       if (fMap) {
@@ -7085,15 +7115,21 @@ Author: Draggable https://draggable.io
       this.onChange?.({ target: this.hiddenField });
     }
   }
+  const keyToPlaceHolder = (key) => mi18n.get(`${key}.placeholder`) || toTitleCase(trimKeyPrefix(key));
+  const keyToClassName = (key) => key.replaceAll(".", "-");
+  const stringInputTypeMap = /* @__PURE__ */ new Map([
+    ["config.helpText", (...args) => largeTextInputConfigBase(...args)],
+    ["config.tooltip", (...args) => largeTextInputConfigBase(...args)]
+  ]);
   function inputConfigBase({ key, value, type = "text", checked }) {
     const config = {
       tag: "input",
       attrs: {
         type,
         value,
-        placeholder: mi18n.get(`${key}.placeholder`) || toTitleCase(key)
+        placeholder: keyToPlaceHolder(key)
       },
-      className: [key.replace(/\./g, "-")],
+      className: [keyToClassName(key)],
       config: {}
     };
     if (checked) {
@@ -7101,17 +7137,33 @@ Author: Draggable https://draggable.io
     }
     return config;
   }
+  function largeTextInputConfigBase({ key, value }) {
+    return {
+      tag: "textarea",
+      attrs: {
+        placeholder: keyToPlaceHolder(key)
+      },
+      className: [keyToClassName(key)],
+      config: {},
+      textContent: value
+    };
+  }
   function labelHelper(key) {
     const labelText = mi18n.get(key);
     if (labelText) {
       return labelText;
     }
-    const splitKey = key.split(".");
-    return mi18n.get(splitKey[splitKey.length - 1]);
+    const trimmedKey = trimKeyPrefix(key);
+    return mi18n.get(trimmedKey) || toTitleCase(trimmedKey);
   }
   const ITEM_INPUT_TYPE_MAP = {
     autocomplete: (...args) => new Autocomplete(...args).createProxy(),
-    string: ({ key, value }) => inputConfigBase({ key, value }),
+    string: ({ key, value }) => {
+      if (stringInputTypeMap.has(key)) {
+        return stringInputTypeMap.get(key)({ key, value });
+      }
+      return inputConfigBase({ key, value });
+    },
     boolean: ({ key, value }) => {
       const type = key === "selected" ? "radio" : "checkbox";
       return inputConfigBase({ key, value, type, checked: !!value });
@@ -7123,7 +7175,7 @@ Author: Draggable https://draggable.io
         attrs: {
           placeholder: labelHelper(`placeholder.${key}`)
         },
-        className: [key.replace(/\./g, "-")],
+        className: [keyToClassName(key)],
         options: value
       };
     },
@@ -7164,6 +7216,265 @@ Author: Draggable https://draggable.io
     }),
     object: () => ({})
   };
+  const defaults$3 = Object.freeze({
+    title: "",
+    content: null,
+    confirmText: () => labelHelper("save"),
+    cancelText: () => labelHelper("cancel"),
+    onConfirm: () => {
+    },
+    onCancel: () => {
+    },
+    className: "",
+    closeOnEscape: true,
+    position: "top",
+    // 'top' | 'center' | 'trigger'
+    triggerElement: null,
+    // Element that triggered the dialog (for position: 'trigger')
+    triggerCoords: null
+    // Or manual coords { x, y } (for position: 'trigger')
+  });
+  class Dialog {
+    /**
+     * Creates a new Dialog instance
+     * @param {Object} options - Dialog configuration options
+     * @param {string} [options.title] - Dialog title
+     * @param {Object|Array} [options.content] - DOM config for dialog body content
+     * @param {Function} [options.onConfirm] - Callback when form is submitted (receives FormData)
+     * @param {Function} [options.onCancel] - Callback when dialog is cancelled
+     * @param {string|Function} [options.confirmText] - Confirm button text
+     * @param {string|Function} [options.cancelText] - Cancel button text
+     * @param {string} [options.className] - Additional CSS class name(s)
+     * @param {boolean} [options.closeOnEscape] - Whether Escape key closes dialog
+     * @param {string} [options.position] - Positioning mode: 'top' (upper center), 'center', or 'trigger' (near trigger element)
+     * @param {HTMLElement} [options.triggerElement] - Element that triggered dialog (for position: 'trigger')
+     * @param {Object} [options.triggerCoords] - Manual coordinates {x, y} (for position: 'trigger')
+     */
+    constructor(options) {
+      this.opts = merge(defaults$3, options);
+      this.dialog = null;
+    }
+    /**
+     * Creates the dialog DOM structure
+     * @returns {HTMLDialogElement} The created dialog element
+     */
+    createDialog() {
+      const { title, content, confirmText, cancelText, className, closeOnEscape, position } = this.opts;
+      const positionClass = `dialog-position-${position}`;
+      const formChildren = [];
+      if (title) {
+        formChildren.push({
+          tag: "h3",
+          className: "dialog-title",
+          textContent: title
+        });
+      }
+      if (content) {
+        formChildren.push({
+          tag: "div",
+          className: "dialog-body",
+          children: Array.isArray(content) ? content : [content]
+        });
+      }
+      formChildren.push({
+        tag: "div",
+        className: "dialog-actions",
+        children: [
+          {
+            tag: "button",
+            type: "button",
+            className: "btn btn-sm btn-secondary",
+            textContent: typeof cancelText === "function" ? cancelText() : cancelText,
+            action: {
+              click: () => this.handleCancel()
+            }
+          },
+          {
+            tag: "button",
+            type: "submit",
+            className: "btn btn-sm btn-primary",
+            textContent: typeof confirmText === "function" ? confirmText() : confirmText
+          }
+        ]
+      });
+      const dialogElement = dom.create({
+        tag: "dialog",
+        className: ["formeo-dialog", "formeo", positionClass, className],
+        children: [
+          {
+            tag: "form",
+            className: "dialog-form",
+            method: "dialog",
+            children: formChildren,
+            action: {
+              submit: (e2) => this.handleSubmit(e2)
+            }
+          }
+        ],
+        action: {
+          cancel: (e2) => {
+            if (closeOnEscape) {
+              this.handleCancel();
+            } else {
+              e2.preventDefault();
+            }
+          }
+        }
+      });
+      return dialogElement;
+    }
+    /**
+     * Handles form submission
+     * @param {Event} e - Submit event
+     */
+    handleSubmit(e2) {
+      e2.preventDefault();
+      const formData = new FormData(e2.target);
+      this.opts.onConfirm(formData, this);
+      this.close();
+    }
+    /**
+     * Handles dialog cancellation
+     */
+    handleCancel() {
+      this.opts.onCancel(this);
+      this.close();
+    }
+    /**
+     * Sets dialog position based on trigger element or coordinates
+     */
+    setPosition() {
+      const { position, triggerElement, triggerCoords } = this.opts;
+      if (position !== "trigger" || !this.dialog) return;
+      let coords = triggerCoords;
+      if (!coords && triggerElement) {
+        const rect = triggerElement.getBoundingClientRect();
+        coords = {
+          x: rect.left + rect.width / 2,
+          y: rect.bottom + 8
+          // 8px gap below trigger
+        };
+      }
+      if (coords) {
+        const dialogRect = this.dialog.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        let left = coords.x - dialogRect.width / 2;
+        let top = coords.y;
+        const padding = 16;
+        left = Math.max(padding, Math.min(left, viewportWidth - dialogRect.width - padding));
+        top = Math.max(padding, Math.min(top, viewportHeight - dialogRect.height - padding));
+        this.dialog.style.left = `${left}px`;
+        this.dialog.style.top = `${top}px`;
+        this.dialog.style.transform = "none";
+      }
+    }
+    /**
+     * Opens the dialog
+     * @returns {Dialog} This dialog instance for chaining
+     */
+    open() {
+      if (!this.dialog) {
+        this.dialog = this.createDialog();
+      }
+      document.body.appendChild(this.dialog);
+      this.dialog.showModal();
+      if (this.opts.position === "trigger") {
+        const setTimeoutId = setTimeout(() => {
+          this.setPosition();
+          clearTimeout(setTimeoutId);
+        }, 0);
+      }
+      return this;
+    }
+    /**
+     * Closes and removes the dialog
+     */
+    close() {
+      if (this.dialog) {
+        this.dialog.close();
+        this.dialog.remove();
+        this.dialog = null;
+      }
+    }
+    /**
+     * Static shorthand for simple alert dialog
+     * @param {string} message - Alert message
+     * @param {Function} [onConfirm] - Optional callback when confirmed
+     * @returns {Dialog} Dialog instance
+     */
+    static alert(message, onConfirm = () => {
+    }) {
+      return new Dialog({
+        content: {
+          tag: "p",
+          className: "dialog-message",
+          textContent: message
+        },
+        confirmText: () => mi18n.get("ok") || "OK",
+        cancelText: "",
+        // Hide cancel button by returning empty string
+        onConfirm: () => onConfirm()
+      });
+    }
+    /**
+     * Static shorthand for confirmation dialog
+     * @param {string} message - Confirmation question
+     * @param {Function} [onConfirm] - Callback when confirmed
+     * @param {Function} [onCancel] - Callback when cancelled
+     * @returns {Dialog} Dialog instance
+     */
+    static confirm(message, onConfirm = () => {
+    }, onCancel = () => {
+    }) {
+      return new Dialog({
+        content: {
+          tag: "p",
+          className: "dialog-message",
+          textContent: message
+        },
+        confirmText: () => mi18n.get("confirm") || "Confirm",
+        onConfirm: () => onConfirm(),
+        onCancel: () => onCancel()
+      });
+    }
+    /**
+     * Static shorthand for prompt dialog
+     * @param {string} message - Prompt message
+     * @param {Function} onSubmit - Callback with user input value
+     * @param {string} [defaultValue] - Default input value
+     * @returns {Dialog} Dialog instance
+     */
+    static prompt(message, onSubmit = () => {
+    }, defaultValue = "") {
+      return new Dialog({
+        content: [
+          {
+            tag: "label",
+            className: "dialog-prompt-label",
+            children: [
+              {
+                tag: "p",
+                className: "dialog-message",
+                textContent: message
+              },
+              {
+                tag: "input",
+                type: "text",
+                name: "prompt-value",
+                className: "dialog-prompt-input",
+                value: defaultValue
+              }
+            ]
+          }
+        ],
+        onConfirm: (formData) => {
+          const value = formData.get("prompt-value");
+          onSubmit(value);
+        }
+      });
+    }
+  }
   const hiddenPropertyClassname = "hidden-property";
   const hiddenOptionClassname = "hidden-option";
   const optionsAddressRegex = /\.options\[\d+\]$/;
@@ -7551,7 +7862,7 @@ Author: Draggable https://draggable.io
       const conditionTypeWrap = this.conditionTypeWrap.get(conditionType);
       const conditionField = conditionTypeWrap.children[index2];
       conditionField.destroy();
-      conditionTypeWrap.removeChild(conditionField.dom);
+      conditionField.dom.remove();
     };
     generateConditionFields = (conditionType, conditionVals) => {
       this.conditions = /* @__PURE__ */ new Map();
@@ -7602,24 +7913,52 @@ Author: Draggable https://draggable.io
       };
       return controls;
     }
+    /**
+     * Get config-provided options for an attribute
+     * @param {String} attrKey - The attribute key (e.g., 'attrs.type')
+     * @returns {Array|null} Array of options if config provides them, null otherwise
+     */
+    getConfigAttrOptions(attrKey) {
+      const attrName = attrKey.split(".").pop();
+      const configValue = this.field.config?.attrs?.[attrName];
+      if (Array.isArray(configValue)) {
+        return configValue;
+      }
+      return null;
+    }
     itemInput(key, value) {
-      const valType = dom.childType(value) || "string";
+      if (this.isDisabled) {
+        return null;
+      }
+      let valType = dom.childType(value) || "string";
+      let effectiveValue = value;
+      if (this.panelName === "attrs") {
+        const configAttrOptions = this.getConfigAttrOptions(key);
+        if (configAttrOptions) {
+          effectiveValue = configAttrOptions.map((opt) => ({
+            ...opt,
+            selected: opt.value === value
+          }));
+          valType = "array";
+        }
+      }
       const dataKey = panelDataKeyMap.get(this.panelName)?.({ itemKey: this.itemKey, key }) || this.itemKey;
       const labelKey = dataKey.split(".").filter(Number.isNaN).join(".") || key;
-      const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value });
-      const name2 = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, "-$1")}`;
+      const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue });
+      const name2 = `${this.field.shortId}-${slugifyAddress(dataKey).replaceAll(/-\d+-(selected)/g, "-$1")}`;
       const config = {
-        label: this.panelName !== "options" && (labelHelper(labelKey) || toTitleCase(labelKey)),
-        labelAfter: false
+        label: this.panelName !== "options" && labelHelper(labelKey),
+        labelAfter: false,
+        inputWrap: ["f-input-wrap", this.isLocked && "locked-prop", this.isDisabled && "disabled-prop"].filter(Boolean).join(" ")
       };
       const attrs = {
         name: baseConfig.attrs.type === "checkbox" ? `${name2}[]` : name2
       };
       attrs.disabled = this.isDisabled;
-      attrs.locked = this.isLocked;
+      attrs.readonly = this.isLocked;
       const itemInputAction = itemInputActions.get(this.itemSlug)?.(this);
       const action = mergeActions(INPUT_TYPE_ACTION[valType](dataKey, this.field), itemInputAction || {});
-      const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value }), { action, attrs, config });
+      const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue }), { action, attrs, config });
       if (CHECKED_TYPES.includes(key)) {
         return {
           className: "f-addon",
@@ -7633,6 +7972,22 @@ Author: Draggable https://draggable.io
     multiple: (val, field2) => {
       toggleOptionMultiSelect(!!val, field2);
     }
+  };
+  const defaultConfigOptions = [
+    { label: labelHelper("config.label"), value: "label" },
+    { label: labelHelper("config.hideLabel"), value: "hideLabel" },
+    { label: labelHelper("config.helpText"), value: "helpText" },
+    { label: labelHelper("config.labelAfter"), value: "labelAfter" },
+    { label: labelHelper("config.disableHtmlLabel"), value: "disableHtmlLabel" },
+    { label: labelHelper("config.tooltip"), value: "tooltip" }
+  ];
+  const defaultConfigValues = {
+    label: "New Field",
+    hideLabel: false,
+    helpText: "",
+    labelAfter: false,
+    disableHtmlLabel: false,
+    tooltip: ""
   };
   class EditPanel {
     /**
@@ -7674,16 +8029,23 @@ Author: Draggable https://draggable.io
     createProps(data = this.data) {
       this.editPanelItems = Array.from(data).map((dataVal, index2) => {
         const isArray = this.type === "array";
+        const keyBase = dataVal[0];
         const key = isArray ? `[${index2}]` : `.${dataVal[0]}`;
         const val = isArray ? dataVal : { [dataVal[0]]: dataVal[1] };
+        const itemKey = `${this.name}${key}`;
+        const isDisabledProp = this.component.isDisabledProp(itemKey, this.name);
+        const isEditableProp = FILTERED_PANEL_DATA_KEYS.get(this.name)?.has(keyBase) ?? true;
+        if (isDisabledProp || !isEditableProp) {
+          return null;
+        }
         return new EditPanelItem({
-          key: `${this.name}${key}`,
+          key: itemKey,
           data: val,
           field: this.component,
           index: index2,
           panel: this
         });
-      });
+      }).filter(Boolean);
       const editGroupConfig = {
         tag: "ul",
         attrs: {
@@ -7706,11 +8068,11 @@ Author: Draggable https://draggable.io
      */
     createEditButtons() {
       const type = this.name;
-      const btnTitle = mi18n.get(`panelEditButtons.${type}`);
       const addActions = {
         attrs: this.addAttribute,
         options: this.addOption,
-        conditions: this.addCondition
+        conditions: this.addCondition,
+        config: this.addConfiguration
       };
       const editPanelButtons = [];
       if (type === "conditions") {
@@ -7731,8 +8093,9 @@ Author: Draggable https://draggable.io
         };
         editPanelButtons.push(clearAllBtn);
       }
+      const addBtnTitle = mi18n.get(`panelEditButtons.${type}`) || `+ Add ${toTitleCase(type)}`;
       const addBtn = {
-        ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
+        ...dom.btnTemplate({ content: addBtnTitle, title: addBtnTitle }),
         className: `add-${type}`,
         action: {
           click: (evt) => {
@@ -7749,7 +8112,7 @@ Author: Draggable https://draggable.io
               };
             }
             const eventType = toTitleCase(type);
-            const customEvt = new window.CustomEvent(`onAdd${eventType}`, {
+            const customEvt = new globalThis.CustomEvent(`onAdd${eventType}`, {
               detail: addEvt
             });
             actions.add[type](addEvt);
@@ -7830,6 +8193,37 @@ Author: Draggable https://draggable.io
       this.component.set(itemKey, evt.template);
       this.component.resizePanelWrap();
     };
+    addConfiguration = () => {
+      const configData = this.component.get("config");
+      const dialog = new Dialog({
+        className: "config-item-dialog",
+        content: [
+          {
+            tag: "select",
+            config: { label: mi18n.get("selectConfigKey") || "Select Configuration Key" },
+            attrs: { name: "selectConfigKey", required: true, className: "config-key-select" },
+            options: defaultConfigOptions.filter((opt) => !(opt.value in configData))
+          }
+        ],
+        onConfirm: (formData) => {
+          const configKey = formData.get("selectConfigKey").trim();
+          const itemKey = `config.${configKey}`;
+          if (configKey) {
+            const newConfig = new EditPanelItem({
+              key: itemKey,
+              data: defaultConfigValues[configKey],
+              field: this.component,
+              panel: this
+            });
+            this.editPanelItems.push(newConfig);
+            this.props.appendChild(newConfig.dom);
+            this.component.debouncedUpdatePreview();
+            this.component.resizePanelWrap();
+          }
+        }
+      });
+      dialog.open();
+    };
     /**
      * Clears all items from the component property based on its type.
      * Sets the property to an empty array for 'array' type or empty object for other types.
@@ -7850,7 +8244,7 @@ Author: Draggable https://draggable.io
       };
       actions.remove[this.name](removeEvt);
       const eventType = toTitleCase(this.name);
-      const customEvt = new window.CustomEvent(`onRemove${eventType}`, {
+      const customEvt = new globalThis.CustomEvent(`onRemove${eventType}`, {
         detail: removeEvt
       });
       document.dispatchEvent(customEvt);
@@ -8005,10 +8399,6 @@ Author: Draggable https://draggable.io
           title: mi18n.get("controlGroups.nextGroup"),
           type: "button"
         },
-        dataset: {
-          toggle: "tooltip",
-          placement: "top"
-        },
         action: {
           click: (e2) => this.nav.nextGroup(e2)
         },
@@ -8020,10 +8410,6 @@ Author: Draggable https://draggable.io
           className: "prev-group",
           title: mi18n.get("controlGroups.prevGroup"),
           type: "button"
-        },
-        dataset: {
-          toggle: "tooltip",
-          placement: "top"
         },
         action: {
           click: (e2) => this.nav.prevGroup(e2)
@@ -8155,8 +8541,7 @@ Author: Draggable https://draggable.io
       this.shortId = this.id.slice(0, this.id.indexOf("-"));
       this.name = name2;
       this.indexName = `${name2}s`;
-      this.config = components[`${this.name}s`].config;
-      merge(this.config, data.config);
+      this.config = { ...data.config, ...components[`${this.name}s`].config };
       this.address = `${this.name}s.${this.id}`;
       this.dataPath = `${this.address}.`;
       this.editPanels = /* @__PURE__ */ new Map();
@@ -8286,7 +8671,7 @@ Author: Draggable https://draggable.io
         // copy array since children will be modified
       });
       forEach(children, (child) => child.remove());
-      this.dom.parentElement.removeChild(this.dom);
+      this.dom.remove();
       remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
       if (!parent.children.length) {
         parent.emptyClass();
@@ -8857,12 +9242,18 @@ Author: Draggable https://draggable.io
      * @return {Boolean}
      */
     isDisabledProp = (propName, kind = "attrs") => {
-      const propKind = this.config.panels[kind];
-      if (!propKind) {
+      if (get(this.config, propName)) {
         return false;
       }
-      const disabledAttrs = propKind.disabled.concat(this.get("config.disabled"));
-      return disabledAttrs.includes(propName);
+      const disabledConfigProps = this.config?.disabled || [];
+      const isDisabledConfigProp = disabledConfigProps.includes(propName);
+      if (isDisabledConfigProp) {
+        return true;
+      }
+      const basePropName = trimKeyPrefix(propName);
+      const disabledPanelProps = this.config?.panels[kind]?.disabled || [];
+      const isDisabledPanelProp = disabledPanelProps.includes(basePropName);
+      return isDisabledPanelProp;
     };
     /**
      * Checks if property can be removed
@@ -8870,12 +9261,18 @@ Author: Draggable https://draggable.io
      * @return {Boolean}
      */
     isLockedProp = (propName, kind = "attrs") => {
-      const propKind = this.config.panels[kind];
-      if (!propKind) {
-        return false;
+      const lockedConfigProps = this.config?.locked || [];
+      const isLockedConfigProp = lockedConfigProps.includes(propName);
+      if (isLockedConfigProp) {
+        return true;
       }
-      const lockedAttrs = propKind.locked.concat(this.get("config.locked"));
-      return lockedAttrs.includes(propName);
+      const basePropName = trimKeyPrefix(propName);
+      const lockedPanelProps = this.config?.panels[kind]?.locked || [];
+      const isLockedPanelProp = lockedPanelProps.includes(basePropName);
+      if (isLockedPanelProp) {
+        return true;
+      }
+      return false;
     };
     /**
      * Generate the markup for field edit mode
@@ -8911,14 +9308,14 @@ Author: Draggable https://draggable.io
       if (!this.config) {
         return null;
       }
-      const editable = ["object", "array"];
+      const editable = /* @__PURE__ */ new Set(["object", "array"]);
       const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)]);
-      const noPanels = ["children", "config", "meta", "action", "events", ...this.config.panels.disabled];
-      const allowedPanels = panelOrder.filter((panelName) => !noPanels.includes(panelName));
+      const noPanels = /* @__PURE__ */ new Set(["children", "meta", "action", "events", ...this.config.panels.disabled]);
+      const allowedPanels = panelOrder.filter((panelName) => !noPanels.has(panelName));
       for (const panelName of allowedPanels) {
         const panelData = this.get(panelName);
         const propType = dom.childType(panelData);
-        if (editable.includes(propType)) {
+        if (editable.has(propType)) {
           const editPanel = new EditPanel(panelData, panelName, this);
           this.editPanels.set(editPanel.name, editPanel);
         }
@@ -9100,7 +9497,7 @@ Author: Draggable https://draggable.io
       return value;
     }
   }
-  const DEFAULT_DATA$3 = () => Object.freeze({
+  const DEFAULT_DATA$2 = () => Object.freeze({
     config: {
       width: "100%"
     },
@@ -9126,7 +9523,7 @@ Author: Draggable https://draggable.io
      * @return {Object} Column config object
      */
     constructor(columnData) {
-      super("column", { ...DEFAULT_DATA$3(), ...columnData });
+      super("column", { ...DEFAULT_DATA$2(), ...columnData });
       const childWrap = this.createChildWrap();
       this.dom = dom.create({
         tag: "li",
@@ -9225,7 +9622,7 @@ Author: Draggable https://draggable.io
     }
   };
   const columns = new Columns$1();
-  const DEFAULT_DATA$2 = () => Object.freeze({
+  const DEFAULT_DATA$1 = () => Object.freeze({
     config: {
       fieldset: false,
       // wrap contents of row in fieldset
@@ -9244,7 +9641,7 @@ Author: Draggable https://draggable.io
      * @return {Object}
      */
     constructor(rowData) {
-      super("row", { ...DEFAULT_DATA$2(), ...rowData });
+      super("row", { ...DEFAULT_DATA$1(), ...rowData });
       const children = this.createChildWrap();
       this.dom = dom.create({
         tag: "li",
@@ -9507,7 +9904,7 @@ Author: Draggable https://draggable.io
     }
   };
   const rows = new Rows$1();
-  const DEFAULT_DATA$1 = () => ({ conditions: [CONDITION_TEMPLATE()], children: [] });
+  const DEFAULT_DATA = () => ({ conditions: [CONDITION_TEMPLATE()], children: [] });
   class Stage extends Component {
     /**
      * Process options and load existing fields from data to the stage
@@ -9516,7 +9913,7 @@ Author: Draggable https://draggable.io
      * @return {Object} DOM element
      */
     constructor(stageData) {
-      super("stage", { ...DEFAULT_DATA$1(), ...stageData });
+      super("stage", { ...DEFAULT_DATA(), ...stageData });
       this.updateEditPanels();
       this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
       ({
@@ -9699,9 +10096,9 @@ Author: Draggable https://draggable.io
      * @return {String} the translated label
      */
     i18n(lookup, args) {
-      const locale2 = mi18n.locale;
+      const locale = mi18n.locale;
       const controlTranslations = this.definition?.i18n;
-      const localeTranslations = controlTranslations?.[locale2] || {};
+      const localeTranslations = controlTranslations?.[locale] || {};
       return (localeTranslations[lookup]?.() ?? localeTranslations[lookup]) || mi18n.get(lookup, args);
     }
   }
@@ -10051,9 +10448,6 @@ Author: Draggable https://draggable.io
     Controls: Controls$1,
     default: Controls$2
   }, Symbol.toStringTag, { value: "Module" }));
-  const DEFAULT_DATA = () => ({
-    // conditions: [CONDITION_TEMPLATE()],
-  });
   const checkableTypes = /* @__PURE__ */ new Set(["checkbox", "radio"]);
   const isSelectableType = /* @__PURE__ */ new Set(["radio", "checkbox", "select-one", "select-multiple"]);
   class Field extends Component {
@@ -10063,7 +10457,7 @@ Author: Draggable https://draggable.io
      * @return {Object} field object
      */
     constructor(fieldData = /* @__PURE__ */ Object.create(null)) {
-      super("field", { ...DEFAULT_DATA(), ...fieldData });
+      super("field", fieldData);
       this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
       this.debouncedUpdatePreview = debounce(this.updatePreview);
       this.label = dom.create(this.labelConfig);
@@ -10099,34 +10493,41 @@ Author: Draggable https://draggable.io
       if (hideLabel) {
         return null;
       }
-      const labelVal = this.get("config.editorLabel") || this.get("config.label");
-      const required = this.get("attrs.required");
-      const disableHTML = this.config.label.disableHTML;
-      const labelConfig = () => {
-        const config = {
-          tag: "label",
-          attrs: {}
-        };
-        if (disableHTML) {
-          config.tag = "input";
-          config.attrs.value = labelVal;
-          return config;
-        }
-        config.attrs.contenteditable = true;
-        config.children = labelVal;
-        return config;
+      const { label, editorLabel, disableHtmlLabel, helpText, tooltip: tooltip2 } = this.get("config");
+      const { required: isRequired } = this.get("attrs") || {};
+      const labelVal = editorLabel || label;
+      const labelBase = {
+        tag: "label",
+        attrs: {}
       };
-      const label = {
-        ...labelConfig(),
+      if (disableHtmlLabel) {
+        labelBase.tag = "input";
+        labelBase.attrs.value = labelVal;
+      } else {
+        labelBase.attrs.contenteditable = true;
+        labelBase.children = labelVal;
+      }
+      const labelObj = {
+        ...labelBase,
         action: {
-          input: ({ target: { innerHTML, innerText } }) => {
-            super.set("config.label", disableHTML ? innerText : innerHTML);
+          input: ({ target: { innerHTML, value } }) => {
+            const labelVal2 = disableHtmlLabel ? value : innerHTML;
+            super.set("config.label", labelVal2);
+            const configPanelLabelInput = this.dom.querySelector(".config-label");
+            if (configPanelLabelInput) {
+              configPanelLabelInput.value = labelVal2;
+            }
           }
         }
       };
       const labelWrap = {
         className: "prev-label",
-        children: [label, required && dom.requiredMark()]
+        children: [
+          labelObj,
+          isRequired && dom.requiredMark(),
+          tooltip2 && dom.tooltip(tooltip2),
+          helpText && dom.helpText(helpText)
+        ]
       };
       return labelWrap;
     }
@@ -10138,18 +10539,23 @@ Author: Draggable https://draggable.io
      */
     set(path, value) {
       const data = this.setData(path, value);
-      this.debouncedUpdatePreview();
       return data;
     }
     /**
      * Update the label dom when label data changes
      */
     updateLabel() {
-      if (!this.label) {
-        return null;
-      }
       const newLabel = dom.create(this.labelConfig);
-      this.label.replaceWith(newLabel);
+      if (this.label || !newLabel) {
+        this.label.remove();
+      }
+      if (newLabel) {
+        if (this.data.config?.labelAfter) {
+          this.dom.append(newLabel);
+        } else {
+          this.dom.prepend(newLabel);
+        }
+      }
       this.label = newLabel;
     }
     /**
@@ -10170,7 +10576,7 @@ Author: Draggable https://draggable.io
           if (isSelectableType.has(type)) {
             const selectedOptions = this.preview.querySelectorAll(":checked");
             const optionsData = this.get("options");
-            const checkedType = optionsData?.[0]?.selected !== void 0 ? "selected" : "checked";
+            const checkedType = optionsData?.[0]?.selected === void 0 ? "checked" : "selected";
             const optionsDataMap = optionsData.reduce((acc, option) => {
               acc[option.value] = option;
               acc[option.value][checkedType] = false;
@@ -10421,6 +10827,7 @@ Author: Draggable https://draggable.io
     Columns,
     Components,
     Controls,
+    Dialog,
     Fields,
     Rows,
     Stages,
@@ -10452,19 +10859,19 @@ Author: Draggable https://draggable.io
     onSave: (_evt) => {
     },
     confirmClearAll: (evt) => {
-      if (window.confirm(evt.confirmationMessage)) {
+      if (globalThis.confirm(evt.confirmationMessage)) {
         evt.clearAllAction(evt);
       }
     }
   };
   const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
-    const evt = new window.CustomEvent(type, {
+    const evt = new globalThis.CustomEvent(type, {
       detail: evtData,
       bubbles: events.opts?.debug || events.opts?.bubbles
     });
     evt.data = (src || document).dispatchEvent(evt);
     if (type === EVENT_FORMEO_UPDATED) {
-      const changedEvt = new window.CustomEvent(EVENT_FORMEO_CHANGED, {
+      const changedEvt = new globalThis.CustomEvent(EVENT_FORMEO_CHANGED, {
         detail: evtData,
         bubbles: events.opts?.debug || events.opts?.bubbles
       });
@@ -10491,7 +10898,7 @@ Author: Draggable https://draggable.io
   };
   const formeoUpdatedThrottled = throttle$1(() => {
     const eventData = {
-      timeStamp: window.performance.now(),
+      timeStamp: globalThis.performance.now(),
       type: EVENT_FORMEO_UPDATED,
       detail: components.formData
     };
@@ -10600,14 +11007,14 @@ Author: Draggable https://draggable.io
   const defaultActions = {
     add: {
       attr: (evt) => {
-        const attr = window.prompt(evt.message.attr);
+        const attr = globalThis.prompt(evt.message.attr);
         if (attr && evt.isDisabled(attr)) {
-          window.alert(mi18n.get("attributeNotPermitted", attr || ""));
+          globalThis.alert(mi18n.get("attributeNotPermitted", attr));
           return actions.add.attrs(evt);
         }
         let val;
         if (attr) {
-          val = String(window.prompt(evt.message.value, ""));
+          val = String(globalThis.prompt(evt.message.value, ""));
           evt.addAction(attr, val);
         }
       },
@@ -10615,6 +11022,9 @@ Author: Draggable https://draggable.io
         evt.addAction();
       },
       condition: (evt) => {
+        evt.addAction(evt);
+      },
+      config: (evt) => {
         evt.addAction(evt);
       }
     },
@@ -10657,6 +11067,9 @@ Author: Draggable https://draggable.io
       conditions: (evt) => {
         evt.template = evt.template || CONDITION_TEMPLATE();
         return actions.opts.add.condition(evt);
+      },
+      config: (evt) => {
+        return actions.opts.add.config(evt);
       }
     },
     remove: {
@@ -10685,10 +11098,6 @@ Author: Draggable https://draggable.io
       }
     }
   };
-  const e = { "en-US": { "en-US": "English", dir: "ltr", "af-ZA": "Afrikaans (South Africa)", "ar-TN": "Arabic (Tunisia)", "cs-CZ": "Czech (Czechia)", "de-DE": "German (Germany)", "es-ES": "European Spanish", "fa-IR": "Persian (Iran)", "fi-FI": "Finnish (Finland)", "fr-FR": "French (France)", "hu-HU": "Hungarian (Hungary)", "it-IT": "Italian (Italy)", "ja-JP": "Japanese (Japan)", "nb-NO": "Norwegian Bokmål (Norway)", "pl-PL": "Polish (Poland)", "pt-BR": "Brazilian Portuguese", "pt-PT": "European Portuguese", "ro-RO": "Romanian (Romania)", "ru-RU": "Russian (Russia)", "th-TH": "Thai (Thailand)", "tr-TR": "Turkish (Türkiye)", "zh-CN": "Chinese (China)", "zh-HK": "Chinese (Hong Kong SAR China)", "action.add.attrs.attr": "What attribute would you like to add?", "action.add.attrs.value": "Default Value", addOption: "Add Option", allFieldsRemoved: "All fields were removed.", allowSelect: "Allow Select", and: "and", attribute: "Attribute", attributeNotPermitted: 'Attribute "{attribute}" is not permitted, please choose another.', attributes: "Attributes", "attrs.class": "Class", "attrs.className": "Class", "attrs.dir": "Direction", "attrs.id": "Id", "attrs.required": "Required", "attrs.style": "Style", "attrs.title": "Title", "attrs.type": "Type", "attrs.value": "Value", autocomplete: "Autocomplete", button: "Button", cannotBeEmpty: "This field cannot be empty", cannotClearFields: "There are no fields to clear", checkbox: "Checkbox", checkboxes: "Checkboxes", class: "Class", clear: "Clear", clearAllMessage: "Are you sure you want to clear all fields?", close: "Close", column: "Column", "condition.target.placeholder": "target", "condition.type.and": "And", "condition.type.if": "If", "condition.type.or": "Or", "condition.type.then": "Then", "condition.value.placeholder": "value", confirmClearAll: "Are you sure you want to remove all fields?", content: "Content", control: "Control", "controlGroups.nextGroup": "Next Group", "controlGroups.prevGroup": "Previous Group", "controls.filteringTerm": 'Filtering "{term}"', "controls.form.button": "Button", "controls.form.checkbox-group": "Checkbox Group", "controls.form.input.date": "Date", "controls.form.input.email": "Email", "controls.form.input.file": "File Upload", "controls.form.input.hidden": "Hidden Input", "controls.form.input.number": "Number", "controls.form.input.text": "Text Input", "controls.form.radio-group": "Radio Group", "controls.form.select": "Select", "controls.form.textarea": "TextArea", "controls.groups.form": "Form Fields", "controls.groups.html": "HTML Elements", "controls.groups.layout": "Layout", "controls.html.divider": "Divider", "controls.html.header": "Header", "controls.html.paragraph": "Paragraph", "controls.layout.column": "Column", "controls.layout.row": "Row", copy: "Copy To Clipboard", danger: "Danger", defineColumnLayout: "Define a column layout", defineColumnWidths: "Define column widths", description: "Help Text", descriptionField: "Description", "editing.row": "Editing Row", editorTitle: "Form Elements", field: "Field", "field.property.invalid": "not valid", "field.property.isChecked": "is checked", "field.property.isNotVisible": "is not visible", "field.property.isVisible": "is visible", "field.property.label": "label", "field.property.valid": "valid", "field.property.value": "value", fieldNonEditable: "This field cannot be edited.", fieldRemoveWarning: "Are you sure you want to remove this field?", fileUpload: "File Upload", formUpdated: "Form Updated", getStarted: "Drag a field from the right to get started.", group: "Group", grouped: "Grouped", hidden: "Hidden Input", hide: "Edit", htmlElements: "HTML Elements", if: "If", "if.condition.source.placeholder": "source", "if.condition.target.placeholder": "target / value", info: "Info", "input.date": "Date", "input.text": "Text", label: "Label", labelCount: "{label} {count}", labelEmpty: "Field Label cannot be empty", "lang.af": "Afrikaans", "lang.ar": "Arabic", "lang.cs": "Czech", "lang.de": "German", "lang.en": "English", "lang.es": "Spanish", "lang.fa": "Persian", "lang.fi": "Finnish", "lang.fr": "French", "lang.hu": "Hungarian", "lang.it": "Italian", "lang.ja": "Japanese", "lang.nb": "Norwegian Bokmål", "lang.pl": "Polish", "lang.pt": "Portuguese", "lang.ro": "Romanian", "lang.ru": "Russian", "lang.th": "Thai", "lang.tr": "Turkish", "lang.zh": "Chinese", layout: "Layout", limitRole: "Limit access to one or more of the following roles:", mandatory: "Mandatory", maxlength: "Max Length", "meta.group": "Group", "meta.icon": "Ico", "meta.label": "Label", minOptionMessage: "This field requires a minimum of 2 options", name: "Name", newOptionLabel: "New {type}", no: "No", number: "Number", off: "Off", on: "On", "operator.contains": "contains", "operator.equals": "equals", "operator.notContains": "not contains", "operator.notEquals": "not equal", "operator.notVisible": "not visible", "operator.visible": "visible", option: "Option", optional: "optional", optionEmpty: "Option value required", optionLabel: "Option {count}", options: "Options", or: "or", order: "Order", "panel.label.attrs": "Attributes", "panel.label.conditions": "Conditions", "panel.label.config": "Configuration", "panel.label.meta": "Meta", "panel.label.options": "Options", "panelEditButtons.attrs": "+ Attribute", "panelEditButtons.conditions": "+ Condition", "panelEditButtons.options": "+ Option", placeholder: "Placeholder", "placeholder.className": "space separated classes", "placeholder.email": "Enter you email", "placeholder.label": "Label", "placeholder.password": "Enter your password", "placeholder.placeholder": "Placeholder", "placeholder.text": "Enter some Text", "placeholder.textarea": "Enter a lot of text", "placeholder.value": "Value", preview: "Preview", primary: "Primary", remove: "Remove", removeMessage: "Remove Element", removeType: "Remove {type}", required: "Required", reset: "Reset", richText: "Rich Text Editor", roles: "Access", row: "Row", "row.makeInputGroup": "Make this row an input group.", "row.makeInputGroupDesc": "Input Groups enable users to add sets of inputs at a time.", "row.settings.fieldsetWrap": "Wrap row in a &lt;fieldset&gt; tag", "row.settings.fieldsetWrap.aria": "Wrap Row in Fieldset", save: "Save", secondary: "Secondary", select: "Select", selectColor: "Select Color", selectionsMessage: "Allow Multiple Selections", selectOptions: "Options", separator: "Separator", settings: "Settings", size: "Size", sizes: "Sizes", "sizes.lg": "Large", "sizes.m": "Default", "sizes.sm": "Small", "sizes.xs": "Extra Small", style: "Style", styles: "Styles", "styles.btn": "Button Style", "styles.btn.danger": "Danger", "styles.btn.default": "Default", "styles.btn.info": "Info", "styles.btn.primary": "Primary", "styles.btn.success": "Success", "styles.btn.warning": "Warning", subtype: "Type", success: "Success", text: "Text Field", then: "Then", "then.condition.target.placeholder": "target", toggle: "Toggle", ungrouped: "Un-Grouped", warning: "Warning", yes: "Yes" } }, i = e["en-US"];
-  const locale = "en-US";
-  mi18n.addLanguage(locale, i);
-  mi18n.setCurrent(locale);
   const defaults = {
     get editor() {
       return {
@@ -10702,7 +11111,6 @@ Author: Draggable https://draggable.io
         svgSprite: null,
         // null = use bundled sprite, or provide custom URL
         style: CSS_URL,
-        // change to null
         iconFont: null,
         // 'glyphicons' || 'font-awesome' || 'fontello'
         config: {},
@@ -10718,7 +11126,6 @@ Author: Draggable https://draggable.io
       };
     }
   };
-  new SmartTooltip();
   let FormeoEditor$1 = class FormeoEditor {
     /**
      * @param  {Object} options  formeo options
@@ -10773,12 +11180,15 @@ Author: Draggable https://draggable.io
      */
     async loadResources() {
       document.removeEventListener("DOMContentLoaded", this.loadResources);
-      const promises = [];
-      promises.push(
+      const promises = [
         fetchIcons(this.opts.svgSprite),
         fetchFormeoStyle(this.opts.style),
-        mi18n.init({ ...this.opts.i18n, locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY) })
-      );
+        mi18n.init({
+          preloaded: { "en-US": i },
+          ...this.opts.i18n,
+          locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY)
+        })
+      ].filter(Boolean);
       await Promise.all(promises);
       if (this.opts.allowEdit) {
         this.init();
@@ -10796,7 +11206,7 @@ Author: Draggable https://draggable.io
         this.formId = components.get("id");
         this.i18n = {
           setLang: (formeoLocale) => {
-            window.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale);
+            globalThis.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale);
             const loadLang = mi18n.setCurrent(formeoLocale);
             loadLang.then(() => {
               this.init();
@@ -10804,6 +11214,7 @@ Author: Draggable https://draggable.io
           }
         };
         this.opts.onLoad?.(this);
+        this.tooltipInstance = new SmartTooltip();
       });
     }
     load(formData = this.userFormData, opts = this.opts) {
@@ -10816,7 +11227,7 @@ Author: Draggable https://draggable.io
      */
     render() {
       if (!this.controls) {
-        return window.requestAnimationFrame(() => this.render());
+        return globalThis.requestAnimationFrame(() => this.render());
       }
       this.stages = Object.values(components.get("stages"));
       if (this.opts.controlOnLeft) {
@@ -11505,7 +11916,8 @@ Author: Draggable https://draggable.io
           className: ""
         },
         config: {
-          label: mi18n.get("controls.form.input.text")
+          label: mi18n.get("controls.form.input.text"),
+          hideLabel: false
         },
         meta: {
           group: "common",
