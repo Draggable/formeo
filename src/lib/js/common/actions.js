@@ -11,14 +11,14 @@ import { identity, sessionStorage } from './utils/index.mjs'
 const defaultActions = {
   add: {
     attr: evt => {
-      const attr = window.prompt(evt.message.attr)
+      const attr = globalThis.prompt(evt.message.attr)
       if (attr && evt.isDisabled(attr)) {
-        window.alert(i18n.get('attributeNotPermitted', attr || ''))
+        globalThis.alert(i18n.get('attributeNotPermitted', attr))
         return actions.add.attrs(evt)
       }
       let val
       if (attr) {
-        val = String(window.prompt(evt.message.value, ''))
+        val = String(globalThis.prompt(evt.message.value, ''))
         evt.addAction(attr, val)
       }
     },
@@ -26,6 +26,9 @@ const defaultActions = {
       evt.addAction()
     },
     condition: evt => {
+      evt.addAction(evt)
+    },
+    config: evt => {
       evt.addAction(evt)
     },
   },
@@ -72,6 +75,9 @@ const actions = {
     conditions: evt => {
       evt.template = evt.template || CONDITION_TEMPLATE()
       return actions.opts.add.condition(evt)
+    },
+    config: evt => {
+      return actions.opts.add.config(evt)
     },
   },
   remove: {

@@ -3,7 +3,7 @@ import dom from '../../common/dom.js'
 import { orderObjectsBy } from '../../common/helpers.mjs'
 import { merge } from '../../common/utils/index.mjs'
 import { mergeActions } from '../../common/utils/object.mjs'
-import { slugifyAddress, toTitleCase } from '../../common/utils/string.mjs'
+import { slugifyAddress } from '../../common/utils/string.mjs'
 import {
   ANIMATION_SPEED_BASE,
   CHECKED_TYPES,
@@ -254,9 +254,9 @@ export default class EditPanelItem {
     const dataKey = panelDataKeyMap.get(this.panelName)?.({ itemKey: this.itemKey, key }) || this.itemKey
     const labelKey = dataKey.split('.').filter(Number.isNaN).join('.') || key
     const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue })
-    const name = `${this.field.shortId}-${slugifyAddress(dataKey).replace(/-\d+-(selected)/g, '-$1')}`
+    const name = `${this.field.shortId}-${slugifyAddress(dataKey).replaceAll(/-\d+-(selected)/g, '-$1')}`
     const config = {
-      label: this.panelName !== 'options' && (labelHelper(labelKey) || toTitleCase(labelKey)),
+      label: this.panelName !== 'options' && labelHelper(labelKey),
       labelAfter: false,
       inputWrap: ['f-input-wrap', this.isLocked && 'locked-prop', this.isDisabled && 'disabled-prop']
         .filter(Boolean)

@@ -938,7 +938,7 @@ export default class Component extends Data {
     }
     const editable = new Set(['object', 'array'])
     const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
-    const noPanels = new Set(['children', 'config', 'meta', 'action', 'events', ...this.config.panels.disabled])
+    const noPanels = new Set(['children', 'meta', 'action', 'events', ...this.config.panels.disabled])
     const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {

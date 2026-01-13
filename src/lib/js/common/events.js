@@ -48,14 +48,14 @@ const defaults = {
   onRender: evt => events.opts?.debug && console.log(evt),
   onSave: _evt => {},
   confirmClearAll: evt => {
-    if (window.confirm(evt.confirmationMessage)) {
+    if (globalThis.confirm(evt.confirmationMessage)) {
       evt.clearAllAction(evt)
     }
   },
 }
 
 const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
-  const evt = new window.CustomEvent(type, {
+  const evt = new globalThis.CustomEvent(type, {
     detail: evtData,
     bubbles: events.opts?.debug || events.opts?.bubbles,
   })
@@ -63,7 +63,7 @@ const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) =>
 
   // Also dispatch formeoChanged as an alias for formeoUpdated
   if (type === EVENT_FORMEO_UPDATED) {
-    const changedEvt = new window.CustomEvent(EVENT_FORMEO_CHANGED, {
+    const changedEvt = new globalThis.CustomEvent(EVENT_FORMEO_CHANGED, {
       detail: evtData,
       bubbles: events.opts?.debug || events.opts?.bubbles,
     })
@@ -96,7 +96,7 @@ const events = {
 
 const formeoUpdatedThrottled = throttle(() => {
   const eventData = {
-    timeStamp: window.performance.now(),
+    timeStamp: globalThis.performance.now(),
     type: EVENT_FORMEO_UPDATED,
     detail: components.formData,
   }

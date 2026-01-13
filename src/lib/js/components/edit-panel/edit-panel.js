@@ -3,8 +3,10 @@ import actions from '../../common/actions.js'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
 import { slugify, toTitleCase } from '../../common/utils/string.mjs'
-import { PANEL_CLASSNAME } from '../../constants.js'
+import { FILTERED_PANEL_DATA_KEYS, PANEL_CLASSNAME } from '../../constants.js'
+import Dialog from '../dialog.js'
 import EditPanelItem, { toggleOptionMultiSelect } from './edit-panel-item.mjs'
+import { labelHelper } from './helpers.mjs'
 
 // @todo convert these hardcoded lists to use
 // the updated event system from #381
@@ -12,6 +14,24 @@ const addAttributeActions = {
   multiple: (val, field) => {
     toggleOptionMultiSelect(!!val, field)
   },
+}
+
+const defaultConfigOptions = [
+  { label: labelHelper('config.label'), value: 'label' },
+  { label: labelHelper('config.hideLabel'), value: 'hideLabel' },
+  { label: labelHelper('config.helpText'), value: 'helpText' },
+  { label: labelHelper('config.labelAfter'), value: 'labelAfter' },
+  { label: labelHelper('config.disableHtmlLabel'), value: 'disableHtmlLabel' },
+  { label: labelHelper('config.tooltip'), value: 'tooltip' },
+]
+
+const defaultConfigValues = {
+  label: 'New Field',
+  hideLabel: false,
+  helpText: '',
+  labelAfter: false,
+  disableHtmlLabel: false,
+  tooltip: '',
 }
 
 /**
@@ -63,15 +83,20 @@ export default class EditPanel {
     this.editPanelItems = Array.from(data)
       .map((dataVal, index) => {
         const isArray = this.type === 'array'
+        const keyBase = dataVal[0]
         const key = isArray ? `[${index}]` : `.${dataVal[0]}`
         const val = isArray ? dataVal : { [dataVal[0]]: dataVal[1] }
+        const itemKey = `${this.name}${key}`
 
-        if (this.component.isDisabledProp(`${this.name}${key}`, this.name)) {
+        const isDisabledProp = this.component.isDisabledProp(itemKey, this.name)
+        const isEditableProp = FILTERED_PANEL_DATA_KEYS.get(this.name)?.has(keyBase) ?? true
+
+        if (isDisabledProp || !isEditableProp) {
           return null
         }
 
         return new EditPanelItem({
-          key: `${this.name}${key}`,
+          key: itemKey,
           data: val,
           field: this.component,
           index,
@@ -105,11 +130,11 @@ export default class EditPanel {
    */
   createEditButtons() {
     const type = this.name
-    const btnTitle = i18n.get(`panelEditButtons.${type}`)
     const addActions = {
       attrs: this.addAttribute,
       options: this.addOption,
       conditions: this.addCondition,
+      config: this.addConfiguration,
     }
     const editPanelButtons = []
 
@@ -134,8 +159,9 @@ export default class EditPanel {
       editPanelButtons.push(clearAllBtn)
     }
 
+    const addBtnTitle = i18n.get(`panelEditButtons.${type}`) || `+ Add ${toTitleCase(type)}`
     const addBtn = {
-      ...dom.btnTemplate({ content: btnTitle, title: btnTitle }),
+      ...dom.btnTemplate({ content: addBtnTitle, title: addBtnTitle }),
       className: `add-${type}`,
       action: {
         click: evt => {
@@ -256,6 +282,42 @@ export default class EditPanel {
     this.component.resizePanelWrap()
   }
 
+  addConfiguration = () => {
+    const configData = this.component.get('config')
+
+    const dialog = new Dialog({
+      className: 'config-item-dialog',
+      content: [
+        {
+          tag: 'select',
+          config: { label: i18n.get('selectConfigKey') || 'Select Configuration Key' },
+          attrs: { name: 'selectConfigKey', required: true, className: 'config-key-select' },
+          options: defaultConfigOptions.filter(opt => !(opt.value in configData)),
+        },
+      ],
+      onConfirm: formData => {
+        const configKey = formData.get('selectConfigKey').trim()
+        const itemKey = `config.${configKey}`
+
+        if (configKey) {
+          const newConfig = new EditPanelItem({
+            key: itemKey,
+            data: defaultConfigValues[configKey],
+            field: this.component,
+            panel: this,
+          })
+          this.editPanelItems.push(newConfig)
+          this.props.appendChild(newConfig.dom)
+
+          this.component.debouncedUpdatePreview()
+          this.component.resizePanelWrap()
+        }
+      },
+    })
+
+    dialog.open()
+  }
+
   /**
    * Clears all items from the component property based on its type.
    * Sets the property to an empty array for 'array' type or empty object for other types.
@@ -282,7 +344,7 @@ export default class EditPanel {
 
     // Fire Event
     const eventType = toTitleCase(this.name)
-    const customEvt = new window.CustomEvent(`onRemove${eventType}`, {
+    const customEvt = new globalThis.CustomEvent(`onRemove${eventType}`, {
       detail: removeEvt,
     })
     document.dispatchEvent(customEvt)

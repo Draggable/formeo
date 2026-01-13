@@ -232,3 +232,7 @@ export const DEFAULT_FORMDATA = () => ({
 
 export const CHECKED_TYPES = ['selected', 'checked']
 export const REVERSED_CHECKED_TYPES = CHECKED_TYPES.toReversed()
+
+export const FILTERED_PANEL_DATA_KEYS = new Map([
+  ['config', new Set(['label', 'helpText', 'hideLabel', 'labelAfter', 'disableHtmlLabel', 'tooltip'])],
+])

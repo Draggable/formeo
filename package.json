@@ -69,8 +69,8 @@
   "scripts": {
     "dev": "NODE_ENV=development vite",
     "preview": "vite preview",
-    "build:lib": "npm run build:lib:clean && npm run build:lib:unminified && npm run build:lib:minified",
-    "build:lib:clean": "rm -rf dist",
+    "prebuild:lib": "rm -rf dist",
+    "build:lib": "npm-run-all -p build:lib:unminified build:lib:minified",
     "build:lib:unminified": "vite build --config vite.config.lib.mjs --mode production",
     "build:lib:minified": "vite build --config vite.config.lib.mjs --mode production-minified",
     "build": "npm-run-all -p build:icons build:demo",

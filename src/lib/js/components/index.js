@@ -8,6 +8,7 @@ import FieldsData from './fields/index.js'
 import RowsData from './rows/index.js'
 import StagesData from './stages/index.js'
 import ControlsData from './controls/index.js'
+export { Dialog } from './dialog.js'
 
 export const Stages = StagesData
 export const Rows = RowsData

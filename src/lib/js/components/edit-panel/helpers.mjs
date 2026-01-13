@@ -6,6 +6,11 @@ import Autocomplete from '../autocomplete/autocomplete.mjs'
 const keyToPlaceHolder = key => i18n.get(`${key}.placeholder`) || toTitleCase(trimKeyPrefix(key))
 const keyToClassName = key => key.replaceAll('.', '-')
 
+const stringInputTypeMap = new Map([
+  ['config.helpText', (...args) => largeTextInputConfigBase(...args)],
+  ['config.tooltip', (...args) => largeTextInputConfigBase(...args)],
+])
+
 function inputConfigBase({ key, value, type = 'text', checked }) {
   const config = {
     tag: 'input',
@@ -25,6 +30,18 @@ function inputConfigBase({ key, value, type = 'text', checked }) {
   return config
 }
 
+function largeTextInputConfigBase({ key, value }) {
+  return {
+    tag: 'textarea',
+    attrs: {
+      placeholder: keyToPlaceHolder(key),
+    },
+    className: [keyToClassName(key)],
+    config: {},
+    textContent: value,
+  }
+}
+
 export function labelHelper(key) {
   const labelText = i18n.get(key)
   if (labelText) {
@@ -36,7 +53,12 @@ export function labelHelper(key) {
 
 export const ITEM_INPUT_TYPE_MAP = {
   autocomplete: (...args) => new Autocomplete(...args).createProxy(),
-  string: ({ key, value }) => inputConfigBase({ key, value }),
+  string: ({ key, value }) => {
+    if (stringInputTypeMap.has(key)) {
+      return stringInputTypeMap.get(key)({ key, value })
+    }
+    return inputConfigBase({ key, value })
+  },
   boolean: ({ key, value }) => {
     const type = key === 'selected' ? 'radio' : 'checkbox'
     return inputConfigBase({ key, value, type, checked: !!value })

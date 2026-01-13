@@ -14,6 +14,7 @@ class TextControl extends Control {
       },
       config: {
         label: i18n.get('controls.form.input.text'),
+        hideLabel: false,
       },
       meta: {
         group: 'common',

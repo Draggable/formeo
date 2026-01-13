@@ -177,10 +177,6 @@ export default class Panels {
         title: i18n.get('controlGroups.nextGroup'),
         type: 'button',
       },
-      dataset: {
-        toggle: 'tooltip',
-        placement: 'top',
-      },
       action: {
         click: e => this.nav.nextGroup(e),
       },
@@ -192,10 +188,6 @@ export default class Panels {
         className: 'prev-group',
         title: i18n.get('controlGroups.prevGroup'),
         type: 'button',
-      },
-      dataset: {
-        toggle: 'tooltip',
-        placement: 'top',
       },
       action: {
         click: e => this.nav.prevGroup(e),
