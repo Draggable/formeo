@@ -37,18 +37,18 @@ export async function loadReactDemo(container) {
         <div class="demo-description">
           <p>This demo shows how to integrate Formeo with React applications using modern hooks and patterns.</p>
           <div class="notice">
-            <strong>Note:</strong> This is a pattern demonstration. For a complete React project with Formeo, 
+            <strong>Note:</strong> This is a pattern demonstration. For a complete React project with Formeo,
             see <code>/docs/react-integration-example/</code> in the repository.
           </div>
         </div>
-        
+
         <div class="instructions-toggle">
           <button class="toggle-button" id="toggle-instructions">
             <span class="toggle-text">Show Implementation Guide</span>
             <span class="toggle-icon">▼</span>
           </button>
         </div>
-        
+
         <div class="code-example" id="instructions-section" style="display: none;">
           <div class="guide-section">
             <h4>1. Install Dependencies</h4>
@@ -62,23 +62,23 @@ npm install formeo
 # Install additional dependencies for TypeScript (optional)
 npm install --save-dev @types/react @types/react-dom typescript</code></pre>
           </div>
-          
+
           <div class="guide-section">
             <h4>2. React Hook for Formeo</h4>
             <pre><code class="language-typescript">${escapeHtml(reactHookCode)}</code></pre>
           </div>
-          
+
           <div class="guide-section">
             <h4>3. React Component Implementation</h4>
             <pre><code class="language-typescript">${escapeHtml(reactComponentCode)}</code></pre>
           </div>
-          
+
           <div class="guide-section">
             <h4>4. Context Provider (Advanced)</h4>
             <pre><code class="language-typescript">${escapeHtml(reactContextCode)}</code></pre>
           </div>
         </div>
-        
+
         <h4>Interactive Demo (React Patterns)</h4>
         <div class="react-app-container">
           <div id="react-app-root"></div>
@@ -199,14 +199,14 @@ function addCodeBlockStyles() {
     .react-demo .guide-section {
       margin-bottom: 24px;
     }
-    
+
     .react-demo .guide-section h4 {
       color: #333;
       margin-bottom: 12px;
       padding-bottom: 8px;
       border-bottom: 2px solid #61dafb;
     }
-    
+
     .react-demo pre {
       background: #f8f9fa;
       border: 1px solid #e1e4e8;
@@ -216,7 +216,7 @@ function addCodeBlockStyles() {
       overflow-x: auto;
       position: relative;
     }
-    
+
     .react-demo pre code {
       background: transparent;
       padding: 0;
@@ -226,7 +226,7 @@ function addCodeBlockStyles() {
       line-height: 1.5;
       color: #24292e;
     }
-    
+
     .react-demo pre code.language-typescript:before,
     .react-demo pre code.language-bash:before {
       content: attr(class);
@@ -241,19 +241,19 @@ function addCodeBlockStyles() {
       text-transform: uppercase;
       font-weight: 500;
     }
-    
+
     .react-demo pre code.language-typescript:before {
       content: 'TypeScript';
     }
-    
+
     .react-demo pre code.language-bash:before {
       content: 'Bash';
     }
-    
+
     .react-demo .hljs {
       background: transparent !important;
     }
-    
+
     .react-demo .code-example {
       background: #ffffff;
       border: 1px solid #e1e4e8;
@@ -261,7 +261,7 @@ function addCodeBlockStyles() {
       padding: 20px;
       margin-top: 16px;
     }
-    
+
     .react-demo .notice {
       background: #e8f4fd;
       border: 1px solid #61dafb;
@@ -431,7 +431,6 @@ async function initializeReactApp() {
         }
       })
     }
-    console.log(editor)
 
     // Return React app-like object
     return {
@@ -742,7 +741,7 @@ export default function App() {
   return (
     <div className="app">
       <h1>Formeo React Integration</h1>
-      
+
       <FormBuilder
         onFormSave={handleFormSave}
         onFormSubmit={handleFormSubmit}
@@ -863,10 +862,10 @@ function formeoReducer(state: FormeoState, action: FormeoAction): FormeoState {
     case 'CLEAR_FORM':
       const editor = state.editors[action.payload];
       const renderer = state.renderers[action.payload];
-      
+
       if (editor) editor.clear();
       // Note: renderer clearing handled by component that owns the container
-      
+
       return {
         ...state,
         forms: {

@@ -1,4 +1,5 @@
 import '../sass/formeo.scss'
+import { enUS } from '@draggable/formeo-languages'
 import i18n from '@draggable/i18n'
 import { SmartTooltip } from '@draggable/tooltip'
 import Actions from './common/actions.js'
@@ -85,12 +86,15 @@ export class FormeoEditor {
   async loadResources() {
     document.removeEventListener('DOMContentLoaded', this.loadResources)
 
-    const promises = []
-    promises.push(
+    const promises = [
       fetchIcons(this.opts.svgSprite),
       fetchFormeoStyle(this.opts.style),
-      i18n.init({ ...this.opts.i18n, locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY) })
-    )
+      i18n.init({
+        preloaded: { 'en-US': enUS },
+        ...this.opts.i18n,
+        locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY),
+      }),
+    ].filter(Boolean)
 
     await Promise.all(promises)
 
