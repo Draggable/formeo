@@ -86,8 +86,8 @@ export default class Field extends Component {
     const labelObj = {
       ...labelBase,
       action: {
-        input: ({ target: { innerHTML, innerText } }) => {
-          const labelVal = disableHtmlLabel ? innerText : innerHTML
+        input: ({ target: { innerHTML, value } }) => {
+          const labelVal = disableHtmlLabel ? value : innerHTML
           super.set('config.label', labelVal)
           const configPanelLabelInput = this.dom.querySelector('.config-label')
           if (configPanelLabelInput) {

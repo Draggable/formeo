@@ -29,9 +29,11 @@
   .prev-label {
     min-height: var.$icon-size;
     max-width: calc(100% - #{var.$icon-size});
-    // display: flex;
-    // align-items: flex-end;
     margin-bottom: var.$input-border-radius;
+
+    input {
+      width: auto;
+    }
   }
 
   [contenteditable] {
