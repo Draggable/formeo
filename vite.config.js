@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { enUS, languageFileOptions } from '@draggable/formeo-languages'
+import { languageFileOptions } from '@draggable/formeo-languages'
 import { defineConfig } from 'vite'
 import banner from 'vite-plugin-banner'
 import compression from 'vite-plugin-compression'
@@ -30,9 +30,6 @@ const sharedConfig = {
     fs: {
       strict: false,
     },
-  },
-  define: {
-    'import.meta.env.enUS': JSON.stringify(enUS),
   },
   css: {
     preprocessorOptions: {

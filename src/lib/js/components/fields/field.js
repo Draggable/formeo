@@ -5,10 +5,6 @@ import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
 
-const DEFAULT_DATA = () => ({
-  // conditions: [CONDITION_TEMPLATE()],
-})
-
 const checkableTypes = new Set(['checkbox', 'radio'])
 const isSelectableType = new Set(['radio', 'checkbox', 'select-one', 'select-multiple'])
 
@@ -22,7 +18,7 @@ export default class Field extends Component {
    * @return {Object} field object
    */
   constructor(fieldData = Object.create(null)) {
-    super('field', { ...DEFAULT_DATA(), ...fieldData })
+    super('field', fieldData)
 
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
     this.debouncedUpdatePreview = debounce(this.updatePreview)
@@ -70,37 +66,45 @@ export default class Field extends Component {
       return null
     }
 
-    const labelVal = this.get('config.editorLabel') || this.get('config.label')
-    const required = this.get('attrs.required')
-    const disableHTML = this.config.label.disableHTML
+    const { label, editorLabel, disableHtmlLabel, helpText, tooltip } = this.get('config')
+    const { required: isRequired } = this.get('attrs') || {}
+    const labelVal = editorLabel || label
 
-    const labelConfig = () => {
-      const config = {
-        tag: 'label',
-        attrs: {},
-      }
-      if (disableHTML) {
-        config.tag = 'input'
-        config.attrs.value = labelVal
-        return config
-      }
-      config.attrs.contenteditable = true
-      config.children = labelVal
-      return config
+    const labelBase = {
+      tag: 'label',
+      attrs: {},
     }
 
-    const label = {
-      ...labelConfig(),
+    if (disableHtmlLabel) {
+      labelBase.tag = 'input'
+      labelBase.attrs.value = labelVal
+    } else {
+      labelBase.attrs.contenteditable = true
+      labelBase.children = labelVal
+    }
+
+    const labelObj = {
+      ...labelBase,
       action: {
         input: ({ target: { innerHTML, innerText } }) => {
-          super.set('config.label', disableHTML ? innerText : innerHTML)
+          const labelVal = disableHtmlLabel ? innerText : innerHTML
+          super.set('config.label', labelVal)
+          const configPanelLabelInput = this.dom.querySelector('.config-label')
+          if (configPanelLabelInput) {
+            configPanelLabelInput.value = labelVal
+          }
         },
       },
     }
 
     const labelWrap = {
       className: 'prev-label',
-      children: [label, required && dom.requiredMark()],
+      children: [
+        labelObj,
+        isRequired && dom.requiredMark(),
+        tooltip && dom.tooltip(tooltip),
+        helpText && dom.helpText(helpText),
+      ],
     }
 
     return labelWrap
@@ -115,7 +119,7 @@ export default class Field extends Component {
    */
   set(path, value) {
     const data = this.setData(path, value)
-    this.debouncedUpdatePreview()
+    // this.debouncedUpdatePreview()
 
     return data
   }
@@ -124,12 +128,20 @@ export default class Field extends Component {
    * Update the label dom when label data changes
    */
   updateLabel() {
-    if (!this.label) {
-      return null
+    const newLabel = dom.create(this.labelConfig)
+
+    if (this.label || !newLabel) {
+      this.label.remove()
     }
 
-    const newLabel = dom.create(this.labelConfig)
-    this.label.replaceWith(newLabel)
+    if (newLabel) {
+      if (this.data.config?.labelAfter) {
+        this.dom.append(newLabel)
+      } else {
+        this.dom.prepend(newLabel)
+      }
+    }
+
     this.label = newLabel
   }
 
@@ -153,7 +165,7 @@ export default class Field extends Component {
         if (isSelectableType.has(type)) {
           const selectedOptions = this.preview.querySelectorAll(':checked')
           const optionsData = this.get('options')
-          const checkedType = optionsData?.[0]?.selected !== undefined ? 'selected' : 'checked'
+          const checkedType = optionsData?.[0]?.selected === undefined ? 'checked' : 'selected'
           const optionsDataMap = optionsData.reduce((acc, option) => {
             acc[option.value] = option
             acc[option.value][checkedType] = false

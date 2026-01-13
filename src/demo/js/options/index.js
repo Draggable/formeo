@@ -45,8 +45,8 @@ export const renderOptions = {
         onRender: elem => {
           if (elem.id) {
             const selector = `#${elem.id}`
-            window.tinymce.remove(selector)
-            window.tinymce.init({
+            globalThis.tinymce.remove(selector)
+            globalThis.tinymce.init({
               selector: selector,
             })
           }

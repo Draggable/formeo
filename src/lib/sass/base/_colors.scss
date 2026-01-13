@@ -65,9 +65,9 @@ $black: #000;
 $white: #fff;
 $off-white: #fefefe;
 
-// $gray-dark: #373a3c !default;
-$gray-dark: color.scale($black, $lightness: 20%) !default;
 $gray: color.scale($black, $lightness: 40%) !default;
+$gray-dark: color.scale($black, $lightness: 20%) !default;
+$gray-darker: color.scale($black, $lightness: 10%) !default;
 $gray-light: color.scale($black, $lightness: 60%) !default;
 $gray-lighter: color.scale($black, $lightness: 80%) !default;
 $gray-lightest: color.scale($black, $lightness: 90%) !default;

@@ -1,0 +1,180 @@
+@use "../base/variables" as vars;
+@use "../base/colors" as color;
+@use "../base/mixins" as mixins;
+
+.formeo-dialog {
+  border: none;
+  border-radius: vars.$border-radius;
+  padding: 0;
+  max-width: min(90vw, 500px);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  position: absolute;
+  margin: 0;
+
+  // Default to top positioning (upper center)
+  &.dialog-position-top {
+    left: 50%;
+    top: 20vh;
+    transform: translateX(-50%);
+  }
+
+  // Center positioning (middle of viewport)
+  &.dialog-position-center {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  // Trigger positioning (set dynamically via JS)
+  &.dialog-position-trigger {
+    // Position will be set inline via JavaScript
+    // Initial position off-screen to prevent flash
+    left: -9999px;
+    top: -9999px;
+  }
+
+  &::backdrop {
+    background-color: rgb(0 0 0 / 0.5);
+    backdrop-filter: blur(2px);
+    animation: backdrop-fade-in vars.$animation-speed-base ease-out;
+  }
+
+  .dialog-form {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$base-space;
+    padding: vars.$double-space;
+    min-width: 300px;
+  }
+
+  .dialog-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: color.$gray-darker;
+  }
+
+  .dialog-body {
+    display: flex;
+    flex-direction: column;
+    gap: vars.$base-space;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: vars.$half-space;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: color.$gray-dark;
+
+      input,
+      textarea,
+      select {
+        padding: vars.$input-padding;
+        border: vars.$input-border;
+        border-radius: vars.$input-border-radius;
+        font-size: 1rem;
+
+        &:focus {
+          outline: 2px solid color.$brand-primary;
+          outline-offset: 0;
+        }
+      }
+    }
+  }
+
+  .dialog-message {
+    margin: 0;
+    line-height: 1.6;
+    color: color.$gray-darker;
+  }
+
+  .dialog-prompt-label {
+    .dialog-message {
+      margin-bottom: vars.$half-space;
+    }
+  }
+
+  .dialog-prompt-input {
+    width: 100%;
+  }
+
+  .dialog-actions {
+    display: flex;
+    gap: vars.$base-space;
+    justify-content: flex-end;
+    margin-top: vars.$half-space;
+
+    button {
+      min-width: 80px;
+    }
+  }
+
+  // Animation
+  &[open] {
+    animation: dialog-fade-in vars.$animation-speed-base ease-out;
+  }
+
+  &.config-item-dialog {
+    label {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: mixins.space(1);
+    }
+  }
+}
+
+@keyframes dialog-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes dialog-fade-in-top {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes dialog-fade-in-center {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+// Position-specific animations
+.dialog-position-top[open] {
+  animation: dialog-fade-in-top vars.$animation-speed-base ease-out;
+}
+
+.dialog-position-center[open] {
+  animation: dialog-fade-in-center vars.$animation-speed-base ease-out;
+}
+
+@keyframes backdrop-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

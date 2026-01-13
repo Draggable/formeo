@@ -409,7 +409,12 @@ class DOM {
       const value = this.processAttrValue(attrs[attr])
 
       if (value !== false) {
-        element.setAttribute(safeAttrName, value)
+        try {
+          element.setAttribute(safeAttrName, value)
+        } catch (e) {
+          // debugger
+          console.warn(`Could not set attribute ${safeAttrName} with value ${value}`, e)
+        }
       }
     }
   }
@@ -592,7 +597,7 @@ class DOM {
    * @return {Boolean} holdsContent
    */
   holdsContent(element) {
-    return element.outerHTML.indexOf('/') !== -1
+    return element.outerHTML.includes('/')
   }
 
   /**
@@ -638,13 +643,28 @@ class DOM {
     const type = h.get(elem, 'attrs.type')
     const labelAfter = h.get(elem, 'config.labelAfter')
     const isCB = type === 'checkbox' || type === 'radio'
-    return labelAfter !== undefined ? labelAfter : isCB
+    return labelAfter === undefined ? isCB : labelAfter
   }
 
   requiredMark = () => ({
     tag: 'span',
     className: 'text-error',
     children: '*',
+  })
+
+  tooltip = tooltip => ({
+    tag: 'span',
+    className: 'f-tooltip',
+    dataset: {
+      tooltip,
+    },
+    content: dom.icon('info-circle'),
+  })
+
+  helpText = helpText => ({
+    tag: 'small',
+    className: 'help-text',
+    children: helpText,
   })
 
   /**
@@ -655,8 +675,9 @@ class DOM {
    */
   label(elem, fMap) {
     const required = h.get(elem, 'attrs.required')
+
     let {
-      config: { label: labelText = '' },
+      config: { label: labelText = '', helpText = '', tooltip = null },
     } = elem
     const { id: elemId, attrs } = elem
     if (typeof labelText === 'function') {
@@ -668,7 +689,12 @@ class DOM {
         for: elemId || attrs?.id,
       },
       className: [],
-      children: [labelText, required && this.requiredMark()],
+      children: [
+        labelText,
+        required && this.requiredMark(),
+        tooltip && this.tooltip(tooltip),
+        helpText && { tag: 'small', className: 'help-text', children: helpText },
+      ],
       action: {},
     }
 

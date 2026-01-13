@@ -11,8 +11,6 @@ import Components from './components/index.js'
 import { defaults } from './config.js'
 import { DEFAULT_FORMDATA, SESSION_LOCALE_KEY } from './constants.js'
 
-new SmartTooltip()
-
 /**
  * Main class
  */
@@ -113,7 +111,7 @@ export class FormeoEditor {
       this.formId = Components.get('id')
       this.i18n = {
         setLang: formeoLocale => {
-          window.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale)
+          globalThis.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale)
           const loadLang = i18n.setCurrent(formeoLocale)
           loadLang.then(() => {
             this.init()
@@ -122,6 +120,7 @@ export class FormeoEditor {
       }
 
       this.opts.onLoad?.(this)
+      this.tooltipInstance = new SmartTooltip()
     })
   }
 
@@ -136,7 +135,7 @@ export class FormeoEditor {
    */
   render() {
     if (!this.controls) {
-      return window.requestAnimationFrame(() => this.render())
+      return globalThis.requestAnimationFrame(() => this.render())
     }
 
     this.stages = Object.values(Components.get('stages'))

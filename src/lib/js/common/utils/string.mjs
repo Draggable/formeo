@@ -110,7 +110,7 @@ export const truncateByWord = (str, maxLength, tail = '…') => {
   return truncatedWord
 }
 
-const keyPrefixRegex = /^attrs\.|^meta\.|^options\./g
+const keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g
 export function trimKeyPrefix(key) {
   return key.replaceAll(keyPrefixRegex, '')
 }

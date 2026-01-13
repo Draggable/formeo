@@ -75,7 +75,7 @@ export const insertStyle = srcs => {
           },
           action: {
             load: () => onLoadStylesheet(styleLink, resolve),
-            error: () => reject(new Error(`${this.src} failed to load.`)),
+            error: () => reject(new Error(`${src} failed to load.`)),
           },
         })
 
@@ -180,10 +180,10 @@ export const fetchDependencies = dependencies => {
  */
 export const fetchFormeoStyle = async cssUrl => {
   // check if necessary styles were loaded
-  if (!loaded.css.has(cssUrl)) {
+  if (cssUrl && !loaded.css.has(cssUrl)) {
     await insertStyle(cssUrl)
     // check again and use fallback if necessary styles were not loaded
-    if (!loaded.css.has(FALLBACK_CSS_URL)) {
+    if (!loaded.css.has(cssUrl) && !loaded.css.has(FALLBACK_CSS_URL)) {
       return await insertStyle(FALLBACK_CSS_URL)
     }
   }

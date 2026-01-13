@@ -174,34 +174,29 @@
     }
   }
 
+  [disabled] {
+    .f-input-wrap & {
+      display: none;
+    }
+  }
 
 
-  .attrs-prop-inputs {
+  .f-input-wrap {
+    display: flex;
+    align-items: center;
+    flex: 1;
 
-    [disabled] {
-      .f-input-wrap & {
-        display: none;
-      }
+
+    &.disabled-prop {
+      display: none;
     }
 
+    &.locked-prop {
+      pointer-events: none;
+      opacity: 0.7;
 
-    .f-input-wrap {
-      display: flex;
-      align-items: center;
-      flex: 1;
-
-
-      &.disabled-prop {
-        display: none;
-      }
-
-      &.locked-prop {
-        pointer-events: none;
-        opacity: 0.7;
-
-        select {
-          background-image: none;
-        }
+      select {
+        background-image: none;
       }
     }
   }

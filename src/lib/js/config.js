@@ -16,7 +16,7 @@ export const defaults = {
       sessionStorage: false,
       editorContainer: null, // element or selector to attach editor to
       svgSprite: null, // null = use bundled sprite, or provide custom URL
-      style: CSS_URL, // change to null
+      style: null, // null = use bundled styles
       iconFont: null, // 'glyphicons' || 'font-awesome' || 'fontello'
       config: {}, // stages, rows, columns, fields
       events: {},

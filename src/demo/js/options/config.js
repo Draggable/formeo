@@ -48,6 +48,7 @@ const config = {
           { label: 'email', value: 'email' },
         ],
       },
+      config: { helpText: 'This is a custom help text for text input fields.', hideLabel: false },
       // disabled: ['attrs.type'],
     },
     checkbox: {
