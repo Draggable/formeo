@@ -1,3 +1,23 @@
+# [5.0.0](https://github.com/Draggable/formeo/compare/v4.2.5...v5.0.0) (2026-01-13)
+
+
+### Bug Fixes
+
+* auto disabled field type ([1d12002](https://github.com/Draggable/formeo/commit/1d120028346e66f02c18f8ce898d83484a168d2a))
+* disabledHtml in editor label ([d8be66b](https://github.com/Draggable/formeo/commit/d8be66bca51ee68e7c53c58f3dc7bf00ca99baf5))
+* preload english ([9fff463](https://github.com/Draggable/formeo/commit/9fff463db576c86dc957301cd8ce461a401fe111))
+
+
+### Features
+
+* field config panel ([8088932](https://github.com/Draggable/formeo/commit/8088932aebc6f224657f4872b59613c79d52ce51))
+* use config to extend field control attrs ([9dab6da](https://github.com/Draggable/formeo/commit/9dab6da3a63614921b5d6d1f2d0a88a143d59927))
+
+
+### BREAKING CHANGES
+
+* html no longer accepted in labels where config.disableHtmlLabel is true
+
 ## [4.2.5](https://github.com/Draggable/formeo/compare/v4.2.4...v4.2.5) (2026-01-03)
 
 
