@@ -2,7 +2,7 @@ pre-push:
   parallel: true
   commands:
     run-tests:
-      run: echo "skip"
+      run: npm test
 
 pre-commit:
   parallel: true
