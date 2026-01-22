@@ -2,7 +2,7 @@ pre-push:
   parallel: true
   commands:
     run-tests:
-      run: echo "Skipping tests due to Node version incompatibility"
+      run: npm test
 
 pre-commit:
   parallel: true
