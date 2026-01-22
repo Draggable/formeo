@@ -119,10 +119,16 @@ export class FormeoEditor {
       }),
     ].filter(Boolean)
 
-    await Promise.all(promises)
+    try {
+      await Promise.all(promises)
 
-    if (this.opts.allowEdit) {
-      this.init()
+      if (this.opts.allowEdit) {
+        this.init()
+      }
+    } catch (error) {
+      this.#initState = INIT_STATES.ERROR
+      console.error('Failed to load resources:', error)
+      throw error
     }
   }
 
@@ -144,27 +150,33 @@ export class FormeoEditor {
 
     this.#initState = INIT_STATES.INITIALIZING
 
-    this.#initPromise = Controls.init(this.opts.controls, this.opts.stickyControls).then(controls => {
-      this.controls = controls
+    this.#initPromise = Controls.init(this.opts.controls, this.opts.stickyControls)
+      .then(controls => {
+        this.controls = controls
 
-      // Only load data on FIRST init - prevents race condition
-      if (!this.#dataLoadedOnce) {
-        this.#loadInitialData()
-        this.#dataLoadedOnce = true
-      }
+        // Only load data on FIRST init - prevents race condition
+        if (!this.#dataLoadedOnce) {
+          this.#loadInitialData()
+          this.#dataLoadedOnce = true
+        }
 
-      this.formId = Components.get('id')
-      this.i18n = {
-        setLang: this.#setLanguage.bind(this),
-      }
+        this.formId = Components.get('id')
+        this.i18n = {
+          setLang: this.#setLanguage.bind(this),
+        }
 
-      this.render()
-      this.#initState = INIT_STATES.READY
-      this.opts.onLoad?.(this)
-      this.tooltipInstance = new SmartTooltip()
+        this.render()
+        this.#initState = INIT_STATES.READY
+        this.opts.onLoad?.(this)
+        this.tooltipInstance = new SmartTooltip()
 
-      return this
-    })
+        return this
+      })
+      .catch(error => {
+        this.#initState = INIT_STATES.ERROR
+        console.error('Failed to initialize editor:', error)
+        throw error
+      })
 
     return this.#initPromise
   }
@@ -253,14 +265,19 @@ export class FormeoEditor {
     if (this.#initState === INIT_STATES.READY) {
       return this
     }
+    if (this.#initState === INIT_STATES.ERROR) {
+      return Promise.reject(new Error('Editor initialization failed'))
+    }
     if (this.#initPromise) {
       return this.#initPromise
     }
     // Fallback: poll for ready state
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       const checkReady = () => {
         if (this.#initState === INIT_STATES.READY) {
           resolve(this)
+        } else if (this.#initState === INIT_STATES.ERROR) {
+          reject(new Error('Editor initialization failed'))
         } else {
           globalThis.requestAnimationFrame(checkReady)
         }
