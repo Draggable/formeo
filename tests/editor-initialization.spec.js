@@ -11,8 +11,11 @@ test.describe('Editor Initialization', () => {
     await page.goto('/')
     // Wait for the editor to load
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    // Wait for full initialization
-    await page.waitForTimeout(500)
+    // Wait for full initialization using whenReady
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
   })
 
   test('should expose initState property on editor instance', async ({ page }) => {
@@ -57,9 +60,7 @@ test.describe('Editor Initialization', () => {
   test('should preserve form data after adding fields', async ({ page }) => {
     // Add some fields
     await page.getByRole('button', { name: 'Text Input' }).click()
-    await page.waitForTimeout(200)
     await page.getByRole('button', { name: 'Email' }).click()
-    await page.waitForTimeout(200)
 
     // Get the form data
     const formData = await page.evaluate(() => {
@@ -86,7 +87,10 @@ test.describe('Form Data Persistence', () => {
   test('should preserve form data structure after initialization', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    await page.waitForTimeout(500)
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
 
     // Get initial form data
     const initialFormData = await page.evaluate(() => {
@@ -105,11 +109,13 @@ test.describe('Form Data Persistence', () => {
   test('should maintain form data after clearing', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    await page.waitForTimeout(500)
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
 
     // Add a field first
     await page.getByRole('button', { name: 'Text Input' }).click()
-    await page.waitForTimeout(300)
 
     // Get form id before clear
     const beforeClear = await page.evaluate(() => {
@@ -127,8 +133,6 @@ test.describe('Form Data Persistence', () => {
       const editor = window.frameworkLoader?.currentDemo?.editor
       editor?.clear()
     })
-
-    await page.waitForTimeout(200)
 
     // Get form data after clear
     const afterClear = await page.evaluate(() => {
@@ -153,13 +157,14 @@ test.describe('Language Change Data Persistence', () => {
   test('should preserve form data when setLang is called', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    await page.waitForTimeout(500)
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
 
     // Add some fields first
     await page.getByRole('button', { name: 'Text Input' }).click()
-    await page.waitForTimeout(200)
     await page.getByRole('button', { name: 'Select' }).click()
-    await page.waitForTimeout(300)
 
     // Get form data before language change
     const beforeLangChange = await page.evaluate(() => {
@@ -180,8 +185,6 @@ test.describe('Language Change Data Persistence', () => {
         await editor.i18n.setLang('en-US')
       }
     })
-
-    await page.waitForTimeout(500)
 
     // Get form data after language change
     const afterLangChange = await page.evaluate(() => {
@@ -207,13 +210,15 @@ test.describe('Language Change Data Persistence', () => {
   test('should not clear fields when changing language', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    await page.waitForTimeout(500)
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
 
     // Add multiple fields
     await page.getByRole('button', { name: 'Text Input' }).click()
     await page.getByRole('button', { name: 'Email' }).click()
     await page.getByRole('button', { name: 'Number' }).click()
-    await page.waitForTimeout(300)
 
     // Verify fields are visible
     const fieldsBeforeCount = await page.locator('.formeo-field').count()
@@ -227,8 +232,6 @@ test.describe('Language Change Data Persistence', () => {
       }
     })
 
-    await page.waitForTimeout(500)
-
     // Verify fields are still visible
     const fieldsAfterCount = await page.locator('.formeo-field').count()
     expect(fieldsAfterCount).toBe(3)
@@ -239,7 +242,10 @@ test.describe('Editor State Transitions', () => {
   test('should be in ready state after initialization', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    await page.waitForTimeout(500)
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
 
     // Check final state
     const finalState = await page.evaluate(() => {
@@ -252,7 +258,10 @@ test.describe('Editor State Transitions', () => {
   test('should have isReady=true after initialization', async ({ page }) => {
     await page.goto('/')
     await expect(page.locator('.formeo-editor')).toBeVisible()
-    await page.waitForTimeout(500)
+    await page.evaluate(async () => {
+      const editor = window.frameworkLoader?.currentDemo?.editor
+      await editor?.whenReady()
+    })
 
     const result = await page.evaluate(() => {
       const editor = window.frameworkLoader?.currentDemo?.editor
