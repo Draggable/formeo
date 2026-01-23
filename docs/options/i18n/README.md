@@ -27,3 +27,25 @@ Full Example
   }
 }
 ```
+
+## Changing Language at Runtime
+
+After the editor is initialized, you can change the language using the `setLang` method:
+
+```javascript
+const editor = new FormeoEditor(options, formData)
+await editor.whenReady()
+
+// Change to German
+editor.i18n.setLang('de-DE')
+```
+
+### Data Preservation
+
+When changing languages, the editor only refreshes the UI (labels, control names, etc.) without reloading form data. This ensures that:
+
+- All form fields, rows, and stages remain intact
+- User changes are preserved
+- No data loss occurs during language switching
+
+The language preference is stored in sessionStorage and will be restored on the next page load.

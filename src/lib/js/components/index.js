@@ -17,11 +17,28 @@ export const Fields = FieldsData
 export const Controls = ControlsData
 
 const getFormData = (formData, useSessionStorage = false) => {
-  if (formData) {
-    return clone(parseData(formData))
+  // If formData is explicitly provided (not null/undefined), always use it
+  if (formData !== undefined && formData !== null) {
+    const parsed = parseData(formData)
+    if (parsed && typeof parsed === 'object') {
+      const cloned = clone(parsed)
+      // Ensure required structure exists
+      return {
+        id: cloned.id || DEFAULT_FORMDATA().id,
+        stages: cloned.stages || DEFAULT_FORMDATA().stages,
+        rows: cloned.rows || {},
+        columns: cloned.columns || {},
+        fields: cloned.fields || {},
+      }
+    }
+    console.warn('Formeo: Invalid formData provided, using default')
   }
+
   if (useSessionStorage) {
-    return sessionStorage.get(SESSION_FORMDATA_KEY) || DEFAULT_FORMDATA()
+    const sessionData = sessionStorage.get(SESSION_FORMDATA_KEY)
+    if (sessionData) {
+      return sessionData
+    }
   }
 
   return DEFAULT_FORMDATA()

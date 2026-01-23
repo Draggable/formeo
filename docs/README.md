@@ -60,6 +60,29 @@ Get the form data object. That is, an object representing the current state of t
 
 Get a JSON form of the form data
 
+#### `FormeoEditor#initState`
+
+Get the current initialization state. Returns one of: `'created'`, `'loading'`, `'initializing'`, `'ready'`, or `'error'`.
+
+#### `FormeoEditor#isReady`
+
+Returns `true` if the editor has completed initialization and is ready for use.
+
+#### `FormeoEditor#whenReady()`
+
+Returns a Promise that resolves when the editor is ready. Useful for ensuring the editor is fully initialized before interacting with it.
+
+```javascript
+const editor = new FormeoEditor(options, formData)
+await editor.whenReady()
+// Editor is now fully initialized
+console.log(editor.formData)
+```
+
+#### `FormeoEditor#clear()`
+
+Reset the editor to its initial empty state. See [editor-clear-method.md](editor/editor-clear-method.md) for details.
+
 ### `FormeoRenderer`
 
 #### `new FormeoRenderer([options[, formData]])`
@@ -75,6 +98,10 @@ Render the form, or update the rendered form to use the given `formData` object.
 
 ## [Options](options/)
 
-## [Component Events](component-events.md)
+## [Editor](editor/)
+
+- [Initialization Lifecycle](editor/initialization.md) - Understanding the editor's async initialization process
+- [Component Events](editor/component-events.md) - Component lifecycle event system
+- [Clear Method](editor/editor-clear-method.md) - Resetting the editor to initial state
 
 ## [Build Tools](tools/)
