@@ -122,6 +122,36 @@ describe('DOM Class', async _t => {
     assert.equal(dom.isDOMElement(null), false)
   })
 
+  await test('resolveContainer', () => {
+    // Create a test element
+    const testDiv = document.createElement('div')
+    testDiv.id = 'test-resolve-container'
+    document.body.appendChild(testDiv)
+
+    // Test with string selector
+    const resolvedBySelector = dom.resolveContainer('#test-resolve-container')
+    assert.equal(resolvedBySelector, testDiv)
+
+    // Test with DOM element
+    const resolvedByElement = dom.resolveContainer(testDiv)
+    assert.equal(resolvedByElement, testDiv)
+
+    // Test with null
+    const resolvedNull = dom.resolveContainer(null)
+    assert.equal(resolvedNull, null)
+
+    // Test with undefined
+    const resolvedUndefined = dom.resolveContainer(undefined)
+    assert.equal(resolvedUndefined, undefined)
+
+    // Test with non-existent selector
+    const resolvedNonExistent = dom.resolveContainer('#non-existent-element')
+    assert.equal(resolvedNonExistent, null)
+
+    // Cleanup
+    document.body.removeChild(testDiv)
+  })
+
   await test('create', async _t => {
     await test('should return undefined for falsy input', () => {
       assert.equal(dom.create(), undefined)

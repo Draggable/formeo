@@ -944,6 +944,10 @@ class DOM {
       !!(variable && typeof variable === 'object' && variable.nodeType === 1 && typeof variable.nodeName === 'string')
     )
   }
+
+  resolveContainer(container) {
+    return typeof container === 'string' ? document.querySelector(container) : container
+  }
 }
 
 export const dom = new DOM()

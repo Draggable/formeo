@@ -41,8 +41,7 @@ export class FormeoEditor {
 
     const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
     if (editorContainer) {
-      this.editorContainer =
-        typeof editorContainer === 'string' ? document.querySelector(editorContainer) : editorContainer
+      this.editorContainer = dom.resolveContainer(editorContainer) || null
     }
     this.opts = opts
     dom.setOptions = opts
@@ -317,7 +316,10 @@ export class FormeoEditor {
     this.editor = dom.create(elemConfig)
 
     const controlsContainer = this.controls.container || this.editor
-    controlsContainer.appendChild(this.controls.dom)
+    if (controlsContainer) {
+      dom.empty(controlsContainer)
+      controlsContainer.appendChild(this.controls.dom)
+    }
 
     if (this.editorContainer) {
       dom.empty(this.editorContainer)
