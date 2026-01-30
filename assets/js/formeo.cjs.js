@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.0.0
+Version: 5.0.1
 Author: Draggable https://draggable.io
 */
 
@@ -434,7 +434,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "5.0.0";
+const version$2 = "5.0.1";
 const pkg = {
   name: name$1,
   version: version$2
@@ -10716,11 +10716,25 @@ const Columns2 = columns;
 const Fields2 = fields;
 const Controls2 = Controls$2;
 const getFormData = (formData, useSessionStorage = false) => {
-  if (formData) {
-    return clone$1(parseData(formData));
+  if (formData !== void 0 && formData !== null) {
+    const parsed = parseData(formData);
+    if (parsed && typeof parsed === "object") {
+      const cloned = clone$1(parsed);
+      return {
+        id: cloned.id || DEFAULT_FORMDATA().id,
+        stages: cloned.stages || DEFAULT_FORMDATA().stages,
+        rows: cloned.rows || {},
+        columns: cloned.columns || {},
+        fields: cloned.fields || {}
+      };
+    }
+    console.warn("Formeo: Invalid formData provided, using default");
   }
   if (useSessionStorage) {
-    return sessionStorage.get(SESSION_FORMDATA_KEY) || DEFAULT_FORMDATA();
+    const sessionData = sessionStorage.get(SESSION_FORMDATA_KEY);
+    if (sessionData) {
+      return sessionData;
+    }
   }
   return DEFAULT_FORMDATA();
 };
@@ -11124,7 +11138,18 @@ const defaults = {
     };
   }
 };
+const INIT_STATES = {
+  CREATED: "created",
+  LOADING_RESOURCES: "loading",
+  INITIALIZING: "initializing",
+  READY: "ready",
+  ERROR: "error"
+};
 let FormeoEditor$1 = class FormeoEditor {
+  #initState = INIT_STATES.CREATED;
+  #initPromise = null;
+  #lockedFormData = null;
+  #dataLoadedOnce = false;
   /**
    * @param  {Object} options  formeo options
    * @param  {String|Object}   userFormData loaded formData
@@ -11139,7 +11164,9 @@ let FormeoEditor$1 = class FormeoEditor {
     this.opts = opts;
     dom.setOptions = opts;
     components.config = config;
-    this.userFormData = userFormData || formData;
+    const providedData = userFormData || formData;
+    this.#lockedFormData = providedData ? cleanFormData(providedData) : null;
+    this.userFormData = this.#lockedFormData;
     this.Components = components;
     this.dom = dom;
     events.init({ debug, ...events$1 });
@@ -11154,7 +11181,9 @@ let FormeoEditor$1 = class FormeoEditor {
     return this.Components.formData;
   }
   set formData(data = {}) {
-    this.userFormData = cleanFormData(data);
+    const cleaned = cleanFormData(data);
+    this.#lockedFormData = cleaned;
+    this.userFormData = cleaned;
     this.load(this.userFormData, this.opts);
   }
   loadData(data = {}) {
@@ -11168,7 +11197,9 @@ let FormeoEditor$1 = class FormeoEditor {
    * @return {void}
    */
   clear() {
-    this.userFormData = DEFAULT_FORMDATA();
+    const defaultData = DEFAULT_FORMDATA();
+    this.#lockedFormData = defaultData;
+    this.userFormData = defaultData;
     this.Components.load(this.userFormData, this.opts);
     this.render();
   }
@@ -11178,6 +11209,7 @@ let FormeoEditor$1 = class FormeoEditor {
    */
   async loadResources() {
     document.removeEventListener("DOMContentLoaded", this.loadResources);
+    this.#initState = INIT_STATES.LOADING_RESOURCES;
     const promises = [
       fetchIcons(this.opts.svgSprite),
       fetchFormeoStyle(this.opts.style),
@@ -11187,37 +11219,141 @@ let FormeoEditor$1 = class FormeoEditor {
         locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY)
       })
     ].filter(Boolean);
-    await Promise.all(promises);
-    if (this.opts.allowEdit) {
-      this.init();
+    try {
+      await Promise.all(promises);
+      if (this.opts.allowEdit) {
+        this.init();
+      }
+    } catch (error) {
+      this.#initState = INIT_STATES.ERROR;
+      console.error("Failed to load resources:", error);
+      throw error;
     }
   }
   /**
    * Formeo initializer
-   * @return {Object} References to formeo instance,
+   * @return {Promise} References to formeo instance,
    * dom elements, actions events and more.
    */
   init() {
-    return Controls$2.init(this.opts.controls, this.opts.stickyControls).then((controls) => {
+    if (this.#initState === INIT_STATES.INITIALIZING) {
+      return this.#initPromise;
+    }
+    if (this.#initState === INIT_STATES.READY) {
+      return this.#refreshUI();
+    }
+    this.#initState = INIT_STATES.INITIALIZING;
+    this.#initPromise = Controls$2.init(this.opts.controls, this.opts.stickyControls).then((controls) => {
       this.controls = controls;
-      this.load(this.userFormData, this.opts);
+      if (!this.#dataLoadedOnce) {
+        this.#loadInitialData();
+        this.#dataLoadedOnce = true;
+      }
       this.formId = components.get("id");
       this.i18n = {
-        setLang: (formeoLocale) => {
-          globalThis.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale);
-          const loadLang = mi18n.setCurrent(formeoLocale);
-          loadLang.then(() => {
-            this.init();
-          }, console.error);
-        }
+        setLang: this.#setLanguage.bind(this)
       };
+      this.render();
+      this.#initState = INIT_STATES.READY;
       this.opts.onLoad?.(this);
       this.tooltipInstance = new SmartTooltip();
+      return this;
+    }).catch((error) => {
+      this.#initState = INIT_STATES.ERROR;
+      console.error("Failed to initialize editor:", error);
+      throw error;
     });
+    return this.#initPromise;
+  }
+  /**
+   * Set language without reloading form data (fixes race condition)
+   * @param {string} formeoLocale - locale code
+   * @return {Promise}
+   */
+  async #setLanguage(formeoLocale) {
+    globalThis.sessionStorage?.setItem(SESSION_LOCALE_KEY, formeoLocale);
+    await mi18n.setCurrent(formeoLocale);
+    await this.#refreshUI();
+  }
+  /**
+   * Refresh UI without reloading data (used for language changes)
+   * @return {Promise}
+   */
+  async #refreshUI() {
+    this.controls = await Controls$2.init(this.opts.controls, this.opts.stickyControls);
+    this.render();
+    return this;
+  }
+  /**
+   * Load initial data with proper priority
+   */
+  #loadInitialData() {
+    const dataToLoad = this.#getDataWithPriority();
+    this.Components.load(dataToLoad, this.opts);
+  }
+  /**
+   * Get form data with proper priority:
+   * 1. User-provided data (locked at construction)
+   * 2. SessionStorage (if enabled)
+   * 3. Default empty form
+   * @return {Object} form data to load
+   */
+  #getDataWithPriority() {
+    if (this.#lockedFormData) {
+      return clone$1(this.#lockedFormData);
+    }
+    if (this.opts.sessionStorage) {
+      const sessionData = sessionStorage.get(SESSION_FORMDATA_KEY);
+      if (sessionData) {
+        return sessionData;
+      }
+    }
+    return DEFAULT_FORMDATA();
   }
   load(formData = this.userFormData, opts = this.opts) {
     this.Components.load(formData, opts);
     this.render();
+  }
+  /**
+   * Get current initialization state
+   * @return {string} current state
+   */
+  get initState() {
+    return this.#initState;
+  }
+  /**
+   * Check if the editor is ready
+   * @return {boolean}
+   */
+  get isReady() {
+    return this.#initState === INIT_STATES.READY;
+  }
+  /**
+   * Wait for the editor to be ready
+   * @return {Promise} resolves when editor is ready
+   */
+  async whenReady() {
+    if (this.#initState === INIT_STATES.READY) {
+      return this;
+    }
+    if (this.#initState === INIT_STATES.ERROR) {
+      return Promise.reject(new Error("Editor initialization failed"));
+    }
+    if (this.#initPromise) {
+      return this.#initPromise;
+    }
+    return new Promise((resolve, reject) => {
+      const checkReady = () => {
+        if (this.#initState === INIT_STATES.READY) {
+          resolve(this);
+        } else if (this.#initState === INIT_STATES.ERROR) {
+          reject(new Error("Editor initialization failed"));
+        } else {
+          globalThis.requestAnimationFrame(checkReady);
+        }
+      };
+      checkReady();
+    });
   }
   /**
    * Render the formeo sections
