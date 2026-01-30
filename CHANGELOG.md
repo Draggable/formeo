@@ -1,3 +1,21 @@
+## [5.0.1](https://github.com/Draggable/formeo/compare/v5.0.0...v5.0.1) (2026-01-30)
+
+
+### Bug Fixes
+
+* editor loading states ([790bf10](https://github.com/Draggable/formeo/commit/790bf106f411ef977f7dc6a038941b1bacbe4c89))
+* handle ERROR state in whenReady polling mechanism ([2e4d4aa](https://github.com/Draggable/formeo/commit/2e4d4aa14f537a0b25e3c71799db3d6d80ffe3ab))
+* handle ERROR state in whenReady polling mechanism ([2d8fe77](https://github.com/Draggable/formeo/commit/2d8fe775841587cef8f2a9cb5ff1604f978d3e94))
+* restore package.json test command to original ([5020a06](https://github.com/Draggable/formeo/commit/5020a0605e6accc4c127542e3e826c801b8ea9a7))
+* semantic-release node version requirement ([fff3fbc](https://github.com/Draggable/formeo/commit/fff3fbc5c80920ddea0c64814d051e08f1c34ffb))
+* temporarily skip pre-push tests ([30a360c](https://github.com/Draggable/formeo/commit/30a360cb4c3e57c67af112ec59299b7649576c04))
+
+
+### Reverts
+
+* Revert "final" ([c783fe1](https://github.com/Draggable/formeo/commit/c783fe1bf25256c22ab1658399eea7b972f7cec7))
+* Revert "fix: temporarily skip pre-push tests" ([c90eb3c](https://github.com/Draggable/formeo/commit/c90eb3cc89e5340a2813235e8ea607619575085d))
+
 # [5.0.0](https://github.com/Draggable/formeo/compare/v4.2.5...v5.0.0) (2026-01-13)
 
 
