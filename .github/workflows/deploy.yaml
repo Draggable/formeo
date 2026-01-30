@@ -17,7 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: 'npm'
-          node-version: 23
+          node-version: 24
       - name: Install dependencies
         run: npm install
       - name: Test
