@@ -15,7 +15,9 @@ export const defaults = {
       config: {}, // stages, rows, columns, fields
       events: {},
       actions: {},
-      controls: {},
+      controls: {
+        container: null, // element or selector to attach controls to
+      },
       i18n: {
         location: 'https://draggable.github.io/formeo/assets/lang/',
       },

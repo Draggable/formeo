@@ -376,7 +376,7 @@ export class Controls {
 
   applyOptions = async (controlOptions = {}) => {
     const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions)
-    this.container = container
+    this.container = dom.resolveContainer(container)
     this.groupOrder = unique(groupOrder.concat(['common', 'html', 'layout']))
     this.options = options
 
