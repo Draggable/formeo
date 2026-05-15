@@ -57,7 +57,7 @@ const formeoOptions = {
 const formeo = new FormeoEditor(formeoOptions)
 ```
 
-The built-in **header** control uses this pattern for its `tag` attribute (h1, h2, h3, h4, h5):
+The built-in **header** control uses this pattern for its `tag` attribute (h1, h2, h3, h4):
 
 ```javascript
 // From header.js
