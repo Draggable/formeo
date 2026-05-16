@@ -6,8 +6,11 @@
   $g: color.channel($bg-color, "green", $space: rgb);
   $b: color.channel($bg-color, "blue", $space: rgb);
   $brightness: math.div(($r * 299) + ($g * 587) + ($b * 114), 1000);
-  @return if($brightness > 150, $dark, $light
-);
+  @if $brightness > 150 {
+    @return $dark;
+  } @else {
+    @return $light;
+  }
 }
 
 
