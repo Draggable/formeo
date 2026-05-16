@@ -1,3 +1,16 @@
+# [5.1.0](https://github.com/Draggable/formeo/compare/v5.0.3...v5.1.0) (2026-05-16)
+
+
+### Bug Fixes
+
+* circular empty when controlContainer is editor ([2e252ae](https://github.com/Draggable/formeo/commit/2e252aebf3922f8801ce0ba60d1855af57ffb74a))
+* playwright using up github action minutes ([7ee9163](https://github.com/Draggable/formeo/commit/7ee91636ce94401f8cd296bd5337dd7d80b422c2))
+
+
+### Features
+
+* use controls container option ([144c2ab](https://github.com/Draggable/formeo/commit/144c2ab506a32d3d3d7d2b8087a051ffb1beb506))
+
 ## [5.0.3](https://github.com/Draggable/formeo/compare/v5.0.2...v5.0.3) (2026-05-16)
 
 
