@@ -8,16 +8,20 @@ export const loaded = {
   formeoSprite: null,
 }
 
-export const ajax = (fileUrl, callback, onError = noop) => {
+export const AJAX_TIMEOUT_MS = 10000
+
+export const ajax = (fileUrl, callback, onError = noop, timeoutMs = AJAX_TIMEOUT_MS) => {
   return new Promise(resolve => {
-    return fetch(fileUrl)
+    const signal =
+      typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : undefined
+    return fetch(fileUrl, signal ? { signal } : undefined)
       .then(data => {
         if (!data.ok) {
           return resolve(onError(data))
         }
         resolve(callback ? callback(data) : data)
       })
-      .catch(err => onError(err))
+      .catch(err => resolve(onError(err)))
   })
 }
 
