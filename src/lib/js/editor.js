@@ -317,7 +317,9 @@ export class FormeoEditor {
 
     const controlsContainer = this.controls.container || this.editor
     if (controlsContainer) {
-      dom.empty(controlsContainer)
+      if (controlsContainer !== this.editor) {
+        dom.empty(controlsContainer)
+      }
       controlsContainer.appendChild(this.controls.dom)
     }
 
