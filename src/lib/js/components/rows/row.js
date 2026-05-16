@@ -1,7 +1,6 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
-import events from '../../common/events.js'
 import { numToPercent } from '../../common/utils/index.mjs'
 import {
   ANIMATION_SPEED_FAST,
@@ -211,7 +210,15 @@ export default class Row extends Component {
         clearTimeout(refreshTimeout)
         column.refreshFieldPanels()
       }, ANIMATION_SPEED_FAST)
-      document.dispatchEvent(events.columnResized)
+      // Dispatch columnResized event scoped to this column's DOM element
+      const columnResizedEvent = new window.CustomEvent('columnResized', {
+        detail: {
+          column: colDom,
+          instance: column,
+        },
+        bubbles: true,
+      })
+      colDom.dispatchEvent(columnResizedEvent)
     }
 
     this.updateColumnPreset()

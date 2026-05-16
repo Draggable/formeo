@@ -9,8 +9,13 @@ const DEFAULT_CONFIG = {
 }
 
 export class Rows extends ComponentData {
-  constructor(rowData) {
-    super('rows', rowData)
+  /**
+   * @param {Object} [data] - Initial row data
+   * @param {Object} [events] - Events instance for dispatching events
+   * @param {Object} [components] - Components instance for component lookup
+   */
+  constructor(data = Object.create(null), events = null, components = null) {
+    super('rows', data, events, components)
     this.config = { all: DEFAULT_CONFIG }
   }
   Component(data) {
@@ -18,6 +23,7 @@ export class Rows extends ComponentData {
   }
 }
 
+// Singleton instance for backward compatibility
 const rows = new Rows()
 
 export default rows

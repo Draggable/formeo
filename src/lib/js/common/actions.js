@@ -1,11 +1,6 @@
 import i18n from '@draggable/i18n'
 import { CONDITION_TEMPLATE, SESSION_FORMDATA_KEY } from '../constants.js'
-import events from './events.js'
 import { identity, sessionStorage } from './utils/index.mjs'
-
-// Actions are the callbacks for things like adding
-// new attributes, options, field removal confirmations etc.
-// Every Action below can be overridden via module options
 
 // Default options
 const defaultActions = {
@@ -14,7 +9,7 @@ const defaultActions = {
       const attr = globalThis.prompt(evt.message.attr)
       if (attr && evt.isDisabled(attr)) {
         globalThis.alert(i18n.get('attributeNotPermitted', attr))
-        return actions.add.attrs(evt)
+        return this.add.attrs(evt)
       }
       let val
       if (attr) {
@@ -54,58 +49,81 @@ const defaultActions = {
 }
 
 /**
- * @todo refactor to handle multiple instances of formeo
+ * Actions class handles user actions (add, remove, clone, edit components).
+ * Each FormeoEditor instance creates its own Actions object so that
+ * multiple editors on the same page don't share action state.
  */
-const actions = {
-  init: function (options) {
+export class Actions {
+  /** @type {Object} */
+  opts = null
+
+  /** @type {Events} */
+  events = null
+
+  /**
+   * @param {Events} events - The Events instance for dispatching events
+   */
+  constructor(events) {
+    this.events = events
+  }
+
+  init(options = {}) {
     const actionKeys = Object.keys(defaultActions)
     this.opts = actionKeys.reduce((acc, key) => {
       acc[key] = { ...defaultActions[key], ...options[key] }
       return acc
     }, options)
     return this
-  },
-  add: {
+  }
+
+  add = {
     attrs: evt => {
-      return actions.opts.add.attr(evt)
+      return this.opts.add.attr(evt)
     },
     options: evt => {
-      return actions.opts.add.option(evt)
+      return this.opts.add.option(evt)
     },
     conditions: evt => {
       evt.template = evt.template || CONDITION_TEMPLATE()
-      return actions.opts.add.condition(evt)
+      return this.opts.add.condition(evt)
     },
     config: evt => {
-      return actions.opts.add.config(evt)
+      return this.opts.add.config(evt)
     },
-  },
-  remove: {
+  }
+
+  remove = {
     attrs: evt => {
-      return actions.opts.remove.attrs(evt)
+      return this.opts.remove.attrs(evt)
     },
     options: evt => {
-      return actions.opts.remove.options(evt)
+      return this.opts.remove.options(evt)
     },
     conditions: evt => {
-      return actions.opts.remove.conditions(evt)
+      return this.opts.remove.conditions(evt)
     },
-  },
-  click: {
+  }
+
+  click = {
     btn: evt => {
-      return actions.opts.click.btn(evt)
+      return this.opts.click.btn(evt)
     },
-  },
-  save: {
+  }
+
+  save = {
     form: formData => {
-      if (actions.opts.sessionStorage) {
+      if (this.opts.sessionStorage) {
         sessionStorage.set(SESSION_FORMDATA_KEY, formData)
       }
-
-      events.formeoSaved({ formData })
-      return actions.opts.save.form(formData)
+      this.events.formeoSaved({ formData })
+      return this.opts.save.form(formData)
     },
-  },
+  }
 }
+
+// Singleton instance for backward compatibility
+// Note: this singleton uses a placeholder events reference
+// that will be replaced when the editor creates its own Actions instance
+const actions = new Actions(null)
 
 export default actions

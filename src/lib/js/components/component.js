@@ -22,11 +22,9 @@ import {
 } from '../constants.js'
 import Data from './data.js'
 import EditPanel from './edit-panel/edit-panel.js'
-// Components is imported at the end of the file after circular dependencies are resolved
+// Keep global Components import for backward compatibility and fallback
 import Components from './index.js'
 import Panels from './panels.js'
-
-// import Controls from './controls/index.js'
 
 let Controls = null
 
@@ -40,13 +38,24 @@ export default class Component extends Data {
     this.shortId = this.id.slice(0, this.id.indexOf('-'))
     this.name = name
     this.indexName = `${name}s`
-    this.config = { ...data.config, ...Components[`${this.name}s`].config }
+    // Use instance components if set, otherwise fall back to global Components
+    const componentsRef = this.components || Components
+    this.config = { ...data.config, ...componentsRef[`${this.name}s`]?.config }
     this.address = `${this.name}s.${this.id}`
     this.dataPath = `${this.address}.`
     // this.observer = new window.MutationObserver(this.mutationHandler)
     this.editPanels = new Map()
     this.eventListeners = new Map()
     this.initEventHandlers()
+  }
+
+  /**
+   * Set the Components instance reference for this component.
+   * Called by ComponentData.add() after the component is created.
+   * @param {Object} components - The Components instance
+   */
+  setComponents(components) {
+    this.components = components
   }
 
   /**
@@ -194,7 +203,8 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.remove()
-    remove(Components.getAddress(`${parent.name}s.${parent.id}.children`), this.id)
+    const componentsRef = this.components || Components
+    remove(componentsRef.getAddress(`${parent.name}s.${parent.id}.children`), this.id)
 
     if (!parent.children.length) {
       parent.emptyClass()
@@ -213,7 +223,8 @@ export default class Component extends Data {
 
     const removeEvent = componentEventMap[this.name]
     if (removeEvent) {
-      events.formeoUpdated(
+      const eventsRef = this.components?.events || events
+      eventsRef.formeoUpdated(
         {
           componentId: this.id,
           componentType: this.name,
@@ -223,7 +234,7 @@ export default class Component extends Data {
       )
     }
 
-    return Components[`${this.name}s`].delete(this.id)
+    return (this.components || Components)[`${this.name}s`].delete(this.id)
   }
 
   /**
@@ -251,16 +262,17 @@ export default class Component extends Data {
    */
   getActionButtons() {
     const hoverClassnames = [`hovering-${this.name}`, 'hovering']
+    const componentsRef = this.components || Components
     return {
       className: [`${this.name}-actions`, 'group-actions'],
       action: {
         mouseenter: () => {
-          Components.stages.active.dom.classList.add(`active-hover-${this.name}`)
+          componentsRef.stages.active.dom.classList.add(`active-hover-${this.name}`)
           this.dom.classList.add(...hoverClassnames)
         },
         mouseleave: ({ target }) => {
           this.dom.classList.remove(...hoverClassnames)
-          Components.stages.active.dom.classList.remove(`active-hover-${this.name}`)
+          componentsRef.stages.active.dom.classList.remove(`active-hover-${this.name}`)
           target.removeAttribute('style')
         },
       },
@@ -426,7 +438,8 @@ export default class Component extends Data {
     }
     const domChildren = this.domChildren
     const childGroup = CHILD_TYPE_MAP.get(this.name)
-    return map(domChildren, child => Components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean)
+    const componentsRef = this.components || Components
+    return map(domChildren, child => componentsRef.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean)
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
@@ -456,9 +469,11 @@ export default class Component extends Data {
     }
 
     const childComponentType = `${childGroup}s`
+    const componentsRef = this.components || Components
 
     const child =
-      Components.getAddress(`${childComponentType}.${childId}`) || Components[childComponentType].add(childId, data)
+      componentsRef.getAddress(`${childComponentType}.${childId}`) ||
+      componentsRef[childComponentType].add(childId, data)
 
     if (index >= childWrap.children.length) {
       childWrap.appendChild(child.dom)
@@ -736,7 +751,8 @@ export default class Component extends Data {
 
   getComponent(path) {
     const [type, id] = path.split('.')
-    const group = Components[type]
+    const componentsRef = this.components || Components
+    const group = componentsRef[type]
     return id === this.id ? this : group?.get(id)
   }
 
@@ -945,7 +961,7 @@ export default class Component extends Data {
       const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.has(propType)) {
-        const editPanel = new EditPanel(panelData, panelName, this)
+        const editPanel = new EditPanel(panelData, panelName, this, this.components?.actions)
         this.editPanels.set(editPanel.name, editPanel)
       }
     }

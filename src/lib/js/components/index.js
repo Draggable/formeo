@@ -2,18 +2,16 @@
 import { buildFlatDataStructure, clone, isAddress, parseData, sessionStorage } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
-import ColumnsData from './columns/index.js'
+import { Columns as ColumnsClass } from './columns/index.js'
 import Data from './data.js'
-import FieldsData from './fields/index.js'
-import RowsData from './rows/index.js'
-import StagesData from './stages/index.js'
+import { Fields as FieldsClass } from './fields/index.js'
+import { Rows as RowsClass } from './rows/index.js'
+import { Stages as StagesClass } from './stages/index.js'
 import ControlsData from './controls/index.js'
 export { Dialog } from './dialog.js'
 
-export const Stages = StagesData
-export const Rows = RowsData
-export const Columns = ColumnsData
-export const Fields = FieldsData
+// Re-export class constructors for per-instance creation
+export { StagesClass as Stages, RowsClass as Rows, ColumnsClass as Columns, FieldsClass as Fields }
 export const Controls = ControlsData
 
 const getFormData = (formData, useSessionStorage = false) => {
@@ -44,28 +42,47 @@ const getFormData = (formData, useSessionStorage = false) => {
   return DEFAULT_FORMDATA()
 }
 
+/**
+ * Components class manages the component hierarchy (stages, rows, columns, fields).
+ * Each FormeoEditor instance creates its own Components object so that
+ * multiple editors on the same page maintain separate state.
+ */
 export class Components extends Data {
-  constructor() {
-    super('components')
+  /**
+   * @param {Object} events - The Events instance for this editor
+   * @param {Object} actions - The Actions instance for this editor
+   */
+  constructor(events, actions = null) {
+    super('components', Object.create(null), events)
     this.disableEvents = true
-    this.stages = Stages
-    this.rows = Rows
-    this.columns = Columns
-    this.fields = Fields
-    this.controls = Controls
+    this.actions = actions
+
+    // Create per-instance data stores
+    this.stages = new StagesClass(undefined, events, this)
+    this.rows = new RowsClass(undefined, events, this)
+    this.columns = new ColumnsClass(undefined, events, this)
+    this.fields = new FieldsClass(undefined, events, this)
   }
 
-  load = (formDataArg, opts) => {
+  /**
+   * Set the Controls instance for the fields data store.
+   * @param {Object} controls - The Controls instance
+   */
+  setControls(controls) {
+    this.fields.setControls(controls)
+  }
+
+  load = (formDataArg, opts = {}) => {
     this.empty()
     const formData = getFormData(formDataArg, opts.sessionStorage)
 
     this.opts = opts
 
     this.set('id', formData.id)
-    this.add('stages', Stages.load(formData.stages))
-    this.add('rows', Rows.load(formData.rows))
-    this.add('columns', Columns.load(formData.columns))
-    this.add('fields', Fields.load(formData.fields))
+    this.add('stages', this.stages.load(formData.stages))
+    this.add('rows', this.rows.load(formData.rows))
+    this.add('columns', this.columns.load(formData.columns))
+    this.add('fields', this.fields.load(formData.fields))
 
     for (const stage of Object.values(this.get('stages'))) {
       stage.loadChildren()
@@ -75,7 +92,7 @@ export class Components extends Data {
   }
 
   /**
-   * flattens the component tree
+   * Flattens the component tree
    * @returns {Object} where keys contains component type
    */
   flatList() {
@@ -105,19 +122,19 @@ export class Components extends Data {
   get formData() {
     return {
       id: this.get('id'),
-      stages: StagesData.getData(),
-      rows: RowsData.getData(),
-      columns: ColumnsData.getData(),
-      fields: FieldsData.getData(),
+      stages: this.stages.getData(),
+      rows: this.rows.getData(),
+      columns: this.columns.getData(),
+      fields: this.fields.getData(),
     }
   }
 
   set config(config) {
     const { stages, rows, columns, fields } = config
-    Stages.config = stages
-    Rows.config = rows
-    Columns.config = columns
-    Fields.config = fields
+    this.stages.config = stages
+    this.rows.config = rows
+    this.columns.config = columns
+    this.fields.config = fields
   }
 
   getIndex(type) {
@@ -125,7 +142,7 @@ export class Components extends Data {
   }
 
   /**
-   * call `set` on a component in memory
+   * Call `set` on a component in memory
    */
   setAddress(fullAddress, value) {
     if (!isAddress(fullAddress)) {
@@ -159,6 +176,7 @@ export class Components extends Data {
   }
 }
 
-const components = new Components()
+// Singleton instance for backward compatibility
+const components = new Components(null)
 
 export default components

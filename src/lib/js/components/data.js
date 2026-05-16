@@ -1,5 +1,4 @@
 import isEqual from 'lodash/isEqual.js'
-import events from '../common/events.js'
 import { uuid } from '../common/utils/index.mjs'
 import { get, set } from '../common/utils/object.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -24,11 +23,19 @@ const getChangeType = (oldVal, newVal) => {
 }
 
 export default class Data {
-  constructor(name, data = Object.create(null)) {
+  /**
+   * @param {string} name - Data store name
+   * @param {Object} [data] - Initial data
+   * @param {Object} [events] - Events instance for dispatching update events
+   */
+  constructor(name, data = Object.create(null), events = null) {
     this.name = name
     this.data = data
     this.dataPath = ''
+    /** @type {Object|null} */
+    this.events = events
   }
+
   get size() {
     return Object.keys(this.data).length
   }
@@ -54,7 +61,7 @@ export default class Data {
       }
     }
 
-    if (!this.disableEvents) {
+    if (!this.disableEvents && this.events) {
       const evtData = {
         entity: this,
         dataPath: this.dataPath.replace(/\.+$/, ''),
@@ -69,7 +76,7 @@ export default class Data {
       }
 
       // Dispatch the generic formeoUpdated event
-      events.formeoUpdated(evtData)
+      this.events.formeoUpdated(evtData)
 
       // Dispatch component-specific events based on the component type
       if (this.name) {
@@ -82,7 +89,7 @@ export default class Data {
 
         const specificEvent = componentEventMap[this.name]
         if (specificEvent) {
-          events.formeoUpdated(evtData, specificEvent)
+          this.events.formeoUpdated(evtData, specificEvent)
         }
       }
     }

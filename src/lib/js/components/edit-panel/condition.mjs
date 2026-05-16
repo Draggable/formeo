@@ -1,6 +1,7 @@
 import i18n from '@draggable/i18n'
 import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
+// Keep global imports for backward compatibility and fallback
 import events from '../../common/events.js'
 import { debounce } from '../../common/utils/index.mjs'
 import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
@@ -17,7 +18,12 @@ function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDE
 }
 
 export class Condition {
-  constructor({ conditionValues, conditionType, conditionCount, index }, parent) {
+  constructor(
+    { conditionValues, conditionType, conditionCount, index },
+    parent,
+    eventsInstance = null,
+    componentsInstance = null
+  ) {
     this.values = new Map(orderConditionValues(conditionValues))
     this.conditionType = conditionType
     this.parent = parent
@@ -25,6 +31,8 @@ export class Condition {
     this.fields = new Map()
     this.conditionCount = conditionCount
     this.index = index
+    this.events = eventsInstance || events
+    this.components = componentsInstance || Components
 
     this.dom = this.generateDom()
   }
@@ -142,8 +150,8 @@ export class Condition {
   }
 
   updateDataDebounced = debounce(evtData => {
-    events.formeoUpdated(evtData)
-    Components.setAddress(evtData.dataPath, evtData.value)
+    this.events.formeoUpdated(evtData)
+    this.components.setAddress(evtData.dataPath, evtData.value)
   })
 
   onChangeCondition = ({ key, target }) => {

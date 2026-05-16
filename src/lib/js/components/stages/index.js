@@ -8,16 +8,18 @@ const DEFAULT_CONFIG = () => ({
   },
   panels: {
     disabled: [],
-    // The 'order' array specifies the sequence in which the panels should be displayed.
-    // Each string in the array represents a panel type, such as 'attrs', 'options', or 'conditions'.
-    // By default, these panels are ordered as you see below, but can be override via formeo options.
     order: ['attrs', 'options', 'conditions'],
   },
 })
 
 export class Stages extends ComponentData {
-  constructor(stageData) {
-    super('stages', stageData)
+  /**
+   * @param {Object} [data] - Initial stage data
+   * @param {Object} [events] - Events instance for dispatching events
+   * @param {Object} [components] - Components instance for component lookup
+   */
+  constructor(data = Object.create(null), events = null, components = null) {
+    super('stages', data, events, components)
     this.config = { all: DEFAULT_CONFIG() }
   }
   Component(data) {
@@ -25,6 +27,7 @@ export class Stages extends ComponentData {
   }
 }
 
+// Singleton instance for backward compatibility
 const stages = new Stages()
 
 export default stages

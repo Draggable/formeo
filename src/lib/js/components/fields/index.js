@@ -1,7 +1,6 @@
 import { parseData } from '../../common/utils/index.mjs'
 import { get, set } from '../../common/utils/object.mjs'
 import ComponentData from '../component-data.js'
-import Controls from '../controls/index.js'
 import Field from './field.js'
 
 const DEFAULT_CONFIG = () => ({
@@ -24,17 +23,34 @@ const DEFAULT_CONFIG = () => ({
 })
 
 export class Fields extends ComponentData {
-  constructor(fieldData) {
-    super('fields', fieldData)
+  /**
+   * @param {Object} [data] - Initial field data
+   * @param {Object} [events] - Events instance for dispatching events
+   * @param {Object} [components] - Components instance for component lookup
+   */
+  constructor(data = Object.create(null), events = null, components = null) {
+    super('fields', data, events, components)
     this.config = { all: DEFAULT_CONFIG() }
+    /** @type {Object|null} */
+    this.controls = null
   }
+
+  /**
+   * Set the Controls instance for auto-registering controls.
+   * @param {Object} controls - The Controls instance
+   */
+  setControls(controls) {
+    this.controls = controls
+  }
+
   Component(data) {
     return new Field(data)
   }
+
   get = path => {
     let found = path && get(this.data, path)
-    if (!found) {
-      const control = Controls.get(path)
+    if (!found && this.controls) {
+      const control = this.controls.get(path)
       if (control) {
         found = this.add(null, control.controlData)
       }
@@ -69,7 +85,7 @@ export class Fields extends ComponentData {
     for (const [key, val] of Object.entries(allFieldData)) {
       const { meta, ...data } = val
       // meta object is only for controls, we want to migrate it out of field data
-      // we only need the control id to tie actions back to control definitons
+      // we only need the control id to tie actions back to control definitions
       if (meta?.id) {
         set(data, 'config.controlId', meta?.id)
       }
@@ -80,6 +96,7 @@ export class Fields extends ComponentData {
   }
 }
 
+// Singleton instance for backward compatibility
 const fields = new Fields()
 
 export default fields

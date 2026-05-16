@@ -1,7 +1,6 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
-import events from '../../common/events.js'
 import h from '../../common/helpers.mjs'
 import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
@@ -60,13 +59,6 @@ export default class Column extends Component {
     })
 
     this.processConfig()
-
-    events.columnResized = new window.CustomEvent('columnResized', {
-      detail: {
-        column: this.dom,
-        instance: this,
-      },
-    })
 
     Sortable.create(childWrap, {
       animation: 150,

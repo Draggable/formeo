@@ -9,8 +9,13 @@ const DEFAULT_CONFIG = {
 }
 
 export class Columns extends ComponentData {
-  constructor(columnData) {
-    super('columns', columnData)
+  /**
+   * @param {Object} [data] - Initial column data
+   * @param {Object} [events] - Events instance for dispatching events
+   * @param {Object} [components] - Components instance for component lookup
+   */
+  constructor(data = Object.create(null), events = null, components = null) {
+    super('columns', data, events, components)
     this.config = { all: DEFAULT_CONFIG }
   }
   Component(data) {
@@ -18,6 +23,7 @@ export class Columns extends ComponentData {
   }
 }
 
+// Singleton instance for backward compatibility
 const columns = new Columns()
 
 export default columns

@@ -17,8 +17,12 @@ import defaultOptions from './options.js'
  *
  */
 export class Controls {
-  constructor() {
+  /**
+   * @param {Object} [components] - The Components instance for this editor
+   */
+  constructor(components = null) {
     this.data = new Map()
+    this.components = components
 
     this.buttonActions = {
       // this is used for keyboard navigation. when tabbing through controls it
@@ -154,17 +158,20 @@ export class Controls {
     if (this.options.disable.formActions === true) {
       return null
     }
+    const componentsRef = this.components
     const clearBtn = {
       ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
       action: {
         click: evt => {
-          if (Rows.size) {
+          const rowsRef = componentsRef?.rows || Rows
+          if (rowsRef.size) {
             events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
                 clearAllAction: () => {
-                  Stages.clearAll().then(() => {
+                  const stagesRef = componentsRef?.stages || Stages
+                  stagesRef.clearAll().then(() => {
                     const evtData = {
                       src: evt.target,
                     }
@@ -188,9 +195,8 @@ export class Controls {
       className: ['save-form'],
       action: {
         click: async ({ target }) => {
-          // Dynamic import to avoid circular dependency
-          const { default: Components } = await import('../index.js')
-          const { formData } = Components
+          const comps = componentsRef || (await import('../index.js')).default
+          const { formData } = comps
           const saveEvt = {
             action: () => {},
             coords: dom.coords(target),
@@ -350,7 +356,10 @@ export class Controls {
   }
 
   layoutTypes = {
-    row: () => Stages.active.addChild(),
+    row: () => {
+      const stagesRef = this.components?.stages || Stages
+      return stagesRef.active.addChild()
+    },
     column: () => this.layoutTypes.row().addChild(),
     field: controlData => this.layoutTypes.column().addChild(controlData),
   }

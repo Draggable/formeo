@@ -143,7 +143,12 @@ export default class EditPanelItem {
       condition = { conditionValues: newConditionData, conditionCount, index: conditionCount }
     }
 
-    const conditionField = new Condition({ conditionType, ...condition }, this)
+    // Get per-instance references from the field component
+    const fieldComponent = this.field
+    const eventsInstance = fieldComponent?.components?.events
+    const componentsInstance = fieldComponent?.components
+
+    const conditionField = new Condition({ conditionType, ...condition }, this, eventsInstance, componentsInstance)
 
     conditionTypeWrap.appendChild(conditionField.dom)
 
