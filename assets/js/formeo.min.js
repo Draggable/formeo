@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.0.3
+Version: 5.1.0
 Author: Draggable https://draggable.io
 */
 
@@ -6064,7 +6064,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.0.3";
+		version$2 = "5.1.0";
 		type = "module";
 		main = "dist/formeo.cjs.js";
 		module$1 = "dist/formeo.es.js";
@@ -12782,6 +12782,9 @@ Author: Draggable https://draggable.io
 			isDOMElement(variable) {
 				return variable instanceof window.Element || variable instanceof window.HTMLElement || !!(variable && typeof variable === "object" && variable.nodeType === 1 && typeof variable.nodeName === "string");
 			}
+			resolveContainer(container) {
+				return typeof container === "string" ? document.querySelector(container) : container;
+			}
 		};
 		dom = new DOM();
 	}));
@@ -16251,7 +16254,7 @@ Author: Draggable https://draggable.io
 			};
 			applyOptions = async (controlOptions = {}) => {
 				const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions);
-				this.container = container;
+				this.container = dom.resolveContainer(container);
 				this.groupOrder = unique(groupOrder.concat([
 					"common",
 					"html",
@@ -17796,7 +17799,7 @@ Author: Draggable https://draggable.io
 			config: {},
 			events: {},
 			actions: {},
-			controls: {},
+			controls: { container: null },
 			i18n: { location: "https://draggable.github.io/formeo/assets/lang/" },
 			onLoad: () => {}
 		};
@@ -17837,7 +17840,7 @@ Author: Draggable https://draggable.io
 		*/
 		constructor({ formData, ...options }, userFormData) {
 			const { actions: actions$1, events: events$1, debug, config, editorContainer, ...opts } = merge(defaults.editor, options);
-			if (editorContainer) this.editorContainer = typeof editorContainer === "string" ? document.querySelector(editorContainer) : editorContainer;
+			if (editorContainer) this.editorContainer = dom.resolveContainer(editorContainer) || null;
 			this.opts = opts;
 			dom.setOptions = opts;
 			components.config = config;
@@ -18034,7 +18037,11 @@ Author: Draggable https://draggable.io
 				dom.dir = s.current.dir;
 			}
 			this.editor = dom.create(elemConfig);
-			(this.controls.container || this.editor).appendChild(this.controls.dom);
+			const controlsContainer = this.controls.container || this.editor;
+			if (controlsContainer) {
+				if (controlsContainer !== this.editor) dom.empty(controlsContainer);
+				controlsContainer.appendChild(this.controls.dom);
+			}
 			if (this.editorContainer) {
 				dom.empty(this.editorContainer);
 				this.editorContainer.appendChild(this.editor);
