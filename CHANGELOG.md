@@ -1,3 +1,10 @@
+## [5.1.1](https://github.com/Draggable/formeo/compare/v5.1.0...v5.1.1) (2026-05-16)
+
+
+### Bug Fixes
+
+* prevent playwright test hangs from CDN fetches and excessive retries ([8ce1bc5](https://github.com/Draggable/formeo/commit/8ce1bc5649580b0b1c46c237ac16c355024cde40))
+
 # [5.1.0](https://github.com/Draggable/formeo/compare/v5.0.3...v5.1.0) (2026-05-16)
 
 
