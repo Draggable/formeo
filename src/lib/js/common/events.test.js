@@ -467,6 +467,65 @@ describe('Events System', () => {
         Events.formeoAddedField({ componentId: 'field-test' })
       })
     })
+
+    it('should call generic onAdd callback for row additions', () => {
+      return new Promise(resolve => {
+        const onAdd = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_ROW)
+          resolve()
+        })
+
+        Events.init({ onAdd })
+
+        Events.formeoAddedRow({ componentId: 'row-test' })
+      })
+    })
+
+    it('should call generic onAdd callback for column additions', () => {
+      return new Promise(resolve => {
+        const onAdd = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_COLUMN)
+          resolve()
+        })
+
+        Events.init({ onAdd })
+
+        Events.formeoAddedColumn({ componentId: 'column-test' })
+      })
+    })
+
+    it('should call generic onAdd callback for field additions', () => {
+      return new Promise(resolve => {
+        const onAdd = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_FIELD)
+          resolve()
+        })
+
+        Events.init({ onAdd })
+
+        Events.formeoAddedField({ componentId: 'field-test' })
+      })
+    })
+
+    it('should call both generic onAdd and specific onAddRow callbacks', () => {
+      return new Promise(resolve => {
+        let calls = 0
+        const onAdd = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_ROW)
+          calls++
+          if (calls === 2) resolve()
+        })
+        const onAddRow = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_ADDED_ROW)
+          calls++
+          if (calls === 2) resolve()
+        })
+
+        Events.init({ onAdd, onAddRow })
+
+        Events.formeoAddedRow({ componentId: 'row-test' })
+      })
+    })
   })
 
   describe('Remove events', () => {
@@ -548,6 +607,65 @@ describe('Events System', () => {
         Events.init({ onRemoveField })
 
         Events.formeoRemovedField({ componentId: 'field-test' })
+      })
+    })
+
+    it('should call generic onRemove callback for row removals', () => {
+      return new Promise(resolve => {
+        const onRemove = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_ROW)
+          resolve()
+        })
+
+        Events.init({ onRemove })
+
+        Events.formeoRemovedRow({ componentId: 'row-test' })
+      })
+    })
+
+    it('should call generic onRemove callback for column removals', () => {
+      return new Promise(resolve => {
+        const onRemove = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_COLUMN)
+          resolve()
+        })
+
+        Events.init({ onRemove })
+
+        Events.formeoRemovedColumn({ componentId: 'column-test' })
+      })
+    })
+
+    it('should call generic onRemove callback for field removals', () => {
+      return new Promise(resolve => {
+        const onRemove = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_FIELD)
+          resolve()
+        })
+
+        Events.init({ onRemove })
+
+        Events.formeoRemovedField({ componentId: 'field-test' })
+      })
+    })
+
+    it('should call both generic onRemove and specific onRemoveRow callbacks', () => {
+      return new Promise(resolve => {
+        let calls = 0
+        const onRemove = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_ROW)
+          calls++
+          if (calls === 2) resolve()
+        })
+        const onRemoveRow = mock.fn(evt => {
+          assert.equal(evt.type, EVENT_FORMEO_REMOVED_ROW)
+          calls++
+          if (calls === 2) resolve()
+        })
+
+        Events.init({ onRemove, onRemoveRow })
+
+        Events.formeoRemovedRow({ componentId: 'row-test' })
       })
     })
   })

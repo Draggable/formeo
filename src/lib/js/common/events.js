@@ -33,6 +33,7 @@ const defaults = {
   bubbles: true, // bubble events from components
   formeoLoaded: _evt => {},
   onAdd: () => {},
+  onRemove: () => {},
   onChange: evt => events.opts?.debug && console.log(evt),
   onUpdate: evt => events.opts?.debug && console.log(evt),
   onUpdateStage: evt => events.opts?.debug && console.log(evt),
@@ -136,36 +137,42 @@ document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
 document.addEventListener(EVENT_FORMEO_ADDED_ROW, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
+  events.opts.onAdd(eventData)
   events.opts.onAddRow(eventData)
 })
 
 document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
+  events.opts.onAdd(eventData)
   events.opts.onAddColumn(eventData)
 })
 
 document.addEventListener(EVENT_FORMEO_ADDED_FIELD, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
+  events.opts.onAdd(eventData)
   events.opts.onAddField(eventData)
 })
 
 document.addEventListener(EVENT_FORMEO_REMOVED_ROW, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
+  events.opts.onRemove(eventData)
   events.opts.onRemoveRow(eventData)
 })
 
 document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
+  events.opts.onRemove(eventData)
   events.opts.onRemoveColumn(eventData)
 })
 
 document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, evt => {
   const { timeStamp, type, detail } = evt
   const eventData = { timeStamp, type, detail }
+  events.opts.onRemove(eventData)
   events.opts.onRemoveField(eventData)
 })
 
