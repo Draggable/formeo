@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.0.1
+Version: 5.0.2
 Author: Draggable https://draggable.io
 */
 
@@ -434,7 +434,7 @@ if (window !== void 0) {
   window.SmartTooltip = SmartTooltip;
 }
 const name$1 = "formeo";
-const version$2 = "5.0.1";
+const version$2 = "5.0.2";
 const pkg = {
   name: name$1,
   version: version$2
@@ -1206,9 +1206,9 @@ var hasRequired_cloneBuffer;
 function require_cloneBuffer() {
   if (hasRequired_cloneBuffer) return _cloneBuffer.exports;
   hasRequired_cloneBuffer = 1;
-  (function(module2, exports2) {
+  (function(module2, exports$1) {
     var root = require_root();
-    var freeExports = exports2 && !exports2.nodeType && exports2;
+    var freeExports = exports$1 && !exports$1.nodeType && exports$1;
     var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var Buffer = moduleExports ? root.Buffer : void 0, allocUnsafe = Buffer ? Buffer.allocUnsafe : void 0;
@@ -1454,9 +1454,9 @@ var hasRequiredIsBuffer;
 function requireIsBuffer() {
   if (hasRequiredIsBuffer) return isBuffer.exports;
   hasRequiredIsBuffer = 1;
-  (function(module2, exports2) {
+  (function(module2, exports$1) {
     var root = require_root(), stubFalse = requireStubFalse();
-    var freeExports = exports2 && !exports2.nodeType && exports2;
+    var freeExports = exports$1 && !exports$1.nodeType && exports$1;
     var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var Buffer = moduleExports ? root.Buffer : void 0;
@@ -1527,9 +1527,9 @@ var hasRequired_nodeUtil;
 function require_nodeUtil() {
   if (hasRequired_nodeUtil) return _nodeUtil.exports;
   hasRequired_nodeUtil = 1;
-  (function(module2, exports2) {
+  (function(module2, exports$1) {
     var freeGlobal = require_freeGlobal();
-    var freeExports = exports2 && !exports2.nodeType && exports2;
+    var freeExports = exports$1 && !exports$1.nodeType && exports$1;
     var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
     var moduleExports = freeModule && freeModule.exports === freeExports;
     var freeProcess = moduleExports && freeGlobal.process;
@@ -10063,12 +10063,12 @@ class Control {
         // will auto navigated between the groups
         focus: ({ target }) => {
           const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`);
-          return group && Controls$2.panels.nav.refresh(indexOfNode(group));
+          return group && Controls$1.panels.nav.refresh(indexOfNode(group));
         },
         click: ({ target }) => {
           const controlId = target.closest(".field-control")?.id;
           if (controlId) {
-            Controls$2.addElement(controlId);
+            Controls$1.addElement(controlId);
           }
         }
       }
@@ -10130,7 +10130,7 @@ const defaultOptions = Object.freeze({
   container: null,
   panels: { displayType: "slider" }
 });
-let Controls$1 = class Controls {
+let Controls$2 = class Controls {
   constructor() {
     this.data = /* @__PURE__ */ new Map();
     this.buttonActions = {
@@ -10440,11 +10440,11 @@ let Controls$1 = class Controls {
     return Promise.all(this.registerControls([...allControls, ...elements]));
   };
 };
-const Controls$2 = new Controls$1();
+const Controls$1 = new Controls$2();
 const index$7 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
   __proto__: null,
-  Controls: Controls$1,
-  default: Controls$2
+  Controls: Controls$2,
+  default: Controls$1
 }, Symbol.toStringTag, { value: "Module" }));
 const checkableTypes = /* @__PURE__ */ new Set(["checkbox", "radio"]);
 const isSelectableType = /* @__PURE__ */ new Set(["radio", "checkbox", "select-one", "select-multiple"]);
@@ -10672,7 +10672,7 @@ let Fields$1 = class Fields extends ComponentData {
   get = (path) => {
     let found = path && get(this.data, path);
     if (!found) {
-      const control = Controls$2.get(path);
+      const control = Controls$1.get(path);
       if (control) {
         found = this.add(null, control.controlData);
       }
@@ -10714,7 +10714,7 @@ const Stages2 = stages;
 const Rows2 = rows;
 const Columns2 = columns;
 const Fields2 = fields;
-const Controls2 = Controls$2;
+const Controls2 = Controls$1;
 const getFormData = (formData, useSessionStorage = false) => {
   if (formData !== void 0 && formData !== null) {
     const parsed = parseData(formData);
@@ -10855,6 +10855,8 @@ const defaults$1 = {
   },
   onAdd: () => {
   },
+  onRemove: () => {
+  },
   onChange: (evt) => events.opts?.debug && console.log(evt),
   onUpdate: (evt) => events.opts?.debug && console.log(evt),
   onUpdateStage: (evt) => events.opts?.debug && console.log(evt),
@@ -10947,31 +10949,37 @@ document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
 document.addEventListener(EVENT_FORMEO_ADDED_ROW, (evt) => {
   const { timeStamp, type, detail } = evt;
   const eventData = { timeStamp, type, detail };
+  events.opts.onAdd(eventData);
   events.opts.onAddRow(eventData);
 });
 document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, (evt) => {
   const { timeStamp, type, detail } = evt;
   const eventData = { timeStamp, type, detail };
+  events.opts.onAdd(eventData);
   events.opts.onAddColumn(eventData);
 });
 document.addEventListener(EVENT_FORMEO_ADDED_FIELD, (evt) => {
   const { timeStamp, type, detail } = evt;
   const eventData = { timeStamp, type, detail };
+  events.opts.onAdd(eventData);
   events.opts.onAddField(eventData);
 });
 document.addEventListener(EVENT_FORMEO_REMOVED_ROW, (evt) => {
   const { timeStamp, type, detail } = evt;
   const eventData = { timeStamp, type, detail };
+  events.opts.onRemove(eventData);
   events.opts.onRemoveRow(eventData);
 });
 document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, (evt) => {
   const { timeStamp, type, detail } = evt;
   const eventData = { timeStamp, type, detail };
+  events.opts.onRemove(eventData);
   events.opts.onRemoveColumn(eventData);
 });
 document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, (evt) => {
   const { timeStamp, type, detail } = evt;
   const eventData = { timeStamp, type, detail };
+  events.opts.onRemove(eventData);
   events.opts.onRemoveField(eventData);
 });
 document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
@@ -11243,7 +11251,7 @@ let FormeoEditor$1 = class FormeoEditor {
       return this.#refreshUI();
     }
     this.#initState = INIT_STATES.INITIALIZING;
-    this.#initPromise = Controls$2.init(this.opts.controls, this.opts.stickyControls).then((controls) => {
+    this.#initPromise = Controls$1.init(this.opts.controls, this.opts.stickyControls).then((controls) => {
       this.controls = controls;
       if (!this.#dataLoadedOnce) {
         this.#loadInitialData();
@@ -11280,7 +11288,7 @@ let FormeoEditor$1 = class FormeoEditor {
    * @return {Promise}
    */
   async #refreshUI() {
-    this.controls = await Controls$2.init(this.opts.controls, this.opts.stickyControls);
+    this.controls = await Controls$1.init(this.opts.controls, this.opts.stickyControls);
     this.render();
     return this;
   }

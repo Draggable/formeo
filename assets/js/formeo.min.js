@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.0.1
+Version: 5.0.2
 Author: Draggable https://draggable.io
 */
 
@@ -436,7 +436,7 @@ Author: Draggable https://draggable.io
     window.SmartTooltip = SmartTooltip;
   }
   const name$1 = "formeo";
-  const version$2 = "5.0.1";
+  const version$2 = "5.0.2";
   const pkg = {
     name: name$1,
     version: version$2
@@ -1208,9 +1208,9 @@ Author: Draggable https://draggable.io
   function require_cloneBuffer() {
     if (hasRequired_cloneBuffer) return _cloneBuffer.exports;
     hasRequired_cloneBuffer = 1;
-    (function(module2, exports3) {
+    (function(module2, exports$1) {
       var root = require_root();
-      var freeExports = exports3 && !exports3.nodeType && exports3;
+      var freeExports = exports$1 && !exports$1.nodeType && exports$1;
       var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
       var moduleExports = freeModule && freeModule.exports === freeExports;
       var Buffer = moduleExports ? root.Buffer : void 0, allocUnsafe = Buffer ? Buffer.allocUnsafe : void 0;
@@ -1456,9 +1456,9 @@ Author: Draggable https://draggable.io
   function requireIsBuffer() {
     if (hasRequiredIsBuffer) return isBuffer.exports;
     hasRequiredIsBuffer = 1;
-    (function(module2, exports3) {
+    (function(module2, exports$1) {
       var root = require_root(), stubFalse = requireStubFalse();
-      var freeExports = exports3 && !exports3.nodeType && exports3;
+      var freeExports = exports$1 && !exports$1.nodeType && exports$1;
       var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
       var moduleExports = freeModule && freeModule.exports === freeExports;
       var Buffer = moduleExports ? root.Buffer : void 0;
@@ -1529,9 +1529,9 @@ Author: Draggable https://draggable.io
   function require_nodeUtil() {
     if (hasRequired_nodeUtil) return _nodeUtil.exports;
     hasRequired_nodeUtil = 1;
-    (function(module2, exports3) {
+    (function(module2, exports$1) {
       var freeGlobal = require_freeGlobal();
-      var freeExports = exports3 && !exports3.nodeType && exports3;
+      var freeExports = exports$1 && !exports$1.nodeType && exports$1;
       var freeModule = freeExports && true && module2 && !module2.nodeType && module2;
       var moduleExports = freeModule && freeModule.exports === freeExports;
       var freeProcess = moduleExports && freeGlobal.process;
@@ -10857,6 +10857,8 @@ Author: Draggable https://draggable.io
     },
     onAdd: () => {
     },
+    onRemove: () => {
+    },
     onChange: (evt) => events.opts?.debug && console.log(evt),
     onUpdate: (evt) => events.opts?.debug && console.log(evt),
     onUpdateStage: (evt) => events.opts?.debug && console.log(evt),
@@ -10949,31 +10951,37 @@ Author: Draggable https://draggable.io
   document.addEventListener(EVENT_FORMEO_ADDED_ROW, (evt) => {
     const { timeStamp, type, detail } = evt;
     const eventData = { timeStamp, type, detail };
+    events.opts.onAdd(eventData);
     events.opts.onAddRow(eventData);
   });
   document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, (evt) => {
     const { timeStamp, type, detail } = evt;
     const eventData = { timeStamp, type, detail };
+    events.opts.onAdd(eventData);
     events.opts.onAddColumn(eventData);
   });
   document.addEventListener(EVENT_FORMEO_ADDED_FIELD, (evt) => {
     const { timeStamp, type, detail } = evt;
     const eventData = { timeStamp, type, detail };
+    events.opts.onAdd(eventData);
     events.opts.onAddField(eventData);
   });
   document.addEventListener(EVENT_FORMEO_REMOVED_ROW, (evt) => {
     const { timeStamp, type, detail } = evt;
     const eventData = { timeStamp, type, detail };
+    events.opts.onRemove(eventData);
     events.opts.onRemoveRow(eventData);
   });
   document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, (evt) => {
     const { timeStamp, type, detail } = evt;
     const eventData = { timeStamp, type, detail };
+    events.opts.onRemove(eventData);
     events.opts.onRemoveColumn(eventData);
   });
   document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, (evt) => {
     const { timeStamp, type, detail } = evt;
     const eventData = { timeStamp, type, detail };
+    events.opts.onRemove(eventData);
     events.opts.onRemoveField(eventData);
   });
   document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
