@@ -1,3 +1,11 @@
+## [5.0.3](https://github.com/Draggable/formeo/compare/v5.0.2...v5.0.3) (2026-05-16)
+
+
+### Bug Fixes
+
+* deprecated sass if ([b7f5b2c](https://github.com/Draggable/formeo/commit/b7f5b2c6a012d892f791aa5b4b8ce64b3a139ff7))
+* esbuild ([0ed8fd5](https://github.com/Draggable/formeo/commit/0ed8fd5659249a6df333b2af3096eda878ff6370))
+
 ## [5.0.2](https://github.com/Draggable/formeo/compare/v5.0.1...v5.0.2) (2026-05-16)
 
 
