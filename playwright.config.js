@@ -75,12 +75,12 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npm run dev',
+    command: 'npx --no-install vite --no-open',
+    env: { NODE_ENV: 'development' },
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
-    stdout: 'pipe',
-    stderr: 'pipe',
+    gracefulShutdown: { signal: 'SIGTERM', timeout: 5000 },
   },
   timeout: 30000,
 })
