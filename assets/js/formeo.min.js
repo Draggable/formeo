@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.1.0
+Version: 5.1.1
 Author: Draggable https://draggable.io
 */
 
@@ -6064,7 +6064,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.1.0";
+		version$2 = "5.1.1";
 		type = "module";
 		main = "dist/formeo.cjs.js";
 		module$1 = "dist/formeo.es.js";
@@ -11984,7 +11984,7 @@ Author: Draggable https://draggable.io
 	}));
 	//#endregion
 	//#region src/lib/js/common/loaders.js
-	var loaded, ajax, onLoadStylesheet, onLoadJavascript, insertScript, insertStyle, insertScripts, insertStyles, insertIcons, fetchIcons, LOADER_MAP, fetchDependencies, fetchFormeoStyle;
+	var loaded, AJAX_TIMEOUT_MS, ajax, onLoadStylesheet, onLoadJavascript, insertScript, insertStyle, insertScripts, insertStyles, insertIcons, fetchIcons, LOADER_MAP, fetchDependencies, fetchFormeoStyle;
 	var init_loaders = __esmMin((() => {
 		init_constants();
 		init_dom();
@@ -11994,12 +11994,14 @@ Author: Draggable https://draggable.io
 			css: /* @__PURE__ */ new Set(),
 			formeoSprite: null
 		};
-		ajax = (fileUrl, callback, onError = noop) => {
+		AJAX_TIMEOUT_MS = 1e4;
+		ajax = (fileUrl, callback, onError = noop, timeoutMs = AJAX_TIMEOUT_MS) => {
 			return new Promise((resolve) => {
-				return fetch(fileUrl).then((data) => {
+				const signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : void 0;
+				return fetch(fileUrl, signal ? { signal } : void 0).then((data) => {
 					if (!data.ok) return resolve(onError(data));
 					resolve(callback ? callback(data) : data);
-				}).catch((err) => onError(err));
+				}).catch((err) => resolve(onError(err)));
 			});
 		};
 		onLoadStylesheet = (elem, cb) => {
