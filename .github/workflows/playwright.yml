@@ -10,8 +10,8 @@ jobs:
     env:
       CI: true
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+    - uses: actions/checkout@v6
+    - uses: actions/setup-node@v6
       with:
         cache: 'npm'
         node-version: 24
@@ -21,7 +21,7 @@ jobs:
       run: npx playwright install --with-deps
     - name: Run Playwright tests
       run: npm run playwright:test:ci
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v7
       if: ${{ !cancelled() }}
       with:
         name: playwright-report
