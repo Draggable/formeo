@@ -1,3 +1,10 @@
+## [5.0.2](https://github.com/Draggable/formeo/compare/v5.0.1...v5.0.2) (2026-05-16)
+
+
+### Bug Fixes
+
+* wire up generic onAdd and onRemove event callbacks (issue [#160](https://github.com/Draggable/formeo/issues/160)) ([f2e04e8](https://github.com/Draggable/formeo/commit/f2e04e8c12d8b573c58f3b27fd90b042b9642855))
+
 ## [5.0.1](https://github.com/Draggable/formeo/compare/v5.0.0...v5.0.1) (2026-01-30)
 
 
