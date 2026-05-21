@@ -78,6 +78,13 @@ export class FormeoEditor {
     this.Components.config = config
 
     this.dom = dom
+    this.loadResources = this.loadResources.bind(this)
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', this.loadResources)
+    } else {
+      this.loadResources()
+    }
   }
 
   get formData() {
@@ -241,11 +248,13 @@ export class FormeoEditor {
    * @return {Promise}
    */
   async #refreshUI() {
+    this.events.removeListeners()
     // Create fresh Controls instance for UI refresh
     const controlsInstance = new Controls(this.Components)
     this.controls = await controlsInstance.init(this.opts.controls, this.opts.stickyControls)
     this.Components.setControls(this.controls)
     this.render()
+    this.events.registerListeners(this.Components, this.Components.columns, this.controls)
     return this
   }
 

@@ -40,7 +40,12 @@ export default class ComponentData extends Data {
    */
   add = (id, data = Object.create(null)) => {
     const elemId = id || uuid()
-    const component = this.Component({ ...data, id: elemId })
+    const component = this.Component({
+      ...data,
+      id: elemId,
+      __events: this.events,
+      __components: this.components,
+    })
     this.data[elemId] = component
     this.active = component
 

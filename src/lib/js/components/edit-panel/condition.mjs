@@ -46,9 +46,10 @@ export class Condition {
   }
 
   destroy() {
-    const conditions = Components.getAddress(this.baseAddress)
+    const componentsRef = this.components || Components
+    const conditions = componentsRef.getAddress(this.baseAddress)
     conditions.splice(this.index, 1)
-    Components.setAddress(this.baseAddress, conditions)
+    componentsRef.setAddress(this.baseAddress, conditions)
     animate.slideUp(this.dom, ANIMATION_SPEED_FAST, () => {
       this.dom.remove()
     })

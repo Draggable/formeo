@@ -159,6 +159,8 @@ export class Controls {
       return null
     }
     const componentsRef = this.components
+    const actionsRef = componentsRef?.actions || actions
+    const eventsRef = componentsRef?.events || events
     const clearBtn = {
       ...dom.btnTemplate({ content: [dom.icon('bin'), i18n.get('clear')], title: i18n.get('clearAll') }),
       className: ['clear-form'],
@@ -166,7 +168,7 @@ export class Controls {
         click: evt => {
           const rowsRef = componentsRef?.rows || Rows
           if (rowsRef.size) {
-            events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
+            const confirmClearEvent = new window.CustomEvent('confirmClearAll', {
               detail: {
                 confirmationMessage: i18n.get('confirmClearAll'),
                 clearAllAction: () => {
@@ -175,14 +177,14 @@ export class Controls {
                     const evtData = {
                       src: evt.target,
                     }
-                    events.formeoCleared(evtData)
+                    eventsRef.formeoCleared(evtData)
                   })
                 },
                 btnCoords: dom.coords(evt.target),
               },
             })
 
-            document.dispatchEvent(events.confirmClearAll)
+            eventsRef.container.dispatchEvent(confirmClearEvent)
           } else {
             window.alert(i18n.get('cannotClearFields'))
           }
@@ -203,9 +205,9 @@ export class Controls {
             message: '',
             button: target,
           }
-          actions.click.btn(saveEvt)
+          actionsRef.click.btn(saveEvt)
 
-          return actions.save.form(formData)
+          return actionsRef.save.form(formData)
         },
       },
     }

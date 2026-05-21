@@ -32,14 +32,15 @@ const propertyOptions = objectFromStringArray(PROPERTY_OPTIONS)
 
 export default class Component extends Data {
   constructor(name, dataArg = {}) {
-    const data = { ...dataArg, id: dataArg.id || uuid() }
-    super(name, data)
+    const { __events: eventsRefFromData, __components: componentsRefFromData, ...componentDataArg } = dataArg
+    const data = { ...componentDataArg, id: componentDataArg.id || uuid() }
+    const componentsRef = componentsRefFromData || Components
+    super(name, data, eventsRefFromData || componentsRef?.events || events)
     this.id = data.id
     this.shortId = this.id.slice(0, this.id.indexOf('-'))
     this.name = name
     this.indexName = `${name}s`
-    // Use instance components if set, otherwise fall back to global Components
-    const componentsRef = this.components || Components
+    this.components = componentsRef
     this.config = { ...data.config, ...componentsRef[`${this.name}s`]?.config }
     this.address = `${this.name}s.${this.id}`
     this.dataPath = `${this.address}.`
@@ -56,6 +57,7 @@ export default class Component extends Data {
    */
   setComponents(components) {
     this.components = components
+    this.events = components?.events || this.events
   }
 
   /**

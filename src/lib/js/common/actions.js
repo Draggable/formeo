@@ -1,22 +1,25 @@
 import i18n from '@draggable/i18n'
 import { CONDITION_TEMPLATE, SESSION_FORMDATA_KEY } from '../constants.js'
+import events from './events.js'
 import { identity, sessionStorage } from './utils/index.mjs'
 
 // Default options
+const addAttributeAction = evt => {
+  const attr = globalThis.prompt(evt.message.attr)
+  if (attr && evt.isDisabled(attr)) {
+    globalThis.alert(i18n.get('attributeNotPermitted', attr))
+    return addAttributeAction(evt)
+  }
+  let val
+  if (attr) {
+    val = String(globalThis.prompt(evt.message.value, ''))
+    evt.addAction(attr, val)
+  }
+}
+
 const defaultActions = {
   add: {
-    attr: evt => {
-      const attr = globalThis.prompt(evt.message.attr)
-      if (attr && evt.isDisabled(attr)) {
-        globalThis.alert(i18n.get('attributeNotPermitted', attr))
-        return this.add.attrs(evt)
-      }
-      let val
-      if (attr) {
-        val = String(globalThis.prompt(evt.message.value, ''))
-        evt.addAction(attr, val)
-      }
-    },
+    attr: addAttributeAction,
     option: evt => {
       evt.addAction()
     },
@@ -115,15 +118,13 @@ export class Actions {
       if (this.opts.sessionStorage) {
         sessionStorage.set(SESSION_FORMDATA_KEY, formData)
       }
-      this.events.formeoSaved({ formData })
+      this.events?.formeoSaved({ formData })
       return this.opts.save.form(formData)
     },
   }
 }
 
 // Singleton instance for backward compatibility
-// Note: this singleton uses a placeholder events reference
-// that will be replaced when the editor creates its own Actions instance
-const actions = new Actions(null)
+const actions = new Actions(events)
 
 export default actions

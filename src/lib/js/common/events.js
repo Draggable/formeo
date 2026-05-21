@@ -78,6 +78,9 @@ export class Events {
     // Auto-register listeners for the singleton (backward compatibility with tests)
     // Per-instance Events objects should call registerListeners() explicitly
     if (this === events) {
+      if (this._autoRegistered) {
+        this.removeListeners()
+      }
       this._autoRegistered = true
       for (const { event, handler } of this._getBasicListeners()) {
         this.container.addEventListener(event, handler)
