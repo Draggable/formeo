@@ -127,7 +127,7 @@ const editor = new FormeoEditor({
     onSave: (formData) => {
       console.log('Form saved:', formData)
       // Render the form
-      renderer.render(formData)
+      renderer.render(formData.formData)
     }
   }
 })
