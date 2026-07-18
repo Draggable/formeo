@@ -105,7 +105,7 @@ fetch('/api/forms', {
 // <div id="formeo-renderer"></div>
 
 const rendererOptions = {
-  editorContainer: '#formeo-renderer',
+  renderContainer: '#formeo-renderer',
   // Add any additional options here
 }
 
@@ -134,7 +134,7 @@ const editor = new FormeoEditor({
 
 // Set up the renderer
 const renderer = new FormeoRenderer({
-  editorContainer: '#formeo-renderer'
+  renderContainer: '#formeo-renderer'
 })
 ```
 
