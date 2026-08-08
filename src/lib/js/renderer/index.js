@@ -178,7 +178,6 @@ export default class FormeoRenderer {
   processColumn = ({ id, ...columnData }) => ({
     ...columnData,
     id: this.prefixId(id),
-    config: layoutConfig(columnData.config),
     children: this.processFields(columnData.children),
     style: `width: ${columnData.config.width || '100%'}`,
   })
@@ -204,12 +203,7 @@ export default class FormeoRenderer {
   processRow = (data, type = 'row') => {
     const { config, id } = data
     const className = [`formeo-${type}-wrap`]
-    const rowData = {
-      ...data,
-      config: layoutConfig(config),
-      children: this.processColumns(data.id),
-      id: this.prefixId(id),
-    }
+    const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) }
     this.cacheComponent(rowData)
 
     const configConditions = [
@@ -452,15 +446,6 @@ export default class FormeoRenderer {
     return components
   }
 }
-
-/**
- * Rows and columns carry an editor-side `config.label` — "row", "column" — that belongs to
- * the stage, not to the rendered form, where a layout container titles itself with
- * `config.legend`. Without this the render grows a stray `<label>row</label>` per row.
- * @param  {Object} config
- * @return {Object} config that renders no label of its own
- */
-const layoutConfig = (config = {}) => ({ ...config, hideLabel: true })
 
 const isDomNode = value => Boolean(value) && typeof value.nodeType === 'number'
 

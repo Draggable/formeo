@@ -568,7 +568,11 @@ export default class Component extends Data {
 
         set(elementData, 'config.controlId', metaId)
 
-        const controlType = metaId.startsWith('layout-') ? metaId.replace(/^layout-/, '') : 'field'
+        const isLayoutControl = metaId.startsWith('layout-')
+        const controlType = isLayoutControl ? metaId.replace(/^layout-/, '') : 'field'
+        // a layout control carries only the caption of its panel button, never data for the
+        // row or column it creates, which start from their own defaults like they do on click
+        const componentData = isLayoutControl ? {} : elementData
         const targets = {
           stage: {
             row: 0,
@@ -590,7 +594,7 @@ export default class Component extends Data {
         const depth = get(targets, `${this.name}.${controlType}`)
         const action = depthMap.get(depth)()
         dom.remove(item)
-        const component = action(elementData, newIndex)
+        const component = action(componentData, newIndex)
 
         return component
       },
