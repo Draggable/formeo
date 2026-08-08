@@ -7,6 +7,7 @@ import {
   baseId,
   comparisonMap,
   createRemoveButton,
+  isCheckableGroup,
   processOptions,
   propertyMap,
   RENDER_PREFIX,
@@ -299,7 +300,12 @@ export default class FormeoRenderer {
    * @return {Array} flattened array of conditions
    */
   handleComponentCondition = (component, ifRest, thenConditions) => {
-    if (component.length) {
+    if (!component) {
+      return
+    }
+
+    // a <select> has a native `length` (its option count), so only real collections may be spread
+    if (isNodeCollection(component)) {
       for (const elem of component) {
         this.handleComponentCondition(elem, ifRest, thenConditions)
       }
@@ -333,27 +339,33 @@ export default class FormeoRenderer {
 
   applyConditions = () => {
     for (const { conditions } of Object.values(this.components)) {
-      if (conditions) {
-        for (const condition of conditions) {
-          const { if: ifConditions, then: thenConditions } = condition
+      if (!conditions) {
+        continue
+      }
 
-          for (const ifCondition of ifConditions) {
-            const { source, target } = ifCondition
+      for (const condition of conditions) {
+        const { if: ifConditions = [], then: thenConditions = [] } = condition
 
-            if (isAddress(source)) {
-              const { component, options } = this.getComponent(source)
-              const sourceComponent = options || component
-              this.handleComponentCondition(sourceComponent, ifCondition, thenConditions)
-            }
-
-            if (isAddress(target)) {
-              const { component, options } = this.getComponent(target)
-              const targetComponent = options || component
-              this.handleComponentCondition(targetComponent, ifCondition, thenConditions)
-            }
+        for (const ifCondition of ifConditions) {
+          // a single unusable condition must never abort the render of the whole form
+          try {
+            this.applyCondition(ifCondition, thenConditions)
+          } catch (err) {
+            console.error('formeo: condition skipped', ifCondition, err)
           }
         }
       }
+    }
+  }
+
+  applyCondition = (ifCondition, thenConditions) => {
+    for (const address of [ifCondition.source, ifCondition.target]) {
+      if (!isAddress(address)) {
+        continue
+      }
+
+      const { component, options } = this.getComponent(address)
+      this.handleComponentCondition(options || component, ifCondition, thenConditions)
     }
   }
 
@@ -384,11 +396,16 @@ export default class FormeoRenderer {
   }
 
   getComponentProperty = (address, propertyName) => {
-    const { component, option } = this.getComponent(address)
+    const { component, option } = this.getComponent(address) || {}
 
     const elem = option || component
 
-    return propertyMap[propertyName]?.(elem) || elem[propertyName]
+    if (!elem) {
+      return undefined
+    }
+
+    // a mapped property must win even when it legitimately resolves to false or an empty value
+    return propertyMap[propertyName] ? propertyMap[propertyName](elem) : elem[propertyName]
   }
 
   getComponent = address => {
@@ -430,9 +447,17 @@ export default class FormeoRenderer {
   }
 }
 
+const isDomNode = value => Boolean(value) && typeof value.nodeType === 'number'
+
+const isNodeCollection = value => Boolean(value) && !isDomNode(value) && typeof value.length === 'number'
+
+const tagName = component => component.tagName?.toLowerCase()
+
 const listenTypeMap = [
-  ['input', c => ['textarea', 'text'].includes(c.type)],
-  ['change', c => ['select'].includes(c.tagName.toLowerCase()) || ['checkbox', 'radio'].includes(c.type)],
+  // option inputs sit inside the group wrapper the address resolves to; change events bubble up to it
+  ['change', component => isCheckableGroup(component)],
+  ['change', component => tagName(component) === 'select' || ['checkbox', 'radio'].includes(component.type)],
+  ['input', component => ['input', 'textarea'].includes(tagName(component))],
 ]
 
 const LISTEN_TYPE_MAP = component => {
