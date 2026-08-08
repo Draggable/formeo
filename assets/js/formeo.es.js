@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.1.1
+Version: 5.1.2
 Author: Draggable https://draggable.io
 */
 
@@ -70,7 +70,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Laat Kies toe",
 		and: "en",
 		attribute: "kenmerk",
-		attributeNotPermitted: `Attribuut "{attribuut}" is nie toegelaat nie, kies asseblief 'n ander.`,
+		attributeNotPermitted: "Attribuut \"{attribuut}\" is nie toegelaat nie, kies asseblief 'n ander.",
 		attributes: "eienskappe",
 		"attrs.class": "klas",
 		"attrs.className": "klas",
@@ -2123,7 +2123,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"row.makeInputGroup": "Définir cette ligne comme groupe de saisie.",
 		"row.makeInputGroupDesc": "Les groupes de saisie permettent aux usagers de rajouter de multiples champs à la fois.",
 		"row.settings.fieldsetWrap": "Entourer le champ d'un élément &lt;fieldset&gt;",
-		"row.settings.fieldsetWrap.aria": `Entourer le champ d'un "Fieldset"`,
+		"row.settings.fieldsetWrap.aria": "Entourer le champ d'un \"Fieldset\"",
 		save: "Sauvegarder",
 		secondary: "Secondaire",
 		select: "Sélection",
@@ -2898,7 +2898,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Consenti selezione",
 		and: "e",
 		attribute: "Attributo",
-		attributeNotPermitted: `L'attributo "{attribute}" non è permesso, per favore sceglierne un altro.`,
+		attributeNotPermitted: "L'attributo \"{attribute}\" non è permesso, per favore sceglierne un altro.",
 		attributes: "attributi",
 		"attrs.class": "Classe",
 		"attrs.className": "Classe",
@@ -5707,10 +5707,10 @@ e$1["de-DE"];
 //#region node_modules/@draggable/formeo-languages/dist/formeo-languages.es.js
 /**
 @draggable/formeo-languages - https://github.com/Draggable/formeo-languages#readme
-Version: 3.4.1
+Version: 3.5.0
 Author: Kevin Chappell <kevin.b.chappell@gmail.com> (https://kevin-chappell.com)
 */
-var i = e$1["en-US"];
+var s$1 = e$1["en-US"];
 e$1["es-ES"];
 e$1["fa-IR"];
 e$1["fi-FI"];
@@ -6060,7 +6060,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.1.1";
+	version$2 = "5.1.2";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -10066,7 +10066,7 @@ function _typeof(o) {
 	}, _typeof(o);
 }
 function userAgent(pattern) {
-	if (typeof window !== "undefined" && window.navigator) return !!/* @__PURE__ */ navigator.userAgent.match(pattern);
+	if (typeof window !== "undefined" && window.navigator) return !!/*@__PURE__*/ navigator.userAgent.match(pattern);
 }
 function on(el, event, fn) {
 	el.addEventListener(event, fn, !IE11OrLess && captureMode);
@@ -17896,7 +17896,7 @@ var FormeoEditor$1 = class {
 			fetchIcons(this.opts.svgSprite),
 			fetchFormeoStyle(this.opts.style),
 			s.init({
-				preloaded: { "en-US": i },
+				preloaded: { "en-US": s$1 },
 				...this.opts.i18n,
 				locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY)
 			})
@@ -18072,20 +18072,56 @@ var baseId = (id) => {
 };
 var isVisible = (elem) => {
 	if (!elem) return false;
-	if (elem.hasAttribute("hidden") || elem.parentElement.hasAttribute("hidden")) return false;
+	if (elem.hasAttribute("hidden") || elem.parentElement?.hasAttribute("hidden")) return false;
 	const computedStyle = window.getComputedStyle(elem);
 	return !(computedStyle.display === "none" || computedStyle.visibility === "hidden" || computedStyle.opacity === "0");
 };
+var CHECKABLE_INPUT_SELECTOR = "input[type=\"checkbox\"], input[type=\"radio\"]";
+var CHECKABLE_TYPES = new Set(["checkbox", "radio"]);
+var tagName$1 = (elem) => elem?.tagName?.toLowerCase();
+var isCheckableInput = (elem) => tagName$1(elem) === "input" && CHECKABLE_TYPES.has(elem.type);
+/**
+* Radio and checkbox fields render as a wrapper holding one input per option, so a
+* field address resolves to the wrapper rather than to anything carrying a value.
+* @param  {Element} elem
+* @return {Array<Element>|null} option inputs, or null when elem is not a group
+*/
+var checkableGroupInputs = (elem) => {
+	if (!elem || isCheckableInput(elem) || typeof elem.querySelectorAll !== "function") return null;
+	const inputs = elem.querySelectorAll(CHECKABLE_INPUT_SELECTOR);
+	return inputs.length ? Array.from(inputs) : null;
+};
+var isCheckableGroup = (elem) => Boolean(checkableGroupInputs(elem));
+/**
+* Value a condition compares against. Controls that can hold several values at once
+* yield an array so that a single selection still matches an `equals` comparison.
+* @param  {Element} elem
+* @return {String|Array<String>|undefined}
+*/
+var elementValue = (elem) => {
+	if (!elem) return;
+	const groupInputs = checkableGroupInputs(elem);
+	if (groupInputs) {
+		const checkedValues = groupInputs.filter((input) => input.checked).map((input) => input.value);
+		return groupInputs.every((input) => input.type === "radio") ? checkedValues[0] ?? "" : checkedValues;
+	}
+	if (tagName$1(elem) === "select" && elem.multiple) return Array.from(elem.selectedOptions, (option) => option.value);
+	if (isCheckableInput(elem)) return elem.checked ? elem.value : "";
+	return elem.value;
+};
+var isChecked = (elem) => {
+	const groupInputs = checkableGroupInputs(elem);
+	return groupInputs ? groupInputs.some((input) => input.checked) : Boolean(elem?.checked);
+};
 var propertyMap = {
 	isChecked: (elem) => {
-		return elem.checked;
+		return isChecked(elem);
 	},
 	isNotChecked: (elem) => {
-		return !elem.checked;
+		return !isChecked(elem);
 	},
-	value: (elem) => {
-		return elem.value;
-	},
+	value: elementValue,
+	checked: elementValue,
 	isVisible: (elem) => {
 		return isVisible(elem);
 	},
@@ -18102,11 +18138,16 @@ var createRemoveButton = () => dom.btnTemplate({
 		click: ({ target }) => target.parentElement.remove()
 	}
 });
+var equals = (source, target) => Array.isArray(source) ? source.some((value) => (0, import_isEqual.default)(value, target)) : (0, import_isEqual.default)(source, target);
+var contains = (source, target) => {
+	if (source == null) return false;
+	return Array.isArray(source) ? source.includes(target) : String(source).includes(target);
+};
 var comparisonHandlers = {
-	equals: import_isEqual.default,
-	notEquals: (source, target) => !(0, import_isEqual.default)(source, target),
-	contains: (source, target) => source.includes(target),
-	notContains: (source, target) => !source.includes(target)
+	equals,
+	notEquals: (source, target) => !equals(source, target),
+	contains,
+	notContains: (source, target) => !contains(source, target)
 };
 var comparisonMap = Object.entries(COMPARISON_OPERATORS).reduce((acc, [key, value]) => {
 	acc[value] = comparisonHandlers[key];
@@ -18374,7 +18415,8 @@ var FormeoRenderer$1 = class {
 	* @return {Array} flattened array of conditions
 	*/
 	handleComponentCondition = (component, ifRest, thenConditions) => {
-		if (component.length) {
+		if (!component) return;
+		if (isNodeCollection(component)) {
 			for (const elem of component) this.handleComponentCondition(elem, ifRest, thenConditions);
 			return;
 		}
@@ -18386,21 +18428,23 @@ var FormeoRenderer$1 = class {
 		if (this.evaluateCondition(ifRest, fakeEvt)) for (const thenCondition of thenConditions) this.execResult(thenCondition, fakeEvt);
 	};
 	applyConditions = () => {
-		for (const { conditions } of Object.values(this.components)) if (conditions) for (const condition of conditions) {
-			const { if: ifConditions, then: thenConditions } = condition;
-			for (const ifCondition of ifConditions) {
-				const { source, target } = ifCondition;
-				if (isAddress(source)) {
-					const { component, options } = this.getComponent(source);
-					const sourceComponent = options || component;
-					this.handleComponentCondition(sourceComponent, ifCondition, thenConditions);
-				}
-				if (isAddress(target)) {
-					const { component, options } = this.getComponent(target);
-					const targetComponent = options || component;
-					this.handleComponentCondition(targetComponent, ifCondition, thenConditions);
+		for (const { conditions } of Object.values(this.components)) {
+			if (!conditions) continue;
+			for (const condition of conditions) {
+				const { if: ifConditions = [], then: thenConditions = [] } = condition;
+				for (const ifCondition of ifConditions) try {
+					this.applyCondition(ifCondition, thenConditions);
+				} catch (err) {
+					console.error("formeo: condition skipped", ifCondition, err);
 				}
 			}
+		}
+	};
+	applyCondition = (ifCondition, thenConditions) => {
+		for (const address of [ifCondition.source, ifCondition.target]) {
+			if (!isAddress(address)) continue;
+			const { component, options } = this.getComponent(address);
+			this.handleComponentCondition(options || component, ifCondition, thenConditions);
 		}
 	};
 	/**
@@ -18424,9 +18468,10 @@ var FormeoRenderer$1 = class {
 		}
 	};
 	getComponentProperty = (address, propertyName) => {
-		const { component, option } = this.getComponent(address);
+		const { component, option } = this.getComponent(address) || {};
 		const elem = option || component;
-		return propertyMap[propertyName]?.(elem) || elem[propertyName];
+		if (!elem) return;
+		return propertyMap[propertyName] ? propertyMap[propertyName](elem) : elem[propertyName];
 	};
 	getComponent = (address) => {
 		const result = { component: null };
@@ -18451,7 +18496,14 @@ var FormeoRenderer$1 = class {
 		return components;
 	};
 };
-var listenTypeMap = [["input", (c) => ["textarea", "text"].includes(c.type)], ["change", (c) => ["select"].includes(c.tagName.toLowerCase()) || ["checkbox", "radio"].includes(c.type)]];
+var isDomNode = (value) => Boolean(value) && typeof value.nodeType === "number";
+var isNodeCollection = (value) => Boolean(value) && !isDomNode(value) && typeof value.length === "number";
+var tagName = (component) => component.tagName?.toLowerCase();
+var listenTypeMap = [
+	["change", (component) => isCheckableGroup(component)],
+	["change", (component) => tagName(component) === "select" || ["checkbox", "radio"].includes(component.type)],
+	["input", (component) => ["input", "textarea"].includes(tagName(component))]
+];
 var LISTEN_TYPE_MAP = (component) => {
 	const [listenerEvent] = listenTypeMap.find((typeMap) => typeMap[1](component)) || [false];
 	return listenerEvent;
