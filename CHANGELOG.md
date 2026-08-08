@@ -1,3 +1,10 @@
+## [5.1.2](https://github.com/Draggable/formeo/compare/v5.1.1...v5.1.2) (2026-08-08)
+
+
+### Bug Fixes
+
+* resolve condition sources for groups, selects and non-text inputs ([206bf49](https://github.com/Draggable/formeo/commit/206bf4933e7a00dd47253b13b41c249931259ee4))
+
 ## [5.1.1](https://github.com/Draggable/formeo/compare/v5.1.0...v5.1.1) (2026-05-16)
 
 
