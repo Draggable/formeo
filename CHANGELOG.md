@@ -1,3 +1,11 @@
+## [5.1.3](https://github.com/Draggable/formeo/compare/v5.1.2...v5.1.3) (2026-08-08)
+
+
+### Bug Fixes
+
+* stop layout controls labelling the rows and columns they create ([5d3eef3](https://github.com/Draggable/formeo/commit/5d3eef39cbf9ad0be3e4dbd78a1171c07a309c46))
+* stop rows and columns rendering their editor label ([d85d730](https://github.com/Draggable/formeo/commit/d85d7309778240dcb61c084635f0834f2c835765))
+
 ## [5.1.2](https://github.com/Draggable/formeo/compare/v5.1.1...v5.1.2) (2026-08-08)
 
 
