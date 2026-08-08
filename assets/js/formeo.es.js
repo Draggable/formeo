@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.1.2
+Version: 5.1.3
 Author: Draggable https://draggable.io
 */
 
@@ -6060,7 +6060,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.1.2";
+	version$2 = "5.1.3";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -16667,7 +16667,9 @@ var init_component = __esmMin((() => {
 					}
 					const { controlData: { meta: { id: metaId }, ...elementData } } = Controls$1.get(item.id);
 					set(elementData, "config.controlId", metaId);
-					const controlType = metaId.startsWith("layout-") ? metaId.replace(/^layout-/, "") : "field";
+					const isLayoutControl = metaId.startsWith("layout-");
+					const controlType = isLayoutControl ? metaId.replace(/^layout-/, "") : "field";
+					const componentData = isLayoutControl ? {} : elementData;
 					const depth = get({
 						stage: {
 							row: 0,
@@ -16688,7 +16690,7 @@ var init_component = __esmMin((() => {
 					}, `${this.name}.${controlType}`);
 					const action = depthMap.get(depth)();
 					dom.remove(item);
-					return action(elementData, newIndex);
+					return action(componentData, newIndex);
 				},
 				row: () => {
 					return (depthMap.get({
