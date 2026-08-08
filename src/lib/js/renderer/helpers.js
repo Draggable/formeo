@@ -25,7 +25,7 @@ export const baseId = id => {
 const isVisible = elem => {
   if (!elem) return false
 
-  if (elem.hasAttribute('hidden') || elem.parentElement.hasAttribute('hidden')) {
+  if (elem.hasAttribute('hidden') || elem.parentElement?.hasAttribute('hidden')) {
     return false
   }
 
@@ -33,16 +33,76 @@ const isVisible = elem => {
   return !(computedStyle.display === 'none' || computedStyle.visibility === 'hidden' || computedStyle.opacity === '0')
 }
 
+const CHECKABLE_INPUT_SELECTOR = 'input[type="checkbox"], input[type="radio"]'
+const CHECKABLE_TYPES = new Set(['checkbox', 'radio'])
+
+const tagName = elem => elem?.tagName?.toLowerCase()
+
+const isCheckableInput = elem => tagName(elem) === 'input' && CHECKABLE_TYPES.has(elem.type)
+
+/**
+ * Radio and checkbox fields render as a wrapper holding one input per option, so a
+ * field address resolves to the wrapper rather than to anything carrying a value.
+ * @param  {Element} elem
+ * @return {Array<Element>|null} option inputs, or null when elem is not a group
+ */
+export const checkableGroupInputs = elem => {
+  if (!elem || isCheckableInput(elem) || typeof elem.querySelectorAll !== 'function') {
+    return null
+  }
+
+  const inputs = elem.querySelectorAll(CHECKABLE_INPUT_SELECTOR)
+
+  return inputs.length ? Array.from(inputs) : null
+}
+
+export const isCheckableGroup = elem => Boolean(checkableGroupInputs(elem))
+
+/**
+ * Value a condition compares against. Controls that can hold several values at once
+ * yield an array so that a single selection still matches an `equals` comparison.
+ * @param  {Element} elem
+ * @return {String|Array<String>|undefined}
+ */
+export const elementValue = elem => {
+  if (!elem) {
+    return undefined
+  }
+
+  const groupInputs = checkableGroupInputs(elem)
+  if (groupInputs) {
+    const checkedValues = groupInputs.filter(input => input.checked).map(input => input.value)
+
+    return groupInputs.every(input => input.type === 'radio') ? (checkedValues[0] ?? '') : checkedValues
+  }
+
+  if (tagName(elem) === 'select' && elem.multiple) {
+    return Array.from(elem.selectedOptions, option => option.value)
+  }
+
+  if (isCheckableInput(elem)) {
+    return elem.checked ? elem.value : ''
+  }
+
+  return elem.value
+}
+
+const isChecked = elem => {
+  const groupInputs = checkableGroupInputs(elem)
+
+  return groupInputs ? groupInputs.some(input => input.checked) : Boolean(elem?.checked)
+}
+
 export const propertyMap = {
   isChecked: elem => {
-    return elem.checked
+    return isChecked(elem)
   },
   isNotChecked: elem => {
-    return !elem.checked
+    return !isChecked(elem)
   },
-  value: elem => {
-    return elem.value
-  },
+  value: elementValue,
+  // "checked" is emitted by pre-v5 editors, where it stored the selected value rather than a boolean
+  checked: elementValue,
   isVisible: elem => {
     return isVisible(elem)
   },
@@ -62,11 +122,22 @@ export const createRemoveButton = () =>
     },
   })
 
+const equals = (source, target) =>
+  Array.isArray(source) ? source.some(value => isEqual(value, target)) : isEqual(source, target)
+
+const contains = (source, target) => {
+  if (source == null) {
+    return false
+  }
+
+  return Array.isArray(source) ? source.includes(target) : String(source).includes(target)
+}
+
 export const comparisonHandlers = {
-  equals: isEqual,
-  notEquals: (source, target) => !isEqual(source, target),
-  contains: (source, target) => source.includes(target),
-  notContains: (source, target) => !source.includes(target),
+  equals,
+  notEquals: (source, target) => !equals(source, target),
+  contains,
+  notContains: (source, target) => !contains(source, target),
 }
 
 export const comparisonMap = Object.entries(COMPARISON_OPERATORS).reduce((acc, [key, value]) => {
