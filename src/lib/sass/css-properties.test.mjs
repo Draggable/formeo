@@ -137,6 +137,11 @@ suite('resolveFormeoProperties purity', () => {
     t.assert.throws(() => resolveFormeoProperties(root + root + use), /at most one :where\(:root\) block, found 2/)
   })
 
+  test('counts a :where(:root) block nested in an at-rule', t => {
+    const nested = `@media print {\n  ${root}}\n`
+    t.assert.throws(() => resolveFormeoProperties(root + nested + use), /at most one :where\(:root\) block, found 2/)
+  })
+
   test('rejects more than one :where(.formeo-dark) block', t => {
     t.assert.throws(
       () => resolveFormeoProperties(root + dark + dark),

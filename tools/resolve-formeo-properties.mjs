@@ -1,7 +1,7 @@
 const escapeSelector = selector => selector.replace(/[()[\].]/g, m => `\\${m}`)
 
 /** A whole rule whose selector is exactly `selectorSource` (a regex source), starting where a rule may start. */
-const rule = selectorSource => new RegExp(String.raw`(?<=(?:^|[};]|\*/)\s*)${selectorSource}\s*\{([^}]*)\}\s*`, 'g')
+const rule = selectorSource => new RegExp(String.raw`(?<=(?:^|[{};]|\*/)\s*)${selectorSource}\s*\{([^}]*)\}\s*`, 'g')
 
 function splitDeclarations(body = '') {
   return body
