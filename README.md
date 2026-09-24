@@ -164,19 +164,34 @@ Formeo can be integrated with popular frontend frameworks:
 
 ## Theming
 
-Every color formeo uses is a CSS custom property declared on `:root` with zero specificity, so you can override any of them from your own stylesheet:
+Every color formeo uses is a `--formeo-*` CSS custom property, declared on `:root` with zero specificity. Override them on `:root` or `<body>`: formeo appends its dialogs to `document.body`, so a rule scoped to the editor's container misses them. A narrower selector works too if it also covers `.formeo-dialog` and, when you move the controls panel with `controls.container`, `.formeo-controls`. For example, to map your own dark theme:
 
 ```css
-.my-app {
-  --formeo-bg: #fafafa;
-  --formeo-text: #111;
-  --formeo-border: #ddd;
+:root {
+  color-scheme: dark;
+  color: #fafafa;
+  --formeo-bg: #0a0a0a;
+  --formeo-bg-hover: #1a1a1a;
+  --formeo-text: #fafafa;
+  --formeo-border: #262626;
+  --formeo-icon: #e5e5e5;
 }
 ```
 
-For a built-in dark palette, add the `formeo-dark` class to any ancestor of the editor (for example `<body class="formeo-dark">`).
+- **Dark preset:** add the `formeo-dark` class to `<body>` (or `:root`). It sets `color-scheme: dark` on that subtree, so your own native controls inside it darken too.
+- **Your own dark theme:** set `color-scheme: dark` as well. Formeo leaves the text color of inputs and selects, and the checkboxes themselves, to the browser, which only makes them light under a dark `color-scheme`.
+- **Text color:** outside the dark preset, formeo's containers inherit the page's `color`. Setting `--formeo-text` alone only recolors text formeo colors explicitly, not inherited labels, so set `color` on your container too.
+- **Derived properties:** some defaults are computed from another color at build time and don't follow when you override that color. If you change the base, override these too: `--formeo-bg-hover`, `--formeo-overlay`, `--formeo-danger-subtle`, `--formeo-column-outline-soft`, and the `--formeo-*-highlight` / `--formeo-*-highlight-text` properties.
 
-The full list of properties is in `src/lib/sass/base/_properties.scss`. Icons now inherit `--formeo-icon` (default `#000`). A few icons that previously used a hard-coded `#444` are now slightly darker by default.
+The full list, with defaults, is in [`_properties.scss`](https://github.com/Draggable/formeo/blob/main/src/lib/sass/base/_properties.scss). It isn't included in the npm package. The groups, without the `--formeo-` prefix, are:
+
+- **Surfaces:** `bg`, `bg-hover`, `surface-muted`, `stage-bg`, `stage-shadow`, `overlay`
+- **Text and icons:** `text`, `text-strong`, `text-secondary`, `text-muted`, `text-subtle`, `on-accent`, `icon`
+- **Borders and focus:** `border`, `border-strong`, `focus`
+- **Accents:** `primary`, `success`, `warning` and `danger` (each with a `-dark` variant), `danger-subtle`, `info`, `remove-bg`
+- **Component outlines:** `{stage,row,column,field,option}-outline`, `-outline-text`, `-highlight` and `-highlight-text`, plus `column-outline-soft`
+
+**Visual changes from 5.1.3:** icons that hard-coded `#444` (header, paragraph and the triangles) now use `--formeo-icon`, which defaults to `#000`. The column resize-handle triangles now use the column outline color (`--formeo-column-outline-soft`, or the darker `--formeo-column-outline` on hover) instead of `#444`.
 
 ## Documentation
 
