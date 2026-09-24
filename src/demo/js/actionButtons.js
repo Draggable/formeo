@@ -48,6 +48,7 @@ const editorActions = (editor, renderer) => {
     editData: () => {
       jsonEditor.setValue(JSON.stringify(editor.formData, null, 2), 1)
     },
+    toggleDark: () => document.body.classList.toggle('formeo-dark'),
   }
 }
 
