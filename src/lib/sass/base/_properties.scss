@@ -78,3 +78,8 @@ $_structural: (
     --formeo-#{$name}-highlight-text: #f4f4f5;
   }
 }
+
+// Formeo containers inherit the host's text color by default; the dark preset must set its own.
+:where(.formeo-dark) :where(.formeo, .formeo-controls, .formeo-dialog) {
+  color: var(--formeo-text);
+}
