@@ -1,0 +1,53 @@
+// SCSS aliases for formeo's CSS custom properties. Component styles use these instead of colors.$*.
+$bg: var(--formeo-bg);
+$bg-hover: var(--formeo-bg-hover);
+$surface-muted: var(--formeo-surface-muted);
+$stage-bg: var(--formeo-stage-bg);
+$stage-shadow: var(--formeo-stage-shadow);
+$overlay: var(--formeo-overlay);
+
+$text: var(--formeo-text);
+$text-strong: var(--formeo-text-strong);
+$text-secondary: var(--formeo-text-secondary);
+$text-muted: var(--formeo-text-muted);
+$text-subtle: var(--formeo-text-subtle);
+$on-accent: var(--formeo-on-accent);
+$icon: var(--formeo-icon);
+
+$border: var(--formeo-border);
+$border-strong: var(--formeo-border-strong);
+$focus: var(--formeo-focus);
+
+$primary: var(--formeo-primary);
+$primary-dark: var(--formeo-primary-dark);
+$success: var(--formeo-success);
+$success-dark: var(--formeo-success-dark);
+$warning: var(--formeo-warning);
+$warning-dark: var(--formeo-warning-dark);
+$danger: var(--formeo-danger);
+$danger-dark: var(--formeo-danger-dark);
+$danger-subtle: var(--formeo-danger-subtle);
+$info: var(--formeo-info);
+$remove-bg: var(--formeo-remove-bg);
+$column-outline-soft: var(--formeo-column-outline-soft);
+
+$stage-outline: var(--formeo-stage-outline);
+$stage-outline-text: var(--formeo-stage-outline-text);
+$stage-highlight: var(--formeo-stage-highlight);
+$stage-highlight-text: var(--formeo-stage-highlight-text);
+$row-outline: var(--formeo-row-outline);
+$row-outline-text: var(--formeo-row-outline-text);
+$row-highlight: var(--formeo-row-highlight);
+$row-highlight-text: var(--formeo-row-highlight-text);
+$column-outline: var(--formeo-column-outline);
+$column-outline-text: var(--formeo-column-outline-text);
+$column-highlight: var(--formeo-column-highlight);
+$column-highlight-text: var(--formeo-column-highlight-text);
+$field-outline: var(--formeo-field-outline);
+$field-outline-text: var(--formeo-field-outline-text);
+$field-highlight: var(--formeo-field-highlight);
+$field-highlight-text: var(--formeo-field-highlight-text);
+$option-outline: var(--formeo-option-outline);
+$option-outline-text: var(--formeo-option-outline-text);
+$option-highlight: var(--formeo-option-highlight);
+$option-highlight-text: var(--formeo-option-highlight-text);
