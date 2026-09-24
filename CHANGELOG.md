@@ -1,3 +1,22 @@
+# [5.2.0](https://github.com/Draggable/formeo/compare/v5.1.3...v5.2.0) (2026-09-24)
+
+
+### Bug Fixes
+
+* derive edit pulse midpoint from runtime focus color ([9cb6eea](https://github.com/Draggable/formeo/commit/9cb6eea6c3a484a198b50e693e1dd27a48e29701))
+* give the editing field its surface background at zero specificity ([3a4ba48](https://github.com/Draggable/formeo/commit/3a4ba48730f46e2029829d9cf2b387265ecfefab))
+* let icons inherit the formeo icon color ([83ff811](https://github.com/Draggable/formeo/commit/83ff811b6f6a652345814daec99f6328ad914c56))
+* let the plus and minus icons follow the icon color ([e2659d6](https://github.com/Draggable/formeo/commit/e2659d6cc9f15cefb21e39029ddc2e5f8442e174))
+* scope the dialog surface rule to the dark preset ([88286ae](https://github.com/Draggable/formeo/commit/88286ae9f8f992fdcb3e6449ee809e197b41b250))
+
+
+### Features
+
+* declare formeo color custom properties with current defaults ([05f021f](https://github.com/Draggable/formeo/commit/05f021fadb6532c22c1cbfc3d8688cd617b3984b))
+* expose theme colors as CSS custom properties ([f397e90](https://github.com/Draggable/formeo/commit/f397e905b2e3eaf377997fb5c1c05829666baf03))
+* set container text color in the .formeo-dark preset ([b40983e](https://github.com/Draggable/formeo/commit/b40983e8a83a17d9e329bb71ba4840c762bed8fd))
+* theme formeo dialogs and raise dark preset contrast ([67e48f9](https://github.com/Draggable/formeo/commit/67e48f910bd8039db475d2441bbdfe316123546f))
+
 ## [5.1.3](https://github.com/Draggable/formeo/compare/v5.1.2...v5.1.3) (2026-08-08)
 
 
