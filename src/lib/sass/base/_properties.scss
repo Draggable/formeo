@@ -80,6 +80,19 @@ $_structural: (
 }
 
 // Formeo containers inherit the host's text color by default; the dark preset must set its own.
-:where(.formeo-dark) :where(.formeo, .formeo-controls, .formeo-dialog) {
+:where(.formeo-dark) :where(.formeo, .formeo-controls, .formeo-dialog),
+:where(.formeo-dark):where(.formeo, .formeo-controls, .formeo-dialog) {
+  color: var(--formeo-text);
+}
+
+// White on --formeo-text-muted is too faint in dark; outranks the .formeo.formeo-editor rule.
+.formeo-dark .formeo.formeo-editor .conditions-prop-inputs label.condition-label.then-condition-label,
+.formeo-dark.formeo.formeo-editor .conditions-prop-inputs label.condition-label.then-condition-label {
+  background-color: var(--formeo-border-strong);
+}
+
+// Dialogs and popovers otherwise keep the UA Canvas colors; the defaults render the same.
+:where(.formeo-dialog, .component-edit[popover]) {
+  background-color: var(--formeo-bg);
   color: var(--formeo-text);
 }
