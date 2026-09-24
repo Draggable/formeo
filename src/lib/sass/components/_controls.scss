@@ -1,6 +1,6 @@
 @use "../base/mixins";
 
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/variables" as var;
 
 .formeo-controls {
@@ -23,10 +23,10 @@
   }
 
   .filtered-term {
-    background-color: color.$white;
+    background-color: t.$bg;
     text-align: center;
     border-radius: var.$input-border-radius var.$input-border-radius 0 0;
-    border: 1px solid color.$gray-lighter;
+    border: 1px solid t.$border;
     border-bottom: 0 none;
     width: calc(100% - 2px);
   }
@@ -50,12 +50,12 @@
     button {
       position: absolute;
       width: var.$action-btn-width;
-      color: color.$black;
+      color: t.$text;
       height: calc(100% + 1px);
       padding: 0;
       line-height: 0;
       margin: 0;
-      border-color: color.$gray-lighter;
+      border-color: t.$border;
 
       &.next-group {
         right: 0;
@@ -80,7 +80,7 @@
   }
 
   .panel-labels {
-    border-top: 1px solid color.$gray-lighter;
+    border-top: 1px solid t.$border;
 
     // border-radius: $border-radius;
   }
@@ -107,7 +107,7 @@
     vertical-align: top;
     display: inline-block;
     width: 100%;
-    border-top: 1px solid color.$gray-lighter;
+    border-top: 1px solid t.$border;
 
     > li {
       &:first-child {
@@ -148,7 +148,7 @@
 
   .control-group-labels {
     height: 100%;
-    background: color.$white;
+    background: t.$bg;
     overflow: hidden;
 
     div {
@@ -166,30 +166,30 @@
     margin-top: mixins.space();
 
     .svg-icon {
-      fill: color.$gray;
+      fill: t.$text-muted;
       display: none;
 
       &:hover {
-        fill: color.$black;
+        fill: t.$text;
       }
     }
 
     .save-form,
     .clear-form {
       &:hover {
-        color: color.$white;
+        color: t.$on-accent;
       }
     }
 
     .save-form {
       &:hover {
-        background-color: color.$brand-primary;
+        background-color: t.$primary;
       }
     }
 
     .clear-form {
       &:hover {
-        background-color: color.$brand-error;
+        background-color: t.$danger;
       }
     }
   }

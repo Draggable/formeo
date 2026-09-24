@@ -80,7 +80,7 @@
     "postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
     "build:demo:watch": "vite build --mode demo --watch",
     "build:icons": "node ./tools/generate-sprite",
-    "lint": "biome check ./src",
+    "lint": "biome check ./src && node tools/check-color-literals.mjs",
     "lint:fix": "biome check --write ./src",
     "format": "biome format --write .",
     "test": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",

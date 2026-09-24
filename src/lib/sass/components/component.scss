@@ -1,5 +1,5 @@
 @use "../base/mixins";
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/variables" as var;
 @use "../base/animation";
 
@@ -18,8 +18,8 @@
   top: -(var.$icon-size);
   border-top-left-radius: var.$border-radius;
   border-top-right-radius: var.$border-radius;
-  background-color: color.$white;
-  border-color: color.$gray-lighter;
+  background-color: t.$bg;
+  border-color: t.$border;
   border-style: solid;
   border-width: 1px 1px 0 1px;
 

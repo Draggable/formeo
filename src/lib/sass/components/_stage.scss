@@ -1,4 +1,4 @@
-@use '../base/colors' as color;
+@use '../base/tokens' as t;
 @use '../base/variables' as var;
 
 @use 'group-actions';
@@ -21,7 +21,7 @@
   border-width: 1px;
   border-style: dashed;
   border-color: transparent;
-  background-color: color.$stage-background;
+  background-color: t.$stage-bg;
   padding-left: var.$action-btn-width - 1;
   padding-bottom: mixins.space(1);
   overflow: visible;
@@ -40,7 +40,7 @@
   }
 
   &>.formeo-field {
-    background-color: color.$white;
+    background-color: t.$bg;
   }
 
   @include mixins.no-list-style;
@@ -50,7 +50,7 @@
   }
 
   &.highlight-component {
-    box-shadow: 0 0 mixins.space() 2px color.$stage-outline-color;
+    box-shadow: 0 0 mixins.space() 2px t.$stage-outline;
   }
 
   .hidden {
@@ -58,14 +58,14 @@
   }
 
   &.empty {
-    border-color: color.$gray-light;
-    background-color: color.$shadow;
+    border-color: t.$border-strong;
+    background-color: t.$stage-shadow;
   }
 
   &.editing-stage,
   &.hovering-stage,
   &.hovering-stage.empty {
-    border-color: color.$stage-outline-color;
+    border-color: t.$stage-outline;
     border-style: solid;
 
     .stage-tag {
@@ -103,7 +103,7 @@
 
 .stage-edit {
   padding: mixins.space(2);
-  background-color: color.$white;
+  background-color: t.$bg;
   margin-top: 0;
   margin-bottom: mixins.space(2);
   border-top-left-radius: mixins.space(1);
@@ -113,7 +113,7 @@
   }
 
   .conditions-prop-inputs {
-    border-top: 1px solid color.$gray-lighter;
+    border-top: 1px solid t.$border;
   }
 }
 
@@ -129,10 +129,10 @@
   .edit-toggle:focus {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    border-right: 1px solid color.$stage-outline-color;
+    border-right: 1px solid t.$stage-outline;
     border-top-left-radius: 0;
     border-top-right-radius: mixins.space(1);
-    border-top: 1px solid color.$stage-outline-color;
+    border-top: 1px solid t.$stage-outline;
   }
 }
 
@@ -163,7 +163,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    color: color.$gray-light;
+    color: t.$text-subtle;
     transition: opacity 200ms ease-in-out;
     will-change: opacity;
     text-align: center;

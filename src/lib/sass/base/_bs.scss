@@ -1,6 +1,6 @@
 @use 'mixins';
 
-@use 'colors' as color;
+@use 'tokens' as t;
 @use 'variables' as var;
 
 .pill-buttons>button {
@@ -11,7 +11,7 @@ hr {
   margin-top: 1rem;
   margin-bottom: 1rem;
   border: 0;
-  border-top: 1px solid color.$gray-lighter;
+  border-top: 1px solid t.$border;
 }
 
 .f-field-group {
@@ -169,7 +169,7 @@ button {
 
       +input,
       +select {
-        border-left: 1px solid color.$input-focus;
+        border-left: 1px solid t.$focus;
       }
     }
   }
@@ -177,19 +177,19 @@ button {
 
 .text- {
   &primary {
-    color: color.$brand-primary;
+    color: t.$primary;
   }
 
   &success {
-    color: color.$brand-success;
+    color: t.$success;
   }
 
   &warning {
-    color: color.$brand-warning;
+    color: t.$warning;
   }
 
   &error {
-    color: color.$brand-error;
+    color: t.$danger;
   }
 }
 

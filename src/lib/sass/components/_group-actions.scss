@@ -1,4 +1,4 @@
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/variables" as var;
 
 .group-actions {
@@ -31,7 +31,7 @@
     }
 
     button {
-      background-color: color.$white;
+      background-color: t.$bg;
     }
   }
 

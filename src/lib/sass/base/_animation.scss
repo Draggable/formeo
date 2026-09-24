@@ -2,6 +2,7 @@
 @use 'mixins';
 
 @use 'colors' as color;
+@use 'tokens' as t;
 @use 'variables' as var;
 
 /*
@@ -20,31 +21,31 @@
 
 @keyframes DRAG_GHOST {
   0% {
-    box-shadow: 0 0 0 0 color.$gray-light;
+    box-shadow: 0 0 0 0 t.$border-strong;
   }
 
   100% {
-    box-shadow: 0 0 30px 0 color.$gray-light;
+    box-shadow: 0 0 30px 0 t.$border-strong;
   }
 }
 
 @keyframes EDIT_PULSE {
   from,
   to {
-    border-color: color.$input-focus;
+    border-color: t.$focus;
   }
 
   50% {
-    border-color: sass-color.adjust(color.$input-focus, $lightness: 20%);
+    border-color: sass-color.adjust(color.$input-focus, $lightness: 20%); // formeo-color-literal-ok: derived
   }
 }
 
 @keyframes COMPONENT_HIGHLIGHT_PULSE {
   0% {
-    box-shadow: 0 0 1px mixins.space(1) color.$brand-info;
+    box-shadow: 0 0 1px mixins.space(1) t.$info;
   }
   100% {
-    box-shadow: 0 0 0 0 color.$brand-info;
+    box-shadow: 0 0 0 0 t.$info;
   }
 }
 

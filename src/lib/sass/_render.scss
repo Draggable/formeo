@@ -1,6 +1,6 @@
 @use "base/mixins";
 
-@use "base/colors" as color;
+@use "base/tokens" as t;
 @use "base/variables" as var;
 
 .formeo-row,
@@ -33,7 +33,7 @@
   align-items: stretch;
   display: flex;
   border-radius: var.$border-radius;
-  outline: 0 solid color.$remove-bg;
+  outline: 0 solid t.$remove-bg;
 
   transition: background-color var.$animation-speed-fast,
     outline var.$animation-speed-fast;
@@ -41,8 +41,8 @@
 
   &.will-remove {
     border-radius: 2px;
-    background-color: color.$remove-bg;
-    outline: 6px solid color.$remove-bg;
+    background-color: t.$remove-bg;
+    outline: 6px solid t.$remove-bg;
   }
 
   &:last-of-type {
@@ -99,9 +99,9 @@ fieldset.formeo-row-wrap {
   padding: mixins.space();
 
   &:hover {
-    background-color: color.$white;
+    background-color: t.$bg;
     .svg-icon {
-      fill: color.$brand-error;
+      fill: t.$danger;
     }
   }
 

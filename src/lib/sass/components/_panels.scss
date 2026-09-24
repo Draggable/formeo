@@ -1,13 +1,13 @@
 @use '../base/mixins';
 
-@use '../base/colors' as color;
+@use '../base/tokens' as t;
 @use '../base/variables' as var;
 
 .formeo-panels-wrap {
   h5 {
     margin: 0;
     padding: 0.55em 0;
-    color: color.$gray;
+    color: t.$text-muted;
     font-weight: normal;
     display: inline-block;
     width: 100%;
@@ -21,7 +21,7 @@
     button {
       position: absolute;
       width: 24px;
-      color: color.$black;
+      color: t.$text;
       height: 100%;
       padding: 0;
       line-height: 0;
@@ -29,7 +29,7 @@
 
       &:focus {
         outline: none;
-        border: 1px solid color.$input-focus;
+        border: 1px solid t.$focus;
         box-shadow: none;
       }
 
@@ -85,7 +85,7 @@
 
   .panel-labels {
     height: 100%;
-    background: color.$white;
+    background: t.$bg;
     overflow: hidden;
     text-align: center;
     white-space: nowrap;
@@ -119,13 +119,13 @@
       flex-direction: column;
       flex: 1;
       cursor: pointer;
-      background-color: color.$gray-lighter;
-      box-shadow: 0 -1px mixins.space(1) color.$gray-light inset;
+      background-color: t.$border;
+      box-shadow: 0 -1px mixins.space(1) t.$border-strong inset;
 
       &.active-tab {
-        color: color.$black;
+        color: t.$text;
         box-shadow: none;
-        background-color: color.$white;
+        background-color: t.$bg;
       }
     }
   }
