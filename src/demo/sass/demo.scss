@@ -473,3 +473,35 @@ body {
     }
   }
 }
+
+// "Toggle Dark" puts .formeo-dark on <body>, so the demo page itself goes dark too.
+body.formeo-dark {
+  background: linear-gradient(135deg, #18181b 0%, #1e293b 100%);
+  background-attachment: fixed;
+  color: var(--formeo-text);
+
+  #demo-header,
+  #demo-header nav,
+  #demo-footer nav {
+    background-color: var(--formeo-bg);
+  }
+
+  #demo-header {
+    border-bottom: 1px solid var(--formeo-border);
+  }
+
+  #demo-footer nav {
+    border-top: 1px solid var(--formeo-border);
+  }
+
+  #formeo-logo,
+  #demo-footer img {
+    filter: invert(1);
+  }
+
+  #formData-popover[popover] {
+    background-color: var(--formeo-bg);
+    border-color: var(--formeo-border);
+    color: var(--formeo-text);
+  }
+}
