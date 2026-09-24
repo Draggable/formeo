@@ -1,7 +1,7 @@
 @use 'sass:color' as sass-color;
 @use 'mixins';
 
-@use 'colors' as color;
+@use 'colors' as color; // formeo-color-literal-ok: derived
 @use 'tokens' as t;
 @use 'variables' as var;
 
