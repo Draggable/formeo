@@ -178,9 +178,9 @@ Every color formeo uses is a `--formeo-*` CSS custom property, declared on `:roo
 }
 ```
 
-- **Dark preset:** add the `formeo-dark` class to `<body>` (or `:root`). It sets `color-scheme: dark` on that subtree, so your own native controls inside it darken too.
-- **Your own dark theme:** set `color-scheme: dark` as well. Formeo leaves the text color of inputs and selects, and the checkboxes themselves, to the browser, which only makes them light under a dark `color-scheme`.
-- **Text color:** outside the dark preset, formeo's containers inherit the page's `color`. Setting `--formeo-text` alone only recolors text formeo colors explicitly, not inherited labels, so set `color` on your container too.
+- **Dark preset:** add the `formeo-dark` class to `<body>` (or `:root`). It sets `color-scheme: dark` on that subtree, so your own native controls inside it darken too. Dialogs take the preset's background and text colors as well.
+- **Your own dark theme:** set `color-scheme: dark` as well, and make sure your mapping's scope includes `.formeo-dialog`. Outside the preset, formeo leaves the dialog's own background and text color, the text color of inputs and selects, and the checkboxes to the browser, which only switches them to dark-mode colors under a dark `color-scheme`.
+- **Text color:** outside the dark preset, the editor and controls containers inherit the page's `color`. Setting `--formeo-text` alone only recolors text formeo colors explicitly, not inherited labels, so set `color` on your container too.
 - **Derived properties:** some defaults are computed from another color at build time and don't follow when you override that color. If you change the base, override these too: `--formeo-bg-hover`, `--formeo-overlay`, `--formeo-danger-subtle`, `--formeo-column-outline-soft`, and the `--formeo-*-highlight` / `--formeo-*-highlight-text` properties.
 
 The full list, with defaults, is in [`_properties.scss`](https://github.com/Draggable/formeo/blob/main/src/lib/sass/base/_properties.scss). It isn't included in the npm package. The groups, without the `--formeo-` prefix, are:
