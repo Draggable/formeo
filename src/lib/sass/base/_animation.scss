@@ -1,7 +1,5 @@
-@use 'sass:color' as sass-color;
 @use 'mixins';
 
-@use 'colors' as color; // formeo-color-literal-ok: derived
 @use 'tokens' as t;
 @use 'variables' as var;
 
@@ -36,7 +34,7 @@
   }
 
   50% {
-    border-color: sass-color.adjust(color.$input-focus, $lightness: 20%); // formeo-color-literal-ok: derived
+    border-color: color-mix(in srgb, t.$focus 80%, white); // formeo-color-literal-ok: derived
   }
 }
 
