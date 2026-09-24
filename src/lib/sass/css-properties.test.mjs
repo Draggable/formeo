@@ -115,9 +115,16 @@ suite('formeo CSS custom properties', () => {
     )
   })
 
+  test(':where(.editing-field) gives the edited field the surface background', t => {
+    t.assert.strictEqual(
+      compiledRule(':where(.editing-field) {'),
+      ':where(.editing-field) {\n  background-color: var(--formeo-bg);\n}'
+    )
+  })
+
   test('allowed additions are stripped before the baseline comparison', t => {
     const { css } = resolveFormeoProperties(compileFormeoCss())
-    for (const fragment of ['formeo-dark', ':where(.svg-icon)']) {
+    for (const fragment of ['formeo-dark', ':where(.svg-icon)', ':where(.editing-field)']) {
       t.assert.ok(!css.includes(fragment), `${fragment} must be stripped before baseline comparison`)
     }
   })

@@ -97,3 +97,8 @@ $_structural: (
   background-color: var(--formeo-bg);
   color: var(--formeo-text);
 }
+
+// The field being edited sits above its neighbours; give it the surface color. Zero specificity so highlights still win.
+:where(.editing-field) {
+  background-color: var(--formeo-bg);
+}

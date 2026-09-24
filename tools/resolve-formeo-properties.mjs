@@ -37,6 +37,7 @@ function takeBlock(css, selector, allowed) {
 /** Rules intentionally added by this change; removed before comparing to baseline. */
 export const ALLOWED_ADDITIONS = [
   rule(String.raw`:where\(\.svg-icon\)`),
+  rule(String.raw`:where\(\.editing-field\)`),
   rule(
     String.raw`:where\(\.formeo-dark\) :where\(\.formeo, \.formeo-controls, \.formeo-dialog\),\s*` +
       String.raw`:where\(\.formeo-dark\):where\(\.formeo, \.formeo-controls, \.formeo-dialog\)`
