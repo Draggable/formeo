@@ -45,7 +45,9 @@ export const ALLOWED_ADDITIONS = [
     String.raw`\.formeo-dark \.formeo\.formeo-editor \.conditions-prop-inputs label\.condition-label\.then-condition-label,\s*` +
       String.raw`\.formeo-dark\.formeo\.formeo-editor \.conditions-prop-inputs label\.condition-label\.then-condition-label`
   ),
-  rule(String.raw`:where\(\.formeo-dialog, \.component-edit\[popover\]\)`),
+  rule(
+    String.raw`:where\(\.formeo-dark\) :where\(\.formeo-dialog\),\s*:where\(\.formeo-dark\):where\(\.formeo-dialog\)`
+  ),
 ]
 
 /**

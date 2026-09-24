@@ -79,7 +79,7 @@ suite('formeo CSS custom properties', () => {
 
   test('.formeo-dark preset sets text color on formeo containers, nested or on the container itself', t => {
     t.assert.strictEqual(
-      compiledRule(':where(.formeo-dark) :where('),
+      compiledRule(':where(.formeo-dark) :where(.formeo,'),
       [
         ':where(.formeo-dark) :where(.formeo, .formeo-controls, .formeo-dialog),',
         ':where(.formeo-dark):where(.formeo, .formeo-controls, .formeo-dialog) {',
@@ -102,11 +102,12 @@ suite('formeo CSS custom properties', () => {
     )
   })
 
-  test('dialogs and the edit popover take their surface and text from the properties', t => {
+  test('.formeo-dark gives dialogs the dark surface and text, nested or on the dialog itself', t => {
     t.assert.strictEqual(
-      compiledRule(':where(.formeo-dialog, '),
+      compiledRule(':where(.formeo-dark) :where(.formeo-dialog)'),
       [
-        ':where(.formeo-dialog, .component-edit[popover]) {',
+        ':where(.formeo-dark) :where(.formeo-dialog),',
+        ':where(.formeo-dark):where(.formeo-dialog) {',
         '  background-color: var(--formeo-bg);',
         '  color: var(--formeo-text);',
         '}',
@@ -116,7 +117,7 @@ suite('formeo CSS custom properties', () => {
 
   test('allowed additions are stripped before the baseline comparison', t => {
     const { css } = resolveFormeoProperties(compileFormeoCss())
-    for (const fragment of ['formeo-dark', ':where(.svg-icon)', ':where(.formeo-dialog']) {
+    for (const fragment of ['formeo-dark', ':where(.svg-icon)']) {
       t.assert.ok(!css.includes(fragment), `${fragment} must be stripped before baseline comparison`)
     }
   })

@@ -91,8 +91,9 @@ $_structural: (
   background-color: var(--formeo-border-strong);
 }
 
-// Dialogs and popovers otherwise keep the UA Canvas colors; the defaults render the same.
-:where(.formeo-dialog, .component-edit[popover]) {
+// Dialogs otherwise keep the UA Canvas colors, which ignore the dark palette.
+:where(.formeo-dark) :where(.formeo-dialog),
+:where(.formeo-dark):where(.formeo-dialog) {
   background-color: var(--formeo-bg);
   color: var(--formeo-text);
 }
