@@ -52,4 +52,14 @@ suite('formeo CSS custom properties', () => {
     const { defaults } = resolveFormeoProperties(compileFormeoCss())
     t.assert.deepStrictEqual([...defaults.keys()].sort(), [...EXPECTED].sort())
   })
+
+  test('.formeo-dark preset overrides surfaces and text but keeps on-accent light', t => {
+    const { dark, defaults } = resolveFormeoProperties(compileFormeoCss())
+    for (const name of ['--formeo-bg', '--formeo-text', '--formeo-border', '--formeo-icon']) {
+      t.assert.ok(dark.has(name), `${name} missing from dark preset`)
+      t.assert.notStrictEqual(dark.get(name), defaults.get(name))
+    }
+    t.assert.ok(!dark.has('--formeo-on-accent'), 'on-accent must not be overridden')
+    for (const key of dark.keys()) t.assert.ok(defaults.has(key), `${key} has no default`)
+  })
 })

@@ -14,6 +14,7 @@ A highly configurable drag & drop form building module for creating dynamic, res
 - [Installation](#installation)
 - [Usage](#usage)
 - [Framework Integration](#framework-integration)
+- [Theming](#theming)
 - [Documentation](#documentation)
 - [Development](#development)
 - [Contributing](#contributing)
@@ -160,6 +161,22 @@ Formeo can be integrated with popular frontend frameworks:
 
 - **[React Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/react-integration.md)** - Custom hooks, functional components, and Context API patterns
 - **[Angular Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/angular-integration.md)** - Services, components, and standalone patterns
+
+## Theming
+
+Every color formeo uses is a CSS custom property declared on `:root` with zero specificity, so you can override any of them from your own stylesheet:
+
+```css
+.my-app {
+  --formeo-bg: #fafafa;
+  --formeo-text: #111;
+  --formeo-border: #ddd;
+}
+```
+
+For a built-in dark palette, add the `formeo-dark` class to any ancestor of the editor (for example `<body class="formeo-dark">`).
+
+The full list of properties is in `src/lib/sass/base/_properties.scss`. Icons now inherit `--formeo-icon` (default `#000`). A few icons that previously used a hard-coded `#444` are now slightly darker by default.
 
 ## Documentation
 

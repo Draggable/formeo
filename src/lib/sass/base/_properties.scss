@@ -50,3 +50,31 @@ $_structural: (
     --formeo-#{$name}-highlight-text: #{list.nth($values, 4)};
   }
 }
+
+:where(.formeo-dark) {
+  color-scheme: dark;
+  --formeo-bg: #1f1f23;
+  --formeo-bg-hover: #2a2a2f;
+  --formeo-surface-muted: #26262b;
+  --formeo-stage-bg: rgba(0, 0, 0, 0);
+  --formeo-stage-shadow: rgba(0, 0, 0, 0.25);
+  --formeo-overlay: rgba(31, 31, 35, 0.9);
+
+  --formeo-text: #f4f4f5;
+  --formeo-text-strong: #e4e4e7;
+  --formeo-text-secondary: #d4d4d8;
+  --formeo-text-muted: #a1a1aa;
+  --formeo-text-subtle: #71717a;
+  --formeo-icon: #e4e4e7;
+
+  --formeo-border: #3f3f46;
+  --formeo-border-strong: #52525b;
+
+  --formeo-danger-subtle: #{rgba(c.$brand-error, 0.2)};
+  --formeo-remove-bg: #{rgba(c.$brand-error, 0.35)};
+
+  @each $name, $values in $_structural {
+    --formeo-#{$name}-highlight: #{rgba(list.nth($values, 1), 0.25)};
+    --formeo-#{$name}-highlight-text: #f4f4f5;
+  }
+}
