@@ -9,6 +9,10 @@
   pointer-events: none;
 }
 
+:where(.svg-icon) {
+  fill: t.$icon;
+}
+
 .f-i-remove {
   &:hover {
     fill: t.$danger;
