@@ -62,4 +62,14 @@ suite('formeo CSS custom properties', () => {
     t.assert.ok(!dark.has('--formeo-on-accent'), 'on-accent must not be overridden')
     for (const key of dark.keys()) t.assert.ok(defaults.has(key), `${key} has no default`)
   })
+
+  test('.formeo-dark preset sets text color on formeo containers', t => {
+    const compiled = compileFormeoCss()
+    t.assert.match(
+      compiled,
+      /:where\(\.formeo-dark\) :where\(\.formeo, \.formeo-controls, \.formeo-dialog\)\s*\{\s*color: var\(--formeo-text\);\s*\}/
+    )
+    const { css } = resolveFormeoProperties(compiled)
+    t.assert.ok(!css.includes('formeo-dark'), 'formeo-dark rule must be stripped before baseline comparison')
+  })
 })

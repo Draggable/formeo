@@ -10,7 +10,10 @@ function readDeclarations(body = '') {
 }
 
 /** Rules intentionally added by this change; removed before comparing to baseline. */
-export const ALLOWED_ADDITIONS = [/:where\(\.svg-icon\)\s*\{[^}]*\}\s*/g]
+export const ALLOWED_ADDITIONS = [
+  /:where\(\.svg-icon\)\s*\{[^}]*\}\s*/g,
+  /:where\(\.formeo-dark\) :where\(\.formeo, \.formeo-controls, \.formeo-dialog\)\s*\{[^}]*\}\s*/g,
+]
 
 /**
  * Replace every var(--formeo-*) with its :where(:root) default and drop the property blocks,
