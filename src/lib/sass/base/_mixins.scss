@@ -1,5 +1,4 @@
-@use "sass:color" as sass-color;
-@use "colors" as color;
+@use "tokens" as t;
 @use "variables" as var;
 
 /*
@@ -95,13 +94,13 @@
   margin: 0;
   border: var.$input-border;
   border-radius: var.$input-border-radius;
-  background-color: color.$white;
+  background-color: t.$bg;
   width: 100%;
   padding: var.$input-padding;
   box-sizing: border-box;
 
   &:focus {
-    border: 1px solid color.$input-focus;
+    border: 1px solid t.$focus;
     outline: none;
   }
 }
@@ -116,9 +115,9 @@
   cursor: move;
   list-style: none;
   margin: -1px 0 0;
-  border: 1px solid color.$gray-lighter;
+  border: 1px solid t.$border;
   text-align: left;
-  background: color.$white;
+  background: t.$bg;
   user-select: none;
   overflow: hidden;
 
@@ -133,7 +132,7 @@
   }
 
   &:hover {
-    background-color: sass-color.adjust(color.$white, $lightness: -5%);
+    background-color: t.$bg-hover;
   }
 
   button {
@@ -151,8 +150,8 @@
 
     &:focus {
       outline: 0 none;
-      background-color: sass-color.adjust(color.$white, $lightness: -5%);
-      box-shadow: 0 0 0 1px color.$input-focus inset;
+      background-color: t.$bg-hover;
+      box-shadow: 0 0 0 1px t.$focus inset;
       border-radius: 0 !important;
     }
 
@@ -189,9 +188,9 @@
 
 @mixin button-style {
   border-radius: var.$input-border-radius;
-  border: 1px solid color.$gray;
-  color: color.$gray-dark;
-  background-color: color.$white;
+  border: 1px solid t.$text-muted;
+  color: t.$text-secondary;
+  background-color: t.$bg;
   padding: space() space(1);
 
   &:active {
@@ -208,36 +207,36 @@
   &.success,
   &.warning,
   &.error {
-    color: color.$white;
+    color: t.$on-accent;
   }
 
   &.primary {
-    background-color: color.$brand-primary;
-    border-color: color.$brand-primary-dark;
+    background-color: t.$primary;
+    border-color: t.$primary-dark;
   }
 
   &.success {
-    background-color: color.$brand-success;
-    border-color: color.$brand-success-dark;
+    background-color: t.$success;
+    border-color: t.$success-dark;
   }
 
   &.warning {
-    background-color: color.$brand-warning;
-    border-color: color.$brand-warning-dark;
+    background-color: t.$warning;
+    border-color: t.$warning-dark;
   }
 
   &.error {
-    background-color: color.$brand-error;
-    border-color: color.$brand-error-dark;
+    background-color: t.$danger;
+    border-color: t.$danger-dark;
   }
 
   &[disabled] {
-    background-color: color.$gray-lighter;
-    color: color.$white;
+    background-color: t.$border;
+    color: t.$on-accent;
   }
 
   &:focus {
-    border: 1px solid color.$input-focus;
+    border: 1px solid t.$focus;
   }
 
   &:hover,

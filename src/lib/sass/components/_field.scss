@@ -1,5 +1,5 @@
 @use "../base/mixins";
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/variables" as var;
 
 .formeo-field {
@@ -10,7 +10,7 @@
   will-change: box-shadow;
 
   &.highlight-component {
-    box-shadow: 0 0 mixins.space() 2px color.$field-outline-color;
+    box-shadow: 0 0 mixins.space() 2px t.$field-outline;
   }
 
   &:last-child {
@@ -49,14 +49,14 @@
       position: absolute;
       bottom: 0;
       left: 0;
-      border-bottom: 1px dashed color.$gray-lighter;
+      border-bottom: 1px dashed t.$border;
     }
 
     &:focus {
       border-radius: var.$input-border-radius;
       border-bottom-color: transparent;
       outline: none;
-      box-shadow: 0 0 0 1px color.$input-focus inset;
+      box-shadow: 0 0 0 1px t.$focus inset;
 
       &::after {
         display: none;
@@ -73,12 +73,12 @@
   }
 
   &.field-type-hidden {
-    border: 1px dashed color.$gray-lighter;
+    border: 1px dashed t.$border;
   }
 
   &.sortable-ghost {
-    background-color: color.$field-highlight-color;
-    box-shadow: 0 0 0 1px color.$field-outline-color;
+    background-color: t.$field-highlight;
+    box-shadow: 0 0 0 1px t.$field-outline;
 
     * {
       opacity: 0;
@@ -91,15 +91,15 @@
   left: auto;
   top: -(var.$icon-size);
 
-  border-color: color.$field-outline-color;
-  background-color: color.$white;
+  border-color: t.$field-outline;
+  background-color: t.$bg;
 
 
 }
 
 .editing-field,
 .hovering-field {
-  box-shadow: 0 0 0 1px color.$field-outline-color;
+  box-shadow: 0 0 0 1px t.$field-outline;
 
   .field-tag {
     display: flex;
@@ -130,16 +130,16 @@
 }
 
 .field-moving {
-  background-color: color.$field-highlight-color;
+  background-color: t.$field-highlight;
 
   .action-btn-wrap {
     button {
-      background-color: color.$field-highlight-color;
+      background-color: t.$field-highlight;
     }
   }
 
   .field-tag {
-    background-color: color.$field-highlight-color;
+    background-color: t.$field-highlight;
 
 
   }
@@ -163,7 +163,7 @@
   .f-checkbox,
   .f-radio {
     &.highlight-component {
-      box-shadow: 0 0 2px 1px color.$option-outline-color inset;
+      box-shadow: 0 0 2px 1px t.$option-outline inset;
     }
   }
 }

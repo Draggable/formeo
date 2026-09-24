@@ -1,4 +1,4 @@
-@use "colors" as color;
+@use "tokens" as t;
 
 // Sizing
 $base-space: 8px;
@@ -11,7 +11,7 @@ $border-radius: $base-space;
 $input-border-radius: $half-space;
 $input-btn-border-width: 1px;
 $input-padding: 0.3em 0.6em;
-$input-border: $input-btn-border-width solid color.$gray-lighter;
+$input-border: $input-btn-border-width solid t.$border;
 $checkbox-character: "✔" !default;
 $animation-speed-base: 266ms;
 $animation-speed-slow: calc($animation-speed-base * 2);

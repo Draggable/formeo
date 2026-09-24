@@ -1,7 +1,7 @@
 @use 'sass:color' as sass-color;
 @use '../base/mixins';
 
-@use '../base/colors' as color;
+@use '../base/tokens' as t;
 @use '../base/variables' as var;
 
 .f-autocomplete {
@@ -13,7 +13,7 @@
 }
 
 .f-autocomplete-list {
-  background-color: color.$white;
+  background-color: t.$bg;
   display: none;
   list-style: none;
   padding: 0;
@@ -21,13 +21,13 @@
   z-index: 2;
   width: 100%;
   margin: 0 -1px;
-  border: 1px solid color.$gray-light;
+  border: 1px solid t.$border-strong;
   border-width: 1px 1px 0;
-  box-shadow: 0 1px mixins.space() 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 0 1px mixins.space() 0 rgba(0, 0, 0, 0.5); // formeo-color-literal-ok: shadow
 
   li {
     position: relative;
-    border: 1px solid color.$gray-light;
+    border: 1px solid t.$border-strong;
     display: none;
     cursor: default;
     padding: mixins.space();
@@ -51,55 +51,55 @@
 
     &.active-option {
       &.component-type-stage {
-        background-color: color.$stage-outline-color;
-        color: color.$stage-outline-color-text;
+        background-color: t.$stage-outline;
+        color: t.$stage-outline-text;
       }
 
       &.component-type-row {
-        background-color: color.$row-outline-color;
-        color: color.$row-outline-color-text;
+        background-color: t.$row-outline;
+        color: t.$row-outline-text;
       }
 
       &.component-type-column {
-        background-color: color.$column-outline-color;
-        color: color.$column-outline-color-text;
+        background-color: t.$column-outline;
+        color: t.$column-outline-text;
       }
 
       &.component-type-field {
-        background-color: color.$field-outline-color;
-        color: color.$field-outline-color-text;
+        background-color: t.$field-outline;
+        color: t.$field-outline-text;
       }
 
       &.component-type-option {
-        background-color: color.$option-outline-color;
-        color: color.$option-outline-color-text;
+        background-color: t.$option-outline;
+        color: t.$option-outline-text;
       }
     }
 
     &:hover {
       &.component-type-stage {
-        background-color: color.$stage-highlight-color;
-        color: color.$stage-highlight-color-text;
+        background-color: t.$stage-highlight;
+        color: t.$stage-highlight-text;
       }
 
       &.component-type-row {
-        background-color: color.$row-highlight-color;
-        color: color.$row-highlight-color-text;
+        background-color: t.$row-highlight;
+        color: t.$row-highlight-text;
       }
 
       &.component-type-column {
-        background-color: color.$column-highlight-color;
-        color: color.$column-highlight-color-text;
+        background-color: t.$column-highlight;
+        color: t.$column-highlight-text;
       }
 
       &.component-type-field {
-        background-color: color.$field-highlight-color;
-        color: color.$field-highlight-color-text;
+        background-color: t.$field-highlight;
+        color: t.$field-highlight-text;
       }
 
       &.component-type-option {
-        background-color: color.$option-highlight-color;
-        color: color.$option-highlight-color-text;
+        background-color: t.$option-highlight;
+        color: t.$option-highlight-text;
       }
     }
 
@@ -109,7 +109,7 @@
   }
 
   .component-type {
-    color: color.$gray;
+    color: t.$text-muted;
     font-style: italic;
     font-size: 0.75em;
   }

@@ -1,5 +1,5 @@
 @use "../base/variables" as vars;
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/mixins" as mixins;
 
 .formeo-dialog {
@@ -7,7 +7,7 @@
   border-radius: vars.$border-radius;
   padding: 0;
   max-width: min(90vw, 500px);
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); // formeo-color-literal-ok: shadow
   position: absolute;
   margin: 0;
 
@@ -34,7 +34,7 @@
   }
 
   &::backdrop {
-    background-color: rgb(0 0 0 / 0.5);
+    background-color: rgb(0 0 0 / 0.5); // formeo-color-literal-ok: shadow
     backdrop-filter: blur(2px);
     animation: backdrop-fade-in vars.$animation-speed-base ease-out;
   }
@@ -51,7 +51,7 @@
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
-    color: color.$gray-darker;
+    color: t.$text-strong;
   }
 
   .dialog-body {
@@ -65,7 +65,7 @@
       gap: vars.$half-space;
       font-weight: 500;
       font-size: 0.9rem;
-      color: color.$gray-dark;
+      color: t.$text-secondary;
 
       input,
       textarea,
@@ -76,7 +76,7 @@
         font-size: 1rem;
 
         &:focus {
-          outline: 2px solid color.$brand-primary;
+          outline: 2px solid t.$primary;
           outline-offset: 0;
         }
       }
@@ -86,7 +86,7 @@
   .dialog-message {
     margin: 0;
     line-height: 1.6;
-    color: color.$gray-darker;
+    color: t.$text-strong;
   }
 
   .dialog-prompt-label {

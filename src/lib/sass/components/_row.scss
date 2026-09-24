@@ -1,6 +1,6 @@
 @use "../base/mixins";
 
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/variables" as var;
 
 .formeo-row {
@@ -13,8 +13,8 @@
   transition: background-color 125ms ease-in-out;
   position: relative;
   clear: both;
-  background-color: color.$white;
-  box-shadow: 0 0 0 1px color.$gray-lighter;
+  background-color: t.$bg;
+  box-shadow: 0 0 0 1px t.$border;
   padding: mixins.space(2);
 
   &::after {
@@ -61,7 +61,7 @@
 
   .row-tag {
     left: -1px;
-    border-color: color.$row-outline-color;
+    border-color: t.$row-outline;
 
 
   }
@@ -75,8 +75,8 @@
   }
 
   &.sortable-ghost {
-    background-color: color.$row-highlight-color;
-    box-shadow: 0 0 0 1px color.$row-outline-color;
+    background-color: t.$row-highlight;
+    box-shadow: 0 0 0 1px t.$row-outline;
 
     * {
       opacity: 0;
@@ -91,21 +91,21 @@
 
 
   &.highlight-component {
-    box-shadow: 0 0 mixins.space() 2px color.$row-outline-color;
+    box-shadow: 0 0 mixins.space() 2px t.$row-outline;
   }
 }
 
 .row-moving {
-  background-color: color.$row-highlight-color !important;
+  background-color: t.$row-highlight !important;
 
   .action-btn-wrap {
     button {
-      background-color: color.$row-highlight-color;
+      background-color: t.$row-highlight;
     }
   }
 
   .row-tag {
-    background-color: color.$row-highlight-color;
+    background-color: t.$row-highlight;
 
 
   }
@@ -145,7 +145,7 @@
 
 .hovering-row,
 .editing-row {
-  box-shadow: 0 0 0 1px color.$row-outline-color;
+  box-shadow: 0 0 0 1px t.$row-outline;
 
   &:first-child {
     border-top-left-radius: 0;

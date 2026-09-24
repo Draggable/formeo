@@ -1,7 +1,6 @@
-@use "sass:color" as sass-color;
 @use "../base/mixins";
 
-@use "../base/colors" as color;
+@use "../base/tokens" as t;
 @use "../base/variables" as var;
 
 .formeo-column {
@@ -19,7 +18,7 @@
   }
 
   .column-tag {
-    border-color: color.$column-outline-color;
+    border-color: t.$column-outline;
   }
 
   .column-tag,
@@ -65,7 +64,7 @@
     &::before {
       width: 0;
       right: 6px;
-      border: 1px dashed sass-color.adjust(color.$column-outline-color, $lightness: 15%);
+      border: 1px dashed t.$column-outline-soft;
       border-width: 0 2px;
       display: block;
       top: 0;
@@ -75,7 +74,7 @@
     }
 
     svg {
-      fill: sass-color.adjust(color.$column-outline-color, $lightness: 15%);
+      fill: t.$column-outline-soft;
       position: absolute;
       right: 1px;
       width: 14px;
@@ -91,11 +90,11 @@
 
     &:hover {
       &::before {
-        border-color: color.$column-outline-color;
+        border-color: t.$column-outline;
       }
 
       svg {
-        fill: color.$column-outline-color;
+        fill: t.$column-outline;
       }
     }
   }
@@ -115,8 +114,8 @@
   }
 
   &.sortable-ghost {
-    background-color: color.$column-highlight-color;
-    box-shadow: 0 0 0 1px color.$column-outline-color;
+    background-color: t.$column-highlight;
+    box-shadow: 0 0 0 1px t.$column-outline;
 
     * {
       opacity: 0;
@@ -130,7 +129,7 @@
   }
 
   &.highlight-component {
-    box-shadow: 0 0 mixins.space() 2px color.$column-outline-color;
+    box-shadow: 0 0 mixins.space() 2px t.$column-outline;
   }
 }
 
@@ -141,7 +140,7 @@
   .empty {
     border-radius: var.$border-radius;
     height: 60px;
-    background-color: color.$gray-lightest;
+    background-color: t.$surface-muted;
 
     &.empty {
       min-height: 0;
@@ -156,7 +155,7 @@
     }
 
     &::after {
-      color: color.$gray-dark !important;
+      color: t.$text-secondary !important;
       line-height: 1em;
       opacity: 1;
       font-size: 1.1em;
@@ -180,21 +179,21 @@
 }
 
 .column-moving {
-  background-color: color.$column-highlight-color;
+  background-color: t.$column-highlight;
 
   .action-btn-wrap {
     button {
-      background-color: color.$column-highlight-color;
+      background-color: t.$column-highlight;
     }
   }
 
   .column-tag {
-    background-color: color.$column-highlight-color;
+    background-color: t.$column-highlight;
   }
 }
 
 button.column-handle {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: t.$overlay;
 }
 
 .hovering-column {
@@ -221,7 +220,7 @@ button.column-handle {
 
 .hovering-column,
 .editing-column {
-  box-shadow: 0 0 0 1px color.$column-outline-color;
+  box-shadow: 0 0 0 1px t.$column-outline;
 }
 
 .column-actions {
