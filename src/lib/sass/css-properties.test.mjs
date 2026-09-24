@@ -122,6 +122,42 @@ suite('formeo CSS custom properties', () => {
   })
 })
 
+suite('resolveFormeoProperties purity', () => {
+  const root = ':where(:root) {\n  --formeo-bg: #fff;\n}\n'
+  const dark = ':where(.formeo-dark) {\n  color-scheme: dark;\n  --formeo-bg: #000;\n}\n'
+  const use = '.a {\n  color: var(--formeo-bg);\n}\n'
+
+  test('resolves a well-formed stylesheet', t => {
+    const result = resolveFormeoProperties(root + dark + use)
+    t.assert.strictEqual(result.css, '.a {\n  color: #fff;\n}\n')
+    t.assert.strictEqual(result.dark.get('--formeo-bg'), '#000')
+  })
+
+  test('rejects more than one :where(:root) block', t => {
+    t.assert.throws(() => resolveFormeoProperties(root + root + use), /at most one :where\(:root\) block, found 2/)
+  })
+
+  test('rejects more than one :where(.formeo-dark) block', t => {
+    t.assert.throws(
+      () => resolveFormeoProperties(root + dark + dark),
+      /at most one :where\(\.formeo-dark\) block, found 2/
+    )
+  })
+
+  test('rejects non-property declarations in the root block', t => {
+    const impure = ':where(:root) {\n  --formeo-bg: #fff;\n  color: red;\n}\n'
+    t.assert.throws(() => resolveFormeoProperties(impure), /:where\(:root\) may only declare .*found: color: red/)
+  })
+
+  test('rejects anything but properties and color-scheme in the dark block', t => {
+    const impure = ':where(.formeo-dark) {\n  color-scheme: dark;\n  background: black;\n}\n'
+    t.assert.throws(
+      () => resolveFormeoProperties(root + impure),
+      /:where\(\.formeo-dark\) may only declare .*found: background: black/
+    )
+  })
+})
+
 /** The single compiled rule starting with `start`, trimmed. */
 function compiledRule(start) {
   const compiled = compileFormeoCss()
