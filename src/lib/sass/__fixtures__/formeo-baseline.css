@@ -704,7 +704,7 @@ button[class*=-clone]:hover .svg-icon {
     border-color: rgb(102, 175, 233);
   }
   50% {
-    border-color: rgb(191.1771428571, 221.6285714286, 245.8228571429);
+    border-color: color-mix(in srgb, rgb(102, 175, 233) 80%, white);
   }
 }
 @keyframes COMPONENT_HIGHLIGHT_PULSE {
