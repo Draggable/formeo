@@ -1,0 +1,52 @@
+@use "sass:color" as sass-color;
+@use "sass:list";
+@use "colors" as c;
+
+$_structural: (
+  stage: (c.$stage-outline-color, c.$stage-outline-color-text, c.$stage-highlight-color, c.$stage-highlight-color-text),
+  row: (c.$row-outline-color, c.$row-outline-color-text, c.$row-highlight-color, c.$row-highlight-color-text),
+  column: (c.$column-outline-color, c.$column-outline-color-text, c.$column-highlight-color, c.$column-highlight-color-text),
+  field: (c.$field-outline-color, c.$field-outline-color-text, c.$field-highlight-color, c.$field-highlight-color-text),
+  option: (c.$option-outline-color, c.$option-outline-color-text, c.$option-highlight-color, c.$option-highlight-color-text),
+);
+
+:where(:root) {
+  --formeo-bg: #{c.$white};
+  --formeo-bg-hover: #{sass-color.adjust(c.$white, $lightness: -5%)};
+  --formeo-surface-muted: #{c.$gray-lightest};
+  --formeo-stage-bg: #{c.$stage-background};
+  --formeo-stage-shadow: #{c.$shadow};
+  --formeo-overlay: #{rgba(255, 255, 255, 0.9)};
+
+  --formeo-text: #{c.$black};
+  --formeo-text-strong: #{c.$gray-darker};
+  --formeo-text-secondary: #{c.$gray-dark};
+  --formeo-text-muted: #{c.$gray};
+  --formeo-text-subtle: #{c.$gray-light};
+  --formeo-on-accent: #{c.$white};
+  --formeo-icon: #{c.$black};
+
+  --formeo-border: #{c.$gray-lighter};
+  --formeo-border-strong: #{c.$gray-light};
+  --formeo-focus: #{c.$input-focus};
+
+  --formeo-primary: #{c.$brand-primary};
+  --formeo-primary-dark: #{c.$brand-primary-dark};
+  --formeo-success: #{c.$brand-success};
+  --formeo-success-dark: #{c.$brand-success-dark};
+  --formeo-warning: #{c.$brand-warning};
+  --formeo-warning-dark: #{c.$brand-warning-dark};
+  --formeo-danger: #{c.$brand-error};
+  --formeo-danger-dark: #{c.$brand-error-dark};
+  --formeo-danger-subtle: #{rgba(c.$brand-error, 0.1)};
+  --formeo-info: #{c.$brand-info};
+  --formeo-remove-bg: #{c.$remove-bg};
+  --formeo-column-outline-soft: #{sass-color.adjust(c.$column-outline-color, $lightness: 15%)};
+
+  @each $name, $values in $_structural {
+    --formeo-#{$name}-outline: #{list.nth($values, 1)};
+    --formeo-#{$name}-outline-text: #{list.nth($values, 2)};
+    --formeo-#{$name}-highlight: #{list.nth($values, 3)};
+    --formeo-#{$name}-highlight-text: #{list.nth($values, 4)};
+  }
+}
