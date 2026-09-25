@@ -172,6 +172,16 @@ export default class EditPanelItem {
     return this.findOrCreateConditionTypeWrap(conditionType)
   }
 
+  /**
+   * Remove this item's data from the component, rebuild the panel and refresh the field preview
+   */
+  removeItem = () => {
+    this.field.remove(this.itemKey)
+    this.dom.remove()
+    this.panel.updateProps()
+    this.field.debouncedUpdatePreview?.()
+  }
+
   get itemControls() {
     if (this.isLocked) {
       const controls = {
@@ -189,11 +199,7 @@ export default class EditPanelItem {
       },
       action: {
         click: () => {
-          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, elem => {
-            this.field.remove(this.itemKey)
-            elem.remove()
-            this.panel.updateProps()
-          })
+          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, this.removeItem)
         },
         mouseover: _evt => {
           this.dom.classList.add('to-remove')

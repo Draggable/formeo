@@ -1,0 +1,39 @@
+// @ts-check
+import { expect, test } from '@playwright/test'
+import { addFieldAndEdit, gotoEditor } from './helpers/editor.js'
+
+const radioValues = field =>
+  field.locator('.field-preview input[type="radio"]').evaluateAll(els => els.map(el => el.value))
+
+test.describe('Options panel', () => {
+  test.beforeEach(async ({ page }) => {
+    await gotoEditor(page)
+  })
+
+  test('removing options updates the preview right away (#306)', async ({ page }) => {
+    const { field, editPanel } = await addFieldAndEdit(page, 'Radio Group', 'Options')
+    const items = editPanel.locator('.field-edit-options > li')
+    await expect(items).toHaveCount(3)
+    await items.nth(2).hover()
+    await items.nth(2).locator('.prop-remove').click()
+    await expect(items).toHaveCount(2)
+    await items.nth(0).hover()
+    await items.nth(0).locator('.prop-remove').click()
+    await expect(items).toHaveCount(1)
+    await expect.poll(() => radioValues(field)).toEqual(['radio-2'])
+  })
+
+  test('editing an option label in the preview updates the options panel (#306 regression)', async ({ page }) => {
+    await page.getByRole('button', { name: 'Radio Group' }).click()
+    const field = page.locator('.formeo-field').last()
+    const secondLabel = field.locator('.field-preview .f-radio label').nth(1)
+    await secondLabel.click()
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.type('New radio 2')
+    await field.locator('.field-actions').hover()
+    await field.locator('.field-actions .edit-toggle').click()
+    await field.locator('.field-edit').getByRole('heading', { name: 'Options' }).click()
+    const labelInput = field.locator('.field-edit-options > li').nth(1).locator('input[name$="-label"]')
+    await expect(labelInput).toHaveValue('New radio 2')
+  })
+})
