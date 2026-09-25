@@ -357,18 +357,51 @@ fields: {
 }
 ```
 
-### Example: require two answers (AND)
+### Example: show a field only when two answers match (AND / OR)
+
+The discount code field appears only for a Team plan with 10 seats. The first condition hides it when either answer differs (`||`). The second shows it when both match (`&&`).
 
 ```javascript
-conditions: [
-  {
-    if: [
-      { source: 'fields.plan', sourceProperty: 'value', comparison: '==', target: 'team' },
-      { logical: '&&', source: 'fields.seats', sourceProperty: 'value', comparison: '==', target: '10' },
+fields: {
+  plan: {
+    id: 'plan',
+    tag: 'input',
+    attrs: { type: 'radio' },
+    config: { label: 'Plan' },
+    options: [
+      { label: 'Free', value: 'free' },
+      { label: 'Team', value: 'team' },
     ],
-    then: [{ target: 'fields.discount-note', targetProperty: 'isVisible' }],
   },
-]
+  seats: {
+    id: 'seats',
+    tag: 'input',
+    attrs: { type: 'number' },
+    config: { label: 'Seats' },
+  },
+  'discount-note': {
+    id: 'discount-note',
+    tag: 'input',
+    attrs: { type: 'text' },
+    config: { label: 'Discount code' },
+    conditions: [
+      {
+        if: [
+          { source: 'fields.plan', sourceProperty: 'value', comparison: '!=', target: 'team' },
+          { logical: '||', source: 'fields.seats', sourceProperty: 'value', comparison: '!=', target: '10' },
+        ],
+        then: [{ target: 'fields.discount-note', targetProperty: 'isNotVisible' }],
+      },
+      {
+        if: [
+          { source: 'fields.plan', sourceProperty: 'value', comparison: '==', target: 'team' },
+          { logical: '&&', source: 'fields.seats', sourceProperty: 'value', comparison: '==', target: '10' },
+        ],
+        then: [{ target: 'fields.discount-note', targetProperty: 'isVisible' }],
+      },
+    ],
+  },
+}
 ```
 
 Both examples are covered by tests in `src/lib/js/renderer/conditions.test.js`.

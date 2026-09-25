@@ -642,34 +642,66 @@ describe('renderer conditions', () => {
       assert.equal(other.required, true, 'required again once shown')
     })
 
-    test('"Require two answers" (AND) works as documented', () => {
+    test('"Show a field only when two answers match" (AND / OR) works as documented', () => {
       render({
-        plan: optionField('plan', 'radio', [
-          { label: 'Free', value: 'free' },
-          { label: 'Team', value: 'team' },
-        ]),
-        seats: inputField('seats', 'number'),
-        [TARGET_ID]: inputField(TARGET_ID, 'text', {
+        plan: {
+          id: 'plan',
+          tag: 'input',
+          attrs: { type: 'radio' },
+          config: { label: 'Plan' },
+          options: [
+            { label: 'Free', value: 'free' },
+            { label: 'Team', value: 'team' },
+          ],
+        },
+        seats: {
+          id: 'seats',
+          tag: 'input',
+          attrs: { type: 'number' },
+          config: { label: 'Seats' },
+        },
+        'discount-note': {
+          id: 'discount-note',
+          tag: 'input',
+          attrs: { type: 'text' },
+          config: { label: 'Discount code' },
           conditions: [
+            {
+              if: [
+                { source: 'fields.plan', sourceProperty: 'value', comparison: '!=', target: 'team' },
+                { logical: '||', source: 'fields.seats', sourceProperty: 'value', comparison: '!=', target: '10' },
+              ],
+              then: [{ target: 'fields.discount-note', targetProperty: 'isNotVisible' }],
+            },
             {
               if: [
                 { source: 'fields.plan', sourceProperty: 'value', comparison: '==', target: 'team' },
                 { logical: '&&', source: 'fields.seats', sourceProperty: 'value', comparison: '==', target: '10' },
               ],
-              then: [{ target: `fields.${TARGET_ID}`, targetProperty: 'isNotVisible' }],
+              then: [{ target: 'fields.discount-note', targetProperty: 'isVisible' }],
             },
           ],
-        }),
+        },
       })
+      const isNoteHidden = () => container.querySelector('#f-discount-note').parentElement.hasAttribute('hidden')
+      const seats = container.querySelector('#f-seats')
+      const typeSeats = value => {
+        seats.value = value
+        seats.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+      }
+
+      assert.equal(isNoteHidden(), true, 'hidden on load')
+
       const [, team] = container.querySelectorAll('#f-plan input')
       team.checked = true
       change(team)
-      assert.equal(isTargetHidden(), false, 'one answer is not enough')
+      assert.equal(isNoteHidden(), true, 'one answer is not enough')
 
-      const seats = container.querySelector('#f-seats')
-      seats.value = '10'
-      seats.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
-      assert.equal(isTargetHidden(), true, 'both answers match')
+      typeSeats('10')
+      assert.equal(isNoteHidden(), false, 'shown once both answers match')
+
+      typeSeats('9')
+      assert.equal(isNoteHidden(), true, 'hidden again when one answer changes back')
     })
   })
 })
