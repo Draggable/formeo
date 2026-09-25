@@ -162,12 +162,26 @@ export const assignmentMap = Object.entries(ASSIGNMENT_OPERATORS).reduce((acc, [
   return acc
 }, {})
 
+/**
+ * Setting `checked` fires no `change`, so a required checkbox group the box belongs to is
+ * re-synced directly. A synthetic `change` could re-trigger conditions.
+ * @param {Element} elem checkbox or radio input
+ */
+const syncRequiredGroupOf = elem => {
+  const group = elem.closest?.(REQUIRED_GROUP_SELECTOR)
+  if (group) {
+    dom.syncCheckboxGroupRequired(group)
+  }
+}
+
 export const targetPropertyMap = {
   isChecked: elem => {
     elem.checked = true
+    syncRequiredGroupOf(elem)
   },
   isNotChecked: elem => {
     elem.checked = false
+    syncRequiredGroupOf(elem)
   },
   value: (elem, { assignment, ...rest }) => {
     const assignmentAction = assignmentMap[assignment]?.(elem, rest)

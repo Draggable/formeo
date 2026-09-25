@@ -196,6 +196,105 @@ describe('checkbox and radio groups', () => {
       assert.equal(box.value, 'yes', 'the value is left alone')
     })
 
+    const afterReset = () => new Promise(resolve => setTimeout(resolve, 0))
+
+    test('resetting the form re-validates a required checkbox group', async () => {
+      render({ 'checkbox-1': groupField('checkbox-1', 'checkbox', { required: true }) })
+      const [first] = inputsOf('checkbox-1')
+      first.checked = true
+      change(first)
+      assert.equal(form().checkValidity(), true, 'valid with a box checked')
+
+      form().reset()
+      await afterReset()
+
+      assert.equal(first.checked, false, 'reset unchecked the box')
+      assert.equal(form().checkValidity(), false, 'nothing checked is invalid again')
+    })
+
+    test('resetting the form back to a preselected box makes a required checkbox group valid again', async () => {
+      render({
+        'checkbox-1': groupField(
+          'checkbox-1',
+          'checkbox',
+          { required: true },
+          {
+            options: [
+              { label: 'One', value: 'one', selected: true },
+              { label: 'Two', value: 'two' },
+            ],
+          }
+        ),
+      })
+      const [first] = inputsOf('checkbox-1')
+      first.checked = false
+      change(first)
+      assert.equal(form().checkValidity(), false, 'invalid with nothing checked')
+
+      form().reset()
+      await afterReset()
+
+      assert.equal(first.checked, true, 'reset re-checked the preselected box')
+      assert.equal(form().checkValidity(), true)
+    })
+
+    describe('checked by a condition', () => {
+      const setOptionWhen = (value, targetProperty) => [
+        {
+          if: [{ source: 'fields.source-1', sourceProperty: 'value', comparison: '==', target: value }],
+          then: [{ target: 'fields.checkbox-1.options[0]', targetProperty }],
+        },
+      ]
+      const typeIntoSource = value => {
+        const source = container.querySelector('#f-source-1')
+        source.value = value
+        source.dispatchEvent(new window.Event('input', { bubbles: true }))
+      }
+      const sourceField = conditions => ({
+        id: 'source-1',
+        tag: 'input',
+        attrs: { type: 'text' },
+        config: { label: 'source' },
+        conditions,
+      })
+
+      test('"isChecked" on one box makes the whole required group valid', () => {
+        render({
+          'source-1': sourceField(setOptionWhen('check', 'isChecked')),
+          'checkbox-1': groupField('checkbox-1', 'checkbox', { required: true }),
+        })
+        assert.equal(form().checkValidity(), false, 'nothing checked')
+
+        typeIntoSource('check')
+
+        assert.equal(inputsOf('checkbox-1')[0].checked, true)
+        assert.equal(form().checkValidity(), true, 'the other box is no longer required')
+      })
+
+      test('"isNotChecked" on the only checked box makes the required group invalid again', () => {
+        render({
+          'source-1': sourceField(setOptionWhen('uncheck', 'isNotChecked')),
+          'checkbox-1': groupField(
+            'checkbox-1',
+            'checkbox',
+            { required: true },
+            {
+              options: [
+                { label: 'One', value: 'one', selected: true },
+                { label: 'Two', value: 'two' },
+              ],
+            }
+          ),
+        })
+        assert.equal(form().checkValidity(), true, 'the preselected box satisfies the group')
+
+        typeIntoSource('uncheck')
+
+        assert.equal(inputsOf('checkbox-1')[0].checked, false)
+        assert.equal(form().checkValidity(), false, 'nothing checked is invalid again')
+      })
+    })
+
     test('a group that is not required renders no required inputs', () => {
       render({ 'radio-1': groupField('radio-1', 'radio', { required: false }) })
 

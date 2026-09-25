@@ -170,10 +170,24 @@ export default class FormeoRenderer {
     }
 
     this.renderedForm = dom.render(config)
+    this.renderedForm.addEventListener('reset', this.syncRequiredGroupsAfterReset)
 
     this.applyConditions()
 
     return this.renderedForm
+  }
+
+  /**
+   * A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
+   * The `reset` event fires before the controls revert, hence the deferral.
+   * @param {Event} evt the form's reset event
+   */
+  syncRequiredGroupsAfterReset = ({ currentTarget: form }) => {
+    setTimeout(() => {
+      for (const group of form.querySelectorAll(`[data-${REQUIRED_GROUP_ATTR}]`)) {
+        dom.syncCheckboxGroupRequired(group)
+      }
+    }, 0)
   }
 
   get html() {
