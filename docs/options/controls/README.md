@@ -7,10 +7,10 @@ Control options can be used to disable, extend and modify the Formeo's control p
 | [sortable](#sortable)         | String  | allow controls to be reordered by users                                             | `true`                                       | `false`                        |
 | [disable](#disable)           | Object  | disable built-in elements or groups                                                 | `{elements: ['number']}`                     | `{}`                           |
 | [elements](#elements)         | Array   | define custom elements                                                              | [see below](#elements)                       | `[]`                           |
-| [elementOrder](#elementOrder) | Object  | set order of elements in a group                                                    | `{html: ['header', 'paragraph', 'divider']}` | `[]`                           |
+| [elementOrder](#elementorder) | Object  | set order of elements in a group                                                    | `{html: ['header', 'paragraph', 'divider']}` | `[]`                           |
 | [groups](#groups)             | Array   | define custom [control groups](../../controls/#control-groups) beyond the default 3 | [see below](#groups)                         | `[]`                           |
-| [groupOrder](#groupOrder)     | Array   | set order of [control groups](../../controls/#control-groups)                       | `['html', 'layout']`                         | `['common', 'html', 'layout']` |
-| [ghostPreview](#ghostPreview) | Boolean | use a live preview of the control when dragging                                     | `true`                                       | `false`                        |
+| [groupOrder](#grouporder)     | Array   | set order of [control groups](../../controls/#control-groups)                       | `['html', 'layout']`                         | `['common', 'html', 'layout']` |
+| [ghostPreview](#ghostpreview) | Boolean | use a live preview of the control when dragging                                     | `true`                                       | `false`                        |
 
 ## sortable
 
@@ -137,6 +137,22 @@ Set the group panel order with `groupOrder`
 ```javascript
 const controlOptions = {
   groupOrder: ['common', 'html'],
+}
+
+const formeoOptions = {
+  controls: controlOptions,
+}
+
+const formeo = new FormeoEditor(formeoOptions)
+```
+
+## ghostPreview
+
+Show a live preview of the field instead of the control button while a control is being dragged onto the stage.
+
+```javascript
+const controlOptions = {
+  ghostPreview: true,
 }
 
 const formeoOptions = {
