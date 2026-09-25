@@ -317,7 +317,7 @@ The editor saves the symbol forms (`==`, `&&`); the word forms are accepted too.
 
 | `targetProperty` | Effect on `target` (an address) |
 |------------------|-----------------------------------|
-| `isVisible` / `isNotVisible` | Shows or hides the target (a field, a whole row or a column). Required inputs inside a hidden target stop being required until it is shown again. |
+| `isVisible` / `isNotVisible` | Shows or hides the target (a field or a whole row). Required inputs inside a hidden target stop being required until it is shown again. |
 | `isChecked` / `isNotChecked` | Checks or unchecks the target. Point at one option: `fields.<id>.options[<index>]`. |
 | `value` | Sets the target's value to `value` when `assignment` is `=`. An `input` event fires, so conditions that read the target run too. |
 
