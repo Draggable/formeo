@@ -254,18 +254,22 @@ renderer.userData = {
 renderer.userData = { firstName: 'John' }
 ```
 
-#### Checkbox Groups
+#### Checkbox and Radio Groups
 
-Checkbox groups automatically convert to/from arrays:
+A checkbox or radio group is one field with `options`. It renders as a wrapper element (`id="f-<fieldId>"`, the element conditions target) that holds one `<input>` per option.
+
+- **Name.** Every option input is named `attrs.name` when it is set. Otherwise it falls back to `attrs.id`, then to the rendered field id (`f-<fieldId>`). `userData` is keyed by that name. Give two groups different names: radio groups that share a name act as one group.
+- **Required.** A required radio group needs one option picked. A required checkbox group needs **at least one** box checked, not all of them. The browser's own validation message appears either way, and the group label shows `*`.
+- **Other attributes.** `disabled` and `form` are copied to every option input. Everything else set on the group (`data-*`, `aria-*`, `title`, custom attributes) goes on the wrapper element.
 
 ```javascript
-// Setting multiple checked values
-renderer.userData = { hobbies: ['reading', 'gaming', 'coding'] }
+// Setting checked values; a single value is fine too
+renderer.userData = { toppings: ['cheese', 'olives'] }
 
 // Getting checked values
-const data = renderer.userData
-// { hobbies: ['reading', 'gaming'] } if multiple checked
-// { hobbies: 'reading' } if only one checked
+renderer.userData
+// { toppings: ['cheese', 'olives'] } if several are checked
+// { toppings: 'cheese' } if only one is checked
 ```
 
 #### Radio Buttons
@@ -578,6 +582,7 @@ const component = renderer.components[componentId]
 **userData returns empty object:**
 - Make sure the form has been rendered
 - Check that form fields have proper `name` attributes
+- Checkbox and radio groups submit under attrs.name, falling back to attrs.id, then f-<fieldId>
 
 **Checkbox values not appearing as arrays:**
 - If only one checkbox is selected, it returns a single value
