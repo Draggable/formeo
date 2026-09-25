@@ -16,11 +16,12 @@ import {
 
 export default class FormeoRenderer {
   constructor(opts, formDataArg) {
-    const { renderContainer: container, elements, formData, config } = processOptions(opts)
+    const { renderContainer: container, elements, formData, config, events } = processOptions(opts)
     this.container = container
     this.form = cleanFormData(formDataArg || formData)
     this.elements = elements
     this.config = config
+    this.events = { ...events }
     this.components = Object.create(null)
     this.dom = dom
   }
@@ -136,6 +137,8 @@ export default class FormeoRenderer {
     } else {
       this.container.appendChild(renderedForm)
     }
+
+    this.events.onRender?.({ form: renderedForm, renderer: this, formData: this.form })
   }
 
   getRenderedForm(formData = this.form) {
@@ -151,10 +154,25 @@ export default class FormeoRenderer {
     }
 
     this.renderedForm = dom.render(config)
+    this.bindFormEvents(this.renderedForm)
 
     this.applyConditions()
 
     return this.renderedForm
+  }
+
+  /**
+   * Wire the renderer's onChange/onSubmit callbacks to a freshly rendered <form>
+   * @param {HTMLFormElement} form
+   */
+  bindFormEvents(form) {
+    const { onChange, onSubmit } = this.events
+    if (onChange) {
+      form.addEventListener('input', event => onChange({ event, target: event.target, form, userData: this.userData }))
+    }
+    if (onSubmit) {
+      form.addEventListener('submit', event => onSubmit({ event, form, userData: this.userData }))
+    }
   }
 
   get html() {

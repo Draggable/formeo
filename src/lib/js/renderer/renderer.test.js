@@ -660,4 +660,90 @@ describe('FormeoRenderer', () => {
       assert.equal(userFormData[1].value, userData['f-field-2'])
     })
   })
+
+  describe('events option (#209)', () => {
+    const textFormData = () => ({
+      id: 'events-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['nickname'] } },
+      fields: {
+        nickname: {
+          id: 'nickname',
+          tag: 'input',
+          attrs: { type: 'text', name: 'nickname' },
+          config: { label: 'Nickname' },
+        },
+      },
+    })
+
+    test('onRender runs once per render() with the attached form', () => {
+      const calls = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onRender: evt => calls.push(evt) },
+      })
+      renderer.render(textFormData())
+      // asserted before the next render() replaces (and detaches) this form
+      assert.equal(calls.length, 1)
+      assert.equal(calls[0].form.tagName, 'FORM')
+      assert.equal(calls[0].form.isConnected, true)
+      assert.equal(calls[0].renderer, renderer)
+
+      renderer.render(textFormData())
+      assert.equal(calls.length, 2)
+      assert.equal(calls[1].form, container.querySelector('.formeo-render'))
+    })
+
+    test('reading html does not fire onRender', () => {
+      const onRender = []
+      const renderer = new FormeoRenderer({ renderContainer: container, events: { onRender: e => onRender.push(e) } })
+      renderer.formData = textFormData()
+      assert.ok(renderer.html.startsWith('<form'))
+      assert.equal(onRender.length, 0)
+    })
+
+    test('onChange receives userData after input', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData.nickname) },
+      })
+      renderer.render(textFormData())
+      const input = container.querySelector('input[name="nickname"]')
+      input.value = 'Ada'
+      input.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.deepEqual(values, ['Ada'])
+    })
+
+    test('onSubmit receives the event and userData', () => {
+      const submits = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: {
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault()
+            submits.push(userData)
+          },
+        },
+      })
+      renderer.render(textFormData())
+      container.querySelector('input[name="nickname"]').value = 'Grace'
+      const submit = new window.Event('submit', { cancelable: true })
+      container.querySelector('form').dispatchEvent(submit)
+      assert.deepEqual(submits, [{ nickname: 'Grace' }])
+      assert.equal(submit.defaultPrevented, true)
+    })
+
+    test('legacy config.action.onRender still fires once the form is in the page', async () => {
+      const seen = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        config: { action: { onRender: form => seen.push(form.tagName) } },
+      })
+      renderer.render(textFormData())
+      await new Promise(resolve => window.requestAnimationFrame(resolve))
+      assert.deepEqual(seen, ['FORM'])
+    })
+  })
 })

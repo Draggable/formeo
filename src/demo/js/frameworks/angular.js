@@ -530,9 +530,10 @@ export class FormBuilderComponent implements OnInit, OnDestroy {
 
     const renderOptions = {
       renderContainer: this.renderContainer.nativeElement,
-      config: {
-        events: {
-          onSubmit: (formData: any) => this.handleFormSubmit(formData)
+      events: {
+        onSubmit: ({ event, userData }: any) => {
+          event.preventDefault();
+          this.handleFormSubmit(userData);
         }
       }
     };

@@ -9,6 +9,7 @@ The `FormeoRenderer` class is responsible for rendering Formeo form data into in
 - [Constructor](#constructor)
 - [Properties](#properties)
 - [Methods](#methods)
+- [Events](#events)
 - [Working with User Data](#working-with-user-data)
 - [Conditional Logic](#conditional-logic)
 - [Examples](#examples)
@@ -49,6 +50,7 @@ Creates a new FormeoRenderer instance.
   - `elements` (Object): Custom form elements/controls configuration
   - `formData` (Object): The form structure data to render
   - `config` (Object): Additional rendering configuration
+  - `events` (Object): `onRender`, `onChange`, `onSubmit` callbacks (see [Events](#events))
 - `formDataArg` (Object, optional): Alternative way to pass form data
 
 **Example:**
@@ -182,6 +184,60 @@ Generates and returns the rendered form as a DOM element without appending it to
 ```javascript
 const formElement = renderer.getRenderedForm()
 document.body.appendChild(formElement)
+```
+
+## Events
+
+Pass an `events` object to the constructor to run code when the form renders, when a field changes, and when the form is submitted.
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: document.getElementById('form-container'),
+  formData: myFormData,
+  events: {
+    onRender: ({ form, renderer, formData }) => {
+      // form is already attached to renderContainer
+      console.log('rendered', form)
+    },
+    onChange: ({ event, target, form, userData }) => {
+      console.log('field changed', target.name, userData)
+    },
+    onSubmit: ({ event, form, userData }) => {
+      event.preventDefault() // the app decides whether/how to prevent the default submit
+      console.log('submitted', userData)
+    },
+  },
+})
+
+renderer.render()
+```
+
+### `onRender({ form, renderer, formData })`
+
+Fires synchronously after `render()` attaches the rendered `<form>` to `renderContainer`. Because `render()` is synchronous, code that runs right after calling it already sees the attached form; `onRender` is useful when that code lives elsewhere, such as inside the `events` object itself. It does **not** fire when reading `html` or calling `getRenderedForm()` directly, since neither attaches the form to the container.
+
+### `onChange({ event, target, form, userData })`
+
+Fires on every `input` event within the rendered form. `userData` is the same object returned by `renderer.userData`, evaluated at the time of the event.
+
+### `onSubmit({ event, form, userData })`
+
+Fires on the form's native `submit` event. Formeo does not call `event.preventDefault()` for you — the app decides whether to stop the browser's default submission and how to handle `userData`.
+
+### Legacy: `config.action.onRender`
+
+`config.action.onRender` is still supported for backwards compatibility. Unlike `events.onRender`, it runs on the next animation frame after the form has been attached to the page (see `dom.onRender`), rather than synchronously:
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: document.getElementById('form-container'),
+  formData: myFormData,
+  config: {
+    action: {
+      onRender: form => console.log('form is in the page', form),
+    },
+  },
+})
 ```
 
 ## Working with User Data
