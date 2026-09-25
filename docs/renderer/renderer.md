@@ -310,18 +310,22 @@ renderer.userData = {
 renderer.userData = { firstName: 'John' }
 ```
 
-#### Checkbox Groups
+#### Checkbox and Radio Groups
 
-Checkbox groups automatically convert to/from arrays:
+A checkbox or radio group is one field with `options`. It renders as a wrapper element (`id="f-<fieldId>"`, the element conditions target) that holds one `<input>` per option.
+
+- **Name.** Every option input is named `attrs.name` when it is set. Otherwise it falls back to `attrs.id`, then to the rendered field id (`f-<fieldId>`). `userData` is keyed by that name. Give two groups different names: radio groups that share a name act as one group.
+- **Required.** A required radio group needs one option picked. A required checkbox group needs **at least one** box checked, not all of them. The browser's own validation message appears either way, and the group label shows `*`.
+- **Other attributes.** `disabled` and `form` are copied to every option input. Everything else set on the group (`data-*`, `aria-*`, `title`, custom attributes) goes on the wrapper element.
 
 ```javascript
-// Setting multiple checked values
-renderer.userData = { hobbies: ['reading', 'gaming', 'coding'] }
+// Setting checked values; a single value is fine too
+renderer.userData = { toppings: ['cheese', 'olives'] }
 
 // Getting checked values
-const data = renderer.userData
-// { hobbies: ['reading', 'gaming'] } if multiple checked
-// { hobbies: 'reading' } if only one checked
+renderer.userData
+// { toppings: ['cheese', 'olives'] } if several are checked
+// { toppings: 'cheese' } if only one is checked
 ```
 
 #### Radio Buttons
@@ -337,73 +341,128 @@ const data = renderer.userData
 
 ## Conditional Logic
 
-The renderer supports conditional field display and behavior based on user input.
+Conditions let one component react to another: show or hide a field or a whole row, check an option, or set a value. The editor writes them from a field's **Conditions** panel. You can also write them by hand in `formData`.
 
-### How Conditions Work
+### Where conditions live
 
-Conditions are evaluated in real-time as users interact with the form. When a condition is met, specific actions are executed (show/hide fields, enable/disable inputs, etc.).
-
-### Condition Structure
-
-Conditions are defined in the form data and automatically applied by the renderer:
+Any component (field, row, column or stage) can carry a `conditions` array. Each entry is one condition:
 
 ```javascript
-const formWithConditions = {
-  // ... form structure
-  fields: {
-    'field-1': {
-      // ... field config
-      conditions: [
-        {
-          if: {
-            source: '@field.source-field-id',
-            sourceProperty: 'value',
-            comparison: 'equals',
-            target: 'specific-value'
-          },
-          then: [
-            {
-              target: '@field.target-field-id',
-              targetProperty: 'visible',
-              assignment: 'set',
-              value: true
-            }
-          ]
-        }
-      ]
-    }
-  }
-}
-```
-
-### Supported Comparisons
-
-- `equals`: Values are exactly equal
-- `notEquals`: Values are not equal
-- `contains`: Source value contains target value
-- Additional comparisons available in `comparisonMap`
-
-### Example: Show Field Based on Selection
-
-```javascript
-// Show "Other" text field when user selects "Other" in dropdown
 {
-  if: {
-    source: '@field.country',
-    sourceProperty: 'value',
-    comparison: 'equals',
-    target: 'other'
-  },
-  then: [
-    {
-      target: '@field.country-other',
-      targetProperty: 'visible',
-      assignment: 'set',
-      value: true
-    }
-  ]
+  if: [ /* one or more clauses */ ],
+  then: [ /* one or more actions */ ],
 }
 ```
+
+When every clause of an `if` group matches, every action in `then` runs. Components are referenced by **address**: `fields.<fieldId>`, `rows.<rowId>`, `columns.<columnId>`, or one option of a group, `fields.<fieldId>.options[<index>]`. Addresses use the ids from `formData`, without the `f-` prefix the renderer adds to element ids.
+
+A column works as a clause `source`, but a show/hide action that targets a column hides the whole row it sits in. To hide part of a row, target its fields.
+
+### `if` clauses
+
+| Key | Values | Meaning |
+|-----|--------|---------|
+| `source` | address | The component to read. |
+| `sourceProperty` | `value`, `isChecked`, `isNotChecked`, `isVisible`, `isNotVisible` | What to read. `value` is the text of an input, the selected value of a select (an array for `multiple`), the checked value of a radio group, or the list of checked values of a checkbox group. The other four are true/false, and a clause using them matches when they are true, so `comparison` and `target` are ignored. |
+| `comparison` | `==` (`equals`), `!=` (`notEquals`), `⊃` (`contains`), `!⊃` (`notContains`) | How to compare `value` with `target`. For checkbox groups and multi-selects, `==` matches when any checked value equals `target`. |
+| `target` | text, or an address | The value to compare against, or another component whose `targetProperty` is compared. |
+| `targetProperty` | `value` | Used only when `target` is an address. |
+| `logical` | `&&` (`and`), `\|\|` (`or`) | Joins this clause to the one before it. Ignored on the first clause, and a missing value means OR. `&&` binds tighter than `\|\|`: `A \|\| B && C` means `A \|\| (B && C)`. |
+
+The editor saves the symbol forms (`==`, `&&`); the word forms are accepted too.
+
+### `then` actions
+
+| `targetProperty` | Effect on `target` (an address) |
+|------------------|-----------------------------------|
+| `isVisible` / `isNotVisible` | Shows or hides the target (a field or a whole row). Required inputs inside a hidden target stop being required until it is shown again. |
+| `isChecked` / `isNotChecked` | Checks or unchecks the target. Point at one option: `fields.<id>.options[<index>]`. |
+| `value` | Sets the target's value to `value` when `assignment` is `=`. An `input` event fires, so conditions that read the target run too. |
+
+### When conditions run
+
+Each condition runs once when the form renders, and again whenever a component its clauses read from changes (`input` for text fields, `change` for selects, checkboxes and radios). Nothing is undone automatically when a condition stops matching. To hide a field **except** when something is true, pair two conditions, as in the first example.
+
+### Example: show a field for "Other"
+
+```javascript
+fields: {
+  country: {
+    id: 'country',
+    tag: 'select',
+    config: { label: 'Country' },
+    options: [
+      { label: 'Canada', value: 'ca' },
+      { label: 'Other', value: 'other' },
+    ],
+  },
+  'country-other': {
+    id: 'country-other',
+    tag: 'input',
+    attrs: { type: 'text', required: true },
+    config: { label: 'Which country?' },
+    conditions: [
+      {
+        if: [{ source: 'fields.country', sourceProperty: 'value', comparison: '!=', target: 'other' }],
+        then: [{ target: 'fields.country-other', targetProperty: 'isNotVisible' }],
+      },
+      {
+        if: [{ source: 'fields.country', sourceProperty: 'value', comparison: '==', target: 'other' }],
+        then: [{ target: 'fields.country-other', targetProperty: 'isVisible' }],
+      },
+    ],
+  },
+}
+```
+
+### Example: show a field only when two answers match (AND / OR)
+
+The discount code field appears only for a Team plan with 10 seats. The first condition hides it when either answer differs (`||`). The second shows it when both match (`&&`).
+
+```javascript
+fields: {
+  plan: {
+    id: 'plan',
+    tag: 'input',
+    attrs: { type: 'radio' },
+    config: { label: 'Plan' },
+    options: [
+      { label: 'Free', value: 'free' },
+      { label: 'Team', value: 'team' },
+    ],
+  },
+  seats: {
+    id: 'seats',
+    tag: 'input',
+    attrs: { type: 'number' },
+    config: { label: 'Seats' },
+  },
+  'discount-note': {
+    id: 'discount-note',
+    tag: 'input',
+    attrs: { type: 'text' },
+    config: { label: 'Discount code' },
+    conditions: [
+      {
+        if: [
+          { source: 'fields.plan', sourceProperty: 'value', comparison: '!=', target: 'team' },
+          { logical: '||', source: 'fields.seats', sourceProperty: 'value', comparison: '!=', target: '10' },
+        ],
+        then: [{ target: 'fields.discount-note', targetProperty: 'isNotVisible' }],
+      },
+      {
+        if: [
+          { source: 'fields.plan', sourceProperty: 'value', comparison: '==', target: 'team' },
+          { logical: '&&', source: 'fields.seats', sourceProperty: 'value', comparison: '==', target: '10' },
+        ],
+        then: [{ target: 'fields.discount-note', targetProperty: 'isVisible' }],
+      },
+    ],
+  },
+}
+```
+
+Both examples are covered by tests in `src/lib/js/renderer/conditions.test.js`.
 
 ## Examples
 
@@ -634,12 +693,13 @@ const component = renderer.components[componentId]
 **userData returns empty object:**
 - Make sure the form has been rendered
 - Check that form fields have proper `name` attributes
+- Checkbox and radio groups submit under attrs.name, falling back to attrs.id, then f-<fieldId>
 
 **Checkbox values not appearing as arrays:**
 - If only one checkbox is selected, it returns a single value
 - Multiple selections automatically convert to arrays
 
 **Conditions not working:**
-- Verify condition syntax in form data
-- Check that source and target fields exist
-- Ensure fields have proper IDs in the format expected by conditions
+- `if` must be an array of clauses, and addresses look like `fields.<fieldId>` (the id from formData, without `f-`)
+- `then` uses `isVisible` / `isNotVisible` / `isChecked` / `isNotChecked` / `value`, not `visible` or `set`
+- Conditions don't undo themselves; add the opposite condition to show a field again

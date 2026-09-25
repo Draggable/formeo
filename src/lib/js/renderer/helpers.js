@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual.js'
-import dom from '../common/dom.js'
+import dom, { REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
 import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, UUID_REGEXP } from '../constants.js'
 
@@ -162,12 +162,26 @@ export const assignmentMap = Object.entries(ASSIGNMENT_OPERATORS).reduce((acc, [
   return acc
 }, {})
 
+/**
+ * Setting `checked` fires no `change`, so a required checkbox group the box belongs to is
+ * re-synced directly. A synthetic `change` could re-trigger conditions.
+ * @param {Element} elem checkbox or radio input
+ */
+const syncRequiredGroupOf = elem => {
+  const group = elem.closest?.(REQUIRED_GROUP_SELECTOR)
+  if (group) {
+    dom.syncCheckboxGroupRequired(group)
+  }
+}
+
 export const targetPropertyMap = {
   isChecked: elem => {
     elem.checked = true
+    syncRequiredGroupOf(elem)
   },
   isNotChecked: elem => {
     elem.checked = false
+    syncRequiredGroupOf(elem)
   },
   value: (elem, { assignment, ...rest }) => {
     const assignmentAction = assignmentMap[assignment]?.(elem, rest)
@@ -178,14 +192,77 @@ export const targetPropertyMap = {
     return assignmentAction
   },
   isNotVisible: elem => {
-    if (elem?._required === undefined) {
-      elem._required = elem.required
-    }
     elem.parentElement.setAttribute('hidden', true)
-    elem.required = false // Hidden input cannot be required.
+    suspendRequired(elem)
   },
   isVisible: elem => {
     elem.parentElement.removeAttribute('hidden')
-    elem.required = elem._required
+    restoreRequired(elem)
   },
 }
+
+const FORM_CONTROL_SELECTOR = 'input, select, textarea'
+const REQUIRED_GROUP_SELECTOR = `[data-${REQUIRED_GROUP_ATTR}]`
+
+/**
+ * The element itself when it matches, plus every descendant that does
+ * @param {Element} elem
+ * @param {String} selector
+ * @return {Array<Element>}
+ */
+const selfAndDescendants = (elem, selector) => [
+  ...(elem.matches(selector) ? [elem] : []),
+  ...elem.querySelectorAll(selector),
+]
+
+/**
+ * A hidden control can't be filled in, so it must not be required. Remembers each control's
+ * `required` so that restoreRequired can put it back. Works for a field, a group or a whole row.
+ * @param {Element} elem condition target
+ */
+export const suspendRequired = elem => {
+  for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
+    if (control._required === undefined) {
+      control._required = control.required
+    }
+    control.required = false
+  }
+}
+
+/**
+ * Undoes suspendRequired. Controls that were never suspended are left alone, and so are controls
+ * still inside a hidden container: they keep their saved `required` until that container is shown.
+ * @param {Element} elem condition target
+ */
+export const restoreRequired = elem => {
+  for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
+    if (control._required !== undefined && !control.closest('[hidden]')) {
+      control.required = control._required
+      delete control._required
+    }
+  }
+  // a required checkbox group's state depends on which boxes are checked now
+  for (const group of selfAndDescendants(elem, REQUIRED_GROUP_SELECTOR)) {
+    dom.syncCheckboxGroupRequired(group)
+  }
+}
+
+const LOGICAL_AND = new Set(['&&', 'and'])
+
+/**
+ * Splits a condition's if-clauses into OR-groups of AND-ed clauses. A clause's `logical`
+ * ('&&' / '||', or 'and' / 'or') joins it to the clause before it, and '&&' binds tighter
+ * than '||' as in JavaScript. The first clause's `logical` is ignored, and a missing
+ * `logical` means OR, which is how every clause behaved before AND was supported.
+ * @param {Array<Object>} ifConditions
+ * @return {Array<Array<Object>>} e.g. A || B && C -> [[A], [B, C]]
+ */
+export const groupIfConditions = (ifConditions = []) =>
+  ifConditions.reduce((groups, clause, index) => {
+    if (index > 0 && LOGICAL_AND.has(clause.logical)) {
+      groups[groups.length - 1].push(clause)
+    } else {
+      groups.push([clause])
+    }
+    return groups
+  }, [])

@@ -245,5 +245,18 @@ describe('DOM Class', async _t => {
       assert.equal(element.children.length, 2)
       assert.equal(element.children[1].selected, true)
     })
+
+    await test('keeps id-based names for option groups in the editor preview', () => {
+      const group = () => ({
+        id: 'group-1',
+        tag: 'input',
+        attrs: { type: 'radio', name: 'shared' },
+        config: { label: 'Group' },
+        options: [{ label: 'A', value: 'a' }],
+      })
+
+      assert.equal(dom.create(group(), true).querySelector('input').name, 'group-1', 'preview keeps the id')
+      assert.equal(dom.create(group()).querySelector('input').name, 'shared', 'render uses attrs.name')
+    })
   })
 })
