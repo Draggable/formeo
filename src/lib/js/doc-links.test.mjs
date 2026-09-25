@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { suite, test } from 'node:test'
@@ -10,8 +10,9 @@ import {
   githubSlug,
 } from '../../../tools/check-doc-links.mjs'
 
-const fixture = files => {
+const fixture = (t, files) => {
   const dir = mkdtempSync(join(tmpdir(), 'formeo-doc-links-'))
+  t.after(() => rmSync(dir, { recursive: true, force: true }))
   for (const [path, text] of Object.entries(files)) {
     mkdirSync(join(dir, path, '..'), { recursive: true })
     writeFileSync(join(dir, path), text)
@@ -41,7 +42,7 @@ suite('docs link guard', () => {
   })
 
   test('flags missing files, directories without README.md and unknown anchors', t => {
-    const dir = fixture({
+    const dir = fixture(t, {
       'README.md': [
         '[ok](docs/a.md#real-heading)',
         '[missing](docs/nope.md)',
@@ -53,6 +54,7 @@ suite('docs link guard', () => {
         '```',
         '[in code](docs/ignored.md)',
         '```',
+        'Use `[x](#)` to mark a placeholder and `handlers[type](evt)` to dispatch.',
       ].join('\n'),
       'docs/a.md': '# Real heading\n',
       'docs/empty/.keep': '',
@@ -67,7 +69,7 @@ suite('docs link guard', () => {
   })
 
   test('resolves repo URLs and directory links against the working tree', t => {
-    const dir = fixture({
+    const dir = fixture(t, {
       'README.md': '[docs](https://github.com/Draggable/formeo/tree/main/docs/options#sortable)\n[same](#top)\n# Top\n',
       'docs/options/README.md': '## sortable\n',
     })

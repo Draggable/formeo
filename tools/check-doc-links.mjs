@@ -26,6 +26,9 @@ export const githubSlug = heading =>
 
 const stripCode = text => text.replace(/^(```|~~~)[\s\S]*?^\1/gm, block => block.replace(/[^\n]/g, ''))
 
+/** Blank inline code spans (`` `...` ``) so link-like text inside them isn't parsed as a link. */
+const stripInlineCode = text => text.replace(/`[^`\n]+`/g, span => span.replace(/[^\n]/g, ''))
+
 /** All anchors a markdown document exposes, with GitHub's -1, -2 suffixes for repeated headings. */
 export function anchorsOf(text) {
   const seen = new Map()
@@ -41,7 +44,7 @@ export function anchorsOf(text) {
 
 /** `[text](target)` links outside code blocks, with 1-based line numbers. */
 export function linksOf(text) {
-  const code = stripCode(text)
+  const code = stripInlineCode(stripCode(text))
   return [...code.matchAll(/!?\[[^\]]*\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g)].map(match => ({
     target: match[1],
     line: code.slice(0, match.index).split('\n').length,
