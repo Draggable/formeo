@@ -48,7 +48,7 @@ test.describe('Rendered checkbox and radio groups', () => {
     expect(await isValid(form)).toBe(true)
   })
 
-  test('a required checkbox group needs exactly one checked box (#270)', async ({ page }) => {
+  test('a required checkbox group needs at least one checked box (#270)', async ({ page }) => {
     const form = await renderForm(page, {
       'e2e-checkbox': { id: 'e2e-checkbox', ...group('checkbox', { required: true }) },
     })
