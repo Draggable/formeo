@@ -230,12 +230,13 @@ export const suspendRequired = elem => {
 }
 
 /**
- * Undoes suspendRequired. Controls that were never suspended are left alone.
+ * Undoes suspendRequired. Controls that were never suspended are left alone, and so are controls
+ * still inside a hidden container: they keep their saved `required` until that container is shown.
  * @param {Element} elem condition target
  */
 export const restoreRequired = elem => {
   for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
-    if (control._required !== undefined) {
+    if (control._required !== undefined && !control.closest('[hidden]')) {
       control.required = control._required
       delete control._required
     }

@@ -440,6 +440,41 @@ describe('renderer conditions', () => {
       assert.equal(form().checkValidity(), true)
     })
 
+    test('showing a field whose row is still hidden keeps it from blocking submission', () => {
+      const when = (value, then) => ({
+        if: [{ source: 'fields.source-1', sourceProperty: 'value', comparison: 'equals', target: value }],
+        then: then.map(([target, targetProperty]) => ({ target, targetProperty, assignment: '', value: '' })),
+      })
+      const formData = buildFormData({
+        'source-1': inputField('source-1', 'text', {
+          conditions: [
+            when('hide', [
+              ['rows.row-2', 'isNotVisible'],
+              ['fields.inner', 'isNotVisible'],
+            ]),
+            when('field', [['fields.inner', 'isVisible']]),
+            when('row', [['rows.row-2', 'isVisible']]),
+          ],
+        }),
+      })
+      formData.stages['stage-1'].children.push('row-2')
+      formData.rows['row-2'] = { id: 'row-2', config: {}, children: ['column-inner'] }
+      formData.columns['column-inner'] = { id: 'column-inner', config: { width: '100%' }, children: ['inner'] }
+      formData.fields.inner = inputField('inner', 'text', { attrs: { type: 'text', required: true } })
+      new FormeoRenderer({ renderContainer: container, formData }).render()
+      const source = container.querySelector('#f-source-1')
+      const inner = container.querySelector('#f-inner')
+
+      typeInto(source, 'hide')
+      typeInto(source, 'field')
+      assert.equal(inner.parentElement.hasAttribute('hidden'), false, 'the field itself is shown')
+      assert.equal(form().checkValidity(), true, 'but its row is still hidden, so it is not required')
+
+      typeInto(source, 'row')
+      assert.equal(inner.required, true, 'required again once the row is shown')
+      assert.equal(form().checkValidity(), false)
+    })
+
     test('"isVisible" on a field that was never hidden keeps its required attribute', () => {
       render({
         'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
