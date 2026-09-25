@@ -362,6 +362,16 @@ describe('renderer conditions', () => {
       assert.equal(isTargetHidden(), false, 'an unresolvable source never matches')
     })
 
+    test('a half-filled clause with no source never matches on render', () => {
+      render({
+        [TARGET_ID]: inputField(TARGET_ID, 'text', {
+          conditions: hideTargetWhen({ source: '', comparison: '!=', target: 'x' }),
+        }),
+      })
+
+      assert.equal(isTargetHidden(), false)
+    })
+
     test('keeps applying the remaining conditions when one blows up', () => {
       const conditions = [
         ...hideTargetWhen({ source: 'fields.broken id!', target: 'x' }),

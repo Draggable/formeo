@@ -398,8 +398,9 @@ export default class FormeoRenderer {
    * Evaulate conditions
    */
   evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
-    // a clause reading from a field that is no longer in the form never matches
-    if (isAddress(source) && !this.getComponent(source)?.component) {
+    // a clause without a source address (e.g. half-filled in the editor), or reading from a field
+    // that is no longer in the form, never matches
+    if (!isAddress(source) || !this.getComponent(source)?.component) {
       return false
     }
 
