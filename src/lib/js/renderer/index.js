@@ -7,6 +7,7 @@ import {
   baseId,
   comparisonMap,
   createRemoveButton,
+  groupIfConditions,
   isCheckableGroup,
   processOptions,
   propertyMap,
@@ -317,47 +318,9 @@ export default class FormeoRenderer {
   }
 
   /**
-   * Evaulate and execute conditions for fields by creating listeners for input and changes
-   * @return {Array} flattened array of conditions
+   * Wires every condition of every rendered component: evaluates it once on render and again
+   * whenever a component one of its if-clauses reads from changes.
    */
-  handleComponentCondition = (component, ifRest, thenConditions) => {
-    if (!component) {
-      return
-    }
-
-    // a <select> has a native `length` (its option count), so only real collections may be spread
-    if (isNodeCollection(component)) {
-      for (const elem of component) {
-        this.handleComponentCondition(elem, ifRest, thenConditions)
-      }
-      return
-    }
-
-    const listenerEvent = LISTEN_TYPE_MAP(component)
-
-    if (listenerEvent) {
-      component.addEventListener(
-        listenerEvent,
-        evt => {
-          if (this.evaluateCondition(ifRest, evt)) {
-            for (const thenCondition of thenConditions) {
-              this.execResult(thenCondition, evt)
-            }
-          }
-        },
-        false
-      )
-    }
-
-    // Evaluate conditions on load.
-    const fakeEvt = { target: component }
-    if (this.evaluateCondition(ifRest, fakeEvt)) {
-      for (const thenCondition of thenConditions) {
-        this.execResult(thenCondition, fakeEvt)
-      }
-    }
-  }
-
   applyConditions = () => {
     for (const { conditions } of Object.values(this.components)) {
       if (!conditions) {
@@ -365,28 +328,58 @@ export default class FormeoRenderer {
       }
 
       for (const condition of conditions) {
-        const { if: ifConditions = [], then: thenConditions = [] } = condition
-
-        for (const ifCondition of ifConditions) {
-          // a single unusable condition must never abort the render of the whole form
-          try {
-            this.applyCondition(ifCondition, thenConditions)
-          } catch (err) {
-            console.error('formeo: condition skipped', ifCondition, err)
-          }
+        // a single unusable condition must never abort the render of the whole form
+        try {
+          this.applyCondition(condition)
+        } catch (err) {
+          console.error('formeo: condition skipped', condition, err)
         }
       }
     }
   }
 
-  applyCondition = (ifCondition, thenConditions) => {
-    for (const address of [ifCondition.source, ifCondition.target]) {
-      if (!isAddress(address)) {
-        continue
+  applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
+    const clauseGroups = groupIfConditions(ifConditions)
+    const run = evt => {
+      if (this.evaluateClauseGroups(clauseGroups)) {
+        for (const thenCondition of thenConditions) {
+          this.execResult(thenCondition, evt)
+        }
       }
+    }
 
+    const watchedAddresses = new Set(ifConditions.flatMap(({ source, target }) => [source, target]).filter(isAddress))
+    for (const address of watchedAddresses) {
       const { component, options } = this.getComponent(address)
-      this.handleComponentCondition(options || component, ifCondition, thenConditions)
+      this.listenForChanges(options || component, run)
+    }
+
+    run({ target: null })
+  }
+
+  /**
+   * @param {Array<Array<Object>>} clauseGroups output of groupIfConditions
+   * @return {Boolean} true when every clause of at least one group matches
+   */
+  evaluateClauseGroups = clauseGroups =>
+    clauseGroups.some(group => group.length && group.every(clause => this.evaluateCondition(clause)))
+
+  listenForChanges = (component, handler) => {
+    if (!component) {
+      return
+    }
+
+    // a <select> has a native `length` (its option count), so only real collections may be spread
+    if (isNodeCollection(component)) {
+      for (const elem of component) {
+        this.listenForChanges(elem, handler)
+      }
+      return
+    }
+
+    const listenerEvent = LISTEN_TYPE_MAP(component)
+    if (listenerEvent) {
+      component.addEventListener(listenerEvent, handler, false)
     }
   }
 
@@ -394,6 +387,11 @@ export default class FormeoRenderer {
    * Evaulate conditions
    */
   evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
+    // a clause reading from a field that is no longer in the form never matches
+    if (isAddress(source) && !this.getComponent(source)?.component) {
+      return false
+    }
+
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
     const sourceValue = this.getComponentProperty(source, sourceProperty)
 
@@ -438,7 +436,12 @@ export default class FormeoRenderer {
     }
     const [, componentId, optionsKey, optionIndex] = splitAddress(address)
 
-    const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`)
+    let component = null
+    try {
+      component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`)
+    } catch {
+      // an id that is not a valid selector can't match anything
+    }
 
     if (!component) {
       return result

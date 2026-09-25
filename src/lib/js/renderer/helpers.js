@@ -231,3 +231,23 @@ export const restoreRequired = elem => {
     dom.syncCheckboxGroupRequired(group)
   }
 }
+
+const LOGICAL_AND = new Set(['&&', 'and'])
+
+/**
+ * Splits a condition's if-clauses into OR-groups of AND-ed clauses. A clause's `logical`
+ * ('&&' / '||', or 'and' / 'or') joins it to the clause before it, and '&&' binds tighter
+ * than '||' as in JavaScript. The first clause's `logical` is ignored, and a missing
+ * `logical` means OR, which is how every clause behaved before AND was supported.
+ * @param {Array<Object>} ifConditions
+ * @return {Array<Array<Object>>} e.g. A || B && C -> [[A], [B, C]]
+ */
+export const groupIfConditions = (ifConditions = []) =>
+  ifConditions.reduce((groups, clause, index) => {
+    if (index > 0 && LOGICAL_AND.has(clause.logical)) {
+      groups[groups.length - 1].push(clause)
+    } else {
+      groups.push([clause])
+    }
+    return groups
+  }, [])

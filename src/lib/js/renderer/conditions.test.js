@@ -378,4 +378,98 @@ describe('renderer conditions', () => {
       assert.equal(form().checkValidity(), false, 'required again once visible')
     })
   })
+
+  describe('combining if-clauses', () => {
+    const TEXT_A = 'text-a'
+    const TEXT_B = 'text-b'
+    const clause = (source, value, logical) => ({
+      ...(logical && { logical }),
+      source: `fields.${source}`,
+      sourceProperty: 'value',
+      comparison: 'equals',
+      target: value,
+      targetProperty: '',
+    })
+    const hideTargetWhenAll = ifClauses => [
+      {
+        if: ifClauses,
+        then: [{ target: `fields.${TARGET_ID}`, targetProperty: 'isNotVisible', assignment: '', value: '' }],
+      },
+    ]
+    const typeInto = (id, value) => {
+      const elem = container.querySelector(`#f-${id}`)
+      elem.value = value
+      elem.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+    }
+    const renderWith = ifClauses =>
+      render({
+        [TEXT_A]: inputField(TEXT_A),
+        [TEXT_B]: inputField(TEXT_B),
+        'text-c': inputField('text-c'),
+        [TARGET_ID]: inputField(TARGET_ID, 'text', { conditions: hideTargetWhenAll(ifClauses) }),
+      })
+
+    test('"&&" only fires when every clause matches', () => {
+      renderWith([clause(TEXT_A, 'a'), clause(TEXT_B, 'b', '&&')])
+
+      typeInto(TEXT_A, 'a')
+      assert.equal(isTargetHidden(), false, 'one of two AND clauses is not enough')
+
+      typeInto(TEXT_B, 'b')
+      assert.equal(isTargetHidden(), true, 'both AND clauses match')
+    })
+
+    test('"||" fires when any clause matches', () => {
+      renderWith([clause(TEXT_A, 'a'), clause(TEXT_B, 'b', '||')])
+
+      typeInto(TEXT_B, 'b')
+      assert.equal(isTargetHidden(), true)
+    })
+
+    test('a clause without "logical" is OR-ed, as before', () => {
+      renderWith([clause(TEXT_A, 'a'), clause(TEXT_B, 'b')])
+
+      typeInto(TEXT_A, 'a')
+      assert.equal(isTargetHidden(), true)
+    })
+
+    test('accepts "and" as well as "&&"', () => {
+      renderWith([clause(TEXT_A, 'a'), clause(TEXT_B, 'b', 'and')])
+
+      typeInto(TEXT_A, 'a')
+      assert.equal(isTargetHidden(), false)
+    })
+
+    test('"&&" binds tighter than "||": A || B && C', () => {
+      renderWith([clause(TEXT_A, 'a'), clause(TEXT_B, 'b', '||'), clause('text-c', 'c', '&&')])
+
+      typeInto(TEXT_B, 'b')
+      assert.equal(isTargetHidden(), false, 'B alone does not satisfy B && C')
+
+      typeInto(TEXT_A, 'a')
+      assert.equal(isTargetHidden(), true, 'A alone satisfies the OR')
+    })
+
+    test('an AND condition whose clauses already match fires on load', () => {
+      render({
+        [TEXT_A]: inputField(TEXT_A, 'text', { attrs: { type: 'text', value: 'a' } }),
+        [TEXT_B]: inputField(TEXT_B, 'text', { attrs: { type: 'text', value: 'b' } }),
+        [TARGET_ID]: inputField(TARGET_ID, 'text', {
+          conditions: hideTargetWhenAll([clause(TEXT_A, 'a'), clause(TEXT_B, 'b', '&&')]),
+        }),
+      })
+
+      assert.equal(isTargetHidden(), true)
+    })
+
+    test('a "notEquals" clause on a removed source field never matches', () => {
+      render({
+        [TARGET_ID]: inputField(TARGET_ID, 'text', {
+          conditions: hideTargetWhenAll([{ ...clause('deleted-field', 'x'), comparison: 'notEquals' }]),
+        }),
+      })
+
+      assert.equal(isTargetHidden(), false)
+    })
+  })
 })
