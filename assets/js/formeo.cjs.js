@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.2.0
+Version: 5.2.1
 Author: Draggable https://draggable.io
 */
 
@@ -6061,7 +6061,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.2.0";
+	version$2 = "5.2.1";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -6123,7 +6123,7 @@ var init_package = __esmMin((() => {
 		"postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
 		"build:demo:watch": "vite build --mode demo --watch",
 		"build:icons": "node ./tools/generate-sprite",
-		"lint": "biome check ./src && node tools/check-color-literals.mjs",
+		"lint": "biome check ./src && node tools/check-color-literals.mjs && node tools/check-doc-links.mjs",
 		"lint:fix": "biome check --write ./src",
 		"format": "biome format --write .",
 		"test": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
@@ -6165,8 +6165,7 @@ var init_package = __esmMin((() => {
 		"vite-plugin-banner": "^0.8.0",
 		"vite-plugin-compression": "^0.5.1",
 		"vite-plugin-html": "^3.2.2",
-		"zod": "^4.4.3",
-		"zod-to-json-schema": "^3.23.5"
+		"zod": "^4.4.3"
 	};
 	dependencies = {
 		"@draggable/formeo-languages": "^3.4.1",
