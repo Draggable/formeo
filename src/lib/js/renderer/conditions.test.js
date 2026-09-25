@@ -357,5 +357,25 @@ describe('renderer conditions', () => {
 
       assert.equal(container.querySelector(`#f-${TARGET_ID}`).required, true)
     })
+
+    test('a hidden required radio group no longer blocks submission, and blocks again once shown', () => {
+      render({
+        'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
+        [TARGET_ID]: optionField(TARGET_ID, 'radio', [{ label: 'One', value: 'r1' }], {
+          attrs: { type: 'radio', required: true },
+        }),
+      })
+      const source = container.querySelector('#f-source-1')
+
+      assert.equal(form().checkValidity(), false, 'visible and unanswered')
+
+      typeInto(source, 'hide')
+      assert.equal(isTargetHidden(), true)
+      assert.equal(form().checkValidity(), true, 'hidden radios are not required')
+
+      typeInto(source, 'show')
+      assert.equal(isTargetHidden(), false)
+      assert.equal(form().checkValidity(), false, 'required again once visible')
+    })
   })
 })

@@ -1,4 +1,4 @@
-import dom, { getName } from '../common/dom.js'
+import dom, { getName, REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { fetchDependencies } from '../common/loaders.js'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -110,19 +110,26 @@ export default class FormeoRenderer {
     const form = this.container.querySelector('form')
     for (const key of Object.keys(data)) {
       const fields = form.elements[key]
+      // a group with a single option resolves to the input itself rather than a RadioNodeList
+      const checkables = checkableInputs(fields)
 
       // Handle checkbox groups
-      if (fields.length && fields[0].type === 'checkbox') {
+      if (checkables?.[0].type === 'checkbox') {
         // Convert to array if not already
         const values = Array.isArray(data[key]) ? data[key] : [data[key]]
 
-        for (const field of fields) {
+        for (const field of checkables) {
           field.checked = values.includes(field.value)
+        }
+
+        const group = checkables[0].closest(`[data-${REQUIRED_GROUP_ATTR}]`)
+        if (group) {
+          dom.syncCheckboxGroupRequired(group)
         }
       }
       // Handle radio groups
-      else if (fields.length && fields[0].type === 'radio') {
-        for (const field of fields) {
+      else if (checkables?.[0].type === 'radio') {
+        for (const field of checkables) {
           field.checked = field.value === data[key]
         }
       }
@@ -459,6 +466,15 @@ export default class FormeoRenderer {
 
     return components
   }
+}
+
+const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)
+
+const checkableInputs = fields => {
+  if (isCheckable(fields)) {
+    return [fields]
+  }
+  return fields?.length && isCheckable(fields[0]) ? Array.from(fields) : null
 }
 
 const isDomNode = value => Boolean(value) && typeof value.nodeType === 'number'

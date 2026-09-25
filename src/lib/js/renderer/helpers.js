@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual.js'
-import dom from '../common/dom.js'
+import dom, { REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
 import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, UUID_REGEXP } from '../constants.js'
 
@@ -188,6 +188,7 @@ export const targetPropertyMap = {
 }
 
 const FORM_CONTROL_SELECTOR = 'input, select, textarea'
+const REQUIRED_GROUP_SELECTOR = `[data-${REQUIRED_GROUP_ATTR}]`
 
 /**
  * The element itself when it matches, plus every descendant that does
@@ -224,5 +225,9 @@ export const restoreRequired = elem => {
       control.required = control._required
       delete control._required
     }
+  }
+  // a required checkbox group's state depends on which boxes are checked now
+  for (const group of selfAndDescendants(elem, REQUIRED_GROUP_SELECTOR)) {
+    dom.syncCheckboxGroupRequired(group)
   }
 }

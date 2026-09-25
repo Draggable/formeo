@@ -117,6 +117,95 @@ describe('checkbox and radio groups', () => {
     })
   })
 
+  describe('required', () => {
+    test('every radio input is required and the group label shows the required mark', () => {
+      render({ 'radio-1': groupField('radio-1', 'radio', { required: true }) })
+
+      assert.deepEqual(
+        inputsOf('radio-1').map(input => input.required),
+        [true, true]
+      )
+      assert.ok(container.querySelector('label[for="f-radio-1"] .text-error'), 'group label has the * mark')
+    })
+
+    test('a required radio group blocks submission until an option is chosen', () => {
+      render({ 'radio-1': groupField('radio-1', 'radio', { required: true }) })
+
+      assert.equal(form().checkValidity(), false)
+      inputsOf('radio-1')[0].checked = true
+      assert.equal(form().checkValidity(), true)
+    })
+
+    test('a required checkbox group needs one checked box, not all of them', () => {
+      render({ 'checkbox-1': groupField('checkbox-1', 'checkbox', { required: true }) })
+      const [first] = inputsOf('checkbox-1')
+
+      assert.equal(form().checkValidity(), false, 'nothing checked is invalid')
+
+      first.checked = true
+      change(first)
+      assert.equal(form().checkValidity(), true, 'one checked box is enough')
+
+      first.checked = false
+      change(first)
+      assert.equal(form().checkValidity(), false, 'unchecking the last box makes it invalid again')
+    })
+
+    test('a required checkbox group with a preselected option starts valid', () => {
+      render({
+        'checkbox-1': groupField(
+          'checkbox-1',
+          'checkbox',
+          { required: true },
+          {
+            options: [
+              { label: 'One', value: 'one', selected: true },
+              { label: 'Two', value: 'two' },
+            ],
+          }
+        ),
+      })
+
+      assert.equal(form().checkValidity(), true)
+    })
+
+    test('setting userData re-validates a required checkbox group', () => {
+      const renderer = render({
+        'checkbox-1': groupField('checkbox-1', 'checkbox', { required: true, name: 'toppings' }),
+      })
+
+      renderer.userData = { toppings: ['two'] }
+
+      assert.equal(form().checkValidity(), true)
+    })
+
+    test('setting userData checks the box of a single-option checkbox group', () => {
+      const renderer = render({
+        'checkbox-1': groupField(
+          'checkbox-1',
+          'checkbox',
+          { name: 'agree' },
+          { options: [{ label: 'I agree', value: 'yes' }] }
+        ),
+      })
+
+      renderer.userData = { agree: 'yes' }
+
+      const [box] = inputsOf('checkbox-1')
+      assert.equal(box.checked, true)
+      assert.equal(box.value, 'yes', 'the value is left alone')
+    })
+
+    test('a group that is not required renders no required inputs', () => {
+      render({ 'radio-1': groupField('radio-1', 'radio', { required: false }) })
+
+      assert.deepEqual(
+        inputsOf('radio-1').map(input => input.required),
+        [false, false]
+      )
+    })
+  })
+
   describe('input group clones', () => {
     test('a cloned radio group gets its own name so it does not share a selection with the original', () => {
       // clone lookup goes through baseId(), which only recognises editor-style hex ids

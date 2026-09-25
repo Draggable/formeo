@@ -28,6 +28,9 @@ const iconFontTemplates = {
 
 const inputTags = new Set(['input', 'textarea', 'select'])
 
+// marks a required checkbox group's wrapper so its `required` state can be re-synced (renderer, userData)
+export const REQUIRED_GROUP_ATTR = 'formeo-required-group'
+
 const stripOn = str => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase())
 const useCaptureEvts = new Set(['focus', 'blur'])
 const defaultActionHandler = event => {
@@ -195,11 +198,17 @@ class DOM {
         h.forEach(processedOptions, option => {
           wrap.children.push(_this.create(option, isPreview))
         })
-        if (elem.attrs.className) {
-          wrap.className = elem.attrs.className
+        const groupAttrs = elem.attrs || {}
+        if (groupAttrs.className) {
+          wrap.className = groupAttrs.className
         }
         wrap.id = elem.id
-        wrap.config = { ...elem.config }
+        // config.required only drives the label's required mark; `required` itself lives on the option inputs
+        wrap.config = { ...elem.config, required: Boolean(groupAttrs.required) }
+        if (!isPreview && groupAttrs.type === 'checkbox' && groupAttrs.required) {
+          wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = 'true'
+          wrap.action = { change: ({ currentTarget }) => this.syncCheckboxGroupRequired(currentTarget) }
+        }
         return this.create(wrap, isPreview)
       }
       processed.push('options')
@@ -509,6 +518,12 @@ class DOM {
     const id = attrs.id || elem.id
     // the editor preview keeps id-based names so two groups sharing a name can't interfere with each other there
     const name = (!isPreview && attrs.name) || id
+    const sharedInputAttrs = {}
+    if (attrs.required) {
+      // a checkbox group only needs one checked box: while one is checked none of them is required
+      sharedInputAttrs.required =
+        fieldType !== 'checkbox' || !options.some(({ selected, checked }) => selected || checked)
+    }
 
     const optionMap = (option, i) => {
       const { label, value, ...rest } = option
@@ -520,6 +535,7 @@ class DOM {
             type: fieldType,
             value: value || '',
             id: `${id}-${i}`,
+            ...sharedInputAttrs,
             ...rest,
           },
           action,
@@ -647,6 +663,21 @@ class DOM {
     return labelAfter === undefined ? isCB : labelAfter
   }
 
+  /**
+   * A required checkbox group needs at least one checked box, not every box.
+   * Every box stays `required` while none is checked; once one is checked none is.
+   * Boxes inside a hidden container are never required.
+   * @param {Element} groupElem wrapper holding the group's checkboxes
+   */
+  syncCheckboxGroupRequired(groupElem) {
+    const boxes = Array.from(groupElem.querySelectorAll('input[type="checkbox"]'))
+    const isHidden = Boolean(groupElem.closest('[hidden]'))
+    const noneChecked = !boxes.some(box => box.checked)
+    for (const box of boxes) {
+      box.required = !isHidden && noneChecked
+    }
+  }
+
   requiredMark = () => ({
     tag: 'span',
     className: 'text-error',
@@ -675,7 +706,7 @@ class DOM {
    * @return {Object}      config object
    */
   label(elem, fMap) {
-    const required = h.get(elem, 'attrs.required')
+    const required = h.get(elem, 'attrs.required') || h.get(elem, 'config.required')
 
     let {
       config: { label: labelText = '', helpText = '', tooltip = null },
