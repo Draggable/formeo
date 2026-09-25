@@ -372,21 +372,33 @@ describe('renderer conditions', () => {
       assert.equal(isTargetHidden(), false)
     })
 
-    test('keeps applying the remaining conditions when one blows up', () => {
-      const conditions = [
-        ...hideTargetWhen({ source: 'fields.broken id!', target: 'x' }),
-        ...hideTargetWhen({ source: 'fields.source-1', target: 'b' }),
-      ]
+    test('renders and keeps applying the other conditions when one uses the old `if` object shape', () => {
+      const [working] = hideTargetWhen({ source: 'fields.source-1', target: 'b' })
+      // the shape older docs showed: `if` is a single clause object, not an array
+      const oldShape = { if: { source: 'fields.source-1', sourceProperty: 'value', comparison: 'equals', target: 'a' } }
+      const conditions = [oldShape, ...hideTargetWhen({ source: 'fields.broken id!', target: 'x' }), working]
 
-      assert.doesNotThrow(() =>
-        render({
-          'source-1': optionField('source-1', 'select', [
-            { label: 'A', value: 'a' },
-            { label: 'B', value: 'b' },
-          ]),
-          [TARGET_ID]: inputField(TARGET_ID, 'text', { conditions }),
-        })
-      )
+      const originalError = console.error
+      const errors = []
+      console.error = (...args) => errors.push(args)
+      try {
+        assert.doesNotThrow(() =>
+          render({
+            'source-1': optionField('source-1', 'select', [
+              { label: 'A', value: 'a' },
+              { label: 'B', value: 'b' },
+            ]),
+            [TARGET_ID]: inputField(TARGET_ID, 'text', { conditions }),
+          })
+        )
+      } finally {
+        console.error = originalError
+      }
+
+      assert.ok(container.querySelector('form'), 'the form renders')
+      assert.equal(errors.length, 1, 'only the old-shape condition is skipped')
+      assert.equal(errors[0][0], 'formeo: condition skipped')
+      assert.deepEqual(errors[0][1], oldShape)
 
       const select = container.querySelector('#f-source-1')
       select.value = 'b'
