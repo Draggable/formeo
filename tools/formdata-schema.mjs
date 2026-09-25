@@ -14,11 +14,11 @@ const htmlAttributesSchema = z.record(
     z.boolean(),
     z.function(),
     z.record(z.string(), z.string()), // for style objects
-    z.array(z.object({ label: z.string(), value: z.string(), selected: z.boolean().optional() })),
+    z.array(z.looseObject({ label: z.string(), value: z.string(), selected: z.boolean().optional() })),
   ])
 )
 
-const conditionIfSchema = z.object({
+const conditionIfSchema = z.looseObject({
   logical: z
     .enum(['&&', '||', 'and', 'or'])
     .optional()
@@ -30,7 +30,7 @@ const conditionIfSchema = z.object({
   targetProperty: z.string().optional(),
 })
 
-const conditionThenSchema = z.object({
+const conditionThenSchema = z.looseObject({
   target: z.string().optional(),
   targetProperty: z.string().optional(),
   assignment: z.string().optional(),
@@ -38,13 +38,13 @@ const conditionThenSchema = z.object({
 })
 
 export const conditionsSchema = z.array(
-  z.object({ if: z.array(conditionIfSchema).optional(), then: z.array(conditionThenSchema).optional() })
+  z.looseObject({ if: z.array(conditionIfSchema).optional(), then: z.array(conditionThenSchema).optional() })
 )
 
 const className = z.union([z.string(), z.array(z.string())]).optional()
 
 export const formDataSchema = z
-  .object({
+  .looseObject({
     $schema: z
       .string()
       .regex(/\.json$/)
@@ -120,7 +120,7 @@ export const formDataSchema = z
               .catchall(z.any())
               .optional(),
             meta: z
-              .object({ group: z.string().optional(), icon: z.string().optional(), id: z.string().optional() })
+              .looseObject({ group: z.string().optional(), icon: z.string().optional(), id: z.string().optional() })
               .optional(),
             content: z.any().optional(),
             action: z.object({}).catchall(z.any()).optional(),
