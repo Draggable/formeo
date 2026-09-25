@@ -87,12 +87,23 @@ export default class FormeoRenderer {
       const fieldData = {
         key,
         value,
-        label: this.components[baseId(key)]?.config?.label || '',
+        label: this.componentByName(key)?.config?.label || '',
       }
       userFormData.push(fieldData)
     }
 
     return userFormData
+  }
+
+  /**
+   * Finds the component data behind a submitted field name
+   * @param {String} name
+   * @return {Object|undefined}
+   */
+  componentByName(name) {
+    return (
+      this.components[baseId(name)] || Object.values(this.components).find(component => component.attrs?.name === name)
+    )
   }
 
   set userData(data = {}) {
@@ -234,7 +245,10 @@ export default class FormeoRenderer {
     const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
     const updatedAttrs = { ...attrs, 'data-clone-of': id }
 
-    if (rest.tag === 'input') {
+    if (rest.options) {
+      // option groups: drop the name so the clone falls back to its own id; a shared radio name would link the groups
+      delete updatedAttrs.name
+    } else if (rest.tag === 'input') {
       updatedAttrs.name = getName(this.components[componentId])
     }
 

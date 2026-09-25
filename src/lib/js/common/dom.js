@@ -507,6 +507,8 @@ class DOM {
     const { action, attrs = {} } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
+    // the editor preview keeps id-based names so two groups sharing a name can't interfere with each other there
+    const name = (!isPreview && attrs.name) || id
 
     const optionMap = (option, i) => {
       const { label, value, ...rest } = option
@@ -514,7 +516,7 @@ class DOM {
         const input = {
           tag: 'input',
           attrs: {
-            name: id,
+            name,
             type: fieldType,
             value: value || '',
             id: `${id}-${i}`,
