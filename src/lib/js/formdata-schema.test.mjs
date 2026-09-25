@@ -36,6 +36,30 @@ suite('formData schema', () => {
     t.assert.deepStrictEqual(ifItem.properties.logical.enum, ['&&', '||', 'and', 'or'])
   })
 
+  test('the generated JSON schema never forbids additional properties', t => {
+    const schema = buildFormDataJsonSchema()
+    const offendingPaths = []
+    const walk = (node, path) => {
+      if (!node || typeof node !== 'object') {
+        return
+      }
+      if (Array.isArray(node)) {
+        node.forEach((item, i) => {
+          walk(item, `${path}[${i}]`)
+        })
+        return
+      }
+      if (node.additionalProperties === false) {
+        offendingPaths.push(path)
+      }
+      for (const [key, value] of Object.entries(node)) {
+        walk(value, `${path}.${key}`)
+      }
+    }
+    walk(schema, '$')
+    t.assert.deepStrictEqual(offendingPaths, [])
+  })
+
   test('accepts editor.json output ($schema) and uuid-keyed legacy components', t => {
     const withRef = {
       $schema: 'https://cdn.jsdelivr.net/npm/formeo@5.3.0/dist/formData_schema.json',
