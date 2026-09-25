@@ -27,7 +27,7 @@ test.describe('Add Configuration to Field', () => {
     await editPanel.getByRole('heading', { name: 'Configuration' }).click()
 
     // Click the add config button
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
 
     // Verify the dialog appears
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
@@ -59,7 +59,7 @@ test.describe('Add Configuration to Field', () => {
     const configItemsBefore = await configPanel.locator('li').count()
 
     // Click the add config button
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
 
     // Wait for dialog
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
@@ -98,7 +98,7 @@ test.describe('Add Configuration to Field', () => {
     await editPanel.getByRole('heading', { name: 'Configuration' }).click()
 
     // Click the add config button
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
 
     // Wait for dialog
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
@@ -136,7 +136,7 @@ test.describe('Add Configuration to Field', () => {
     await editPanel.getByRole('heading', { name: 'Configuration' }).click()
 
     // Click the add config button
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
 
     // Wait for dialog
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
@@ -183,7 +183,7 @@ test.describe('Add Configuration to Field', () => {
     const configItemsBefore = await configPanel.locator('li').count()
 
     // Click the add config button
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
 
     // Wait for dialog
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
@@ -224,7 +224,7 @@ test.describe('Add Configuration to Field', () => {
     const configItemsBefore = await configPanel.locator('li').count()
 
     // Add first config item (tooltip)
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
     let dialog = page.locator('.formeo-dialog.config-item-dialog')
     await expect(dialog).toBeVisible()
     await dialog.locator('select.config-key-select').selectOption('tooltip')
@@ -233,7 +233,7 @@ test.describe('Add Configuration to Field', () => {
     await page.waitForTimeout(200)
 
     // Add second config item (labelAfter)
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
     dialog = page.locator('.formeo-dialog.config-item-dialog')
     await expect(dialog).toBeVisible()
     await dialog.locator('select.config-key-select').selectOption('labelAfter')
@@ -276,7 +276,7 @@ test.describe('Add Configuration to Field', () => {
     await editPanel.getByRole('heading', { name: 'Configuration' }).click()
 
     // Click the add config button
-    await page.getByRole('button', { name: '+ Add Config' }).click()
+    await editPanel.locator('.add-config').click()
 
     // Wait for dialog
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
