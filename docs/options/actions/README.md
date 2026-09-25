@@ -4,7 +4,7 @@
 | --------------- | -------- | --------------------------------------------- |
 | `add.attr`      | Function | Called when adding an attribute to an element |
 | `add.option`    | Function | Called when adding an option to a field       |
-| `add.condition` | Function | Called when adding an condition to a field    |
+| `add.condition` | Function | Called when adding a condition to a field    |
 | `click.button`  | Function | Called when clicking a form action button     |
 | `save`          | Function | Called when saving                            |
 
