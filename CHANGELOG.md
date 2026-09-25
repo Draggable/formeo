@@ -1,3 +1,19 @@
+## [5.2.2](https://github.com/Draggable/formeo/compare/v5.2.1...v5.2.2) (2026-09-25)
+
+
+### Bug Fixes
+
+* **renderer:** apply required to checkbox and radio groups ([1b81d7c](https://github.com/Draggable/formeo/commit/1b81d7cd9604d68e14d14ec162427b141fd5dcdd)), closes [#270](https://github.com/Draggable/formeo/issues/270)
+* **renderer:** honour AND between condition clauses ([e5853d6](https://github.com/Draggable/formeo/commit/e5853d6778f627f13caad310611eb6522698ae0e)), closes [#258](https://github.com/Draggable/formeo/issues/258)
+* **renderer:** keep required suspended inside a still-hidden container ([167a252](https://github.com/Draggable/formeo/commit/167a252ab9b556ef3de38a2f4557f1fde2a75390)), closes [#277](https://github.com/Draggable/formeo/issues/277)
+* **renderer:** keep the name of cloned selects in input groups ([f2cc72c](https://github.com/Draggable/formeo/commit/f2cc72c6c4eb9d96f6243e5433a5f6eeba350ac8)), closes [#220](https://github.com/Draggable/formeo/issues/220)
+* **renderer:** never match a clause whose source is not an address ([c9cb681](https://github.com/Draggable/formeo/commit/c9cb68122b889babb53a252650b706f523879286)), closes [#258](https://github.com/Draggable/formeo/issues/258)
+* **renderer:** re-sync required checkbox groups on reset and on checked actions ([ddac56d](https://github.com/Draggable/formeo/commit/ddac56d8a5175e550917cfd32636a5d8ed84957d)), closes [#270](https://github.com/Draggable/formeo/issues/270)
+* **renderer:** render custom attributes of checkbox and radio groups ([41799dc](https://github.com/Draggable/formeo/commit/41799dc0a269dad09d02bb1cdf56b8da89e284b2)), closes [#256](https://github.com/Draggable/formeo/issues/256)
+* **renderer:** stop a value action from re-running its own condition forever ([05303c4](https://github.com/Draggable/formeo/commit/05303c47b4922a3ea06908abe01f2966e8788723)), closes [#258](https://github.com/Draggable/formeo/issues/258)
+* **renderer:** stop hidden fields from blocking form submission ([8d12357](https://github.com/Draggable/formeo/commit/8d1235793bc2ab24a8833443fa87b9db1ac4d237)), closes [#277](https://github.com/Draggable/formeo/issues/277) [#270](https://github.com/Draggable/formeo/issues/270)
+* **renderer:** use the name attribute of checkbox and radio groups ([238e1e2](https://github.com/Draggable/formeo/commit/238e1e27774e04b847c67b7502fff5fc9d799d9c)), closes [#220](https://github.com/Draggable/formeo/issues/220) [#331](https://github.com/Draggable/formeo/issues/331)
+
 ## [5.2.1](https://github.com/Draggable/formeo/compare/v5.2.0...v5.2.1) (2026-09-25)
 
 
