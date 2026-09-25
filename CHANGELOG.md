@@ -1,3 +1,11 @@
+## [5.2.1](https://github.com/Draggable/formeo/compare/v5.2.0...v5.2.1) (2026-09-25)
+
+
+### Bug Fixes
+
+* generate a populated formData JSON schema ([b865ba8](https://github.com/Draggable/formeo/commit/b865ba8f52ddaf70b03242e2be161b2de6638a91))
+* keep the generated formData schema as permissive as the zod schema ([22a2fe5](https://github.com/Draggable/formeo/commit/22a2fe559b965409f26c5fba7fc6b584f4a16af0))
+
 # [5.2.0](https://github.com/Draggable/formeo/compare/v5.1.3...v5.2.0) (2026-09-24)
 
 
