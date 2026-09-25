@@ -340,11 +340,22 @@ export default class FormeoRenderer {
 
   applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
     const clauseGroups = groupIfConditions(ifConditions)
+    // a `value` action fires `input` on its target; when the condition watches that target,
+    // the event would re-enter run and set the value again, forever
+    let running = false
     const run = evt => {
-      if (this.evaluateClauseGroups(clauseGroups)) {
-        for (const thenCondition of thenConditions) {
-          this.execResult(thenCondition, evt)
+      if (running) {
+        return
+      }
+      running = true
+      try {
+        if (this.evaluateClauseGroups(clauseGroups)) {
+          for (const thenCondition of thenConditions) {
+            this.execResult(thenCondition, evt)
+          }
         }
+      } finally {
+        running = false
       }
     }
 

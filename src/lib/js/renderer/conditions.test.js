@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, test } from 'node:test'
 import { JSDOM } from 'jsdom'
+import { targetPropertyMap } from './helpers.js'
 import FormeoRenderer from './index.js'
 
 const TARGET_ID = 'target-1'
@@ -52,6 +53,8 @@ const hideTargetWhen = ({ source, sourceProperty = 'value', comparison = 'equals
 describe('renderer conditions', () => {
   let dom
   let container
+  // the value action dispatches `new Event(...)`, which jsdom only accepts from its own window
+  const nativeEvent = global.Event
 
   beforeEach(() => {
     dom = new JSDOM('<!DOCTYPE html><html><body><div id="container"></div></body></html>', {
@@ -65,6 +68,7 @@ describe('renderer conditions', () => {
     global.HTMLElement = dom.window.HTMLElement
     global.Node = dom.window.Node
     global.FormData = dom.window.FormData
+    global.Event = dom.window.Event
 
     container = dom.window.document.getElementById('container')
   })
@@ -73,6 +77,7 @@ describe('renderer conditions', () => {
     for (const key of ['document', 'window', 'Element', 'HTMLElement', 'Node', 'FormData']) {
       delete global[key]
     }
+    global.Event = nativeEvent
   })
 
   const render = fields => {
@@ -277,6 +282,70 @@ describe('renderer conditions', () => {
       input.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
 
       assert.equal(isTargetHidden(), true, 'non-text input types are listened to as well')
+    })
+  })
+
+  describe('value actions', () => {
+    const setValue = (target, value) => ({ target, targetProperty: 'value', assignment: '=', value })
+    const typeInto = (elem, value) => {
+      elem.value = value
+      elem.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+    }
+
+    test('"=" sets the target value and re-runs conditions that read the target', () => {
+      render({
+        'source-1': inputField('source-1', 'text', {
+          conditions: [
+            {
+              if: [{ source: 'fields.source-1', sourceProperty: 'value', comparison: '==', target: 'go' }],
+              then: [setValue('fields.source-2', 'set')],
+            },
+          ],
+        }),
+        'source-2': inputField('source-2'),
+        [TARGET_ID]: inputField(TARGET_ID, 'text', {
+          conditions: hideTargetWhen({ source: 'fields.source-2', target: 'set' }),
+        }),
+      })
+
+      typeInto(container.querySelector('#f-source-1'), 'go')
+
+      assert.equal(container.querySelector('#f-source-2').value, 'set')
+      assert.equal(isTargetHidden(), true, 'the input event re-ran the condition reading source-2')
+    })
+
+    test('a value action on a field its own condition watches runs once, not forever', () => {
+      const originalValue = targetPropertyMap.value
+      let calls = 0
+      targetPropertyMap.value = (...args) => {
+        calls += 1
+        // a safety cap so an unguarded loop fails the assertion instead of overflowing the stack
+        return calls > 50 ? undefined : originalValue(...args)
+      }
+
+      try {
+        // A == 'x' || B != 'q'  then  B = 'q': setting B fires input on B, which B's clause watches
+        render({
+          'field-a': inputField('field-a', 'text', { attrs: { type: 'text', value: 'x' } }),
+          'field-b': inputField('field-b', 'text', {
+            conditions: [
+              {
+                if: [
+                  { source: 'fields.field-a', sourceProperty: 'value', comparison: '==', target: 'x' },
+                  { logical: '||', source: 'fields.field-b', sourceProperty: 'value', comparison: '!=', target: 'q' },
+                ],
+                then: [setValue('fields.field-b', 'q')],
+              },
+            ],
+          }),
+        })
+      } finally {
+        targetPropertyMap.value = originalValue
+      }
+
+      assert.ok(container.querySelector('form'), 'the form renders')
+      assert.equal(calls, 1, 'the action ran once on render')
+      assert.equal(container.querySelector('#f-field-b').value, 'q')
     })
   })
 
