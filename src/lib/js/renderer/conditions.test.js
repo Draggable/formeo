@@ -316,4 +316,46 @@ describe('renderer conditions', () => {
       assert.equal(isTargetHidden(), true, 'the healthy condition still works')
     })
   })
+
+  describe('hidden targets and required', () => {
+    const form = () => container.querySelector('form')
+    const typeInto = (elem, value) => {
+      elem.value = value
+      elem.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+    }
+    const hideWhenSourceIsHide = targetAddress => [
+      {
+        if: [{ source: 'fields.source-1', sourceProperty: 'value', comparison: 'equals', target: 'hide' }],
+        then: [{ target: targetAddress, targetProperty: 'isNotVisible', assignment: '', value: '' }],
+      },
+      {
+        if: [{ source: 'fields.source-1', sourceProperty: 'value', comparison: 'notEquals', target: 'hide' }],
+        then: [{ target: targetAddress, targetProperty: 'isVisible', assignment: '', value: '' }],
+      },
+    ]
+
+    test('required inputs inside a hidden row do not block submission', () => {
+      const formData = buildFormData({
+        'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide('rows.row-2') }),
+      })
+      formData.stages['stage-1'].children.push('row-2')
+      formData.rows['row-2'] = { id: 'row-2', config: {}, children: ['column-inner'] }
+      formData.columns['column-inner'] = { id: 'column-inner', config: { width: '100%' }, children: ['inner'] }
+      formData.fields.inner = inputField('inner', 'text', { attrs: { type: 'text', required: true } })
+      new FormeoRenderer({ renderContainer: container, formData }).render()
+
+      typeInto(container.querySelector('#f-source-1'), 'hide')
+
+      assert.equal(form().checkValidity(), true)
+    })
+
+    test('"isVisible" on a field that was never hidden keeps its required attribute', () => {
+      render({
+        'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
+        [TARGET_ID]: inputField(TARGET_ID, 'text', { attrs: { type: 'text', required: true } }),
+      })
+
+      assert.equal(container.querySelector(`#f-${TARGET_ID}`).required, true)
+    })
+  })
 })

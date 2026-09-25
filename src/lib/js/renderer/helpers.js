@@ -178,14 +178,51 @@ export const targetPropertyMap = {
     return assignmentAction
   },
   isNotVisible: elem => {
-    if (elem?._required === undefined) {
-      elem._required = elem.required
-    }
     elem.parentElement.setAttribute('hidden', true)
-    elem.required = false // Hidden input cannot be required.
+    suspendRequired(elem)
   },
   isVisible: elem => {
     elem.parentElement.removeAttribute('hidden')
-    elem.required = elem._required
+    restoreRequired(elem)
   },
+}
+
+const FORM_CONTROL_SELECTOR = 'input, select, textarea'
+
+/**
+ * The element itself when it matches, plus every descendant that does
+ * @param {Element} elem
+ * @param {String} selector
+ * @return {Array<Element>}
+ */
+const selfAndDescendants = (elem, selector) => [
+  ...(elem.matches(selector) ? [elem] : []),
+  ...elem.querySelectorAll(selector),
+]
+
+/**
+ * A hidden control can't be filled in, so it must not be required. Remembers each control's
+ * `required` so that restoreRequired can put it back. Works for a field, a group or a whole row.
+ * @param {Element} elem condition target
+ */
+export const suspendRequired = elem => {
+  for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
+    if (control._required === undefined) {
+      control._required = control.required
+    }
+    control.required = false
+  }
+}
+
+/**
+ * Undoes suspendRequired. Controls that were never suspended are left alone.
+ * @param {Element} elem condition target
+ */
+export const restoreRequired = elem => {
+  for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
+    if (control._required !== undefined) {
+      control.required = control._required
+      delete control._required
+    }
+  }
 }
