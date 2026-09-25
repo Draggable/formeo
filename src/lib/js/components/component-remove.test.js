@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert'
-import { afterEach, beforeEach, describe, it, mock } from 'node:test'
+import { after, afterEach, before, beforeEach, describe, it, mock } from 'node:test'
 import events from '../common/events.js'
 import { EVENT_FORMEO_UPDATED } from '../constants.js'
 import Components from './index.js'
@@ -22,14 +22,31 @@ describe('Component.remove emits formeoUpdated (#246)', () => {
     }
   }
 
+  // formeoUpdatedThrottled (events.js) is a module-level singleton: enabling/resetting mock
+  // timers per-test would tear down and recreate the fake timer environment mid-suite while
+  // that closure still holds a setTimeout handle from the old one, orphaning it so its
+  // trailing call never fires. Mock timers once for the whole suite instead.
+  before(() => {
+    mock.timers.enable({ apis: ['Date', 'setTimeout'], now: Date.now() + 10_000 })
+  })
+
+  after(() => {
+    mock.timers.reset()
+  })
+
   beforeEach(() => {
     removals = []
+    // events.opts is only set by events.init(); without it, the pre-existing
+    // EVENT_FORMEO_REMOVED_* listeners in events.js throw reading events.opts.onRemove.
+    events.init({})
+    // Jump the mocked clock well past ANIMATION_SPEED_FAST so this test's first dispatch is
+    // always a fresh leading-edge call, regardless of what a previous test left pending.
+    mock.timers.tick(100_000)
     document.addEventListener(EVENT_FORMEO_UPDATED, onUpdated)
   })
 
   afterEach(() => {
     document.removeEventListener(EVENT_FORMEO_UPDATED, onUpdated)
-    mock.timers.reset()
   })
 
   it('reports a removed field with its parent children path', () => {
@@ -63,7 +80,6 @@ describe('Component.remove emits formeoUpdated (#246)', () => {
   })
 
   it('calls onUpdate with the final formData after a cascading removal', () => {
-    mock.timers.enable({ apis: ['Date', 'setTimeout'], now: Date.now() + 10_000 })
     const onUpdate = mock.fn()
     events.init({ onUpdate })
     const { row } = buildStage()
