@@ -206,6 +206,38 @@ describe('checkbox and radio groups', () => {
     })
   })
 
+  describe('other attributes', () => {
+    test('custom and data attributes land on the group wrapper', () => {
+      render({
+        'checkbox-1': groupField('checkbox-1', 'checkbox', { 'data-foo': 'bar', title: 'Pick some', role: 'group' }),
+      })
+      const wrapper = container.querySelector('#f-checkbox-1')
+
+      assert.equal(wrapper.getAttribute('data-foo'), 'bar')
+      assert.equal(wrapper.getAttribute('title'), 'Pick some')
+      assert.equal(wrapper.getAttribute('role'), 'group')
+    })
+
+    test('disabled is applied to every option input, not the wrapper', () => {
+      render({ 'radio-1': groupField('radio-1', 'radio', { disabled: true }) })
+
+      assert.deepEqual(
+        inputsOf('radio-1').map(input => input.disabled),
+        [true, true]
+      )
+      assert.equal(container.querySelector('#f-radio-1').hasAttribute('disabled'), false)
+    })
+
+    test('the wrapper does not receive type, name or required', () => {
+      render({ 'radio-1': groupField('radio-1', 'radio', { name: 'favcolor', required: true }) })
+      const wrapper = container.querySelector('#f-radio-1')
+
+      for (const attr of ['type', 'name', 'required']) {
+        assert.equal(wrapper.hasAttribute(attr), false, `wrapper has no ${attr}`)
+      }
+    })
+  })
+
   describe('input group clones', () => {
     test('a cloned radio group gets its own name so it does not share a selection with the original', () => {
       // clone lookup goes through baseId(), which only recognises editor-style hex ids

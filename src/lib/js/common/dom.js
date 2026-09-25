@@ -31,6 +31,20 @@ const inputTags = new Set(['input', 'textarea', 'select'])
 // marks a required checkbox group's wrapper so its `required` state can be re-synced (renderer, userData)
 export const REQUIRED_GROUP_ATTR = 'formeo-required-group'
 
+// Checkbox and radio groups render as a wrapper holding one <input> per option.
+// These group attributes are copied onto every option input.
+const OPTION_INPUT_ATTRS = ['disabled', 'form']
+// These are consumed while building the group and never copied to the wrapper.
+const GROUP_CONSUMED_ATTRS = new Set(['type', 'id', 'name', 'className', 'value', 'required', ...OPTION_INPUT_ATTRS])
+
+/**
+ * Attributes a checkbox/radio group passes to its wrapper element (data-*, aria-*, title, custom attributes...)
+ * @param  {Object} attrs group attributes
+ * @return {Object} wrapper attributes
+ */
+export const groupWrapperAttrs = (attrs = {}) =>
+  Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)))
+
 const stripOn = str => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase())
 const useCaptureEvts = new Set(['focus', 'blur'])
 const defaultActionHandler = event => {
@@ -203,6 +217,7 @@ class DOM {
           wrap.className = groupAttrs.className
         }
         wrap.id = elem.id
+        wrap.attrs = groupWrapperAttrs(groupAttrs)
         // config.required only drives the label's required mark; `required` itself lives on the option inputs
         wrap.config = { ...elem.config, required: Boolean(groupAttrs.required) }
         if (!isPreview && groupAttrs.type === 'checkbox' && groupAttrs.required) {
@@ -518,7 +533,9 @@ class DOM {
     const id = attrs.id || elem.id
     // the editor preview keeps id-based names so two groups sharing a name can't interfere with each other there
     const name = (!isPreview && attrs.name) || id
-    const sharedInputAttrs = {}
+    const sharedInputAttrs = Object.fromEntries(
+      OPTION_INPUT_ATTRS.filter(key => key in attrs).map(key => [key, attrs[key]])
+    )
     if (attrs.required) {
       // a checkbox group only needs one checked box: while one is checked none of them is required
       sharedInputAttrs.required =
