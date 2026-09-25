@@ -257,5 +257,37 @@ describe('checkbox and radio groups', () => {
       assert.equal(radios.length, 4, 'the row was cloned')
       assert.equal(new Set(radios.map(input => input.name)).size, 2, 'original and clone use different names')
     })
+
+    test('a cloned select keeps its configured name (selects also carry top-level options)', () => {
+      // clone lookup goes through baseId(), which only recognises editor-style hex ids
+      const selectField = (id, attrs = {}) => ({
+        id,
+        tag: 'select',
+        attrs,
+        config: { label: 'select group' },
+        options: [
+          { label: 'One', value: 'one' },
+          { label: 'Two', value: 'two' },
+        ],
+      })
+      const formData = {
+        id: 'clone-form',
+        stages: { '0a0a0a0a': { id: '0a0a0a0a', children: ['1b1b1b1b'] } },
+        rows: { '1b1b1b1b': { id: '1b1b1b1b', config: { inputGroup: true }, children: ['2c2c2c2c'] } },
+        columns: { '2c2c2c2c': { id: '2c2c2c2c', config: { width: '100%' }, children: ['3d3d3d3d'] } },
+        fields: { '3d3d3d3d': selectField('3d3d3d3d', { name: 'favcolor' }) },
+      }
+      const renderer = new FormeoRenderer({ renderContainer: container, formData })
+      renderer.render()
+
+      container.querySelector('.add-input-group').click()
+
+      const selects = Array.from(container.querySelectorAll('select'))
+      assert.equal(selects.length, 2, 'the row was cloned')
+      assert.deepEqual(
+        selects.map(select => select.name),
+        ['favcolor', 'favcolor']
+      )
+    })
   })
 })

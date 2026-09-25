@@ -252,7 +252,7 @@ export default class FormeoRenderer {
     const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
     const updatedAttrs = { ...attrs, 'data-clone-of': id }
 
-    if (rest.options) {
+    if (rest.options && ['checkbox', 'radio'].includes(attrs.type)) {
       // option groups: drop the name so the clone falls back to its own id; a shared radio name would link the groups
       delete updatedAttrs.name
     } else if (rest.tag === 'input') {
