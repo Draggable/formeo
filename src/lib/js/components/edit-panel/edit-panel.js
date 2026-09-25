@@ -1,4 +1,5 @@
 import i18n from '@draggable/i18n'
+import Sortable from 'sortablejs'
 import actions from '../../common/actions.js'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
@@ -110,18 +111,48 @@ export default class EditPanel {
       attrs: {
         className: ['edit-group', `${this.component.name}-edit-group`, `${this.component.name}-edit-${this.name}`],
       },
-      editGroup: this.name,
-      isSortable: this.name === 'options',
       content: this.editPanelItems,
     }
 
-    return dom.create(editGroupConfig)
+    const props = dom.create(editGroupConfig)
+
+    if (this.name === 'options') {
+      this.sortable?.destroy()
+      this.sortable = Sortable.create(props, {
+        animation: 150,
+        handle: '.prop-order',
+        draggable: '.prop-wrap',
+        forceFallback: true,
+        // let Sortable finish its drop before the list is rebuilt
+        onEnd: ({ oldIndex, newIndex }) => window.requestAnimationFrame(() => this.moveOption(oldIndex, newIndex)),
+      })
+    }
+
+    return props
   }
 
   updateProps() {
     const newProps = this.createProps()
     this.props.replaceWith(newProps)
     this.props = newProps
+  }
+
+  /**
+   * Move an option, save the new order and rebuild the option items (their keys are index based)
+   * @param {Number} fromIndex
+   * @param {Number} toIndex
+   */
+  moveOption = (fromIndex, toIndex) => {
+    const options = this.component.get('options')
+    if (!Array.isArray(options) || fromIndex === toIndex || options[fromIndex] === undefined) {
+      return
+    }
+    const reordered = [...options]
+    const [moved] = reordered.splice(fromIndex, 1)
+    reordered.splice(toIndex, 0, moved)
+    this.component.set('options', reordered)
+    this.updateProps()
+    this.component.debouncedUpdatePreview?.()
   }
 
   /**

@@ -36,4 +36,32 @@ test.describe('Options panel', () => {
     const labelInput = field.locator('.field-edit-options > li').nth(1).locator('input[name$="-label"]')
     await expect(labelInput).toHaveValue('New radio 2')
   })
+
+  test('dragging option 3 above option 1 reorders formData options and the preview (#114)', async ({ page }) => {
+    const { field, editPanel } = await addFieldAndEdit(page, 'Radio Group', 'Options')
+    const items = editPanel.locator('.field-edit-options > li')
+    await items.nth(2).hover()
+    const handle = items.nth(2).locator('.prop-order')
+    await expect(handle).toBeVisible()
+    const from = await handle.boundingBox()
+    const to = await items.nth(0).boundingBox()
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+    await page.mouse.down()
+    // a small intermediate move is needed to cross Sortable's forceFallback drag threshold
+    // before the larger move to the drop target, or no drag ever starts
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2 - 10, { steps: 5 })
+    await page.waitForTimeout(100)
+    await page.mouse.move(to.x + to.width / 2, to.y + 2, { steps: 20 })
+    await page.waitForTimeout(100)
+    await page.mouse.up()
+
+    const fieldId = await field.getAttribute('id')
+    const formDataValues = () =>
+      page.evaluate(
+        id => window.frameworkLoader.currentDemo.editor.formData.fields[id].options.map(o => o.value),
+        fieldId
+      )
+    await expect.poll(formDataValues).toEqual(['radio-3', 'radio-1', 'radio-2'])
+    await expect.poll(() => radioValues(field)).toEqual(['radio-3', 'radio-1', 'radio-2'])
+  })
 })

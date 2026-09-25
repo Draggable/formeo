@@ -1,7 +1,6 @@
 import i18n from '@draggable/i18n'
-import Sortable from 'sortablejs'
 import dom from '../common/dom.js'
-import h, { indexOfNode } from '../common/helpers.mjs'
+import { indexOfNode } from '../common/helpers.mjs'
 import { merge } from '../common/utils/index.mjs'
 import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../constants.js'
 
@@ -87,8 +86,7 @@ export default class Panels {
   }
 
   /**
-   * Wrap a panel and make properties sortable
-   * if the panel belongs to a field
+   * Wrap a panel's DOM elements
    * @return {Object} DOM element
    */
   createPanelsWrap() {
@@ -97,44 +95,11 @@ export default class Panels {
       content: this.opts.panels.map(({ config: _config, ...panel }) => panel),
     })
 
-    if (this.opts.type === 'field') {
-      this.sortableProperties(panelsWrap)
-    }
-
     this.panelsWrap = panelsWrap
     this.panels = panelsWrap.children
     this.currentPanel = this.panels[this.activePanelIndex]
 
     return panelsWrap
-  }
-
-  /**
-   * Sortable panel properties
-   * @param  {Array} panels
-   * @return {Array} panel groups
-   */
-  sortableProperties(panels) {
-    const groups = panels.getElementsByClassName('field-edit-group')
-
-    return h.forEach(groups, group => {
-      group.fieldId = this.opts.id
-      if (group.isSortable) {
-        Sortable.create(group, {
-          animation: 150,
-          group: {
-            name: `edit-${group.editGroup}`,
-            pull: true,
-            put: ['properties'],
-          },
-          sort: true,
-          handle: '.prop-order',
-          onSort: evt => {
-            this.propertySave(evt.to)
-            this.resizePanels()
-          },
-        })
-      }
-    })
   }
 
   createPanelNavLabels() {
