@@ -43,3 +43,68 @@ test.describe('Form Editor', () => {
     await page.getByRole('button', { name: '+ Option' }).click()
   })
 })
+
+test.describe('Rendered conditions', () => {
+  const clause = (source, value, logical) => ({
+    ...(logical && { logical }),
+    source: `fields.${source}`,
+    sourceProperty: 'value',
+    comparison: 'equals',
+    target: value,
+    targetProperty: '',
+  })
+
+  const renderWithCondition = async (page, ifClauses) => {
+    await page.evaluate(ifClauses => {
+      const text = (id, extra = {}) => ({ id, tag: 'input', attrs: { type: 'text' }, config: { label: id }, ...extra })
+      const fields = {
+        'cond-a': text('cond-a'),
+        'cond-b': text('cond-b'),
+        'cond-target': text('cond-target', {
+          conditions: [
+            {
+              if: ifClauses,
+              then: [{ target: 'fields.cond-target', targetProperty: 'isNotVisible', assignment: '', value: '' }],
+            },
+          ],
+        }),
+      }
+      const ids = Object.keys(fields)
+      const formData = {
+        id: 'e2e-conditions',
+        stages: { 'cond-stage': { id: 'cond-stage', children: ['cond-row'] } },
+        rows: { 'cond-row': { id: 'cond-row', config: {}, children: ids.map(id => `col-${id}`) } },
+        columns: Object.fromEntries(ids.map(id => [`col-${id}`, { id: `col-${id}`, config: {}, children: [id] }])),
+        fields,
+      }
+      const container = document.createElement('div')
+      container.id = 'e2e-conditions'
+      document.body.appendChild(container)
+      new window.FormeoRenderer({ renderContainer: container, formData }).render()
+    }, ifClauses)
+    return page.locator('#e2e-conditions form')
+  }
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('.formeo-editor')).toBeVisible()
+  })
+
+  test('AND hides the target only when both clauses match (#258)', async ({ page }) => {
+    const form = await renderWithCondition(page, [clause('cond-a', 'a'), clause('cond-b', 'b', '&&')])
+    const target = form.locator('#f-cond-target')
+
+    await form.locator('#f-cond-a').fill('a')
+    await expect(target).toBeVisible()
+
+    await form.locator('#f-cond-b').fill('b')
+    await expect(target).toBeHidden()
+  })
+
+  test('OR hides the target when either clause matches (#258)', async ({ page }) => {
+    const form = await renderWithCondition(page, [clause('cond-a', 'a'), clause('cond-b', 'b', '||')])
+
+    await form.locator('#f-cond-b').fill('b')
+    await expect(form.locator('#f-cond-target')).toBeHidden()
+  })
+})

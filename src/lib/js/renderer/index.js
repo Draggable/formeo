@@ -1,4 +1,4 @@
-import dom, { getName } from '../common/dom.js'
+import dom, { getName, REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { fetchDependencies } from '../common/loaders.js'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -7,6 +7,7 @@ import {
   baseId,
   comparisonMap,
   createRemoveButton,
+  groupIfConditions,
   isCheckableGroup,
   processOptions,
   propertyMap,
@@ -87,7 +88,7 @@ export default class FormeoRenderer {
       const fieldData = {
         key,
         value,
-        label: this.components[baseId(key)]?.config?.label || '',
+        label: this.componentByName(key)?.config?.label || '',
       }
       userFormData.push(fieldData)
     }
@@ -95,23 +96,41 @@ export default class FormeoRenderer {
     return userFormData
   }
 
+  /**
+   * Finds the component data behind a submitted field name
+   * @param {String} name
+   * @return {Object|undefined}
+   */
+  componentByName(name) {
+    return (
+      this.components[baseId(name)] || Object.values(this.components).find(component => component.attrs?.name === name)
+    )
+  }
+
   set userData(data = {}) {
     const form = this.container.querySelector('form')
     for (const key of Object.keys(data)) {
       const fields = form.elements[key]
+      // a group with a single option resolves to the input itself rather than a RadioNodeList
+      const checkables = checkableInputs(fields)
 
       // Handle checkbox groups
-      if (fields.length && fields[0].type === 'checkbox') {
+      if (checkables?.[0].type === 'checkbox') {
         // Convert to array if not already
         const values = Array.isArray(data[key]) ? data[key] : [data[key]]
 
-        for (const field of fields) {
+        for (const field of checkables) {
           field.checked = values.includes(field.value)
+        }
+
+        const group = checkables[0].closest(`[data-${REQUIRED_GROUP_ATTR}]`)
+        if (group) {
+          dom.syncCheckboxGroupRequired(group)
         }
       }
       // Handle radio groups
-      else if (fields.length && fields[0].type === 'radio') {
-        for (const field of fields) {
+      else if (checkables?.[0].type === 'radio') {
+        for (const field of checkables) {
           field.checked = field.value === data[key]
         }
       }
@@ -151,10 +170,24 @@ export default class FormeoRenderer {
     }
 
     this.renderedForm = dom.render(config)
+    this.renderedForm.addEventListener('reset', this.syncRequiredGroupsAfterReset)
 
     this.applyConditions()
 
     return this.renderedForm
+  }
+
+  /**
+   * A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
+   * The `reset` event fires before the controls revert, hence the deferral.
+   * @param {Event} evt the form's reset event
+   */
+  syncRequiredGroupsAfterReset = ({ currentTarget: form }) => {
+    setTimeout(() => {
+      for (const group of form.querySelectorAll(`[data-${REQUIRED_GROUP_ATTR}]`)) {
+        dom.syncCheckboxGroupRequired(group)
+      }
+    }, 0)
   }
 
   get html() {
@@ -234,7 +267,10 @@ export default class FormeoRenderer {
     const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
     const updatedAttrs = { ...attrs, 'data-clone-of': id }
 
-    if (rest.tag === 'input') {
+    if (rest.options && ['checkbox', 'radio'].includes(attrs.type)) {
+      // option groups: drop the name so the clone falls back to its own id; a shared radio name would link the groups
+      delete updatedAttrs.name
+    } else if (rest.tag === 'input') {
       updatedAttrs.name = getName(this.components[componentId])
     }
 
@@ -296,47 +332,9 @@ export default class FormeoRenderer {
   }
 
   /**
-   * Evaulate and execute conditions for fields by creating listeners for input and changes
-   * @return {Array} flattened array of conditions
+   * Wires every condition of every rendered component: evaluates it once on render and again
+   * whenever a component one of its if-clauses reads from changes.
    */
-  handleComponentCondition = (component, ifRest, thenConditions) => {
-    if (!component) {
-      return
-    }
-
-    // a <select> has a native `length` (its option count), so only real collections may be spread
-    if (isNodeCollection(component)) {
-      for (const elem of component) {
-        this.handleComponentCondition(elem, ifRest, thenConditions)
-      }
-      return
-    }
-
-    const listenerEvent = LISTEN_TYPE_MAP(component)
-
-    if (listenerEvent) {
-      component.addEventListener(
-        listenerEvent,
-        evt => {
-          if (this.evaluateCondition(ifRest, evt)) {
-            for (const thenCondition of thenConditions) {
-              this.execResult(thenCondition, evt)
-            }
-          }
-        },
-        false
-      )
-    }
-
-    // Evaluate conditions on load.
-    const fakeEvt = { target: component }
-    if (this.evaluateCondition(ifRest, fakeEvt)) {
-      for (const thenCondition of thenConditions) {
-        this.execResult(thenCondition, fakeEvt)
-      }
-    }
-  }
-
   applyConditions = () => {
     for (const { conditions } of Object.values(this.components)) {
       if (!conditions) {
@@ -344,28 +342,69 @@ export default class FormeoRenderer {
       }
 
       for (const condition of conditions) {
-        const { if: ifConditions = [], then: thenConditions = [] } = condition
-
-        for (const ifCondition of ifConditions) {
-          // a single unusable condition must never abort the render of the whole form
-          try {
-            this.applyCondition(ifCondition, thenConditions)
-          } catch (err) {
-            console.error('formeo: condition skipped', ifCondition, err)
-          }
+        // a single unusable condition must never abort the render of the whole form
+        try {
+          this.applyCondition(condition)
+        } catch (err) {
+          console.error('formeo: condition skipped', condition, err)
         }
       }
     }
   }
 
-  applyCondition = (ifCondition, thenConditions) => {
-    for (const address of [ifCondition.source, ifCondition.target]) {
-      if (!isAddress(address)) {
-        continue
+  applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
+    const clauseGroups = groupIfConditions(ifConditions)
+    // a `value` action fires `input` on its target; when the condition watches that target,
+    // the event would re-enter run and set the value again, forever
+    let running = false
+    const run = evt => {
+      if (running) {
+        return
       }
+      running = true
+      try {
+        if (this.evaluateClauseGroups(clauseGroups)) {
+          for (const thenCondition of thenConditions) {
+            this.execResult(thenCondition, evt)
+          }
+        }
+      } finally {
+        running = false
+      }
+    }
 
+    const watchedAddresses = new Set(ifConditions.flatMap(({ source, target }) => [source, target]).filter(isAddress))
+    for (const address of watchedAddresses) {
       const { component, options } = this.getComponent(address)
-      this.handleComponentCondition(options || component, ifCondition, thenConditions)
+      this.listenForChanges(options || component, run)
+    }
+
+    run({ target: null })
+  }
+
+  /**
+   * @param {Array<Array<Object>>} clauseGroups output of groupIfConditions
+   * @return {Boolean} true when every clause of at least one group matches
+   */
+  evaluateClauseGroups = clauseGroups =>
+    clauseGroups.some(group => group.length && group.every(clause => this.evaluateCondition(clause)))
+
+  listenForChanges = (component, handler) => {
+    if (!component) {
+      return
+    }
+
+    // a <select> has a native `length` (its option count), so only real collections may be spread
+    if (isNodeCollection(component)) {
+      for (const elem of component) {
+        this.listenForChanges(elem, handler)
+      }
+      return
+    }
+
+    const listenerEvent = LISTEN_TYPE_MAP(component)
+    if (listenerEvent) {
+      component.addEventListener(listenerEvent, handler, false)
     }
   }
 
@@ -373,6 +412,12 @@ export default class FormeoRenderer {
    * Evaulate conditions
    */
   evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
+    // a clause without a source address (e.g. half-filled in the editor), or reading from a field
+    // that is no longer in the form, never matches
+    if (!isAddress(source) || !this.getComponent(source)?.component) {
+      return false
+    }
+
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
     const sourceValue = this.getComponentProperty(source, sourceProperty)
 
@@ -417,7 +462,12 @@ export default class FormeoRenderer {
     }
     const [, componentId, optionsKey, optionIndex] = splitAddress(address)
 
-    const component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`)
+    let component = null
+    try {
+      component = this.renderedForm.querySelector(`#${RENDER_PREFIX}${componentId}`)
+    } catch {
+      // an id that is not a valid selector can't match anything
+    }
 
     if (!component) {
       return result
@@ -445,6 +495,15 @@ export default class FormeoRenderer {
 
     return components
   }
+}
+
+const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)
+
+const checkableInputs = fields => {
+  if (isCheckable(fields)) {
+    return [fields]
+  }
+  return fields?.length && isCheckable(fields[0]) ? Array.from(fields) : null
 }
 
 const isDomNode = value => Boolean(value) && typeof value.nodeType === 'number'
