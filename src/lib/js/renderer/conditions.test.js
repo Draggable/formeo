@@ -472,4 +472,78 @@ describe('renderer conditions', () => {
       assert.equal(isTargetHidden(), false)
     })
   })
+
+  describe('documented examples (docs/renderer/renderer.md)', () => {
+    test('"Show a field for Other" works as documented', () => {
+      render({
+        country: {
+          id: 'country',
+          tag: 'select',
+          attrs: {},
+          config: { label: 'Country' },
+          options: [
+            { label: 'Canada', value: 'ca' },
+            { label: 'Other', value: 'other' },
+          ],
+        },
+        'country-other': {
+          id: 'country-other',
+          tag: 'input',
+          attrs: { type: 'text', required: true },
+          config: { label: 'Which country?' },
+          conditions: [
+            {
+              if: [{ source: 'fields.country', sourceProperty: 'value', comparison: '!=', target: 'other' }],
+              then: [{ target: 'fields.country-other', targetProperty: 'isNotVisible' }],
+            },
+            {
+              if: [{ source: 'fields.country', sourceProperty: 'value', comparison: '==', target: 'other' }],
+              then: [{ target: 'fields.country-other', targetProperty: 'isVisible' }],
+            },
+          ],
+        },
+      })
+      const other = container.querySelector('#f-country-other')
+      const select = container.querySelector('#f-country')
+
+      assert.equal(other.parentElement.hasAttribute('hidden'), true, 'hidden while Canada is selected')
+      assert.equal(other.required, false, 'not required while hidden')
+
+      select.value = 'other'
+      change(select)
+
+      assert.equal(other.parentElement.hasAttribute('hidden'), false, 'shown for Other')
+      assert.equal(other.required, true, 'required again once shown')
+    })
+
+    test('"Require two answers" (AND) works as documented', () => {
+      render({
+        plan: optionField('plan', 'radio', [
+          { label: 'Free', value: 'free' },
+          { label: 'Team', value: 'team' },
+        ]),
+        seats: inputField('seats', 'number'),
+        [TARGET_ID]: inputField(TARGET_ID, 'text', {
+          conditions: [
+            {
+              if: [
+                { source: 'fields.plan', sourceProperty: 'value', comparison: '==', target: 'team' },
+                { logical: '&&', source: 'fields.seats', sourceProperty: 'value', comparison: '==', target: '10' },
+              ],
+              then: [{ target: `fields.${TARGET_ID}`, targetProperty: 'isNotVisible' }],
+            },
+          ],
+        }),
+      })
+      const [, team] = container.querySelectorAll('#f-plan input')
+      team.checked = true
+      change(team)
+      assert.equal(isTargetHidden(), false, 'one answer is not enough')
+
+      const seats = container.querySelector('#f-seats')
+      seats.value = '10'
+      seats.dispatchEvent(new dom.window.Event('input', { bubbles: true }))
+      assert.equal(isTargetHidden(), true, 'both answers match')
+    })
+  })
 })
