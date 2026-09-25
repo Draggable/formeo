@@ -1,4 +1,5 @@
 import i18n from '@draggable/i18n'
+import Dialog from '../components/dialog.js'
 import { CONDITION_TEMPLATE, SESSION_FORMDATA_KEY } from '../constants.js'
 import events from './events.js'
 import { identity, sessionStorage } from './utils/index.mjs'
@@ -7,21 +8,59 @@ import { identity, sessionStorage } from './utils/index.mjs'
 // new attributes, options, field removal confirmations etc.
 // Every Action below can be overridden via module options
 
+const ATTRIBUTE_NAME = /^[A-Za-z_:][-A-Za-z0-9_:.]*$/
+
+/**
+ * Why an attribute name can't be added, or '' when it can
+ * @param {String} attr trimmed attribute name
+ * @param {Object} evt add-attribute event from the edit panel
+ * @return {String}
+ */
+const attributeProblem = (attr, evt) => {
+  if (!attr) {
+    return ''
+  }
+  if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`)) {
+    return i18n.get('attributeNotPermitted', { attribute: attr }) || `Attribute "${attr}" is not permitted`
+  }
+  return ''
+}
+
+/**
+ * Default add-attribute UI: an in-app dialog in place of window.prompt (#233)
+ * @param {Object} evt add-attribute event from the edit panel
+ * @return {Dialog}
+ */
+const openAddAttributeDialog = evt =>
+  new Dialog({
+    className: 'add-attribute-dialog',
+    content: [
+      {
+        tag: 'input',
+        attrs: { type: 'text', name: 'attrName', className: 'attr-name-input', required: true, autocomplete: 'off' },
+        config: { label: evt.message.attr },
+        action: {
+          input: ({ target }) => target.setCustomValidity(attributeProblem(target.value.trim(), evt)),
+        },
+      },
+      {
+        tag: 'input',
+        attrs: { type: 'text', name: 'attrValue', className: 'attr-value-input', autocomplete: 'off' },
+        config: { label: evt.message.value },
+      },
+    ],
+    onConfirm: formData => {
+      const attr = String(formData.get('attrName') ?? '').trim()
+      if (attr && !attributeProblem(attr, evt)) {
+        evt.addAction(attr, String(formData.get('attrValue') ?? ''))
+      }
+    },
+  }).open()
+
 // Default options
 const defaultActions = {
   add: {
-    attr: evt => {
-      const attr = globalThis.prompt(evt.message.attr)
-      if (attr && evt.isDisabled(attr)) {
-        globalThis.alert(i18n.get('attributeNotPermitted', attr))
-        return actions.add.attrs(evt)
-      }
-      let val
-      if (attr) {
-        val = String(globalThis.prompt(evt.message.value, ''))
-        evt.addAction(attr, val)
-      }
-    },
+    attr: evt => openAddAttributeDialog(evt),
     option: evt => {
       evt.addAction()
     },
