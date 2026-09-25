@@ -2,7 +2,7 @@
 
 A highly configurable drag & drop form building module for creating dynamic, responsive forms with an intuitive visual editor.
 
-![npm](https://img.shields.io/npm/v/formeo.svg) ![npm downloads](https://img.shields.io/npm/dm/formeo.svg) ![GitHub](https://img.shields.io/github/license/Draggable/formeo.svg) [![build](https://github.com/Draggable/formeo/workflows/build/badge.svg)](https://github.com/Draggable/formeo/actions?query=workflow%3Abuild)
+![npm](https://img.shields.io/npm/v/formeo.svg) ![npm downloads](https://img.shields.io/npm/dm/formeo.svg) ![GitHub](https://img.shields.io/github/license/Draggable/formeo.svg) [![build](https://github.com/Draggable/formeo/actions/workflows/publish.yaml/badge.svg)](https://github.com/Draggable/formeo/actions/workflows/publish.yaml)
 
 ## [Demo](https://formeo.io)
 
