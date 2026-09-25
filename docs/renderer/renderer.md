@@ -300,6 +300,8 @@ Any component (field, row, column or stage) can carry a `conditions` array. Each
 
 When every clause of an `if` group matches, every action in `then` runs. Components are referenced by **address**: `fields.<fieldId>`, `rows.<rowId>`, `columns.<columnId>`, or one option of a group, `fields.<fieldId>.options[<index>]`. Addresses use the ids from `formData`, without the `f-` prefix the renderer adds to element ids.
 
+A column works as a clause `source`, but a show/hide action that targets a column hides the whole row it sits in. To hide part of a row, target its fields.
+
 ### `if` clauses
 
 | Key | Values | Meaning |

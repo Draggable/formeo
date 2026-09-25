@@ -475,6 +475,24 @@ describe('renderer conditions', () => {
       assert.equal(form().checkValidity(), false)
     })
 
+    test('"isNotVisible" on a column hides its whole row, as documented', () => {
+      const formData = buildFormData({
+        'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide('columns.column-a') }),
+      })
+      formData.stages['stage-1'].children.push('row-2')
+      formData.rows['row-2'] = { id: 'row-2', config: {}, children: ['column-a', 'column-b'] }
+      formData.columns['column-a'] = { id: 'column-a', config: { width: '50%' }, children: ['field-a'] }
+      formData.columns['column-b'] = { id: 'column-b', config: { width: '50%' }, children: ['field-b'] }
+      formData.fields['field-a'] = inputField('field-a')
+      formData.fields['field-b'] = inputField('field-b')
+      new FormeoRenderer({ renderContainer: container, formData }).render()
+
+      typeInto(container.querySelector('#f-source-1'), 'hide')
+
+      assert.ok(container.querySelector('#f-row-2').hasAttribute('hidden'), 'the row holding the column is hidden')
+      assert.ok(container.querySelector('#f-field-b').closest('[hidden]'), 'so is the other column in that row')
+    })
+
     test('"isVisible" on a field that was never hidden keeps its required attribute', () => {
       render({
         'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
