@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.2.1
+Version: 5.2.2
 Author: Draggable https://draggable.io
 */
 
@@ -6061,7 +6061,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.2.1";
+	version$2 = "5.2.2";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -12086,7 +12086,7 @@ var init_loaders = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/common/dom.js
-var iconFontTemplates, inputTags, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
+var iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
 var init_dom = __esmMin((() => {
 	init_components();
 	init_constants();
@@ -12108,6 +12108,18 @@ var init_dom = __esmMin((() => {
 		"textarea",
 		"select"
 	]);
+	REQUIRED_GROUP_ATTR = "formeo-required-group";
+	OPTION_INPUT_ATTRS = ["disabled", "form"];
+	GROUP_CONSUMED_ATTRS = new Set([
+		"type",
+		"id",
+		"name",
+		"className",
+		"value",
+		"required",
+		...OPTION_INPUT_ATTRS
+	]);
+	groupWrapperAttrs = (attrs = {}) => Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)));
 	stripOn = (str) => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase());
 	useCaptureEvts = new Set(["focus", "blur"]);
 	defaultActionHandler = (event) => {
@@ -12231,9 +12243,18 @@ var init_dom = __esmMin((() => {
 					helpers.forEach(processedOptions, (option) => {
 						wrap.children.push(_this.create(option, isPreview));
 					});
-					if (elem.attrs.className) wrap.className = elem.attrs.className;
+					const groupAttrs = elem.attrs || {};
+					if (groupAttrs.className) wrap.className = groupAttrs.className;
 					wrap.id = elem.id;
-					wrap.config = { ...elem.config };
+					wrap.attrs = groupWrapperAttrs(groupAttrs);
+					wrap.config = {
+						...elem.config,
+						required: Boolean(groupAttrs.required)
+					};
+					if (!isPreview && groupAttrs.type === "checkbox" && groupAttrs.required) {
+						wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = "true";
+						wrap.action = { change: ({ currentTarget }) => this.syncCheckboxGroupRequired(currentTarget) };
+					}
 					return this.create(wrap, isPreview);
 				}
 				processed.push("options");
@@ -12436,16 +12457,20 @@ var init_dom = __esmMin((() => {
 			const { action, attrs = {} } = elem;
 			const fieldType = attrs.type || elem.tag;
 			const id = attrs.id || elem.id;
+			const name = !isPreview && attrs.name || id;
+			const sharedInputAttrs = Object.fromEntries(OPTION_INPUT_ATTRS.filter((key) => key in attrs).map((key) => [key, attrs[key]]));
+			if (attrs.required) sharedInputAttrs.required = fieldType !== "checkbox" || !options.some(({ selected, checked }) => selected || checked);
 			const optionMap = (option, i) => {
 				const { label, value, ...rest } = option;
 				const defaultInput = () => {
 					const input = {
 						tag: "input",
 						attrs: {
-							name: id,
+							name,
 							type: fieldType,
 							value: value || "",
 							id: `${id}-${i}`,
+							...sharedInputAttrs,
 							...rest
 						},
 						action
@@ -12547,6 +12572,18 @@ var init_dom = __esmMin((() => {
 			const labelAfter = helpers.get(elem, "config.labelAfter");
 			return labelAfter === void 0 ? type === "checkbox" || type === "radio" : labelAfter;
 		}
+		/**
+		* A required checkbox group needs at least one checked box, not every box.
+		* Every box stays `required` while none is checked; once one is checked none is.
+		* Boxes inside a hidden container are never required.
+		* @param {Element} groupElem wrapper holding the group's checkboxes
+		*/
+		syncCheckboxGroupRequired(groupElem) {
+			const boxes = Array.from(groupElem.querySelectorAll("input[type=\"checkbox\"]"));
+			const isHidden = Boolean(groupElem.closest("[hidden]"));
+			const noneChecked = !boxes.some((box) => box.checked);
+			for (const box of boxes) box.required = !isHidden && noneChecked;
+		}
 		requiredMark = () => ({
 			tag: "span",
 			className: "text-error",
@@ -12570,7 +12607,7 @@ var init_dom = __esmMin((() => {
 		* @return {Object}      config object
 		*/
 		label(elem, fMap) {
-			const required = helpers.get(elem, "attrs.required");
+			const required = helpers.get(elem, "attrs.required") || helpers.get(elem, "config.required");
 			let { config: { label: labelText = "", helpText = "", tooltip = null } } = elem;
 			const { id: elemId, attrs } = elem;
 			if (typeof labelText === "function") labelText = labelText();
@@ -18165,12 +18202,23 @@ var assignmentMap = Object.entries(ASSIGNMENT_OPERATORS).reduce((acc, [key, valu
 	acc[key] = assignmentHandlers[key];
 	return acc;
 }, {});
+/**
+* Setting `checked` fires no `change`, so a required checkbox group the box belongs to is
+* re-synced directly. A synthetic `change` could re-trigger conditions.
+* @param {Element} elem checkbox or radio input
+*/
+var syncRequiredGroupOf = (elem) => {
+	const group = elem.closest?.(REQUIRED_GROUP_SELECTOR);
+	if (group) dom.syncCheckboxGroupRequired(group);
+};
 var targetPropertyMap = {
 	isChecked: (elem) => {
 		elem.checked = true;
+		syncRequiredGroupOf(elem);
 	},
 	isNotChecked: (elem) => {
 		elem.checked = false;
+		syncRequiredGroupOf(elem);
 	},
 	value: (elem, { assignment, ...rest }) => {
 		const assignmentAction = assignmentMap[assignment]?.(elem, rest);
@@ -18179,15 +18227,60 @@ var targetPropertyMap = {
 		return assignmentAction;
 	},
 	isNotVisible: (elem) => {
-		if (elem?._required === void 0) elem._required = elem.required;
 		elem.parentElement.setAttribute("hidden", true);
-		elem.required = false;
+		suspendRequired(elem);
 	},
 	isVisible: (elem) => {
 		elem.parentElement.removeAttribute("hidden");
-		elem.required = elem._required;
+		restoreRequired(elem);
 	}
 };
+var FORM_CONTROL_SELECTOR = "input, select, textarea";
+var REQUIRED_GROUP_SELECTOR = `[data-${REQUIRED_GROUP_ATTR}]`;
+/**
+* The element itself when it matches, plus every descendant that does
+* @param {Element} elem
+* @param {String} selector
+* @return {Array<Element>}
+*/
+var selfAndDescendants = (elem, selector) => [...elem.matches(selector) ? [elem] : [], ...elem.querySelectorAll(selector)];
+/**
+* A hidden control can't be filled in, so it must not be required. Remembers each control's
+* `required` so that restoreRequired can put it back. Works for a field, a group or a whole row.
+* @param {Element} elem condition target
+*/
+var suspendRequired = (elem) => {
+	for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
+		if (control._required === void 0) control._required = control.required;
+		control.required = false;
+	}
+};
+/**
+* Undoes suspendRequired. Controls that were never suspended are left alone, and so are controls
+* still inside a hidden container: they keep their saved `required` until that container is shown.
+* @param {Element} elem condition target
+*/
+var restoreRequired = (elem) => {
+	for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) if (control._required !== void 0 && !control.closest("[hidden]")) {
+		control.required = control._required;
+		delete control._required;
+	}
+	for (const group of selfAndDescendants(elem, REQUIRED_GROUP_SELECTOR)) dom.syncCheckboxGroupRequired(group);
+};
+var LOGICAL_AND = new Set(["&&", "and"]);
+/**
+* Splits a condition's if-clauses into OR-groups of AND-ed clauses. A clause's `logical`
+* ('&&' / '||', or 'and' / 'or') joins it to the clause before it, and '&&' binds tighter
+* than '||' as in JavaScript. The first clause's `logical` is ignored, and a missing
+* `logical` means OR, which is how every clause behaved before AND was supported.
+* @param {Array<Object>} ifConditions
+* @return {Array<Array<Object>>} e.g. A || B && C -> [[A], [B, C]]
+*/
+var groupIfConditions = (ifConditions = []) => ifConditions.reduce((groups, clause, index) => {
+	if (index > 0 && LOGICAL_AND.has(clause.logical)) groups[groups.length - 1].push(clause);
+	else groups.push([clause]);
+	return groups;
+}, []);
 //#endregion
 //#region src/lib/js/renderer/index.js
 init_dom();
@@ -18252,20 +18345,31 @@ var FormeoRenderer$1 = class {
 			const fieldData = {
 				key,
 				value,
-				label: this.components[baseId(key)]?.config?.label || ""
+				label: this.componentByName(key)?.config?.label || ""
 			};
 			userFormData.push(fieldData);
 		}
 		return userFormData;
 	}
+	/**
+	* Finds the component data behind a submitted field name
+	* @param {String} name
+	* @return {Object|undefined}
+	*/
+	componentByName(name) {
+		return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name);
+	}
 	set userData(data = {}) {
 		const form = this.container.querySelector("form");
 		for (const key of Object.keys(data)) {
 			const fields = form.elements[key];
-			if (fields.length && fields[0].type === "checkbox") {
+			const checkables = checkableInputs(fields);
+			if (checkables?.[0].type === "checkbox") {
 				const values = Array.isArray(data[key]) ? data[key] : [data[key]];
-				for (const field of fields) field.checked = values.includes(field.value);
-			} else if (fields.length && fields[0].type === "radio") for (const field of fields) field.checked = field.value === data[key];
+				for (const field of checkables) field.checked = values.includes(field.value);
+				const group = checkables[0].closest(`[data-${REQUIRED_GROUP_ATTR}]`);
+				if (group) dom.syncCheckboxGroupRequired(group);
+			} else if (checkables?.[0].type === "radio") for (const field of checkables) field.checked = field.value === data[key];
 			else if (fields.type) fields.value = data[key];
 		}
 	}
@@ -18291,9 +18395,20 @@ var FormeoRenderer$1 = class {
 			children: this.processedData
 		};
 		this.renderedForm = dom.render(config);
+		this.renderedForm.addEventListener("reset", this.syncRequiredGroupsAfterReset);
 		this.applyConditions();
 		return this.renderedForm;
 	}
+	/**
+	* A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
+	* The `reset` event fires before the controls revert, hence the deferral.
+	* @param {Event} evt the form's reset event
+	*/
+	syncRequiredGroupsAfterReset = ({ currentTarget: form }) => {
+		setTimeout(() => {
+			for (const group of form.querySelectorAll(`[data-${REQUIRED_GROUP_ATTR}]`)) dom.syncCheckboxGroupRequired(group);
+		}, 0);
+	};
 	get html() {
 		return (this.renderedForm || this.getRenderedForm()).outerHTML;
 	}
@@ -18368,7 +18483,8 @@ var FormeoRenderer$1 = class {
 			...attrs,
 			"data-clone-of": id
 		};
-		if (rest.tag === "input") updatedAttrs.name = getName(this.components[componentId]);
+		if (rest.options && ["checkbox", "radio"].includes(attrs.type)) delete updatedAttrs.name;
+		else if (rest.tag === "input") updatedAttrs.name = getName(this.components[componentId]);
 		return {
 			...rest,
 			id: "f-" + uuid(id),
@@ -18413,46 +18529,57 @@ var FormeoRenderer$1 = class {
 		});
 	}
 	/**
-	* Evaulate and execute conditions for fields by creating listeners for input and changes
-	* @return {Array} flattened array of conditions
+	* Wires every condition of every rendered component: evaluates it once on render and again
+	* whenever a component one of its if-clauses reads from changes.
 	*/
-	handleComponentCondition = (component, ifRest, thenConditions) => {
-		if (!component) return;
-		if (isNodeCollection(component)) {
-			for (const elem of component) this.handleComponentCondition(elem, ifRest, thenConditions);
-			return;
-		}
-		const listenerEvent = LISTEN_TYPE_MAP(component);
-		if (listenerEvent) component.addEventListener(listenerEvent, (evt) => {
-			if (this.evaluateCondition(ifRest, evt)) for (const thenCondition of thenConditions) this.execResult(thenCondition, evt);
-		}, false);
-		const fakeEvt = { target: component };
-		if (this.evaluateCondition(ifRest, fakeEvt)) for (const thenCondition of thenConditions) this.execResult(thenCondition, fakeEvt);
-	};
 	applyConditions = () => {
 		for (const { conditions } of Object.values(this.components)) {
 			if (!conditions) continue;
-			for (const condition of conditions) {
-				const { if: ifConditions = [], then: thenConditions = [] } = condition;
-				for (const ifCondition of ifConditions) try {
-					this.applyCondition(ifCondition, thenConditions);
-				} catch (err) {
-					console.error("formeo: condition skipped", ifCondition, err);
-				}
+			for (const condition of conditions) try {
+				this.applyCondition(condition);
+			} catch (err) {
+				console.error("formeo: condition skipped", condition, err);
 			}
 		}
 	};
-	applyCondition = (ifCondition, thenConditions) => {
-		for (const address of [ifCondition.source, ifCondition.target]) {
-			if (!isAddress(address)) continue;
+	applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
+		const clauseGroups = groupIfConditions(ifConditions);
+		let running = false;
+		const run = (evt) => {
+			if (running) return;
+			running = true;
+			try {
+				if (this.evaluateClauseGroups(clauseGroups)) for (const thenCondition of thenConditions) this.execResult(thenCondition, evt);
+			} finally {
+				running = false;
+			}
+		};
+		const watchedAddresses = new Set(ifConditions.flatMap(({ source, target }) => [source, target]).filter(isAddress));
+		for (const address of watchedAddresses) {
 			const { component, options } = this.getComponent(address);
-			this.handleComponentCondition(options || component, ifCondition, thenConditions);
+			this.listenForChanges(options || component, run);
 		}
+		run({ target: null });
+	};
+	/**
+	* @param {Array<Array<Object>>} clauseGroups output of groupIfConditions
+	* @return {Boolean} true when every clause of at least one group matches
+	*/
+	evaluateClauseGroups = (clauseGroups) => clauseGroups.some((group) => group.length && group.every((clause) => this.evaluateCondition(clause)));
+	listenForChanges = (component, handler) => {
+		if (!component) return;
+		if (isNodeCollection(component)) {
+			for (const elem of component) this.listenForChanges(elem, handler);
+			return;
+		}
+		const listenerEvent = LISTEN_TYPE_MAP(component);
+		if (listenerEvent) component.addEventListener(listenerEvent, handler, false);
 	};
 	/**
 	* Evaulate conditions
 	*/
 	evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
+		if (!isAddress(source) || !this.getComponent(source)?.component) return false;
 		const sourceValue = this.getComponentProperty(source, sourceProperty);
 		if (typeof sourceValue === "boolean") return sourceValue;
 		const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target);
@@ -18479,7 +18606,10 @@ var FormeoRenderer$1 = class {
 		const result = { component: null };
 		if (!isAddress(address)) return null;
 		const [, componentId, optionsKey, optionIndex] = splitAddress(address);
-		const component = this.renderedForm.querySelector(`#f-${componentId}`);
+		let component = null;
+		try {
+			component = this.renderedForm.querySelector(`#f-${componentId}`);
+		} catch {}
 		if (!component) return result;
 		result.component = component;
 		if (optionsKey) {
@@ -18497,6 +18627,11 @@ var FormeoRenderer$1 = class {
 		components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
 		return components;
 	};
+};
+var isCheckable = (elem) => ["checkbox", "radio"].includes(elem?.type);
+var checkableInputs = (fields) => {
+	if (isCheckable(fields)) return [fields];
+	return fields?.length && isCheckable(fields[0]) ? Array.from(fields) : null;
 };
 var isDomNode = (value) => Boolean(value) && typeof value.nodeType === "number";
 var isNodeCollection = (value) => Boolean(value) && !isDomNode(value) && typeof value.length === "number";

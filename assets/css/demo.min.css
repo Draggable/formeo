@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.2.1
+Version: 5.2.2
 Author: Draggable https://draggable.io
 */
 
