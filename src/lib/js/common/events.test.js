@@ -691,6 +691,24 @@ describe('Events System', () => {
 
       assert.equal(onUpdateField.mock.callCount(), 0)
     })
+
+    it('skips callbacks for a connected src when events do not bubble', () => {
+      const onUpdateField = mock.fn()
+      const connected = document.createElement('div')
+      document.body.appendChild(connected)
+
+      try {
+        Events.init({ onUpdateField, bubbles: true })
+        Events.formeoUpdated({ src: connected }, EVENT_FORMEO_UPDATED_FIELD)
+        assert.equal(onUpdateField.mock.callCount(), 1, 'a bubbling event from a connected src runs callbacks')
+
+        Events.init({ onUpdateField, bubbles: false })
+        Events.formeoUpdated({ src: connected }, EVENT_FORMEO_UPDATED_FIELD)
+        assert.equal(onUpdateField.mock.callCount(), 1, 'a non-bubbling event never reaches document')
+      } finally {
+        connected.remove()
+      }
+    })
   })
 
   describe('onResizeWindow (#152 final review)', () => {

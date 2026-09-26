@@ -19,6 +19,26 @@ const formFor = (key, label) => ({
   },
 })
 
+/**
+ * Drags a control button onto the bottom of a stage the way a user does with Sortable's fallback drag.
+ * @param {import('@playwright/test').Page} page
+ * @param {import('@playwright/test').Locator} control
+ * @param {import('@playwright/test').Locator} stage
+ */
+const dragControlTo = async (page, control, stage) => {
+  await control.hover()
+  const from = await control.boundingBox()
+  const to = await stage.boundingBox()
+  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+  await page.mouse.down()
+  // cross Sortable's fallbackTolerance before the long move, or no drag starts
+  await page.mouse.move(from.x + from.width / 2 + 10, from.y + from.height / 2, { steps: 5 })
+  await page.waitForTimeout(100)
+  await page.mouse.move(to.x + to.width / 2, to.y + to.height - 10, { steps: 25 })
+  await page.waitForTimeout(150)
+  await page.mouse.up()
+}
+
 test.describe('Multiple editors on one page (#152)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')
@@ -66,6 +86,22 @@ test.describe('Multiple editors on one page (#152)', () => {
     ])
     expect(a).toBe(2)
     expect(b).toBe(1)
+  })
+
+  test('a control dragged onto its editor’s stage adds the field to that editor only', async ({ page }) => {
+    // the test editors sit below the demo; fit the whole page so the stage is under the mouse
+    await page.setViewportSize({ width: 1280, height: 1800 })
+    await page.evaluate(() => window.scrollTo(0, 0))
+    const fieldCount = editor => page.evaluate(name => Object.keys(window[name].formData.fields).length, editor)
+
+    await dragControlTo(
+      page,
+      page.locator('#e2e-editor-a').getByRole('button', { name: 'Text Input' }),
+      page.locator('#e2e-editor-a .formeo-stage').first()
+    )
+
+    await expect.poll(() => fieldCount('e2eEditorA')).toBe(2)
+    expect(await fieldCount('e2eEditorB')).toBe(1)
   })
 
   test('condition pickers list the fields of their own editor', async ({ page }) => {
@@ -169,5 +205,67 @@ test.describe('Shared sessionStorage key warning (#152)', () => {
     })
 
     expect(warnings.filter(text => text.includes('sessionStorage key'))).toHaveLength(0)
+  })
+})
+
+test.describe('Per-editor save, restore and clear (#152)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('.formeo-editor').first()).toBeVisible()
+
+    await page.evaluate(
+      async ([formA, formB]) => {
+        // the demo editor uses the default key; start every test from an empty store
+        window.sessionStorage.clear()
+        window.makeKeyedEditor = (id, sessionStorage, formData) => {
+          const container = document.createElement('div')
+          container.id = id
+          document.body.appendChild(container)
+          return new window.FormeoEditor({ editorContainer: container, sessionStorage, style: null }, formData)
+        }
+        window.e2eEditorA = window.makeKeyedEditor('save-editor-a', 'a-form', formA)
+        window.e2eEditorB = window.makeKeyedEditor('save-editor-b', 'b-form', formB)
+        await Promise.all([window.e2eEditorA.whenReady(), window.e2eEditorB.whenReady()])
+      },
+      [formFor('a', 'Field A'), formFor('b', 'Field B')]
+    )
+  })
+
+  const stored = (page, key) => page.evaluate(storageKey => window.sessionStorage.getItem(storageKey), key)
+
+  test('saving one editor writes only its own key', async ({ page }) => {
+    await page.locator('#save-editor-a .save-form').click()
+
+    await expect.poll(() => stored(page, 'a-form')).not.toBeNull()
+    expect(Object.keys(JSON.parse(await stored(page, 'a-form')).fields)).toEqual(['field-a'])
+    expect(await stored(page, 'b-form')).toBeNull()
+    expect(await stored(page, 'formeo-formData')).toBeNull()
+  })
+
+  test('a new editor with the same key and no formData restores the saved form', async ({ page }) => {
+    await page.locator('#save-editor-a .save-form').click()
+    await expect.poll(() => stored(page, 'a-form')).not.toBeNull()
+
+    const restored = await page.evaluate(async () => {
+      const editor = window.makeKeyedEditor('save-editor-c', 'a-form')
+      await editor.whenReady()
+      return editor.formData
+    })
+
+    expect(restored.id).toBe('form-a')
+    expect(Object.keys(restored.fields)).toEqual(['field-a'])
+    await expect(page.locator('#save-editor-c')).toContainText('Field A')
+  })
+
+  test('clearing one editor leaves the other untouched', async ({ page }) => {
+    page.on('dialog', dialog => dialog.accept())
+
+    await page.locator('#save-editor-a .clear-form').click()
+
+    await expect.poll(() => page.evaluate(() => Object.keys(window.e2eEditorA.formData.rows).length)).toBe(0)
+    const b = await page.evaluate(() => window.e2eEditorB.formData)
+    expect(Object.keys(b.rows)).toEqual(['row-b'])
+    expect(Object.keys(b.fields)).toEqual(['field-b'])
+    await expect(page.locator('#save-editor-b')).toContainText('Field B')
   })
 })

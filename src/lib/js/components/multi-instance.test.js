@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict'
 import { describe, it, mock } from 'node:test'
+import Sortable from 'sortablejs'
 import { Actions } from '../common/actions.js'
 import { Events } from '../common/events.js'
 import { formDataStorageKey } from '../common/utils/index.mjs'
 import { SESSION_FORMDATA_KEY } from '../constants.js'
-import defaultComponents, { Components } from './index.js'
+import Control from './controls/control.js'
+import defaultComponents, { Components, Controls } from './index.js'
 
 const formFor = key => ({
   id: `form-${key}`,
@@ -73,9 +75,52 @@ describe('Multi-instance isolation (#152)', () => {
 
   it('scopes sortable groups to the instance so components cannot be dragged between editors', () => {
     const a = editorState()
+    const b = editorState()
     a.load(formFor('a'))
+    b.load(formFor('b'))
 
-    assert.equal(a.rows.get('row-a').sortable.options.group.name, `row-${a.instanceId}`)
+    // Sortable keeps `put` only as a checkPut function, so ask it which source groups it accepts
+    const accepts = (sortable, groupName) =>
+      sortable.options.group.checkPut(sortable, { options: { group: { name: groupName } } })
+    const layout = {
+      stage: { component: a.stages.get('stage-a'), put: ['row', 'column', 'controls'] },
+      row: { component: a.rows.get('row-a'), put: ['row', 'column', 'controls'] },
+      column: { component: a.columns.get('col-a'), put: ['column', 'controls'] },
+    }
+
+    for (const [type, { component, put }] of Object.entries(layout)) {
+      const { group } = component.sortable.options
+      assert.equal(group.name, `${type}-${a.instanceId}`, `${type} group name`)
+      for (const source of put) {
+        assert.ok(accepts(component.sortable, `${source}-${a.instanceId}`), `${type} accepts its own ${source}`)
+        assert.ok(!accepts(component.sortable, `${source}-${b.instanceId}`), `${type} refuses another ${source}`)
+        assert.ok(!accepts(component.sortable, source), `${type} refuses the unscoped ${source} group`)
+      }
+    }
+  })
+
+  it('scopes the controls panel group to the instance', async t => {
+    // the TinyMCE control fetches its script from a CDN, which never loads under jsdom
+    t.mock.method(Control.prototype, 'promise', () => Promise.resolve())
+    // the control groups keep their order in localStorage, which Node has no store for here;
+    // t.mock.property never finishes restoring Node's own localStorage getter, so swap it by hand
+    const localStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+    const store = { getItem: () => null, setItem: () => {}, removeItem: () => {} }
+    Object.defineProperty(globalThis, 'localStorage', { value: store, configurable: true })
+    t.after(() => {
+      if (localStorage) {
+        Object.defineProperty(globalThis, 'localStorage', localStorage)
+      } else {
+        delete globalThis.localStorage
+      }
+    })
+    const a = editorState()
+    const controls = await new Controls(a).init({}, false)
+
+    assert.ok(controls.groups.length > 0)
+    for (const groupEl of controls.groups) {
+      assert.equal(Sortable.get(groupEl).options.group.name, `controls-${a.instanceId}`)
+    }
   })
 
   describe('sessionStorage keys', () => {
