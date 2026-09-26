@@ -37,7 +37,7 @@ Set `editorContainer` to an element or selector, otherwise the editor is built b
 
 | Method                     | Returns   | Description                                                                 |
 | -------------------------- | --------- | --------------------------------------------------------------------------- |
-| `whenReady()`              | Promise   | Resolves with the editor once it has rendered. See [Initialization](initialization.md). |
+| `whenReady()`              | Promise   | Resolves with the editor once it has rendered. Rejects if initialization fails, or if the editor is destroyed before or while it initializes. See [Initialization](initialization.md). |
 | `loadData(formData)`       | -         | Replace the form being edited. Same as assigning `editor.formData`.        |
 | `clear()`                  | -         | Reset to an empty form. See [Clear Method](editor-clear-method.md).        |
 | `render()`                 | -         | Re-render the editor into `editorContainer`.                                |

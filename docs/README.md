@@ -69,7 +69,7 @@ Returns `true` if the editor has completed initialization and is ready for use.
 
 #### `FormeoEditor#whenReady()`
 
-Returns a Promise that resolves when the editor is ready. Useful for ensuring the editor is fully initialized before interacting with it.
+Returns a Promise that resolves when the editor is ready. Useful for ensuring the editor is fully initialized before interacting with it. It rejects if initialization fails, and with `Error('Editor was destroyed')` if the editor is destroyed before or while it initializes.
 
 ```javascript
 const editor = new FormeoEditor(options, formData)
@@ -84,7 +84,7 @@ Reset the editor to its initial empty state. See [editor-clear-method.md](editor
 
 #### `FormeoEditor#destroy()`
 
-Remove the editor and its controls from the page and release what it holds: drag-and-drop instances, resize observers, its window resize listener, pending event callbacks and loaded components. No option callback runs afterwards. Other editors on the page keep working, and a new editor can be created in the same container. Safe to call more than once, and before the editor is ready. See [Destroying an editor](editor/initialization.md#destroying-an-editor).
+Remove the editor and its controls from the page and release what it holds: drag-and-drop instances, resize observers, its window resize listener, pending event callbacks and loaded components. None of its `events` callbacks (`onUpdate`, `onChange`, `onAdd`, `onRemove`, `onRender`, `onSave` and the rest) runs afterwards. `formData` and `json` return an empty form once it is destroyed, so read them first. Other editors on the page keep working, and a new editor can be created in the same container. Safe to call more than once, and before the editor is ready. See [Destroying an editor](editor/initialization.md#destroying-an-editor) for what it releases and its current limits.
 
 ```javascript
 editor.destroy()

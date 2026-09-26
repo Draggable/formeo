@@ -40,7 +40,7 @@ if (editor.isReady) {
 
 ### `editor.whenReady()`
 
-Returns a Promise that resolves when the editor reaches the `ready` state. This is the recommended way to wait for initialization.
+Returns a Promise that resolves when the editor reaches the `ready` state. This is the recommended way to wait for initialization. It rejects with `Error('Editor initialization failed')` if initialization fails, and with `Error('Editor was destroyed')` if the editor is destroyed before or while it initializes, including a `whenReady()` that was already waiting.
 
 ```javascript
 const editor = new FormeoEditor(options, formData)
@@ -127,9 +127,15 @@ useEffect(() => {
   const editor = new FormeoEditor(options, formData)
   editorRef.current = editor
 
-  editor.whenReady().then(() => {
-    setIsReady(true)
-  })
+  editor
+    .whenReady()
+    .then(() => setIsReady(true))
+    .catch(error => {
+      // StrictMode unmounts the first editor while it is still loading, so its whenReady() rejects
+      if (!editor.isDestroyed) {
+        console.error(error)
+      }
+    })
 
   return () => {
     editor.destroy()
@@ -194,8 +200,9 @@ Give each editor its own `editorContainer`, and a distinct `sessionStorage` key 
 - the drag-and-drop (Sortable) instances on its stages, rows, columns, controls and option lists
 - the resize observers of its edit and control panels
 - its window `resize` listener, and a resize update or trailing `onUpdate`/`onChange` that is still pending
+- a control drag in progress from its controls, which ends: the drag ghost is removed and the page scrollbar comes back
 - its loaded components, and its hold on its `sessionStorage` key, so a new editor can use the key without a warning
-- the tooltip, once no other editor is left on the page
+- the page-wide tooltip, but only when it is the last editor on the page; while other editors remain, they keep it
 
 ```javascript
 const editor = new FormeoEditor({ editorContainer: '#form-builder' })
@@ -207,6 +214,12 @@ editor.destroy()
 const next = new FormeoEditor({ editorContainer: '#form-builder' })
 ```
 
-After `destroy()`, `initState` is `'destroyed'` and `isDestroyed` is `true`. No option callback runs again, including one that was already scheduled. `render()`, `load()`, `loadData()`, `clear()` and `i18n.setLang()` do nothing to the editor (`setLang` still changes the page-wide language), and `whenReady()` rejects with `Error('Editor was destroyed')`, including a `whenReady()` that was waiting when the editor was destroyed. An editor destroyed before it is ready never renders. `destroy()` is safe to call more than once.
+After `destroy()`, `initState` is `'destroyed'` and `isDestroyed` is `true`. None of the editor's `events` callbacks (`onUpdate`, `onChange`, `onAdd`, `onRemove`, `onRender`, `onSave` and the rest) runs again, including one that was already scheduled. This covers the `events` option only: `actions` callbacks and `events` set in a component's `config` are not switched off.
+
+`formData` and `json` return an empty form after `destroy()`, so read `formData` before calling it if you need the form.
+
+`render()`, `load()`, `loadData()` and `clear()` do nothing, and `whenReady()` rejects with `Error('Editor was destroyed')`, including a `whenReady()` that was waiting when the editor was destroyed. `i18n.setLang()` doesn't re-render a destroyed editor, though it still changes the page-wide language; on an editor destroyed before it was ready, `editor.i18n` is `undefined`. An editor destroyed before it is ready never renders, and one destroyed from its own `onLoad` or `formeoLoaded` callback stays destroyed. `destroy()` is safe to call more than once.
+
+Current limit: `destroy()` releases the components and controls the editor holds when it is called. When `clear()`, `load()`, `loadData()`, assigning `formData` or `i18n.setLang()` replaced components or controls earlier, the drag-and-drop instances and resize observers of the replaced ones are not released yet.
 
 `destroy()` doesn't change sessionStorage: a saved form stays saved. It also leaves the container element in place, and leaves the page-wide settings (stylesheet, icon sprite, language) loaded. Other editors on the page keep working.
