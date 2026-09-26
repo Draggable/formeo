@@ -1797,6 +1797,115 @@ button[class*=-clone]:hover .svg-icon {
 .formeo.formeo-editor .formeo-settings {
   display: none;
 }
+.formeo.formeo-editor {
+  /*
+    Mixins
+  */
+}
+.formeo.formeo-editor .formeo-pages-editor {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  inline-size: 73%;
+  min-inline-size: 0;
+}
+@media (max-width: 481px) {
+  .formeo.formeo-editor .formeo-pages-editor {
+    inline-size: calc(100% - 50px);
+  }
+}
+.formeo.formeo-editor .formeo-pages-editor > .formeo-stage {
+  inline-size: auto;
+}
+.formeo.formeo-editor .formeo-pages-editor > .formeo-stage[hidden] {
+  display: none !important;
+}
+.formeo.formeo-editor .formeo-pages-editor[data-page-count="1"] .item-page {
+  display: none;
+}
+.formeo.formeo-editor .formeo-pages-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  margin-block-end: 8px;
+  border-block-end: 1px solid #cccccc;
+}
+.formeo.formeo-editor .formeo-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+.formeo.formeo-editor .formeo-page-tab-wrap {
+  display: flex;
+  align-items: center;
+  max-inline-size: 16em;
+}
+.formeo.formeo-editor .formeo-page-tab {
+  overflow: hidden;
+  margin-block-end: -1px;
+  padding-block: 8px;
+  padding-inline: 16px;
+  border: 0 none;
+  border-block-end: 2px solid transparent;
+  background: transparent;
+  color: #333333;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.formeo.formeo-editor .formeo-page-tab:hover {
+  color: rgb(25.5, 25.5, 25.5);
+}
+.formeo.formeo-editor .formeo-page-tab[aria-selected=true] {
+  border-block-end-color: #4F46E5;
+  color: rgb(25.5, 25.5, 25.5);
+}
+.formeo.formeo-editor .formeo-page-tab:focus-visible {
+  outline: 2px solid rgb(102, 175, 233);
+  outline-offset: -2px;
+}
+.formeo.formeo-editor .formeo-page-remove {
+  display: inline-flex;
+  visibility: hidden;
+  padding: 0;
+  border: 0 none;
+  background: transparent;
+  color: #666666;
+  cursor: pointer;
+}
+.formeo.formeo-editor .formeo-page-remove:hover {
+  color: rgb(217, 83, 79);
+}
+.formeo.formeo-editor .formeo-page-remove .svg-icon {
+  inline-size: 1em;
+  block-size: 1em;
+}
+.formeo.formeo-editor .formeo-page-tab-wrap:hover .formeo-page-remove,
+.formeo.formeo-editor .formeo-page-tab-wrap:focus-within .formeo-page-remove,
+.formeo.formeo-editor .formeo-page-tab[aria-selected=true] + .formeo-page-remove {
+  visibility: visible;
+}
+.formeo.formeo-editor .formeo-page-add {
+  flex: none;
+  align-self: center;
+  padding-block: 8px;
+  padding-inline: 8px;
+  border: 0 none;
+  background: transparent;
+  color: #333333;
+  cursor: pointer;
+}
+.formeo.formeo-editor .formeo-page-add:hover {
+  color: rgb(25.5, 25.5, 25.5);
+}
+.formeo.formeo-editor .formeo-pages-status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .formeo.formeo-editor [dir=rtl] .f-btn-group {
   display: inline-flex;
   vertical-align: middle;

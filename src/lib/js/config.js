@@ -8,6 +8,7 @@ export const defaults = {
       dataType: 'json',
       debug: false,
       sessionStorage: false,
+      pages: false, // page tabs, one per stage (#122)
       editorContainer: null, // element or selector to attach editor to
       svgSprite: null, // null = use bundled sprite, or provide custom URL
       style: CSS_URL,

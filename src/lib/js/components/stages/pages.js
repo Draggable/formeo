@@ -98,8 +98,9 @@ export class EditorPages {
     if (!ids.includes(this.activeId)) {
       this.activeId = ids[0] ?? null
     }
-    for (const id of [...this.stageListeners.keys()]) {
-      if (!ids.includes(id)) {
+    // a load() of the same ids brings new Stage objects: move their listeners over
+    for (const [id, { stage }] of [...this.stageListeners]) {
+      if (!ids.includes(id) || this.stages.get(id) !== stage) {
         this.unwatchStage(id)
       }
     }

@@ -10,6 +10,7 @@ import { destroySortables } from './common/sortable.js'
 import { cleanFormData, clone, formDataStorageKey, merge, sessionStorage } from './common/utils/index.mjs'
 import { Controls } from './components/controls/index.js'
 import { Components } from './components/index.js'
+import { EditorPages } from './components/stages/pages.js'
 import { defaults } from './config.js'
 import { DEFAULT_FORMDATA, SESSION_LOCALE_KEY } from './constants.js'
 
@@ -86,6 +87,9 @@ export class FormeoEditor {
     this.actions = new Actions(this.events).init({ debug, sessionStorage: opts.sessionStorage, ...actions })
     this.Components = new Components({ events: this.events, actions: this.actions })
     this.Components.config = config
+    // page tabs, one per stage (#122); null keeps the editor as it has always been
+    this.pages = opts.pages ? new EditorPages(this.Components) : null
+    this.Components.pages = this.pages
 
     if (opts.sessionStorage) {
       const key = formDataStorageKey(opts.sessionStorage)
@@ -408,9 +412,11 @@ export class FormeoEditor {
     }
 
     this.stages = Object.values(this.Components.get('stages'))
+    // with page tabs the stages live inside the pages wrapper, which takes their place (#122)
+    const stageArea = this.pages ? [this.pages.render()] : this.stages.map(({ dom }) => dom)
     if (this.opts.controlOnLeft) {
-      for (const stage of this.stages) {
-        stage.dom.style.order = 1
+      for (const element of stageArea) {
+        element.style.order = 1
       }
     }
     const elemConfig = {
@@ -418,7 +424,7 @@ export class FormeoEditor {
         className: 'formeo formeo-editor',
         id: this.formId,
       },
-      content: [this.stages.map(({ dom }) => dom)],
+      content: [stageArea],
     }
 
     if (i18n.current.dir) {
@@ -467,7 +473,13 @@ export class FormeoEditor {
     this.#initState = INIT_STATES.DESTROYED
     document.removeEventListener('DOMContentLoaded', this.#onDOMContentLoaded)
     window.removeEventListener('resize', this.onResize)
+    // first, so nothing torn down below can still reach the integrator's callbacks
     this.events.destroy()
+    // before pages: Controls#destroy's active-drag guard needs Sortable.active to still be the controls'
+    // own drag; releasing the tabs' Sortables first would otherwise end it early and orphan its ghost (#122)
+    this.controls?.destroy()
+    // discards an open rename rather than saving it, since the events are already gone
+    this.pages?.destroy()
 
     if (this.opts.sessionStorage) {
       const key = formDataStorageKey(this.opts.sessionStorage)
@@ -476,7 +488,6 @@ export class FormeoEditor {
       }
     }
 
-    this.controls?.destroy()
     destroySortables(this.editor)
 
     for (const type of ['stages', 'rows', 'columns', 'fields']) {

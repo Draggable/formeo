@@ -204,6 +204,18 @@ describe('EditorPages add, labels and destroy (#122)', () => {
     assert.equal(tabs(editor)[2].textContent, 'Page 3')
   })
 
+  it('keeps relabeling after a reload of the same stage ids', () => {
+    const { editor, components, pages } = setup()
+    const before = components.stages.get('p-1')
+    components.load(threePages(), { pages: true })
+    editor.replaceChildren(pages.render())
+    assert.notEqual(components.stages.get('p-1'), before)
+    components.stages.get('p-1').set('config.title', 'Renamed')
+    assert.equal(tabs(editor)[0].textContent, 'Renamed')
+    before.set('config.title', 'Stale')
+    assert.equal(tabs(editor)[0].textContent, 'Renamed')
+  })
+
   it('destroy() releases its Sortables and stage listeners', () => {
     const { editor, pages, components } = setup()
     const tablist = editor.querySelector('.formeo-page-tabs')
