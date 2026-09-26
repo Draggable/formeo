@@ -6,8 +6,8 @@
 | `add.option`        | Function | Called when adding an option to a field                                   |
 | `add.condition`     | Function | Called when adding a condition to a field                                 |
 | `add.config`        | Function | Called when adding a configuration item to a field                        |
-| `remove.attrs`      | Function | Called by "Clear All" in the attributes panel; calls `evt.removeAction()`  |
-| `remove.options`    | Function | Called by "Clear All" in the options panel; calls `evt.removeAction()`    |
+| `remove.attrs`      | Function | Defined, but no "Clear All" button is currently rendered in the attributes panel; calls `evt.removeAction()`  |
+| `remove.options`    | Function | Defined, but no "Clear All" button is currently rendered in the options panel; calls `evt.removeAction()`    |
 | `remove.conditions` | Function | Called by "Clear All" in the conditions panel; calls `evt.removeAction()` |
 | `click.button`      | Function | Called when clicking a form action button                                 |
 | `save`              | Function | Called when saving                                                        |
