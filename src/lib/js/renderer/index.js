@@ -176,8 +176,22 @@ export default class FormeoRenderer {
     this.events.onRender?.({ form: renderedForm, renderer: this, formData: this.form })
   }
 
+  /**
+   * Remove the rendered form from the page and stop its pagination. render() can be called again afterwards.
+   * @return {void}
+   */
+  destroy() {
+    this.pager?.destroy()
+    this.pager = null
+    this.renderedForm?.remove()
+    this.renderedForm = null
+    this.components = Object.create(null)
+  }
+
   getRenderedForm(formData = this.form) {
     this.form = cleanFormData(formData)
+    this.pager?.destroy()
+    this.pager = null
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {

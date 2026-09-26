@@ -22,12 +22,8 @@ export async function loadVanillaDemo(container) {
     renderer,
     cleanup: () => {
       // Cleanup any resources if needed
-      if (editor?.destroy) {
-        editor.destroy()
-      }
-      if (renderer?.destroy) {
-        renderer.destroy()
-      }
+      editor.destroy()
+      renderer.destroy()
 
       // Cleanup action buttons
       const actionButtonsContainer = document.getElementById('editor-action-buttons')

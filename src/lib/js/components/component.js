@@ -1,8 +1,10 @@
 /* global MutationObserver */
 
+import Sortable from 'sortablejs'
 import animate from '../common/animation.js'
 import dom from '../common/dom.js'
 import { forEach, indexOfNode, isInt, map } from '../common/helpers.mjs'
+import { destroySortables } from '../common/sortable.js'
 import { clone, componentType, identity, merge, remove, unique, uuid } from '../common/utils/index.mjs'
 import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
 import { splitAddress, toTitleCase, trimKeyPrefix } from '../common/utils/string.mjs'
@@ -222,6 +224,8 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.remove()
+    this.panels?.destroy()
+    this.releaseSortables()
     remove(this.components.getAddress(siblingsPath), this.id)
 
     if (!parent.children.length) {
@@ -699,6 +703,21 @@ export default class Component extends Data {
   }
 
   /**
+   * Destroy the Sortables of this removed component and its descendants, so Sortable's page-wide
+   * list stops holding them (and through them the editor). A column emptied by a drag is removed
+   * from inside Sortable's drop handler; destroying that Sortable there would end the drop early,
+   * so during a drag it is released once the drop has finished.
+   */
+  releaseSortables() {
+    const { dom: removedDom } = this
+    if (Sortable.active) {
+      queueMicrotask(() => destroySortables(removedDom))
+      return
+    }
+    destroySortables(removedDom)
+  }
+
+  /**
    * Handler for removing content from a sortable component
    * @param  {Object} evt
    * @return {Array} updated child order
@@ -1015,6 +1034,7 @@ export default class Component extends Data {
       displayType: 'auto',
     }
 
+    this.panels?.destroy()
     this.panels = new Panels(panelsData)
 
     if (this.dom) {

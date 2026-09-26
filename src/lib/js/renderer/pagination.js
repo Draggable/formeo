@@ -56,7 +56,7 @@ const focusFirst = page => {
  *   `progress` only affects the wizard, adding a clickable step list above the pages
  * @param {Array<Object>} stages stage data in render order, for page titles
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
- * @return {{show: Function, index: Number, count: Number}|null} null when there is only one page
+ * @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
  */
 export const paginate = (form, { type, progress, labels }, stages, onChange) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
@@ -305,28 +305,22 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     }
   }
   const ownerDocument = form.ownerDocument
-  ownerDocument.addEventListener(
-    'click',
-    ({ target }) => {
-      const control = target.closest?.('button, input')
-      if (control?.form !== form) {
-        return
-      }
-      if (control?.type === 'submit' || (control?.tagName === 'INPUT' && control.type === 'image')) {
-        markReported()
-      }
-    },
-    true
-  )
-  ownerDocument.addEventListener(
-    'keydown',
-    ({ key, target }) => {
-      if (key === 'Enter' && target.tagName === 'INPUT' && target.form === form) {
-        markReported()
-      }
-    },
-    true
-  )
+  const onDocumentClick = ({ target }) => {
+    const control = target.closest?.('button, input')
+    if (control?.form !== form) {
+      return
+    }
+    if (control?.type === 'submit' || (control?.tagName === 'INPUT' && control.type === 'image')) {
+      markReported()
+    }
+  }
+  const onDocumentKeydown = ({ key, target }) => {
+    if (key === 'Enter' && target.tagName === 'INPUT' && target.form === form) {
+      markReported()
+    }
+  }
+  ownerDocument.addEventListener('click', onDocumentClick, true)
+  ownerDocument.addEventListener('keydown', onDocumentKeydown, true)
   for (const method of ['requestSubmit', 'reportValidity']) {
     const native = HTMLFormElement.prototype[method]
     if (typeof native !== 'function') {
@@ -363,5 +357,10 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
       return current
     },
     count,
+    // the only listeners that outlive the form: everything else is on the form and goes with it
+    destroy() {
+      ownerDocument.removeEventListener('click', onDocumentClick, true)
+      ownerDocument.removeEventListener('keydown', onDocumentKeydown, true)
+    },
   }
 }

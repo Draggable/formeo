@@ -2,6 +2,7 @@ import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
+import { destroySortables } from '../../common/sortable.js'
 import { clone, match, merge, unique } from '../../common/utils/index.mjs'
 import { get, set } from '../../common/utils/object.mjs'
 import { CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME } from '../../constants.js'
@@ -366,6 +367,25 @@ export class Controls {
     }
 
     return this.layoutTypes.field(elementData)
+  }
+
+  /**
+   * Remove the controls from the page and release their Sortables and Panels. A control drag in
+   * progress in these controls is ended: its ghost is removed and the page overflow it hid is
+   * restored. Safe to call more than once, and before init().
+   */
+  destroy() {
+    const element = this.dom
+    if (element && Sortable.active?.el && element.contains(Sortable.active.el)) {
+      Sortable.ghost?.remove()
+    }
+    if (this.originalDocumentOverflow != null) {
+      document.documentElement.style.overflow = this.originalDocumentOverflow
+      this.originalDocumentOverflow = null
+    }
+    destroySortables(element)
+    this.panels?.destroy()
+    element?.remove()
   }
 
   applyOptions = async (controlOptions = {}) => {
