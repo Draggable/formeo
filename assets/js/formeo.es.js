@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.3.2
+Version: 5.3.3
 Author: Draggable https://draggable.io
 */
 
@@ -8064,7 +8064,7 @@ var require_mergeWith = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 })), name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.3.2";
+	version$2 = "5.3.3";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -8677,7 +8677,7 @@ function toTitleCase(str) {
 function trimKeyPrefix(key) {
 	return key.replaceAll(keyPrefixRegex, "");
 }
-var toTitleCaseLowers, toTitleCaseRegex, regexSpace, slugify, splitAddress, slugifyAddress, extractTextFromHtml, truncateByWord, keyPrefixRegex;
+var toTitleCaseLowers, toTitleCaseRegex, regexSpace, slugify, splitAddress, slugifyAddress, extractTextFromHtml, truncateByWord, keyPrefixRegex, groupInputName;
 var init_string = __esmMin((() => {
 	toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => String.raw`\s${lower}\s`);
 	toTitleCaseRegex = new RegExp(String.raw`(?!${toTitleCaseLowers.join("|")})\w\S*`, "g");
@@ -8714,6 +8714,7 @@ var init_string = __esmMin((() => {
 		return truncatedWord;
 	};
 	keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
+	groupInputName = (name, fieldType, optionCount) => fieldType === "checkbox" && optionCount > 1 && name && !name.endsWith("[]") ? `${name}[]` : name;
 }));
 //#endregion
 //#region src/lib/js/common/events.js
@@ -17216,7 +17217,7 @@ var init_dom = __esmMin((() => {
 			const { action, attrs = {} } = elem;
 			const fieldType = attrs.type || elem.tag;
 			const id = attrs.id || elem.id;
-			const name = !isPreview && attrs.name || id;
+			const name = isPreview ? id : groupInputName(attrs.name || id, fieldType, options.length);
 			const sharedInputAttrs = Object.fromEntries(OPTION_INPUT_ATTRS.filter((key) => key in attrs).map((key) => [key, attrs[key]]));
 			if (attrs.required) sharedInputAttrs.required = fieldType !== "checkbox" || !options.some(({ selected, checked }) => selected || checked);
 			const optionMap = (option, i) => {
@@ -18482,12 +18483,12 @@ var FormeoRenderer$1 = class {
 	* @return {Object|undefined}
 	*/
 	componentByName(name) {
-		return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name);
+		return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`);
 	}
 	set userData(data = {}) {
 		const form = this.container.querySelector("form");
 		for (const key of Object.keys(data)) {
-			const fields = form.elements[key];
+			const fields = form.elements[key] ?? form.elements[`${key}[]`];
 			const checkables = checkableInputs(fields);
 			if (checkables?.[0].type === "checkbox") {
 				const values = Array.isArray(data[key]) ? data[key] : [data[key]];
@@ -18773,11 +18774,12 @@ var FormeoRenderer$1 = class {
 	};
 	getComponents = (address) => {
 		const components = [];
-		const componentId = address.slice(address.indexOf(".") + 1);
-		components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
+		const name = `f-${address.slice(address.indexOf(".") + 1)}`;
+		components.push(...this.renderedForm.querySelectorAll(`[name="${name}"], [name="${name}[]"]`));
 		return components;
 	};
 };
+var fieldKey = (key) => key.endsWith("[]") ? key.slice(0, -2) : key;
 /**
 * Converts a rendered form's fields to a plain object, the same shape the `userData`
 * getter exposes. Handles multiple values for the same key by converting them to arrays.
@@ -18788,9 +18790,12 @@ var userDataOf = (form) => {
 	if (!form) return {};
 	const formEntries = new FormData(form);
 	const formDataObj = {};
-	for (const [key, value] of formEntries.entries()) if (Object.hasOwn(formDataObj, key)) if (Array.isArray(formDataObj[key])) formDataObj[key].push(value);
-	else formDataObj[key] = [formDataObj[key], value];
-	else formDataObj[key] = value;
+	for (const [rawKey, value] of formEntries.entries()) {
+		const key = fieldKey(rawKey);
+		if (Object.hasOwn(formDataObj, key)) if (Array.isArray(formDataObj[key])) formDataObj[key].push(value);
+		else formDataObj[key] = [formDataObj[key], value];
+		else formDataObj[key] = value;
+	}
 	return formDataObj;
 };
 var isCheckable = (elem) => ["checkbox", "radio"].includes(elem?.type);
