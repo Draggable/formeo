@@ -88,6 +88,14 @@ describe('actions.add.attrs default (#233)', () => {
     assert.equal(evt.addAction.mock.callCount(), 0)
   })
 
+  it('accepts names with underscores, which HTML allows', () => {
+    const evt = addAttrEvt()
+    actions.add.attrs(evt)
+    submit('_data_x', '1')
+    assert.deepEqual(evt.addAction.mock.calls[0].arguments, ['_data_x', '1'])
+    assert.equal(dialog(), null)
+  })
+
   it('rejects a dotted name, which the address system would store as a nested attrs object', () => {
     const evt = addAttrEvt()
     actions.add.attrs(evt)
