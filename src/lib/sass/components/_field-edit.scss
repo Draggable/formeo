@@ -64,52 +64,23 @@
   .prop-control {
     width: mixins.space(2);
     height: mixins.space(2);
-    right: 0;
-    bottom: 0;
-    position: absolute;
     padding: 0;
+    border-radius: var.$input-border-radius;
 
-    @for $i from 1 through 4 {
-      &:nth-of-type(#{$i}) {
-        right: $i * var.$prop-btn-width - var.$prop-btn-width;
-      }
+    // adjacent controls read as one segmented group: only the outer corners are rounded
+    &:not(:last-child) {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
     }
 
-    &:first-child {
-      right: 0;
+    &:not(:first-child) {
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
     }
+  }
 
-    :not(.control-count-1) & {
-      &:last-child {
-        border-radius: var.$input-border-radius 0 0 var.$input-border-radius;
-        display: none;
-      }
-
-      &:first-child {
-        border-radius: var.$input-border-radius;
-      }
-    }
-
-    &:hover {
-      &:first-child {
-        border-radius: 0 var.$input-border-radius var.$input-border-radius 0;
-
-        &:last-child {
-          border-radius: var.$input-border-radius;
-        }
-      }
-
-      &:last-child {
-        display: inline-block;
-      }
-    }
-
-    &:last-child:first-child {
-      display: inline-block;
-      border-radius: var.$input-border-radius;
-      margin-right: 0;
-    }
-
+  .prop-order {
+    cursor: grab;
   }
 
   .to-remove {
@@ -197,18 +168,6 @@
 
       select {
         background-image: none;
-      }
-    }
-  }
-
-  .control-count-2 {
-    .prop-controls {
-      &:hover {
-        width: var.$prop-btn-width * 2;
-
-        +.prop-inputs {
-          width: calc(100% - #{var.$prop-btn-width});
-        }
       }
     }
   }

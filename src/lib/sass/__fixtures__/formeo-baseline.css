@@ -1303,46 +1303,19 @@ button[class*=-clone]:hover .svg-icon {
 .formeo.formeo-editor .component-edit .prop-control {
   width: 16px;
   height: 16px;
-  right: 0;
-  bottom: 0;
-  position: absolute;
   padding: 0;
-}
-.formeo.formeo-editor .component-edit .prop-control:nth-of-type(1) {
-  right: 0px;
-}
-.formeo.formeo-editor .component-edit .prop-control:nth-of-type(2) {
-  right: 24px;
-}
-.formeo.formeo-editor .component-edit .prop-control:nth-of-type(3) {
-  right: 48px;
-}
-.formeo.formeo-editor .component-edit .prop-control:nth-of-type(4) {
-  right: 72px;
-}
-.formeo.formeo-editor .component-edit .prop-control:first-child {
-  right: 0;
-}
-.formeo.formeo-editor :not(.control-count-1) .component-edit .prop-control:last-child {
-  border-radius: 4px 0 0 4px;
-  display: none;
-}
-.formeo.formeo-editor :not(.control-count-1) .component-edit .prop-control:first-child {
   border-radius: 4px;
 }
-.formeo.formeo-editor .component-edit .prop-control:hover:first-child {
-  border-radius: 0 4px 4px 0;
+.formeo.formeo-editor .component-edit .prop-control:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
-.formeo.formeo-editor .component-edit .prop-control:hover:first-child:last-child {
-  border-radius: 4px;
+.formeo.formeo-editor .component-edit .prop-control:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
-.formeo.formeo-editor .component-edit .prop-control:hover:last-child {
-  display: inline-block;
-}
-.formeo.formeo-editor .component-edit .prop-control:last-child:first-child {
-  display: inline-block;
-  border-radius: 4px;
-  margin-right: 0;
+.formeo.formeo-editor .component-edit .prop-order {
+  cursor: grab;
 }
 .formeo.formeo-editor .component-edit .to-remove {
   position: relative;
@@ -1423,12 +1396,6 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-editor .component-edit .f-input-wrap.locked-prop select {
   background-image: none;
-}
-.formeo.formeo-editor .component-edit .control-count-2 .prop-controls:hover {
-  width: 48px;
-}
-.formeo.formeo-editor .component-edit .control-count-2 .prop-controls:hover + .prop-inputs {
-  width: calc(100% - 24px);
 }
 .formeo.formeo-editor .component-edit.panel-count-1 .panel-nav {
   border-bottom: 1px solid #999999;
