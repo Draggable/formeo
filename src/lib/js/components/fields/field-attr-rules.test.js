@@ -16,6 +16,9 @@ describe('Field control-level attribute rules', () => {
   after(() => {
     Controls.data.delete('ctrl-uuid')
     Controls.data.delete('locked-control')
+    delete Components.fields.configVal.c0ffee02
+    Controls.data.delete('union-ctrl-uuid')
+    delete Components.fields.configVal['union-control']
   })
 
   it('locks attributes listed in config.lockedAttrs', t => {
@@ -88,5 +91,28 @@ describe('Field control-level attribute rules', () => {
       id: 'c0ffee02',
     })
     t.assert.strictEqual(field.isDisabledProp('attrs.className'), false)
+  })
+
+  it('unions the control rule, the editor config, and the default disabled list', t => {
+    // control-level rule, from a registered control
+    Controls.add({
+      id: 'union-ctrl-uuid',
+      controlData: { meta: { id: 'union-control' }, config: { lockedAttrs: ['className'] } },
+    })
+    // editor config keyed by controlId
+    Components.fields.config = { 'union-control': { panels: { attrs: { locked: ['required'] } } } }
+
+    const field = new Field({
+      tag: 'input',
+      attrs: { type: 'text', name: 'union-name', className: 'union', required: true },
+      // field's own saved config.lockedAttrs (e.g. copied from the control when it was added)
+      config: { label: 'Union', controlId: 'union-control', lockedAttrs: ['name'] },
+      id: 'decafbad',
+    })
+
+    t.assert.strictEqual(field.isLockedProp('attrs.className'), true, 'control-level lockedAttrs still applies')
+    t.assert.strictEqual(field.isLockedProp('attrs.name'), true, 'field-level lockedAttrs still applies')
+    t.assert.strictEqual(field.isLockedProp('attrs.required'), true, 'editor config panels.attrs.locked still applies')
+    t.assert.strictEqual(field.isDisabledProp('attrs.type'), true, 'default panels.attrs.disabled still applies')
   })
 })
