@@ -166,11 +166,13 @@ export class Events {
   columnResized = detail => document.dispatchEvent(new globalThis.CustomEvent('columnResized', { detail }))
 
   /**
-   * Window resize handler for one editor; FormeoEditor registers it (and can remove it, see #166)
+   * Window resize handler for one editor; FormeoEditor registers it (and can remove it, see #166).
+   * It stays registered when the editor leaves the page, since its controls may be put back
+   * (the #122 tab workaround), so it does nothing while they are detached.
    */
   onResizeWindow = () => {
     const { columns, controls } = this.components || {}
-    if (!columns || !controls?.dom || this.resizeFrame) {
+    if (!columns || !controls?.dom?.isConnected || this.resizeFrame) {
       return
     }
     this.resizeFrame = window.requestAnimationFrame(() => {

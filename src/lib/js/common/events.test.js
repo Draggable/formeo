@@ -693,6 +693,61 @@ describe('Events System', () => {
     })
   })
 
+  describe('onResizeWindow (#152 final review)', () => {
+    const frames = []
+
+    beforeEach(() => {
+      frames.length = 0
+      mock.method(window, 'requestAnimationFrame', callback => frames.push(callback))
+    })
+
+    afterEach(() => {
+      mock.restoreAll()
+    })
+
+    /**
+     * An Events wired to a stub editor with one column, like FormeoEditor's resize listener
+     * @param {boolean} onPage whether the editor's controls are still in the document
+     */
+    const editorEvents = onPage => {
+      const controlsDom = document.createElement('div')
+      if (onPage) {
+        document.body.appendChild(controlsDom)
+      }
+      const column = { dom: document.createElement('div'), refreshFieldPanels: mock.fn() }
+      const controls = { dom: controlsDom, panels: { nav: { refresh: mock.fn() } } }
+      const events = new EventsClass()
+      events.components = { columns: { data: { 'col-1': column } }, controls }
+      return { events, column, controls }
+    }
+
+    it('does no work for an editor that is no longer on the page', () => {
+      const { events, column, controls } = editorEvents(false)
+
+      events.onResizeWindow()
+      for (const frame of frames) frame()
+
+      assert.equal(window.requestAnimationFrame.mock.callCount(), 0)
+      assert.equal(column.refreshFieldPanels.mock.callCount(), 0)
+      assert.equal(controls.panels.nav.refresh.mock.callCount(), 0)
+    })
+
+    it('still refreshes the columns of an editor on the page', () => {
+      const { events, column, controls } = editorEvents(true)
+
+      try {
+        events.onResizeWindow()
+        for (const frame of frames) frame()
+
+        assert.equal(window.requestAnimationFrame.mock.callCount(), 1)
+        assert.equal(column.refreshFieldPanels.mock.callCount(), 1)
+        assert.equal(controls.panels.nav.refresh.mock.callCount(), 1)
+      } finally {
+        controls.dom.remove()
+      }
+    })
+  })
+
   describe('default opts before init() (#152 follow-up 4)', () => {
     afterEach(() => {
       mock.timers.reset()
