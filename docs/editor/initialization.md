@@ -75,7 +75,7 @@ await editor.whenReady()
 When the editor initializes, it loads form data with the following priority:
 
 1. **User-provided data** - Data passed to the constructor via `formData` option or second argument
-2. **SessionStorage** - If `sessionStorage: true` option is set and data exists
+2. **SessionStorage** - If the `sessionStorage` option is `true` or a key, and data is saved under that key
 3. **Default empty form** - A new form with one empty stage
 
 User-provided data is "locked" at construction time and preserved through the entire initialization process, preventing race conditions.
@@ -177,8 +177,10 @@ Available states:
 Each `FormeoEditor` keeps its own form data, controls, conditions and event callbacks, so several editors can share a page:
 
 ```javascript
-const orders = new FormeoEditor({ editorContainer: '#orders', sessionStorage: 'orders-form' }, ordersFormData)
-const returns = new FormeoEditor({ editorContainer: '#returns', sessionStorage: 'returns-form' }, returnsFormData)
+const orders = new FormeoEditor({ editorContainer: '#orders', sessionStorage: 'orders-form' })
+const returns = new FormeoEditor({ editorContainer: '#returns', sessionStorage: 'returns-form' })
 ```
 
-Give each editor its own `editorContainer`, and a distinct `sessionStorage` key if you use one (a warning is logged if two editors on the page share a key; an editor re-created after the previous one left the page, as in a remount, takes the key over without a warning). Some settings are page-wide and the last editor created wins: the icon sprite and icon font (`svgSprite`, `iconFont`), the stylesheet (`style`), and the interface language, which is also remembered in sessionStorage.
+Each editor saves to and restores from its own key. Form data passed to the constructor wins over sessionStorage (see [Form Data Priority](#form-data-priority)), so an editor given `formData` always starts from that data and only uses its key for saving.
+
+Give each editor its own `editorContainer`, and a distinct `sessionStorage` key if you use one (a warning is logged if two editors on the page share a key; an editor re-created after the previous one left the page, as in a remount, takes the key over without a warning). Some settings are page-wide and the last editor created wins: the icon sprite and icon font (`svgSprite`, `iconFont`), the stylesheet (`style`), and the interface language, which is also remembered in sessionStorage. `editor.i18n.setLang()` changes that page-wide language but only re-renders the editor it is called on; call it on each editor to update them all.
