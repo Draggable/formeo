@@ -14,7 +14,7 @@ export class Rows extends ComponentData {
     this.config = { all: DEFAULT_CONFIG }
   }
   Component(data) {
-    return new Row(data)
+    return new Row(data, this.components)
   }
 }
 

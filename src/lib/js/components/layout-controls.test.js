@@ -1,14 +1,12 @@
 import { strict as assert } from 'node:assert'
 import { describe, test } from 'node:test'
 import { CONTROL_GROUP_CLASSNAME } from '../constants.js'
-import Columns from './columns/index.js'
 import Control from './controls/control.js'
-import Controls from './controls/index.js'
 import columnControl from './controls/layout/column.js'
 import rowControl from './controls/layout/row.js'
-import Fields from './fields/index.js'
-import Rows from './rows/index.js'
-import Stages from './stages/index.js'
+import defaultComponents from './index.js'
+
+const { stages: Stages, rows: Rows, columns: Columns, fields: Fields, controls: Controls } = defaultComponents
 
 const textControl = {
   tag: 'input',

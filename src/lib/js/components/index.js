@@ -1,21 +1,25 @@
-// biome-ignore assist/source/organizeImports: import order necessary for Controls circular dependency
-import defaultEvents from '../common/events.js' // temporary until per-editor wiring (#152)
-import { buildFlatDataStructure, clone, isAddress, parseData, sessionStorage } from '../common/utils/index.mjs'
+import defaultActions, { Actions } from '../common/actions.js'
+import defaultEvents, { Events } from '../common/events.js'
+import {
+  buildFlatDataStructure,
+  clone,
+  formDataStorageKey,
+  isAddress,
+  parseData,
+  sessionStorage,
+  uuid,
+} from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
-import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
-import ColumnsData from './columns/index.js'
+import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, version } from '../constants.js'
+import defaultColumns, { Columns } from './columns/index.js'
+import defaultControls, { Controls } from './controls/index.js'
 import Data from './data.js'
-import FieldsData from './fields/index.js'
-import RowsData from './rows/index.js'
-import StagesData from './stages/index.js'
-import ControlsData from './controls/index.js'
-export { Dialog } from './dialog.js'
+import defaultFields, { Fields } from './fields/index.js'
+import defaultRows, { Rows } from './rows/index.js'
+import defaultStages, { Stages } from './stages/index.js'
 
-export const Stages = StagesData
-export const Rows = RowsData
-export const Columns = ColumnsData
-export const Fields = FieldsData
-export const Controls = ControlsData
+export { Dialog } from './dialog.js'
+export { Columns, Controls, Fields, Rows, Stages }
 
 const getFormData = (formData, useSessionStorage = false) => {
   // If formData is explicitly provided (not null/undefined), always use it
@@ -36,7 +40,7 @@ const getFormData = (formData, useSessionStorage = false) => {
   }
 
   if (useSessionStorage) {
-    const sessionData = sessionStorage.get(SESSION_FORMDATA_KEY)
+    const sessionData = sessionStorage.get(formDataStorageKey(useSessionStorage))
     if (sessionData) {
       return sessionData
     }
@@ -46,27 +50,56 @@ const getFormData = (formData, useSessionStorage = false) => {
 }
 
 export class Components extends Data {
-  constructor() {
+  // an own field, so it shadows Data's `events` getter
+  events = null
+
+  /**
+   * One editor's form: its stores, controls, Events and Actions
+   * @param {Object} [context]
+   * @param {Events} [context.events] the editor's Events
+   * @param {Actions} [context.actions] the editor's Actions, built on `events` when omitted
+   * @param {Object} [context.stores] existing { stages, rows, columns, fields } stores to use
+   * @param {Controls} [context.controls] the editor's Controls, usually set once they are initialized
+   */
+  constructor({ events = new Events(), actions, stores = {}, controls = null } = {}) {
     super('components')
     this.disableEvents = true
-    this.stages = Stages
-    this.rows = Rows
-    this.columns = Columns
-    this.fields = Fields
-    this.controls = Controls
+    this.instanceId = uuid()
+    this.events = events
+    this.events.components = this
+    this.actions = actions || new Actions(events).init()
+    this.stages = stores.stages || new Stages()
+    this.rows = stores.rows || new Rows()
+    this.columns = stores.columns || new Columns()
+    this.fields = stores.fields || new Fields()
+    for (const store of [this.stages, this.rows, this.columns, this.fields]) {
+      store.components = this
+    }
+    this.controls = controls
   }
 
-  load = (formDataArg, opts) => {
+  get controls() {
+    return this._controls
+  }
+
+  set controls(controls) {
+    this._controls = controls
+    if (controls) {
+      controls.components = this
+    }
+  }
+
+  load = (formDataArg, opts = {}) => {
     this.empty()
     const formData = getFormData(formDataArg, opts.sessionStorage)
 
     this.opts = opts
 
     this.set('id', formData.id)
-    this.add('stages', Stages.load(formData.stages))
-    this.add('rows', Rows.load(formData.rows))
-    this.add('columns', Columns.load(formData.columns))
-    this.add('fields', Fields.load(formData.fields))
+    this.add('stages', this.stages.load(formData.stages))
+    this.add('rows', this.rows.load(formData.rows))
+    this.add('columns', this.columns.load(formData.columns))
+    this.add('fields', this.fields.load(formData.fields))
 
     for (const stage of Object.values(this.get('stages'))) {
       stage.loadChildren()
@@ -106,19 +139,19 @@ export class Components extends Data {
   get formData() {
     return {
       id: this.get('id'),
-      stages: StagesData.getData(),
-      rows: RowsData.getData(),
-      columns: ColumnsData.getData(),
-      fields: FieldsData.getData(),
+      stages: this.stages.getData(),
+      rows: this.rows.getData(),
+      columns: this.columns.getData(),
+      fields: this.fields.getData(),
     }
   }
 
   set config(config) {
     const { stages, rows, columns, fields } = config
-    Stages.config = stages
-    Rows.config = rows
-    Columns.config = columns
-    Fields.config = fields
+    this.stages.config = stages
+    this.rows.config = rows
+    this.columns.config = columns
+    this.fields.config = fields
   }
 
   getIndex(type) {
@@ -160,7 +193,13 @@ export class Components extends Data {
   }
 }
 
-const components = new Components()
-defaultEvents.components = components // temporary until per-editor wiring (#152)
+// legacy default instance assembled from the default stores, for existing unit tests only
+const components = new Components({
+  events: defaultEvents,
+  actions: defaultActions,
+  stores: { stages: defaultStages, rows: defaultRows, columns: defaultColumns, fields: defaultFields },
+  controls: defaultControls,
+})
+defaultActions.events = defaultEvents
 
 export default components

@@ -1,10 +1,12 @@
-import events from '../common/events.js'
 import { clone, merge, parseData, uuid } from '../common/utils/index.mjs'
 import { get } from '../common/utils/object.mjs'
 import { EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_ADDED_ROW } from '../constants.js'
 import Data from './data.js'
 
 export default class ComponentData extends Data {
+  // the Components instance (one editor) this store belongs to; set by Components
+  components = null
+
   load = dataArg => {
     const data = parseData(dataArg)
     this.empty()
@@ -46,7 +48,7 @@ export default class ComponentData extends Data {
 
     const addEvent = componentEventMap[this.name]
     if (addEvent && !silent) {
-      events.formeoUpdated(
+      this.events?.formeoUpdated(
         {
           entity: component,
           componentId: elemId,

@@ -1,7 +1,6 @@
 import { parseData } from '../../common/utils/index.mjs'
 import { get, set } from '../../common/utils/object.mjs'
 import ComponentData from '../component-data.js'
-import Controls from '../controls/index.js'
 import Field from './field.js'
 
 const DEFAULT_CONFIG = () => ({
@@ -29,12 +28,12 @@ export class Fields extends ComponentData {
     this.config = { all: DEFAULT_CONFIG() }
   }
   Component(data) {
-    return new Field(data)
+    return new Field(data, this.components)
   }
   get = path => {
     let found = path && get(this.data, path)
     if (!found) {
-      const control = Controls.get(path)
+      const control = this.components.controls?.get(path)
       if (control) {
         found = this.add(null, control.controlData)
       }

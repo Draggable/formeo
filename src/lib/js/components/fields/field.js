@@ -4,7 +4,6 @@ import { indexOfNode } from '../../common/helpers.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
-import Components from '../index.js'
 import { controlAttrPanelConfig, getControlConfig } from './control-attr-config.mjs'
 
 const checkableTypes = new Set(['checkbox', 'radio'])
@@ -19,8 +18,8 @@ export default class Field extends Component {
    * @param  {Object} fieldData existing field ID
    * @return {Object} field object
    */
-  constructor(fieldData = Object.create(null)) {
-    super('field', fieldData)
+  constructor(fieldData = Object.create(null), components) {
+    super('field', fieldData, components)
 
     this.controlId = this.get('config.controlId') || this.get('meta.id')
     this.applyControlAttrConfig()
@@ -68,7 +67,7 @@ export default class Field extends Component {
    * saved config so forms saved before a control changed still pick up its rules.
    */
   applyControlAttrConfig() {
-    const controlConfig = getControlConfig(Components.controls?.get(this.controlId))
+    const controlConfig = getControlConfig(this.components.controls?.get(this.controlId))
     const attrConfig = controlAttrPanelConfig(controlConfig, this.get('config'))
     if (attrConfig) {
       this.config = { [this.id]: attrConfig }

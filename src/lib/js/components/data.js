@@ -1,5 +1,4 @@
 import isEqual from 'lodash/isEqual.js'
-import events from '../common/events.js'
 import { uuid } from '../common/utils/index.mjs'
 import { get, set } from '../common/utils/object.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -28,6 +27,13 @@ export default class Data {
     this.name = name
     this.data = data
     this.dataPath = ''
+  }
+  /**
+   * The editor's Events, reached through its Components (`Components` sets its own `events`)
+   * @return {Events|undefined}
+   */
+  get events() {
+    return this.components?.events
   }
   get size() {
     return Object.keys(this.data).length
@@ -69,7 +75,7 @@ export default class Data {
       }
 
       // Dispatch the generic formeoUpdated event
-      events.formeoUpdated(evtData)
+      this.events?.formeoUpdated(evtData)
 
       // Dispatch component-specific events based on the component type
       if (this.name) {
@@ -82,7 +88,7 @@ export default class Data {
 
         const specificEvent = componentEventMap[this.name]
         if (specificEvent) {
-          events.formeoUpdated(evtData, specificEvent)
+          this.events?.formeoUpdated(evtData, specificEvent)
         }
       }
     }

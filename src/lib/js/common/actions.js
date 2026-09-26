@@ -1,7 +1,6 @@
 import i18n from '@draggable/i18n'
 import Dialog from '../components/dialog.js'
 import { CONDITION_TEMPLATE } from '../constants.js'
-import events from './events.js'
 import { formDataStorageKey, identity, sessionStorage } from './utils/index.mjs'
 
 // Actions are the callbacks for things like adding
@@ -170,7 +169,8 @@ export class Actions {
   }
 }
 
-// standalone instance for existing tests; editor code must use its own (see singletons.test.mjs)
-const actions = new Actions(events)
+// standalone instance for existing tests; editor code must use its own (see singletons.test.mjs).
+// components/index.js gives it the default Events when it assembles the legacy default Components.
+const actions = new Actions(null)
 
 export default actions

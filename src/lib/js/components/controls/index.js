@@ -290,7 +290,7 @@ export class Controls {
         forceFallback: true,
         fallbackTolerance: 5,
         group: {
-          name: 'controls',
+          name: `controls-${this.components.instanceId}`,
           pull: 'clone',
           put: false,
           revertClone: true,

@@ -14,7 +14,7 @@ export class Columns extends ComponentData {
     this.config = { all: DEFAULT_CONFIG }
   }
   Component(data) {
-    return new Column(data)
+    return new Column(data, this.components)
   }
 }
 

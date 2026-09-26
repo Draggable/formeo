@@ -1,10 +1,7 @@
 import assert from 'node:assert/strict'
-import { afterEach, describe, it, mock } from 'node:test'
-import events from '../common/events.js'
-import Columns from './columns/index.js'
-import Fields from './fields/index.js'
-import Components from './index.js'
-import Rows from './rows/index.js'
+import { describe, it, mock } from 'node:test'
+import { Events } from '../common/events.js'
+import { Components } from './index.js'
 
 const formData = {
   id: 'form-added-events',
@@ -15,17 +12,13 @@ const formData = {
 }
 
 describe('ComponentData added events', () => {
-  afterEach(() => {
-    events.init({})
-  })
-
   it('calls onAddRow, onAddColumn and onAddField when a store adds a component', () => {
     const callbacks = { onAddRow: mock.fn(), onAddColumn: mock.fn(), onAddField: mock.fn() }
-    events.init(callbacks)
+    const components = new Components({ events: new Events().init(callbacks) })
 
-    const row = Rows.add()
-    Columns.add()
-    Fields.add(null, { tag: 'input', attrs: { type: 'text' }, config: { label: 'Name' } })
+    const row = components.rows.add()
+    components.columns.add()
+    components.fields.add(null, { tag: 'input', attrs: { type: 'text' }, config: { label: 'Name' } })
 
     assert.equal(callbacks.onAddRow.mock.callCount(), 1)
     assert.equal(callbacks.onAddColumn.mock.callCount(), 1)
@@ -37,9 +30,9 @@ describe('ComponentData added events', () => {
 
   it('does not report components loaded from formData as added', () => {
     const onAdd = mock.fn()
-    events.init({ onAdd })
+    const components = new Components({ events: new Events().init({ onAdd }) })
 
-    Components.load(formData, {})
+    components.load(formData)
 
     assert.equal(onAdd.mock.callCount(), 0)
   })

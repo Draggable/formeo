@@ -4,7 +4,6 @@ import dom from '../../common/dom.js'
 import { isAddress, noop } from '../../common/utils/index.mjs'
 import { splitAddress } from '../../common/utils/string.mjs'
 import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../../constants.js'
-import Components from '../index.js'
 import {
   BASE_NAME,
   componentOptions,
@@ -26,8 +25,10 @@ export default class Autocomplete {
    * Create an Autocomplete instance
    * @param {String} key - The key for the autocomplete instance
    * @param {String} value - The initial value for the autocomplete input
+   * @param {Components} components - The editor whose components are listed
    */
-  constructor({ key, value, className, onChange = noop }) {
+  constructor({ key, value, className, onChange = noop, components }) {
+    this.components = components
     this.key = key
     this.className = [className || this.key.replace(/\./g, '-')].flat()
     this.value = value
@@ -67,7 +68,7 @@ export default class Autocomplete {
   }
 
   get valueComponent() {
-    return isAddress(this.value) && Components.getAddress(this.value)
+    return isAddress(this.value) && this.components.getAddress(this.value)
   }
 
   /**
@@ -215,7 +216,7 @@ export default class Autocomplete {
     if (!isAddress(this.value)) {
       return this.value
     }
-    const component = this.value && Components.getAddress(this.value)
+    const component = this.value && this.components.getAddress(this.value)
     return (component && getComponentLabel(component, `${this.key}`)) || this.value
   }
 
@@ -333,7 +334,7 @@ export default class Autocomplete {
       option.classList.remove('active-option')
 
       if (isAddress(value)) {
-        const component = Components.getAddress(value)
+        const component = this.components.getAddress(value)
         component?.dom?.classList.remove(HIGHLIGHT_CLASSNAME)
       }
     }
@@ -384,7 +385,7 @@ export default class Autocomplete {
         }
       )
 
-      const component = Components.getAddress(componentAddress)
+      const component = this.components.getAddress(componentAddress)
 
       if (component?.dom) {
         component.dom.classList.add(HIGHLIGHT_CLASSNAME)

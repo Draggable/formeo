@@ -1,7 +1,6 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
-import events from '../../common/events.js'
 import h from '../../common/helpers.mjs'
 import { COLUMN_CLASSNAME, FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
@@ -38,8 +37,8 @@ export default class Column extends Component {
    * @param  {Object} columnData
    * @return {Object} Column config object
    */
-  constructor(columnData) {
-    super('column', { ...DEFAULT_DATA(), ...columnData })
+  constructor(columnData, components) {
+    super('column', { ...DEFAULT_DATA(), ...columnData }, components)
 
     const childWrap = this.createChildWrap()
 
@@ -54,28 +53,21 @@ export default class Column extends Component {
         this.getComponentTag(),
         this.getActionButtons(),
         DOM_CONFIGS.editWindow(),
-        DOM_CONFIGS.resizeHandle(new ResizeColumn()),
+        DOM_CONFIGS.resizeHandle(new ResizeColumn(this.components)),
         childWrap,
       ],
     })
 
     this.processConfig()
 
-    events.columnResized = new window.CustomEvent('columnResized', {
-      detail: {
-        column: this.dom,
-        instance: this,
-      },
-    })
-
-    Sortable.create(childWrap, {
+    this.sortable = Sortable.create(childWrap, {
       animation: 150,
       fallbackClass: 'field-moving',
       forceFallback: true,
       group: {
-        name: 'column',
+        name: this.sortableGroup('column'),
         pull: true,
-        put: ['column', 'controls'],
+        put: ['column', 'controls'].map(name => this.sortableGroup(name)),
       },
       sort: true,
       disabled: false,

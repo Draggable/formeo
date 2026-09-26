@@ -13,7 +13,7 @@ mock.method(components, 'flatList', () => mockFlatList)
 suite('Autolinker', () => {
   suite('componentOptions utility', () => {
     test('should generate an array of dom options', ({ assert }) => {
-      const options = componentOptions('test.id')
+      const options = componentOptions({ components })
       assert.snapshot(options)
     })
   })

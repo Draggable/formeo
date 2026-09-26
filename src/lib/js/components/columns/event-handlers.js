@@ -8,13 +8,14 @@ import {
   CUSTOM_COLUMN_OPTION_CLASSNAME,
   ROW_CLASSNAME,
 } from '../../constants.js'
-import Components from '../index.js'
 
 export class ResizeColumn {
   /**
    * Binds the event handlers to the instance.
+   * @param {Components} components the editor whose columns are resized
    */
-  constructor() {
+  constructor(components) {
+    this.components = components
     this.onMove = this.onMove.bind(this)
     this.onStop = this.onStop.bind(this)
     this.cleanup = this.cleanup.bind(this)
@@ -164,8 +165,8 @@ export class ResizeColumn {
 
     this.setCustomWidthValue()
 
-    Components.setAddress(`columns.${column.id}.config.width`, column.dataset.colWidth)
-    Components.setAddress(`columns.${sibling.id}.config.width`, sibling.dataset.colWidth)
+    this.components.setAddress(`columns.${column.id}.config.width`, column.dataset.colWidth)
+    this.components.setAddress(`columns.${sibling.id}.config.width`, sibling.dataset.colWidth)
     this.row.classList.remove(COLUMN_RESIZE_CLASSNAME)
 
     this.resized = false
