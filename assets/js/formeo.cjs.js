@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.3.1
+Version: 5.3.2
 Author: Draggable https://draggable.io
 */
 
@@ -8065,7 +8065,7 @@ var require_mergeWith = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 })), name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.3.1";
+	version$2 = "5.3.2";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -14522,6 +14522,23 @@ var init_options = __esmMin((() => {
 	});
 }));
 //#endregion
+//#region src/lib/js/components/fields/control-attr-config.mjs
+var getControlConfig, controlAttrPanelConfig;
+var init_control_attr_config = __esmMin((() => {
+	init_utils();
+	getControlConfig = (control) => control?.controlData?.config ?? control?.config;
+	controlAttrPanelConfig = (...sources) => {
+		const collect = (key) => unique(sources.flatMap((source) => Array.isArray(source?.[key]) ? source[key] : []));
+		const disabled = collect("disabledAttrs");
+		const locked = collect("lockedAttrs");
+		if (!disabled.length && !locked.length) return null;
+		return { panels: { attrs: {
+			disabled,
+			locked
+		} } };
+	};
+}));
+//#endregion
 //#region src/lib/js/components/fields/field.js
 var field_exports = /* @__PURE__ */ __exportAll({ default: () => Field });
 var checkableTypes, isSelectableType, Field;
@@ -14532,6 +14549,8 @@ var init_field = __esmMin((() => {
 	init_utils();
 	init_constants();
 	init_component();
+	init_components();
+	init_control_attr_config();
 	checkableTypes = new Set(["checkbox", "radio"]);
 	isSelectableType = new Set([
 		"radio",
@@ -14547,11 +14566,12 @@ var init_field = __esmMin((() => {
 		*/
 		constructor(fieldData = Object.create(null)) {
 			super("field", fieldData);
+			this.controlId = this.get("config.controlId") || this.get("meta.id");
+			this.applyControlAttrConfig();
 			this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
 			this.debouncedUpdatePreview = debounce(this.updatePreview);
 			this.label = dom.create(this.labelConfig);
 			this.preview = this.fieldPreview();
-			this.controlId = this.get("config.controlId") || this.get("meta.id");
 			const actionButtons = this.getActionButtons();
 			const hasEditButton = this.actionButtons.some((child) => child.meta?.id === "edit");
 			this.updateEditPanels();
@@ -14571,6 +14591,15 @@ var init_field = __esmMin((() => {
 			});
 			this.dom = field;
 			this.isEditing = false;
+		}
+		/**
+		* Honour control-level `disabledAttrs` / `lockedAttrs` by merging them into this field's
+		* panels.attrs config. Reads both the registered control definition and the field's own
+		* saved config so forms saved before a control changed still pick up its rules.
+		*/
+		applyControlAttrConfig() {
+			const attrConfig = controlAttrPanelConfig(getControlConfig(components.controls?.get(this.controlId)), this.get("config"));
+			if (attrConfig) this.config = { [this.id]: attrConfig };
 		}
 		get labelConfig() {
 			if (!!this.get("config.hideLabel")) return null;
@@ -15015,7 +15044,7 @@ var init_radio_group = __esmMin((() => {
 				},
 				config: {
 					label: s.get("controls.form.radio-group"),
-					disabled: ["attrs.type"]
+					disabledAttrs: ["type"]
 				},
 				meta: {
 					group: "common",
