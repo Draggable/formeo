@@ -690,3 +690,49 @@ describe('pagination (#122)', () => {
     })
   })
 })
+
+describe('pagination teardown (#166)', () => {
+  /**
+   * Tracks the listeners paginate() leaves on the document, keyed by type
+   * @return {Map<String, Set<Function>>}
+   */
+  const trackDocumentListeners = () => {
+    const live = new Map()
+    const { addEventListener, removeEventListener } = document
+    document.addEventListener = function (type, listener, options) {
+      if (!live.has(type)) live.set(type, new Set())
+      live.get(type).add(listener)
+      return addEventListener.call(this, type, listener, options)
+    }
+    document.removeEventListener = function (type, listener, options) {
+      live.get(type)?.delete(listener)
+      return removeEventListener.call(this, type, listener, options)
+    }
+    return live
+  }
+  const count = live => [...live.values()].reduce((total, listeners) => total + listeners.size, 0)
+
+  for (const type of ['tabs', 'wizard']) {
+    test(`renderer.destroy() removes the ${type} pager's document listeners`, () => {
+      const live = trackDocumentListeners()
+      const renderer = render(type)
+      assert.ok(count(live) > 0, 'paginate() listens on the document')
+      renderer.destroy()
+      assert.equal(count(live), 0)
+      assert.equal(renderer.pager, null)
+      assert.equal(renderer.page, 0)
+      assert.equal(renderer.pageCount, 1)
+    })
+  }
+
+  test('renderer.destroy() is safe twice with a pager, and render() paginates again afterwards', () => {
+    const renderer = render('wizard')
+    assert.doesNotThrow(() => {
+      renderer.destroy()
+      renderer.destroy()
+    })
+    renderer.render(twoPages())
+    assert.equal(renderer.pageCount, 2)
+    assert.deepEqual(hiddenPages(), [false, true])
+  })
+})

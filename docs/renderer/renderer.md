@@ -215,7 +215,7 @@ document.body.appendChild(formElement)
 
 ### `destroy()`
 
-Removes the rendered form from the page. The renderer keeps its options and `formData`, so `render()` can be called again afterwards. Safe to call more than once, and before `render()`.
+Removes the rendered form from the page and stops its [pagination](#multi-page-forms): the page navigation's document listeners are removed, and `page` returns `0` and `pageCount` `1` until the next `render()`. The renderer keeps its options and `formData`, so `render()` can be called again afterwards. Safe to call more than once, and before `render()`.
 
 ```javascript
 renderer.destroy()

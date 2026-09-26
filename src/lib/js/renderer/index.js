@@ -177,10 +177,12 @@ export default class FormeoRenderer {
   }
 
   /**
-   * Remove the rendered form from the page. render() can be called again afterwards.
+   * Remove the rendered form from the page and stop its pagination. render() can be called again afterwards.
    * @return {void}
    */
   destroy() {
+    this.pager?.destroy()
+    this.pager = null
     this.renderedForm?.remove()
     this.renderedForm = null
     this.components = Object.create(null)
