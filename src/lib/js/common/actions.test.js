@@ -88,6 +88,15 @@ describe('actions.add.attrs default (#233)', () => {
     assert.equal(evt.addAction.mock.callCount(), 0)
   })
 
+  it('rejects a dotted name, which the address system would store as a nested attrs object', () => {
+    const evt = addAttrEvt()
+    actions.add.attrs(evt)
+    const input = submit('data.x', '1')
+    assert.equal(evt.addAction.mock.callCount(), 0)
+    assert.ok(dialog(), 'still open')
+    assert.equal(input.validity.valid, false)
+  })
+
   it('keeps the dialog open for a whitespace-only name', () => {
     const evt = addAttrEvt()
     actions.add.attrs(evt)
