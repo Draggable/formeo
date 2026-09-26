@@ -30,7 +30,6 @@ To start building forms with this module include formeo.min.js and formeo.min.cs
 import { FormeoEditor, FormeoRenderer } from 'formeo'
 
 // Set up a form builder
-const editor = new FormeoEditor() // or:
 const editor = new FormeoEditor(options, formData)
 
 // When you're ready, grab the form data object
@@ -48,7 +47,7 @@ renderer.render(formData)
 
 #### `new FormeoEditor([options[, formData]])`
 
-Initialize an editor. If no [`options` object](options/) is supplied, the editor attaches itself to the first element it finds with the class `formeo-wrap`.
+Initialize an editor. `options.editorContainer` (selector, element or jQuery object) sets where the editor is added. Without it, the editor isn't added to the page.
 
 The `formData` object represents a form. It sets the initial form data for the `FormeoEditor`. For example, if you're editing an existing form, you can pass this object to restore the editor to the previous state.
 
@@ -87,7 +86,7 @@ Reset the editor to its initial empty state. See [editor-clear-method.md](editor
 
 #### `new FormeoRenderer([options[, formData]])`
 
-Initialize a renderer. If no [`options` object](options/) is supplied, the renderer attaches itself to the first element it finds with the class `formeo-wrap`.
+Initialize a renderer. `options.renderContainer` is required for `render()`. `getRenderedForm()` and `html` work without it.
 
 The `formData` object represents the form to render. It can be replaced later using the `FormeoRenderer#render()` function.
 
