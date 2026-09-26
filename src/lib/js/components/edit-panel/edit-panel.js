@@ -382,7 +382,6 @@ export default class EditPanel {
   }
 
   setData(val) {
-    this.data = val
     this.component.set(this.name, val)
     this.updateProps()
   }

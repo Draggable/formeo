@@ -1,6 +1,18 @@
 import { strict as assert } from 'node:assert'
 import { describe, it, mock } from 'node:test'
 import Field from '../fields/field.js'
+import { toggleOptionMultiSelect } from './edit-panel-item.mjs'
+
+const selectField = () =>
+  new Field({
+    tag: 'select',
+    attrs: { type: 'select' },
+    config: { label: 'Choices', controlId: 'select' },
+    options: [
+      { label: 'One', value: 'one', selected: true },
+      { label: 'Two', value: 'two', selected: false },
+    ],
+  })
 
 const radioField = () =>
   new Field({
@@ -70,5 +82,30 @@ describe('EditPanel option ordering (#114)', () => {
     const before = field.get('options')
     field.editPanels.get('options').moveOption(1, 1)
     assert.equal(field.get('options'), before)
+  })
+})
+
+describe('EditPanel#setData via toggleOptionMultiSelect (select switched to multiple)', () => {
+  it('does not throw and switches options to the multi-select "checked" key, re-rendering the panel', () => {
+    const field = selectField()
+    const panel = field.editPanels.get('options')
+    const previousProps = panel.props
+
+    assert.doesNotThrow(() => toggleOptionMultiSelect(true, field))
+
+    const options = field.get('options')
+    assert.deepEqual(
+      options.map(o => ({ value: o.value, checked: o.checked })),
+      [
+        { value: 'one', checked: true },
+        { value: 'two', checked: false },
+      ]
+    )
+    assert.equal(
+      options.some(o => 'selected' in o),
+      false,
+      'options no longer carry the single-select "selected" key'
+    )
+    assert.notEqual(panel.props, previousProps, 'panel re-rendered its props list')
   })
 })

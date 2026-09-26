@@ -64,4 +64,27 @@ test.describe('Options panel', () => {
     await expect.poll(formDataValues).toEqual(['radio-3', 'radio-1', 'radio-2'])
     await expect.poll(() => radioValues(field)).toEqual(['radio-3', 'radio-1', 'radio-2'])
   })
+
+  test('toggling "multiple" on a select logs no page error and re-keys its options', async ({ page }) => {
+    const pageErrors = []
+    page.on('pageerror', err => pageErrors.push(err))
+
+    const { field, editPanel } = await addFieldAndEdit(page, 'Select', 'Attributes')
+    const fieldId = await field.getAttribute('id')
+    const optionsData = () =>
+      page.evaluate(id => window.frameworkLoader.currentDemo.editor.formData.fields[id].options, fieldId)
+
+    expect((await optionsData()).every(o => 'selected' in o)).toBe(true)
+
+    await editPanel.locator('.field-attrs-multiple input[type="checkbox"]').check()
+
+    await expect
+      .poll(() =>
+        page.evaluate(id => window.frameworkLoader.currentDemo.editor.formData.fields[id].attrs.multiple, fieldId)
+      )
+      .toBe(true)
+    const updatedOptions = await optionsData()
+    expect(updatedOptions.every(o => 'checked' in o && !('selected' in o))).toBe(true)
+    expect(pageErrors).toEqual([])
+  })
 })
