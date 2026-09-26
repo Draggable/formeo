@@ -725,6 +725,17 @@ describe('pagination teardown (#166)', () => {
     })
   }
 
+  test('renderer.render() destroys the previous pager before replacing the form', () => {
+    const live = trackDocumentListeners()
+    const renderer = render('wizard')
+    const initialListeners = count(live)
+    assert.ok(initialListeners > 0, 'paginate() listens on the document')
+    renderer.render(twoPages())
+    assert.equal(count(live), initialListeners)
+    renderer.destroy()
+    assert.equal(count(live), 0)
+  })
+
   test('renderer.destroy() is safe twice with a pager, and render() paginates again afterwards', () => {
     const renderer = render('wizard')
     assert.doesNotThrow(() => {

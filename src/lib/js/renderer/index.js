@@ -190,6 +190,8 @@ export default class FormeoRenderer {
 
   getRenderedForm(formData = this.form) {
     this.form = cleanFormData(formData)
+    this.pager?.destroy()
+    this.pager = null
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
