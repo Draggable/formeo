@@ -142,6 +142,8 @@ export default class EditPanel {
    * @param {Number} fromIndex
    * @param {Number} toIndex
    */
+  moveOption = (fromIndex, toIndex) => {
+    const options = this.component.get('options')
     if (
       !Array.isArray(options) ||
       !Number.isInteger(fromIndex) ||
