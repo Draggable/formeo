@@ -361,9 +361,64 @@ export class EditorPages {
     }
   }
 
-  // Task 7 replaces these two
-  startRename(_stageId) {}
-  commitRename() {}
+  /**
+   * Swaps a tab for a text input holding the page's title
+   * @param {String} stageId
+   */
+  startRename(stageId) {
+    this.commitRename()
+    const tab = this.tabFor(stageId)
+    if (!tab) {
+      return
+    }
+    const stage = this.stages.get(stageId)
+    const input = el('input', {
+      className: 'formeo-page-title-input',
+      type: 'text',
+      'aria-label': pageText('pages.rename'),
+      placeholder: this.titleOf(stageId),
+    })
+    input.value = stage.get('config.title') || ''
+    input.addEventListener('keydown', evt => {
+      if (evt.key === 'Enter' || evt.key === 'Escape') {
+        evt.preventDefault()
+        evt.stopPropagation()
+        this.commitRename({ save: evt.key === 'Enter', focus: true })
+      }
+    })
+    input.addEventListener('blur', () => this.commitRename())
+    tab.hidden = true
+    tab.after(input)
+    this.renaming = { stageId, input, tab }
+    input.focus()
+    input.select()
+  }
+
+  /**
+   * Ends a rename in progress
+   * @param {Object} [options]
+   * @param {Boolean} [options.save] keep the typed title (false on Escape)
+   * @param {Boolean} [options.focus] focus the tab afterwards
+   */
+  commitRename({ save = true, focus = false } = {}) {
+    const renaming = this.renaming
+    if (!renaming) {
+      return
+    }
+    // cleared first: removing the input blurs it, which calls this again
+    this.renaming = null
+    const stage = this.stages.get(renaming.stageId)
+    const title = renaming.input.value.trim()
+    if (save && stage && title !== (stage.get('config.title') || '')) {
+      stage.set('config.title', title)
+    }
+    renaming.input.remove()
+    renaming.tab.hidden = false
+    this.refreshLabels()
+    if (focus) {
+      renaming.tab.focus()
+    }
+  }
 
   // Task 8 replaces this
   requestRemove(_stageId) {}
@@ -387,8 +442,12 @@ export class EditorPages {
     this.flashTimers.clear()
   }
 
-  /** Releases everything this editor's page tabs hold. FormeoEditor#destroy calls it. */
+  /**
+   * Releases everything this editor's page tabs hold. FormeoEditor#destroy calls it, after the editor's events are
+   * gone, so an open rename is discarded rather than saved: nothing may change the form while it is torn down.
+   */
   destroy() {
+    this.commitRename({ save: false })
     this.teardown()
     for (const id of [...this.stageListeners.keys()]) {
       this.unwatchStage(id)

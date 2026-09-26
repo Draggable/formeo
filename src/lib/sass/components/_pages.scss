@@ -115,6 +115,17 @@
   }
 }
 
+.formeo-page-title-input {
+  inline-size: 12em;
+  margin-block-end: -1px;
+  padding-block: mixins.space(1);
+  padding-inline: mixins.space(1);
+  border: 1px solid t.$border-strong;
+  border-radius: 0;
+  background: t.$bg;
+  color: t.$text-strong;
+}
+
 // live region for "Moved to …"; visually hidden
 .formeo-pages-status {
   position: absolute;

@@ -74,6 +74,20 @@ export default class EditPanel {
   }
 
   /**
+   * A stage's config.title is its page title (#122): editable only while the editor's page tabs are on
+   * @param {String} keyBase
+   * @return {Boolean}
+   */
+  isPageTitle(keyBase) {
+    return (
+      this.name === 'config' &&
+      keyBase === 'title' &&
+      this.component.name === 'stage' &&
+      Boolean(this.component.components?.opts?.pages)
+    )
+  }
+
+  /**
    * Generates the edit panel for attrs, meta and options for a fields(s)
    * @param  {String} panelName
    * @param  {Object} dataObj   field config object
@@ -89,7 +103,8 @@ export default class EditPanel {
         const itemKey = `${this.name}${key}`
 
         const isDisabledProp = this.component.isDisabledProp(itemKey, this.name)
-        const isEditableProp = FILTERED_PANEL_DATA_KEYS.get(this.name)?.has(keyBase) ?? true
+        const allowedKeys = FILTERED_PANEL_DATA_KEYS.get(this.name)
+        const isEditableProp = !allowedKeys || allowedKeys.has(keyBase) || this.isPageTitle(keyBase)
 
         if (isDisabledProp || !isEditableProp) {
           return null

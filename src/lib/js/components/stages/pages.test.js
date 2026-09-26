@@ -242,3 +242,79 @@ describe('EditorPages add, labels and destroy (#122)', () => {
     }
   })
 })
+
+describe('EditorPages rename (#122)', () => {
+  const input = editor => editor.querySelector('.formeo-page-title-input')
+
+  it('F2 opens an input with the current title; Enter saves it', () => {
+    const { editor, components } = setup()
+    const [first] = tabs(editor)
+    first.focus()
+    key(first, 'F2')
+    assert.equal(input(editor).value, 'About you')
+    assert.equal(document.activeElement, input(editor))
+    assert.equal(first.hidden, true)
+
+    input(editor).value = '  Your details  '
+    key(input(editor), 'Enter')
+    assert.equal(input(editor), null)
+    assert.equal(components.stages.get('p-1').get('config.title'), 'Your details')
+    assert.equal(tabs(editor)[0].textContent, 'Your details')
+    assert.equal(document.activeElement, tabs(editor)[0])
+  })
+
+  it('Escape cancels', () => {
+    const { editor, components } = setup()
+    tabs(editor)[0].dispatchEvent(new window.MouseEvent('dblclick', { bubbles: true }))
+    input(editor).value = 'Nope'
+    key(input(editor), 'Escape')
+    assert.equal(components.stages.get('p-1').get('config.title'), 'About you')
+    assert.equal(tabs(editor)[0].hidden, false)
+  })
+
+  it('an empty title falls back to "Page {n}"', () => {
+    const { editor, pages } = setup()
+    pages.startRename('p-2')
+    input(editor).value = '   '
+    key(input(editor), 'Enter')
+    assert.equal(tabs(editor)[1].textContent, 'Page 2')
+  })
+
+  it('keys typed in the input edit text, not pages', () => {
+    const { editor, pages } = setup()
+    pages.startRename('p-2')
+    for (const name of ['Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'F2']) {
+      key(input(editor), name)
+    }
+    assert.equal(pages.count, 3)
+    assert.equal(pages.index, 0)
+    assert.ok(input(editor))
+  })
+
+  it('switching pages commits the rename first', () => {
+    const { editor, pages, components } = setup()
+    pages.startRename('p-3')
+    input(editor).value = 'Review'
+    pages.activate(1)
+    assert.equal(input(editor), null)
+    assert.equal(components.stages.get('p-3').get('config.title'), 'Review')
+  })
+
+  it('blur saves', () => {
+    const { editor, pages, components } = setup()
+    pages.startRename('p-3')
+    input(editor).value = 'Review'
+    input(editor).dispatchEvent(new window.FocusEvent('blur'))
+    assert.equal(components.stages.get('p-3').get('config.title'), 'Review')
+  })
+
+  it('destroying the editor mid-rename discards the unsaved title and does not throw', () => {
+    const { editor, pages, components } = setup()
+    pages.startRename('p-3')
+    input(editor).value = 'Review'
+    assert.doesNotThrow(() => pages.destroy())
+    assert.equal(input(editor), null)
+    assert.equal(components.stages.get('p-3').get('config.title'), '')
+    assert.equal(components.formData.stages['p-3'].config.title, '')
+  })
+})

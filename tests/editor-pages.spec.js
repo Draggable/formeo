@@ -170,4 +170,51 @@ test.describe('Editor page tabs (#122)', () => {
     await mountEditor(page)
     expect(await callsOf(page)).toEqual([])
   })
+
+  test('destroy() mid-rename discards the typed title and fires no callbacks', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Page 3' }).dblclick()
+    await editor.getByRole('textbox', { name: 'Rename page' }).fill('Review')
+    const updated = await page.evaluate(async () => {
+      const e = window.e2eEditors['e2e-pages']
+      const stage = e.Components.stages.get('p-s3')
+      window.e2eCalls['e2e-pages'].length = 0
+      e.destroy()
+      await new Promise(resolve => setTimeout(resolve, 300))
+      return stage.data.config.title
+    })
+    expect(updated).toBe('')
+    expect(await callsOf(page)).toEqual([])
+  })
+
+  test('double-click renames a page', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Page 3' }).dblclick()
+    const input = editor.getByRole('textbox', { name: 'Rename page' })
+    await input.fill('Review')
+    await input.press('Enter')
+    await expect(editor.getByRole('tab', { name: 'Review' })).toBeFocused()
+    expect((await formDataOf(page)).stages['p-s3'].config.title).toBe('Review')
+  })
+
+  test('F2 renames and Escape cancels', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'About you' }).focus()
+    await page.keyboard.press('F2')
+    await page.keyboard.type('Nope')
+    await page.keyboard.press('Escape')
+    await expect(editor.getByRole('tab', { name: 'About you' })).toBeVisible()
+  })
+
+  test('the stage edit panel renames the tab', async ({ page }) => {
+    const editor = await mountEditor(page)
+    const stage = editor.locator('[id="p-s1"]')
+    await stage.locator('> .stage-actions').hover()
+    await stage.locator('> .stage-actions .edit-toggle').click()
+    // the edit panel opens on its Conditions panel; switch to Configuration first
+    await stage.getByRole('heading', { name: 'Configuration', level: 5 }).click()
+    const titleInput = stage.locator('.stage-edit .field-config-title input')
+    await titleInput.fill('Your details')
+    await expect(editor.getByRole('tab', { name: 'Your details' })).toBeVisible()
+  })
 })

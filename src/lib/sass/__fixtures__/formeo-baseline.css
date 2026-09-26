@@ -1898,6 +1898,16 @@ button[class*=-clone]:hover .svg-icon {
 .formeo.formeo-editor .formeo-page-add:hover {
   color: rgb(25.5, 25.5, 25.5);
 }
+.formeo.formeo-editor .formeo-page-title-input {
+  inline-size: 12em;
+  margin-block-end: -1px;
+  padding-block: 8px;
+  padding-inline: 8px;
+  border: 1px solid #999999;
+  border-radius: 0;
+  background: #fff;
+  color: rgb(25.5, 25.5, 25.5);
+}
 .formeo.formeo-editor .formeo-pages-status {
   position: absolute;
   inline-size: 1px;

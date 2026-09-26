@@ -1,8 +1,11 @@
 import { strict as assert } from 'node:assert'
 import { before, describe, it, mock } from 'node:test'
 import i18n from '@draggable/i18n'
+import { Actions } from '../../common/actions.js'
+import { Events } from '../../common/events.js'
 import Field from '../fields/field.js'
-import components from '../index.js'
+import components, { Components } from '../index.js'
+import EditPanel from './edit-panel.js'
 import { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 
 const selectField = () =>
@@ -141,5 +144,46 @@ describe('EditPanel#addAttribute', () => {
     panel.addAttribute('xlink:href', '#b')
     assert.equal(field.get('attrs.xlink:href'), '#b')
     assert.equal(attrRows(panel, 'xlink:href').length, 1)
+  })
+})
+
+describe('EditPanel config.title (#122)', () => {
+  const titledForm = () => ({
+    id: 'form-title',
+    stages: { 's-1': { id: 's-1', config: { title: 'About you' }, children: [] } },
+  })
+  const load = pages => {
+    const events = new Events().init({})
+    const editorComponents = new Components({ events, actions: new Actions(events).init({}) })
+    editorComponents.load(titledForm(), { pages })
+    return editorComponents
+  }
+  const configKeys = component =>
+    new EditPanel(component.get('config'), 'config', component).editPanelItems.map(({ itemKey }) => itemKey)
+
+  it('pages off: a stage with config.title shows no Title item', () => {
+    const stage = load(false).stages.get('s-1')
+    assert.equal(stage.get('config.title'), 'About you')
+    assert.ok(!configKeys(stage).includes('config.title'))
+  })
+
+  it('pages off: a field with config.title shows no Title item', () => {
+    const editorComponents = load(false)
+    const field = new Field(
+      { tag: 'input', attrs: { type: 'text' }, config: { label: 'Name', title: 'T' } },
+      editorComponents
+    )
+    assert.ok(configKeys(field).includes('config.label'))
+    assert.ok(!configKeys(field).includes('config.title'))
+  })
+
+  it('pages on: a stage shows its Title item, a field still does not', () => {
+    const editorComponents = load(true)
+    assert.ok(configKeys(editorComponents.stages.get('s-1')).includes('config.title'))
+    const field = new Field(
+      { tag: 'input', attrs: { type: 'text' }, config: { label: 'Name', title: 'T' } },
+      editorComponents
+    )
+    assert.ok(!configKeys(field).includes('config.title'))
   })
 })
