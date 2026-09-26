@@ -519,7 +519,7 @@ const userDataOf = form => {
 
   const formDataObj = {}
   for (const [key, value] of formEntries.entries()) {
-    if (formDataObj[key]) {
+    if (Object.prototype.hasOwnProperty.call(formDataObj, key)) {
       if (Array.isArray(formDataObj[key])) {
         formDataObj[key].push(value)
       } else {
