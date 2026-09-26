@@ -504,6 +504,18 @@ describe('pagination (#122)', () => {
       assert.equal(renderer.page, 1)
     })
 
+    test('an external submit button associated with the form brings the invalid page into view', () => {
+      const renderer = render('tabs')
+      const form = container.querySelector('form')
+      form.id = 'associated-form'
+      const button = document.createElement('button')
+      button.type = 'submit'
+      button.setAttribute('form', form.id)
+      container.append(button)
+      button.click()
+      assert.equal(renderer.page, 1)
+    })
+
     test('Enter in an input marks the implicit submission that follows as reported', () => {
       const renderer = render('tabs')
       key(input('name'), 'Enter')
@@ -519,6 +531,15 @@ describe('pagination (#122)', () => {
       assert.equal(input('email').checkValidity(), false)
       assert.equal(renderer.page, 0)
       assert.deepEqual(calls, [])
+    })
+
+    test('checkValidity() right after reportValidity() in the same task does not switch pages', () => {
+      const renderer = render('tabs')
+      const form = container.querySelector('form')
+      form.reportValidity()
+      renderer.page = 0
+      form.checkValidity()
+      assert.equal(renderer.page, 0)
     })
 
     test('checkValidity() in a later task than a reported pass does not switch pages', async () => {
@@ -599,10 +620,29 @@ describe('pagination (#122)', () => {
     test('the page setter clamps to the available pages', () => {
       const renderer = render('tabs')
       assert.equal(renderer.pageCount, 2)
+      renderer.page = 0.5
+      assert.equal(renderer.page, 0)
+      renderer.page = 1.9
+      assert.equal(renderer.page, 1)
       renderer.page = 5
       assert.equal(renderer.page, 1)
       renderer.page = -1
       assert.equal(renderer.page, 0)
+    })
+
+    test('form controls named like wrapped methods do not break reportValidity or requestSubmit', () => {
+      const renderer = render(
+        'tabs',
+        buildPages([
+          [field('requestSubmit'), field('reportValidity')],
+          [field('email', { type: 'email', required: true })],
+        ])
+      )
+      const form = container.querySelector('form')
+      assert.doesNotThrow(() => form.reportValidity())
+      renderer.page = 0
+      assert.doesNotThrow(() => form.requestSubmit())
+      assert.equal(renderer.page, 1)
     })
 
     test('onPageChange fires on every change but not on render or when the page stays the same', () => {

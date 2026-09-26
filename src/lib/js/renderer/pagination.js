@@ -106,7 +106,9 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
    */
   const show = (index, { focus = false } = {}) => {
     const previousPage = current
-    current = Math.max(0, Math.min(Number(index) || 0, last))
+    const parsed = Number(index)
+    const normalized = Number.isFinite(parsed) ? Math.trunc(parsed) : 0
+    current = Math.max(0, Math.min(normalized, last))
     update()
     if (focus) {
       focusFirst(pages[current])
@@ -286,38 +288,52 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
   // Only a validation pass the browser reports to the user may switch pages: submitting (a submit
   // button, Enter's implicit submission, requestSubmit()) or form.reportValidity(). A silent
   // checkValidity() - e.g. an onChange handler toggling a submit button - must leave the page alone.
-  // The flag covers the rest of the current task; the browser's pass runs within it.
+  // The flag only covers the browser validation pass triggered by a reported action.
   let reporting = false
   const markReported = () => {
     reporting = true
-    setTimeout(() => {
+    queueMicrotask(() => {
       reporting = false
-    }, 0)
+    })
   }
-  form.addEventListener(
+  const withReportedValidation = call => {
+    reporting = true
+    try {
+      return call()
+    } finally {
+      reporting = false
+    }
+  }
+  const ownerDocument = form.ownerDocument
+  ownerDocument.addEventListener(
     'click',
     ({ target }) => {
       const control = target.closest?.('button, input')
+      if (control?.form !== form) {
+        return
+      }
       if (control?.type === 'submit' || (control?.tagName === 'INPUT' && control.type === 'image')) {
         markReported()
       }
     },
     true
   )
-  form.addEventListener(
+  ownerDocument.addEventListener(
     'keydown',
     ({ key, target }) => {
-      if (key === 'Enter' && target.tagName === 'INPUT') {
+      if (key === 'Enter' && target.tagName === 'INPUT' && target.form === form) {
         markReported()
       }
     },
     true
   )
   for (const method of ['requestSubmit', 'reportValidity']) {
-    const native = form[method]
+    const native = HTMLFormElement.prototype[method]
+    if (typeof native !== 'function') {
+      continue
+    }
     form[method] = function (...args) {
-      markReported()
-      return native.apply(this, args)
+      return withReportedValidation(() => native.apply(this, args))
     }
   }
 
