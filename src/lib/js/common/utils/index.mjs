@@ -106,6 +106,23 @@ export const uuid = elem => {
   return elem?.attrs?.id || elem?.id || shortId()
 }
 
+// JS objects list an integer-like key ("1", "2") before any string key, whatever its insertion order (#122)
+export const looksLikeArrayIndex = id => String(Number.parseInt(id, 10)) === id
+
+/**
+ * A fresh id that never looks like an array index, for ids whose *store's key order* is meaningful (e.g. stage/page
+ * order, #122): such a key would otherwise silently jump to the front of `Object.keys()` regardless of when it was
+ * added. uuid() is 8 hex characters, so an all-digit result happens for roughly 1 in 43; regenerate until it isn't.
+ * @return {String}
+ */
+export const nonIndexId = () => {
+  let id = uuid()
+  while (looksLikeArrayIndex(id)) {
+    id = uuid()
+  }
+  return id
+}
+
 /**
  * Merge one object with another.
  * This can be expensive, use as little as possible.

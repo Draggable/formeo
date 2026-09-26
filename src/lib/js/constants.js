@@ -1,5 +1,5 @@
 import pkg from '../../../package.json' with { type: 'json' }
-import { uuid } from './common/utils/index.mjs'
+import { nonIndexId, uuid } from './common/utils/index.mjs'
 
 export { default as BUNDLED_SVG_SPRITE } from '../../lib/icons/formeo-sprite.svg?raw'
 
@@ -232,7 +232,9 @@ export const iconPrefix = 'f-i-'
 
 export const DEFAULT_FORMDATA = () => ({
   id: uuid(),
-  stages: { [uuid()]: {} },
+  // a blank editor's first (and only) page: not index-like, or stages.reorder() would later refuse to reorder it
+  // and every other page dragged in after it (#122)
+  stages: { [nonIndexId()]: {} },
   rows: {},
   columns: {},
   fields: {},
