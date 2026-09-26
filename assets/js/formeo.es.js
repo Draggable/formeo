@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.4.0
+Version: 5.5.0
 Author: Draggable https://draggable.io
 */
 
@@ -6060,7 +6060,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.4.0";
+	version$2 = "5.5.0";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -8432,7 +8432,7 @@ var init_utils = __esmMin((() => {
 var formeo_sprite_default;
 var init_formeo_sprite = __esmMin((() => {
 	formeo_sprite_default = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><symbol id=\"f-i-autocomplete\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6,5h1v1H6V5z M4,4H3v1h1V4z M6,4H5v1h1V4z M2,5v1h1V5H2z M3,7h1V6H3V7z M5,7h1V6H5V7z M4,5v1h1V5H4z M2,14h1v-1H2V14z M4,14h1v-1H4V14z M6,14h1v-1H6V14z M9,13H8v1h1V13z M16,3.5v4C16,8.3,15.3,9,14.5,9H14v3v3c0,0.6-0.4,1-1,1H1c-0.6,0-1-0.4-1-1V3.5 C0,2.7,0.7,2,1.5,2h3H8V1.5V1H7H6V0.5V0h2.5H11v0.5V1h-1H9v0.5V2h3h2.5C15.3,2,16,2.7,16,3.5z M13,12H7H1v3h12V12z M3,11v-1H2v1H3z M5,11v-1H4v1H5z M15,3.5C15,3.2,14.8,3,14.5,3H9v2.5V8H8.5H8V7.5V7H7V6h1V5.5V5H7V4h1V3.5V3H1.5C1.2,3,1,3.2,1,3.5v4 C1,7.8,1.2,8,1.5,8H8v1H6v0.5V10h2.5H11V9.5V9H9V8h5.5C14.8,8,15,7.8,15,7.5V3.5z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-bin\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M4 10v20c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-20h-22zM10 28h-2v-14h2v14zM14 28h-2v-14h2v14zM18 28h-2v-14h2v14zM22 28h-2v-14h2v14zM26.5 4h-6.5v-2.5c0-.825-.675-1.5-1.5-1.5h-7c-.825 0-1.5.675-1.5 1.5v2.5h-6.5c-.825 0-1.5.675-1.5 1.5v2.5h26v-2.5c0-.825-.675-1.5-1.5-1.5zM18 4h-6v-1.975h6v1.975z\"/></symbol><symbol id=\"f-i-button\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"acprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"acprefix__rect4140\" d=\"M 0.4765625,4 A 0.47706934,0.47706934 0 0 0 0,4.4765625 L 0,11.523438 A 0.47706934,0.47706934 0 0 0 0.4765625,12 L 15.523438,12 A 0.47706934,0.47706934 0 0 0 16,11.523438 L 16,4.4765625 A 0.47706934,0.47706934 0 0 0 15.523438,4 L 0.4765625,4 Z m 0.4765625,0.953125 14.09375,0 0,6.09375 -14.09375,0 0,-6.09375 z\"/><g id=\"acprefix__layer1\"><g id=\"acprefix__text4203\"><g id=\"acprefix__g4212\" transform=\"translate(0.10112835,0.1001358)\"><path id=\"acprefix__path4208\" d=\"m 6.0690374,6.4093857 q -0.5371093,0 -0.8544922,0.4003906 -0.3149414,0.4003906 -0.3149414,1.0913086 0,0.6884766 0.3149414,1.0888672 0.3173829,0.4003906 0.8544922,0.4003906 0.5371094,0 0.8496094,-0.4003906 0.3149414,-0.4003906 0.3149414,-1.0888672 0,-0.690918 -0.3149414,-1.0913086 -0.3125,-0.4003906 -0.8496094,-0.4003906 z m 0,-0.4003906 q 0.7666016,0 1.225586,0.5151367 0.4589843,0.5126953 0.4589843,1.3769531 0,0.8618164 -0.4589843,1.3769531 -0.4589844,0.5126953 -1.225586,0.5126953 -0.7690429,0 -1.2304687,-0.5126953 -0.4589844,-0.5126953 -0.4589844,-1.3769531 0,-0.8642578 0.4589844,-1.3769531 0.4614258,-0.5151367 1.2304687,-0.5151367 z\"/><path id=\"acprefix__path4210\" d=\"m 8.5250921,6.074913 0.4931641,0 0,1.5405274 1.6357418,-1.5405274 0.634766,0 -1.809082,1.6992188 1.938477,1.9458008 -0.649415,0 -1.7504878,-1.7553711 0,1.7553711 -0.4931641,0 0,-3.6450196 z\"/></g></g></g></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-calendar\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.048 16.961c-0.178 0.257-0.395 0.901-0.652 1.059-0.257 0.157-0.547 0.267-0.869 0.328-0.323 0.062-0.657 0.089-1.002 0.079v1.527h2.467v6.046h1.991v-9.996h-1.584c-0.056 0.381-0.173 0.7-0.351 0.957zM23 8h2c0.553 0 1-0.448 1-1v-6c0-0.552-0.447-1-1-1h-2c-0.553 0-1 0.448-1 1v6c0 0.552 0.447 1 1 1zM7 8h2c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1h-2c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1zM30 4h-2v5c0 0.552-0.447 1-1 1h-6c-0.553 0-1-0.448-1-1v-5h-8v5c0 0.552-0.448 1-1 1h-6c-0.552 0-1-0.448-1-1v-5h-2c-1.104 0-2 0.896-2 2v24c0 1.104 0.896 2 2 2h28c1.104 0 2-0.896 2-2v-24c0-1.104-0.896-2-2-2zM30 29c0 0.553-0.447 1-1 1h-26c-0.552 0-1-0.447-1-1v-16c0-0.552 0.448-1 1-1h26c0.553 0 1 0.448 1 1v16zM15.985 17.982h4.968c-0.936 1.152-1.689 2.325-2.265 3.705-0.575 1.381-0.638 2.818-0.749 4.312h2.131c0.009-0.666-0.195-1.385-0.051-2.156 0.146-0.771 0.352-1.532 0.617-2.285 0.267-0.752 0.598-1.461 0.996-2.127 0.396-0.667 0.853-1.229 1.367-1.686v-1.742h-7.015v1.979z\"/></symbol><symbol id=\"f-i-checkbox\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M13.5,5v8c0,0.8-0.7,1.5-1.5,1.5H3c-0.8,0-1.5-0.7-1.5-1.5V4c0-0.8,0.7-1.5,1.5-1.5h9c0.7,0,1.3,0.5,1.5,1.2l2.4-1.4L13.5,5 z M12.5,6.2L7.7,12L2.8,5.5l4.9,1.6l4.8-2.9V4c0-0.3-0.2-0.5-0.5-0.5H3C2.7,3.5,2.5,3.7,2.5,4v9c0,0.3,0.2,0.5,0.5,0.5h9 c0.3,0,0.5-0.2,0.5-0.5V6.2z\"/></symbol><symbol id=\"f-i-checkbox-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M6,5v1h9V5H6z M15,14v-1H6v1H15z M6,10h9V9H6V10z M4,12l-2.5,1.5L0,13l1.5,2L4,12z M4,8 L1.5,9.5L0,9l1.5,2L4,8z M4,4L1.5,5.5L0,5l1.5,2L4,4z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-columns\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"agprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"agprefix__rect4860-3-5\" d=\"M 16,0.5 A 0.50004997,0.50004997 0 0 0 15.5,0 l -5,0 -5,0 -5,0 A 0.50004997,0.50004997 0 0 0 0,0.5 l 0,15 A 0.50004997,0.50004997 0 0 0 0.5,16 l 5,0 5,0 5,0 A 0.50004997,0.50004997 0 0 0 16,15.5 l 0,-15 z M 15,1 15,15 11,15 11,1 15,1 Z M 10,1 10,15 6,15 6,1 10,1 Z M 5,1 5,15 1,15 1,1 5,1 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-copy\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20 8v-8h-14l-6 6v18h12v8h20v-24h-12zM6 2.828v3.172h-3.172l3.172-3.172zM2 22v-14h6v-6h10v6l-6 6v8h-10zM18 10.828v3.172h-3.172l3.172-3.172zM30 30h-16v-14h6v-6h10v20z\"/></symbol><symbol id=\"f-i-divider\" viewBox=\"0 0 15 15\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aiprefix__metadata10\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><rect y=\"7\" x=\"0\" height=\"1\" width=\"15\" id=\"aiprefix__rect4182\"/></symbol><symbol viewBox=\"0 0 28 32\" id=\"f-i-edit\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M22 2l-4 4 6 6 4-4-6-6zM0 24l0.021 6.018 5.979-0.018 16-16-6-6-16 16zM6 28h-4v-4h2v2h2v2z\"/></symbol><symbol viewBox=\"0 0 24 24\" id=\"f-i-email\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12,2 C17.4292399,2 21.8479317,6.32667079 21.9961582,11.7200952 L22,12 L22,13 C22,15.1729208 20.477434,17 18.5,17 C17.3269391,17 16.3139529,16.3570244 15.6839382,15.3803024 C14.770593,16.3757823 13.4581934,17 12,17 C9.23857625,17 7,14.7614237 7,12 C7,9.23857625 9.23857625,7 12,7 C14.6887547,7 16.8818181,9.12230671 16.9953805,11.7831104 L17,12 L17,13 C17,14.1407877 17.7160103,15 18.5,15 C19.2447902,15 19.928229,14.2245609 19.9947109,13.1689341 L20,13 L20,12 C20,7.581722 16.418278,4 12,4 C7.581722,4 4,7.581722 4,12 C4,16.418278 7.581722,20 12,20 C13.1630948,20 14.2892822,19.7522618 15.3225159,19.2798331 C15.8247876,19.0501777 16.4181317,19.271177 16.647787,19.7734487 C16.8774423,20.2757205 16.656443,20.8690646 16.1541713,21.0987199 C14.861218,21.689901 13.4515463,22 12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 Z M12,9 C10.3431458,9 9,10.3431458 9,12 C9,13.6568542 10.3431458,15 12,15 C13.6568542,15 15,13.6568542 15,12 C15,10.3431458 13.6568542,9 12,9 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-floppy-disk\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M28 0h-28v32h32v-28l-4-4zM16 4h4v8h-4v-8zM28 28h-24v-24h2v10h18v-10h2.343l1.657 1.657v22.343z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aqprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"translate(0,-2)\" id=\"aqprefix__g4220\"><rect id=\"aqprefix__rect4191\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g><g transform=\"translate(0,2)\" id=\"aqprefix__g4220-6\"><rect id=\"aqprefix__rect4191-40\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2-3\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4-9\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-column\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 7h2v2H2zM7 7h2v2H7zM12 7h2v2h-2zM2 12h2v2H2zM7 12h2v2H7zM12 12h2v2h-2z\" transform=\"rotate(90 9.25 9.25)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-field\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.5-6.5h2v2h-2zm-5 0h2v2h-2zm5-5h2v2h-2zm-5 0h2v2h-2z\" transform=\"rotate(90)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-row\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 9.5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Zm10-5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-stage\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 4.5h2v2H2zM7 4.5h2v2H7zM12 4.5h2v2h-2zM2 9.5h2v2H2zM7 9.5h2v2H7zM12 9.5h2v2h-2zM2-.5h2v2H2zM7-.5h2v2H7zM12-.5h2v2h-2z\" transform=\"translate(0 2.5)\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-hash\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"arprefix__icomoon-ignore\"/><path d=\"M448 192v-64h-80.064l16-128h-64l-16 128h-127.968l16-128h-64l-16 128h-111.968v64h103.968l-15.968 128h-88v64h80l-16 128h64l16-128h127.968l-16 128h64.032l16-128h112v-64h-104l15.936-128h88.064zM279.968 320h-127.968l15.968-128h127.968l-15.968 128z\"/></symbol><symbol viewBox=\"0 0 28 28\" id=\"f-i-header\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M26.281 26q-0.688 0-2.070-0.055t-2.086-0.055q-0.688 0-2.063 0.055t-2.063 0.055q-0.375 0-0.578-0.32t-0.203-0.711q0-0.484 0.266-0.719t0.609-0.266 0.797-0.109 0.703-0.234q0.516-0.328 0.516-2.188l-0.016-6.109q0-0.328-0.016-0.484-0.203-0.063-0.781-0.063h-10.547q-0.594 0-0.797 0.063-0.016 0.156-0.016 0.484l-0.016 5.797q0 2.219 0.578 2.562 0.25 0.156 0.75 0.203t0.891 0.055 0.703 0.234 0.313 0.711q0 0.406-0.195 0.75t-0.57 0.344q-0.734 0-2.18-0.055t-2.164-0.055q-0.672 0-2 0.055t-1.984 0.055q-0.359 0-0.555-0.328t-0.195-0.703q0-0.469 0.242-0.703t0.562-0.273 0.742-0.117 0.656-0.234q0.516-0.359 0.516-2.234l-0.016-0.891v-12.703q0-0.047 0.008-0.406t0-0.57-0.023-0.602-0.055-0.656-0.102-0.57-0.172-0.492-0.25-0.281q-0.234-0.156-0.703-0.187t-0.828-0.031-0.641-0.219-0.281-0.703q0-0.406 0.187-0.75t0.562-0.344q0.719 0 2.164 0.055t2.164 0.055q0.656 0 1.977-0.055t1.977-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.266 0.68t-0.602 0.227-0.773 0.063-0.672 0.203q-0.547 0.328-0.547 2.5l0.016 5q0 0.328 0.016 0.5 0.203 0.047 0.609 0.047h10.922q0.391 0 0.594-0.047 0.016-0.172 0.016-0.5l0.016-5q0-2.172-0.547-2.5-0.281-0.172-0.914-0.195t-1.031-0.203-0.398-0.773q0-0.406 0.195-0.75t0.586-0.344q0.688 0 2.063 0.055t2.063 0.055q0.672 0 2.016-0.055t2.016-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.273 0.688t-0.625 0.227-0.805 0.047-0.688 0.195q-0.547 0.359-0.547 2.516l0.016 14.734q0 1.859 0.531 2.188 0.25 0.156 0.719 0.211t0.836 0.070 0.648 0.242 0.281 0.695q0 0.406-0.187 0.75t-0.562 0.344z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-hidden\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12h1v-1H0Zm15-7h1V4h-1zm-1 7h1v-1h-1zm-2 0h1v-1h-1zm-2 0h1v-1h-1Zm-2 0h1v-1H8Zm-2 0h1v-1H6Zm-2 0h1v-1H4Zm-2 0h1v-1H2Zm13-1h1v-1h-1ZM0 10h1V9H0Zm15-1h1V8h-1ZM0 8h1V7H0Zm15-1h1V6h-1ZM0 6h1V5H0Zm13-1h1V4h-1zm-2 0h1V4h-1ZM9 5h1V4H9ZM7 5h1V4H7ZM5 5h1V4H5ZM3 5h1V4H3ZM1 5h1V4H1Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 32 32\" id=\"f-i-info-circle\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m17.962 24.725 1.806.096v2.531h-7.534v-2.406l1.045-.094c.568-.063.916-.254.916-1.014v-8.801c0-.699-.188-.92-.791-.92l-1.106-.062v-2.626h5.666zM15.747 4.648c1.394 0 2.405 1.047 2.405 2.374 0 1.331-1.014 2.313-2.438 2.313-1.454 0-2.404-.982-2.404-2.313 0-1.327.95-2.374 2.437-2.374M16 32C7.178 32 0 24.822 0 16S7.178 0 16 0c8.82 0 16 7.178 16 16s-7.18 16-16 16m0-29C8.832 3 3 8.832 3 16s5.832 13 13 13 13-5.832 13-13S23.168 3 16 3\"/></symbol><symbol viewBox=\"0 0 384 512\" id=\"f-i-menu\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"avprefix__icomoon-ignore\"/><path d=\"M0 96v64h384v-64h-384zM0 288h384v-64h-384v64zM0 416h384v-64h-384v64z\"/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-minus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12L18 12\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M287.744 94.736v129.008h128v-64l96.256 96.256-96.256 96.24v-65.488h-128v129.008h64.496l-96.24 96.24-96.256-96.24h64v-129.008h-128v64.992l-95.744-95.744 95.744-95.744v63.488h128v-129.008h-62.496l94.752-94.736 94.752 94.736h-63.008z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move-vertical\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m 287.744,94.736 0,321.024 64.496,0 L 256,512 l -96.256,-96.24 64,0 0,-321.024 -62.496,0 L 256,0 350.752,94.736 Z\"/></symbol><symbol viewBox=\"0 0 20 28\" id=\"f-i-paragraph\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.969 2.953v1.141q0 0.453-0.289 0.953t-0.664 0.5q-0.781 0-0.844 0.016-0.406 0.094-0.5 0.484-0.047 0.172-0.047 1v18q0 0.391-0.281 0.672t-0.672 0.281h-1.687q-0.391 0-0.672-0.281t-0.281-0.672v-19.031h-2.234v19.031q0 0.391-0.273 0.672t-0.68 0.281h-1.687q-0.406 0-0.68-0.281t-0.273-0.672v-7.75q-2.297-0.187-3.828-0.922-1.969-0.906-3-2.797-1-1.828-1-4.047 0-2.594 1.375-4.469 1.375-1.844 3.266-2.484 1.734-0.578 6.516-0.578h7.484q0.391 0 0.672 0.281t0.281 0.672z\"/></symbol><symbol id=\"f-i-phone-receiver\" viewBox=\"0 0 578.106 578.106\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><g><g><path d=\"M577.83,456.128c1.225,9.385-1.635,17.545-8.568,24.48l-81.396,80.781 c-3.672,4.08-8.465,7.551-14.381,10.404c-5.916,2.857-11.729,4.693-17.439,5.508c-0.408,0-1.635,0.105-3.676,0.309 c-2.037,0.203-4.689,0.307-7.953,0.307c-7.754,0-20.301-1.326-37.641-3.979s-38.555-9.182-63.645-19.584 c-25.096-10.404-53.553-26.012-85.376-46.818c-31.823-20.805-65.688-49.367-101.592-85.68 c-28.56-28.152-52.224-55.08-70.992-80.783c-18.768-25.705-33.864-49.471-45.288-71.299 c-11.425-21.828-19.993-41.616-25.705-59.364S4.59,177.362,2.55,164.51s-2.856-22.95-2.448-30.294 c0.408-7.344,0.612-11.424,0.612-12.24c0.816-5.712,2.652-11.526,5.508-17.442s6.324-10.71,10.404-14.382L98.022,8.756 c5.712-5.712,12.24-8.568,19.584-8.568c5.304,0,9.996,1.53,14.076,4.59s7.548,6.834,10.404,11.322l65.484,124.236 c3.672,6.528,4.692,13.668,3.06,21.42c-1.632,7.752-5.1,14.28-10.404,19.584l-29.988,29.988c-0.816,0.816-1.53,2.142-2.142,3.978 s-0.918,3.366-0.918,4.59c1.632,8.568,5.304,18.36,11.016,29.376c4.896,9.792,12.444,21.726,22.644,35.802 s24.684,30.293,43.452,48.653c18.36,18.77,34.68,33.354,48.96,43.76c14.277,10.4,26.215,18.053,35.803,22.949 c9.588,4.896,16.932,7.854,22.031,8.871l7.648,1.531c0.816,0,2.145-0.307,3.979-0.918c1.836-0.613,3.162-1.326,3.979-2.143 l34.883-35.496c7.348-6.527,15.912-9.791,25.705-9.791c6.938,0,12.443,1.223,16.523,3.672h0.611l118.115,69.768 C571.098,441.238,576.197,447.968,577.83,456.128z\"/></g></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-plus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12H18M12 6V18\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"f-i-radio-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M5,6h10V5H5V6z M15,9H5v1h10V9z M15,14v-1H5v1H15z M1.5,7C0.7,7,0,6.3,0,5.5S0.7,4,1.5,4 S3,4.7,3,5.5S2.3,7,1.5,7z M1.5,5C1.2,5,1,5.2,1,5.5S1.2,6,1.5,6S2,5.8,2,5.5S1.8,5,1.5,5z M1.5,11.1C0.7,11.1,0,10.4,0,9.6 s0.7-1.5,1.5-1.5S3,8.7,3,9.6S2.3,11.1,1.5,11.1z M1.5,9.1C1.2,9.1,1,9.3,1,9.6s0.2,0.5,0.5,0.5S2,9.8,2,9.6S1.8,9.1,1.5,9.1z M1.5,15C0.7,15,0,14.3,0,13.5S0.7,12,1.5,12S3,12.7,3,13.5S2.3,15,1.5,15z M1.5,13C1.2,13,1,13.2,1,13.5S1.2,14,1.5,14 S2,13.8,2,13.5S1.8,13,1.5,13z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-remove\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M193.694-139.2h87.322v510.916h-87.322zM-18.103 159.92V72.597h510.915v87.322z\" transform=\"rotate(45 77.994 208.636)\"/></symbol><symbol id=\"f-i-rich-text\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M15,1H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14c0.6,0,1-0.4,1-1V2C16,1.4,15.6,1,15,1z M1,3.1h0.8v0.3H1V3.1z M1,3.6h0.8 v0.3H1V3.6z M15,14H1V5.1h14V14z M15,4.9H1V4.6h14V4.9z M15,4.4H1V4.1h0.8v0.2h1.5V4.1h1.3v0.2H6V4.1h1.3v0.2h1.5V4.1H10v0.2h1.5 V4.1h1.3v0.2h1.5V4.1H15V4.4z M4.5,3.6v0.3H3.3V3.6H4.5z M3.3,3.4V3.1h1.3v0.3H3.3z M7.3,3.6v0.3H6V3.6H7.3z M6,3.4V3.1h1.3v0.3H6z M10,3.6v0.3H8.8V3.6H10z M8.8,3.4V3.1H10v0.3H8.8z M12.8,3.6v0.3h-1.3V3.6H12.8z M11.5,3.4V3.1h1.3v0.3H11.5z M15,3.9h-0.8V3.6H15 V3.9z M15,3.4h-0.8V3.1H15V3.4z M15,2.9h-0.8V2.8h-1.5v0.2h-1.3V2.8H10v0.2H8.8V2.8H7.3v0.2H6V2.8H4.5v0.2H3.3V2.8H1.8v0.2H1V2.6h14 V2.9z M15,2.4H1V2.1h14V2.4z M3,12v-1h10v1H3z M13,10H3V9h10V10z M11,8H3V7h8V8z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-rows\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"bfprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"matrix(0,1,-1,0,3.0984025,11.835155)\" id=\"bfprefix__g7209\"><path id=\"bfprefix__rect4860-3-5\" d=\"m 4.1640625,-12.402344 a 0.50004997,0.50004997 0 0 0 -0.5,-0.5 l -5,0 -5,0 -5.0000005,0 a 0.50004997,0.50004997 0 0 0 -0.5,0.5 l 0,15.0000002 a 0.50004997,0.50004997 0 0 0 0.5,0.5 l 4.9648442,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 4.9648437,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 5,0 a 0.50004997,0.50004997 0 0 0 0.5,-0.5 l 0,-15.0000002 z m -1,0.5 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4.0000005,0 0,-14.0000002 4.0000005,0 z\"/></g></symbol><symbol id=\"f-i-select\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bgprefix__XMLID_1_\" d=\"M0,0v14h0c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1h0V5h4V0H0z M1,1h10v3H1V1z M1,7h10v3H1V7z M1,14v-3h10v3H1z M15,4h-3V1h3V4z M2,2h1v1H2V2z M2,12h1v1H2V12z M4,12h1v1H4V12z M6,12h1v1H6V12z M9,12v1H8v-1H9z M2,8h1v1H2V8z M4,8h1v1H4V8z M6,8 h1v1H6V8z M13.5,3.1l-1-1.1h1.9L13.5,3.1z M2,6V5h1v1H2L2,6z M4,6V5h1v1H4L4,6z\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-settings\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"bhprefix__icomoon-ignore\"/><path d=\"M223.969 175c-44.703 0-80.969 36.266-80.969 81 0 44.688 36.266 81.031 80.969 81.031 44.719 0 80.719-36.344 80.719-81.031-0-44.734-36-81-80.719-81zM386.313 302.531l-14.594 35.156 29.469 57.875-36.094 36.094-59.218-27.969-35.156 14.438-17.844 54.625-2.281 7.25h-51.016l-22.078-61.656-35.156-14.5-57.952 29.344-36.078-36.063 27.938-59.25-14.484-35.125-61.767-20.156v-50.984l61.703-22.109 14.485-35.094-25.953-51.234-3.422-6.719 36.031-36.031 59.297 27.922 35.109-14.516 17.828-54.594 2.297-7.234h51l22.094 61.734 35.063 14.516 58.031-29.406 36.063 36.031-27.938 59.203 14.438 35.172 61.875 20.125v50.969l-61.688 22.187z\"/></symbol><symbol id=\"f-i-text-input\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"biprefix__XMLID_10_\" d=\"M15,4H4.5V3H6V2H4.5h-1H2v1h1.5v1H1C0.4,4,0,4.5,0,5v6c0,0.6,0.4,1,1,1h2.5v1H2v1h4v-1H4.5v-1H15 c0.6,0,1-0.4,1-1V5C16,4.5,15.6,4,15,4z M1,11V5h2.5v6H1z M15,11H4.5V5H15V11z\"/></symbol><symbol id=\"f-i-textarea\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bjprefix__XMLID_1_\" d=\"M3,11v-1h8v1H3L3,11z M3,7h10V6H3V7L3,7z M3,8v1h10V8H3L3,8z M13,4H3v1h10V4L13,4z M16,14V2c0-0.6-0.4-1-1-1 H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14C15.6,15,16,14.6,16,14z M15,2v12H1V2H15z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-down\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12l11.992 11.992 11.992-11.992h-23.984z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-left\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 15.996l11.992 11.992v-23.984l-11.992 11.992z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-right\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0.002 4.008l11.992 11.992-11.992 11.992v-23.984z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-up\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M11.992 8l-11.992 11.992h23.984l-11.992-11.992z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-upload\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"boprefix__icomoon-ignore\"/><path d=\"M240 352h-240v128h480v-128h-240zM448 416h-64v-32h64v32zM112 160l128-128 128 128h-80v160h-96v-160z\"/></symbol></svg>";
-})), name, version$1, PACKAGE_NAME, formeoSpriteId, FALLBACK_SVG_SPRITE_URL, CSS_URL, FALLBACK_CSS_URL, PANEL_CLASSNAME, CONTROL_GROUP_CLASSNAME, STAGE_CLASSNAME, ROW_CLASSNAME, COLUMN_CLASSNAME, FIELD_CLASSNAME, CUSTOM_COLUMN_OPTION_CLASSNAME, COLUMN_PRESET_CLASSNAME, COLUMN_RESIZE_CLASSNAME, CHILD_CLASSNAME_MAP, INTERNAL_COMPONENT_TYPES, INTERNAL_COMPONENT_INDEX_TYPES, INTERNAL_COMPONENT_INDEX_REGEX, COMPONENT_TYPES, COMPONENT_INDEX_TYPES, COMPONENT_INDEX_TYPE_MAP, COMPONENT_TYPE_MAP, COMPONENT_TYPE_CONFIGS, COMPONENT_TYPE_CLASSNAMES, COMPONENT_TYPE_CLASSNAMES_LOOKUP, COMPONENT_TYPE_CLASSNAMES_ARRAY, COMPONENT_TYPE_CLASSNAMES_REGEXP, childTypeMapVals, childTypeIndexMapVals, parentTypeMap, CHILD_TYPE_MAP, CHILD_TYPE_INDEX_MAP, PARENT_TYPE_MAP, columnTemplates, COLUMN_TEMPLATES, SESSION_FORMDATA_KEY, SESSION_LOCALE_KEY, ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW, EVENT_FORMEO_SAVED, EVENT_FORMEO_UPDATED, EVENT_FORMEO_CHANGED, EVENT_FORMEO_UPDATED_STAGE, EVENT_FORMEO_UPDATED_ROW, EVENT_FORMEO_UPDATED_COLUMN, EVENT_FORMEO_UPDATED_FIELD, EVENT_FORMEO_CLEARED, EVENT_FORMEO_ON_RENDER, EVENT_FORMEO_CONDITION_UPDATED, EVENT_FORMEO_ADDED_ROW, EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_REMOVED_ROW, EVENT_FORMEO_REMOVED_COLUMN, EVENT_FORMEO_REMOVED_FIELD, COMPARISON_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS, CONDITION_INPUT_ORDER, CHECKABLE_OPTIONS, VISIBLE_OPTIONS, PROPERTY_OPTIONS, OPERATORS, conditionTypeThen, CONDITION_TEMPLATE, UUID_REGEXP, bsColRegExp, iconPrefix, DEFAULT_FORMDATA, CHECKED_TYPES, REVERSED_CHECKED_TYPES, FILTERED_PANEL_DATA_KEYS;
+})), name, version$1, PACKAGE_NAME, formeoSpriteId, FALLBACK_SVG_SPRITE_URL, CSS_URL, FALLBACK_CSS_URL, PANEL_CLASSNAME, CONTROL_GROUP_CLASSNAME, STAGE_CLASSNAME, ROW_CLASSNAME, COLUMN_CLASSNAME, FIELD_CLASSNAME, HIDDEN_BY_CONDITION_SELECTOR, CUSTOM_COLUMN_OPTION_CLASSNAME, COLUMN_PRESET_CLASSNAME, COLUMN_RESIZE_CLASSNAME, CHILD_CLASSNAME_MAP, INTERNAL_COMPONENT_TYPES, INTERNAL_COMPONENT_INDEX_TYPES, INTERNAL_COMPONENT_INDEX_REGEX, COMPONENT_TYPES, COMPONENT_INDEX_TYPES, COMPONENT_INDEX_TYPE_MAP, COMPONENT_TYPE_MAP, COMPONENT_TYPE_CONFIGS, COMPONENT_TYPE_CLASSNAMES, COMPONENT_TYPE_CLASSNAMES_LOOKUP, COMPONENT_TYPE_CLASSNAMES_ARRAY, COMPONENT_TYPE_CLASSNAMES_REGEXP, childTypeMapVals, childTypeIndexMapVals, parentTypeMap, CHILD_TYPE_MAP, CHILD_TYPE_INDEX_MAP, PARENT_TYPE_MAP, columnTemplates, COLUMN_TEMPLATES, SESSION_FORMDATA_KEY, SESSION_LOCALE_KEY, ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW, EVENT_FORMEO_SAVED, EVENT_FORMEO_UPDATED, EVENT_FORMEO_CHANGED, EVENT_FORMEO_UPDATED_STAGE, EVENT_FORMEO_UPDATED_ROW, EVENT_FORMEO_UPDATED_COLUMN, EVENT_FORMEO_UPDATED_FIELD, EVENT_FORMEO_CLEARED, EVENT_FORMEO_ON_RENDER, EVENT_FORMEO_CONDITION_UPDATED, EVENT_FORMEO_ADDED_ROW, EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_REMOVED_ROW, EVENT_FORMEO_REMOVED_COLUMN, EVENT_FORMEO_REMOVED_FIELD, COMPARISON_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS, CONDITION_INPUT_ORDER, CHECKABLE_OPTIONS, VISIBLE_OPTIONS, PROPERTY_OPTIONS, OPERATORS, conditionTypeThen, CONDITION_TEMPLATE, UUID_REGEXP, bsColRegExp, iconPrefix, DEFAULT_FORMDATA, CHECKED_TYPES, REVERSED_CHECKED_TYPES, FILTERED_PANEL_DATA_KEYS;
 var init_constants = __esmMin((() => {
 	init_package();
 	init_utils();
@@ -8450,6 +8450,7 @@ var init_constants = __esmMin((() => {
 	ROW_CLASSNAME = `${PACKAGE_NAME}-row`;
 	COLUMN_CLASSNAME = `${PACKAGE_NAME}-column`;
 	FIELD_CLASSNAME = `${PACKAGE_NAME}-field`;
+	HIDDEN_BY_CONDITION_SELECTOR = `[hidden]:not(.${STAGE_CLASSNAME})`;
 	CUSTOM_COLUMN_OPTION_CLASSNAME = "custom-column-widths";
 	COLUMN_PRESET_CLASSNAME = "column-preset";
 	COLUMN_RESIZE_CLASSNAME = "resizing-columns";
@@ -9876,12 +9877,12 @@ var init_dom = __esmMin((() => {
 		/**
 		* A required checkbox group needs at least one checked box, not every box.
 		* Every box stays `required` while none is checked; once one is checked none is.
-		* Boxes inside a hidden container are never required.
+		* Boxes inside a container a condition hid are never required; an inactive page is not such a container.
 		* @param {Element} groupElem wrapper holding the group's checkboxes
 		*/
 		syncCheckboxGroupRequired(groupElem) {
 			const boxes = Array.from(groupElem.querySelectorAll("input[type=\"checkbox\"]"));
-			const isHidden = Boolean(groupElem.closest("[hidden]"));
+			const isHidden = Boolean(groupElem.closest(HIDDEN_BY_CONDITION_SELECTOR));
 			const noneChecked = !boxes.some((box) => box.checked);
 			for (const box of boxes) box.required = !isHidden && noneChecked;
 		}
@@ -18205,6 +18206,32 @@ var processOptions = ({ editorContainer, renderContainer, formData, ...opts } = 
 		...processedOptions
 	};
 };
+var PAGINATION_TYPES = ["tabs", "wizard"];
+var PAGINATION_LABELS = {
+	previous: "Previous",
+	next: "Next",
+	page: "Page {n}"
+};
+/**
+* Expands the renderer's `pagination` option. `progress` only affects the wizard.
+* @param {String|Object} [pagination] 'tabs' | 'wizard' | { type, progress, labels: { previous, next, page } }
+* @return {{type: String, progress: Boolean, labels: {previous: String, next: String, page: String}}|null}
+* null when the option is missing or its type is unknown
+*/
+var normalizePagination = (pagination) => {
+	const opts = typeof pagination === "string" ? { type: pagination } : pagination;
+	if (!PAGINATION_TYPES.includes(opts?.type)) return null;
+	const { type, progress = true, labels } = opts;
+	const customLabels = Object.entries(labels ?? {}).filter(([, value]) => typeof value === "string");
+	return {
+		type,
+		progress: Boolean(progress),
+		labels: {
+			...PAGINATION_LABELS,
+			...Object.fromEntries(customLabels)
+		}
+	};
+};
 var baseId = (id) => {
 	return id.match(UUID_REGEXP)?.[0] || id;
 };
@@ -18356,11 +18383,11 @@ var suspendRequired = (elem) => {
 };
 /**
 * Undoes suspendRequired. Controls that were never suspended are left alone, and so are controls
-* still inside a hidden container: they keep their saved `required` until that container is shown.
+* still inside a container a condition hid: they keep their saved `required` until it is shown.
 * @param {Element} elem condition target
 */
 var restoreRequired = (elem) => {
-	for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) if (control._required !== void 0 && !control.closest("[hidden]")) {
+	for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) if (control._required !== void 0 && !control.closest(HIDDEN_BY_CONDITION_SELECTOR)) {
 		control.required = control._required;
 		delete control._required;
 	}
@@ -18381,6 +18408,289 @@ var groupIfConditions = (ifConditions = []) => ifConditions.reduce((groups, clau
 	return groups;
 }, []);
 //#endregion
+//#region src/lib/js/renderer/pagination.js
+init_constants();
+var CONTROLS = "input, select, textarea";
+var FOCUSABLE = "input:not([type=\"hidden\"]), select, textarea, button, a[href], [tabindex]:not([tabindex=\"-1\"])";
+var ENTER_NATIVE_TYPES = new Set([
+	"submit",
+	"button",
+	"reset",
+	"image",
+	"file"
+]);
+var nextTab = (index, count) => (index + 1) % count;
+var previousTab = (index, count) => (index - 1 + count) % count;
+var TAB_KEYS = {
+	ArrowRight: nextTab,
+	ArrowLeft: previousTab,
+	Home: () => 0,
+	End: (_index, count) => count - 1
+};
+var RTL_TAB_KEYS = {
+	...TAB_KEYS,
+	ArrowRight: previousTab,
+	ArrowLeft: nextTab
+};
+var paginatedForms = 0;
+/**
+* Creates an element with a class and text, leaving any other attributes to the caller
+* @param {String} tag
+* @param {String} className
+* @param {String} [text]
+* @return {HTMLElement}
+*/
+var create = (tag, className, text = "") => {
+	const elem = document.createElement(tag);
+	elem.className = className;
+	elem.textContent = text;
+	return elem;
+};
+/**
+* Moves focus to the first control a user can reach on a page, or to the page itself when it has none,
+* so that focus is never lost to the body
+* @param {HTMLElement} page
+*/
+var focusFirst = (page) => {
+	const target = Array.from(page.querySelectorAll(FOCUSABLE)).find((elem) => !elem.disabled && !elem.closest("[hidden]"));
+	if (target) {
+		target.focus();
+		return;
+	}
+	if (!page.hasAttribute("tabindex")) page.tabIndex = -1;
+	page.focus();
+};
+/**
+* Shows one stage of a rendered form at a time, as tabs or as a wizard
+* @param {HTMLFormElement} form rendered form
+* @param {{type: String, progress: Boolean, labels: Object}} options output of normalizePagination;
+*   `progress` only affects the wizard, adding a clickable step list above the pages
+* @param {Array<Object>} stages stage data in render order, for page titles
+* @param {Function} [onChange] called with (page, previousPage) whenever the page changes
+* @return {{show: Function, index: Number, count: Number}|null} null when there is only one page
+*/
+var paginate = (form, { type, progress, labels }, stages, onChange) => {
+	const pages = Array.from(form.children).filter((elem) => elem.classList.contains(STAGE_CLASSNAME));
+	if (pages.length < 2) return null;
+	const count = pages.length;
+	const last = count - 1;
+	let current = 0;
+	let tabs = [];
+	let steps = [];
+	let previous;
+	let next;
+	let status;
+	const stepState = (i) => i < current ? "done" : i === current ? "current" : "upcoming";
+	const update = () => {
+		pages.forEach((page, i) => {
+			page.hidden = i !== current;
+		});
+		tabs.forEach((tab, i) => {
+			tab.setAttribute("aria-selected", String(i === current));
+			tab.tabIndex = i === current ? 0 : -1;
+		});
+		if (type === "wizard") {
+			previous.disabled = current === 0;
+			next.hidden = current === last;
+			status.textContent = `${current + 1} / ${count}`;
+			steps.forEach((step, i) => {
+				step.dataset.state = stepState(i);
+				const button = step.querySelector("button");
+				if (i === current) button.setAttribute("aria-current", "step");
+				else button.removeAttribute("aria-current");
+			});
+		}
+	};
+	/**
+	* @param {Number} index page to show, clamped to the available pages
+	* @param {{focus: Boolean}} [options] focus the first control of the new page
+	*/
+	const show = (index, { focus = false } = {}) => {
+		const previousPage = current;
+		const parsed = Number(index);
+		current = Math.max(0, Math.min(Number.isFinite(parsed) ? Math.trunc(parsed) : 0, last));
+		update();
+		if (focus) focusFirst(pages[current]);
+		if (current !== previousPage) onChange?.(current, previousPage);
+	};
+	let checkingPage = false;
+	/**
+	* Checks the controls of a page the way native submit would, reporting the first invalid one.
+	* Only meaningful for the page currently on screen: `reportValidity` focuses and shows its bubble
+	* on the first invalid control in place, without moving the page.
+	* @param {HTMLElement} page
+	* @return {Boolean} true when every control on the page is valid
+	*/
+	const pageIsValid = (page) => {
+		checkingPage = true;
+		try {
+			return Array.from(page.querySelectorAll(CONTROLS)).every((control) => !control.willValidate || control.reportValidity());
+		} finally {
+			checkingPage = false;
+		}
+	};
+	/**
+	* Finds a page's first invalid control without triggering any native UI, so a still-hidden page
+	* can be checked before it is shown
+	* @param {HTMLElement} page
+	* @return {Element|null}
+	*/
+	const firstInvalidControl = (page) => {
+		checkingPage = true;
+		try {
+			return Array.from(page.querySelectorAll(CONTROLS)).find((control) => control.willValidate && !control.checkValidity()) ?? null;
+		} finally {
+			checkingPage = false;
+		}
+	};
+	/**
+	* Moves toward a target page. Clicking the current step is a no-op. Going back is unconditional.
+	* Moving forward validates every page from the current one up to (but not including) the target,
+	* in order, stopping at the first invalid one instead of reaching it:
+	*  - when that page is the current, still-visible one, `pageIsValid`'s own `reportValidity` calls
+	*    already focused and reported the problem in place, so nothing more happens here - showing the
+	*    page again would only steal focus back to its first control.
+	*  - when it's a later, still-hidden page, it's shown first without moving focus (a hidden
+	*    control can't take focus or show a bubble anyway), then its actual invalid control - not
+	*    necessarily the first one on the page - is reported directly, now that it can be seen.
+	* A `novalidate` form is never checked, just as native submit wouldn't check it.
+	* Shared by the Next button and the step list.
+	* @param {Number} target page to reach
+	*/
+	const goTo = (target) => {
+		if (target === current) return;
+		for (let i = current; i < target && !form.noValidate; i++) {
+			if (i === current) {
+				if (!pageIsValid(pages[i])) return;
+				continue;
+			}
+			const invalidControl = firstInvalidControl(pages[i]);
+			if (invalidControl) {
+				show(i);
+				checkingPage = true;
+				try {
+					invalidControl.reportValidity();
+				} finally {
+					checkingPage = false;
+				}
+				return;
+			}
+		}
+		show(target, { focus: true });
+	};
+	const goNext = () => goTo(current + 1);
+	const title = (i) => stages[i]?.config?.title || labels.page.replaceAll("{n}", String(i + 1));
+	if (type === "tabs") {
+		const tablist = create("nav", "formeo-pages-nav formeo-pages-tabs");
+		tablist.setAttribute("role", "tablist");
+		const idPrefix = `formeo-pages-${++paginatedForms}`;
+		tabs = pages.map((page, i) => {
+			page.dataset.stageId = page.id;
+			page.id = `${idPrefix}-page-${i + 1}`;
+			const tab = create("button", "formeo-pages-tab", title(i));
+			tab.type = "button";
+			tab.id = `${idPrefix}-tab-${i + 1}`;
+			tab.setAttribute("role", "tab");
+			tab.setAttribute("aria-controls", page.id);
+			tab.addEventListener("click", () => show(i));
+			page.setAttribute("role", "tabpanel");
+			page.tabIndex = 0;
+			page.setAttribute("aria-labelledby", tab.id);
+			return tab;
+		});
+		tablist.append(...tabs);
+		tablist.addEventListener("keydown", (event) => {
+			const index = tabs.indexOf(event.target);
+			const move = (tablist.ownerDocument.defaultView.getComputedStyle(tablist).direction === "rtl" ? RTL_TAB_KEYS : TAB_KEYS)[event.key];
+			if (index === -1 || !move) return;
+			event.preventDefault();
+			const target = move(index, count);
+			show(target);
+			tabs[target].focus();
+		});
+		form.prepend(tablist);
+	} else {
+		if (progress) {
+			const stepList = document.createElement("ol");
+			stepList.className = "formeo-pages-steps";
+			steps = pages.map((_page, i) => {
+				const step = document.createElement("li");
+				step.className = "formeo-pages-step";
+				const button = create("button", "", title(i));
+				button.type = "button";
+				button.addEventListener("click", () => goTo(i));
+				step.append(button);
+				return step;
+			});
+			stepList.append(...steps);
+			form.prepend(stepList);
+		}
+		previous = create("button", "formeo-pages-previous", labels.previous);
+		previous.type = "button";
+		previous.addEventListener("click", () => show(current - 1, { focus: true }));
+		status = create("span", "formeo-pages-status");
+		status.setAttribute("aria-live", "polite");
+		next = create("button", "formeo-pages-next", labels.next);
+		next.type = "button";
+		next.addEventListener("click", goNext);
+		const bar = create("div", "formeo-pages-nav formeo-pages-wizard");
+		bar.setAttribute("role", "group");
+		bar.append(previous, status, next);
+		form.append(bar);
+		form.addEventListener("keydown", (event) => {
+			const { target } = event;
+			if (event.key !== "Enter" || event.isComposing || event.defaultPrevented || current === last || target.tagName !== "INPUT" || ENTER_NATIVE_TYPES.has(target.type)) return;
+			event.preventDefault();
+			goNext();
+		});
+	}
+	let reporting = false;
+	const markReported = () => {
+		reporting = true;
+		queueMicrotask(() => {
+			reporting = false;
+		});
+	};
+	const withReportedValidation = (call) => {
+		reporting = true;
+		try {
+			return call();
+		} finally {
+			reporting = false;
+		}
+	};
+	const ownerDocument = form.ownerDocument;
+	ownerDocument.addEventListener("click", ({ target }) => {
+		const control = target.closest?.("button, input");
+		if (control?.form !== form) return;
+		if (control?.type === "submit" || control?.tagName === "INPUT" && control.type === "image") markReported();
+	}, true);
+	ownerDocument.addEventListener("keydown", ({ key, target }) => {
+		if (key === "Enter" && target.tagName === "INPUT" && target.form === form) markReported();
+	}, true);
+	for (const method of ["requestSubmit", "reportValidity"]) {
+		const native = HTMLFormElement.prototype[method];
+		if (typeof native !== "function") continue;
+		form[method] = function(...args) {
+			return withReportedValidation(() => native.apply(this, args));
+		};
+	}
+	form.addEventListener("invalid", ({ target }) => {
+		if (checkingPage || !reporting) return;
+		const firstInvalid = Array.from(form.elements).find((elem) => elem.willValidate && !elem.validity.valid);
+		const index = pages.findIndex((page) => page.contains(firstInvalid || target));
+		if (index !== -1) show(index);
+	}, true);
+	update();
+	return {
+		show,
+		get index() {
+			return current;
+		},
+		count
+	};
+};
+//#endregion
 //#region src/lib/js/renderer/index.js
 init_dom();
 init_loaders();
@@ -18389,14 +18699,35 @@ init_string();
 init_constants();
 var FormeoRenderer$1 = class {
 	constructor(opts = {}, formDataArg) {
-		const { renderContainer: container, elements, formData, config, events } = processOptions(opts);
+		const { renderContainer: container, elements, formData, config, events, pagination } = processOptions(opts);
 		this.container = container;
 		this.form = cleanFormData(formDataArg || formData);
 		this.elements = elements;
 		this.config = config;
 		this.events = { ...events };
+		this.pagination = normalizePagination(pagination);
 		this.components = Object.create(null);
 		this.dom = dom;
+	}
+	/**
+	* Index of the page on show when the `pagination` option splits the form's stages into pages
+	* @return {Number} 0 without pagination
+	*/
+	get page() {
+		return this.pager?.index ?? 0;
+	}
+	/**
+	* Shows a page without validating the one being left. Out-of-range indexes are clamped.
+	* @param {Number} index
+	*/
+	set page(index) {
+		this.pager?.show(index);
+	}
+	/**
+	* @return {Number} number of pages, 1 when the form is not paginated
+	*/
+	get pageCount() {
+		return this.pager?.count ?? 1;
 	}
 	get formData() {
 		return this.form;
@@ -18497,7 +18828,23 @@ var FormeoRenderer$1 = class {
 		this.renderedForm.addEventListener("reset", this.syncRequiredGroupsAfterReset);
 		this.applyConditions();
 		this.bindFormEvents(this.renderedForm);
+		this.pager = this.paginateForm(this.renderedForm);
 		return this.renderedForm;
+	}
+	/**
+	* Splits a freshly rendered <form> into pages when the `pagination` option is set
+	* @param {HTMLFormElement} form
+	* @return {Object|null} the pager, or null when the form is shown as one page
+	*/
+	paginateForm(form) {
+		if (!this.pagination) return null;
+		const onChange = (page, previousPage) => this.events.onPageChange?.({
+			page,
+			previousPage,
+			form,
+			renderer: this
+		});
+		return paginate(form, this.pagination, Object.values(this.form.stages), onChange);
 	}
 	/**
 	* A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
