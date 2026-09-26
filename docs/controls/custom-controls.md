@@ -84,13 +84,13 @@ contribute upstream). Consumers of the published package should use the plain-ob
 ## Register it
 
 Pass either form to `controls.elements` when creating the editor. A plain object is wrapped in `Control`
-automatically; a subclass is instantiated for you:
+automatically; a subclass (source checkouts only) is instantiated for you:
 
 ```javascript
 const formeo = new FormeoEditor({
   editorContainer: '.formeo-editor',
   controls: {
-    elements: [ImageAnnotateControl], // or [imageAnnotateControl]
+    elements: [imageAnnotateControl], // or [ImageAnnotateControl] from a source checkout
     elementOrder: {
       common: ['image-annotate'],
     },
@@ -105,7 +105,7 @@ the control's `meta.id` via the `elements` option:
 
 ```javascript
 const renderer = new FormeoRenderer({
-  renderContainer: '.formeo-render',
+  renderContainer: '#formeo-renderer',
   elements: {
     'image-annotate': {
       dependencies: { js: 'https://cdn.example.com/annotate.min.js' },

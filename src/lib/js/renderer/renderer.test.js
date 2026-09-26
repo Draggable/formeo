@@ -918,7 +918,7 @@ describe('FormeoRenderer', () => {
       const seen = []
       const renderer = new FormeoRenderer({
         renderContainer: container,
-        elements: { 'image-annotate': { action: { onRender: elem => seen.push(elem.id) } } },
+        elements: { 'image-annotate': { action: { onRender: elem => seen.push(elem) } } },
       })
       renderer.render({
         id: 'custom-form',
@@ -929,13 +929,17 @@ describe('FormeoRenderer', () => {
           'annotate-1': {
             id: 'annotate-1',
             tag: 'div',
+            attrs: { className: 'image-annotate' },
             config: { label: 'Annotate', controlId: 'image-annotate' },
             children: [{ tag: 'input', attrs: { type: 'hidden', name: 'annotation', value: '' } }],
           },
         },
       })
       await new Promise(resolve => window.requestAnimationFrame(resolve))
-      assert.ok(seen.includes('f-annotate-1'))
+      const elem = seen.find(el => el.id === 'f-annotate-1')
+      assert.ok(elem, 'onRender ran for the custom control')
+      // docs/controls/custom-controls.md passes elem straight to the library, so elem must be the control itself
+      assert.ok(elem.classList.contains('image-annotate'))
       assert.equal(renderer.userData.annotation, '')
     })
   })
