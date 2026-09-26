@@ -40,7 +40,7 @@ if (editor.isReady) {
 
 ### `editor.whenReady()`
 
-Returns a Promise that resolves when the editor reaches the `ready` state. This is the recommended way to wait for initialization. It rejects with `Error('Editor initialization failed')` if initialization fails, and with `Error('Editor was destroyed')` if the editor is destroyed before or while it initializes, including a `whenReady()` that was already waiting.
+Returns a Promise that resolves when the editor reaches the `ready` state. This is the recommended way to wait for initialization. If initialization fails, it rejects with the error that stopped it when `whenReady()` was already waiting on the editor's controls, and otherwise with `Error('Editor initialization failed')`. It rejects with `Error('Editor was destroyed')` if the editor is destroyed before or while it initializes, including a `whenReady()` that was already waiting.
 
 ```javascript
 const editor = new FormeoEditor(options, formData)
@@ -218,7 +218,7 @@ After `destroy()`, `initState` is `'destroyed'` and `isDestroyed` is `true`. Non
 
 `formData` and `json` return an empty form after `destroy()`, so read `formData` before calling it if you need the form.
 
-`render()`, `load()`, `loadData()` and `clear()` do nothing, and `whenReady()` rejects with `Error('Editor was destroyed')`, including a `whenReady()` that was waiting when the editor was destroyed. `i18n.setLang()` doesn't re-render a destroyed editor, though it still changes the page-wide language; on an editor destroyed before it was ready, `editor.i18n` is `undefined`. An editor destroyed before it is ready never renders, and one destroyed from its own `onLoad` or `formeoLoaded` callback stays destroyed. `destroy()` is safe to call more than once.
+`render()`, `load()`, `loadData()` and `clear()` do nothing, and `whenReady()` rejects with `Error('Editor was destroyed')`, including a `whenReady()` that was waiting when the editor was destroyed. `i18n.setLang()` doesn't re-render a destroyed editor, though it still changes the page-wide language; `editor.i18n` is only set once the editor's controls are built, so it is `undefined` on an editor destroyed before that point. An editor destroyed before it is ready never renders, and one destroyed from its own `onLoad` or `formeoLoaded` callback stays destroyed. `destroy()` is safe to call more than once.
 
 Current limit: `destroy()` releases the components and controls the editor holds when it is called. When `clear()`, `load()`, `loadData()`, assigning `formData` or `i18n.setLang()` replaced components or controls earlier, the drag-and-drop instances and resize observers of the replaced ones are not released yet.
 
