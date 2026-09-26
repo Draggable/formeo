@@ -1,23 +1,21 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
-import actions from '../../common/actions.js'
 import dom from '../../common/dom.js'
-import events from '../../common/events.js'
 import { indexOfNode, orderObjectsBy } from '../../common/helpers.mjs'
 import { clone, match, merge, unique } from '../../common/utils/index.mjs'
 import { get, set } from '../../common/utils/object.mjs'
 import { CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME } from '../../constants.js'
 import Panels from '../panels.js'
-import Rows from '../rows/index.js'
-import Stages from '../stages/index.js'
 import Control from './control.js'
 import defaultOptions from './options.js'
 
 /**
- *
+ * One editor's control panel. `components` is the editor's Components; it is set by the
+ * constructor or by assigning this instance to `components.controls`.
  */
 export class Controls {
-  constructor() {
+  constructor(components = null) {
+    this.components = components
     this.data = new Map()
 
     this.buttonActions = {
@@ -57,6 +55,8 @@ export class Controls {
       const control = isControlClass ? new Element() : new Control(Element)
 
       this.add(control)
+      // set after add(), which deep-clones the control
+      control.controls = this
       this.controls.push(control.dom)
 
       // the control may have dependencies so we need to resolve them asynchronously
@@ -159,15 +159,15 @@ export class Controls {
       className: ['clear-form'],
       action: {
         click: evt => {
-          if (Rows.size) {
-            events.confirmClearAll({
+          if (this.components.rows.size) {
+            this.components.events.confirmClearAll({
               confirmationMessage: i18n.get('confirmClearAll'),
               clearAllAction: () => {
-                Stages.clearAll().then(() => {
+                this.components.stages.clearAll().then(() => {
                   const evtData = {
                     src: evt.target,
                   }
-                  events.formeoCleared(evtData)
+                  this.components.events.formeoCleared(evtData)
                 })
               },
               btnCoords: dom.coords(evt.target),
@@ -183,19 +183,17 @@ export class Controls {
       ...dom.btnTemplate({ content: [dom.icon('floppy-disk'), i18n.get('save')], title: i18n.get('save') }),
       className: ['save-form'],
       action: {
-        click: async ({ target }) => {
-          // Dynamic import to avoid circular dependency
-          const { default: Components } = await import('../index.js')
-          const { formData } = Components
+        click: ({ target }) => {
+          const { formData } = this.components
           const saveEvt = {
             action: () => {},
             coords: dom.coords(target),
             message: '',
             button: target,
           }
-          actions.click.btn(saveEvt)
+          this.components.actions.click.btn(saveEvt)
 
-          return actions.save.form(formData)
+          return this.components.actions.save.form(formData)
         },
       },
     }
@@ -304,7 +302,7 @@ export class Controls {
             // Dynamically import Field to avoid circular dependency
             import('../fields/field.js').then(({ default: Field }) => {
               clone.innerHTML = ''
-              clone.appendChild(new Field(controlData).preview)
+              clone.appendChild(new Field(controlData, this.components).preview)
             })
           }
         },
@@ -346,7 +344,7 @@ export class Controls {
   }
 
   layoutTypes = {
-    row: () => Stages.active.addChild(),
+    row: () => this.components.stages.active.addChild(),
     column: () => this.layoutTypes.row().addChild(),
     field: controlData => this.layoutTypes.column().addChild(controlData),
   }
@@ -388,4 +386,5 @@ export class Controls {
   }
 }
 
+// standalone instance for existing tests; components/index.js wires it into the legacy default Components
 export default new Controls()

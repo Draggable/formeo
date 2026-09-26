@@ -4,7 +4,6 @@ import { indexOfNode } from '../../common/helpers.mjs'
 import { fetchDependencies } from '../../common/loaders.js'
 import { uuid } from '../../common/utils/index.mjs'
 import { CONTROL_GROUP_CLASSNAME } from '../../constants.js'
-import controls from './index.js'
 
 export default class Control {
   controlCache = new Set()
@@ -47,12 +46,12 @@ export default class Control {
         // will auto navigated between the groups
         focus: ({ target }) => {
           const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`)
-          return group && controls.panels.nav.refresh(indexOfNode(group))
+          return group && this.controls.panels.nav.refresh(indexOfNode(group))
         },
         click: ({ target }) => {
           const controlId = target.closest('.field-control')?.id
           if (controlId) {
-            controls.addElement(controlId)
+            this.controls.addElement(controlId)
           }
         },
       },

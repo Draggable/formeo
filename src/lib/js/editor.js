@@ -2,13 +2,13 @@ import '../sass/formeo.scss'
 import { enUS } from '@draggable/formeo-languages'
 import i18n from '@draggable/i18n'
 import { SmartTooltip } from '@draggable/tooltip'
-import Actions from './common/actions.js'
+import { Actions } from './common/actions.js'
 import dom from './common/dom.js'
-import Events from './common/events.js'
+import { Events } from './common/events.js'
 import { fetchFormeoStyle, fetchIcons } from './common/loaders.js'
 import { cleanFormData, clone, merge, sessionStorage } from './common/utils/index.mjs'
-import Controls from './components/controls/index.js'
-import Components from './components/index.js'
+import { Controls } from './components/controls/index.js'
+import { Components } from './components/index.js'
 import { defaults } from './config.js'
 import { DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, SESSION_LOCALE_KEY } from './constants.js'
 
@@ -46,19 +46,17 @@ export class FormeoEditor {
     this.editorContainerOption = editorContainer
     this.opts = opts
     dom.setOptions = opts
-    Components.config = config
 
     // Lock user data immediately - this prevents race conditions during async init
     const providedData = userFormData || formData
     this.#lockedFormData = providedData ? cleanFormData(providedData) : null
     this.userFormData = this.#lockedFormData // backward compat
 
-    this.Components = Components
     this.dom = dom
-    Events.init({ debug, ...events })
-    Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
-    // events.js no longer registers this at import time; temporary until per-editor wiring (#152)
-    window.addEventListener('resize', Events.onResizeWindow)
+    this.events = new Events().init({ debug, ...events })
+    this.actions = new Actions(this.events).init({ debug, sessionStorage: opts.sessionStorage, ...actions })
+    this.Components = new Components({ events: this.events, actions: this.actions })
+    this.Components.config = config
 
     // Load remote resources such as css and svg sprite
     if (document.readyState === 'loading') {
@@ -152,9 +150,11 @@ export class FormeoEditor {
 
     this.#initState = INIT_STATES.INITIALIZING
 
-    this.#initPromise = Controls.init(this.opts.controls, this.opts.stickyControls)
+    this.#initPromise = new Controls(this.Components)
+      .init(this.opts.controls, this.opts.stickyControls)
       .then(controls => {
         this.controls = controls
+        this.Components.controls = controls
 
         // Only load data on FIRST init - prevents race condition
         if (!this.#dataLoadedOnce) {
@@ -162,12 +162,15 @@ export class FormeoEditor {
           this.#dataLoadedOnce = true
         }
 
-        this.formId = Components.get('id')
+        this.formId = this.Components.get('id')
         this.i18n = {
           setLang: this.#setLanguage.bind(this),
         }
 
         this.render()
+        // kept on the instance so destroy() (#166) can remove it
+        this.onResize = this.events.onResizeWindow
+        window.addEventListener('resize', this.onResize)
         this.#initState = INIT_STATES.READY
         this.opts.onLoad?.(this)
         this.tooltipInstance = new SmartTooltip()
@@ -200,7 +203,8 @@ export class FormeoEditor {
    * @return {Promise}
    */
   async #refreshUI() {
-    this.controls = await Controls.init(this.opts.controls, this.opts.stickyControls)
+    this.controls = await new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls)
+    this.Components.controls = this.controls
     this.render()
     return this
   }
@@ -297,7 +301,7 @@ export class FormeoEditor {
       return globalThis.requestAnimationFrame(() => this.render())
     }
 
-    this.stages = Object.values(Components.get('stages'))
+    this.stages = Object.values(this.Components.get('stages'))
     if (this.opts.controlOnLeft) {
       for (const stage of this.stages) {
         stage.dom.style.order = 1
@@ -340,7 +344,7 @@ export class FormeoEditor {
       this.editorContainer.appendChild(this.editor)
     }
 
-    Events.formeoLoaded(this)
+    this.events.formeoLoaded(this)
   }
 }
 
