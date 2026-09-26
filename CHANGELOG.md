@@ -1,3 +1,10 @@
+## [5.3.2](https://github.com/Draggable/formeo/compare/v5.3.1...v5.3.2) (2026-09-26)
+
+
+### Bug Fixes
+
+* honour lockedAttrs and disabledAttrs from control definitions ([2939739](https://github.com/Draggable/formeo/commit/293973988c563136c0e20e8c6ebede6b892856d4)), closes [#116](https://github.com/Draggable/formeo/issues/116) [#159](https://github.com/Draggable/formeo/issues/159)
+
 ## [5.3.1](https://github.com/Draggable/formeo/compare/v5.3.0...v5.3.1) (2026-09-26)
 
 
