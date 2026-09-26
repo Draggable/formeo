@@ -9,6 +9,7 @@ The `FormeoRenderer` class is responsible for rendering Formeo form data into in
 - [Constructor](#constructor)
 - [Properties](#properties)
 - [Methods](#methods)
+- [Events](#events)
 - [Working with User Data](#working-with-user-data)
 - [Conditional Logic](#conditional-logic)
 - [Examples](#examples)
@@ -16,7 +17,7 @@ The `FormeoRenderer` class is responsible for rendering Formeo form data into in
 ## Installation
 
 ```javascript
-import FormeoRenderer from './path/to/renderer/index.js'
+import { FormeoRenderer } from 'formeo'
 ```
 
 ## Basic Usage
@@ -49,6 +50,8 @@ Creates a new FormeoRenderer instance.
   - `elements` (Object): Custom form elements/controls configuration
   - `formData` (Object): The form structure data to render
   - `config` (Object): Additional rendering configuration
+    - `attrs` (Object): Attributes for the rendered `<form>`, e.g. `method`, `action`, `enctype`, `novalidate`
+  - `events` (Object): `onRender`, `onChange`, `onSubmit` callbacks (see [Events](#events))
 - `formDataArg` (Object, optional): Alternative way to pass form data
 
 **Example:**
@@ -184,6 +187,60 @@ const formElement = renderer.getRenderedForm()
 document.body.appendChild(formElement)
 ```
 
+## Events
+
+Pass an `events` object to the constructor to run code when the form renders, when a field changes, and when the form is submitted.
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: document.getElementById('form-container'),
+  formData: myFormData,
+  events: {
+    onRender: ({ form, renderer, formData }) => {
+      // form is already attached to renderContainer
+      console.log('rendered', form)
+    },
+    onChange: ({ event, target, form, userData }) => {
+      console.log('field changed', target.name, userData)
+    },
+    onSubmit: ({ event, form, userData }) => {
+      event.preventDefault() // the app decides whether/how to prevent the default submit
+      console.log('submitted', userData)
+    },
+  },
+})
+
+renderer.render()
+```
+
+### `onRender({ form, renderer, formData })`
+
+Fires synchronously after `render()` attaches the rendered `<form>` to `renderContainer`. Because `render()` is synchronous, code that runs right after calling it already sees the attached form; `onRender` is useful when that code lives elsewhere, such as inside the `events` object itself. It does **not** fire when reading `html` or calling `getRenderedForm()` directly, since neither attaches the form to the container.
+
+### `onChange({ event, target, form, userData })`
+
+Fires on every `input` event within the rendered form, including one fired by a condition's `value` action after the form has rendered. The conditions applied while rendering don't fire it. `userData` has the same shape as `renderer.userData` and is read from the form the event came from, at the time of the event.
+
+### `onSubmit({ event, form, userData })`
+
+Fires on the form's native `submit` event. Formeo does not call `event.preventDefault()` for you — the app decides whether to stop the browser's default submission and how to handle `userData`.
+
+### Legacy: `config.action.onRender`
+
+`config.action.onRender` is still supported for backwards compatibility. Unlike `events.onRender`, it runs on the next animation frame after the form has been attached to the page (see `dom.onRender`), rather than synchronously:
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: document.getElementById('form-container'),
+  formData: myFormData,
+  config: {
+    action: {
+      onRender: form => console.log('form is in the page', form),
+    },
+  },
+})
+```
+
 ## Working with User Data
 
 ### Retrieving User Data
@@ -282,6 +339,38 @@ renderer.userData = { size: 'medium' }
 const data = renderer.userData
 // { size: 'medium' }
 ```
+
+### File uploads
+
+The File Upload control renders a standard `<input type="file">`. Formeo doesn't upload anything itself; your app sends the file.
+
+- `C:\fakepath\cv.pdf` is how browsers show a file input's `value`. The file itself is in the form's `FormData`.
+- `renderer.userData` holds `File` objects for file inputs, and `JSON.stringify` turns a `File` into `{}`. Send `FormData` instead:
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: '#formeo-renderer',
+  events: {
+    onSubmit: ({ event, form }) => {
+      event.preventDefault()
+      // don't set Content-Type: the browser adds the multipart boundary
+      fetch('/upload', { method: 'POST', body: new FormData(form) })
+    },
+  },
+})
+renderer.render(formData)
+```
+
+For a regular (non-JavaScript) submit, set the form attributes:
+
+```javascript
+new FormeoRenderer({
+  renderContainer: '#formeo-renderer',
+  config: { attrs: { method: 'post', enctype: 'multipart/form-data', action: '/upload' } },
+})
+```
+
+Give the upload field a `name` attribute in the editor to control the key your server receives.
 
 ## Conditional Logic
 
@@ -413,7 +502,7 @@ Both examples are covered by tests in `src/lib/js/renderer/conditions.test.js`.
 ### Example 1: Basic Form Rendering
 
 ```javascript
-import FormeoRenderer from './renderer/index.js'
+import { FormeoRenderer } from 'formeo'
 
 const formData = {
   id: 'my-form',
@@ -454,6 +543,7 @@ form.addEventListener('submit', (e) => {
   console.log('Structured data:', userFormData)
 
   // Submit to API
+  // Forms with file inputs: send new FormData(form) instead (see File uploads)
   fetch('/api/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -531,6 +621,7 @@ form.addEventListener('submit', async (e) => {
 
   // Process submission
   try {
+    // Forms with file inputs: send new FormData(form) instead (see File uploads)
     const response = await fetch('/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -33,8 +33,9 @@ const editor = new FormeoEditor({
 | -------------------- | -------- | ---------------------------------------- |
 | `formeoLoaded`       | Function | Fires when Formeo loads                  |
 | `onAdd`              | Function | Fires when element is added              |
+| `onRemove`           | Function | Fires when a row, column or field is removed |
 | `onChange`           | Function | Fires when form data changes             |
-| `onUpdate`           | Function | Fires when form is updated (all changes) |
+| `onUpdate`           | Function | Fires when form data changes, including removals (throttled; receives the whole formData as detail) |
 | `onUpdateStage`      | Function | Fires when stage is updated              |
 | `onUpdateRow`        | Function | Fires when row is updated                |
 | `onUpdateColumn`     | Function | Fires when column is updated             |
@@ -112,6 +113,8 @@ Events include detailed information about what changed:
   }
 }
 ```
+
+Removals use `changeType: 'removed'`. When a row, column or field is removed the detail also has `componentId` and `componentType`, and `changePath` points at the parent's children list.
 
 ## onChange vs onUpdate
 

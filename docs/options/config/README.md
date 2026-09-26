@@ -101,3 +101,19 @@ Here are a few things you can do with the `config` option.
   }
 }
 ```
+
+### Stop users removing the required attribute
+
+```javascript
+new FormeoEditor({
+  editorContainer: '#formeo-editor',
+  config: {
+    fields: {
+      all: { panels: { attrs: { locked: ['required'] } } }, // every field
+      // 'text-input': { … } // one control type, or use a field id for one field
+    },
+  },
+})
+```
+
+Locked attributes can't be removed from the edit panel. If one was removed before you locked it, add it back with **+ Attribute** (name `required`, value `true`).

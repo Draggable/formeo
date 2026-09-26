@@ -9,8 +9,7 @@ If you're having trouble please don't hesitate to open Issue [here](https://gith
 ### Dependencies
 To develop for Formeo you'll need:
 
-- [NodeJS](https://nodejs.org)
-- [Webpack](https://webpack.github.io/)
+- Node.js 22.12 or newer (the floor both Vite and `npm test`'s native test runner support)
 
 ### Recommended Tooling
 While not required, the following tools are recommended to maintain code quality and consistency in style.
@@ -27,7 +26,22 @@ npm install
 npm start
 ```
 
-The above code will clone the repo, install the required `node_modules` and run the npm `start` task. You should now have a locally running version of the demo accessible at [http://localhost:8080/](http://localhost:8080/).
+The above code will clone the repo, install the required `node_modules` and run the npm `start` task (a Vite dev server). You should now have a locally running version of the demo accessible at [http://localhost:5173/](http://localhost:5173/).
+
+### Running tests
+
+```
+npm test               # unit tests (Node.js native test runner)
+npm run playwright:test  # e2e tests
+```
+
+### Git hooks
+
+[Lefthook](https://github.com/evilmartians/lefthook) runs automatically:
+
+- **pre-commit**: Biome linting/formatting on staged files
+- **commit-msg**: validates the commit message follows [Conventional Commits](https://www.conventionalcommits.org/)
+- **pre-push**: the full test suite (`npm test`)
 
 ## Notes
 Windows users, remember to configure your line endings with `core.autocrlf`. More info [here](https://help.github.com/articles/dealing-with-line-endings/#platform-windows)

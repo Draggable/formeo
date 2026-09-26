@@ -8,6 +8,8 @@ describe('FormeoRenderer', () => {
   let document
   let window
   let container
+  // the value condition action dispatches `new Event(...)`, which jsdom only accepts from its own window
+  const nativeEvent = global.Event
 
   beforeEach(() => {
     // Set up JSDOM environment
@@ -26,6 +28,7 @@ describe('FormeoRenderer', () => {
     global.HTMLFormElement = window.HTMLFormElement
     global.Node = window.Node
     global.FormData = window.FormData
+    global.Event = window.Event
 
     container = document.getElementById('container')
   })
@@ -39,6 +42,7 @@ describe('FormeoRenderer', () => {
     delete global.HTMLFormElement
     delete global.Node
     delete global.FormData
+    global.Event = nativeEvent
   })
 
   describe('userFormData getter', () => {
@@ -658,6 +662,292 @@ describe('FormeoRenderer', () => {
       assert.equal(userFormData.length, 2)
       assert.equal(userFormData[0].value, userData['f-field-1'])
       assert.equal(userFormData[1].value, userData['f-field-2'])
+    })
+  })
+
+  describe('events option (#209)', () => {
+    const textFormData = () => ({
+      id: 'events-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['nickname'] } },
+      fields: {
+        nickname: {
+          id: 'nickname',
+          tag: 'input',
+          attrs: { type: 'text', name: 'nickname' },
+          config: { label: 'Nickname' },
+        },
+      },
+    })
+
+    test('onRender runs once per render() with the attached form', () => {
+      const calls = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onRender: evt => calls.push(evt) },
+      })
+      renderer.render(textFormData())
+      // asserted before the next render() replaces (and detaches) this form
+      assert.equal(calls.length, 1)
+      assert.equal(calls[0].form.tagName, 'FORM')
+      assert.equal(calls[0].form.isConnected, true)
+      assert.equal(calls[0].renderer, renderer)
+
+      renderer.render(textFormData())
+      assert.equal(calls.length, 2)
+      assert.equal(calls[1].form, container.querySelector('.formeo-render'))
+    })
+
+    test('reading html does not fire onRender', () => {
+      const onRender = []
+      const renderer = new FormeoRenderer({ renderContainer: container, events: { onRender: e => onRender.push(e) } })
+      renderer.formData = textFormData()
+      assert.ok(renderer.html.startsWith('<form'))
+      assert.equal(onRender.length, 0)
+    })
+
+    test('onChange receives userData after input', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData.nickname) },
+      })
+      renderer.render(textFormData())
+      const input = container.querySelector('input[name="nickname"]')
+      input.value = 'Ada'
+      input.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.deepEqual(values, ['Ada'])
+    })
+
+    test('onSubmit receives the event and userData', () => {
+      const submits = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: {
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault()
+            submits.push(userData)
+          },
+        },
+      })
+      renderer.render(textFormData())
+      container.querySelector('input[name="nickname"]').value = 'Grace'
+      const submit = new window.Event('submit', { cancelable: true })
+      container.querySelector('form').dispatchEvent(submit)
+      assert.deepEqual(submits, [{ nickname: 'Grace' }])
+      assert.equal(submit.defaultPrevented, true)
+    })
+
+    test('getRenderedForm() with no renderContainer still fires onChange/onSubmit without throwing', () => {
+      const values = []
+      const submits = []
+      const renderer = new FormeoRenderer({
+        events: {
+          onChange: ({ userData }) => values.push(userData.nickname),
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault()
+            submits.push(userData)
+          },
+        },
+      })
+      const form = renderer.getRenderedForm(textFormData())
+      const input = form.querySelector('input[name="nickname"]')
+      input.value = 'Ada'
+      assert.doesNotThrow(() => input.dispatchEvent(new window.Event('input', { bubbles: true })))
+      assert.deepEqual(values, ['Ada'])
+
+      const submit = new window.Event('submit', { cancelable: true })
+      assert.doesNotThrow(() => form.dispatchEvent(submit))
+      assert.equal(submit.defaultPrevented, true)
+      assert.deepEqual(submits, [{ nickname: 'Ada' }])
+    })
+
+    test('onChange after a re-render still reads userData from the form the handler is bound to', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData.nickname) },
+      })
+      renderer.render(textFormData())
+      const oldForm = container.querySelector('.formeo-render')
+      oldForm.querySelector('input[name="nickname"]').value = 'Ada'
+
+      // replaces oldForm in the container with a fresh (empty) form
+      renderer.render(textFormData())
+
+      // a stale listener on the detached oldForm must still report oldForm's own data
+      oldForm.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.deepEqual(values, ['Ada'])
+    })
+
+    // nickname starts as 'x', so the condition sets greeting (firing a bubbling input) on every render
+    const valueConditionFormData = () => ({
+      id: 'value-condition-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['nickname', 'greeting'] } },
+      fields: {
+        nickname: {
+          id: 'nickname',
+          tag: 'input',
+          attrs: { type: 'text', name: 'nickname', value: 'x' },
+          config: { label: 'Nickname' },
+        },
+        greeting: {
+          id: 'greeting',
+          tag: 'input',
+          attrs: { type: 'text', name: 'greeting' },
+          config: { label: 'Greeting' },
+          conditions: [
+            {
+              if: [{ source: 'fields.nickname', sourceProperty: 'value', comparison: '==', target: 'x' }],
+              then: [{ target: 'fields.greeting', targetProperty: 'value', assignment: '=', value: 'hello' }],
+            },
+          ],
+        },
+      },
+    })
+
+    test('onChange never reports userData from a form that render() replaced', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData) },
+      })
+      renderer.render(valueConditionFormData())
+      container.querySelector('input[name="nickname"]').value = 'typed'
+
+      renderer.render(valueConditionFormData())
+
+      // the second render's value action fires input while the old form is still in the container
+      assert.deepEqual(values, [], `onChange fired during render: ${JSON.stringify(values)}`)
+    })
+
+    test('a value condition applied during render does not fire onChange', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData) },
+      })
+      renderer.render(valueConditionFormData())
+      assert.equal(container.querySelector('input[name="greeting"]').value, 'hello')
+      assert.deepEqual(values, [])
+
+      const nickname = container.querySelector('input[name="nickname"]')
+      nickname.value = 'Ada'
+      nickname.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.deepEqual(values, [{ nickname: 'Ada', greeting: 'hello' }])
+
+      // a value action that user input triggers after render still reaches onChange: first its own
+      // input on greeting, then the user's input on nickname
+      container.querySelector('input[name="greeting"]').value = ''
+      nickname.value = 'x'
+      nickname.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.equal(values.length, 3)
+      assert.equal(values[1].greeting, 'hello')
+      assert.deepEqual(values[2], { nickname: 'x', greeting: 'hello' })
+    })
+
+    test('legacy config.action.onRender still fires once the form is in the page', async () => {
+      const seen = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        config: { action: { onRender: form => seen.push(form.tagName) } },
+      })
+      renderer.render(textFormData())
+      await new Promise(resolve => window.requestAnimationFrame(resolve))
+      assert.deepEqual(seen, ['FORM'])
+    })
+  })
+
+  describe('containers (#266)', () => {
+    const emptyForm = { id: 'c-form', stages: {}, rows: {}, columns: {}, fields: {} }
+
+    test('can be constructed without options', () => {
+      assert.doesNotThrow(() => new FormeoRenderer())
+    })
+
+    test('render() without a container explains what is missing', () => {
+      assert.throws(() => new FormeoRenderer().render(emptyForm), /renderContainer/)
+    })
+
+    test('html works without a container', () => {
+      const renderer = new FormeoRenderer()
+      renderer.formData = emptyForm
+      assert.ok(renderer.html.startsWith('<form'))
+    })
+
+    test('accepts a jQuery object as renderContainer', () => {
+      const renderer = new FormeoRenderer({ renderContainer: { jquery: '3.7.1', 0: container, length: 1 } })
+      renderer.render(emptyForm)
+      assert.ok(container.querySelector('.formeo-render'))
+    })
+  })
+
+  describe('form attributes and file inputs (#313)', () => {
+    const uploadFormData = () => ({
+      id: 'upload-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['resume'] } },
+      fields: {
+        resume: {
+          id: 'resume',
+          tag: 'input',
+          attrs: { type: 'file', name: 'resume' },
+          config: { label: 'Resume', controlId: 'upload' },
+        },
+      },
+    })
+
+    test('config.attrs sets attributes on the rendered <form>', () => {
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        config: { attrs: { method: 'post', enctype: 'multipart/form-data', action: '/upload' } },
+      })
+      renderer.render(uploadFormData())
+      const form = container.querySelector('form.formeo-render')
+      assert.equal(form.getAttribute('method'), 'post')
+      assert.equal(form.getAttribute('enctype'), 'multipart/form-data')
+      assert.equal(form.getAttribute('action'), '/upload')
+    })
+
+    test('the upload field renders a named file input', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(uploadFormData())
+      assert.ok(container.querySelector('input[type="file"][name="resume"]'))
+    })
+  })
+
+  describe('custom controls (#228)', () => {
+    test('elements[controlId].action.onRender runs for a custom control once it is in the page', async () => {
+      const seen = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        elements: { 'image-annotate': { action: { onRender: elem => seen.push(elem) } } },
+      })
+      renderer.render({
+        id: 'custom-form',
+        stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+        rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+        columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['annotate-1'] } },
+        fields: {
+          'annotate-1': {
+            id: 'annotate-1',
+            tag: 'div',
+            attrs: { className: 'image-annotate' },
+            config: { label: 'Annotate', controlId: 'image-annotate' },
+            children: [{ tag: 'input', attrs: { type: 'hidden', name: 'annotation', value: '' } }],
+          },
+        },
+      })
+      await new Promise(resolve => window.requestAnimationFrame(resolve))
+      const elem = seen.find(el => el.id === 'f-annotate-1')
+      assert.ok(elem, 'onRender ran for the custom control')
+      // docs/controls/custom-controls.md passes elem straight to the library, so elem must be the control itself
+      assert.ok(elem.classList.contains('image-annotate'))
+      assert.equal(renderer.userData.annotation, '')
     })
   })
 })

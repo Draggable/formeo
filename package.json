@@ -67,9 +67,9 @@
     }
   },
   "scripts": {
-    "dev": "NODE_ENV=development vite",
+    "dev": "vite --mode development",
     "preview": "vite preview",
-    "prebuild:lib": "rm -rf dist",
+    "prebuild:lib": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
     "build:lib": "npm-run-all -p build:lib:unminified build:lib:minified",
     "build:lib:unminified": "vite build --config vite.config.lib.mjs --mode production",
     "build:lib:minified": "vite build --config vite.config.lib.mjs --mode production-minified",

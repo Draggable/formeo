@@ -1,4 +1,4 @@
-import { suite, test } from 'node:test'
+import { mock, suite, test } from 'node:test'
 import { get, set } from '../../common/utils/object.mjs'
 import { EditPanelItem } from './edit-panel-item.mjs'
 
@@ -129,5 +129,38 @@ suite('EditPanelItem snapshots', () => {
 
     const inputConfig = editPanelItem.itemInput('checked', true)
     t.assert.equal(inputConfig.children.attrs.name, 'mockShortId-key1[]')
+  })
+})
+
+suite('EditPanelItem removal (#306)', () => {
+  const buildOptionItem = () => {
+    const field = new MockField()
+    field.config = { panels: { options: { hideDisabled: true } } }
+    field.remove = mock.fn()
+    field.debouncedUpdatePreview = mock.fn()
+    const panel = { name: 'options', updateProps: mock.fn() }
+    const item = new EditPanelItem({ key: 'options[1]', data: { label: 'Two', value: 'two' }, index: 1, field, panel })
+    return { field, panel, item }
+  }
+
+  test('removing an option removes its data, rebuilds the panel and refreshes the preview', t => {
+    const { field, panel, item } = buildOptionItem()
+    item.removeItem()
+    t.assert.deepEqual(field.remove.mock.calls[0].arguments, ['options[1]'])
+    t.assert.equal(panel.updateProps.mock.callCount(), 1)
+    t.assert.equal(field.debouncedUpdatePreview.mock.callCount(), 1)
+  })
+
+  test('the remove button runs removeItem', t => {
+    const { field, item } = buildOptionItem()
+    document.body.appendChild(item.dom)
+    item.dom.querySelector('.prop-remove').click()
+    t.assert.equal(field.debouncedUpdatePreview.mock.callCount(), 1)
+  })
+
+  test('components without a preview (rows, columns) can still remove items', t => {
+    const { field, item } = buildOptionItem()
+    field.debouncedUpdatePreview = undefined
+    t.assert.doesNotThrow(() => item.removeItem())
   })
 })

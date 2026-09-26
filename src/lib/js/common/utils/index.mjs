@@ -300,19 +300,37 @@ export const isBoolKey = key => /^is|^has/.test(key)
 export const typeIsChildOf = (childType, parentType) => CHILD_TYPE_MAP.get(parentType) === childType
 
 /**
- * Creates a throttled function that only invokes the provided callback at most once per every limit milliseconds.
+ * Creates a throttled function that invokes callback at most once per `limit` ms.
+ * With `trailing: true`, a call made inside the window is not dropped: the latest one
+ * runs when the window closes.
  *
  * @param {Function} callback - The function to throttle.
  * @param {number} limit - The number of milliseconds to throttle invocations to.
+ * @param {{trailing?: boolean}} [options]
  * @returns {Function} - Returns the new throttled function.
  */
-export function throttle(callback, limit = ANIMATION_SPEED_SLOW) {
+export function throttle(callback, limit = ANIMATION_SPEED_SLOW, { trailing = false } = {}) {
   let lastCall = 0
+  let trailingTimer = null
+  let trailingArgs = null
   return function (...args) {
-    const now = Date.now()
-    if (now - lastCall >= limit) {
-      lastCall = now
+    const remaining = limit - (Date.now() - lastCall)
+    if (remaining <= 0) {
+      clearTimeout(trailingTimer)
+      trailingTimer = null
+      lastCall = Date.now()
       callback.apply(this, args)
+      return
+    }
+    if (trailing) {
+      trailingArgs = args
+      if (!trailingTimer) {
+        trailingTimer = setTimeout(() => {
+          trailingTimer = null
+          lastCall = Date.now()
+          callback.apply(this, trailingArgs)
+        }, remaining)
+      }
     }
   }
 }

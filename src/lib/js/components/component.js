@@ -162,9 +162,11 @@ export default class Component extends Data {
       const delPath = splitAddress(path)
       const delItem = delPath.pop()
       const parent = this.get(delPath)
+      const previousValue = parent?.[delItem]
       if (Array.isArray(parent)) {
         if (isInt(delItem)) {
           parent.splice(Number(delItem), 1)
+          this.dispatchRemovedPath(path, previousValue)
         } else {
           this.set(
             delPath,
@@ -173,6 +175,7 @@ export default class Component extends Data {
         }
       } else {
         delete parent[delItem]
+        this.dispatchRemovedPath(path, previousValue)
       }
       return parent
     }
@@ -183,6 +186,8 @@ export default class Component extends Data {
 
     const parent = this.parent
     const children = this.children
+    const siblingsPath = `${parent.name}s.${parent.id}.children`
+    const previousSiblings = [...(Components.getAddress(siblingsPath) || [])]
 
     // Dispatch onRemove event before removal
     this.dispatchComponentEvent('onRemove', {
@@ -194,7 +199,7 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.remove()
-    remove(Components.getAddress(`${parent.name}s.${parent.id}.children`), this.id)
+    remove(Components.getAddress(siblingsPath), this.id)
 
     if (!parent.children.length) {
       parent.emptyClass()
@@ -223,7 +228,39 @@ export default class Component extends Data {
       )
     }
 
-    return Components[`${this.name}s`].delete(this.id)
+    const removedId = Components[`${this.name}s`].delete(this.id)
+
+    // A removal is a data change: let formeoUpdated/onUpdate/onChange listeners know (#246)
+    events.formeoUpdated({
+      entity: this,
+      componentId: this.id,
+      componentType: this.name,
+      dataPath: `${parent.name}s.${parent.id}`,
+      changePath: siblingsPath,
+      value: [...(Components.getAddress(siblingsPath) || [])],
+      previousValue: previousSiblings,
+      changeType: 'removed',
+    })
+
+    return removedId
+  }
+
+  /**
+   * Announce that a property (attribute, option, condition) was removed from this component
+   * @param {String|Array} path removed path, e.g. 'attrs.required' or 'options[1]'
+   * @param {*} previousValue value that was removed
+   */
+  dispatchRemovedPath = (path, previousValue) => {
+    const localPath = Array.isArray(path) ? path.join('.') : path
+    events.formeoUpdated({
+      entity: this,
+      dataPath: this.address,
+      changePath: `${this.address}.${localPath}`,
+      value: undefined,
+      previousValue,
+      changeType: 'removed',
+      data: this.data,
+    })
   }
 
   /**

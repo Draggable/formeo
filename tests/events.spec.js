@@ -1,5 +1,6 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
+import { collectOnChange, gotoEditor } from './helpers/editor.js'
 
 test.describe('Formeo Events System', () => {
   test.beforeEach(async ({ page }) => {
@@ -227,5 +228,49 @@ test.describe('Formeo Events System', () => {
     // Should have received at least some events (throttled)
     expect(allEvents.length).toBeGreaterThan(0)
     expect(allEvents.length).toBeLessThan(20) // Should be throttled to prevent excessive firing
+  })
+})
+
+test.describe('Removal events (#246)', () => {
+  test('removing a field dispatches formeoUpdated with changeType "removed"', async ({ page }) => {
+    await gotoEditor(page)
+    await page.getByRole('button', { name: 'Text Input' }).click()
+    const field = page.locator('.formeo-field').last()
+    const fieldId = await field.getAttribute('id')
+    await page.evaluate(() => {
+      window.__removals = []
+      document.addEventListener('formeoUpdated', evt => {
+        if (evt.detail?.changeType === 'removed') window.__removals.push(evt.detail.componentId)
+      })
+    })
+    await field.locator('.field-actions').hover()
+    await field.locator('.field-actions .item-remove').click()
+    await expect(page.locator(`[id="${fieldId}"]`)).toHaveCount(0)
+    await expect.poll(() => page.evaluate(() => window.__removals)).toContain(fieldId)
+  })
+
+  test('onChange receives formData without the removed field', async ({ page }) => {
+    const payloads = collectOnChange(page)
+    await gotoEditor(page)
+    await page.getByRole('button', { name: 'Text Input' }).click()
+    const field = page.locator('.formeo-field').last()
+    const fieldId = await field.getAttribute('id')
+    await expect.poll(() => payloads.some(p => p.detail?.fields?.[fieldId])).toBe(true)
+    await field.locator('.field-actions').hover()
+    await field.locator('.field-actions .item-remove').click()
+    await expect(page.locator(`[id="${fieldId}"]`)).toHaveCount(0)
+    await expect.poll(() => payloads.at(-1)?.detail?.fields?.[fieldId]).toBeUndefined()
+  })
+
+  test('removing a row gives onChange the formData left afterwards', async ({ page }) => {
+    const payloads = collectOnChange(page)
+    await gotoEditor(page)
+    await page.getByRole('button', { name: 'Text Input' }).click()
+    const row = page.locator('.formeo-row').last()
+    const rowId = await row.getAttribute('id')
+    await row.locator('.row-actions').first().hover()
+    await row.locator('.row-actions .item-remove').first().click()
+    await expect(page.locator(`[id="${rowId}"]`)).toHaveCount(0)
+    await expect.poll(() => payloads.at(-1)?.detail?.rows?.[rowId]).toBeUndefined()
   })
 })

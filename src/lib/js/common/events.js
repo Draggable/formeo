@@ -95,18 +95,22 @@ const events = {
   formeoRemovedField: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_FIELD),
 }
 
-const formeoUpdatedThrottled = throttle(() => {
-  const eventData = {
-    timeStamp: globalThis.performance.now(),
-    type: EVENT_FORMEO_UPDATED,
-    detail: components.formData,
-  }
-  events.opts.onUpdate(eventData)
-  // Also call onChange if it's different from onUpdate
-  if (events.opts.onChange !== events.opts.onUpdate) {
-    events.opts.onChange(eventData)
-  }
-}, ANIMATION_SPEED_FAST)
+const formeoUpdatedThrottled = throttle(
+  () => {
+    const eventData = {
+      timeStamp: globalThis.performance.now(),
+      type: EVENT_FORMEO_UPDATED,
+      detail: components.formData,
+    }
+    events.opts.onUpdate(eventData)
+    // Also call onChange if it's different from onUpdate
+    if (events.opts.onChange !== events.opts.onUpdate) {
+      events.opts.onChange(eventData)
+    }
+  },
+  ANIMATION_SPEED_FAST,
+  { trailing: true }
+)
 
 document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled)
 document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, evt => {

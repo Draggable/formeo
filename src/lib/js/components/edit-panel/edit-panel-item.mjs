@@ -1,3 +1,4 @@
+import i18n from '@draggable/i18n'
 import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
 import { orderObjectsBy } from '../../common/helpers.mjs'
@@ -172,6 +173,16 @@ export default class EditPanelItem {
     return this.findOrCreateConditionTypeWrap(conditionType)
   }
 
+  /**
+   * Remove this item's data from the component, rebuild the panel and refresh the field preview
+   */
+  removeItem = () => {
+    this.field.remove(this.itemKey)
+    this.dom.remove()
+    this.panel.updateProps()
+    this.field.debouncedUpdatePreview?.()
+  }
+
   get itemControls() {
     if (this.isLocked) {
       const controls = {
@@ -189,11 +200,7 @@ export default class EditPanelItem {
       },
       action: {
         click: () => {
-          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, elem => {
-            this.field.remove(this.itemKey)
-            elem.remove()
-            this.panel.updateProps()
-          })
+          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, this.removeItem)
         },
         mouseover: _evt => {
           this.dom.classList.add('to-remove')
@@ -204,9 +211,26 @@ export default class EditPanelItem {
       },
       content: dom.icon('remove'),
     }
+    const orderHandle = this.panelName === 'options' && {
+      tag: 'button',
+      attrs: {
+        type: 'button',
+        className: 'prop-order prop-control',
+        // .prop-control:last-child is `display: none` by default and only meant to reveal on
+        // its own :hover, which a display:none element can never receive; and `.prop-controls
+        // button` resets position to relative, so the nth-of-type(2) `right` offset meant for
+        // absolute positioning instead shifts this handle left, on top of the remove button.
+        // Force it visible and in normal flow with inline styles until that CSS is revisited
+        // (SCSS changes are out of scope here).
+        style: 'display: inline-block; right: auto',
+        title: i18n.get('reorderOption') || 'Drag to reorder',
+        'aria-label': i18n.get('reorderOption') || 'Drag to reorder',
+      },
+      content: dom.icon('move-vertical'),
+    }
     const controls = {
       className: `${this.panelName}-prop-controls prop-controls`,
-      content: [remove],
+      content: [remove, orderHandle].filter(Boolean),
     }
     return controls
   }

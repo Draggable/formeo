@@ -90,6 +90,8 @@ const formeoOptions = {
 const formeo = new FormeoEditor(formeoOptions)
 ```
 
+See [Custom controls](../../controls/custom-controls.md) for a full editor + renderer example.
+
 ## elementOrder
 
 Set the element order within a control group. May be overridden if [sortable](#sortable) is set to true

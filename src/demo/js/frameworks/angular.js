@@ -517,22 +517,19 @@ export class FormBuilderComponent implements OnInit, OnDestroy {
       sessionStorage: true,
       events: {
         onSave: (formData: any) => this.handleFormSave(formData),
-        onChange: (formData: any) => this.handleFormChange(formData),
-        onLoad: (formData: any) => this.handleFormLoad(formData)
+        onChange: (formData: any) => this.handleFormChange(formData)
       },
-      config: {
-        disableFields: [], // Customize which fields to disable
-        controls: {
-          // Customize available controls
-        }
-      }
+      onLoad: (editor: any) => this.handleFormLoad(editor.formData)
+      // Controls go in the top-level \`controls\` option, not \`config.controls\`.
+      // See docs/options/controls/README.md.
     };
 
     const renderOptions = {
       renderContainer: this.renderContainer.nativeElement,
-      config: {
-        events: {
-          onSubmit: (formData: any) => this.handleFormSubmit(formData)
+      events: {
+        onSubmit: ({ event, userData }: any) => {
+          event.preventDefault();
+          this.handleFormSubmit(userData);
         }
       }
     };
@@ -669,10 +666,8 @@ export class FormeoService {
   createRenderer(containerId: string, container: HTMLElement, config?: FormeoConfig): FormeoRenderer {
     const defaultOptions = {
       renderContainer: container,
-      config: {
-        events: {
-          onSubmit: (formData: any) => this.handleFormSubmit(formData)
-        }
+      events: {
+        onSubmit: ({ userData }: any) => this.handleFormSubmit(userData)
       }
     };
 

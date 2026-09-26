@@ -16,12 +16,13 @@ import {
 } from './helpers.js'
 
 export default class FormeoRenderer {
-  constructor(opts, formDataArg) {
-    const { renderContainer: container, elements, formData, config } = processOptions(opts)
+  constructor(opts = {}, formDataArg) {
+    const { renderContainer: container, elements, formData, config, events } = processOptions(opts)
     this.container = container
     this.form = cleanFormData(formDataArg || formData)
     this.elements = elements
     this.config = config
+    this.events = { ...events }
     this.components = Object.create(null)
     this.dom = dom
   }
@@ -51,26 +52,8 @@ export default class FormeoRenderer {
    * { username: 'john', hobbies: ['reading', 'gaming'] }
    */
   get userData() {
-    const form = this.container.querySelector('.formeo-render') || this.renderedForm
-    if (!form) {
-      return {}
-    }
-    const formEntries = new FormData(form)
-
-    const formDataObj = {}
-    for (const [key, value] of formEntries.entries()) {
-      if (formDataObj[key]) {
-        if (Array.isArray(formDataObj[key])) {
-          formDataObj[key].push(value)
-        } else {
-          formDataObj[key] = [formDataObj[key], value]
-        }
-      } else {
-        formDataObj[key] = value
-      }
-    }
-
-    return formDataObj
+    const form = this.container?.querySelector('.formeo-render') || this.renderedForm
+    return userDataOf(form)
   }
 
   /**
@@ -146,6 +129,11 @@ export default class FormeoRenderer {
    * @param {Object} formData
    */
   render(formData = this.form) {
+    if (!this.container) {
+      throw new Error(
+        'FormeoRenderer: renderContainer is required for render(); use getRenderedForm() or html without one'
+      )
+    }
     this.form = cleanFormData(formData)
     const renderedForm = this.getRenderedForm(formData)
     const existingRenderedForm = this.container.querySelector('.formeo-render')
@@ -155,6 +143,8 @@ export default class FormeoRenderer {
     } else {
       this.container.appendChild(renderedForm)
     }
+
+    this.events.onRender?.({ form: renderedForm, renderer: this, formData: this.form })
   }
 
   getRenderedForm(formData = this.form) {
@@ -173,6 +163,8 @@ export default class FormeoRenderer {
     this.renderedForm.addEventListener('reset', this.syncRequiredGroupsAfterReset)
 
     this.applyConditions()
+    // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
+    this.bindFormEvents(this.renderedForm)
 
     return this.renderedForm
   }
@@ -188,6 +180,22 @@ export default class FormeoRenderer {
         dom.syncCheckboxGroupRequired(group)
       }
     }, 0)
+  }
+
+  /**
+   * Wire the renderer's onChange/onSubmit callbacks to a freshly rendered <form>
+   * @param {HTMLFormElement} form
+   */
+  bindFormEvents(form) {
+    const { onChange, onSubmit } = this.events
+    if (onChange) {
+      form.addEventListener('input', event =>
+        onChange({ event, target: event.target, form, userData: userDataOf(form) })
+      )
+    }
+    if (onSubmit) {
+      form.addEventListener('submit', event => onSubmit({ event, form, userData: userDataOf(form) }))
+    }
   }
 
   get html() {
@@ -495,6 +503,34 @@ export default class FormeoRenderer {
 
     return components
   }
+}
+
+/**
+ * Converts a rendered form's fields to a plain object, the same shape the `userData`
+ * getter exposes. Handles multiple values for the same key by converting them to arrays.
+ * @param {HTMLFormElement} [form]
+ * @return {Object.<string, string|string[]>}
+ */
+const userDataOf = form => {
+  if (!form) {
+    return {}
+  }
+  const formEntries = new FormData(form)
+
+  const formDataObj = {}
+  for (const [key, value] of formEntries.entries()) {
+    if (Object.hasOwn(formDataObj, key)) {
+      if (Array.isArray(formDataObj[key])) {
+        formDataObj[key].push(value)
+      } else {
+        formDataObj[key] = [formDataObj[key], value]
+      }
+    } else {
+      formDataObj[key] = value
+    }
+  }
+
+  return formDataObj
 }
 
 const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)

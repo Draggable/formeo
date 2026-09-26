@@ -23,6 +23,10 @@ suite('Helpers', () => {
       t.assert.strictEqual(safeAttrName('validName'), 'validName')
     })
 
+    test('should keep underscores, which the add-attribute dialog allows', t => {
+      t.assert.strictEqual(safeAttrName('_data_x'), '_data_x')
+    })
+
     test('should cache sanitized attribute names', t => {
       const firstCall = safeAttrName('123data-name')
       const secondCall = safeAttrName('123data-name')

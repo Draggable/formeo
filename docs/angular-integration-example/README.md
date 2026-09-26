@@ -1,40 +1,11 @@
 # Angular + Formeo Integration Example
 
-This directory contains a complete Angular v20 project demonstrating Formeo integration.
+This directory holds only this README — there is no runnable Angular project here.
 
-## Quick Start
+The code samples referenced below (a standalone component, an injectable service, and module/config
+wiring) live inline in `src/demo/js/frameworks/angular.js`, which the demo's "Angular" tab displays and
+syntax-highlights. That file also explains why the demo simulates Angular patterns instead of loading
+the real framework.
 
-```bash
-# Navigate to the Angular example
-cd docs/angular-integration-example
-
-# Install dependencies
-npm install
-
-# Run the development server
-ng serve
-
-# Open http://localhost:4200
-```
-
-## Project Structure
-
-```
-angular-integration-example/
-├── src/
-│   ├── app/
-│   │   ├── form-builder/
-│   │   │   ├── form-builder.component.ts
-│   │   │   ├── form-builder.component.html
-│   │   │   └── form-builder.component.scss
-│   │   ├── app.component.ts
-│   │   └── app.module.ts
-│   └── main.ts
-├── angular.json
-├── package.json
-└── tsconfig.json
-```
-
-## Integration Guide
-
-See the `form-builder.component.ts` for a complete working example of Formeo integration in Angular.
+For the full picture — the reasoning behind the simulation, and how to build a real Angular project
+against Formeo — see [`docs/angular-integration.md`](../angular-integration.md).
