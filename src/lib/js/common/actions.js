@@ -12,13 +12,17 @@ const ATTRIBUTE_NAME = /^[A-Za-z_:][-A-Za-z0-9_:.]*$/
 
 /**
  * Why an attribute name can't be added, or '' when it can
- * @param {String} attr trimmed attribute name
+ * @param {String} rawValue untrimmed attribute name, straight from the input
  * @param {Object} evt add-attribute event from the edit panel
  * @return {String}
  */
-const attributeProblem = (attr, evt) => {
+const attributeProblem = (rawValue, evt) => {
+  const attr = rawValue.trim()
   if (!attr) {
-    return ''
+    // A non-empty value that trims to nothing (e.g. "   ") satisfies the native
+    // `required` check, so it needs its own message; a truly empty value keeps
+    // relying on `required`.
+    return rawValue ? i18n.get('attributeNameRequired') || 'Enter an attribute name' : ''
   }
   if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`)) {
     return i18n.get('attributeNotPermitted', { attribute: attr }) || `Attribute "${attr}" is not permitted`
@@ -40,7 +44,7 @@ const openAddAttributeDialog = evt =>
         attrs: { type: 'text', name: 'attrName', className: 'attr-name-input', required: true, autocomplete: 'off' },
         config: { label: evt.message.attr },
         action: {
-          input: ({ target }) => target.setCustomValidity(attributeProblem(target.value.trim(), evt)),
+          input: ({ target }) => target.setCustomValidity(attributeProblem(target.value, evt)),
         },
       },
       {

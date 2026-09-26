@@ -88,11 +88,22 @@ describe('actions.add.attrs default (#233)', () => {
     assert.equal(evt.addAction.mock.callCount(), 0)
   })
 
-  it('ignores whitespace-only names', () => {
+  it('keeps the dialog open for a whitespace-only name', () => {
     const evt = addAttrEvt()
     actions.add.attrs(evt)
-    submit('   ')
+    const input = submit('   ')
     assert.equal(evt.addAction.mock.callCount(), 0)
+    assert.ok(dialog(), 'still open')
+    assert.equal(input.validity.valid, false)
+  })
+
+  it('keeps the dialog open for an empty name', () => {
+    const evt = addAttrEvt()
+    actions.add.attrs(evt)
+    const input = submit('')
+    assert.equal(evt.addAction.mock.callCount(), 0)
+    assert.ok(dialog(), 'still open')
+    assert.equal(input.validity.valid, false)
   })
 
   it('a custom actions.add.attr replaces the dialog', () => {
