@@ -1,3 +1,11 @@
+## [5.3.1](https://github.com/Draggable/formeo/compare/v5.3.0...v5.3.1) (2026-09-26)
+
+
+### Bug Fixes
+
+* **edit-panel:** show every option control side by side ([3f85ad2](https://github.com/Draggable/formeo/commit/3f85ad26802ac6b7aab5e5118272055b79a006dc)), closes [#114](https://github.com/Draggable/formeo/issues/114)
+* **icons:** draw the arrow on the option drag handle ([a660550](https://github.com/Draggable/formeo/commit/a6605506463b80d64b022fe9f641c55a26924755)), closes [#114](https://github.com/Draggable/formeo/issues/114)
+
 # [5.3.0](https://github.com/Draggable/formeo/compare/v5.2.2...v5.3.0) (2026-09-26)
 
 
