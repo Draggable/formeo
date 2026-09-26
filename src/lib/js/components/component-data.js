@@ -9,7 +9,7 @@ export default class ComponentData extends Data {
     const data = parseData(dataArg)
     this.empty()
     for (const [key, val] of Object.entries(data)) {
-      this.add(key, val)
+      this.add(key, val, { silent: true })
     }
     return this.data
   }
@@ -27,28 +27,30 @@ export default class ComponentData extends Data {
    *
    * @param {string} id - The unique identifier for the component. If not provided, a new UUID will be generated.
    * @param {Object} [data=Object.create(null)] - The data to initialize the component with.
+   * @param {Object} [options]
+   * @param {Boolean} [options.silent=false] - skip the added event, used when loading formData
    * @returns {Object} The newly created component.
    */
-  add = (id, data = Object.create(null)) => {
+  add = (id, data = Object.create(null), { silent = false } = {}) => {
     const elemId = id || uuid()
     const component = this.Component({ ...data, id: elemId })
     this.data[elemId] = component
     this.active = component
 
-    // Dispatch add events based on component type
+    // Dispatch add events based on component type. Stores are named in the plural.
     const componentEventMap = {
-      row: EVENT_FORMEO_ADDED_ROW,
-      column: EVENT_FORMEO_ADDED_COLUMN,
-      field: EVENT_FORMEO_ADDED_FIELD,
+      rows: EVENT_FORMEO_ADDED_ROW,
+      columns: EVENT_FORMEO_ADDED_COLUMN,
+      fields: EVENT_FORMEO_ADDED_FIELD,
     }
 
     const addEvent = componentEventMap[this.name]
-    if (addEvent) {
+    if (addEvent && !silent) {
       events.formeoUpdated(
         {
           entity: component,
           componentId: elemId,
-          componentType: this.name,
+          componentType: component.name,
           data: component.data,
         },
         addEvent

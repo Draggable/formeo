@@ -73,7 +73,7 @@ export class Fields extends ComponentData {
       if (meta?.id) {
         set(data, 'config.controlId', meta?.id)
       }
-      this.add(key, data)
+      this.add(key, data, { silent: true })
     }
 
     return this.data
