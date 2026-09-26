@@ -231,11 +231,18 @@ export class FormeoEditor {
         }
 
         this.render()
+        // a formeoLoaded callback run by render() can destroy the editor
+        if (this.isDestroyed) {
+          return this
+        }
         // kept on the instance so destroy() (#166) can remove it
         this.onResize = this.events.onResizeWindow
         window.addEventListener('resize', this.onResize)
         this.#initState = INIT_STATES.READY
         this.opts.onLoad?.(this)
+        if (this.isDestroyed) {
+          return this
+        }
         this.tooltipInstance = new SmartTooltip()
         pageTooltip = this.tooltipInstance
 

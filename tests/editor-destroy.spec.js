@@ -155,6 +155,51 @@ test.describe('FormeoEditor#destroy (#166)', () => {
     expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe(overflowBefore)
   })
 
+  for (const [where, hook] of [
+    ['onLoad', 'onLoad'],
+    ['the formeoLoaded event callback', 'formeoLoaded'],
+  ]) {
+    test(`an editor destroyed from ${where} stays destroyed`, async ({ page }) => {
+      await page.evaluate(() => window.frameworkLoader.currentDemo.editor.destroy())
+      const listenersBefore = await windowResizeListeners(page)
+
+      const state = await page.evaluate(async hookName => {
+        const container = document.createElement('div')
+        container.id = 'destroy-from-callback'
+        document.body.appendChild(container)
+        const destroyIt = editor => editor.destroy()
+        const options = { editorContainer: container, sessionStorage: false, style: null }
+        if (hookName === 'onLoad') {
+          options.onLoad = destroyIt
+        } else {
+          options.events = { formeoLoaded: destroyIt }
+        }
+        const editor = new window.FormeoEditor(options)
+        const whenReady = await editor.whenReady().then(
+          () => 'resolved',
+          error => error.message
+        )
+        await new Promise(resolve => setTimeout(resolve, 300))
+        return {
+          whenReady,
+          initState: editor.initState,
+          isDestroyed: editor.isDestroyed,
+          rendered: container.querySelectorAll('.formeo-editor, .formeo-controls').length,
+          tooltips: document.querySelectorAll('.d-tooltip').length,
+        }
+      }, hook)
+
+      expect(state).toEqual({
+        whenReady: 'Editor was destroyed',
+        initState: 'destroyed',
+        isDestroyed: true,
+        rendered: 0,
+        tooltips: 0,
+      })
+      expect(await windowResizeListeners(page)).toBe(listenersBefore)
+    })
+  }
+
   test('switching demo frameworks leaves exactly one editor', async ({ page }) => {
     await page.evaluate(() => window.frameworkLoader.switchFramework('angular'))
     await page.evaluate(() => window.frameworkLoader.switchFramework('vanilla'))
