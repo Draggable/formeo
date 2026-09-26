@@ -989,6 +989,30 @@ describe('FormeoRenderer', () => {
       assert.equal(hobbiesField.label, 'Hobbies')
     })
 
+    test('onChange and onSubmit get target.name with [] but a userData key without it', () => {
+      const changes = []
+      const submits = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: {
+          onChange: ({ target, userData }) => changes.push({ name: target.name, userData }),
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault()
+            submits.push(userData)
+          },
+        },
+      })
+      renderer.render(checkboxGroup({ name: 'hobbies' }))
+      boxes()[0].checked = true
+      boxes()[0].dispatchEvent(new window.Event('input', { bubbles: true }))
+
+      assert.deepEqual(changes, [{ name: 'hobbies[]', userData: { hobbies: 'reading' } }])
+
+      const submit = new window.Event('submit', { cancelable: true })
+      container.querySelector('form').dispatchEvent(submit)
+      assert.deepEqual(submits, [{ hobbies: 'reading' }])
+    })
+
     test('getComponents finds an unnamed multi-option group by its f-<id>[] name', () => {
       const renderer = new FormeoRenderer({ renderContainer: container })
       renderer.render(checkboxGroup({}))
