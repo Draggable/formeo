@@ -1,3 +1,28 @@
+# [5.3.0](https://github.com/Draggable/formeo/compare/v5.2.2...v5.3.0) (2026-09-26)
+
+
+### Bug Fixes
+
+* **actions:** allow underscores in added attribute names again ([29b9dce](https://github.com/Draggable/formeo/commit/29b9dce200dcf05b73d1c30c65e09a4724e469a1))
+* **actions:** keep the add-attribute dialog open for a blank name ([5558b26](https://github.com/Draggable/formeo/commit/5558b26740af99e88a75d5fdee7a1ae170ce66cc)), closes [#233](https://github.com/Draggable/formeo/issues/233)
+* **actions:** reject dotted attribute names in the add-attribute dialog ([b189c90](https://github.com/Draggable/formeo/commit/b189c90c416906b219b7bcd5db35649794b23eb7)), closes [#233](https://github.com/Draggable/formeo/issues/233)
+* **edit-panel:** find an existing attribute row without a class selector ([76f25b4](https://github.com/Draggable/formeo/commit/76f25b439bb15c2aacfc77f5329ecf535676bec3))
+* **edit-panel:** make select, checkbox and radio options reorderable ([fe106b6](https://github.com/Draggable/formeo/commit/fe106b6468c306a7f2151d140f5a3791d416cd77)), closes [#114](https://github.com/Draggable/formeo/issues/114)
+* **edit-panel:** refresh the field preview after removing an option ([a3a431b](https://github.com/Draggable/formeo/commit/a3a431b87208ee48f91bf81e872dd66630f62045)), closes [#306](https://github.com/Draggable/formeo/issues/306)
+* **edit-panel:** restore moveOption declaration dropped by the index-validation suggestion ([1f50caa](https://github.com/Draggable/formeo/commit/1f50caabb41d7fbf3c8445b068f8e533bee20665))
+* **edit-panel:** stop setData assigning to the getter-only data ([e2c31ea](https://github.com/Draggable/formeo/commit/e2c31ea2be335f98127bb9f59593b8f79c504d98)), closes [EditPanel#data](https://github.com/EditPanel/issues/data)
+* **events:** fire onUpdate and onChange when components are removed ([15e3f0d](https://github.com/Draggable/formeo/commit/15e3f0d8d1989c53ff65c2e73b71a54a53bb2681)), closes [#246](https://github.com/Draggable/formeo/issues/246)
+* **helpers:** keep underscores in safeAttrName ([2fcc10f](https://github.com/Draggable/formeo/commit/2fcc10fefe06f0a5a425fce0b4f282f6c473b9db))
+* **renderer:** keep onChange quiet while conditions apply during render ([4473a8e](https://github.com/Draggable/formeo/commit/4473a8ea49788c9a729e8c7e169e605d2e599a8f)), closes [#209](https://github.com/Draggable/formeo/issues/209)
+* **renderer:** read event userData from the form the handler is bound to ([6279f98](https://github.com/Draggable/formeo/commit/6279f984a32aafb0641033474feca9b155896ed0)), closes [#209](https://github.com/Draggable/formeo/issues/209)
+
+
+### Features
+
+* **edit-panel:** add attributes through an in-app dialog ([430a799](https://github.com/Draggable/formeo/commit/430a799b39b99d24589e496fb04275aa342730fb)), closes [#233](https://github.com/Draggable/formeo/issues/233)
+* **editor:** accept jQuery objects as editor, controls and render containers ([07ec481](https://github.com/Draggable/formeo/commit/07ec481951140725a1d222cc3437dc129404a93d)), closes [#266](https://github.com/Draggable/formeo/issues/266)
+* **renderer:** add onRender, onChange and onSubmit event callbacks ([1c66fed](https://github.com/Draggable/formeo/commit/1c66fed5b680141739cb47442739926d02914b22)), closes [#209](https://github.com/Draggable/formeo/issues/209)
+
 ## [5.2.2](https://github.com/Draggable/formeo/compare/v5.2.1...v5.2.2) (2026-09-25)
 
 
