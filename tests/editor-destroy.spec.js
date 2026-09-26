@@ -3,6 +3,21 @@ import { expect, test } from '@playwright/test'
 import { gotoEditor } from './helpers/editor.js'
 import { dragControlTo, formFor } from './helpers/multi-editor.js'
 
+/**
+ * How many `resize` listeners are registered on window, read through the DevTools protocol
+ * @param {import('@playwright/test').Page} page
+ */
+const windowResizeListeners = async page => {
+  const client = await page.context().newCDPSession(page)
+  try {
+    const { result } = await client.send('Runtime.evaluate', { expression: 'window' })
+    const { listeners } = await client.send('DOMDebugger.getEventListeners', { objectId: result.objectId })
+    return listeners.filter(({ type }) => type === 'resize').length
+  } finally {
+    await client.detach()
+  }
+}
+
 test.describe('FormeoEditor#destroy (#166)', () => {
   let errors
   test.beforeEach(async ({ page }) => {
@@ -79,6 +94,48 @@ test.describe('FormeoEditor#destroy (#166)', () => {
     expect(state).toEqual({ editors: 0, initState: 'destroyed', pending: 'Editor was destroyed' })
   })
 
+  test('an editor destroyed while initializing never renders, and a pending whenReady() rejects', async ({ page }) => {
+    const state = await page.evaluate(async () => {
+      const container = document.createElement('div')
+      container.id = 'destroy-while-initializing'
+      document.body.appendChild(container)
+      // allowEdit: false keeps loadResources() from calling init(), so the test can call it itself
+      const editor = new window.FormeoEditor({
+        allowEdit: false,
+        editorContainer: container,
+        sessionStorage: false,
+        style: null,
+      })
+      await editor.loadResources()
+
+      editor.init()
+      const stateWhenDestroyed = editor.initState
+      const pending = editor.whenReady().then(
+        () => 'resolved',
+        error => error.message
+      )
+      editor.destroy()
+      const whenReady = await pending
+      await new Promise(resolve => setTimeout(resolve, 300))
+
+      return {
+        stateWhenDestroyed,
+        whenReady,
+        initState: editor.initState,
+        controls: editor.controls ?? null,
+        rendered: container.querySelectorAll('.formeo-editor, .formeo-controls').length,
+      }
+    })
+
+    expect(state).toEqual({
+      stateWhenDestroyed: 'initializing',
+      whenReady: 'Editor was destroyed',
+      initState: 'destroyed',
+      controls: null,
+      rendered: 0,
+    })
+  })
+
   test('switching demo frameworks leaves exactly one editor', async ({ page }) => {
     await page.evaluate(() => window.frameworkLoader.switchFramework('angular'))
     await page.evaluate(() => window.frameworkLoader.switchFramework('vanilla'))
@@ -115,9 +172,14 @@ test.describe('FormeoEditor#destroy (#166)', () => {
     })
 
     test("a destroyed editor's callbacks stop firing", async ({ page }) => {
-      await page.evaluate(() => {
+      await page.evaluate(async () => {
+        // held from before destroy(), as app code might
+        const fieldA = window.e2eEditorA.Components.fields.get('field-a')
         window.e2eEditorA.destroy()
         window.e2eCalls = { a: 0, b: 0 }
+        fieldA.set('config.label', 'Changed after destroy')
+        await new Promise(resolve => setTimeout(resolve, 300))
+        fieldA.set('config.label', 'Changed again after destroy')
       })
 
       await page.locator('#e2e-editor-b').getByRole('button', { name: 'Text Input' }).click()
@@ -126,6 +188,15 @@ test.describe('FormeoEditor#destroy (#166)', () => {
       await expect.poll(() => page.evaluate(() => window.e2eCalls.b)).toBeGreaterThan(0)
       await page.waitForTimeout(500)
       expect(await page.evaluate(() => window.e2eCalls.a)).toBe(0)
+    })
+
+    test('removes its window resize listener', async ({ page }) => {
+      const before = await windowResizeListeners(page)
+      // not the last editor on the page, so the shared tooltip (and its resize listener) stays
+      await page.evaluate(() => window.e2eEditorA.destroy())
+      const after = await windowResizeListeners(page)
+
+      expect(before - after).toBe(1)
     })
 
     test('a trailing onUpdate scheduled just before destroy() never fires', async ({ page }) => {
