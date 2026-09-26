@@ -206,7 +206,7 @@ export default class Component extends Data {
     }
 
     if (this.name === 'stage') {
-      return null
+      return this.removeStage()
     }
 
     const parent = this.parent

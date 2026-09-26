@@ -4,13 +4,16 @@ import {
   EVENT_FORMEO_ADDED_COLUMN,
   EVENT_FORMEO_ADDED_FIELD,
   EVENT_FORMEO_ADDED_ROW,
+  EVENT_FORMEO_ADDED_STAGE,
   EVENT_FORMEO_CHANGED,
   EVENT_FORMEO_CLEARED,
   EVENT_FORMEO_CONDITION_UPDATED,
   EVENT_FORMEO_ON_RENDER,
+  EVENT_FORMEO_PAGE_CHANGED,
   EVENT_FORMEO_REMOVED_COLUMN,
   EVENT_FORMEO_REMOVED_FIELD,
   EVENT_FORMEO_REMOVED_ROW,
+  EVENT_FORMEO_REMOVED_STAGE,
   EVENT_FORMEO_SAVED,
   EVENT_FORMEO_UPDATED,
   EVENT_FORMEO_UPDATED_COLUMN,
@@ -35,12 +38,15 @@ const EVENT_CALLBACKS = new Map([
   [EVENT_FORMEO_UPDATED_ROW, ['onUpdate', 'onUpdateRow']],
   [EVENT_FORMEO_UPDATED_COLUMN, ['onUpdate', 'onUpdateColumn']],
   [EVENT_FORMEO_UPDATED_FIELD, ['onUpdate', 'onUpdateField']],
+  [EVENT_FORMEO_ADDED_STAGE, ['onAdd', 'onAddStage']],
   [EVENT_FORMEO_ADDED_ROW, ['onAdd', 'onAddRow']],
   [EVENT_FORMEO_ADDED_COLUMN, ['onAdd', 'onAddColumn']],
   [EVENT_FORMEO_ADDED_FIELD, ['onAdd', 'onAddField']],
+  [EVENT_FORMEO_REMOVED_STAGE, ['onRemove', 'onRemoveStage']],
   [EVENT_FORMEO_REMOVED_ROW, ['onRemove', 'onRemoveRow']],
   [EVENT_FORMEO_REMOVED_COLUMN, ['onRemove', 'onRemoveColumn']],
   [EVENT_FORMEO_REMOVED_FIELD, ['onRemove', 'onRemoveField']],
+  [EVENT_FORMEO_PAGE_CHANGED, ['onPageChange']],
   [EVENT_FORMEO_ON_RENDER, ['onRender']],
 ])
 
@@ -94,13 +100,16 @@ export class Events {
       onUpdateRow: log,
       onUpdateColumn: log,
       onUpdateField: log,
+      onAddStage: log,
       onAddRow: log,
       onAddColumn: log,
       onAddField: log,
+      onRemoveStage: log,
       onRemoveRow: log,
       onRemoveColumn: log,
       onRemoveField: log,
       onRender: log,
+      onPageChange: () => {},
       onSave: _evt => {},
       confirmClearAll: evt => {
         if (globalThis.confirm(evt.confirmationMessage)) {
@@ -152,12 +161,15 @@ export class Events {
   formeoCleared = evt => this.dispatch(EVENT_FORMEO_CLEARED, evt)
   formeoOnRender = evt => this.dispatch(EVENT_FORMEO_ON_RENDER, evt)
   formeoConditionUpdated = evt => this.dispatch(EVENT_FORMEO_CONDITION_UPDATED, evt)
+  formeoAddedStage = evt => this.dispatch(EVENT_FORMEO_ADDED_STAGE, evt)
   formeoAddedRow = evt => this.dispatch(EVENT_FORMEO_ADDED_ROW, evt)
   formeoAddedColumn = evt => this.dispatch(EVENT_FORMEO_ADDED_COLUMN, evt)
   formeoAddedField = evt => this.dispatch(EVENT_FORMEO_ADDED_FIELD, evt)
+  formeoRemovedStage = evt => this.dispatch(EVENT_FORMEO_REMOVED_STAGE, evt)
   formeoRemovedRow = evt => this.dispatch(EVENT_FORMEO_REMOVED_ROW, evt)
   formeoRemovedColumn = evt => this.dispatch(EVENT_FORMEO_REMOVED_COLUMN, evt)
   formeoRemovedField = evt => this.dispatch(EVENT_FORMEO_REMOVED_FIELD, evt)
+  formeoPageChanged = evt => this.dispatch(EVENT_FORMEO_PAGE_CHANGED, evt)
 
   /** detail: { confirmationMessage, clearAllAction, btnCoords } */
   confirmClearAll = detail => {

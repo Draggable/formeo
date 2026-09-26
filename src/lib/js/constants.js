@@ -164,6 +164,10 @@ export const EVENT_FORMEO_ADDED_FIELD = 'formeoAddedField'
 export const EVENT_FORMEO_REMOVED_ROW = 'formeoRemovedRow'
 export const EVENT_FORMEO_REMOVED_COLUMN = 'formeoRemovedColumn'
 export const EVENT_FORMEO_REMOVED_FIELD = 'formeoRemovedField'
+export const EVENT_FORMEO_ADDED_STAGE = 'formeoAddedStage'
+export const EVENT_FORMEO_REMOVED_STAGE = 'formeoRemovedStage'
+// the editor's page tabs switched pages (#122); formData is unchanged
+export const EVENT_FORMEO_PAGE_CHANGED = 'formeoPageChanged'
 export const COMPARISON_OPERATORS = {
   equals: '==',
   notEquals: '!=',
