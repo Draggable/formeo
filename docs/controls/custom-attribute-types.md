@@ -175,7 +175,7 @@ const customControl = {
 Lists are merged, so a later source cannot unlock or re-enable an attribute. Two details:
 
 - **Disabled** attributes are not shown in the edit panel and cannot be added back with **+ Attribute**. The value in the field's data is still rendered.
-- **Locked** attributes are shown greyed out, with no remove button, and can't be changed from the edit panel.
+- **Locked** attributes are shown read-only and greyed out, with no remove button.
 
 An attribute that you give dropdown options in `config.fields.<scope>.attrs.<name>` is never disabled. If an attribute is both disabled and locked, it is hidden.
 
