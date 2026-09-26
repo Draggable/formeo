@@ -1,3 +1,16 @@
+# [5.5.0](https://github.com/Draggable/formeo/compare/v5.4.0...v5.5.0) (2026-09-26)
+
+
+### Bug Fixes
+
+* **renderer:** address pagination review feedback ([cabe371](https://github.com/Draggable/formeo/commit/cabe3711dc539a0f3e7e9470532f020c056f1ec3))
+* **renderer:** restore required on fields revealed on another page ([c8745fa](https://github.com/Draggable/formeo/commit/c8745fa21d8ac9d9fa89a7b8073b9fd94e194790)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+
+
+### Features
+
+* **renderer:** render multi-stage forms as tabs or a wizard ([d78c7a1](https://github.com/Draggable/formeo/commit/d78c7a1223643e95f3bf51de427485c37ba23fc3)), closes [#122](https://github.com/Draggable/formeo/issues/122) [#311](https://github.com/Draggable/formeo/issues/311)
+
 # [5.4.0](https://github.com/Draggable/formeo/compare/v5.3.3...v5.4.0) (2026-09-26)
 
 
