@@ -32,7 +32,9 @@ test('hide a field when a radio option is checked, built in the editor (#215)', 
   await sourceInput.fill('Radio 2')
   const radioGroupItem = page.locator('.f-autocomplete-list-item-depth-0[data-label="Radio Group"]')
   await radioGroupItem.hover()
-  await page.locator('.f-autocomplete-list-item[data-label="Radio 2"]').click()
+  // "Radio 2" is an option nested inside the Radio Group item's own sub-list; scope to it so a second
+  // autocomplete list open elsewhere on the stage can't cause a strict-mode failure
+  await radioGroupItem.locator('.f-autocomplete-list-item[data-label="Radio 2"]').click()
 
   // The property switches to "is checked" automatically, with no comparison/value box
   const sourceProperty = stageEditPanel.locator('.condition-sourceProperty').first()
@@ -46,7 +48,9 @@ test('hide a field when a radio option is checked, built in the editor (#215)', 
     .first()
   await targetInput.click()
   await targetInput.fill('Text Input')
-  await page.locator('.f-autocomplete-list-item[data-label="Text Input"]').click()
+  // Scope to the stage so another open autocomplete list can't cause a strict-mode failure, and take
+  // the last match so the freshly opened list (not a still-closing one) is the one clicked
+  await stage.locator('.f-autocomplete-list-item[data-label="Text Input"]').last().click()
   await stageEditPanel.locator('.then-conditions-wrap .condition-targetProperty').first().selectOption('isNotVisible')
 
   // Writes to the underlying condition data are debounced, so poll until they land
