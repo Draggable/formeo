@@ -9,7 +9,7 @@ If you're having trouble please don't hesitate to open Issue [here](https://gith
 ### Dependencies
 To develop for Formeo you'll need:
 
-- Node.js 18 or newer
+- Node.js 20.19 or newer (Vite requires it; 22.12+ also works)
 
 ### Recommended Tooling
 While not required, the following tools are recommended to maintain code quality and consistency in style.
