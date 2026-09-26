@@ -261,6 +261,22 @@ describe('DOM Class', async _t => {
 
       assert.equal(dom.create(group(), true).querySelector('input').name, 'group-1', 'preview keeps the id')
       assert.equal(dom.create(group()).querySelector('input').name, 'shared', 'render uses attrs.name')
+
+      // A checkbox group with more than one option renders its inputs as `name[]` (#128), but the
+      // preview keeps the plain id-based name so it never grows the [] suffix.
+      const checkboxGroup = () => ({
+        id: 'group-2',
+        tag: 'input',
+        attrs: { type: 'checkbox', name: 'hobbies' },
+        config: { label: 'Hobbies' },
+        options: [
+          { label: 'A', value: 'a' },
+          { label: 'B', value: 'b' },
+        ],
+      })
+
+      assert.equal(dom.create(checkboxGroup(), true).querySelector('input').name, 'group-2', 'preview keeps the id')
+      assert.equal(dom.create(checkboxGroup()).querySelector('input').name, 'hobbies[]', 'render adds []')
     })
   })
 })
