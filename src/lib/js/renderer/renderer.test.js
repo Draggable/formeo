@@ -735,6 +735,48 @@ describe('FormeoRenderer', () => {
       assert.equal(submit.defaultPrevented, true)
     })
 
+    test('getRenderedForm() with no renderContainer still fires onChange/onSubmit without throwing', () => {
+      const values = []
+      const submits = []
+      const renderer = new FormeoRenderer({
+        events: {
+          onChange: ({ userData }) => values.push(userData.nickname),
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault()
+            submits.push(userData)
+          },
+        },
+      })
+      const form = renderer.getRenderedForm(textFormData())
+      const input = form.querySelector('input[name="nickname"]')
+      input.value = 'Ada'
+      assert.doesNotThrow(() => input.dispatchEvent(new window.Event('input', { bubbles: true })))
+      assert.deepEqual(values, ['Ada'])
+
+      const submit = new window.Event('submit', { cancelable: true })
+      assert.doesNotThrow(() => form.dispatchEvent(submit))
+      assert.equal(submit.defaultPrevented, true)
+      assert.deepEqual(submits, [{ nickname: 'Ada' }])
+    })
+
+    test('onChange after a re-render still reads userData from the form the handler is bound to', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData.nickname) },
+      })
+      renderer.render(textFormData())
+      const oldForm = container.querySelector('.formeo-render')
+      oldForm.querySelector('input[name="nickname"]').value = 'Ada'
+
+      // replaces oldForm in the container with a fresh (empty) form
+      renderer.render(textFormData())
+
+      // a stale listener on the detached oldForm must still report oldForm's own data
+      oldForm.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.deepEqual(values, ['Ada'])
+    })
+
     test('legacy config.action.onRender still fires once the form is in the page', async () => {
       const seen = []
       const renderer = new FormeoRenderer({

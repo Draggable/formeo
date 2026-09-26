@@ -52,26 +52,8 @@ export default class FormeoRenderer {
    * { username: 'john', hobbies: ['reading', 'gaming'] }
    */
   get userData() {
-    const form = this.container.querySelector('.formeo-render') || this.renderedForm
-    if (!form) {
-      return {}
-    }
-    const formEntries = new FormData(form)
-
-    const formDataObj = {}
-    for (const [key, value] of formEntries.entries()) {
-      if (formDataObj[key]) {
-        if (Array.isArray(formDataObj[key])) {
-          formDataObj[key].push(value)
-        } else {
-          formDataObj[key] = [formDataObj[key], value]
-        }
-      } else {
-        formDataObj[key] = value
-      }
-    }
-
-    return formDataObj
+    const form = this.container?.querySelector('.formeo-render') || this.renderedForm
+    return userDataOf(form)
   }
 
   /**
@@ -206,10 +188,12 @@ export default class FormeoRenderer {
   bindFormEvents(form) {
     const { onChange, onSubmit } = this.events
     if (onChange) {
-      form.addEventListener('input', event => onChange({ event, target: event.target, form, userData: this.userData }))
+      form.addEventListener('input', event =>
+        onChange({ event, target: event.target, form, userData: userDataOf(form) })
+      )
     }
     if (onSubmit) {
-      form.addEventListener('submit', event => onSubmit({ event, form, userData: this.userData }))
+      form.addEventListener('submit', event => onSubmit({ event, form, userData: userDataOf(form) }))
     }
   }
 
@@ -518,6 +502,34 @@ export default class FormeoRenderer {
 
     return components
   }
+}
+
+/**
+ * Converts a rendered form's fields to a plain object, the same shape the `userData`
+ * getter exposes. Handles multiple values for the same key by converting them to arrays.
+ * @param {HTMLFormElement} [form]
+ * @return {Object.<string, string|string[]>}
+ */
+const userDataOf = form => {
+  if (!form) {
+    return {}
+  }
+  const formEntries = new FormData(form)
+
+  const formDataObj = {}
+  for (const [key, value] of formEntries.entries()) {
+    if (formDataObj[key]) {
+      if (Array.isArray(formDataObj[key])) {
+        formDataObj[key].push(value)
+      } else {
+        formDataObj[key] = [formDataObj[key], value]
+      }
+    } else {
+      formDataObj[key] = value
+    }
+  }
+
+  return formDataObj
 }
 
 const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)
