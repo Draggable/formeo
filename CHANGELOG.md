@@ -1,3 +1,11 @@
+## [5.3.3](https://github.com/Draggable/formeo/compare/v5.3.2...v5.3.3) (2026-09-26)
+
+
+### Bug Fixes
+
+* **renderer:** find unnamed checkbox groups in getComponents ([7bd5f0a](https://github.com/Draggable/formeo/commit/7bd5f0a0c4887dc862a3d33c994a51d003eb5bac)), closes [#128](https://github.com/Draggable/formeo/issues/128)
+* **renderer:** post every checked value of a checkbox group ([e3fff71](https://github.com/Draggable/formeo/commit/e3fff71a34387a078e78a755cefa9e67fa4a803c)), closes [#128](https://github.com/Draggable/formeo/issues/128)
+
 ## [5.3.2](https://github.com/Draggable/formeo/compare/v5.3.1...v5.3.2) (2026-09-26)
 
 
