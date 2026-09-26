@@ -4,6 +4,8 @@ import { indexOfNode } from '../../common/helpers.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
+import Components from '../index.js'
+import { controlAttrPanelConfig, getControlConfig } from './control-attr-config.mjs'
 
 const checkableTypes = new Set(['checkbox', 'radio'])
 const isSelectableType = new Set(['radio', 'checkbox', 'select-one', 'select-multiple'])
@@ -20,14 +22,15 @@ export default class Field extends Component {
   constructor(fieldData = Object.create(null)) {
     super('field', fieldData)
 
+    this.controlId = this.get('config.controlId') || this.get('meta.id')
+    this.applyControlAttrConfig()
+
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
     this.debouncedUpdatePreview = debounce(this.updatePreview)
 
     this.label = dom.create(this.labelConfig)
 
     this.preview = this.fieldPreview()
-
-    this.controlId = this.get('config.controlId') || this.get('meta.id')
 
     const actionButtons = this.getActionButtons()
     const hasEditButton = this.actionButtons.some(child => child.meta?.id === 'edit')
@@ -57,6 +60,19 @@ export default class Field extends Component {
 
     this.dom = field
     this.isEditing = false
+  }
+
+  /**
+   * Honour control-level `disabledAttrs` / `lockedAttrs` by merging them into this field's
+   * panels.attrs config. Reads both the registered control definition and the field's own
+   * saved config so forms saved before a control changed still pick up its rules.
+   */
+  applyControlAttrConfig() {
+    const controlConfig = getControlConfig(Components.controls?.get(this.controlId))
+    const attrConfig = controlAttrPanelConfig(controlConfig, this.get('config'))
+    if (attrConfig) {
+      this.config = { [this.id]: attrConfig }
+    }
   }
 
   get labelConfig() {

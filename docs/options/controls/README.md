@@ -58,8 +58,8 @@ const controlOptions = {
       tag: 'input', // HTML tag used to render the element
       config: {
         label: 'Email',
-        disabledAttrs: ['type'], // Attributes hidden from the user
-        lockedAttrs: [], // Attributes that cannot be deleted
+        disabledAttrs: ['type'], // hidden from the edit panel and cannot be re-added
+        lockedAttrs: [], // shown, but cannot be removed
       },
       meta: {
         group: 'common',
@@ -89,6 +89,8 @@ const formeoOptions = {
 
 const formeo = new FormeoEditor(formeoOptions)
 ```
+
+See [Controlling Attribute Visibility](../../controls/custom-attribute-types.md#controlling-attribute-visibility) for how these combine with the editor config.
 
 See [Custom controls](../../controls/custom-controls.md) for a full editor + renderer example.
 

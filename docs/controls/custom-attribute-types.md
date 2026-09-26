@@ -143,7 +143,7 @@ const formeoOptions = {
 }
 ```
 
-You can also use `disabledAttrs` and `lockedAttrs` in the control definition:
+The same result can be set directly on a control definition's `config`, without touching the editor's `config` at all:
 
 ```javascript
 const customControl = {
@@ -154,8 +154,8 @@ const customControl = {
   },
   config: {
     label: 'Email Input',
-    disabledAttrs: ['type'],  // user cannot edit the type
-    lockedAttrs: ['name'],    // user cannot remove the name attribute
+    disabledAttrs: ['type'], // hidden from the edit panel and cannot be re-added
+    lockedAttrs: ['name'], // shown, but cannot be removed
   },
   meta: {
     group: 'common',
@@ -164,6 +164,20 @@ const customControl = {
   },
 }
 ```
+
+`disabledAttrs` and `lockedAttrs` work the same as `panels.attrs.disabled` and `panels.attrs.locked`, and every source is combined:
+
+- the control definition's `config.disabledAttrs` / `config.lockedAttrs`
+- the same keys saved in a field's `config` (copied from the control when the field was added)
+- `config.fields.<all | controlId | fieldId>.panels.attrs.disabled` / `.locked`
+- `config.fields.<all | controlId | fieldId>.disabled` / `.locked` with full paths such as `'attrs.type'`
+
+Lists are merged, so a later source cannot unlock or re-enable an attribute. Two details:
+
+- **Disabled** attributes are not shown in the edit panel and cannot be added back with **+ Attribute**. The value in the field's data is still rendered.
+- **Locked** attributes are shown read-only and greyed out, with no remove button.
+
+An attribute that you give dropdown options in `config.fields.<scope>.attrs.<name>` is never disabled. If an attribute is both disabled and locked, it is hidden.
 
 ## Complete Example: Custom Control with Multiple Attribute Types
 
