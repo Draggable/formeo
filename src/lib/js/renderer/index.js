@@ -161,9 +161,10 @@ export default class FormeoRenderer {
 
     this.renderedForm = dom.render(config)
     this.renderedForm.addEventListener('reset', this.syncRequiredGroupsAfterReset)
-    this.bindFormEvents(this.renderedForm)
 
     this.applyConditions()
+    // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
+    this.bindFormEvents(this.renderedForm)
 
     return this.renderedForm
   }

@@ -826,6 +826,22 @@ describe('FormeoRenderer', () => {
       )
     })
 
+    test('a value condition applied during render does not fire onChange', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData) },
+      })
+      renderer.render(valueConditionFormData())
+      assert.equal(container.querySelector('input[name="greeting"]').value, 'hello')
+      assert.deepEqual(values, [])
+
+      const nickname = container.querySelector('input[name="nickname"]')
+      nickname.value = 'Ada'
+      nickname.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.deepEqual(values, [{ nickname: 'Ada', greeting: 'hello' }])
+    })
+
     test('legacy config.action.onRender still fires once the form is in the page', async () => {
       const seen = []
       const renderer = new FormeoRenderer({

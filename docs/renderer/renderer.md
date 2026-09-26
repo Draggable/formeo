@@ -219,7 +219,7 @@ Fires synchronously after `render()` attaches the rendered `<form>` to `renderCo
 
 ### `onChange({ event, target, form, userData })`
 
-Fires on every `input` event within the rendered form. `userData` is the same object returned by `renderer.userData`, evaluated at the time of the event.
+Fires on every `input` event within the rendered form, including one fired by a condition's `value` action after the form has rendered. The conditions applied while rendering don't fire it. `userData` has the same shape as `renderer.userData` and is read from the form the event came from, at the time of the event.
 
 ### `onSubmit({ event, form, userData })`
 
