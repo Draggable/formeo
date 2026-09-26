@@ -14,7 +14,7 @@ test.describe('Add attribute dialog (#233)', () => {
       d.dismiss()
     })
     const { field, editPanel } = await addFieldAndEdit(page, 'Text Input', 'Attributes')
-    await editPanel.getByRole('button', { name: '+ Attribute' }).click()
+    await editPanel.locator('.add-attrs').click()
     const dialog = page.locator('.formeo-dialog.add-attribute-dialog')
     await expect(dialog).toBeVisible()
     await dialog.locator('[name="attrName"]').fill('data-limit')
@@ -37,7 +37,7 @@ test.describe('Add attribute dialog (#233)', () => {
     // setting a value" early return), so use Radio Group, whose control config disables
     // attrs.type outright (src/lib/js/components/controls/form/radio-group.js).
     const { editPanel } = await addFieldAndEdit(page, 'Radio Group', 'Attributes')
-    await editPanel.getByRole('button', { name: '+ Attribute' }).click()
+    await editPanel.locator('.add-attrs').click()
     const dialog = page.locator('.formeo-dialog.add-attribute-dialog')
     const name = dialog.locator('[name="attrName"]')
     await name.fill('type')
@@ -49,7 +49,7 @@ test.describe('Add attribute dialog (#233)', () => {
   test('Escape closes the dialog without adding anything', async ({ page }) => {
     const { editPanel } = await addFieldAndEdit(page, 'Text Input', 'Attributes')
     const before = await editPanel.locator('.attrs-panel li').count()
-    await editPanel.getByRole('button', { name: '+ Attribute' }).click()
+    await editPanel.locator('.add-attrs').click()
     await page.locator('.add-attribute-dialog [name="attrName"]').fill('data-x')
     await page.keyboard.press('Escape')
     await expect(page.locator('.add-attribute-dialog')).toHaveCount(0)
