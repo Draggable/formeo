@@ -1,3 +1,17 @@
+# [5.4.0](https://github.com/Draggable/formeo/compare/v5.3.3...v5.4.0) (2026-09-26)
+
+
+### Bug Fixes
+
+* **editor:** support multiple editors on the same page ([27cfc6d](https://github.com/Draggable/formeo/commit/27cfc6d8312eca2c4ad4b37ab539f27117c80b3f)), closes [#152](https://github.com/Draggable/formeo/issues/152)
+* **events:** fire the documented added events ([3c9dcd0](https://github.com/Draggable/formeo/commit/3c9dcd018d2fde96a57dc1adfcb3bd19a602b4d8)), closes [#152](https://github.com/Draggable/formeo/issues/152)
+* **events:** skip resize work for editors no longer on the page ([a056feb](https://github.com/Draggable/formeo/commit/a056febaf704a1d53f1aa475c6d5a0f2b71d1603)), closes [#152](https://github.com/Draggable/formeo/issues/152)
+
+
+### Features
+
+* **editor:** accept a sessionStorage key per editor ([557ce37](https://github.com/Draggable/formeo/commit/557ce373aa6962833c2f7a3f8247c520f714522d)), closes [#152](https://github.com/Draggable/formeo/issues/152)
+
 ## [5.3.3](https://github.com/Draggable/formeo/compare/v5.3.2...v5.3.3) (2026-09-26)
 
 
