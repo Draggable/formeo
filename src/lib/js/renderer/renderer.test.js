@@ -920,6 +920,76 @@ describe('FormeoRenderer', () => {
     })
   })
 
+  describe('checkbox group names for native posts (#128)', () => {
+    const checkboxGroup = (attrs, count = 3) => ({
+      id: 'cb-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['hobbies-1'] } },
+      fields: {
+        'hobbies-1': {
+          id: 'hobbies-1',
+          tag: 'input',
+          attrs: { type: 'checkbox', ...attrs },
+          config: { label: 'Hobbies' },
+          options: [
+            { label: 'Reading', value: 'reading' },
+            { label: 'Gaming', value: 'gaming' },
+            { label: 'Coding', value: 'coding' },
+          ].slice(0, count),
+        },
+      },
+    })
+    const boxes = () => [...container.querySelectorAll('input[type="checkbox"]')]
+
+    test('options share a name ending in [] so every checked value is posted', () => {
+      new FormeoRenderer({ renderContainer: container }).render(checkboxGroup({ name: 'hobbies' }))
+      assert.deepEqual([...new Set(boxes().map(b => b.name))], ['hobbies[]'])
+      boxes()[0].checked = true
+      boxes()[2].checked = true
+      assert.deepEqual(new window.FormData(container.querySelector('form')).getAll('hobbies[]'), ['reading', 'coding'])
+    })
+
+    test('userData strips the [] suffix and keeps arrays', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(checkboxGroup({ name: 'hobbies' }))
+      boxes()[0].checked = true
+      boxes()[2].checked = true
+      assert.deepEqual(renderer.userData, { hobbies: ['reading', 'coding'] })
+    })
+
+    test('a single checked value stays a string', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(checkboxGroup({ name: 'hobbies' }))
+      boxes()[1].checked = true
+      assert.deepEqual(renderer.userData, { hobbies: 'gaming' })
+    })
+
+    test('the userData setter accepts the plain name', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(checkboxGroup({ name: 'hobbies' }))
+      renderer.userData = { hobbies: ['gaming'] }
+      assert.deepEqual(
+        boxes().map(b => b.checked),
+        [false, true, false]
+      )
+    })
+
+    test('a single-option checkbox keeps its plain name', () => {
+      new FormeoRenderer({ renderContainer: container }).render(checkboxGroup({ name: 'agree' }, 1))
+      assert.equal(boxes()[0].name, 'agree')
+    })
+
+    test('a configured name already ending in [] still resolves a label via componentByName', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(checkboxGroup({ name: 'hobbies[]' }))
+      boxes()[0].checked = true
+      const [hobbiesField] = renderer.userFormData
+      assert.equal(hobbiesField.key, 'hobbies')
+      assert.equal(hobbiesField.label, 'Hobbies')
+    })
+  })
+
   describe('custom controls (#228)', () => {
     test('elements[controlId].action.onRender runs for a custom control once it is in the page', async () => {
       const seen = []

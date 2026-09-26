@@ -315,7 +315,7 @@ renderer.userData = { firstName: 'John' }
 
 A checkbox or radio group is one field with `options`. It renders as a wrapper element (`id="f-<fieldId>"`, the element conditions target) that holds one `<input>` per option.
 
-- **Name.** Every option input is named `attrs.name` when it is set. Otherwise it falls back to `attrs.id`, then to the rendered field id (`f-<fieldId>`). `userData` is keyed by that name. Give two groups different names: radio groups that share a name act as one group.
+- **Name.** Every option input is named `attrs.name` when it is set. Otherwise it falls back to `attrs.id`, then to the rendered field id (`f-<fieldId>`). `userData` is keyed by that name. Give two groups different names: radio groups that share a name act as one group. Checkbox groups with more than one option render their inputs as `name[]`, so a regular form POST sends every checked value (PHP, Rails and Express's `extended` parser read these as arrays). `userData` strips the suffix: `{ hobbies: ['reading', 'coding'] }`, and one checked value is still a string.
 - **Required.** A required radio group needs one option picked. A required checkbox group needs **at least one** box checked, not all of them. The browser's own validation message appears either way, and the group label shows `*`.
 - **Other attributes.** `disabled` and `form` are copied to every option input. Everything else set on the group (`data-*`, `aria-*`, `title`, custom attributes) goes on the wrapper element.
 
@@ -327,6 +327,9 @@ renderer.userData = { toppings: ['cheese', 'olives'] }
 renderer.userData
 // { toppings: ['cheese', 'olives'] } if several are checked
 // { toppings: 'cheese' } if only one is checked
+
+// With more than one option, the group's inputs are actually named "toppings[]" so a native
+// <form> POST keeps every checked value; userData strips the suffix either way.
 ```
 
 #### Radio Buttons

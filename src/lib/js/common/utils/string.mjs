@@ -114,3 +114,14 @@ const keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g
 export function trimKeyPrefix(key) {
   return key.replaceAll(keyPrefixRegex, '')
 }
+
+/**
+ * Checkbox groups submit several values under one name; a [] suffix keeps them all in
+ * PHP/Rails/Express-style form parsing (#128)
+ * @param {String} name group name
+ * @param {String} fieldType input type of the group's options
+ * @param {Number} optionCount number of options in the group
+ * @return {String}
+ */
+export const groupInputName = (name, fieldType, optionCount) =>
+  fieldType === 'checkbox' && optionCount > 1 && name && !name.endsWith('[]') ? `${name}[]` : name

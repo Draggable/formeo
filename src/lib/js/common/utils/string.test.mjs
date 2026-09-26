@@ -2,6 +2,7 @@ import { suite, test } from 'node:test'
 
 import {
   extractTextFromHtml,
+  groupInputName,
   isHtmlString,
   slugify,
   slugifyAddress,
@@ -265,6 +266,21 @@ suite('string', () => {
     test('should handle multiple prefixes', ({ assert }) => {
       const result = trimKeyPrefix('attrs.meta.name')
       assert.strictEqual(result, 'meta.name')
+    })
+  })
+
+  suite('groupInputName (#128)', () => {
+    test('adds [] to checkbox groups with several options', ({ assert }) => {
+      assert.strictEqual(groupInputName('hobbies', 'checkbox', 3), 'hobbies[]')
+    })
+
+    test('does not double the suffix', ({ assert }) => {
+      assert.strictEqual(groupInputName('hobbies[]', 'checkbox', 3), 'hobbies[]')
+    })
+
+    test('leaves radio groups and single checkboxes alone', ({ assert }) => {
+      assert.strictEqual(groupInputName('size', 'radio', 3), 'size')
+      assert.strictEqual(groupInputName('agree', 'checkbox', 1), 'agree')
     })
   })
 })
