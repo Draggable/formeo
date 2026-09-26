@@ -111,3 +111,63 @@ test.describe('Multiple editors on one page (#152)', () => {
     expect(await page.evaluate(() => window.e2eCalls.d)).toBe(0)
   })
 })
+
+test.describe('Shared sessionStorage key warning (#152)', () => {
+  const warningsFor = (warnings, key) => warnings.filter(text => text.includes(`sessionStorage key "${key}"`))
+
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('.formeo-editor').first()).toBeVisible()
+    await page.evaluate(() => {
+      window.makeEditor = (id, sessionStorage) => {
+        const container = document.createElement('div')
+        container.id = id
+        document.body.appendChild(container)
+        return new window.FormeoEditor({ editorContainer: container, sessionStorage, style: null })
+      }
+    })
+  })
+
+  test('warns once when two live editors share a key', async ({ page }) => {
+    const warnings = []
+    page.on('console', msg => msg.type() === 'warning' && warnings.push(msg.text()))
+
+    await page.evaluate(async () => {
+      const editors = [window.makeEditor('key-a', 'shared-form'), window.makeEditor('key-b', 'shared-form')]
+      await Promise.all(editors.map(editor => editor.whenReady()))
+    })
+
+    expect(warningsFor(warnings, 'shared-form')).toHaveLength(1)
+  })
+
+  test('does not warn when an editor is re-created after the first one left the page', async ({ page }) => {
+    const warnings = []
+    page.on('console', msg => msg.type() === 'warning' && warnings.push(msg.text()))
+
+    await page.evaluate(async () => {
+      const removed = window.makeEditor('remount-a', 'remount-form')
+      await removed.whenReady()
+      document.getElementById('remount-a').remove()
+
+      const replaced = window.makeEditor('remount-b', 'remount-form')
+      await replaced.whenReady()
+      document.getElementById('remount-b').replaceChildren()
+
+      await window.makeEditor('remount-c', 'remount-form').whenReady()
+    })
+
+    expect(warningsFor(warnings, 'remount-form')).toHaveLength(0)
+  })
+
+  test('does not warn for distinct keys', async ({ page }) => {
+    const warnings = []
+    page.on('console', msg => msg.type() === 'warning' && warnings.push(msg.text()))
+
+    await page.evaluate(async () => {
+      const editors = [window.makeEditor('distinct-a', 'orders-form'), window.makeEditor('distinct-b', 'returns-form')]
+      await Promise.all(editors.map(editor => editor.whenReady()))
+    })
+
+    expect(warnings.filter(text => text.includes('sessionStorage key'))).toHaveLength(0)
+  })
+})

@@ -7,7 +7,7 @@
 | [editorContainer](#editorcontainer) | String\|Element\|jQuery | Where the editor is added: a selector, an element, or a jQuery object (its first element). Required. | `'#formeo-editor'`  | `null`                            |
 | [svgSprite](#svgsprite)             | String       | loads an svg sprite                                                             | `'path/to/svsprite'`        | `null` (bundled sprite)           |
 | style                               | String       | loads a stylesheet to the page                                                  | `'path/to/stylesheet'`      | `https://cdn.jsdelivr.net/npm/formeo@<version>/dist/formeo.min.css`, `null` to skip |
-| sessionStorage                      | Boolean      | save form template state in sessionStorage                                      | `true` \| `false`           | `false`                           |
+| sessionStorage                      | Boolean\|String | save the form in sessionStorage; `true` uses the key `formeo-formData`, a string is used as the key (give each editor on a page its own) | `true` \| `'orders-form'` | `false`                           |
 | iconFont                            | String       | use existing icon font as fallback                                              | `'glyphicons'`              | `null`                            |
 | [stickyControls](#stickycontrols)   | Boolean      | keep the controls panel in view while scrolling                                | `true` \| `false`           | `false`                           |
 | [controlOnLeft](#controlonleft)     | Boolean      | show controls left of the stage                                                | `true` \| `false`           | `false`                           |

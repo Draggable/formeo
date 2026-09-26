@@ -93,6 +93,8 @@ document.addEventListener('formeoUpdatedField', (event) => {
 | `formeoOnRender`         | Component has been rendered              |
 | `formeoConditionUpdated` | Conditional logic has been updated       |
 
+Callbacks passed in `events` only fire for their own editor. DOM events on `document` fire for every editor on the page; `formeoLoaded`'s `event.detail.formeo` tells you which one.
+
 ## Event Data Structure
 
 Events include detailed information about what changed:

@@ -171,3 +171,14 @@ Available states:
 - `INIT_STATES.INITIALIZING`
 - `INIT_STATES.READY`
 - `INIT_STATES.ERROR`
+
+## Multiple editors on one page
+
+Each `FormeoEditor` keeps its own form data, controls, conditions and event callbacks, so several editors can share a page:
+
+```javascript
+const orders = new FormeoEditor({ editorContainer: '#orders', sessionStorage: 'orders-form' }, ordersFormData)
+const returns = new FormeoEditor({ editorContainer: '#returns', sessionStorage: 'returns-form' }, returnsFormData)
+```
+
+Give each editor its own `editorContainer`, and a distinct `sessionStorage` key if you use one (a warning is logged if two editors on the page share a key; an editor re-created after the previous one left the page, as in a remount, takes the key over without a warning). Some settings are page-wide and the last editor created wins: the icon sprite and icon font (`svgSprite`, `iconFont`), the stylesheet (`style`), and the interface language, which is also remembered in sessionStorage.
