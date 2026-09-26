@@ -2,7 +2,6 @@
 
 import animate from '../common/animation.js'
 import dom from '../common/dom.js'
-import events from '../common/events.js'
 import { forEach, indexOfNode, isInt, map } from '../common/helpers.mjs'
 import { clone, componentType, identity, merge, remove, unique, uuid } from '../common/utils/index.mjs'
 import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
@@ -22,31 +21,55 @@ import {
 } from '../constants.js'
 import Data from './data.js'
 import EditPanel from './edit-panel/edit-panel.js'
-// Components is imported at the end of the file after circular dependencies are resolved
-import Components from './index.js'
 import Panels from './panels.js'
-
-// import Controls from './controls/index.js'
-
-let Controls = null
 
 const propertyOptions = objectFromStringArray(PROPERTY_OPTIONS)
 
 export default class Component extends Data {
-  constructor(name, dataArg = {}) {
+  /**
+   * @param {String} name 'stage' | 'row' | 'column' | 'field'
+   * @param {Object} dataArg component data
+   * @param {Components} components the editor this component belongs to (required, there is no default)
+   */
+  constructor(name, dataArg = {}, components) {
     const data = { ...dataArg, id: dataArg.id || uuid() }
     super(name, data)
+    this.components = components
     this.id = data.id
     this.shortId = this.id.slice(0, this.id.indexOf('-'))
     this.name = name
     this.indexName = `${name}s`
-    this.config = { ...data.config, ...Components[`${this.name}s`].config }
+    this.config = { ...data.config, ...components[`${this.name}s`].config }
     this.address = `${this.name}s.${this.id}`
     this.dataPath = `${this.address}.`
     // this.observer = new window.MutationObserver(this.mutationHandler)
     this.editPanels = new Map()
     this.eventListeners = new Map()
     this.initEventHandlers()
+  }
+
+  get dom() {
+    return this._dom
+  }
+
+  /**
+   * Keeps a reference from the element back to this component, see dom.remove and dom.asComponent
+   * @param {HTMLElement} element
+   */
+  set dom(element) {
+    this._dom = element
+    if (element) {
+      element.formeoComponent = this
+    }
+  }
+
+  /**
+   * Sortable group names are page-wide, so scope them to this editor
+   * @param {String} name 'stage' | 'row' | 'column' | 'controls'
+   * @return {String}
+   */
+  sortableGroup(name) {
+    return `${name}-${this.components.instanceId}`
   }
 
   /**
@@ -187,7 +210,7 @@ export default class Component extends Data {
     const parent = this.parent
     const children = this.children
     const siblingsPath = `${parent.name}s.${parent.id}.children`
-    const previousSiblings = [...(Components.getAddress(siblingsPath) || [])]
+    const previousSiblings = [...(this.components.getAddress(siblingsPath) || [])]
 
     // Dispatch onRemove event before removal
     this.dispatchComponentEvent('onRemove', {
@@ -199,7 +222,7 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.remove()
-    remove(Components.getAddress(siblingsPath), this.id)
+    remove(this.components.getAddress(siblingsPath), this.id)
 
     if (!parent.children.length) {
       parent.emptyClass()
@@ -218,7 +241,7 @@ export default class Component extends Data {
 
     const removeEvent = componentEventMap[this.name]
     if (removeEvent) {
-      events.formeoUpdated(
+      this.components.events.formeoUpdated(
         {
           componentId: this.id,
           componentType: this.name,
@@ -228,16 +251,16 @@ export default class Component extends Data {
       )
     }
 
-    const removedId = Components[`${this.name}s`].delete(this.id)
+    const removedId = this.components[`${this.name}s`].delete(this.id)
 
     // A removal is a data change: let formeoUpdated/onUpdate/onChange listeners know (#246)
-    events.formeoUpdated({
+    this.components.events.formeoUpdated({
       entity: this,
       componentId: this.id,
       componentType: this.name,
       dataPath: `${parent.name}s.${parent.id}`,
       changePath: siblingsPath,
-      value: [...(Components.getAddress(siblingsPath) || [])],
+      value: [...(this.components.getAddress(siblingsPath) || [])],
       previousValue: previousSiblings,
       changeType: 'removed',
     })
@@ -252,7 +275,7 @@ export default class Component extends Data {
    */
   dispatchRemovedPath = (path, previousValue) => {
     const localPath = Array.isArray(path) ? path.join('.') : path
-    events.formeoUpdated({
+    this.components.events.formeoUpdated({
       entity: this,
       dataPath: this.address,
       changePath: `${this.address}.${localPath}`,
@@ -292,12 +315,12 @@ export default class Component extends Data {
       className: [`${this.name}-actions`, 'group-actions'],
       action: {
         mouseenter: () => {
-          Components.stages.active.dom.classList.add(`active-hover-${this.name}`)
+          this.components.stages.active.dom.classList.add(`active-hover-${this.name}`)
           this.dom.classList.add(...hoverClassnames)
         },
         mouseleave: ({ target }) => {
           this.dom.classList.remove(...hoverClassnames)
-          Components.stages.active.dom.classList.remove(`active-hover-${this.name}`)
+          this.components.stages.active.dom.classList.remove(`active-hover-${this.name}`)
           target.removeAttribute('style')
         },
       },
@@ -463,7 +486,7 @@ export default class Component extends Data {
     }
     const domChildren = this.domChildren
     const childGroup = CHILD_TYPE_MAP.get(this.name)
-    return map(domChildren, child => Components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean)
+    return map(domChildren, child => this.components.getAddress(`${childGroup}s.${child.id}`)).filter(Boolean)
   }
 
   loadChildren = (children = this.data.children) => children.map(rowId => this.addChild({ id: rowId }))
@@ -495,7 +518,8 @@ export default class Component extends Data {
     const childComponentType = `${childGroup}s`
 
     const child =
-      Components.getAddress(`${childComponentType}.${childId}`) || Components[childComponentType].add(childId, data)
+      this.components.getAddress(`${childComponentType}.${childId}`) ||
+      this.components[childComponentType].add(childId, data)
 
     if (index >= childWrap.children.length) {
       childWrap.appendChild(child.dom)
@@ -589,19 +613,13 @@ export default class Component extends Data {
     ])
 
     const onAddConditions = {
-      controls: async () => {
-        if (!Controls) {
-          // Lazy import to avoid circular dependency
-          const { default: ControlsData } = await import('./controls/index.js')
-          Controls = ControlsData
-        }
-
+      controls: () => {
         const {
           controlData: {
             meta: { id: metaId },
             ...elementData
           },
-        } = Controls.get(item.id)
+        } = this.components.controls.get(item.id)
 
         set(elementData, 'config.controlId', metaId)
 
@@ -777,7 +795,7 @@ export default class Component extends Data {
 
   getComponent(path) {
     const [type, id] = path.split('.')
-    const group = Components[type]
+    const group = this.components[type]
     return id === this.id ? this : group?.get(id)
   }
 

@@ -36,9 +36,6 @@ describe('Component.remove emits formeoUpdated (#246)', () => {
 
   beforeEach(() => {
     removals = []
-    // events.opts is only set by events.init(); without it, the pre-existing
-    // EVENT_FORMEO_REMOVED_* listeners in events.js throw reading events.opts.onRemove.
-    events.init({})
     // Jump the mocked clock well past ANIMATION_SPEED_FAST so this test's first dispatch is
     // always a fresh leading-edge call, regardless of what a previous test left pending.
     mock.timers.tick(100_000)

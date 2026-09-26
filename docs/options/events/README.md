@@ -50,6 +50,8 @@ const editor = new FormeoEditor({
 | `onRender`           | Function | Fires when an element is rendered        |
 | `confirmClearAll`    | Function | Fires when form is cleared               |
 
+`onAdd`, `onAddRow`, `onAddColumn` and `onAddField` fire for rows, columns and fields added after the editor loads, not for the ones loaded from `formData`.
+
 ## DOM Event Listeners
 
 Listen for custom events dispatched on the document:
@@ -92,6 +94,10 @@ document.addEventListener('formeoUpdatedField', (event) => {
 | `formeoCleared`          | Form has been cleared                    |
 | `formeoOnRender`         | Component has been rendered              |
 | `formeoConditionUpdated` | Conditional logic has been updated       |
+
+Like the callbacks, `formeoAddedRow`, `formeoAddedColumn` and `formeoAddedField` fire for components added after load, not for components loaded from `formData`.
+
+Callbacks passed in `events` only fire for their own editor. DOM events on `document` fire for every editor on the page, and some of them carry no source element, so to tell editors apart use each editor's `events` callbacks. `formeoLoaded`'s `event.detail.formeo` does tell you which editor loaded.
 
 ## Event Data Structure
 

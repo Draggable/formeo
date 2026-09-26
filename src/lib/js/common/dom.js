@@ -1,6 +1,5 @@
 import i18n from '@draggable/i18n'
 
-import Components from '../components/index.js'
 import {
   ANIMATION_SPEED_BASE,
   CHILD_CLASSNAME_MAP,
@@ -846,12 +845,8 @@ class DOM {
    * @return  {Object} parent element
    */
   remove(elem) {
-    const type = componentType(elem)
-    if (type) {
-      return Components.remove(`${type}s.${elem.id}`)
-    }
-
-    return elem.parentElement.removeChild(elem)
+    const component = elem.formeoComponent
+    return component ? component.remove() : elem.parentElement.removeChild(elem)
   }
 
   /**
@@ -985,7 +980,7 @@ class DOM {
   isRow = node => componentType(node) === ROW_CLASSNAME
   isColumn = node => componentType(node) === COLUMN_CLASSNAME
   isField = node => componentType(node) === FIELD_CLASSNAME
-  asComponent = elem => Components[`${componentType(elem)}s`].get(elem.id)
+  asComponent = elem => elem.formeoComponent
 
   isDOMElement(variable) {
     return (

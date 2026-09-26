@@ -2,30 +2,37 @@ import { strict as assert } from 'node:assert'
 import { before, describe, it, mock } from 'node:test'
 import i18n from '@draggable/i18n'
 import Field from '../fields/field.js'
+import components from '../index.js'
 import { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 
 const selectField = () =>
-  new Field({
-    tag: 'select',
-    attrs: { type: 'select' },
-    config: { label: 'Choices', controlId: 'select' },
-    options: [
-      { label: 'One', value: 'one', selected: true },
-      { label: 'Two', value: 'two', selected: false },
-    ],
-  })
+  new Field(
+    {
+      tag: 'select',
+      attrs: { type: 'select' },
+      config: { label: 'Choices', controlId: 'select' },
+      options: [
+        { label: 'One', value: 'one', selected: true },
+        { label: 'Two', value: 'two', selected: false },
+      ],
+    },
+    components
+  )
 
 const radioField = () =>
-  new Field({
-    tag: 'input',
-    attrs: { type: 'radio' },
-    config: { label: 'Colour', controlId: 'radio' },
-    options: [
-      { label: 'Red', value: 'red', selected: false },
-      { label: 'Green', value: 'green', selected: true },
-      { label: 'Blue', value: 'blue', selected: false },
-    ],
-  })
+  new Field(
+    {
+      tag: 'input',
+      attrs: { type: 'radio' },
+      config: { label: 'Colour', controlId: 'radio' },
+      options: [
+        { label: 'Red', value: 'red', selected: false },
+        { label: 'Green', value: 'green', selected: true },
+        { label: 'Blue', value: 'blue', selected: false },
+      ],
+    },
+    components
+  )
 
 const optionItems = panel => panel.props.querySelectorAll(':scope > li')
 

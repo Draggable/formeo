@@ -1,6 +1,5 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
-import actions from '../../common/actions.js'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
 import { slugify, toTitleCase } from '../../common/utils/string.mjs'
@@ -225,7 +224,7 @@ export default class EditPanel {
           })
 
           // Run Action Hook
-          actions.add[type](addEvt)
+          this.component.components.actions.add[type](addEvt)
 
           // Fire Event
           document.dispatchEvent(customEvt)
@@ -382,7 +381,7 @@ export default class EditPanel {
     }
 
     // Run Action Hook
-    actions.remove[this.name](removeEvt)
+    this.component.components.actions.remove[this.name](removeEvt)
 
     // Fire Event
     const eventType = toTitleCase(this.name)

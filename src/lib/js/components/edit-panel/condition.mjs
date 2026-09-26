@@ -1,10 +1,8 @@
 import i18n from '@draggable/i18n'
 import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
-import events from '../../common/events.js'
 import { debounce } from '../../common/utils/index.mjs'
 import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
-import Components from '../index.js'
 import { segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
 
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
@@ -21,6 +19,7 @@ export class Condition {
     this.values = new Map(orderConditionValues(conditionValues))
     this.conditionType = conditionType
     this.parent = parent
+    this.components = parent.field.components
     this.baseAddress = `${parent.address}.${conditionType}`
     this.fields = new Map()
     this.conditionCount = conditionCount
@@ -38,9 +37,9 @@ export class Condition {
   }
 
   destroy() {
-    const conditions = Components.getAddress(this.baseAddress)
+    const conditions = this.components.getAddress(this.baseAddress)
     conditions.splice(this.index, 1)
-    Components.setAddress(this.baseAddress, conditions)
+    this.components.setAddress(this.baseAddress, conditions)
     animate.slideUp(this.dom, ANIMATION_SPEED_FAST, () => {
       this.dom.remove()
     })
@@ -62,7 +61,7 @@ export class Condition {
     const fieldsDom = []
     for (const [key, value] of this.values) {
       const onChange = evt => this.onChangeCondition({ key, target: evt.target })
-      const fieldArgs = { key, value, conditionType: this.conditionType, onChange }
+      const fieldArgs = { key, value, conditionType: this.conditionType, onChange, components: this.components }
       const conditionField = segmentTypes[key](fieldArgs, this.values)
       const conditionFieldDom = conditionField.dom || dom.create(conditionField)
       this.fields.set(key, conditionField.dom ? conditionField : conditionFieldDom)
@@ -142,8 +141,8 @@ export class Condition {
   }
 
   updateDataDebounced = debounce(evtData => {
-    events.formeoUpdated(evtData)
-    Components.setAddress(evtData.dataPath, evtData.value)
+    this.components.events.formeoUpdated(evtData)
+    this.components.setAddress(evtData.dataPath, evtData.value)
   })
 
   onChangeCondition = ({ key, target }) => {

@@ -1,6 +1,5 @@
 import dom from '../../common/dom.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
-import Components from '../index.js'
 
 export const BASE_NAME = 'f-autocomplete'
 export const DISPLAY_FIELD_CLASSNAME = `${BASE_NAME}-display-field`
@@ -130,14 +129,14 @@ const makeComponentOptionsList = (component, autocomplete) => {
 }
 
 /**
- * Generate options for the autolinker component
- * @param {String} selectedId option value
+ * Generate options for the autolinker component, from the components of the autocomplete's own editor
+ * @param {Autocomplete} autocomplete
  * @return {Array} option config objects
  */
 export const componentOptions = autocomplete => {
   const selectedId = autocomplete.value
   const labels = []
-  const flatList = Components.flatList()
+  const flatList = autocomplete.components.flatList()
   const options = Object.entries(flatList).reduce((acc, [value, component]) => {
     const label = getComponentLabel(component, autocomplete.key)
     if (label) {

@@ -25,12 +25,13 @@ export const segmentTypes = {
   assignment: createConditionSelect,
   comparison: createConditionSelect,
   logical: createConditionSelect,
-  source: ({ key: keyArg, value, onChange, conditionType }) => {
+  source: ({ key: keyArg, value, onChange, conditionType, components }) => {
     const componentInput = ITEM_INPUT_TYPE_MAP.autocomplete({
       key: `${conditionType}.condition.${keyArg}`,
       value,
       onChange,
       className: `condition-${keyArg}`,
+      components,
     })
 
     return componentInput

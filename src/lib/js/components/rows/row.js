@@ -1,7 +1,6 @@
 import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
-import events from '../../common/events.js'
 import { numToPercent } from '../../common/utils/index.mjs'
 import {
   ANIMATION_SPEED_FAST,
@@ -34,8 +33,8 @@ export default class Row extends Component {
    * @param  {String} dataID
    * @return {Object}
    */
-  constructor(rowData) {
-    super('row', { ...DEFAULT_DATA(), ...rowData })
+  constructor(rowData, components) {
+    super('row', { ...DEFAULT_DATA(), ...rowData }, components)
 
     const children = this.createChildWrap()
 
@@ -50,14 +49,14 @@ export default class Row extends Component {
       content: [this.getComponentTag(), this.getActionButtons(), this.editWindow, children],
     })
 
-    Sortable.create(children, {
+    this.sortable = Sortable.create(children, {
       animation: 150,
       fallbackClass: 'column-moving',
       forceFallback: true,
       group: {
-        name: 'row',
+        name: this.sortableGroup('row'),
         pull: true,
-        put: ['row', 'column', 'controls'],
+        put: ['row', 'column', 'controls'].map(name => this.sortableGroup(name)),
       },
       sort: true,
       disabled: false,
@@ -211,7 +210,7 @@ export default class Row extends Component {
         clearTimeout(refreshTimeout)
         column.refreshFieldPanels()
       }, ANIMATION_SPEED_FAST)
-      document.dispatchEvent(events.columnResized)
+      this.components.events.columnResized({ column: colDom, instance: column })
     }
 
     this.updateColumnPreset()

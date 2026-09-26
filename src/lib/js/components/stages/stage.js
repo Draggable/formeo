@@ -5,7 +5,6 @@ import dom from '../../common/dom.js'
 import { debounce } from '../../common/utils/index.mjs'
 import { ANIMATION_SPEED_BASE, CONDITION_TEMPLATE, ROW_CLASSNAME, STAGE_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
-import Stages from './index.js'
 
 const DEFAULT_DATA = () => ({ conditions: [CONDITION_TEMPLATE()], children: [] })
 
@@ -19,8 +18,8 @@ export default class Stage extends Component {
    * @param  {String} stageData uuid
    * @return {Object} DOM element
    */
-  constructor(stageData) {
-    super('stage', { ...DEFAULT_DATA(), ...stageData })
+  constructor(stageData, components) {
+    super('stage', { ...DEFAULT_DATA(), ...stageData }, components)
 
     this.updateEditPanels()
 
@@ -81,20 +80,20 @@ export default class Stage extends Component {
       children: [this.getComponentTag(), this.getActionButtons(), this.editWindow, children],
     })
 
-    Sortable.create(children, {
+    this.sortable = Sortable.create(children, {
       animation: 150,
       fallbackClass: 'row-moving',
       group: {
-        name: 'stage',
+        name: this.sortableGroup('stage'),
         pull: true,
-        put: ['row', 'column', 'controls'],
+        put: ['row', 'column', 'controls'].map(name => this.sortableGroup(name)),
       },
       sort: true,
       disabled: false,
       onAdd: this.onAdd.bind(this),
       onRemove: this.onRemove.bind(this),
       onStart: () => {
-        Stages.active = this
+        this.components.stages.active = this
       },
       onSort: this.onSort.bind(this),
       draggable: `.${ROW_CLASSNAME}`,

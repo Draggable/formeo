@@ -21,7 +21,7 @@ export class Stages extends ComponentData {
     this.config = { all: DEFAULT_CONFIG() }
   }
   Component(data) {
-    return new Stage(data)
+    return new Stage(data, this.components)
   }
 }
 

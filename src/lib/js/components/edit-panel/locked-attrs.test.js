@@ -1,7 +1,9 @@
 import { strict as assert } from 'node:assert'
 import { after, describe, it } from 'node:test'
 import Field from '../fields/field.js'
-import Fields from '../fields/index.js'
+import components from '../index.js'
+
+const { fields: Fields } = components
 
 describe('locking attributes through config (#116)', () => {
   // Capture the prior config value before this test suite runs.
@@ -16,7 +18,10 @@ describe('locking attributes through config (#116)', () => {
 
   it('config.fields.all.panels.attrs.locked removes the delete button for required', () => {
     Fields.config = { all: { panels: { attrs: { locked: ['required'] } } } }
-    const field = new Field({ tag: 'input', attrs: { type: 'text', required: true }, config: { label: 'Name' } })
+    const field = new Field(
+      { tag: 'input', attrs: { type: 'text', required: true }, config: { label: 'Name' } },
+      components
+    )
     const item = field.editPanels.get('attrs').editPanelItems.find(i => i.itemKey === 'attrs.required')
     assert.equal(item.isLocked, true)
     assert.equal(item.dom.querySelector('.prop-remove'), null)

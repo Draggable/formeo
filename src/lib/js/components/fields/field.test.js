@@ -1,4 +1,5 @@
 import { beforeEach, describe, it, mock } from 'node:test'
+import components from '../index.js'
 import Field from './field.js'
 
 const fieldConfig = {
@@ -19,7 +20,7 @@ describe('Field', () => {
   let field
 
   beforeEach(() => {
-    field = new Field(fieldConfig)
+    field = new Field(fieldConfig, components)
     mock.method(field, 'onRender', () => identity => identity)
   })
 

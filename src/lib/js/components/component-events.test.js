@@ -5,6 +5,7 @@
 import { strict as assert } from 'node:assert'
 import { beforeEach, describe, it } from 'node:test'
 import Field from './fields/field.js'
+import components from './index.js'
 
 const fieldConfig = {
   tag: 'input',
@@ -26,7 +27,7 @@ describe('Component Event System', () => {
   let component
 
   beforeEach(() => {
-    component = new Field(fieldConfig)
+    component = new Field(fieldConfig, components)
   })
 
   it('should initialize event handlers from config', () => {
