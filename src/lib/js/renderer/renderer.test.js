@@ -805,4 +805,31 @@ describe('FormeoRenderer', () => {
       assert.ok(container.querySelector('input[type="file"][name="resume"]'))
     })
   })
+
+  describe('custom controls (#228)', () => {
+    test('elements[controlId].action.onRender runs for a custom control once it is in the page', async () => {
+      const seen = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        elements: { 'image-annotate': { action: { onRender: elem => seen.push(elem.id) } } },
+      })
+      renderer.render({
+        id: 'custom-form',
+        stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+        rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+        columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['annotate-1'] } },
+        fields: {
+          'annotate-1': {
+            id: 'annotate-1',
+            tag: 'div',
+            config: { label: 'Annotate', controlId: 'image-annotate' },
+            children: [{ tag: 'input', attrs: { type: 'hidden', name: 'annotation', value: '' } }],
+          },
+        },
+      })
+      await new Promise(resolve => window.requestAnimationFrame(resolve))
+      assert.ok(seen.includes('f-annotate-1'))
+      assert.equal(renderer.userData.annotation, '')
+    })
+  })
 })

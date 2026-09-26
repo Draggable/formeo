@@ -26,6 +26,8 @@ const inputElement = {
 
 ## [Control Options](https://github.com/Draggable/formeo/tree/main/docs/options/controls)
 
+See [Custom controls](custom-controls.md) for a full editor + renderer example.
+
 ## Control Groups
 
 Formeo comes with a 3 groups of basic controls. These groups can be disabled, extended, [ordered](https://github.com/Draggable/formeo/tree/main/docs/options/controls#grouporder), and more. The default control groups are `form`, `html`, and `layout`.
