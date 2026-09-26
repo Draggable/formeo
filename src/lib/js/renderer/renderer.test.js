@@ -770,4 +770,39 @@ describe('FormeoRenderer', () => {
       assert.ok(container.querySelector('.formeo-render'))
     })
   })
+
+  describe('form attributes and file inputs (#313)', () => {
+    const uploadFormData = () => ({
+      id: 'upload-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['resume'] } },
+      fields: {
+        resume: {
+          id: 'resume',
+          tag: 'input',
+          attrs: { type: 'file', name: 'resume' },
+          config: { label: 'Resume', controlId: 'upload' },
+        },
+      },
+    })
+
+    test('config.attrs sets attributes on the rendered <form>', () => {
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        config: { attrs: { method: 'post', enctype: 'multipart/form-data', action: '/upload' } },
+      })
+      renderer.render(uploadFormData())
+      const form = container.querySelector('form.formeo-render')
+      assert.equal(form.getAttribute('method'), 'post')
+      assert.equal(form.getAttribute('enctype'), 'multipart/form-data')
+      assert.equal(form.getAttribute('action'), '/upload')
+    })
+
+    test('the upload field renders a named file input', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(uploadFormData())
+      assert.ok(container.querySelector('input[type="file"][name="resume"]'))
+    })
+  })
 })

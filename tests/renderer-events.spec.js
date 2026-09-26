@@ -45,3 +45,40 @@ test.describe('FormeoRenderer events (#209)', () => {
     expect(calls.submit).toEqual(['Ada'])
   })
 })
+
+test('the documented FormData upload snippet sends the File (#313)', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('.formeo-editor')).toBeVisible()
+  await page.evaluate(() => {
+    window.__upload = null
+    const container = Object.assign(document.createElement('div'), { id: 'upload-container' })
+    document.body.appendChild(container)
+    new window.FormeoRenderer({
+      renderContainer: container,
+      events: {
+        onSubmit: ({ event, form }) => {
+          event.preventDefault()
+          const body = new FormData(form)
+          window.__upload = { name: body.get('resume')?.name, json: JSON.stringify({ resume: body.get('resume') }) }
+        },
+      },
+    }).render({
+      id: 'upload-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['resume'] } },
+      fields: {
+        resume: { id: 'resume', tag: 'input', attrs: { type: 'file', name: 'resume' }, config: { label: 'Resume' } },
+      },
+    })
+  })
+  await page.locator('#upload-container input[type="file"]').setInputFiles({
+    name: 'cv.txt',
+    mimeType: 'text/plain',
+    buffer: Buffer.from('hello'),
+  })
+  await page.evaluate(() => document.querySelector('#upload-container form').requestSubmit())
+  const upload = await page.evaluate(() => window.__upload)
+  expect(upload.name).toBe('cv.txt')
+  expect(upload.json).toBe('{"resume":{}}') // why the docs say not to JSON.stringify files
+})

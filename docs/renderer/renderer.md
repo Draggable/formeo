@@ -50,6 +50,7 @@ Creates a new FormeoRenderer instance.
   - `elements` (Object): Custom form elements/controls configuration
   - `formData` (Object): The form structure data to render
   - `config` (Object): Additional rendering configuration
+    - `attrs` (Object): Attributes for the rendered `<form>`, e.g. `method`, `action`, `enctype`, `novalidate`
   - `events` (Object): `onRender`, `onChange`, `onSubmit` callbacks (see [Events](#events))
 - `formDataArg` (Object, optional): Alternative way to pass form data
 
@@ -339,6 +340,38 @@ const data = renderer.userData
 // { size: 'medium' }
 ```
 
+### File uploads
+
+The File Upload control renders a standard `<input type="file">`. Formeo doesn't upload anything itself; your app sends the file.
+
+- `C:\fakepath\cv.pdf` is how browsers show a file input's `value`. The file itself is in the form's `FormData`.
+- `renderer.userData` holds `File` objects for file inputs, and `JSON.stringify` turns a `File` into `{}`. Send `FormData` instead:
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: '#formeo-renderer',
+  events: {
+    onSubmit: ({ event, form }) => {
+      event.preventDefault()
+      // don't set Content-Type: the browser adds the multipart boundary
+      fetch('/upload', { method: 'POST', body: new FormData(form) })
+    },
+  },
+})
+renderer.render(formData)
+```
+
+For a regular (non-JavaScript) submit, set the form attributes:
+
+```javascript
+new FormeoRenderer({
+  renderContainer: '#formeo-renderer',
+  config: { attrs: { method: 'post', enctype: 'multipart/form-data', action: '/upload' } },
+})
+```
+
+Give the upload field a `name` attribute in the editor to control the key your server receives.
+
 ## Conditional Logic
 
 Conditions let one component react to another: show or hide a field or a whole row, check an option, or set a value. The editor writes them from a field's **Conditions** panel. You can also write them by hand in `formData`.
@@ -510,6 +543,7 @@ form.addEventListener('submit', (e) => {
   console.log('Structured data:', userFormData)
 
   // Submit to API
+  // Forms with file inputs: send new FormData(form) instead (see File uploads)
   fetch('/api/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -587,6 +621,7 @@ form.addEventListener('submit', async (e) => {
 
   // Process submission
   try {
+    // Forms with file inputs: send new FormData(form) instead (see File uploads)
     const response = await fetch('/api/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
