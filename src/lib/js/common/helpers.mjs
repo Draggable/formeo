@@ -85,7 +85,7 @@ export const safeAttrName = name => {
   }
 
   const attributeName = attributeMap[name] || name
-  const sanitizedAttributeName = attributeName.replace(/^\d+/, '').replace(/[^a-zA-Z0-9-:]/g, '')
+  const sanitizedAttributeName = attributeName.replace(/^\d+/, '').replace(/[^a-zA-Z0-9_:-]/g, '')
 
   sanitizedAttributeNames[name] = sanitizedAttributeName
 
