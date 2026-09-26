@@ -820,10 +820,8 @@ describe('FormeoRenderer', () => {
 
       renderer.render(valueConditionFormData())
 
-      assert.ok(
-        values.every(userData => userData.nickname !== 'typed'),
-        `onChange reported the replaced form's data: ${JSON.stringify(values)}`
-      )
+      // the second render's value action fires input while the old form is still in the container
+      assert.deepEqual(values, [], `onChange fired during render: ${JSON.stringify(values)}`)
     })
 
     test('a value condition applied during render does not fire onChange', () => {
@@ -840,6 +838,15 @@ describe('FormeoRenderer', () => {
       nickname.value = 'Ada'
       nickname.dispatchEvent(new window.Event('input', { bubbles: true }))
       assert.deepEqual(values, [{ nickname: 'Ada', greeting: 'hello' }])
+
+      // a value action that user input triggers after render still reaches onChange: first its own
+      // input on greeting, then the user's input on nickname
+      container.querySelector('input[name="greeting"]').value = ''
+      nickname.value = 'x'
+      nickname.dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.equal(values.length, 3)
+      assert.equal(values[1].greeting, 'hello')
+      assert.deepEqual(values[2], { nickname: 'x', greeting: 'hello' })
     })
 
     test('legacy config.action.onRender still fires once the form is in the page', async () => {
