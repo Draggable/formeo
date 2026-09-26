@@ -8,8 +8,7 @@ import { identity, sessionStorage } from './utils/index.mjs'
 // new attributes, options, field removal confirmations etc.
 // Every Action below can be overridden via module options
 
-// no `.`: addAttribute writes `attrs.<name>`, and addresses split on dots
-const ATTRIBUTE_NAME = /^[A-Za-z_:][-A-Za-z0-9_:]*$/
+const ATTRIBUTE_NAME = /^[A-Za-z:][-A-Za-z0-9:]*$/
 
 /**
  * Why an attribute name can't be added, or '' when it can
