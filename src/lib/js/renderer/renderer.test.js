@@ -8,6 +8,8 @@ describe('FormeoRenderer', () => {
   let document
   let window
   let container
+  // the value condition action dispatches `new Event(...)`, which jsdom only accepts from its own window
+  const nativeEvent = global.Event
 
   beforeEach(() => {
     // Set up JSDOM environment
@@ -26,6 +28,7 @@ describe('FormeoRenderer', () => {
     global.HTMLFormElement = window.HTMLFormElement
     global.Node = window.Node
     global.FormData = window.FormData
+    global.Event = window.Event
 
     container = document.getElementById('container')
   })
@@ -39,6 +42,7 @@ describe('FormeoRenderer', () => {
     delete global.HTMLFormElement
     delete global.Node
     delete global.FormData
+    global.Event = nativeEvent
   })
 
   describe('userFormData getter', () => {
@@ -775,6 +779,51 @@ describe('FormeoRenderer', () => {
       // a stale listener on the detached oldForm must still report oldForm's own data
       oldForm.dispatchEvent(new window.Event('input', { bubbles: true }))
       assert.deepEqual(values, ['Ada'])
+    })
+
+    // nickname starts as 'x', so the condition sets greeting (firing a bubbling input) on every render
+    const valueConditionFormData = () => ({
+      id: 'value-condition-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['nickname', 'greeting'] } },
+      fields: {
+        nickname: {
+          id: 'nickname',
+          tag: 'input',
+          attrs: { type: 'text', name: 'nickname', value: 'x' },
+          config: { label: 'Nickname' },
+        },
+        greeting: {
+          id: 'greeting',
+          tag: 'input',
+          attrs: { type: 'text', name: 'greeting' },
+          config: { label: 'Greeting' },
+          conditions: [
+            {
+              if: [{ source: 'fields.nickname', sourceProperty: 'value', comparison: '==', target: 'x' }],
+              then: [{ target: 'fields.greeting', targetProperty: 'value', assignment: '=', value: 'hello' }],
+            },
+          ],
+        },
+      },
+    })
+
+    test('onChange never reports userData from a form that render() replaced', () => {
+      const values = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onChange: ({ userData }) => values.push(userData) },
+      })
+      renderer.render(valueConditionFormData())
+      container.querySelector('input[name="nickname"]').value = 'typed'
+
+      renderer.render(valueConditionFormData())
+
+      assert.ok(
+        values.every(userData => userData.nickname !== 'typed'),
+        `onChange reported the replaced form's data: ${JSON.stringify(values)}`
+      )
     })
 
     test('legacy config.action.onRender still fires once the form is in the page', async () => {
