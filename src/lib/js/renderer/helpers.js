@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual.js'
 import dom, { REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
-import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, UUID_REGEXP } from '../constants.js'
+import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, STAGE_CLASSNAME, UUID_REGEXP } from '../constants.js'
 
 export const RENDER_PREFIX = 'f-'
 
@@ -228,14 +228,17 @@ export const suspendRequired = elem => {
   }
 }
 
+// a stage hidden by pagination is an inactive page, not a condition, so it never keeps `required` off
+const HIDDEN_BY_CONDITION = `[hidden]:not(.${STAGE_CLASSNAME})`
+
 /**
  * Undoes suspendRequired. Controls that were never suspended are left alone, and so are controls
- * still inside a hidden container: they keep their saved `required` until that container is shown.
+ * still inside a container a condition hid: they keep their saved `required` until it is shown.
  * @param {Element} elem condition target
  */
 export const restoreRequired = elem => {
   for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
-    if (control._required !== undefined && !control.closest('[hidden]')) {
+    if (control._required !== undefined && !control.closest(HIDDEN_BY_CONDITION)) {
       control.required = control._required
       delete control._required
     }
