@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.5.0
+Version: 5.6.0
 Author: Draggable https://draggable.io
 */
 
@@ -6064,7 +6064,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.5.0";
+		version$2 = "5.6.0";
 		type = "module";
 		main = "dist/formeo.cjs.js";
 		module$1 = "dist/formeo.es.js";
@@ -11120,9 +11120,11 @@ Author: Draggable https://draggable.io
 	*/
 	var Events = class {
 		components = null;
+		destroyed = false;
 		constructor() {
 			this.opts = this.defaults();
 			this.formeoUpdatedThrottled = throttle$1(() => {
+				if (this.destroyed) return;
 				const eventData = {
 					timeStamp: globalThis.performance.now(),
 					type: EVENT_FORMEO_UPDATED,
@@ -11178,6 +11180,7 @@ Author: Draggable https://draggable.io
 			return evt;
 		}
 		runCallbacks({ type, timeStamp, detail }) {
+			if (this.destroyed) return;
 			if (type === "formeoUpdated") return this.formeoUpdatedThrottled();
 			if (type === "formeoSaved") return this.opts.onSave({
 				timeStamp,
@@ -11205,6 +11208,7 @@ Author: Draggable https://draggable.io
 		confirmClearAll = (detail) => {
 			const evt = new globalThis.CustomEvent("confirmClearAll", { detail });
 			document.dispatchEvent(evt);
+			if (this.destroyed) return;
 			this.opts.confirmClearAll({
 				timeStamp: evt.timeStamp,
 				type: evt.type,
@@ -11213,7 +11217,7 @@ Author: Draggable https://draggable.io
 		};
 		formeoLoaded = (formeo) => {
 			document.dispatchEvent(new globalThis.CustomEvent("formeoLoaded", { detail: { formeo } }));
-			this.opts.formeoLoaded(formeo);
+			if (!this.destroyed) this.opts.formeoLoaded(formeo);
 		};
 		columnResized = (detail) => document.dispatchEvent(new globalThis.CustomEvent("columnResized", { detail }));
 		/**
@@ -11223,7 +11227,7 @@ Author: Draggable https://draggable.io
 		*/
 		onResizeWindow = () => {
 			const { columns, controls } = this.components || {};
-			if (!columns || !controls?.dom?.isConnected || this.resizeFrame) return;
+			if (this.destroyed || !columns || !controls?.dom?.isConnected || this.resizeFrame) return;
 			this.resizeFrame = window.requestAnimationFrame(() => {
 				this.resizeFrame = null;
 				for (const column of Object.values(columns.data)) {
@@ -11238,6 +11242,18 @@ Author: Draggable https://draggable.io
 				}
 			});
 		};
+		/**
+		* Stop calling this editor's option callbacks, including a trailing onUpdate/onChange that is
+		* already scheduled, and cancel a pending resize frame. FormeoEditor#destroy (#166) calls it.
+		* DOM events are still dispatched, so page listeners are unaffected.
+		*/
+		destroy() {
+			this.destroyed = true;
+			if (this.resizeFrame) {
+				window.cancelAnimationFrame(this.resizeFrame);
+				this.resizeFrame = null;
+			}
+		}
 	};
 	var events = new Events();
 	//#endregion
@@ -13110,6 +13126,24 @@ Author: Draggable https://draggable.io
 		Sortable.mount(Remove, Revert);
 	}));
 	//#endregion
+	//#region src/lib/js/common/sortable.js
+	var destroySortables;
+	var init_sortable = __esmMin((() => {
+		init_sortable_esm();
+		destroySortables = (root) => {
+			if (!root) return 0;
+			let count = 0;
+			for (const el of [root, ...root.querySelectorAll("*")]) {
+				const sortable = Sortable.get(el);
+				if (sortable) {
+					sortable.destroy();
+					count++;
+				}
+			}
+			return count;
+		};
+	}));
+	//#endregion
 	//#region src/lib/js/components/panels.js
 	var defaults$1, getTransition, Panels;
 	var init_panels = __esmMin((() => {
@@ -13139,17 +13173,24 @@ Author: Draggable https://draggable.io
 				const panelsWrap = this.createPanelsWrap();
 				this.nav = this.navActions();
 				this.nav.groupChange(this.activePanelIndex);
-				const resizeObserver = new window.ResizeObserver(([{ contentRect: { width } }]) => {
+				this.resizeObserver = new window.ResizeObserver(([{ contentRect: { width } }]) => {
 					if (this.currentWidth !== width) {
 						this.toggleTabbedLayout();
 						this.currentWidth = width;
 						this.nav.setTranslateX(this.activePanelIndex, false);
 					}
 				});
-				const observeTimeout = window.setTimeout(() => {
-					resizeObserver.observe(panelsWrap);
-					window.clearTimeout(observeTimeout);
+				this.observeTimeout = window.setTimeout(() => {
+					this.resizeObserver?.observe(panelsWrap);
 				}, ANIMATION_SPEED_SLOW);
+			}
+			/**
+			* Stop watching the panels' size
+			*/
+			destroy() {
+				window.clearTimeout(this.observeTimeout);
+				this.resizeObserver?.disconnect();
+				this.resizeObserver = null;
 			}
 			getPanelDisplay() {
 				const column = this.panelsWrap;
@@ -13449,7 +13490,7 @@ Author: Draggable https://draggable.io
 	}));
 	//#endregion
 	//#region src/lib/js/components/controls/options.js
-	init_sortable_esm();
+	init_sortable();
 	init_panels();
 	init_control();
 	var defaultOptions = Object.freeze({
@@ -14767,6 +14808,7 @@ Author: Draggable https://draggable.io
 	var addAttributeActions, defaultConfigOptions, defaultConfigValues, EditPanel;
 	var init_edit_panel = __esmMin((() => {
 		init_i18n_es_min();
+		init_sortable_esm();
 		init_dom();
 		init_helpers$2();
 		init_string();
@@ -15092,6 +15134,7 @@ Author: Draggable https://draggable.io
 	//#region src/lib/js/components/component.js
 	var propertyOptions, Component;
 	var init_component = __esmMin((() => {
+		init_sortable_esm();
 		init_animation();
 		init_dom();
 		init_helpers$2();
@@ -15246,6 +15289,8 @@ Author: Draggable https://draggable.io
 				});
 				forEach(children, (child) => child.remove());
 				this.dom.remove();
+				this.panels?.destroy();
+				this.releaseSortables();
 				remove(this.components.getAddress(siblingsPath), this.id);
 				if (!parent.children.length) parent.emptyClass();
 				if (parent.name === "row") parent.autoColumnWidths();
@@ -15594,6 +15639,20 @@ Author: Draggable https://draggable.io
 				return this.saveChildOrder();
 			};
 			/**
+			* Destroy the Sortables of this removed component and its descendants, so Sortable's page-wide
+			* list stops holding them (and through them the editor). A column emptied by a drag is removed
+			* from inside Sortable's drop handler; destroying that Sortable there would end the drop early,
+			* so during a drag it is released once the drop has finished.
+			*/
+			releaseSortables() {
+				const { dom: removedDom } = this;
+				if (Sortable.active) {
+					queueMicrotask(() => destroySortables(removedDom));
+					return;
+				}
+				destroySortables(removedDom);
+			}
+			/**
 			* Handler for removing content from a sortable component
 			* @param  {Object} evt
 			* @return {Array} updated child order
@@ -15819,6 +15878,7 @@ Author: Draggable https://draggable.io
 					id: this.id,
 					displayType: "auto"
 				};
+				this.panels?.destroy();
 				this.panels = new Panels(panelsData);
 				if (this.dom) {
 					this.dom.querySelector(".panel-nav").replaceWith(this.panels.panelNav);
@@ -16597,6 +16657,7 @@ Author: Draggable https://draggable.io
 	init_sortable_esm();
 	init_dom();
 	init_helpers$2();
+	init_sortable();
 	init_utils();
 	init_object();
 	init_constants();
@@ -16886,6 +16947,22 @@ Author: Draggable https://draggable.io
 			if (group === "layout") return this.layoutTypes[metaId.replace("layout-", "")]();
 			return this.layoutTypes.field(elementData);
 		};
+		/**
+		* Remove the controls from the page and release their Sortables and Panels. A control drag in
+		* progress in these controls is ended: its ghost is removed and the page overflow it hid is
+		* restored. Safe to call more than once, and before init().
+		*/
+		destroy() {
+			const element = this.dom;
+			if (element && Sortable.active?.el && element.contains(Sortable.active.el)) Sortable.ghost?.remove();
+			if (this.originalDocumentOverflow != null) {
+				document.documentElement.style.overflow = this.originalDocumentOverflow;
+				this.originalDocumentOverflow = null;
+			}
+			destroySortables(element);
+			this.panels?.destroy();
+			element?.remove();
+		}
 		applyOptions = async (controlOptions = {}) => {
 			const { container, elements, groupOrder, ...options } = merge(defaultOptions, controlOptions);
 			this.container = dom.resolveContainer(container);
@@ -17925,6 +18002,7 @@ Author: Draggable https://draggable.io
 	init_i18n_es_min();
 	init_dom();
 	init_loaders();
+	init_sortable();
 	init_utils();
 	init_constants();
 	/**
@@ -17935,9 +18013,11 @@ Author: Draggable https://draggable.io
 		LOADING_RESOURCES: "loading",
 		INITIALIZING: "initializing",
 		READY: "ready",
-		ERROR: "error"
+		ERROR: "error",
+		DESTROYED: "destroyed"
 	};
 	var storageKeyHolders = /* @__PURE__ */ new Map();
+	var pageTooltip = null;
 	/**
 	* Whether an editor is still on the page, or still on its way there. An editor whose container
 	* left the page or no longer holds its DOM (a remount, a demo switch) no longer owns its key.
@@ -17945,7 +18025,7 @@ Author: Draggable https://draggable.io
 	* @return {Boolean}
 	*/
 	var isLiveEditor = (editor) => {
-		if (editor.initState === INIT_STATES.ERROR) return false;
+		if (editor.initState === INIT_STATES.ERROR || editor.initState === INIT_STATES.DESTROYED) return false;
 		if (!editor.editor) return !editor.editorContainer || editor.editorContainer.isConnected;
 		return Boolean(editor.editorContainer?.isConnected && editor.editorContainer.contains(editor.editor));
 	};
@@ -17957,6 +18037,7 @@ Author: Draggable https://draggable.io
 		#initPromise = null;
 		#lockedFormData = null;
 		#dataLoadedOnce = false;
+		#onDOMContentLoaded = () => this.loadResources();
 		/**
 		* @param  {Object} options  formeo options
 		* @param  {String|Object}   userFormData loaded formData
@@ -17992,7 +18073,7 @@ Author: Draggable https://draggable.io
 				if (holder && isLiveEditor(holder)) console.warn(`formeo: another editor on this page already saves to sessionStorage key "${key}". Give each editor its own key, e.g. sessionStorage: 'orders-form'.`);
 				storageKeyHolders.set(key, this);
 			}
-			if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", this.loadResources.bind(this));
+			if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", this.#onDOMContentLoaded, { once: true });
 			else this.loadResources();
 		}
 		get formData() {
@@ -18015,6 +18096,7 @@ Author: Draggable https://draggable.io
 		* @return {void}
 		*/
 		clear() {
+			if (this.isDestroyed) return;
 			const defaultData = DEFAULT_FORMDATA();
 			this.#lockedFormData = defaultData;
 			this.userFormData = defaultData;
@@ -18026,7 +18108,8 @@ Author: Draggable https://draggable.io
 		* @return {Promise} asynchronously loaded remote resources
 		*/
 		async loadResources() {
-			document.removeEventListener("DOMContentLoaded", this.loadResources);
+			document.removeEventListener("DOMContentLoaded", this.#onDOMContentLoaded);
+			if (this.isDestroyed) return;
 			this.#initState = INIT_STATES.LOADING_RESOURCES;
 			const promises = [
 				fetchIcons(this.opts.svgSprite),
@@ -18039,8 +18122,10 @@ Author: Draggable https://draggable.io
 			].filter(Boolean);
 			try {
 				await Promise.all(promises);
+				if (this.isDestroyed) return;
 				if (this.opts.allowEdit) this.init();
 			} catch (error) {
+				if (this.isDestroyed) return;
 				this.#initState = INIT_STATES.ERROR;
 				console.error("Failed to load resources:", error);
 				throw error;
@@ -18052,10 +18137,15 @@ Author: Draggable https://draggable.io
 		* dom elements, actions events and more.
 		*/
 		init() {
+			if (this.isDestroyed) return Promise.resolve(this);
 			if (this.#initState === INIT_STATES.INITIALIZING) return this.#initPromise;
 			if (this.#initState === INIT_STATES.READY) return this.#refreshUI();
 			this.#initState = INIT_STATES.INITIALIZING;
 			this.#initPromise = new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls).then((controls) => {
+				if (this.isDestroyed) {
+					controls.destroy();
+					return this;
+				}
 				this.controls = controls;
 				this.Components.controls = controls;
 				if (!this.#dataLoadedOnce) {
@@ -18065,13 +18155,17 @@ Author: Draggable https://draggable.io
 				this.formId = this.Components.get("id");
 				this.i18n = { setLang: this.#setLanguage.bind(this) };
 				this.render();
+				if (this.isDestroyed) return this;
 				this.onResize = this.events.onResizeWindow;
 				window.addEventListener("resize", this.onResize);
 				this.#initState = INIT_STATES.READY;
 				this.opts.onLoad?.(this);
+				if (this.isDestroyed) return this;
 				this.tooltipInstance = new SmartTooltip();
+				pageTooltip = this.tooltipInstance;
 				return this;
 			}).catch((error) => {
+				if (this.isDestroyed) return this;
 				this.#initState = INIT_STATES.ERROR;
 				console.error("Failed to initialize editor:", error);
 				throw error;
@@ -18093,7 +18187,13 @@ Author: Draggable https://draggable.io
 		* @return {Promise}
 		*/
 		async #refreshUI() {
-			this.controls = await new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls);
+			if (this.isDestroyed) return this;
+			const controls = await new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls);
+			if (this.isDestroyed) {
+				controls.destroy();
+				return this;
+			}
+			this.controls = controls;
 			this.Components.controls = this.controls;
 			this.render();
 			return this;
@@ -18121,6 +18221,7 @@ Author: Draggable https://draggable.io
 			return DEFAULT_FORMDATA();
 		}
 		load(formData = this.userFormData, opts = this.opts) {
+			if (this.isDestroyed) return;
 			this.Components.load(formData, opts);
 			this.render();
 		}
@@ -18139,16 +18240,28 @@ Author: Draggable https://draggable.io
 			return this.#initState === INIT_STATES.READY;
 		}
 		/**
+		* Check if destroy() was called
+		* @return {boolean}
+		*/
+		get isDestroyed() {
+			return this.#initState === INIT_STATES.DESTROYED;
+		}
+		/**
 		* Wait for the editor to be ready
 		* @return {Promise} resolves when editor is ready
 		*/
 		async whenReady() {
 			if (this.#initState === INIT_STATES.READY) return this;
+			if (this.isDestroyed) return Promise.reject(/* @__PURE__ */ new Error("Editor was destroyed"));
 			if (this.#initState === INIT_STATES.ERROR) return Promise.reject(/* @__PURE__ */ new Error("Editor initialization failed"));
-			if (this.#initPromise) return this.#initPromise;
+			if (this.#initPromise) return this.#initPromise.then((editor) => {
+				if (this.isDestroyed) throw new Error("Editor was destroyed");
+				return editor;
+			});
 			return new Promise((resolve, reject) => {
 				const checkReady = () => {
 					if (this.#initState === INIT_STATES.READY) resolve(this);
+					else if (this.isDestroyed) reject(/* @__PURE__ */ new Error("Editor was destroyed"));
 					else if (this.#initState === INIT_STATES.ERROR) reject(/* @__PURE__ */ new Error("Editor initialization failed"));
 					else globalThis.requestAnimationFrame(checkReady);
 				};
@@ -18160,6 +18273,7 @@ Author: Draggable https://draggable.io
 		* @return {void}
 		*/
 		render() {
+			if (this.isDestroyed) return;
 			if (!this.controls) return globalThis.requestAnimationFrame(() => this.render());
 			this.stages = Object.values(this.Components.get("stages"));
 			if (this.opts.controlOnLeft) for (const stage of this.stages) stage.dom.style.order = 1;
@@ -18189,6 +18303,46 @@ Author: Draggable https://draggable.io
 				this.editorContainer.appendChild(this.editor);
 			}
 			this.events.formeoLoaded(this);
+		}
+		/**
+		* Remove the editor from the page and release what it holds: its Sortable instances, resize
+		* observers, window resize listener, pending callbacks and loaded components. Other editors on
+		* the page keep working, and a new editor can mount in the same container.
+		* Safe to call more than once, and before the editor is ready.
+		* @return {void}
+		*/
+		destroy() {
+			if (this.isDestroyed) return;
+			this.#initState = INIT_STATES.DESTROYED;
+			document.removeEventListener("DOMContentLoaded", this.#onDOMContentLoaded);
+			window.removeEventListener("resize", this.onResize);
+			this.events.destroy();
+			if (this.opts.sessionStorage) {
+				const key = formDataStorageKey(this.opts.sessionStorage);
+				if (storageKeyHolders.get(key) === this) storageKeyHolders.delete(key);
+			}
+			this.controls?.destroy();
+			destroySortables(this.editor);
+			for (const type of [
+				"stages",
+				"rows",
+				"columns",
+				"fields"
+			]) {
+				for (const component of Object.values(this.Components[type]?.data || {})) component.panels?.destroy();
+				this.Components[type]?.empty();
+			}
+			this.editor?.remove();
+			this.Components.empty();
+			if (pageTooltip && !document.querySelector(".formeo-editor")) {
+				pageTooltip.destroy();
+				pageTooltip = null;
+			}
+			this.tooltipInstance = null;
+			this.editor = null;
+			this.controls = null;
+			this.Components.controls = null;
+			this.stages = [];
 		}
 	};
 	//#endregion
@@ -18471,7 +18625,7 @@ Author: Draggable https://draggable.io
 	*   `progress` only affects the wizard, adding a clickable step list above the pages
 	* @param {Array<Object>} stages stage data in render order, for page titles
 	* @param {Function} [onChange] called with (page, previousPage) whenever the page changes
-	* @return {{show: Function, index: Number, count: Number}|null} null when there is only one page
+	* @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
 	*/
 	var paginate = (form, { type, progress, labels }, stages, onChange) => {
 		const pages = Array.from(form.children).filter((elem) => elem.classList.contains(STAGE_CLASSNAME));
@@ -18664,14 +18818,16 @@ Author: Draggable https://draggable.io
 			}
 		};
 		const ownerDocument = form.ownerDocument;
-		ownerDocument.addEventListener("click", ({ target }) => {
+		const onDocumentClick = ({ target }) => {
 			const control = target.closest?.("button, input");
 			if (control?.form !== form) return;
 			if (control?.type === "submit" || control?.tagName === "INPUT" && control.type === "image") markReported();
-		}, true);
-		ownerDocument.addEventListener("keydown", ({ key, target }) => {
+		};
+		const onDocumentKeydown = ({ key, target }) => {
 			if (key === "Enter" && target.tagName === "INPUT" && target.form === form) markReported();
-		}, true);
+		};
+		ownerDocument.addEventListener("click", onDocumentClick, true);
+		ownerDocument.addEventListener("keydown", onDocumentKeydown, true);
 		for (const method of ["requestSubmit", "reportValidity"]) {
 			const native = HTMLFormElement.prototype[method];
 			if (typeof native !== "function") continue;
@@ -18691,7 +18847,11 @@ Author: Draggable https://draggable.io
 			get index() {
 				return current;
 			},
-			count
+			count,
+			destroy() {
+				ownerDocument.removeEventListener("click", onDocumentClick, true);
+				ownerDocument.removeEventListener("keydown", onDocumentKeydown, true);
+			}
 		};
 	};
 	//#endregion
@@ -18818,8 +18978,21 @@ Author: Draggable https://draggable.io
 				formData: this.form
 			});
 		}
+		/**
+		* Remove the rendered form from the page and stop its pagination. render() can be called again afterwards.
+		* @return {void}
+		*/
+		destroy() {
+			this.pager?.destroy();
+			this.pager = null;
+			this.renderedForm?.remove();
+			this.renderedForm = null;
+			this.components = Object.create(null);
+		}
 		getRenderedForm(formData = this.form) {
 			this.form = cleanFormData(formData);
+			this.pager?.destroy();
+			this.pager = null;
 			const renderCount = document.getElementsByClassName("formeo-render").length;
 			const config = {
 				...this.config,
