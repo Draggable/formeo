@@ -988,6 +988,16 @@ describe('FormeoRenderer', () => {
       assert.equal(hobbiesField.key, 'hobbies')
       assert.equal(hobbiesField.label, 'Hobbies')
     })
+
+    test('getComponents finds an unnamed multi-option group by its f-<id>[] name', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(checkboxGroup({}))
+      assert.deepEqual(
+        boxes().map(b => b.name),
+        ['f-hobbies-1[]', 'f-hobbies-1[]', 'f-hobbies-1[]']
+      )
+      assert.equal(renderer.getComponents('fields.hobbies-1').length, 3)
+    })
   })
 
   describe('custom controls (#228)', () => {

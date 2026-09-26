@@ -501,8 +501,10 @@ export default class FormeoRenderer {
   getComponents = address => {
     const components = []
     const componentId = address.slice(address.indexOf('.') + 1)
+    const name = `f-${componentId}`
 
-    components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`))
+    // an unnamed multi-option checkbox group falls back to this name but renders it as `name[]` (#128)
+    components.push(...this.renderedForm.querySelectorAll(`[name="${name}"], [name="${name}[]"]`))
 
     return components
   }
