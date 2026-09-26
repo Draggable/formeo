@@ -420,8 +420,53 @@ export class EditorPages {
     }
   }
 
-  // Task 8 replaces this
-  requestRemove(_stageId) {}
+  /**
+   * Asks the editor's actions.remove.page to remove a page; the last page is never offered
+   * @param {String} stageId
+   */
+  requestRemove(stageId) {
+    const stage = this.stageAt(stageId)
+    if (!stage || this.count <= 1) {
+      return
+    }
+    this.commitRename()
+    const index = this.ids.indexOf(stageId)
+    this.components.actions.remove.page({
+      stage,
+      stageId,
+      index,
+      title: this.titleOf(stageId),
+      isEmpty: !stage.children.length,
+      removeAction: () => this.removePage(stageId),
+    })
+  }
+
+  /**
+   * Removes a page with everything on it, then shows its neighbour
+   * @param {String} stageId
+   * @return {Boolean} whether it was removed
+   */
+  removePage(stageId) {
+    const stage = this.stageAt(stageId)
+    if (!stage || this.count <= 1) {
+      return false
+    }
+    const index = this.ids.indexOf(stageId)
+    const wasActive = this.activeId === stageId
+    const previousPage = this.activeIndex
+    this.unwatchStage(stageId)
+    stage.remove()
+    const remaining = this.ids
+    this.rebuildTabs()
+    if (wasActive) {
+      // rebuildTabs() re-synced activeIndex against the remaining pages; onPageChange reports the removed page's index
+      this.activeIndex = previousPage
+      this.activate(remaining[Math.max(0, index - 1)], { focus: true })
+    } else {
+      this.tabFor(this.activeId)?.focus()
+    }
+    return true
+  }
 
   // Task 9 replaces these two
   movePage(_stageId, _toIndex) {}

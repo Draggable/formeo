@@ -217,4 +217,36 @@ test.describe('Editor page tabs (#122)', () => {
     await titleInput.fill('Your details')
     await expect(editor.getByRole('tab', { name: 'Your details' })).toBeVisible()
   })
+
+  test('an empty page is removed at once', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Page 3' }).click()
+    await editor.getByRole('button', { name: 'Remove page "Page 3"' }).click()
+    await expect(editor.getByRole('tab')).toHaveText(['About you', 'Account'])
+    await expect(editor.getByRole('tab', { name: 'Account' })).toBeFocused()
+  })
+
+  test('a page with content asks first', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('button', { name: 'Remove page "About you"' }).click()
+    const dialog = page.locator('dialog.remove-page-dialog')
+    await expect(dialog).toContainText('Remove "About you" and everything on it?')
+    await dialog.getByRole('button', { name: 'Cancel' }).click()
+    await expect(editor.getByRole('tab')).toHaveCount(3)
+
+    await editor.getByRole('button', { name: 'Remove page "About you"' }).click()
+    await dialog.getByRole('button', { name: 'Remove' }).click()
+    await expect(editor.getByRole('tab')).toHaveText(['Account', 'Page 2'])
+    const data = await formDataOf(page)
+    expect(Object.keys(data.stages)).toEqual(['p-s2', 'p-s3'])
+    expect(data.fields['p-f1']).toBeUndefined()
+  })
+
+  test('a custom actions.remove.page can veto', async ({ page }) => {
+    const editor = await mountEditor(page, { vetoRemove: true })
+    await editor.getByRole('tab', { name: 'Page 3' }).click()
+    await editor.getByRole('button', { name: 'Remove page "Page 3"' }).click()
+    await expect(editor.getByRole('tab')).toHaveCount(3)
+    expect(await page.evaluate(() => window.e2eVetoed['e2e-pages'])).toEqual(['p-s3'])
+  })
 })

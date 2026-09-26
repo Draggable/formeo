@@ -1874,7 +1874,11 @@ button[class*=-clone]:hover .svg-icon {
   cursor: pointer;
 }
 .formeo.formeo-editor .formeo-page-remove:hover {
+  background-color: transparent !important;
   color: rgb(217, 83, 79);
+}
+.formeo.formeo-editor .formeo-page-remove:hover .svg-icon {
+  fill: rgb(217, 83, 79);
 }
 .formeo.formeo-editor .formeo-page-remove .svg-icon {
   inline-size: 1em;

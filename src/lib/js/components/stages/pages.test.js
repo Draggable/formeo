@@ -283,12 +283,15 @@ describe('EditorPages rename (#122)', () => {
   it('keys typed in the input edit text, not pages', () => {
     const { editor, pages } = setup()
     pages.startRename('p-2')
+    const before = input(editor)
     for (const name of ['Delete', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'F2']) {
-      key(input(editor), name)
+      key(before, name)
     }
+    // Delete in particular must not have reached requestRemove(): the page count is unchanged and this is
+    // still the very same input element (a real removal would rebuildTabs() and destroy it)
     assert.equal(pages.count, 3)
     assert.equal(pages.index, 0)
-    assert.ok(input(editor))
+    assert.equal(input(editor), before)
   })
 
   it('switching pages commits the rename first', () => {
@@ -316,5 +319,80 @@ describe('EditorPages rename (#122)', () => {
     assert.equal(input(editor), null)
     assert.equal(components.stages.get('p-3').get('config.title'), '')
     assert.equal(components.formData.stages['p-3'].config.title, '')
+  })
+})
+
+describe('EditorPages remove (#122)', () => {
+  it('removes an empty page at once and shows the previous page', () => {
+    const onRemoveStage = mock.fn()
+    const onPageChange = mock.fn()
+    const { editor, pages } = setup({ callbacks: { onRemoveStage, onPageChange } })
+    pages.activate(2)
+    editor.querySelectorAll('.formeo-page-remove')[2].click()
+
+    assert.equal(pages.count, 2)
+    assert.deepEqual(
+      tabs(editor).map(tab => tab.textContent),
+      ['About you', 'Account']
+    )
+    assert.deepEqual(visibleStageIds(editor), ['p-2'])
+    assert.equal(document.activeElement, tabs(editor)[1])
+    assert.equal(onRemoveStage.mock.callCount(), 1)
+    assert.deepEqual(onPageChange.mock.calls.at(-1).arguments[0].detail, {
+      page: 1,
+      previousPage: 2,
+      stageId: 'p-2',
+      previousStageId: 'p-3',
+    })
+  })
+
+  it('shows the next page when the first page goes', () => {
+    const { editor, pages } = setup({ actions: { remove: { page: evt => evt.removeAction() } } })
+    pages.requestRemove('p-1')
+    assert.deepEqual(visibleStageIds(editor), ['p-2'])
+  })
+
+  it('passes the page to actions.remove.page, which can veto', () => {
+    const page = mock.fn()
+    const { pages } = setup({ actions: { remove: { page } } })
+    pages.requestRemove('p-1')
+    const [evt] = page.mock.calls[0].arguments
+    assert.equal(evt.stageId, 'p-1')
+    assert.equal(evt.index, 0)
+    assert.equal(evt.title, 'About you')
+    assert.equal(evt.isEmpty, false)
+    assert.equal(typeof evt.removeAction, 'function')
+    assert.equal(pages.count, 3)
+  })
+
+  it('commits an open rename first, so the removal sees the new title', () => {
+    const page = mock.fn()
+    const { editor, pages, components } = setup({ actions: { remove: { page } } })
+    pages.startRename('p-2')
+    editor.querySelector('.formeo-page-title-input').value = 'New name'
+    pages.requestRemove('p-2')
+    const [evt] = page.mock.calls[0].arguments
+    assert.equal(evt.title, 'New name')
+    assert.equal(components.stages.get('p-2').get('config.title'), 'New name')
+  })
+
+  it('Delete on a tab asks to remove its page', () => {
+    const page = mock.fn()
+    const { editor } = setup({ actions: { remove: { page } } })
+    const [, second] = tabs(editor)
+    second.focus()
+    key(second, 'Delete')
+    assert.equal(page.mock.calls[0].arguments[0].stageId, 'p-2')
+  })
+
+  it('keeps the last page', () => {
+    const page = mock.fn(evt => evt.removeAction())
+    const { editor, pages } = setup({ actions: { remove: { page } } })
+    pages.requestRemove('p-3')
+    pages.requestRemove('p-2')
+    assert.equal(editor.querySelectorAll('.formeo-page-remove').length, 0)
+    pages.requestRemove('p-1')
+    assert.equal(page.mock.callCount(), 2)
+    assert.equal(pages.count, 1)
   })
 })

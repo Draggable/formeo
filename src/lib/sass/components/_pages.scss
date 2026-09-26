@@ -85,7 +85,13 @@
   cursor: pointer;
 
   &:hover {
+    // overrides base/_icons.scss's button[class*='-remove']:hover chip: a bare danger-coloured × on hover, no chip
+    background-color: transparent !important;
     color: t.$danger;
+
+    .svg-icon {
+      fill: t.$danger;
+    }
   }
 
   .svg-icon {
