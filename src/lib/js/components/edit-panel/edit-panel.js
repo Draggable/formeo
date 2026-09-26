@@ -264,7 +264,9 @@ export default class EditPanel {
     this.component.set(`attrs.${attr}`, val)
     addAttributeActions[safeAttr]?.(val, this.component)
 
-    const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`)
+    // classList, not a selector: a namespaced name like `xlink:href` isn't a valid class selector
+    const rowClass = `${this.component.name}-attrs-${safeAttr}`
+    const existingAttr = Array.from(this.props.children).find(row => row.classList.contains(rowClass))
     const newAttr = new EditPanelItem({
       key: itemKey,
       data: { [safeAttr]: val },

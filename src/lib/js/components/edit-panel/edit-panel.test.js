@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert'
-import { describe, it, mock } from 'node:test'
+import { before, describe, it, mock } from 'node:test'
+import i18n from '@draggable/i18n'
 import Field from '../fields/field.js'
 import { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 
@@ -107,5 +108,31 @@ describe('EditPanel#setData via toggleOptionMultiSelect (select switched to mult
       'options no longer carry the single-select "selected" key'
     )
     assert.notEqual(panel.props, previousProps, 'panel re-rendered its props list')
+  })
+})
+
+describe('EditPanel#addAttribute', () => {
+  // addAttribute writes a label into the current language, which the editor loads before this runs
+  before(() => {
+    i18n.current ??= {}
+  })
+
+  const attrRows = (panel, name) => panel.props.querySelectorAll(`[class~="field-attrs-${name}"]`)
+
+  it('adds a namespaced attribute, whose ":" would break a class selector', () => {
+    const field = selectField()
+    const panel = field.editPanels.get('attrs')
+    assert.doesNotThrow(() => panel.addAttribute('xlink:href', '#a'))
+    assert.equal(field.get('attrs.xlink:href'), '#a')
+    assert.equal(attrRows(panel, 'xlink:href').length, 1)
+  })
+
+  it('replaces the row when the same namespaced attribute is added again', () => {
+    const field = selectField()
+    const panel = field.editPanels.get('attrs')
+    panel.addAttribute('xlink:href', '#a')
+    panel.addAttribute('xlink:href', '#b')
+    assert.equal(field.get('attrs.xlink:href'), '#b')
+    assert.equal(attrRows(panel, 'xlink:href').length, 1)
   })
 })
