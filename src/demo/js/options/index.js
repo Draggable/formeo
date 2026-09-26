@@ -25,7 +25,6 @@ export const editorOptions = {
   style: null,
   // debug: true,
   sessionStorage: true,
-  editPanelOrder: ['attrs', 'options'],
   // controlOnLeft: true,
   onLoad: () => {
     console.log('demo loaded')
