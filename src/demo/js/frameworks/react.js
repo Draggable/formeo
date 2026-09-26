@@ -437,8 +437,8 @@ async function initializeReactApp() {
       editor,
       renderer,
       cleanup: () => {
-        if (editor?.destroy) editor.destroy()
-        if (renderer?.destroy) renderer.destroy()
+        editor.destroy()
+        renderer.destroy()
       },
     }
   }
@@ -487,10 +487,8 @@ export function useFormeoEditor(options = {}) {
   }, [options]);
 
   const destroyEditor = useCallback(() => {
-    if (editorRef.current?.destroy) {
-      editorRef.current.destroy();
-      editorRef.current = null;
-    }
+    editorRef.current?.destroy();
+    editorRef.current = null;
   }, []);
 
   const saveForm = useCallback(() => {
@@ -557,10 +555,8 @@ export function useFormeoRenderer(options = {}) {
   }, [options]);
 
   const destroyRenderer = useCallback(() => {
-    if (rendererRef.current?.destroy) {
-      rendererRef.current.destroy();
-      rendererRef.current = null;
-    }
+    rendererRef.current?.destroy();
+    rendererRef.current = null;
   }, []);
 
   const renderForm = useCallback((formData) => {
@@ -841,9 +837,7 @@ function formeoReducer(state: FormeoState, action: FormeoAction): FormeoState {
 
     case 'REMOVE_EDITOR':
       const { [action.payload]: removedEditor, ...restEditors } = state.editors;
-      if (removedEditor?.destroy) {
-        removedEditor.destroy();
-      }
+      removedEditor?.destroy();
       return {
         ...state,
         editors: restEditors
@@ -851,9 +845,7 @@ function formeoReducer(state: FormeoState, action: FormeoAction): FormeoState {
 
     case 'REMOVE_RENDERER':
       const { [action.payload]: removedRenderer, ...restRenderers } = state.renderers;
-      if (removedRenderer?.destroy) {
-        removedRenderer.destroy();
-      }
+      removedRenderer?.destroy();
       return {
         ...state,
         renderers: restRenderers

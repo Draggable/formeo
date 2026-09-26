@@ -120,9 +120,7 @@ npm install formeo</code></pre>
       angularApp,
       cleanup: () => {
         // Cleanup Angular application
-        if (angularApp?.destroy) {
-          angularApp.destroy()
-        }
+        angularApp?.destroy()
 
         // Clear the container
         const appRoot = document.getElementById('angular-app-root')
@@ -415,8 +413,8 @@ async function initializeAngularApp() {
       editor,
       renderer,
       destroy: () => {
-        if (editor?.destroy) editor.destroy()
-        if (renderer?.destroy) renderer.destroy()
+        editor.destroy()
+        renderer.destroy()
       },
     }
   }
@@ -610,12 +608,8 @@ export class FormBuilderComponent implements OnInit, OnDestroy {
   }
 
   private cleanup() {
-    if (this.editor?.destroy) {
-      this.editor.destroy();
-    }
-    if (this.renderer?.destroy) {
-      this.renderer.destroy();
-    }
+    this.editor?.destroy();
+    this.renderer?.destroy();
   }
 }`
 
@@ -692,9 +686,7 @@ export class FormeoService {
 
   destroyEditor(containerId: string): void {
     const editor = this.editorsSignal().get(containerId);
-    if (editor?.destroy) {
-      editor.destroy();
-    }
+    editor?.destroy();
     
     const currentEditors = new Map(this.editorsSignal());
     currentEditors.delete(containerId);
@@ -703,9 +695,7 @@ export class FormeoService {
 
   destroyRenderer(containerId: string): void {
     const renderer = this.renderersSignal().get(containerId);
-    if (renderer?.destroy) {
-      renderer.destroy();
-    }
+    renderer?.destroy();
     
     const currentRenderers = new Map(this.renderersSignal());
     currentRenderers.delete(containerId);
