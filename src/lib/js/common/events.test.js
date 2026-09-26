@@ -848,4 +848,89 @@ describe('Events System', () => {
       assert.equal(formeoLoaded.mock.calls[0].arguments[0], formeo)
     })
   })
+
+  describe('destroy (#166)', () => {
+    afterEach(() => {
+      mock.restoreAll()
+      mock.timers.reset()
+    })
+
+    it('a trailing onUpdate already scheduled never runs after destroy()', () => {
+      mock.timers.enable({ apis: ['setTimeout'] })
+      const onUpdate = mock.fn()
+      const events = new EventsClass().init({ onUpdate })
+
+      events.formeoUpdated({ changePath: 'fields.a.attrs' })
+      events.formeoUpdated({ changePath: 'fields.b.attrs' })
+      assert.equal(onUpdate.mock.callCount(), 1, 'the second change is held for the trailing call')
+
+      events.destroy()
+      mock.timers.tick(1000)
+
+      assert.equal(onUpdate.mock.callCount(), 1)
+    })
+
+    it('runs no option callbacks after destroy()', () => {
+      const opts = {
+        onUpdate: mock.fn(),
+        onAddRow: mock.fn(),
+        onSave: mock.fn(),
+        confirmClearAll: mock.fn(),
+        formeoLoaded: mock.fn(),
+      }
+      const events = new EventsClass().init(opts)
+      const connected = document.createElement('div')
+      document.body.appendChild(connected)
+
+      try {
+        events.destroy()
+        events.formeoUpdated({ changePath: 'rows.x.config' })
+        events.formeoAddedRow({ src: connected, componentId: 'row-x' })
+        events.formeoSaved({ formData: {} })
+        events.confirmClearAll({ confirmationMessage: 'Sure?', clearAllAction: mock.fn() })
+        events.formeoLoaded({ id: 'editor-x' })
+      } finally {
+        connected.remove()
+      }
+
+      for (const [name, callback] of Object.entries(opts)) {
+        assert.equal(callback.mock.callCount(), 0, `${name} ran after destroy()`)
+      }
+    })
+
+    it('cancels a pending resize frame and ignores later resizes', () => {
+      const frames = []
+      mock.method(window, 'requestAnimationFrame', callback => frames.push(callback))
+      const cancelAnimationFrame = mock.method(window, 'cancelAnimationFrame', () => {})
+      const controlsDom = document.createElement('div')
+      document.body.appendChild(controlsDom)
+      const column = { dom: document.createElement('div'), refreshFieldPanels: mock.fn() }
+      const events = new EventsClass()
+      events.components = {
+        columns: { data: { 'col-1': column } },
+        controls: { dom: controlsDom, panels: { nav: { refresh: mock.fn() } } },
+      }
+
+      try {
+        events.onResizeWindow()
+        assert.equal(frames.length, 1)
+        events.destroy()
+        assert.equal(cancelAnimationFrame.mock.callCount(), 1)
+        assert.equal(cancelAnimationFrame.mock.calls[0].arguments[0], 1)
+
+        events.onResizeWindow()
+        assert.equal(frames.length, 1, 'no new frame after destroy()')
+      } finally {
+        controlsDom.remove()
+      }
+    })
+
+    it('is safe to call twice', () => {
+      const events = new EventsClass()
+      assert.doesNotThrow(() => {
+        events.destroy()
+        events.destroy()
+      })
+    })
+  })
 })

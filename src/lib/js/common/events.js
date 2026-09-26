@@ -54,11 +54,16 @@ const reachesDocument = evt => evt.target === document || Boolean(evt.bubbles &&
  */
 export class Events {
   components = null
+  destroyed = false
 
   constructor() {
     this.opts = this.defaults()
     this.formeoUpdatedThrottled = throttle(
       () => {
+        // a trailing call can already be scheduled when the editor is destroyed
+        if (this.destroyed) {
+          return
+        }
         const eventData = {
           timeStamp: globalThis.performance.now(),
           type: EVENT_FORMEO_UPDATED,
@@ -128,6 +133,9 @@ export class Events {
   }
 
   runCallbacks({ type, timeStamp, detail }) {
+    if (this.destroyed) {
+      return
+    }
     if (type === EVENT_FORMEO_UPDATED) {
       return this.formeoUpdatedThrottled()
     }
@@ -155,12 +163,17 @@ export class Events {
   confirmClearAll = detail => {
     const evt = new globalThis.CustomEvent('confirmClearAll', { detail })
     document.dispatchEvent(evt)
+    if (this.destroyed) {
+      return
+    }
     this.opts.confirmClearAll({ timeStamp: evt.timeStamp, type: evt.type, ...detail })
   }
 
   formeoLoaded = formeo => {
     document.dispatchEvent(new globalThis.CustomEvent('formeoLoaded', { detail: { formeo } }))
-    this.opts.formeoLoaded(formeo)
+    if (!this.destroyed) {
+      this.opts.formeoLoaded(formeo)
+    }
   }
 
   columnResized = detail => document.dispatchEvent(new globalThis.CustomEvent('columnResized', { detail }))
@@ -172,7 +185,7 @@ export class Events {
    */
   onResizeWindow = () => {
     const { columns, controls } = this.components || {}
-    if (!columns || !controls?.dom?.isConnected || this.resizeFrame) {
+    if (this.destroyed || !columns || !controls?.dom?.isConnected || this.resizeFrame) {
       return
     }
     this.resizeFrame = window.requestAnimationFrame(() => {
@@ -188,6 +201,19 @@ export class Events {
         }, ANIMATION_SPEED_BASE)
       }
     })
+  }
+
+  /**
+   * Stop calling this editor's option callbacks, including a trailing onUpdate/onChange that is
+   * already scheduled, and cancel a pending resize frame. FormeoEditor#destroy (#166) calls it.
+   * DOM events are still dispatched, so page listeners are unaffected.
+   */
+  destroy() {
+    this.destroyed = true
+    if (this.resizeFrame) {
+      window.cancelAnimationFrame(this.resizeFrame)
+      this.resizeFrame = null
+    }
   }
 }
 

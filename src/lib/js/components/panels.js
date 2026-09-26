@@ -34,7 +34,7 @@ export default class Panels {
     this.nav = this.navActions()
     this.nav.groupChange(this.activePanelIndex)
 
-    const resizeObserver = new window.ResizeObserver(
+    this.resizeObserver = new window.ResizeObserver(
       ([
         {
           contentRect: { width },
@@ -48,10 +48,18 @@ export default class Panels {
       }
     )
 
-    const observeTimeout = window.setTimeout(() => {
-      resizeObserver.observe(panelsWrap)
-      window.clearTimeout(observeTimeout)
+    this.observeTimeout = window.setTimeout(() => {
+      this.resizeObserver?.observe(panelsWrap)
     }, ANIMATION_SPEED_SLOW)
+  }
+
+  /**
+   * Stop watching the panels' size
+   */
+  destroy() {
+    window.clearTimeout(this.observeTimeout)
+    this.resizeObserver?.disconnect()
+    this.resizeObserver = null
   }
 
   getPanelDisplay() {

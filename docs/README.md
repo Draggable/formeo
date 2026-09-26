@@ -61,7 +61,7 @@ Get a JSON form of the form data
 
 #### `FormeoEditor#initState`
 
-Get the current initialization state. Returns one of: `'created'`, `'loading'`, `'initializing'`, `'ready'`, or `'error'`.
+Get the current initialization state. Returns one of: `'created'`, `'loading'`, `'initializing'`, `'ready'`, `'error'`, or `'destroyed'`.
 
 #### `FormeoEditor#isReady`
 
@@ -82,6 +82,19 @@ console.log(editor.formData)
 
 Reset the editor to its initial empty state. See [editor-clear-method.md](editor/editor-clear-method.md) for details.
 
+#### `FormeoEditor#destroy()`
+
+Remove the editor and its controls from the page and release what it holds: drag-and-drop instances, resize observers, its window resize listener, pending event callbacks and loaded components. No option callback runs afterwards. Other editors on the page keep working, and a new editor can be created in the same container. Safe to call more than once, and before the editor is ready. See [Destroying an editor](editor/initialization.md#destroying-an-editor).
+
+```javascript
+editor.destroy()
+editor = new FormeoEditor({ editorContainer: '#form-builder' })
+```
+
+#### `FormeoEditor#isDestroyed`
+
+Returns `true` once `destroy()` has been called.
+
 ### `FormeoRenderer`
 
 #### `new FormeoRenderer([options[, formData]])`
@@ -93,6 +106,10 @@ The `formData` object represents the form to render. It can be replaced later us
 #### `FormeoRenderer#render([formData])`
 
 Render the form, or update the rendered form to use the given `formData` object.
+
+#### `FormeoRenderer#destroy()`
+
+Remove the rendered form from the page. The renderer keeps its options and `formData`, so `render()` can be called again afterwards. Safe to call more than once, and before `render()`.
 
 
 ## [Options](options/)

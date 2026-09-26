@@ -5,6 +5,9 @@ export class ResizeObserver {
   unobserve() {
     // do nothing
   }
+  disconnect() {
+    // do nothing
+  }
 }
 
 export default ResizeObserver

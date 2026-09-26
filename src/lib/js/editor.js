@@ -6,6 +6,7 @@ import { Actions } from './common/actions.js'
 import dom from './common/dom.js'
 import { Events } from './common/events.js'
 import { fetchFormeoStyle, fetchIcons } from './common/loaders.js'
+import { destroySortables } from './common/sortable.js'
 import { cleanFormData, clone, formDataStorageKey, merge, sessionStorage } from './common/utils/index.mjs'
 import { Controls } from './components/controls/index.js'
 import { Components } from './components/index.js'
@@ -21,11 +22,16 @@ const INIT_STATES = {
   INITIALIZING: 'initializing',
   READY: 'ready',
   ERROR: 'error',
+  DESTROYED: 'destroyed',
 }
 
 // page-wide on purpose: two editors saving to one sessionStorage key overwrite each other's form.
 // Maps each key to the editor created last with it.
 const storageKeyHolders = new Map()
+
+// SmartTooltip keeps one page-wide instance: each editor's `new SmartTooltip()` replaces the last one,
+// so the latest is kept here for destroy() to remove once no editor is left on the page.
+let pageTooltip = null
 
 /**
  * Whether an editor is still on the page, or still on its way there. An editor whose container
@@ -34,7 +40,7 @@ const storageKeyHolders = new Map()
  * @return {Boolean}
  */
 const isLiveEditor = editor => {
-  if (editor.initState === INIT_STATES.ERROR) {
+  if (editor.initState === INIT_STATES.ERROR || editor.initState === INIT_STATES.DESTROYED) {
     return false
   }
   if (!editor.editor) {
@@ -52,6 +58,8 @@ export class FormeoEditor {
   #initPromise = null
   #lockedFormData = null
   #dataLoadedOnce = false
+  // one bound handler, so loadResources() and destroy() remove the listener the constructor added
+  #onDOMContentLoaded = () => this.loadResources()
   /**
    * @param  {Object} options  formeo options
    * @param  {String|Object}   userFormData loaded formData
@@ -93,7 +101,7 @@ export class FormeoEditor {
 
     // Load remote resources such as css and svg sprite
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', this.loadResources.bind(this))
+      document.addEventListener('DOMContentLoaded', this.#onDOMContentLoaded, { once: true })
     } else {
       this.loadResources()
     }
@@ -122,6 +130,9 @@ export class FormeoEditor {
    * @return {void}
    */
   clear() {
+    if (this.isDestroyed) {
+      return
+    }
     // Reset form data to default structure with empty stage
     const defaultData = DEFAULT_FORMDATA()
     this.#lockedFormData = defaultData
@@ -139,7 +150,10 @@ export class FormeoEditor {
    * @return {Promise} asynchronously loaded remote resources
    */
   async loadResources() {
-    document.removeEventListener('DOMContentLoaded', this.loadResources)
+    document.removeEventListener('DOMContentLoaded', this.#onDOMContentLoaded)
+    if (this.isDestroyed) {
+      return
+    }
     this.#initState = INIT_STATES.LOADING_RESOURCES
 
     const promises = [
@@ -155,10 +169,17 @@ export class FormeoEditor {
     try {
       await Promise.all(promises)
 
+      if (this.isDestroyed) {
+        return
+      }
+
       if (this.opts.allowEdit) {
         this.init()
       }
     } catch (error) {
+      if (this.isDestroyed) {
+        return
+      }
       this.#initState = INIT_STATES.ERROR
       console.error('Failed to load resources:', error)
       throw error
@@ -171,6 +192,10 @@ export class FormeoEditor {
    * dom elements, actions events and more.
    */
   init() {
+    if (this.isDestroyed) {
+      return Promise.resolve(this)
+    }
+
     // Prevent re-initialization while already initializing
     if (this.#initState === INIT_STATES.INITIALIZING) {
       return this.#initPromise
@@ -186,6 +211,12 @@ export class FormeoEditor {
     this.#initPromise = new Controls(this.Components)
       .init(this.opts.controls, this.opts.stickyControls)
       .then(controls => {
+        if (this.isDestroyed) {
+          // destroyed while the controls were being built: release them, they were never on the page
+          destroySortables(controls.dom)
+          controls.panels?.destroy()
+          return this
+        }
         this.controls = controls
         this.Components.controls = controls
 
@@ -207,10 +238,14 @@ export class FormeoEditor {
         this.#initState = INIT_STATES.READY
         this.opts.onLoad?.(this)
         this.tooltipInstance = new SmartTooltip()
+        pageTooltip = this.tooltipInstance
 
         return this
       })
       .catch(error => {
+        if (this.isDestroyed) {
+          return this
+        }
         this.#initState = INIT_STATES.ERROR
         console.error('Failed to initialize editor:', error)
         throw error
@@ -236,7 +271,16 @@ export class FormeoEditor {
    * @return {Promise}
    */
   async #refreshUI() {
-    this.controls = await new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls)
+    if (this.isDestroyed) {
+      return this
+    }
+    const controls = await new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls)
+    if (this.isDestroyed) {
+      destroySortables(controls.dom)
+      controls.panels?.destroy()
+      return this
+    }
+    this.controls = controls
     this.Components.controls = this.controls
     this.render()
     return this
@@ -276,6 +320,9 @@ export class FormeoEditor {
   }
 
   load(formData = this.userFormData, opts = this.opts) {
+    if (this.isDestroyed) {
+      return
+    }
     this.Components.load(formData, opts)
     this.render()
   }
@@ -297,6 +344,14 @@ export class FormeoEditor {
   }
 
   /**
+   * Check if destroy() was called
+   * @return {boolean}
+   */
+  get isDestroyed() {
+    return this.#initState === INIT_STATES.DESTROYED
+  }
+
+  /**
    * Wait for the editor to be ready
    * @return {Promise} resolves when editor is ready
    */
@@ -304,17 +359,27 @@ export class FormeoEditor {
     if (this.#initState === INIT_STATES.READY) {
       return this
     }
+    if (this.isDestroyed) {
+      return Promise.reject(new Error('Editor was destroyed'))
+    }
     if (this.#initState === INIT_STATES.ERROR) {
       return Promise.reject(new Error('Editor initialization failed'))
     }
     if (this.#initPromise) {
-      return this.#initPromise
+      return this.#initPromise.then(editor => {
+        if (this.isDestroyed) {
+          throw new Error('Editor was destroyed')
+        }
+        return editor
+      })
     }
     // Fallback: poll for ready state
     return new Promise((resolve, reject) => {
       const checkReady = () => {
         if (this.#initState === INIT_STATES.READY) {
           resolve(this)
+        } else if (this.isDestroyed) {
+          reject(new Error('Editor was destroyed'))
         } else if (this.#initState === INIT_STATES.ERROR) {
           reject(new Error('Editor initialization failed'))
         } else {
@@ -330,6 +395,9 @@ export class FormeoEditor {
    * @return {void}
    */
   render() {
+    if (this.isDestroyed) {
+      return
+    }
     if (!this.controls) {
       return globalThis.requestAnimationFrame(() => this.render())
     }
@@ -378,6 +446,58 @@ export class FormeoEditor {
     }
 
     this.events.formeoLoaded(this)
+  }
+
+  /**
+   * Remove the editor from the page and release what it holds: its Sortable instances, resize
+   * observers, window resize listener, pending callbacks and loaded components. Other editors on
+   * the page keep working, and a new editor can mount in the same container.
+   * Safe to call more than once, and before the editor is ready.
+   * @return {void}
+   */
+  destroy() {
+    if (this.isDestroyed) {
+      return
+    }
+    this.#initState = INIT_STATES.DESTROYED
+    document.removeEventListener('DOMContentLoaded', this.#onDOMContentLoaded)
+    window.removeEventListener('resize', this.onResize)
+    this.events.destroy()
+
+    if (this.opts.sessionStorage) {
+      const key = formDataStorageKey(this.opts.sessionStorage)
+      if (storageKeyHolders.get(key) === this) {
+        storageKeyHolders.delete(key)
+      }
+    }
+
+    const controlsDom = this.controls?.dom
+    destroySortables(this.editor)
+    destroySortables(controlsDom)
+
+    for (const type of ['stages', 'rows', 'columns', 'fields']) {
+      for (const component of Object.values(this.Components[type]?.data || {})) {
+        component.panels?.destroy()
+      }
+      this.Components[type]?.empty()
+    }
+    this.controls?.panels?.destroy()
+
+    controlsDom?.remove()
+    this.editor?.remove()
+    this.Components.empty()
+
+    // the page-wide tooltip serves every editor, so it goes only with the last one
+    if (pageTooltip && !document.querySelector('.formeo-editor')) {
+      pageTooltip.destroy()
+      pageTooltip = null
+    }
+    this.tooltipInstance = null
+
+    this.editor = null
+    this.controls = null
+    this.Components.controls = null
+    this.stages = []
   }
 }
 

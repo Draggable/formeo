@@ -1054,4 +1054,33 @@ describe('FormeoRenderer', () => {
       assert.equal(renderer.userData.annotation, '')
     })
   })
+
+  describe('destroy (#166)', () => {
+    const emptyStageForm = () => ({
+      id: 'd-form',
+      stages: { 's-1': { id: 's-1', children: [] } },
+      rows: {},
+      columns: {},
+      fields: {},
+    })
+
+    test('removes the rendered form, and render() works again afterwards', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(emptyStageForm())
+      renderer.destroy()
+      assert.equal(container.querySelector('.formeo-render'), null)
+      assert.equal(renderer.renderedForm, null)
+      assert.deepEqual(renderer.userData, {})
+      renderer.render(emptyStageForm())
+      assert.equal(container.querySelectorAll('.formeo-render').length, 1)
+    })
+
+    test('is safe to call twice or before render()', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      assert.doesNotThrow(() => {
+        renderer.destroy()
+        renderer.destroy()
+      })
+    })
+  })
 })

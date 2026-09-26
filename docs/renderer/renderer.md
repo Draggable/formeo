@@ -187,6 +187,14 @@ const formElement = renderer.getRenderedForm()
 document.body.appendChild(formElement)
 ```
 
+### `destroy()`
+
+Removes the rendered form from the page. The renderer keeps its options and `formData`, so `render()` can be called again afterwards. Safe to call more than once, and before `render()`.
+
+```javascript
+renderer.destroy()
+```
+
 ## Events
 
 Pass an `events` object to the constructor to run code when the form renders, when a field changes, and when the form is submitted.

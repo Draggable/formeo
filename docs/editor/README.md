@@ -28,8 +28,9 @@ Set `editorContainer` to an element or selector, otherwise the editor is built b
 | ------------- | ------- | ----------------------------------------------------------------------------------- |
 | `formData`    | Object  | The current form definition. Assigning a new value reloads the editor with it.      |
 | `json`        | String  | `formData` serialised as JSON, with a `$schema` reference.                          |
-| `initState`   | String  | `'created'`, `'loading'`, `'initializing'`, `'ready'` or `'error'`.                 |
+| `initState`   | String  | `'created'`, `'loading'`, `'initializing'`, `'ready'`, `'error'` or `'destroyed'`.  |
 | `isReady`     | Boolean | `true` once `initState` is `'ready'`.                                               |
+| `isDestroyed` | Boolean | `true` once `destroy()` has been called.                                            |
 | `i18n.setLang` | Function | Switch the editor language at runtime. Available once ready. See [i18n](../options/i18n/README.md). |
 
 ## Methods
@@ -40,6 +41,7 @@ Set `editorContainer` to an element or selector, otherwise the editor is built b
 | `loadData(formData)`       | -         | Replace the form being edited. Same as assigning `editor.formData`.        |
 | `clear()`                  | -         | Reset to an empty form. See [Clear Method](editor-clear-method.md).        |
 | `render()`                 | -         | Re-render the editor into `editorContainer`.                                |
+| `destroy()`                | -         | Remove the editor from the page and release its resources. See [Destroying an editor](initialization.md#destroying-an-editor). |
 
 ## Related
 

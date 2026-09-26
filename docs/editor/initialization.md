@@ -15,6 +15,7 @@ The editor progresses through the following states:
 | `initializing` | Resources loaded, setting up controls and components |
 | `ready` | Editor is fully initialized and ready for use |
 | `error` | An error occurred during initialization |
+| `destroyed` | `destroy()` was called; the editor is no longer on the page |
 
 ## State API
 
@@ -131,7 +132,7 @@ useEffect(() => {
   })
 
   return () => {
-    // Cleanup if needed
+    editor.destroy()
   }
 }, [])
 ```
@@ -171,6 +172,7 @@ Available states:
 - `INIT_STATES.INITIALIZING`
 - `INIT_STATES.READY`
 - `INIT_STATES.ERROR`
+- `INIT_STATES.DESTROYED`
 
 ## Multiple editors on one page
 
@@ -184,3 +186,27 @@ const returns = new FormeoEditor({ editorContainer: '#returns', sessionStorage: 
 Each editor saves to and restores from its own key. Form data passed to the constructor wins over sessionStorage (see [Form Data Priority](#form-data-priority)), so an editor given `formData` always starts from that data and only uses its key for saving.
 
 Give each editor its own `editorContainer`, and a distinct `sessionStorage` key if you use one (a warning is logged if two editors on the page share a key; an editor re-created after the previous one left the page, as in a remount, takes the key over without a warning). Some settings are page-wide and the last editor created wins: the icon sprite and icon font (`svgSprite`, `iconFont`), the stylesheet (`style`), and the interface language, which is also remembered in sessionStorage. `editor.i18n.setLang()` changes that page-wide language but only re-renders the editor it is called on; call it on each editor to update them all.
+
+## Destroying an editor
+
+`editor.destroy()` removes the editor and its controls from the page and releases what it holds:
+
+- the drag-and-drop (Sortable) instances on its stages, rows, columns, controls and option lists
+- the resize observers of its edit and control panels
+- its window `resize` listener, and a resize update or trailing `onUpdate`/`onChange` that is still pending
+- its loaded components, and its hold on its `sessionStorage` key, so a new editor can use the key without a warning
+- the tooltip, once no other editor is left on the page
+
+```javascript
+const editor = new FormeoEditor({ editorContainer: '#form-builder' })
+
+// later, when the modal or view closes
+editor.destroy()
+
+// a new editor can mount in the same container
+const next = new FormeoEditor({ editorContainer: '#form-builder' })
+```
+
+After `destroy()`, `initState` is `'destroyed'` and `isDestroyed` is `true`. No option callback runs again, including one that was already scheduled. `render()`, `load()`, `loadData()`, `clear()` and `i18n.setLang()` do nothing to the editor (`setLang` still changes the page-wide language), and `whenReady()` rejects with `Error('Editor was destroyed')`, including a `whenReady()` that was waiting when the editor was destroyed. An editor destroyed before it is ready never renders. `destroy()` is safe to call more than once.
+
+`destroy()` doesn't change sessionStorage: a saved form stays saved. It also leaves the container element in place, and leaves the page-wide settings (stylesheet, icon sprite, language) loaded. Other editors on the page keep working.

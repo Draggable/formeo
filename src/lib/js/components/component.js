@@ -222,6 +222,7 @@ export default class Component extends Data {
     forEach(children, child => child.remove())
 
     this.dom.remove()
+    this.panels?.destroy()
     remove(this.components.getAddress(siblingsPath), this.id)
 
     if (!parent.children.length) {
@@ -1015,6 +1016,7 @@ export default class Component extends Data {
       displayType: 'auto',
     }
 
+    this.panels?.destroy()
     this.panels = new Panels(panelsData)
 
     if (this.dom) {
