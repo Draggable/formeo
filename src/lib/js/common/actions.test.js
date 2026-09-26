@@ -1,6 +1,6 @@
 import { strict as assert } from 'node:assert'
 import { afterEach, before, beforeEach, describe, it, mock } from 'node:test'
-import actions from './actions.js'
+import actions, { Actions } from './actions.js'
 
 before(() => {
   const proto = window.HTMLDialogElement.prototype
@@ -129,5 +129,68 @@ describe('actions.add.attrs default (#233)', () => {
     actions.add.attrs(addAttrEvt())
     assert.equal(custom.mock.callCount(), 1)
     assert.equal(dialog(), null)
+  })
+})
+
+describe('actions.remove.page default (#122)', () => {
+  const removeDialog = () => document.querySelector('dialog.remove-page-dialog')
+  const pageEvt = overrides => ({
+    stage: {},
+    stageId: 's-2',
+    index: 1,
+    title: 'Account',
+    isEmpty: false,
+    removeAction: mock.fn(),
+    ...overrides,
+  })
+
+  afterEach(() => {
+    for (const dialog of document.querySelectorAll('dialog')) {
+      dialog.remove()
+    }
+  })
+
+  it('removes an empty page at once', () => {
+    const evt = pageEvt({ isEmpty: true })
+    new Actions(null).init({}).remove.page(evt)
+    assert.equal(evt.removeAction.mock.callCount(), 1)
+    assert.equal(removeDialog(), null)
+  })
+
+  it('asks before removing a page with content, and removes on confirm', () => {
+    const evt = pageEvt()
+    new Actions(null).init({}).remove.page(evt)
+    assert.equal(evt.removeAction.mock.callCount(), 0)
+    assert.match(removeDialog().textContent, /Remove "Account" and everything on it\?/)
+    removeDialog().querySelector('form').requestSubmit()
+    assert.equal(evt.removeAction.mock.callCount(), 1)
+  })
+
+  it('keeps the page on cancel', () => {
+    const evt = pageEvt()
+    new Actions(null).init({}).remove.page(evt)
+    removeDialog().querySelector('button[type="button"]').click()
+    assert.equal(evt.removeAction.mock.callCount(), 0)
+  })
+
+  it('shows a title as text, never as markup', () => {
+    new Actions(null).init({}).remove.page(pageEvt({ title: '<img src=x onerror=alert(1)>' }))
+    assert.equal(removeDialog().querySelector('img'), null)
+    assert.match(removeDialog().textContent, /<img src=x onerror=alert\(1\)>/)
+  })
+
+  it('lets a custom handler veto the removal', () => {
+    const page = mock.fn()
+    const evt = pageEvt({ isEmpty: true })
+    new Actions(null).init({ remove: { page } }).remove.page(evt)
+    assert.equal(page.mock.callCount(), 1)
+    assert.equal(page.mock.calls[0].arguments[0], evt)
+    assert.equal(evt.removeAction.mock.callCount(), 0)
+  })
+
+  it('works before init()', () => {
+    const evt = pageEvt({ isEmpty: true })
+    new Actions(null).remove.page(evt)
+    assert.equal(evt.removeAction.mock.callCount(), 1)
   })
 })
