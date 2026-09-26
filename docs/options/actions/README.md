@@ -23,7 +23,7 @@ function addAttribute(evt) {
     title: evt.message.attr,
     onSave: (name, value) => {
       if (evt.isDisabled(`attrs.${name}`)) {
-        return false // keep your modal open
+        return false // your own modal: keep it open (Formeo's Dialog doesn't use this)
       }
       evt.addAction(name, value) // pass strings, not input elements
     },
