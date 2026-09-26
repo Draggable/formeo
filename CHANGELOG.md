@@ -1,3 +1,19 @@
+# [5.6.0](https://github.com/Draggable/formeo/compare/v5.5.0...v5.6.0) (2026-09-26)
+
+
+### Bug Fixes
+
+* **editor:** end a control drag in progress when the editor is destroyed ([c39caae](https://github.com/Draggable/formeo/commit/c39caae721c7c10d21c9574005887e8674d7ea38)), closes [#166](https://github.com/Draggable/formeo/issues/166)
+* **editor:** keep an editor destroyed from its load callbacks destroyed ([76a551b](https://github.com/Draggable/formeo/commit/76a551b83a7151accc8d59da699fa475dfd7b3fd)), closes [#166](https://github.com/Draggable/formeo/issues/166)
+* **editor:** release a removed component's Sortables ([702ca6a](https://github.com/Draggable/formeo/commit/702ca6ad1c8a71044826aa4014edac632305a2ae)), closes [Component#remove](https://github.com/Component/issues/remove) [#166](https://github.com/Draggable/formeo/issues/166)
+* **renderer:** destroy old pager before rerender ([81e7de2](https://github.com/Draggable/formeo/commit/81e7de2206453a47e8d0affa549d18cbc6d9b0ca))
+* **renderer:** stop pagination when the renderer is destroyed ([053d09d](https://github.com/Draggable/formeo/commit/053d09dff2013d5c854548edc701e5cc5d2d44fc)), closes [#166](https://github.com/Draggable/formeo/issues/166) [#122](https://github.com/Draggable/formeo/issues/122)
+
+
+### Features
+
+* **editor:** add destroy() to FormeoEditor and FormeoRenderer ([9bd3cbd](https://github.com/Draggable/formeo/commit/9bd3cbd60e1d2f56eb513828b69159287a8765d3)), closes [#166](https://github.com/Draggable/formeo/issues/166) [#152](https://github.com/Draggable/formeo/issues/152)
+
 # [5.5.0](https://github.com/Draggable/formeo/compare/v5.4.0...v5.5.0) (2026-09-26)
 
 
