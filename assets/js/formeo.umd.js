@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.2.2
+Version: 5.3.0
 Author: Draggable https://draggable.io
 */
 
@@ -6060,187 +6060,6 @@ Author: Draggable https://draggable.io
 	var SmartTooltip = _SmartTooltip;
 	if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 	//#endregion
-	//#region package.json
-	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
-	var init_package = __esmMin((() => {
-		name$1 = "formeo";
-		version$2 = "5.2.2";
-		type = "module";
-		main = "dist/formeo.cjs.js";
-		module$1 = "dist/formeo.es.js";
-		unpkg = "dist/formeo.umd.js";
-		exports$1 = {
-			".": {
-				"import": "./dist/formeo.es.js",
-				"require": "./dist/formeo.cjs.js",
-				"default": "./dist/formeo.umd.js"
-			},
-			"./dist/formeo.min.css": {
-				"import": "./dist/formeo.min.css",
-				"require": "./dist/formeo.min.css",
-				"default": "./dist/formeo.min.css"
-			}
-		};
-		files = ["dist/*", "demo/**/*"];
-		homepage = "https://formeo.io";
-		repository = {
-			"url": "https://github.com/Draggable/formeo",
-			"type": "git"
-		};
-		author = "Draggable https://draggable.io";
-		contributors = [{
-			"name": "Kevin Chappell",
-			"email": "kevin@chappell.dev",
-			"url": "https://kevin-chappell.com"
-		}];
-		bugs = { "url": "https://github.com/draggable/formeo/issues" };
-		description = "A zero dependency JavaScript module for drag and drop form creation.";
-		keywords = [
-			"drag and drop",
-			"form builder",
-			"form maker",
-			"forms"
-		];
-		ignore = [
-			"**/*",
-			"node_modules",
-			"test"
-		];
-		config = { "files": {
-			"test": ["test/**/*.spec.js"],
-			"formeo-editor": { "js": "src/js/editor.js" },
-			"formeo-renderer": { "js": "src/js/renderer.js" },
-			"site": ["demo/assets/sass/site.scss"]
-		} };
-		scripts = {
-			"dev": "NODE_ENV=development vite",
-			"preview": "vite preview",
-			"prebuild:lib": "rm -rf dist",
-			"build:lib": "npm-run-all -p build:lib:unminified build:lib:minified",
-			"build:lib:unminified": "vite build --config vite.config.lib.mjs --mode production",
-			"build:lib:minified": "vite build --config vite.config.lib.mjs --mode production-minified",
-			"build": "npm-run-all -p build:icons build:demo",
-			"prebuild": "npm run build:lib",
-			"postbuild": "npm run generate:jsonSchema",
-			"build:demo": "vite build --mode demo",
-			"postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
-			"build:demo:watch": "vite build --mode demo --watch",
-			"build:icons": "node ./tools/generate-sprite",
-			"lint": "biome check ./src && node tools/check-color-literals.mjs && node tools/check-doc-links.mjs",
-			"lint:fix": "biome check --write ./src",
-			"format": "biome format --write .",
-			"test": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
-			"test:watch": "node --watch --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
-			"test:updateSnapshots": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
-			"test:ci": "npm test --coverage",
-			"start": "npm-run-all build:icons dev",
-			"semantic-release": "semantic-release --ci --debug",
-			"copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
-			"travis-deploy-once": "travis-deploy-once --pro",
-			"playwright:test": "playwright test",
-			"playwright:test:ui": "playwright test --ui",
-			"playwright:test:report": "playwright show-report",
-			"playwright:test:ci": "playwright test --reporter=dot",
-			"prepush": "npm test",
-			"prepare": "lefthook install",
-			"postmerge": "lefthook install",
-			"generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
-		};
-		devDependencies = {
-			"@biomejs/biome": "^2.3.3",
-			"@commitlint/cli": "^21.0.1",
-			"@commitlint/config-conventional": "^21.0.1",
-			"@playwright/test": "^1.49.1",
-			"@semantic-release/changelog": "^6.0.3",
-			"@semantic-release/git": "^10.0.1",
-			"@semantic-release/github": "^12.0.8",
-			"@semantic-release/npm": "^13.1.3",
-			"@types/node": "^25.8.0",
-			"ace-builds": "^1.36.5",
-			"esbuild": "^0.28.0",
-			"jsdom": "^29.1.1",
-			"lefthook": "^2.1.6",
-			"npm-run-all": "^4.1.5",
-			"sass-embedded": "^1.80.1",
-			"semantic-release": "^25.0.2",
-			"svg-sprite": "^2.0.4",
-			"vite": "^8.0.13",
-			"vite-plugin-banner": "^0.8.0",
-			"vite-plugin-compression": "^0.5.1",
-			"vite-plugin-html": "^3.2.2",
-			"zod": "^4.4.3"
-		};
-		dependencies = {
-			"@draggable/formeo-languages": "^3.4.1",
-			"@draggable/i18n": "^1.0.7",
-			"@draggable/tooltip": "^1.2.2",
-			"lodash": "^4.17.21",
-			"sortablejs": "^1.15.3"
-		};
-		release = {
-			"branches": ["main"],
-			"verifyConditions": [
-				"@semantic-release/changelog",
-				"@semantic-release/npm",
-				"@semantic-release/git",
-				"@semantic-release/github"
-			],
-			"prepare": [
-				"@semantic-release/changelog",
-				"@semantic-release/npm",
-				"@semantic-release/git"
-			],
-			"publish": ["@semantic-release/npm", "@semantic-release/github"],
-			"success": ["@semantic-release/github"],
-			"fail": ["@semantic-release/github"]
-		};
-		commitlint = {
-			"extends": ["@commitlint/config-conventional"],
-			"rules": { "type-enum": [
-				2,
-				"always",
-				[
-					"build",
-					"chore",
-					"ci",
-					"docs",
-					"feat",
-					"fix",
-					"perf",
-					"refactor",
-					"revert",
-					"style",
-					"test"
-				]
-			] }
-		};
-		package_default = {
-			name: name$1,
-			version: version$2,
-			type,
-			main,
-			module: module$1,
-			unpkg,
-			exports: exports$1,
-			files,
-			homepage,
-			repository,
-			author,
-			contributors,
-			bugs,
-			description,
-			keywords,
-			license: "MIT",
-			ignore,
-			config,
-			scripts,
-			devDependencies,
-			dependencies,
-			release,
-			commitlint
-		};
-	}));
-	//#endregion
 	//#region node_modules/lodash/_listCacheClear.js
 	var require__listCacheClear = /* @__PURE__ */ __commonJSMin(((exports, module) => {
 		/**
@@ -8246,173 +8065,184 @@ Author: Draggable https://draggable.io
 		module.exports = require__createAssigner()(function(object, source, srcIndex, customizer) {
 			baseMerge(object, source, srcIndex, customizer);
 		});
-	}));
-	//#endregion
-	//#region src/lib/js/common/utils/index.mjs
-	/**
-	* Creates a throttled function that only invokes the provided callback at most once per every limit milliseconds.
-	*
-	* @param {Function} callback - The function to throttle.
-	* @param {number} limit - The number of milliseconds to throttle invocations to.
-	* @returns {Function} - Returns the new throttled function.
-	*/
-	function throttle$1(callback, limit = ANIMATION_SPEED_SLOW) {
-		let lastCall = 0;
-		return function(...args) {
-			const now = Date.now();
-			if (now - lastCall >= limit) {
-				lastCall = now;
-				callback.apply(this, args);
+	})), name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
+	var init_package = __esmMin((() => {
+		name$1 = "formeo";
+		version$2 = "5.3.0";
+		type = "module";
+		main = "dist/formeo.cjs.js";
+		module$1 = "dist/formeo.es.js";
+		unpkg = "dist/formeo.umd.js";
+		exports$1 = {
+			".": {
+				"import": "./dist/formeo.es.js",
+				"require": "./dist/formeo.cjs.js",
+				"default": "./dist/formeo.umd.js"
+			},
+			"./dist/formeo.min.css": {
+				"import": "./dist/formeo.min.css",
+				"require": "./dist/formeo.min.css",
+				"default": "./dist/formeo.min.css"
 			}
 		};
-	}
-	/**
-	* Creates a debounced function that delays invoking the provided function until after the specified delay.
-	*
-	* @param {Function} fn - The function to debounce.
-	* @param {number} [delay=ANIMATION_SPEED_FAST] - The number of milliseconds to delay invocation.
-	* @returns {Function} - A new debounced function.
-	*/
-	function debounce(fn, delay = ANIMATION_SPEED_FAST) {
-		let timeoutID;
-		return function(...args) {
-			if (timeoutID) clearTimeout(timeoutID);
-			timeoutID = setTimeout(() => fn.apply(this, args), delay);
+		files = ["dist/*", "demo/**/*"];
+		homepage = "https://formeo.io";
+		repository = {
+			"url": "https://github.com/Draggable/formeo",
+			"type": "git"
 		};
-	}
-	function identity(value) {
-		return value;
-	}
-	function noop() {}
-	/**
-	* Parses the provided data argument. If the argument is a string, it attempts to parse it as JSON.
-	* If the parsing fails, it logs an error and returns an empty object.
-	* If the argument is not a string, it returns the argument as is.
-	*
-	* @param {string|Object} dataArg - The data to be parsed. Can be a JSON string or an object.
-	* @returns {Object} - The parsed object or the original object if the input was not a string.
-	*/
-	function parseData(data = Object.create(null)) {
-		if (typeof data === "string") try {
-			return JSON.parse(data);
-		} catch (e) {
-			console.error("Invalid JSON string provided:", e);
-			return Object.create(null);
-		}
-		return data;
-	}
-	/**
-	* Builds a flat data structure from a nested data object.
-	*
-	* @param {Object} data - The nested data object containing components.
-	* @param {string} componentId - The ID of the component to start building the flat structure from.
-	* @param {string} componentType - The type of the component to start building the flat structure from.
-	* @param {Object} [result={}] - The result object to store the flat data structure.
-	* @returns {Object} The flat data structure with component IDs as keys and component data as values.
-	*/
-	function buildFlatDataStructure(data, componentId, componentType, result = {}) {
-		if (!componentId || !data[componentType][componentId]) return result;
-		const key = `${componentType}.${componentId}`;
-		result[key] = data[componentType][componentId];
-		const childType = CHILD_TYPE_INDEX_MAP.get(componentType);
-		if (childType) {
-			const childrenIds = data[componentType][componentId].data?.children || [];
-			for (const childId of childrenIds) buildFlatDataStructure(data, childId, childType, result);
-		}
-		return result;
-	}
-	var import_mergeWith, uuidv4, shortId, match, remove, componentType, unique, uuid, merge, clone$1, percent, numToPercent, sessionStorage, isAddress, isInternalAddress, cleanFormData;
-	var init_utils = __esmMin((() => {
-		import_mergeWith = /* @__PURE__ */ __toESM(require_mergeWith(), 1);
-		init_constants();
-		uuidv4 = () => crypto.randomUUID().slice(0, 8);
-		shortId = () => uuidv4().slice(0, 8);
-		match = (str = "", filter) => {
-			if (!filter) {
-				console.warn("utils.match missing argument 2.");
-				return false;
-			}
-			const matchOperators = /[|\\{}()[\]^*$+?.]/g;
-			let filterArray = typeof filter === "string" ? [filter] : filter;
-			filterArray = filterArray.map((filterStr) => {
-				return filterStr === "*" ? "" : filterStr.replace(matchOperators, "\\$&");
-			});
-			let isMatch = true;
-			if (filterArray.length) isMatch = !new RegExp(filterArray.join("|"), "i").exec(str);
-			return isMatch;
+		author = "Draggable https://draggable.io";
+		contributors = [{
+			"name": "Kevin Chappell",
+			"email": "kevin@chappell.dev",
+			"url": "https://kevin-chappell.com"
+		}];
+		bugs = { "url": "https://github.com/draggable/formeo/issues" };
+		description = "A zero dependency JavaScript module for drag and drop form creation.";
+		keywords = [
+			"drag and drop",
+			"form builder",
+			"form maker",
+			"forms"
+		];
+		ignore = [
+			"**/*",
+			"node_modules",
+			"test"
+		];
+		config = { "files": {
+			"test": ["test/**/*.spec.js"],
+			"formeo-editor": { "js": "src/js/editor.js" },
+			"formeo-renderer": { "js": "src/js/renderer.js" },
+			"site": ["demo/assets/sass/site.scss"]
+		} };
+		scripts = {
+			"dev": "vite --mode development",
+			"preview": "vite preview",
+			"prebuild:lib": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+			"build:lib": "npm-run-all -p build:lib:unminified build:lib:minified",
+			"build:lib:unminified": "vite build --config vite.config.lib.mjs --mode production",
+			"build:lib:minified": "vite build --config vite.config.lib.mjs --mode production-minified",
+			"build": "npm-run-all -p build:icons build:demo",
+			"prebuild": "npm run build:lib",
+			"postbuild": "npm run generate:jsonSchema",
+			"build:demo": "vite build --mode demo",
+			"postbuild:demo": "node --no-warnings tools/copy-assets.mjs",
+			"build:demo:watch": "vite build --mode demo --watch",
+			"build:icons": "node ./tools/generate-sprite",
+			"lint": "biome check ./src && node tools/check-color-literals.mjs && node tools/check-doc-links.mjs",
+			"lint:fix": "biome check --write ./src",
+			"format": "biome format --write .",
+			"test": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
+			"test:watch": "node --watch --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
+			"test:updateSnapshots": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
+			"test:ci": "npm test --coverage",
+			"start": "npm-run-all build:icons dev",
+			"semantic-release": "semantic-release --ci --debug",
+			"copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
+			"travis-deploy-once": "travis-deploy-once --pro",
+			"playwright:test": "playwright test",
+			"playwright:test:ui": "playwright test --ui",
+			"playwright:test:report": "playwright show-report",
+			"playwright:test:ci": "playwright test --reporter=dot",
+			"prepush": "npm test",
+			"prepare": "lefthook install",
+			"postmerge": "lefthook install",
+			"generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
 		};
-		remove = (arr, val) => {
-			const index = arr.indexOf(val);
-			if (index !== -1) arr.splice(index, 1);
+		devDependencies = {
+			"@biomejs/biome": "^2.3.3",
+			"@commitlint/cli": "^21.0.1",
+			"@commitlint/config-conventional": "^21.0.1",
+			"@playwright/test": "^1.49.1",
+			"@semantic-release/changelog": "^6.0.3",
+			"@semantic-release/git": "^10.0.1",
+			"@semantic-release/github": "^12.0.8",
+			"@semantic-release/npm": "^13.1.3",
+			"@types/node": "^25.8.0",
+			"ace-builds": "^1.36.5",
+			"esbuild": "^0.28.0",
+			"jsdom": "^29.1.1",
+			"lefthook": "^2.1.6",
+			"npm-run-all": "^4.1.5",
+			"sass-embedded": "^1.80.1",
+			"semantic-release": "^25.0.2",
+			"svg-sprite": "^2.0.4",
+			"vite": "^8.0.13",
+			"vite-plugin-banner": "^0.8.0",
+			"vite-plugin-compression": "^0.5.1",
+			"vite-plugin-html": "^3.2.2",
+			"zod": "^4.4.3"
 		};
-		componentType = (node) => {
-			const classMatch = node.className?.match(COMPONENT_TYPE_CLASSNAMES_REGEXP);
-			return classMatch && COMPONENT_TYPE_CLASSNAMES_LOOKUP[classMatch[0]];
+		dependencies = {
+			"@draggable/formeo-languages": "^3.4.1",
+			"@draggable/i18n": "^1.0.7",
+			"@draggable/tooltip": "^1.2.2",
+			"lodash": "^4.17.21",
+			"sortablejs": "^1.15.3"
 		};
-		unique = (array) => Array.from(new Set(array));
-		uuid = (elem) => {
-			return elem?.attrs?.id || elem?.id || shortId();
+		release = {
+			"branches": ["main"],
+			"verifyConditions": [
+				"@semantic-release/changelog",
+				"@semantic-release/npm",
+				"@semantic-release/git",
+				"@semantic-release/github"
+			],
+			"prepare": [
+				"@semantic-release/changelog",
+				"@semantic-release/npm",
+				"@semantic-release/git"
+			],
+			"publish": ["@semantic-release/npm", "@semantic-release/github"],
+			"success": ["@semantic-release/github"],
+			"fail": ["@semantic-release/github"]
 		};
-		merge = (obj1, obj2) => {
-			const customizer = (objValue, srcValue) => {
-				if (Array.isArray(objValue)) {
-					if (srcValue !== void 0 && srcValue !== null) return unique(objValue.concat(srcValue));
-					return srcValue;
-				}
-				if (Array.isArray(srcValue)) {
-					if (objValue !== void 0 && objValue !== null) return unique(srcValue.concat(objValue));
-					return srcValue;
-				}
-			};
-			return (0, import_mergeWith.default)({}, obj1, obj2, customizer);
+		commitlint = {
+			"extends": ["@commitlint/config-conventional"],
+			"rules": { "type-enum": [
+				2,
+				"always",
+				[
+					"build",
+					"chore",
+					"ci",
+					"docs",
+					"feat",
+					"fix",
+					"perf",
+					"refactor",
+					"revert",
+					"style",
+					"test"
+				]
+			] }
 		};
-		clone$1 = (obj) => {
-			let copy;
-			const isPromise = obj instanceof Promise;
-			if (obj === null || !(typeof obj === "object") || isPromise) return obj;
-			if (obj instanceof Date) {
-				copy = /* @__PURE__ */ new Date();
-				copy.setTime(obj.getTime());
-				return copy;
-			}
-			if (Array.isArray(obj)) {
-				copy = [];
-				for (let i = 0, len = obj.length; i < len; i++) copy[i] = clone$1(obj[i]);
-				return copy;
-			}
-			if (obj instanceof Object) {
-				copy = {};
-				for (const attr in obj) if (Object.hasOwn(obj, attr)) copy[attr] = clone$1(obj[attr]);
-				return copy;
-			}
-			throw new Error("Unable to copy Object, type not supported.");
+		package_default = {
+			name: name$1,
+			version: version$2,
+			type,
+			main,
+			module: module$1,
+			unpkg,
+			exports: exports$1,
+			files,
+			homepage,
+			repository,
+			author,
+			contributors,
+			bugs,
+			description,
+			keywords,
+			license: "MIT",
+			ignore,
+			config,
+			scripts,
+			devDependencies,
+			dependencies,
+			release,
+			commitlint
 		};
-		percent = (val, total) => val / total * 100;
-		numToPercent = (num) => `${num.toString()}%`;
-		sessionStorage = Object.create(null, {
-			get: { value: (key) => {
-				const itemValue = window.sessionStorage?.getItem(key);
-				try {
-					return JSON.parse(itemValue);
-				} catch (_err) {
-					return itemValue;
-				}
-			} },
-			set: { value: (key, itemValue) => {
-				try {
-					return window.sessionStorage?.setItem(key, JSON.stringify(itemValue));
-				} catch (error) {
-					console.error(error);
-				}
-			} }
-		});
-		isAddress = (str) => {
-			return /^(stage|row|column|field)s./.test(str);
-		};
-		isInternalAddress = (str) => {
-			return INTERNAL_COMPONENT_INDEX_REGEX.test(str);
-		};
-		cleanFormData = (formData) => formData ? clone$1(parseData(formData)) : DEFAULT_FORMDATA();
 	}));
 	//#endregion
 	//#region src/lib/icons/formeo-sprite.svg?raw
@@ -8653,6 +8483,189 @@ Author: Draggable https://draggable.io
 		])]]);
 	}));
 	//#endregion
+	//#region src/lib/js/common/utils/index.mjs
+	/**
+	* Creates a throttled function that invokes callback at most once per `limit` ms.
+	* With `trailing: true`, a call made inside the window is not dropped: the latest one
+	* runs when the window closes.
+	*
+	* @param {Function} callback - The function to throttle.
+	* @param {number} limit - The number of milliseconds to throttle invocations to.
+	* @param {{trailing?: boolean}} [options]
+	* @returns {Function} - Returns the new throttled function.
+	*/
+	function throttle$1(callback, limit = ANIMATION_SPEED_SLOW, { trailing = false } = {}) {
+		let lastCall = 0;
+		let trailingTimer = null;
+		let trailingArgs = null;
+		return function(...args) {
+			const remaining = limit - (Date.now() - lastCall);
+			if (remaining <= 0) {
+				clearTimeout(trailingTimer);
+				trailingTimer = null;
+				lastCall = Date.now();
+				callback.apply(this, args);
+				return;
+			}
+			if (trailing) {
+				trailingArgs = args;
+				if (!trailingTimer) trailingTimer = setTimeout(() => {
+					trailingTimer = null;
+					lastCall = Date.now();
+					callback.apply(this, trailingArgs);
+				}, remaining);
+			}
+		};
+	}
+	/**
+	* Creates a debounced function that delays invoking the provided function until after the specified delay.
+	*
+	* @param {Function} fn - The function to debounce.
+	* @param {number} [delay=ANIMATION_SPEED_FAST] - The number of milliseconds to delay invocation.
+	* @returns {Function} - A new debounced function.
+	*/
+	function debounce(fn, delay = ANIMATION_SPEED_FAST) {
+		let timeoutID;
+		return function(...args) {
+			if (timeoutID) clearTimeout(timeoutID);
+			timeoutID = setTimeout(() => fn.apply(this, args), delay);
+		};
+	}
+	function identity(value) {
+		return value;
+	}
+	function noop() {}
+	/**
+	* Parses the provided data argument. If the argument is a string, it attempts to parse it as JSON.
+	* If the parsing fails, it logs an error and returns an empty object.
+	* If the argument is not a string, it returns the argument as is.
+	*
+	* @param {string|Object} dataArg - The data to be parsed. Can be a JSON string or an object.
+	* @returns {Object} - The parsed object or the original object if the input was not a string.
+	*/
+	function parseData(data = Object.create(null)) {
+		if (typeof data === "string") try {
+			return JSON.parse(data);
+		} catch (e) {
+			console.error("Invalid JSON string provided:", e);
+			return Object.create(null);
+		}
+		return data;
+	}
+	/**
+	* Builds a flat data structure from a nested data object.
+	*
+	* @param {Object} data - The nested data object containing components.
+	* @param {string} componentId - The ID of the component to start building the flat structure from.
+	* @param {string} componentType - The type of the component to start building the flat structure from.
+	* @param {Object} [result={}] - The result object to store the flat data structure.
+	* @returns {Object} The flat data structure with component IDs as keys and component data as values.
+	*/
+	function buildFlatDataStructure(data, componentId, componentType, result = {}) {
+		if (!componentId || !data[componentType][componentId]) return result;
+		const key = `${componentType}.${componentId}`;
+		result[key] = data[componentType][componentId];
+		const childType = CHILD_TYPE_INDEX_MAP.get(componentType);
+		if (childType) {
+			const childrenIds = data[componentType][componentId].data?.children || [];
+			for (const childId of childrenIds) buildFlatDataStructure(data, childId, childType, result);
+		}
+		return result;
+	}
+	var import_mergeWith, uuidv4, shortId, match, remove, componentType, unique, uuid, merge, clone$1, percent, numToPercent, sessionStorage, isAddress, isInternalAddress, cleanFormData;
+	var init_utils = __esmMin((() => {
+		import_mergeWith = /* @__PURE__ */ __toESM(require_mergeWith(), 1);
+		init_constants();
+		uuidv4 = () => crypto.randomUUID().slice(0, 8);
+		shortId = () => uuidv4().slice(0, 8);
+		match = (str = "", filter) => {
+			if (!filter) {
+				console.warn("utils.match missing argument 2.");
+				return false;
+			}
+			const matchOperators = /[|\\{}()[\]^*$+?.]/g;
+			let filterArray = typeof filter === "string" ? [filter] : filter;
+			filterArray = filterArray.map((filterStr) => {
+				return filterStr === "*" ? "" : filterStr.replace(matchOperators, "\\$&");
+			});
+			let isMatch = true;
+			if (filterArray.length) isMatch = !new RegExp(filterArray.join("|"), "i").exec(str);
+			return isMatch;
+		};
+		remove = (arr, val) => {
+			const index = arr.indexOf(val);
+			if (index !== -1) arr.splice(index, 1);
+		};
+		componentType = (node) => {
+			const classMatch = node.className?.match(COMPONENT_TYPE_CLASSNAMES_REGEXP);
+			return classMatch && COMPONENT_TYPE_CLASSNAMES_LOOKUP[classMatch[0]];
+		};
+		unique = (array) => Array.from(new Set(array));
+		uuid = (elem) => {
+			return elem?.attrs?.id || elem?.id || shortId();
+		};
+		merge = (obj1, obj2) => {
+			const customizer = (objValue, srcValue) => {
+				if (Array.isArray(objValue)) {
+					if (srcValue !== void 0 && srcValue !== null) return unique(objValue.concat(srcValue));
+					return srcValue;
+				}
+				if (Array.isArray(srcValue)) {
+					if (objValue !== void 0 && objValue !== null) return unique(srcValue.concat(objValue));
+					return srcValue;
+				}
+			};
+			return (0, import_mergeWith.default)({}, obj1, obj2, customizer);
+		};
+		clone$1 = (obj) => {
+			let copy;
+			const isPromise = obj instanceof Promise;
+			if (obj === null || !(typeof obj === "object") || isPromise) return obj;
+			if (obj instanceof Date) {
+				copy = /* @__PURE__ */ new Date();
+				copy.setTime(obj.getTime());
+				return copy;
+			}
+			if (Array.isArray(obj)) {
+				copy = [];
+				for (let i = 0, len = obj.length; i < len; i++) copy[i] = clone$1(obj[i]);
+				return copy;
+			}
+			if (obj instanceof Object) {
+				copy = {};
+				for (const attr in obj) if (Object.hasOwn(obj, attr)) copy[attr] = clone$1(obj[attr]);
+				return copy;
+			}
+			throw new Error("Unable to copy Object, type not supported.");
+		};
+		percent = (val, total) => val / total * 100;
+		numToPercent = (num) => `${num.toString()}%`;
+		sessionStorage = Object.create(null, {
+			get: { value: (key) => {
+				const itemValue = window.sessionStorage?.getItem(key);
+				try {
+					return JSON.parse(itemValue);
+				} catch (_err) {
+					return itemValue;
+				}
+			} },
+			set: { value: (key, itemValue) => {
+				try {
+					return window.sessionStorage?.setItem(key, JSON.stringify(itemValue));
+				} catch (error) {
+					console.error(error);
+				}
+			} }
+		});
+		isAddress = (str) => {
+			return /^(stage|row|column|field)s./.test(str);
+		};
+		isInternalAddress = (str) => {
+			return INTERNAL_COMPONENT_INDEX_REGEX.test(str);
+		};
+		cleanFormData = (formData) => formData ? clone$1(parseData(formData)) : DEFAULT_FORMDATA();
+	}));
+	//#endregion
 	//#region src/lib/js/common/utils/string.mjs
 	/**
 	* Converts a given string to title case.
@@ -8705,6 +8718,229 @@ Author: Draggable https://draggable.io
 			return truncatedWord;
 		};
 		keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
+	}));
+	//#endregion
+	//#region src/lib/js/common/events.js
+	function onResizeWindow() {
+		throttling = throttling || window.requestAnimationFrame(() => {
+			throttling = false;
+			for (const column of Object.values(Columns.data)) {
+				column.dom.classList.add(NO_TRANSITION_CLASS_NAME);
+				Controls.dom.classList.add(NO_TRANSITION_CLASS_NAME);
+				Controls.panels.nav.refresh();
+				column.refreshFieldPanels();
+				throttle$1(() => {
+					column.dom.classList.remove(NO_TRANSITION_CLASS_NAME);
+					Controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME);
+				}, 333);
+			}
+		});
+	}
+	var NO_TRANSITION_CLASS_NAME, defaults$4, defaultCustomEvent, events, formeoUpdatedThrottled, throttling;
+	var init_events = __esmMin((() => {
+		init_components();
+		init_constants();
+		init_utils();
+		NO_TRANSITION_CLASS_NAME = "no-transition";
+		defaults$4 = {
+			debug: false,
+			bubbles: true,
+			formeoLoaded: (_evt) => {},
+			onAdd: () => {},
+			onRemove: () => {},
+			onChange: (evt) => events.opts?.debug && console.log(evt),
+			onUpdate: (evt) => events.opts?.debug && console.log(evt),
+			onUpdateStage: (evt) => events.opts?.debug && console.log(evt),
+			onUpdateRow: (evt) => events.opts?.debug && console.log(evt),
+			onUpdateColumn: (evt) => events.opts?.debug && console.log(evt),
+			onUpdateField: (evt) => events.opts?.debug && console.log(evt),
+			onAddRow: (evt) => events.opts?.debug && console.log(evt),
+			onAddColumn: (evt) => events.opts?.debug && console.log(evt),
+			onAddField: (evt) => events.opts?.debug && console.log(evt),
+			onRemoveRow: (evt) => events.opts?.debug && console.log(evt),
+			onRemoveColumn: (evt) => events.opts?.debug && console.log(evt),
+			onRemoveField: (evt) => events.opts?.debug && console.log(evt),
+			onRender: (evt) => events.opts?.debug && console.log(evt),
+			onSave: (_evt) => {},
+			confirmClearAll: (evt) => {
+				if (globalThis.confirm(evt.confirmationMessage)) evt.clearAllAction(evt);
+			}
+		};
+		defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
+			const evt = new globalThis.CustomEvent(type, {
+				detail: evtData,
+				bubbles: events.opts?.debug || events.opts?.bubbles
+			});
+			evt.data = (src || document).dispatchEvent(evt);
+			if (type === "formeoUpdated") {
+				const changedEvt = new globalThis.CustomEvent(EVENT_FORMEO_CHANGED, {
+					detail: evtData,
+					bubbles: events.opts?.debug || events.opts?.bubbles
+				});
+				(src || document).dispatchEvent(changedEvt);
+			}
+			return evt;
+		};
+		events = {
+			init: function(options) {
+				this.opts = {
+					...defaults$4,
+					...options
+				};
+				return this;
+			},
+			formeoSaved: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
+			formeoUpdated: (evt, eventType) => defaultCustomEvent(evt, eventType || "formeoUpdated"),
+			formeoCleared: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
+			formeoOnRender: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
+			formeoConditionUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
+			formeoAddedRow: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_ROW),
+			formeoAddedColumn: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_COLUMN),
+			formeoAddedField: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_FIELD),
+			formeoRemovedRow: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_ROW),
+			formeoRemovedColumn: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_COLUMN),
+			formeoRemovedField: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_FIELD)
+		};
+		formeoUpdatedThrottled = throttle$1(() => {
+			const eventData = {
+				timeStamp: globalThis.performance.now(),
+				type: EVENT_FORMEO_UPDATED,
+				detail: components.formData
+			};
+			events.opts.onUpdate(eventData);
+			if (events.opts.onChange !== events.opts.onUpdate) events.opts.onChange(eventData);
+		}, ANIMATION_SPEED_FAST, { trailing: true });
+		document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled);
+		document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onUpdate(eventData);
+			events.opts.onUpdateStage(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_UPDATED_ROW, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onUpdate(eventData);
+			events.opts.onUpdateRow(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onUpdate(eventData);
+			events.opts.onUpdateColumn(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onUpdate(eventData);
+			events.opts.onUpdateField(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_ADDED_ROW, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onAdd(eventData);
+			events.opts.onAddRow(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onAdd(eventData);
+			events.opts.onAddColumn(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_ADDED_FIELD, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onAdd(eventData);
+			events.opts.onAddField(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_REMOVED_ROW, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onRemove(eventData);
+			events.opts.onRemoveRow(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onRemove(eventData);
+			events.opts.onRemoveColumn(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			const eventData = {
+				timeStamp,
+				type,
+				detail
+			};
+			events.opts.onRemove(eventData);
+			events.opts.onRemoveField(eventData);
+		});
+		document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
+			const { timeStamp, type, detail } = evt;
+			events.opts.onRender({
+				timeStamp,
+				type,
+				detail
+			});
+		});
+		document.addEventListener("confirmClearAll", (evt) => {
+			evt = {
+				timeStamp: evt.timeStamp,
+				type: evt.type,
+				confirmationMessage: evt.detail.confirmationMessage,
+				clearAllAction: evt.detail.clearAllAction,
+				btnCoords: evt.detail.btnCoords
+			};
+			events.opts.confirmClearAll(evt);
+		});
+		document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { formData } }) => {
+			const evt = {
+				timeStamp,
+				type,
+				formData
+			};
+			events.opts.onSave(evt);
+		});
+		document.addEventListener("formeoLoaded", (evt) => {
+			events.opts.formeoLoaded(evt.detail.formeo);
+		});
+		window.addEventListener("resize", onResizeWindow);
 	}));
 	//#endregion
 	//#region node_modules/lodash/isSymbol.js
@@ -10757,7 +10993,7 @@ Author: Draggable https://draggable.io
 	}
 	function Revert() {}
 	function Remove() {}
-	var version, IE11OrLess, Edge, FireFox, Safari, IOS, ChromeForAndroid, captureMode, R_SPACE, _throttleTimeout, expando, plugins, defaults$4, PluginManager, _excluded, pluginEvent, dragEl, parentEl, ghostEl, rootEl, nextEl, lastDownEl, cloneEl, cloneHidden, oldIndex, newIndex, oldDraggableIndex, newDraggableIndex, activeGroup, putSortable, awaitingDragStarted, ignoreNextClick, sortables, tapEvt, touchEvt, lastDx, lastDy, tapDistanceLeft, tapDistanceTop, moved, lastTarget, lastDirection, pastFirstInvertThresh, isCircumstantialInvert, targetMoveDistance, ghostRelativeParent, ghostRelativeParentInitialScroll, _silent, savedInputChecked, documentExists, PositionGhostAbsolutely, CSSFloatProperty, supportDraggable, supportCssPointerEvents, _detectDirection, _dragElInRowColumn, _detectNearestEmptySortable, _prepareGroup, _hideGhostForTarget, _unhideGhostForTarget, nearestEmptyInsertDetectEvent, _checkOutsideTargetEl, autoScrolls, scrollEl, scrollRootEl, scrolling, lastAutoScrollX, lastAutoScrollY, touchEvt$1, pointerElemChangedInterval, autoScroll, drop;
+	var version, IE11OrLess, Edge, FireFox, Safari, IOS, ChromeForAndroid, captureMode, R_SPACE, _throttleTimeout, expando, plugins, defaults$3, PluginManager, _excluded, pluginEvent, dragEl, parentEl, ghostEl, rootEl, nextEl, lastDownEl, cloneEl, cloneHidden, oldIndex, newIndex, oldDraggableIndex, newDraggableIndex, activeGroup, putSortable, awaitingDragStarted, ignoreNextClick, sortables, tapEvt, touchEvt, lastDx, lastDy, tapDistanceLeft, tapDistanceTop, moved, lastTarget, lastDirection, pastFirstInvertThresh, isCircumstantialInvert, targetMoveDistance, ghostRelativeParent, ghostRelativeParentInitialScroll, _silent, savedInputChecked, documentExists, PositionGhostAbsolutely, CSSFloatProperty, supportDraggable, supportCssPointerEvents, _detectDirection, _dragElInRowColumn, _detectNearestEmptySortable, _prepareGroup, _hideGhostForTarget, _unhideGhostForTarget, nearestEmptyInsertDetectEvent, _checkOutsideTargetEl, autoScrolls, scrollEl, scrollRootEl, scrolling, lastAutoScrollX, lastAutoScrollY, touchEvt$1, pointerElemChangedInterval, autoScroll, drop;
 	var init_sortable_esm = __esmMin((() => {
 		version = "1.15.7";
 		IE11OrLess = userAgent(/(?:Trident.*rv[ :]?11\.|msie|iemobile|Windows Phone)/i);
@@ -10773,10 +11009,10 @@ Author: Draggable https://draggable.io
 		R_SPACE = /\s+/g;
 		expando = "Sortable" + (/* @__PURE__ */ new Date()).getTime();
 		plugins = [];
-		defaults$4 = { initializeByDefault: true };
+		defaults$3 = { initializeByDefault: true };
 		PluginManager = {
 			mount: function mount(plugin) {
-				for (var option in defaults$4) if (defaults$4.hasOwnProperty(option) && !(option in plugin)) plugin[option] = defaults$4[option];
+				for (var option in defaults$3) if (defaults$3.hasOwnProperty(option) && !(option in plugin)) plugin[option] = defaults$3[option];
 				plugins.forEach(function(p) {
 					if (p.pluginName === plugin.pluginName) throw "Sortable: Cannot mount plugin ".concat(plugin.pluginName, " more than once");
 				});
@@ -11852,6 +12088,61 @@ Author: Draggable https://draggable.io
 		Sortable.mount(Remove, Revert);
 	}));
 	//#endregion
+	//#region src/lib/js/common/helpers.mjs
+	var isInt, indexOfNode, orderObjectsBy, forEach, map, sanitizedAttributeNames, safeAttrName, capitalize, copyObj, subtract, helpers;
+	var init_helpers$2 = __esmMin((() => {
+		init_utils();
+		init_object();
+		isInt = (n) => Number.isInteger(Number(n));
+		indexOfNode = (node) => {
+			let index = 0;
+			let currentNode = node;
+			while (currentNode?.previousElementSibling) {
+				currentNode = currentNode.previousElementSibling;
+				index++;
+			}
+			return index;
+		};
+		orderObjectsBy = (elements, order, path) => {
+			const splitPath = path.split("||");
+			return unique(unique(order).map((key) => elements.find((elem) => {
+				const newPath = splitPath.find((p) => !!get(elem, p));
+				return newPath && get(elem, newPath) === key;
+			})).filter(Boolean).concat(elements));
+		};
+		forEach = (arr, cb, scope) => {
+			for (let i = 0; i < arr.length; i++) cb.call(scope, arr[i], i);
+		};
+		map = (arr, cb) => {
+			const newArray = [];
+			forEach(arr, (elem, i) => newArray.push(cb(elem, i)));
+			return newArray;
+		};
+		sanitizedAttributeNames = {};
+		safeAttrName = (name) => {
+			const attributeMap = { className: "class" };
+			if (sanitizedAttributeNames[name]) return sanitizedAttributeNames[name];
+			const sanitizedAttributeName = (attributeMap[name] || name).replace(/^\d+/, "").replace(/[^a-zA-Z0-9_:-]/g, "");
+			sanitizedAttributeNames[name] = sanitizedAttributeName;
+			return sanitizedAttributeName;
+		};
+		capitalize = (str) => str.replace(/\b\w/g, (m) => m.toUpperCase());
+		copyObj = (obj) => window.JSON.parse(window.JSON.stringify(obj));
+		subtract = (arr, from) => from.filter((a) => !~arr.indexOf(a));
+		helpers = {
+			capitalize,
+			safeAttrName,
+			forEach,
+			copyObj,
+			map,
+			subtract,
+			indexOfNode,
+			isInt,
+			get,
+			orderObjectsBy
+		};
+	}));
+	//#endregion
 	//#region src/lib/js/common/animation.js
 	var animate;
 	var init_animation = __esmMin((() => {
@@ -11925,906 +12216,6 @@ Author: Draggable https://draggable.io
 				else animate.slideUp(elem, duration);
 			}
 		};
-	}));
-	//#endregion
-	//#region src/lib/js/common/helpers.mjs
-	var isInt, indexOfNode, orderObjectsBy, forEach, map, sanitizedAttributeNames, safeAttrName, capitalize, copyObj, subtract, helpers;
-	var init_helpers$2 = __esmMin((() => {
-		init_utils();
-		init_object();
-		isInt = (n) => Number.isInteger(Number(n));
-		indexOfNode = (node) => {
-			let index = 0;
-			let currentNode = node;
-			while (currentNode?.previousElementSibling) {
-				currentNode = currentNode.previousElementSibling;
-				index++;
-			}
-			return index;
-		};
-		orderObjectsBy = (elements, order, path) => {
-			const splitPath = path.split("||");
-			return unique(unique(order).map((key) => elements.find((elem) => {
-				const newPath = splitPath.find((p) => !!get(elem, p));
-				return newPath && get(elem, newPath) === key;
-			})).filter(Boolean).concat(elements));
-		};
-		forEach = (arr, cb, scope) => {
-			for (let i = 0; i < arr.length; i++) cb.call(scope, arr[i], i);
-		};
-		map = (arr, cb) => {
-			const newArray = [];
-			forEach(arr, (elem, i) => newArray.push(cb(elem, i)));
-			return newArray;
-		};
-		sanitizedAttributeNames = {};
-		safeAttrName = (name) => {
-			const attributeMap = { className: "class" };
-			if (sanitizedAttributeNames[name]) return sanitizedAttributeNames[name];
-			const sanitizedAttributeName = (attributeMap[name] || name).replace(/^\d+/, "").replace(/[^a-zA-Z0-9-:]/g, "");
-			sanitizedAttributeNames[name] = sanitizedAttributeName;
-			return sanitizedAttributeName;
-		};
-		capitalize = (str) => str.replace(/\b\w/g, (m) => m.toUpperCase());
-		copyObj = (obj) => window.JSON.parse(window.JSON.stringify(obj));
-		subtract = (arr, from) => from.filter((a) => !~arr.indexOf(a));
-		helpers = {
-			capitalize,
-			safeAttrName,
-			forEach,
-			copyObj,
-			map,
-			subtract,
-			indexOfNode,
-			isInt,
-			get,
-			orderObjectsBy
-		};
-	}));
-	//#endregion
-	//#region src/lib/js/common/loaders.js
-	var loaded, AJAX_TIMEOUT_MS, ajax, onLoadStylesheet, onLoadJavascript, insertScript, insertStyle, insertScripts, insertStyles, insertIcons, fetchIcons, LOADER_MAP, fetchDependencies, fetchFormeoStyle;
-	var init_loaders = __esmMin((() => {
-		init_constants();
-		init_dom();
-		init_utils();
-		loaded = {
-			js: /* @__PURE__ */ new Set(),
-			css: /* @__PURE__ */ new Set(),
-			formeoSprite: null
-		};
-		AJAX_TIMEOUT_MS = 1e4;
-		ajax = (fileUrl, callback, onError = noop, timeoutMs = AJAX_TIMEOUT_MS) => {
-			return new Promise((resolve) => {
-				const signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : void 0;
-				return fetch(fileUrl, signal ? { signal } : void 0).then((data) => {
-					if (!data.ok) return resolve(onError(data));
-					resolve(callback ? callback(data) : data);
-				}).catch((err) => resolve(onError(err)));
-			});
-		};
-		onLoadStylesheet = (elem, cb) => {
-			elem.removeEventListener("load", onLoadStylesheet);
-			cb(elem.src);
-		};
-		onLoadJavascript = (elem, cb) => {
-			elem.removeEventListener("load", onLoadJavascript);
-			cb(elem.src);
-		};
-		insertScript = (src) => {
-			return new Promise((resolve, reject) => {
-				if (loaded.js.has(src)) return resolve(src);
-				loaded.js.add(src);
-				const script = dom.create({
-					tag: "script",
-					attrs: {
-						type: "text/javascript",
-						async: true,
-						src
-					},
-					action: {
-						load: () => onLoadJavascript(script, resolve),
-						error: () => reject(/* @__PURE__ */ new Error(`${src} failed to load.`))
-					}
-				});
-				document.head.appendChild(script);
-			});
-		};
-		insertStyle = (srcs) => {
-			srcs = Array.isArray(srcs) ? srcs : [srcs];
-			const promises = srcs.map((src) => new Promise((resolve, reject) => {
-				if (loaded.css.has(src)) return resolve(src);
-				loaded.css.add(src);
-				const styleLink = dom.create({
-					tag: "link",
-					attrs: {
-						rel: "stylesheet",
-						href: src
-					},
-					action: {
-						load: () => onLoadStylesheet(styleLink, resolve),
-						error: () => reject(/* @__PURE__ */ new Error(`${src} failed to load.`))
-					}
-				});
-				document.head.appendChild(styleLink);
-			}));
-			return Promise.all(promises);
-		};
-		insertScripts = (srcs) => {
-			srcs = Array.isArray(srcs) ? srcs : [srcs];
-			const promises = srcs.map((src) => insertScript(src));
-			return Promise.all(promises);
-		};
-		insertStyles = (srcs) => {
-			srcs = Array.isArray(srcs) ? srcs : [srcs];
-			const promises = srcs.map((src) => insertStyle(src));
-			return Promise.all(promises);
-		};
-		insertIcons = (iconSvgStr) => {
-			loaded.formeoSprite = new DOMParser().parseFromString(iconSvgStr, "image/svg+xml").documentElement;
-			return loaded.formeoSprite;
-		};
-		fetchIcons = async (iconSpriteUrl = null) => {
-			if (loaded.formeoSprite) return loaded.formeoSprite;
-			if (!iconSpriteUrl) return insertIcons(formeo_sprite_default);
-			const parseResp = async (resp) => insertIcons(await resp.text());
-			return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp));
-		};
-		LOADER_MAP = {
-			js: insertScripts,
-			css: insertStyles
-		};
-		fetchDependencies = (dependencies) => {
-			const promises = Object.entries(dependencies).map(([type, src]) => {
-				return LOADER_MAP[type](src);
-			});
-			return Promise.all(promises);
-		};
-		fetchFormeoStyle = async (cssUrl) => {
-			if (cssUrl && !loaded.css.has(cssUrl)) {
-				await insertStyle(cssUrl);
-				if (!loaded.css.has(cssUrl) && !loaded.css.has("https://draggable.github.io/formeo/assets/css/formeo.min.css")) return await insertStyle(FALLBACK_CSS_URL);
-			}
-		};
-	}));
-	//#endregion
-	//#region src/lib/js/common/dom.js
-	var iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
-	var init_dom = __esmMin((() => {
-		init_components();
-		init_constants();
-		init_animation();
-		init_helpers$2();
-		init_loaders();
-		init_utils();
-		init_string();
-		iconFontTemplates = {
-			glyphicons: (icon) => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
-			"font-awesome": (icon) => {
-				const [style, name] = icon.split(" ");
-				return `<i class="${style} fa-${name}"></i>`;
-			},
-			fontello: (icon) => `<i class="${iconPrefix}${icon}">${icon}</i>`
-		};
-		inputTags = new Set([
-			"input",
-			"textarea",
-			"select"
-		]);
-		REQUIRED_GROUP_ATTR = "formeo-required-group";
-		OPTION_INPUT_ATTRS = ["disabled", "form"];
-		GROUP_CONSUMED_ATTRS = new Set([
-			"type",
-			"id",
-			"name",
-			"className",
-			"value",
-			"required",
-			...OPTION_INPUT_ATTRS
-		]);
-		groupWrapperAttrs = (attrs = {}) => Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)));
-		stripOn = (str) => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase());
-		useCaptureEvts = new Set(["focus", "blur"]);
-		defaultActionHandler = (event) => {
-			const eventName = stripOn(event);
-			return (node, cb) => node.addEventListener(eventName, cb, useCaptureEvts.has(eventName));
-		};
-		getName = (elem = {}) => {
-			let name = elem?.attrs?.name || elem?.name;
-			if (name) return name;
-			const id = uuid(elem);
-			let label = elem.config?.label || elem.attrs?.label || elem?.label;
-			if (label) {
-				if (typeof label === "object") label = dom.create(label).textContent;
-				if (/^<.+>.+<.+>$/gim.test(label)) label = extractTextFromHtml(label);
-				name = `${id}-${slugify(truncateByWord(label, 24, null))}`;
-			}
-			return name || id;
-		};
-		DOM = class {
-			/**
-			* Set defaults, store references to key elements
-			* like stages, rows, columns etc
-			*/
-			constructor(options = Object.create(null)) {
-				this.options = options;
-			}
-			set setOptions(options) {
-				this.options = merge(this.options, options);
-			}
-			/**
-			* Ensure elements have proper tagName
-			* @param  {Object|String} elem
-			* @return {Object} valid element object
-			*/
-			processElemArg(elemArg) {
-				let elem = elemArg;
-				let tagName;
-				if (typeof elem === "string") {
-					tagName = elem;
-					elem = { tag: tagName };
-					return elem;
-				}
-				if (elem.attrs) {
-					const { tag, ...restAttrs } = elem.attrs;
-					if (tag) if (typeof tag === "string") tagName = tag;
-					else tagName = (tag.find((t) => t.selected === true) || tag[0]).value;
-					elem.attrs = restAttrs;
-				}
-				elem.tag = tagName || elem.tag || "div";
-				return elem;
-			}
-			/**
-			* Wraps dom.create to modify data
-			* Used when rendering components in form- not editor
-			*/
-			render = (elem) => {
-				elem.id = `f-${elem.id || uuid()}`;
-				return this.create(elem);
-			};
-			/**
-			* Creates DOM elements
-			* @param  {Object}  elem      element config object
-			* @param  {Boolean} isPreview generating element for preview or render?
-			* @return {Object}            DOM Object
-			*/
-			create = (elemArg, isPreview = false) => {
-				if (!elemArg) return;
-				if (this.isDOMElement(elemArg)) return elemArg;
-				const _this = this;
-				const processed = ["children", "content"];
-				const { className, options, dataset, ...elem } = this.processElemArg(elemArg);
-				processed.push("tag");
-				let childType;
-				const { tag } = elem;
-				let i;
-				const wrap = {
-					attrs: {},
-					className: [helpers.get(elem, "config.inputWrap")],
-					children: [],
-					config: {}
-				};
-				let element = document.createElement(tag);
-				/**
-				* Object for mapping contentType to its function
-				* @type {Object}
-				*/
-				const appendChildren = {
-					string: (children) => {
-						element.innerHTML += children;
-					},
-					object: (children) => {
-						return children && element.appendChild(_this.create(children, isPreview));
-					},
-					node: (children) => {
-						return element.appendChild(children);
-					},
-					component: (children) => {
-						return element.appendChild(children.dom);
-					},
-					array: (children) => {
-						for (const child of children) {
-							childType = _this.childType(child);
-							appendChildren[childType](child);
-						}
-					},
-					function: (children) => {
-						children = children();
-						childType = _this.childType(children);
-						appendChildren[childType](children);
-					},
-					undefined: () => null,
-					boolean: () => null
-				};
-				if (className) elem.attrs = merge(elem.attrs, { className });
-				if (options) {
-					const processedOptions = this.processOptions(options, elem, isPreview);
-					if (this.holdsContent(element) && tag !== "button") {
-						appendChildren.array.call(this, processedOptions);
-						elem.content = void 0;
-					} else {
-						helpers.forEach(processedOptions, (option) => {
-							wrap.children.push(_this.create(option, isPreview));
-						});
-						const groupAttrs = elem.attrs || {};
-						if (groupAttrs.className) wrap.className = groupAttrs.className;
-						wrap.id = elem.id;
-						wrap.attrs = groupWrapperAttrs(groupAttrs);
-						wrap.config = {
-							...elem.config,
-							required: Boolean(groupAttrs.required)
-						};
-						if (!isPreview && groupAttrs.type === "checkbox" && groupAttrs.required) {
-							wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = "true";
-							wrap.action = { change: ({ currentTarget }) => this.syncCheckboxGroupRequired(currentTarget) };
-						}
-						return this.create(wrap, isPreview);
-					}
-					processed.push("options");
-				}
-				if (elem.attrs) {
-					_this.processAttrs(elem, element, isPreview);
-					processed.push("attrs");
-				}
-				if (elem.config) {
-					if (elem.config.label && (elem.config.label && tag !== "button" || ["radio", "checkbox"].includes(helpers.get(elem, "attrs.type"))) && !isPreview) {
-						const label = _this.label(elem);
-						if (!elem.config.hideLabel) {
-							const wrapContent = [label, element];
-							if (_this.labelAfter(elem)) wrapContent.reverse();
-							wrap.children.push(wrapContent);
-						}
-					}
-					processed.push("config");
-				}
-				if (elem.content || elem.children) {
-					const children = elem.content || elem.children;
-					childType = _this.childType(children);
-					if (!appendChildren[childType]) console.error(`childType: ${childType} is not supported`);
-					appendChildren[childType].call(this, children);
-				}
-				if (dataset) {
-					for (const data in dataset) if (Object.hasOwn(dataset, data)) element.dataset[data] = typeof dataset[data] === "function" ? dataset[data]() : dataset[data];
-					processed.push("dataset");
-				}
-				if (elem.action) {
-					this.actionHandler(element, elem.action);
-					processed.push("action");
-				}
-				const remaining = helpers.subtract(processed, Object.keys(elem));
-				for (i = remaining.length - 1; i >= 0; i--) element[remaining[i]] = elem[remaining[i]];
-				if (wrap.children.length) element = this.create(wrap);
-				return element;
-			};
-			onRender = (node, cb, timeout = 333) => {
-				const start = Date.now();
-				const checkParent = () => {
-					if (!node.parentElement && Date.now() - start < timeout) window.requestAnimationFrame(checkParent);
-					else if (node.parentElement) cb(node);
-				};
-				checkParent();
-			};
-			/**
-			* Processes element config object actions (click, onRender etc)
-			*/
-			actionHandler(node, actions) {
-				const handlers = {
-					onRender: dom.onRender,
-					render: dom.onRender
-				};
-				return Object.entries(actions).map(([event, cb]) => {
-					return (Array.isArray(cb) ? cb : [cb]).map((cb) => {
-						return (handlers[event] || defaultActionHandler(event))(node, cb);
-					});
-				});
-			}
-			get icons() {
-				if (this.iconSymbols) return this.iconSymbols;
-				const iconSymbolNodes = loaded.formeoSprite.querySelectorAll("svg symbol");
-				/**
-				* Creates an SVG icon config by inlining the symbol's content
-				* This allows icons to work without the sprite being in the DOM
-				*/
-				const createSvgIconConfig = (symbol) => {
-					const viewBox = symbol.getAttribute("viewBox") || "0 0 24 24";
-					const children = Array.from(symbol.children).map((child) => {
-						return child.cloneNode(true).outerHTML;
-					}).join("");
-					return {
-						tag: "svg",
-						attrs: {
-							className: ["svg-icon", symbol.id],
-							viewBox,
-							xmlns: "http://www.w3.org/2000/svg"
-						},
-						children
-					};
-				};
-				this.iconSymbols = Array.from(iconSymbolNodes).reduce((acc, symbol) => {
-					const name = symbol.id.replace(iconPrefix, "");
-					acc[name] = createSvgIconConfig(symbol);
-					return acc;
-				}, {});
-				this.cachedIcons = {};
-				return this.iconSymbols;
-			}
-			/**
-			* Create and SVG or font icon.
-			* Simple string concatenation instead of DOM.create because:
-			*  - we don't need the perks of having icons be DOM objects at this stage
-			*  - it forces the icon to be appended using innerHTML which helps svg render
-			* @param  {String} name - icon name
-			* @param  {Function} config - dom element config object
-			* @return {String} icon markup
-			*/
-			icon(name, config) {
-				if (!name) return;
-				const cacheKey = `${name}?${new URLSearchParams(config).toString()}`;
-				if (this.cachedIcons?.[cacheKey]) return this.cachedIcons[cacheKey];
-				const iconConfig = this.icons[name];
-				if (iconConfig) {
-					if (config) {
-						const mergedConfig = merge(iconConfig, config);
-						this.cachedIcons[cacheKey] = dom.create(mergedConfig).outerHTML;
-						return this.cachedIcons[cacheKey];
-					}
-					this.cachedIcons[cacheKey] = dom.create(iconConfig).outerHTML;
-					return this.cachedIcons[cacheKey];
-				}
-				return iconFontTemplates[dom.options.iconFont]?.(name) || name;
-			}
-			/**
-			* JS Object to DOM attributes
-			* @param  {Object} elem    element config object
-			* @param  {Object} element DOM element we are building
-			* @param  {Boolean} isPreview
-			* @return {void}
-			*/
-			processAttrs(elem, element, isPreview) {
-				const { attrs = {} } = elem;
-				if (!isPreview && !attrs.name && attrs.name !== null && this.isInput(elem.tag)) {
-					const name = getName(elem);
-					if (name) element.setAttribute("name", name);
-				}
-				for (const attr of Object.keys(attrs)) {
-					const safeAttrName = helpers.safeAttrName(attr);
-					const value = this.processAttrValue(attrs[attr]);
-					if (value !== false) try {
-						element.setAttribute(safeAttrName, value);
-					} catch (e) {
-						console.warn(`Could not set attribute ${safeAttrName} with value ${value}`, e);
-					}
-				}
-			}
-			processAttrValue(valueArg) {
-				if (typeof valueArg === "function") return valueArg();
-				if (typeof valueArg === "boolean") {
-					if (valueArg) return "";
-					return valueArg;
-				}
-				let value = valueArg || "";
-				if (Array.isArray(value)) if (typeof value[0] === "object") {
-					const selected = value.filter((t) => t.selected === true);
-					value = selected.length ? selected[0].value : value[0].value;
-				} else value = value.join(" ");
-				return value;
-			}
-			/**
-			* Hide or show an Array or HTMLCollection of elements
-			* @param  {Array} elems
-			* @param  {String} term  match textContent to this term
-			* @return {Array}        filtered elements
-			*/
-			toggleElementsByStr = (elems, term) => {
-				const filteredElems = [];
-				const containsTextCb = (elem, contains) => {
-					if (contains) {
-						elem.style.display = "block";
-						filteredElems.push(elem);
-					} else elem.style.display = "none";
-				};
-				dom.elementsContainText(elems, term, containsTextCb);
-				return filteredElems;
-			};
-			elementsContainText = (collection, term, cb) => {
-				const elementsContainingText = [];
-				forEach(collection, (elem) => {
-					const contains = elem.textContent.toLowerCase().indexOf(term.toLowerCase()) !== -1;
-					cb?.(elem, contains);
-					contains && elementsContainingText.push(elem);
-				});
-				return elementsContainingText;
-			};
-			generateOption = ({ type = "option", label, value, i = 0, selected }) => {
-				return {
-					tag: type === "option" ? "option" : "input",
-					attrs: {
-						type,
-						value: value || `${type}-${i}`,
-						[type === "option" ? "selected" : "checked"]: selected || !i
-					},
-					config: { label: label || s.get("labelCount", {
-						label: s.get("option"),
-						count: i
-					}) }
-				};
-			};
-			/**
-			* Extend Array of option config objects
-			* @param  {Array} options
-			* @param  {Object} elem element config object
-			* @param  {Boolean} isPreview
-			* @return {Array} option config objects
-			*/
-			processOptions(options, elem, isPreview) {
-				const { action, attrs = {} } = elem;
-				const fieldType = attrs.type || elem.tag;
-				const id = attrs.id || elem.id;
-				const name = !isPreview && attrs.name || id;
-				const sharedInputAttrs = Object.fromEntries(OPTION_INPUT_ATTRS.filter((key) => key in attrs).map((key) => [key, attrs[key]]));
-				if (attrs.required) sharedInputAttrs.required = fieldType !== "checkbox" || !options.some(({ selected, checked }) => selected || checked);
-				const optionMap = (option, i) => {
-					const { label, value, ...rest } = option;
-					const defaultInput = () => {
-						const input = {
-							tag: "input",
-							attrs: {
-								name,
-								type: fieldType,
-								value: value || "",
-								id: `${id}-${i}`,
-								...sharedInputAttrs,
-								...rest
-							},
-							action
-						};
-						const optionLabel = {
-							tag: "label",
-							attrs: { for: `${id}-${i}` },
-							children: label
-						};
-						const inputWrap = {
-							children: [input, optionLabel],
-							className: [`f-${fieldType}`]
-						};
-						if (attrs.className) elem.config.inputWrap = attrs.className;
-						if (elem.config.inline) inputWrap.className.push(`f-${fieldType}-inline`);
-						if (option.selected) input.attrs.checked = true;
-						if (isPreview) optionLabel.attrs.contenteditable = true;
-						return inputWrap;
-					};
-					return {
-						select: () => {
-							const defaultAttrs = option.attrs || option;
-							const { label, checked, selected, attrs } = {
-								attrs: defaultAttrs,
-								...option,
-								...defaultAttrs
-							};
-							return {
-								tag: "option",
-								attrs: {
-									...attrs,
-									selected: !!(checked || selected)
-								},
-								children: label
-							};
-						},
-						button: (option) => {
-							const { type, label, className, id } = option;
-							return {
-								...elem,
-								attrs: { type },
-								className,
-								id: id || uuid(),
-								options: void 0,
-								children: label,
-								action: elem.action
-							};
-						},
-						checkbox: defaultInput,
-						radio: defaultInput
-					}[fieldType]?.(option);
-				};
-				return options.map(optionMap);
-			}
-			/**
-			* Checks if there is a closing tag, if so it can hold content
-			* @param  {Object} element DOM element
-			* @return {Boolean} holdsContent
-			*/
-			holdsContent(element) {
-				return element.outerHTML.includes("/");
-			}
-			/**
-			* Is this a textarea, select or other block input
-			* also isContentEditable
-			* @param  {Object}  element
-			* @return {Boolean}
-			*/
-			isBlockInput(element) {
-				return !this.isInput(element) && this.holdsContent(element);
-			}
-			/**
-			* Determine if an element is an input field
-			* @param  {String|Object} tag tagName or DOM element
-			* @return {Boolean} isInput
-			*/
-			isInput(tagArg) {
-				let tag = tagArg;
-				if (typeof tag !== "string") tag = tag.tagName;
-				return inputTags.has(tag);
-			}
-			/**
-			* Converts escaped HTML into usable HTML
-			* @param  {String} html escaped HTML
-			* @return {String}      parsed HTML
-			*/
-			parsedHtml(html) {
-				const escapeElement = document.createElement("textarea");
-				escapeElement.innerHTML = html;
-				return escapeElement.textContent;
-			}
-			/**
-			* Test if label should be display before or after an element
-			* @param  {Object} elem config
-			* @return {Boolean} labelAfter
-			*/
-			labelAfter(elem) {
-				const type = helpers.get(elem, "attrs.type");
-				const labelAfter = helpers.get(elem, "config.labelAfter");
-				return labelAfter === void 0 ? type === "checkbox" || type === "radio" : labelAfter;
-			}
-			/**
-			* A required checkbox group needs at least one checked box, not every box.
-			* Every box stays `required` while none is checked; once one is checked none is.
-			* Boxes inside a hidden container are never required.
-			* @param {Element} groupElem wrapper holding the group's checkboxes
-			*/
-			syncCheckboxGroupRequired(groupElem) {
-				const boxes = Array.from(groupElem.querySelectorAll("input[type=\"checkbox\"]"));
-				const isHidden = Boolean(groupElem.closest("[hidden]"));
-				const noneChecked = !boxes.some((box) => box.checked);
-				for (const box of boxes) box.required = !isHidden && noneChecked;
-			}
-			requiredMark = () => ({
-				tag: "span",
-				className: "text-error",
-				children: "*"
-			});
-			tooltip = (tooltip) => ({
-				tag: "span",
-				className: "f-tooltip",
-				dataset: { tooltip },
-				content: dom.icon("info-circle")
-			});
-			helpText = (helpText) => ({
-				tag: "small",
-				className: "f-help-text",
-				children: helpText
-			});
-			/**
-			* Generate a label
-			* @param  {Object} elem config object
-			* @param  {String} fMap map to label's value in formData
-			* @return {Object}      config object
-			*/
-			label(elem, fMap) {
-				const required = helpers.get(elem, "attrs.required") || helpers.get(elem, "config.required");
-				let { config: { label: labelText = "", helpText = "", tooltip = null } } = elem;
-				const { id: elemId, attrs } = elem;
-				if (typeof labelText === "function") labelText = labelText();
-				const fieldLabel = {
-					tag: "label",
-					attrs: { for: elemId || attrs?.id },
-					className: [],
-					children: [
-						labelText,
-						required && this.requiredMark(),
-						tooltip && this.tooltip(tooltip),
-						helpText && this.helpText(helpText)
-					],
-					action: {}
-				};
-				if (fMap) {
-					fieldLabel.attrs.for = void 0;
-					fieldLabel.attrs.contenteditable = true;
-					fieldLabel.fMap = fMap;
-				}
-				return fieldLabel;
-			}
-			/**
-			* Determine content type
-			* @param  {Node | String | Array | Object} content
-			* @return {String}
-			*/
-			childType(content) {
-				if (content === void 0) return content;
-				return [
-					["array", (content) => Array.isArray(content)],
-					["node", (content) => content instanceof window.Node || content instanceof window.HTMLElement],
-					["component", () => content?.dom],
-					[typeof content, () => true]
-				].find((typeCondition) => typeCondition[1](content))[0];
-			}
-			/**
-			* Get the computed style for DOM element
-			* @param  {Object}  elem     dom element
-			* @param  {Boolean} property style eg. width, height, opacity
-			* @return {String}           computed style
-			*/
-			getStyle(elem, property = false) {
-				let style;
-				if (window.getComputedStyle) style = window.getComputedStyle(elem, null);
-				else if (elem.currentStyle) style = elem.currentStyle;
-				return property ? style[property] : style;
-			}
-			/**
-			* Retrieves an element by config object, string id,
-			* or existing reference
-			* @param  {Object|String|Node} elem
-			* @return {Object}             DOM element
-			*/
-			getElement(elem) {
-				return {
-					node: () => elem,
-					object: () => document.getElementById(elem.id),
-					string: () => document.getElementById(elem)
-				}[this.childType(elem)]();
-			}
-			/**
-			* Util to remove contents of DOM Object
-			* @param  {Object} elem
-			* @return {Object} element with its children removed
-			*/
-			empty(elem) {
-				while (elem.firstChild) this.remove(elem.firstChild);
-				return elem;
-			}
-			/**
-			* Remove elements without f children
-			* @param  {Object} element DOM element
-			* @return {Object} formData
-			*/
-			removeEmpty = (element) => {
-				const parent = element.parentElement;
-				const type = componentType(element);
-				const children = parent.getElementsByClassName(`formeo-${type}`);
-				this.remove(element);
-				if (!children.length) {
-					if (!this.isStage(parent)) return this.removeEmpty(parent);
-					return this.emptyClass(parent);
-				}
-			};
-			/**
-			* Removes element from DOM and data
-			* @param  {Object} elem
-			* @return  {Object} parent element
-			*/
-			remove(elem) {
-				const type = componentType(elem);
-				if (type) return components.remove(`${type}s.${elem.id}`);
-				return elem.parentElement.removeChild(elem);
-			}
-			/**
-			* Removes a class or classes from nodeList
-			*
-			* @param  {NodeList|Node} nodeList
-			* @param  {String | Array} className
-			*/
-			removeClasses(nodeList, className) {
-				const removeClass = {
-					string: (elem) => elem.classList.remove(className),
-					array: (elem) => {
-						for (const name of className) elem.classList.remove(name);
-					}
-				};
-				removeClass.object = removeClass.string;
-				helpers.forEach(nodeList, removeClass[this.childType(className)]);
-			}
-			/**
-			* Adds a class or classes from nodeList
-			*
-			* @param  {NodeList} nodeList
-			* @param  {String | Array} className
-			*/
-			addClasses(nodeList, className) {
-				helpers.forEach(nodeList, {
-					string: (elem) => elem.classList.add(className),
-					array: (elem) => {
-						for (const name of className) elem.classList.add(name);
-					}
-				}[this.childType(className)]);
-			}
-			/**
-			* Wrap content in a formGroup
-			* @param  {Object|Array|String} content
-			* @param  {String} className
-			* @return {Object} formGroup config
-			*/
-			formGroup(content, className = "") {
-				return {
-					className: ["f-field-group", className],
-					children: content
-				};
-			}
-			/**
-			* Returns the {x, y} coordinates for the
-			* center of a given element
-			* @param  {DOM} element
-			* @return {Object}      {x,y} coordinates
-			*/
-			coords(element) {
-				const elemPosition = element.getBoundingClientRect();
-				const bodyRect = document.body.getBoundingClientRect();
-				return {
-					pageX: elemPosition.left + elemPosition.width / 2,
-					pageY: elemPosition.top - bodyRect.top - elemPosition.height / 2
-				};
-			}
-			/**
-			* Removes all fields and resets a stage
-			* @param  {DOM} stage DOM element
-			*/
-			clearStage(stage) {
-				stage.classList.add("removing-all-fields");
-				const resetStage = () => {
-					dom.empty(stage);
-					stage.classList.remove("removing-all-fields");
-					dom.emptyClass(stage);
-					animate.slideDown(stage, 300);
-				};
-				animate.slideUp(stage, 600, resetStage);
-			}
-			/**
-			* Toggles a sortables `disabled` option.
-			* @param  {Object} elem DOM element
-			* @param  {Boolean} state
-			*/
-			toggleSortable(elem, stateArg) {
-				let state = stateArg;
-				const fType = componentType(elem);
-				if (!fType) return;
-				const pFtype = componentType(elem.parentElement);
-				const sortable = dom[fType].get(elem.id).sortable;
-				if (!state) state = !sortable.option("disabled");
-				sortable.option("disabled", state);
-				if (pFtype && [
-					"rows",
-					"columns",
-					"stages"
-				].includes(pFtype)) this.toggleSortable(elem.parentElement, state);
-			}
-			/**
-			* Apply empty class to element if does not have children
-			* @param  {Object} elem
-			*/
-			emptyClass(elem) {
-				const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)));
-				elem.classList.toggle("empty", !children.length);
-			}
-			btnTemplate = ({ title = "", ...rest }) => ({
-				tag: "button",
-				attrs: {
-					type: "button",
-					title
-				},
-				...rest
-			});
-			isControls = (node) => componentType(node) === CONTROL_GROUP_CLASSNAME;
-			isStage = (node) => componentType(node) === STAGE_CLASSNAME;
-			isRow = (node) => componentType(node) === ROW_CLASSNAME;
-			isColumn = (node) => componentType(node) === COLUMN_CLASSNAME;
-			isField = (node) => componentType(node) === FIELD_CLASSNAME;
-			asComponent = (elem) => components[`${componentType(elem)}s`].get(elem.id);
-			isDOMElement(variable) {
-				return variable instanceof window.Element || variable instanceof window.HTMLElement || !!(variable && typeof variable === "object" && variable.nodeType === 1 && typeof variable.nodeName === "string");
-			}
-			resolveContainer(container) {
-				return typeof container === "string" ? document.querySelector(container) : container;
-			}
-		};
-		dom = new DOM();
 	}));
 	//#endregion
 	//#region src/lib/js/components/autocomplete/helpers.mjs
@@ -12977,7 +12368,6 @@ Author: Draggable https://draggable.io
 	//#region src/lib/js/components/autocomplete/autocomplete.mjs
 	var Autocomplete;
 	var init_autocomplete = __esmMin((() => {
-		init_i18n_es_min();
 		init_animation();
 		init_dom();
 		init_utils();
@@ -13404,241 +12794,6 @@ Author: Draggable https://draggable.io
 		};
 	}));
 	//#endregion
-	//#region src/lib/js/components/dialog.js
-	var defaults$3, Dialog;
-	var init_dialog = __esmMin((() => {
-		init_i18n_es_min();
-		init_dom();
-		init_utils();
-		init_helpers();
-		defaults$3 = Object.freeze({
-			title: "",
-			content: null,
-			confirmText: () => labelHelper("save"),
-			cancelText: () => labelHelper("cancel"),
-			onConfirm: () => {},
-			onCancel: () => {},
-			className: "",
-			closeOnEscape: true,
-			position: "top",
-			triggerElement: null,
-			triggerCoords: null
-		});
-		Dialog = class Dialog {
-			/**
-			* Creates a new Dialog instance
-			* @param {Object} options - Dialog configuration options
-			* @param {string} [options.title] - Dialog title
-			* @param {Object|Array} [options.content] - DOM config for dialog body content
-			* @param {Function} [options.onConfirm] - Callback when form is submitted (receives FormData)
-			* @param {Function} [options.onCancel] - Callback when dialog is cancelled
-			* @param {string|Function} [options.confirmText] - Confirm button text
-			* @param {string|Function} [options.cancelText] - Cancel button text
-			* @param {string} [options.className] - Additional CSS class name(s)
-			* @param {boolean} [options.closeOnEscape] - Whether Escape key closes dialog
-			* @param {string} [options.position] - Positioning mode: 'top' (upper center), 'center', or 'trigger' (near trigger element)
-			* @param {HTMLElement} [options.triggerElement] - Element that triggered dialog (for position: 'trigger')
-			* @param {Object} [options.triggerCoords] - Manual coordinates {x, y} (for position: 'trigger')
-			*/
-			constructor(options) {
-				this.opts = merge(defaults$3, options);
-				this.dialog = null;
-			}
-			/**
-			* Creates the dialog DOM structure
-			* @returns {HTMLDialogElement} The created dialog element
-			*/
-			createDialog() {
-				const { title, content, confirmText, cancelText, className, closeOnEscape, position } = this.opts;
-				const positionClass = `dialog-position-${position}`;
-				const formChildren = [];
-				if (title) formChildren.push({
-					tag: "h3",
-					className: "dialog-title",
-					textContent: title
-				});
-				if (content) formChildren.push({
-					tag: "div",
-					className: "dialog-body",
-					children: Array.isArray(content) ? content : [content]
-				});
-				formChildren.push({
-					tag: "div",
-					className: "dialog-actions",
-					children: [{
-						tag: "button",
-						type: "button",
-						className: "btn btn-sm btn-secondary",
-						textContent: typeof cancelText === "function" ? cancelText() : cancelText,
-						action: { click: () => this.handleCancel() }
-					}, {
-						tag: "button",
-						type: "submit",
-						className: "btn btn-sm btn-primary",
-						textContent: typeof confirmText === "function" ? confirmText() : confirmText
-					}]
-				});
-				return dom.create({
-					tag: "dialog",
-					className: [
-						"formeo-dialog",
-						"formeo",
-						positionClass,
-						className
-					],
-					children: [{
-						tag: "form",
-						className: "dialog-form",
-						method: "dialog",
-						children: formChildren,
-						action: { submit: (e) => this.handleSubmit(e) }
-					}],
-					action: { cancel: (e) => {
-						if (closeOnEscape) this.handleCancel();
-						else e.preventDefault();
-					} }
-				});
-			}
-			/**
-			* Handles form submission
-			* @param {Event} e - Submit event
-			*/
-			handleSubmit(e) {
-				e.preventDefault();
-				const formData = new FormData(e.target);
-				this.opts.onConfirm(formData, this);
-				this.close();
-			}
-			/**
-			* Handles dialog cancellation
-			*/
-			handleCancel() {
-				this.opts.onCancel(this);
-				this.close();
-			}
-			/**
-			* Sets dialog position based on trigger element or coordinates
-			*/
-			setPosition() {
-				const { position, triggerElement, triggerCoords } = this.opts;
-				if (position !== "trigger" || !this.dialog) return;
-				let coords = triggerCoords;
-				if (!coords && triggerElement) {
-					const rect = triggerElement.getBoundingClientRect();
-					coords = {
-						x: rect.left + rect.width / 2,
-						y: rect.bottom + 8
-					};
-				}
-				if (coords) {
-					const dialogRect = this.dialog.getBoundingClientRect();
-					const viewportWidth = window.innerWidth;
-					const viewportHeight = window.innerHeight;
-					let left = coords.x - dialogRect.width / 2;
-					let top = coords.y;
-					const padding = 16;
-					left = Math.max(padding, Math.min(left, viewportWidth - dialogRect.width - padding));
-					top = Math.max(padding, Math.min(top, viewportHeight - dialogRect.height - padding));
-					this.dialog.style.left = `${left}px`;
-					this.dialog.style.top = `${top}px`;
-					this.dialog.style.transform = "none";
-				}
-			}
-			/**
-			* Opens the dialog
-			* @returns {Dialog} This dialog instance for chaining
-			*/
-			open() {
-				if (!this.dialog) this.dialog = this.createDialog();
-				document.body.appendChild(this.dialog);
-				this.dialog.showModal();
-				if (this.opts.position === "trigger") {
-					const setTimeoutId = setTimeout(() => {
-						this.setPosition();
-						clearTimeout(setTimeoutId);
-					}, 0);
-				}
-				return this;
-			}
-			/**
-			* Closes and removes the dialog
-			*/
-			close() {
-				if (this.dialog) {
-					this.dialog.close();
-					this.dialog.remove();
-					this.dialog = null;
-				}
-			}
-			/**
-			* Static shorthand for simple alert dialog
-			* @param {string} message - Alert message
-			* @param {Function} [onConfirm] - Optional callback when confirmed
-			* @returns {Dialog} Dialog instance
-			*/
-			static alert(message, onConfirm = () => {}) {
-				return new Dialog({
-					content: {
-						tag: "p",
-						className: "dialog-message",
-						textContent: message
-					},
-					confirmText: () => s.get("ok") || "OK",
-					cancelText: "",
-					onConfirm: () => onConfirm()
-				});
-			}
-			/**
-			* Static shorthand for confirmation dialog
-			* @param {string} message - Confirmation question
-			* @param {Function} [onConfirm] - Callback when confirmed
-			* @param {Function} [onCancel] - Callback when cancelled
-			* @returns {Dialog} Dialog instance
-			*/
-			static confirm(message, onConfirm = () => {}, onCancel = () => {}) {
-				return new Dialog({
-					content: {
-						tag: "p",
-						className: "dialog-message",
-						textContent: message
-					},
-					confirmText: () => s.get("confirm") || "Confirm",
-					onConfirm: () => onConfirm(),
-					onCancel: () => onCancel()
-				});
-			}
-			/**
-			* Static shorthand for prompt dialog
-			* @param {string} message - Prompt message
-			* @param {Function} onSubmit - Callback with user input value
-			* @param {string} [defaultValue] - Default input value
-			* @returns {Dialog} Dialog instance
-			*/
-			static prompt(message, onSubmit = () => {}, defaultValue = "") {
-				return new Dialog({
-					content: [{
-						tag: "label",
-						className: "dialog-prompt-label",
-						children: [{
-							tag: "p",
-							className: "dialog-message",
-							textContent: message
-						}, {
-							tag: "input",
-							type: "text",
-							name: "prompt-value",
-							className: "dialog-prompt-input",
-							value: defaultValue
-						}]
-					}],
-					onConfirm: (formData) => {
-						onSubmit(formData.get("prompt-value"));
-					}
-				});
-			}
-		};
-	}));
-	//#endregion
 	//#region src/lib/js/components/edit-panel/condition-helpers.mjs
 	function getOptionConfigs({ key: fieldName, value: fieldValue, conditionType }) {
 		return Object.entries(optionDataMap[`${conditionType}-${fieldName}`] || {}).map(([key, optionValue]) => makeOptionDomConfig({
@@ -13930,6 +13085,7 @@ Author: Draggable https://draggable.io
 	//#region src/lib/js/components/edit-panel/edit-panel-item.mjs
 	var panelDataKeyMap, toggleOptionMultiSelect, itemInputActions, EditPanelItem;
 	var init_edit_panel_item = __esmMin((() => {
+		init_i18n_es_min();
 		init_animation();
 		init_dom();
 		init_helpers$2();
@@ -14047,6 +13203,15 @@ Author: Draggable https://draggable.io
 				});
 				return this.findOrCreateConditionTypeWrap(conditionType);
 			};
+			/**
+			* Remove this item's data from the component, rebuild the panel and refresh the field preview
+			*/
+			removeItem = () => {
+				this.field.remove(this.itemKey);
+				this.dom.remove();
+				this.panel.updateProps();
+				this.field.debouncedUpdatePreview?.();
+			};
 			get itemControls() {
 				if (this.isLocked) return {
 					className: `${this.panelName}-prop-controls prop-controls`,
@@ -14060,11 +13225,7 @@ Author: Draggable https://draggable.io
 					},
 					action: {
 						click: () => {
-							animate.slideUp(this.dom, 333, (elem) => {
-								this.field.remove(this.itemKey);
-								elem.remove();
-								this.panel.updateProps();
-							});
+							animate.slideUp(this.dom, 333, this.removeItem);
 						},
 						mouseover: (_evt) => {
 							this.dom.classList.add("to-remove");
@@ -14075,9 +13236,20 @@ Author: Draggable https://draggable.io
 					},
 					content: dom.icon("remove")
 				};
+				const orderHandle = this.panelName === "options" && {
+					tag: "button",
+					attrs: {
+						type: "button",
+						className: "prop-order prop-control",
+						style: "display: inline-block; right: auto",
+						title: s.get("reorderOption") || "Drag to reorder",
+						"aria-label": s.get("reorderOption") || "Drag to reorder"
+					},
+					content: dom.icon("move-vertical")
+				};
 				return {
 					className: `${this.panelName}-prop-controls prop-controls`,
-					content: [remove]
+					content: [remove, orderHandle].filter(Boolean)
 				};
 			}
 			/**
@@ -14150,6 +13322,7 @@ Author: Draggable https://draggable.io
 	var addAttributeActions, defaultConfigOptions, defaultConfigValues, EditPanel;
 	var init_edit_panel = __esmMin((() => {
 		init_i18n_es_min();
+		init_sortable_esm();
 		init_actions();
 		init_dom();
 		init_helpers$2();
@@ -14253,17 +13426,41 @@ Author: Draggable https://draggable.io
 						`${this.component.name}-edit-group`,
 						`${this.component.name}-edit-${this.name}`
 					] },
-					editGroup: this.name,
-					isSortable: this.name === "options",
 					content: this.editPanelItems
 				};
-				return dom.create(editGroupConfig);
+				const props = dom.create(editGroupConfig);
+				if (this.name === "options") {
+					this.sortable?.destroy();
+					this.sortable = Sortable.create(props, {
+						animation: 150,
+						handle: ".prop-order",
+						draggable: ".prop-wrap",
+						forceFallback: true,
+						onEnd: ({ oldIndex, newIndex }) => window.requestAnimationFrame(() => this.moveOption(oldIndex, newIndex))
+					});
+				}
+				return props;
 			}
 			updateProps() {
 				const newProps = this.createProps();
 				this.props.replaceWith(newProps);
 				this.props = newProps;
 			}
+			/**
+			* Move an option, save the new order and rebuild the option items (their keys are index based)
+			* @param {Number} fromIndex
+			* @param {Number} toIndex
+			*/
+			moveOption = (fromIndex, toIndex) => {
+				const options = this.component.get("options");
+				if (!Array.isArray(options) || !Number.isInteger(fromIndex) || !Number.isInteger(toIndex) || fromIndex === toIndex || fromIndex < 0 || fromIndex >= options.length || toIndex < 0 || toIndex >= options.length) return;
+				const reordered = [...options];
+				const [moved] = reordered.splice(fromIndex, 1);
+				reordered.splice(toIndex, 0, moved);
+				this.component.set("options", reordered);
+				this.updateProps();
+				this.component.debouncedUpdatePreview?.();
+			};
 			/**
 			* Generate edit buttons for interacting with attrs and options panel
 			* @return {Object} panel edit buttons config
@@ -14336,7 +13533,8 @@ Author: Draggable https://draggable.io
 				if (typeof val === "string" && ["true", "false"].includes(val)) val = JSON.parse(val);
 				this.component.set(`attrs.${attr}`, val);
 				addAttributeActions[safeAttr]?.(val, this.component);
-				const existingAttr = this.props.querySelector(`.${this.component.name}-attrs-${safeAttr}`);
+				const rowClass = `${this.component.name}-attrs-${safeAttr}`;
+				const existingAttr = Array.from(this.props.children).find((row) => row.classList.contains(rowClass));
 				const newAttr = new EditPanelItem({
 					key: itemKey,
 					data: { [safeAttr]: val },
@@ -14442,7 +13640,6 @@ Author: Draggable https://draggable.io
 				document.dispatchEvent(customEvt);
 			};
 			setData(val) {
-				this.data = val;
 				this.component.set(this.name, val);
 				this.updateProps();
 			}
@@ -14453,7 +13650,6 @@ Author: Draggable https://draggable.io
 	var defaults$2, getTransition, Panels;
 	var init_panels = __esmMin((() => {
 		init_i18n_es_min();
-		init_sortable_esm();
 		init_dom();
 		init_helpers$2();
 		init_utils();
@@ -14513,8 +13709,7 @@ Author: Draggable https://draggable.io
 				this.toggleTabbedLayout();
 			};
 			/**
-			* Wrap a panel and make properties sortable
-			* if the panel belongs to a field
+			* Wrap a panel's DOM elements
 			* @return {Object} DOM element
 			*/
 			createPanelsWrap() {
@@ -14522,36 +13717,10 @@ Author: Draggable https://draggable.io
 					className: "panels",
 					content: this.opts.panels.map(({ config: _config, ...panel }) => panel)
 				});
-				if (this.opts.type === "field") this.sortableProperties(panelsWrap);
 				this.panelsWrap = panelsWrap;
 				this.panels = panelsWrap.children;
 				this.currentPanel = this.panels[this.activePanelIndex];
 				return panelsWrap;
-			}
-			/**
-			* Sortable panel properties
-			* @param  {Array} panels
-			* @return {Array} panel groups
-			*/
-			sortableProperties(panels) {
-				const groups = panels.getElementsByClassName("field-edit-group");
-				return helpers.forEach(groups, (group) => {
-					group.fieldId = this.opts.id;
-					if (group.isSortable) Sortable.create(group, {
-						animation: 150,
-						group: {
-							name: `edit-${group.editGroup}`,
-							pull: true,
-							put: ["properties"]
-						},
-						sort: true,
-						handle: ".prop-order",
-						onSort: (evt) => {
-							this.propertySave(evt.to);
-							this.resizePanels();
-						}
-					});
-				});
 			}
 			createPanelNavLabels() {
 				const labels = this.opts.panels.map((panel) => ({
@@ -15126,6 +14295,112 @@ Author: Draggable https://draggable.io
 			}
 		};
 		stages = new Stages$1();
+	}));
+	//#endregion
+	//#region src/lib/js/common/loaders.js
+	var loaded, AJAX_TIMEOUT_MS, ajax, onLoadStylesheet, onLoadJavascript, insertScript, insertStyle, insertScripts, insertStyles, insertIcons, fetchIcons, LOADER_MAP, fetchDependencies, fetchFormeoStyle;
+	var init_loaders = __esmMin((() => {
+		init_constants();
+		init_dom();
+		init_utils();
+		loaded = {
+			js: /* @__PURE__ */ new Set(),
+			css: /* @__PURE__ */ new Set(),
+			formeoSprite: null
+		};
+		AJAX_TIMEOUT_MS = 1e4;
+		ajax = (fileUrl, callback, onError = noop, timeoutMs = AJAX_TIMEOUT_MS) => {
+			return new Promise((resolve) => {
+				const signal = typeof AbortSignal !== "undefined" && AbortSignal.timeout ? AbortSignal.timeout(timeoutMs) : void 0;
+				return fetch(fileUrl, signal ? { signal } : void 0).then((data) => {
+					if (!data.ok) return resolve(onError(data));
+					resolve(callback ? callback(data) : data);
+				}).catch((err) => resolve(onError(err)));
+			});
+		};
+		onLoadStylesheet = (elem, cb) => {
+			elem.removeEventListener("load", onLoadStylesheet);
+			cb(elem.src);
+		};
+		onLoadJavascript = (elem, cb) => {
+			elem.removeEventListener("load", onLoadJavascript);
+			cb(elem.src);
+		};
+		insertScript = (src) => {
+			return new Promise((resolve, reject) => {
+				if (loaded.js.has(src)) return resolve(src);
+				loaded.js.add(src);
+				const script = dom.create({
+					tag: "script",
+					attrs: {
+						type: "text/javascript",
+						async: true,
+						src
+					},
+					action: {
+						load: () => onLoadJavascript(script, resolve),
+						error: () => reject(/* @__PURE__ */ new Error(`${src} failed to load.`))
+					}
+				});
+				document.head.appendChild(script);
+			});
+		};
+		insertStyle = (srcs) => {
+			srcs = Array.isArray(srcs) ? srcs : [srcs];
+			const promises = srcs.map((src) => new Promise((resolve, reject) => {
+				if (loaded.css.has(src)) return resolve(src);
+				loaded.css.add(src);
+				const styleLink = dom.create({
+					tag: "link",
+					attrs: {
+						rel: "stylesheet",
+						href: src
+					},
+					action: {
+						load: () => onLoadStylesheet(styleLink, resolve),
+						error: () => reject(/* @__PURE__ */ new Error(`${src} failed to load.`))
+					}
+				});
+				document.head.appendChild(styleLink);
+			}));
+			return Promise.all(promises);
+		};
+		insertScripts = (srcs) => {
+			srcs = Array.isArray(srcs) ? srcs : [srcs];
+			const promises = srcs.map((src) => insertScript(src));
+			return Promise.all(promises);
+		};
+		insertStyles = (srcs) => {
+			srcs = Array.isArray(srcs) ? srcs : [srcs];
+			const promises = srcs.map((src) => insertStyle(src));
+			return Promise.all(promises);
+		};
+		insertIcons = (iconSvgStr) => {
+			loaded.formeoSprite = new DOMParser().parseFromString(iconSvgStr, "image/svg+xml").documentElement;
+			return loaded.formeoSprite;
+		};
+		fetchIcons = async (iconSpriteUrl = null) => {
+			if (loaded.formeoSprite) return loaded.formeoSprite;
+			if (!iconSpriteUrl) return insertIcons(formeo_sprite_default);
+			const parseResp = async (resp) => insertIcons(await resp.text());
+			return ajax(iconSpriteUrl, parseResp, () => ajax(FALLBACK_SVG_SPRITE_URL, parseResp));
+		};
+		LOADER_MAP = {
+			js: insertScripts,
+			css: insertStyles
+		};
+		fetchDependencies = (dependencies) => {
+			const promises = Object.entries(dependencies).map(([type, src]) => {
+				return LOADER_MAP[type](src);
+			});
+			return Promise.all(promises);
+		};
+		fetchFormeoStyle = async (cssUrl) => {
+			if (cssUrl && !loaded.css.has(cssUrl)) {
+				await insertStyle(cssUrl);
+				if (!loaded.css.has(cssUrl) && !loaded.css.has("https://draggable.github.io/formeo/assets/css/formeo.min.css")) return await insertStyle(FALLBACK_CSS_URL);
+			}
+		};
 	}));
 	//#endregion
 	//#region src/lib/js/components/controls/control.js
@@ -16428,14 +15703,22 @@ Author: Draggable https://draggable.io
 					const delPath = splitAddress(path);
 					const delItem = delPath.pop();
 					const parent = this.get(delPath);
-					if (Array.isArray(parent)) if (isInt(delItem)) parent.splice(Number(delItem), 1);
-					else this.set(delPath, parent.filter((item) => item !== delItem));
-					else delete parent[delItem];
+					const previousValue = parent?.[delItem];
+					if (Array.isArray(parent)) if (isInt(delItem)) {
+						parent.splice(Number(delItem), 1);
+						this.dispatchRemovedPath(path, previousValue);
+					} else this.set(delPath, parent.filter((item) => item !== delItem));
+					else {
+						delete parent[delItem];
+						this.dispatchRemovedPath(path, previousValue);
+					}
 					return parent;
 				}
 				if (this.name === "stage") return null;
 				const parent = this.parent;
 				const children = this.children;
+				const siblingsPath = `${parent.name}s.${parent.id}.children`;
+				const previousSiblings = [...components.getAddress(siblingsPath) || []];
 				this.dispatchComponentEvent("onRemove", {
 					path,
 					parent,
@@ -16443,7 +15726,7 @@ Author: Draggable https://draggable.io
 				});
 				forEach(children, (child) => child.remove());
 				this.dom.remove();
-				remove(components.getAddress(`${parent.name}s.${parent.id}.children`), this.id);
+				remove(components.getAddress(siblingsPath), this.id);
 				if (!parent.children.length) parent.emptyClass();
 				if (parent.name === "row") parent.autoColumnWidths();
 				const removeEvent = {
@@ -16456,7 +15739,35 @@ Author: Draggable https://draggable.io
 					componentType: this.name,
 					parent
 				}, removeEvent);
-				return components[`${this.name}s`].delete(this.id);
+				const removedId = components[`${this.name}s`].delete(this.id);
+				events.formeoUpdated({
+					entity: this,
+					componentId: this.id,
+					componentType: this.name,
+					dataPath: `${parent.name}s.${parent.id}`,
+					changePath: siblingsPath,
+					value: [...components.getAddress(siblingsPath) || []],
+					previousValue: previousSiblings,
+					changeType: "removed"
+				});
+				return removedId;
+			};
+			/**
+			* Announce that a property (attribute, option, condition) was removed from this component
+			* @param {String|Array} path removed path, e.g. 'attrs.required' or 'options[1]'
+			* @param {*} previousValue value that was removed
+			*/
+			dispatchRemovedPath = (path, previousValue) => {
+				const localPath = Array.isArray(path) ? path.join(".") : path;
+				events.formeoUpdated({
+					entity: this,
+					dataPath: this.address,
+					changePath: `${this.address}.${localPath}`,
+					value: void 0,
+					previousValue,
+					changeType: "removed",
+					data: this.data
+				});
 			};
 			/**
 			* Removes element from DOM and data
@@ -17508,246 +16819,1034 @@ Author: Draggable https://draggable.io
 		components = new Components();
 	}));
 	//#endregion
-	//#region src/lib/js/common/events.js
-	function onResizeWindow() {
-		throttling = throttling || window.requestAnimationFrame(() => {
-			throttling = false;
-			for (const column of Object.values(Columns.data)) {
-				column.dom.classList.add(NO_TRANSITION_CLASS_NAME);
-				Controls.dom.classList.add(NO_TRANSITION_CLASS_NAME);
-				Controls.panels.nav.refresh();
-				column.refreshFieldPanels();
-			}
-		});
-	}
-	var NO_TRANSITION_CLASS_NAME, defaults$1, defaultCustomEvent, events, formeoUpdatedThrottled, throttling;
-	var init_events = __esmMin((() => {
+	//#region src/lib/js/common/dom.js
+	var iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
+	var init_dom = __esmMin((() => {
+		init_i18n_es_min();
 		init_components();
 		init_constants();
+		init_animation();
+		init_helpers$2();
+		init_loaders();
 		init_utils();
-		NO_TRANSITION_CLASS_NAME = "no-transition";
-		defaults$1 = {
-			debug: false,
-			bubbles: true,
-			formeoLoaded: (_evt) => {},
-			onAdd: () => {},
-			onRemove: () => {},
-			onChange: (evt) => events.opts?.debug && console.log(evt),
-			onUpdate: (evt) => events.opts?.debug && console.log(evt),
-			onUpdateStage: (evt) => events.opts?.debug && console.log(evt),
-			onUpdateRow: (evt) => events.opts?.debug && console.log(evt),
-			onUpdateColumn: (evt) => events.opts?.debug && console.log(evt),
-			onUpdateField: (evt) => events.opts?.debug && console.log(evt),
-			onAddRow: (evt) => events.opts?.debug && console.log(evt),
-			onAddColumn: (evt) => events.opts?.debug && console.log(evt),
-			onAddField: (evt) => events.opts?.debug && console.log(evt),
-			onRemoveRow: (evt) => events.opts?.debug && console.log(evt),
-			onRemoveColumn: (evt) => events.opts?.debug && console.log(evt),
-			onRemoveField: (evt) => events.opts?.debug && console.log(evt),
-			onRender: (evt) => events.opts?.debug && console.log(evt),
-			onSave: (_evt) => {},
-			confirmClearAll: (evt) => {
-				if (globalThis.confirm(evt.confirmationMessage)) evt.clearAllAction(evt);
-			}
-		};
-		defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
-			const evt = new globalThis.CustomEvent(type, {
-				detail: evtData,
-				bubbles: events.opts?.debug || events.opts?.bubbles
-			});
-			evt.data = (src || document).dispatchEvent(evt);
-			if (type === "formeoUpdated") {
-				const changedEvt = new globalThis.CustomEvent(EVENT_FORMEO_CHANGED, {
-					detail: evtData,
-					bubbles: events.opts?.debug || events.opts?.bubbles
-				});
-				(src || document).dispatchEvent(changedEvt);
-			}
-			return evt;
-		};
-		events = {
-			init: function(options) {
-				this.opts = {
-					...defaults$1,
-					...options
-				};
-				return this;
+		init_string();
+		iconFontTemplates = {
+			glyphicons: (icon) => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
+			"font-awesome": (icon) => {
+				const [style, name] = icon.split(" ");
+				return `<i class="${style} fa-${name}"></i>`;
 			},
-			formeoSaved: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
-			formeoUpdated: (evt, eventType) => defaultCustomEvent(evt, eventType || "formeoUpdated"),
-			formeoCleared: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
-			formeoOnRender: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
-			formeoConditionUpdated: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
-			formeoAddedRow: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_ROW),
-			formeoAddedColumn: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_COLUMN),
-			formeoAddedField: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_FIELD),
-			formeoRemovedRow: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_ROW),
-			formeoRemovedColumn: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_COLUMN),
-			formeoRemovedField: (evt) => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_FIELD)
+			fontello: (icon) => `<i class="${iconPrefix}${icon}">${icon}</i>`
 		};
-		formeoUpdatedThrottled = throttle$1(() => {
-			const eventData = {
-				timeStamp: globalThis.performance.now(),
-				type: EVENT_FORMEO_UPDATED,
-				detail: components.formData
+		inputTags = new Set([
+			"input",
+			"textarea",
+			"select"
+		]);
+		REQUIRED_GROUP_ATTR = "formeo-required-group";
+		OPTION_INPUT_ATTRS = ["disabled", "form"];
+		GROUP_CONSUMED_ATTRS = new Set([
+			"type",
+			"id",
+			"name",
+			"className",
+			"value",
+			"required",
+			...OPTION_INPUT_ATTRS
+		]);
+		groupWrapperAttrs = (attrs = {}) => Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)));
+		stripOn = (str) => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase());
+		useCaptureEvts = new Set(["focus", "blur"]);
+		defaultActionHandler = (event) => {
+			const eventName = stripOn(event);
+			return (node, cb) => node.addEventListener(eventName, cb, useCaptureEvts.has(eventName));
+		};
+		getName = (elem = {}) => {
+			let name = elem?.attrs?.name || elem?.name;
+			if (name) return name;
+			const id = uuid(elem);
+			let label = elem.config?.label || elem.attrs?.label || elem?.label;
+			if (label) {
+				if (typeof label === "object") label = dom.create(label).textContent;
+				if (/^<.+>.+<.+>$/gim.test(label)) label = extractTextFromHtml(label);
+				name = `${id}-${slugify(truncateByWord(label, 24, null))}`;
+			}
+			return name || id;
+		};
+		DOM = class {
+			/**
+			* Set defaults, store references to key elements
+			* like stages, rows, columns etc
+			*/
+			constructor(options = Object.create(null)) {
+				this.options = options;
+			}
+			set setOptions(options) {
+				this.options = merge(this.options, options);
+			}
+			/**
+			* Ensure elements have proper tagName
+			* @param  {Object|String} elem
+			* @return {Object} valid element object
+			*/
+			processElemArg(elemArg) {
+				let elem = elemArg;
+				let tagName;
+				if (typeof elem === "string") {
+					tagName = elem;
+					elem = { tag: tagName };
+					return elem;
+				}
+				if (elem.attrs) {
+					const { tag, ...restAttrs } = elem.attrs;
+					if (tag) if (typeof tag === "string") tagName = tag;
+					else tagName = (tag.find((t) => t.selected === true) || tag[0]).value;
+					elem.attrs = restAttrs;
+				}
+				elem.tag = tagName || elem.tag || "div";
+				return elem;
+			}
+			/**
+			* Wraps dom.create to modify data
+			* Used when rendering components in form- not editor
+			*/
+			render = (elem) => {
+				elem.id = `f-${elem.id || uuid()}`;
+				return this.create(elem);
 			};
-			events.opts.onUpdate(eventData);
-			if (events.opts.onChange !== events.opts.onUpdate) events.opts.onChange(eventData);
-		}, ANIMATION_SPEED_FAST);
-		document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled);
-		document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
+			/**
+			* Creates DOM elements
+			* @param  {Object}  elem      element config object
+			* @param  {Boolean} isPreview generating element for preview or render?
+			* @return {Object}            DOM Object
+			*/
+			create = (elemArg, isPreview = false) => {
+				if (!elemArg) return;
+				if (this.isDOMElement(elemArg)) return elemArg;
+				const _this = this;
+				const processed = ["children", "content"];
+				const { className, options, dataset, ...elem } = this.processElemArg(elemArg);
+				processed.push("tag");
+				let childType;
+				const { tag } = elem;
+				let i;
+				const wrap = {
+					attrs: {},
+					className: [helpers.get(elem, "config.inputWrap")],
+					children: [],
+					config: {}
+				};
+				let element = document.createElement(tag);
+				/**
+				* Object for mapping contentType to its function
+				* @type {Object}
+				*/
+				const appendChildren = {
+					string: (children) => {
+						element.innerHTML += children;
+					},
+					object: (children) => {
+						return children && element.appendChild(_this.create(children, isPreview));
+					},
+					node: (children) => {
+						return element.appendChild(children);
+					},
+					component: (children) => {
+						return element.appendChild(children.dom);
+					},
+					array: (children) => {
+						for (const child of children) {
+							childType = _this.childType(child);
+							appendChildren[childType](child);
+						}
+					},
+					function: (children) => {
+						children = children();
+						childType = _this.childType(children);
+						appendChildren[childType](children);
+					},
+					undefined: () => null,
+					boolean: () => null
+				};
+				if (className) elem.attrs = merge(elem.attrs, { className });
+				if (options) {
+					const processedOptions = this.processOptions(options, elem, isPreview);
+					if (this.holdsContent(element) && tag !== "button") {
+						appendChildren.array.call(this, processedOptions);
+						elem.content = void 0;
+					} else {
+						helpers.forEach(processedOptions, (option) => {
+							wrap.children.push(_this.create(option, isPreview));
+						});
+						const groupAttrs = elem.attrs || {};
+						if (groupAttrs.className) wrap.className = groupAttrs.className;
+						wrap.id = elem.id;
+						wrap.attrs = groupWrapperAttrs(groupAttrs);
+						wrap.config = {
+							...elem.config,
+							required: Boolean(groupAttrs.required)
+						};
+						if (!isPreview && groupAttrs.type === "checkbox" && groupAttrs.required) {
+							wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = "true";
+							wrap.action = { change: ({ currentTarget }) => this.syncCheckboxGroupRequired(currentTarget) };
+						}
+						return this.create(wrap, isPreview);
+					}
+					processed.push("options");
+				}
+				if (elem.attrs) {
+					_this.processAttrs(elem, element, isPreview);
+					processed.push("attrs");
+				}
+				if (elem.config) {
+					if (elem.config.label && (elem.config.label && tag !== "button" || ["radio", "checkbox"].includes(helpers.get(elem, "attrs.type"))) && !isPreview) {
+						const label = _this.label(elem);
+						if (!elem.config.hideLabel) {
+							const wrapContent = [label, element];
+							if (_this.labelAfter(elem)) wrapContent.reverse();
+							wrap.children.push(wrapContent);
+						}
+					}
+					processed.push("config");
+				}
+				if (elem.content || elem.children) {
+					const children = elem.content || elem.children;
+					childType = _this.childType(children);
+					if (!appendChildren[childType]) console.error(`childType: ${childType} is not supported`);
+					appendChildren[childType].call(this, children);
+				}
+				if (dataset) {
+					for (const data in dataset) if (Object.hasOwn(dataset, data)) element.dataset[data] = typeof dataset[data] === "function" ? dataset[data]() : dataset[data];
+					processed.push("dataset");
+				}
+				if (elem.action) {
+					this.actionHandler(element, elem.action);
+					processed.push("action");
+				}
+				const remaining = helpers.subtract(processed, Object.keys(elem));
+				for (i = remaining.length - 1; i >= 0; i--) element[remaining[i]] = elem[remaining[i]];
+				if (wrap.children.length) element = this.create(wrap);
+				return element;
 			};
-			events.opts.onUpdate(eventData);
-			events.opts.onUpdateStage(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_UPDATED_ROW, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
+			onRender = (node, cb, timeout = 333) => {
+				const start = Date.now();
+				const checkParent = () => {
+					if (!node.parentElement && Date.now() - start < timeout) window.requestAnimationFrame(checkParent);
+					else if (node.parentElement) cb(node);
+				};
+				checkParent();
 			};
-			events.opts.onUpdate(eventData);
-			events.opts.onUpdateRow(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
+			/**
+			* Processes element config object actions (click, onRender etc)
+			*/
+			actionHandler(node, actions) {
+				const handlers = {
+					onRender: dom.onRender,
+					render: dom.onRender
+				};
+				return Object.entries(actions).map(([event, cb]) => {
+					return (Array.isArray(cb) ? cb : [cb]).map((cb) => {
+						return (handlers[event] || defaultActionHandler(event))(node, cb);
+					});
+				});
+			}
+			get icons() {
+				if (this.iconSymbols) return this.iconSymbols;
+				const iconSymbolNodes = loaded.formeoSprite.querySelectorAll("svg symbol");
+				/**
+				* Creates an SVG icon config by inlining the symbol's content
+				* This allows icons to work without the sprite being in the DOM
+				*/
+				const createSvgIconConfig = (symbol) => {
+					const viewBox = symbol.getAttribute("viewBox") || "0 0 24 24";
+					const children = Array.from(symbol.children).map((child) => {
+						return child.cloneNode(true).outerHTML;
+					}).join("");
+					return {
+						tag: "svg",
+						attrs: {
+							className: ["svg-icon", symbol.id],
+							viewBox,
+							xmlns: "http://www.w3.org/2000/svg"
+						},
+						children
+					};
+				};
+				this.iconSymbols = Array.from(iconSymbolNodes).reduce((acc, symbol) => {
+					const name = symbol.id.replace(iconPrefix, "");
+					acc[name] = createSvgIconConfig(symbol);
+					return acc;
+				}, {});
+				this.cachedIcons = {};
+				return this.iconSymbols;
+			}
+			/**
+			* Create and SVG or font icon.
+			* Simple string concatenation instead of DOM.create because:
+			*  - we don't need the perks of having icons be DOM objects at this stage
+			*  - it forces the icon to be appended using innerHTML which helps svg render
+			* @param  {String} name - icon name
+			* @param  {Function} config - dom element config object
+			* @return {String} icon markup
+			*/
+			icon(name, config) {
+				if (!name) return;
+				const cacheKey = `${name}?${new URLSearchParams(config).toString()}`;
+				if (this.cachedIcons?.[cacheKey]) return this.cachedIcons[cacheKey];
+				const iconConfig = this.icons[name];
+				if (iconConfig) {
+					if (config) {
+						const mergedConfig = merge(iconConfig, config);
+						this.cachedIcons[cacheKey] = dom.create(mergedConfig).outerHTML;
+						return this.cachedIcons[cacheKey];
+					}
+					this.cachedIcons[cacheKey] = dom.create(iconConfig).outerHTML;
+					return this.cachedIcons[cacheKey];
+				}
+				return iconFontTemplates[dom.options.iconFont]?.(name) || name;
+			}
+			/**
+			* JS Object to DOM attributes
+			* @param  {Object} elem    element config object
+			* @param  {Object} element DOM element we are building
+			* @param  {Boolean} isPreview
+			* @return {void}
+			*/
+			processAttrs(elem, element, isPreview) {
+				const { attrs = {} } = elem;
+				if (!isPreview && !attrs.name && attrs.name !== null && this.isInput(elem.tag)) {
+					const name = getName(elem);
+					if (name) element.setAttribute("name", name);
+				}
+				for (const attr of Object.keys(attrs)) {
+					const safeAttrName = helpers.safeAttrName(attr);
+					const value = this.processAttrValue(attrs[attr]);
+					if (value !== false) try {
+						element.setAttribute(safeAttrName, value);
+					} catch (e) {
+						console.warn(`Could not set attribute ${safeAttrName} with value ${value}`, e);
+					}
+				}
+			}
+			processAttrValue(valueArg) {
+				if (typeof valueArg === "function") return valueArg();
+				if (typeof valueArg === "boolean") {
+					if (valueArg) return "";
+					return valueArg;
+				}
+				let value = valueArg || "";
+				if (Array.isArray(value)) if (typeof value[0] === "object") {
+					const selected = value.filter((t) => t.selected === true);
+					value = selected.length ? selected[0].value : value[0].value;
+				} else value = value.join(" ");
+				return value;
+			}
+			/**
+			* Hide or show an Array or HTMLCollection of elements
+			* @param  {Array} elems
+			* @param  {String} term  match textContent to this term
+			* @return {Array}        filtered elements
+			*/
+			toggleElementsByStr = (elems, term) => {
+				const filteredElems = [];
+				const containsTextCb = (elem, contains) => {
+					if (contains) {
+						elem.style.display = "block";
+						filteredElems.push(elem);
+					} else elem.style.display = "none";
+				};
+				dom.elementsContainText(elems, term, containsTextCb);
+				return filteredElems;
 			};
-			events.opts.onUpdate(eventData);
-			events.opts.onUpdateColumn(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
+			elementsContainText = (collection, term, cb) => {
+				const elementsContainingText = [];
+				forEach(collection, (elem) => {
+					const contains = elem.textContent.toLowerCase().indexOf(term.toLowerCase()) !== -1;
+					cb?.(elem, contains);
+					contains && elementsContainingText.push(elem);
+				});
+				return elementsContainingText;
 			};
-			events.opts.onUpdate(eventData);
-			events.opts.onUpdateField(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_ADDED_ROW, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
+			generateOption = ({ type = "option", label, value, i = 0, selected }) => {
+				return {
+					tag: type === "option" ? "option" : "input",
+					attrs: {
+						type,
+						value: value || `${type}-${i}`,
+						[type === "option" ? "selected" : "checked"]: selected || !i
+					},
+					config: { label: label || s.get("labelCount", {
+						label: s.get("option"),
+						count: i
+					}) }
+				};
 			};
-			events.opts.onAdd(eventData);
-			events.opts.onAddRow(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
-			};
-			events.opts.onAdd(eventData);
-			events.opts.onAddColumn(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_ADDED_FIELD, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
-			};
-			events.opts.onAdd(eventData);
-			events.opts.onAddField(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_REMOVED_ROW, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
-			};
-			events.opts.onRemove(eventData);
-			events.opts.onRemoveRow(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
-			};
-			events.opts.onRemove(eventData);
-			events.opts.onRemoveColumn(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			const eventData = {
-				timeStamp,
-				type,
-				detail
-			};
-			events.opts.onRemove(eventData);
-			events.opts.onRemoveField(eventData);
-		});
-		document.addEventListener(EVENT_FORMEO_ON_RENDER, (evt) => {
-			const { timeStamp, type, detail } = evt;
-			events.opts.onRender({
-				timeStamp,
-				type,
-				detail
+			/**
+			* Extend Array of option config objects
+			* @param  {Array} options
+			* @param  {Object} elem element config object
+			* @param  {Boolean} isPreview
+			* @return {Array} option config objects
+			*/
+			processOptions(options, elem, isPreview) {
+				const { action, attrs = {} } = elem;
+				const fieldType = attrs.type || elem.tag;
+				const id = attrs.id || elem.id;
+				const name = !isPreview && attrs.name || id;
+				const sharedInputAttrs = Object.fromEntries(OPTION_INPUT_ATTRS.filter((key) => key in attrs).map((key) => [key, attrs[key]]));
+				if (attrs.required) sharedInputAttrs.required = fieldType !== "checkbox" || !options.some(({ selected, checked }) => selected || checked);
+				const optionMap = (option, i) => {
+					const { label, value, ...rest } = option;
+					const defaultInput = () => {
+						const input = {
+							tag: "input",
+							attrs: {
+								name,
+								type: fieldType,
+								value: value || "",
+								id: `${id}-${i}`,
+								...sharedInputAttrs,
+								...rest
+							},
+							action
+						};
+						const optionLabel = {
+							tag: "label",
+							attrs: { for: `${id}-${i}` },
+							children: label
+						};
+						const inputWrap = {
+							children: [input, optionLabel],
+							className: [`f-${fieldType}`]
+						};
+						if (attrs.className) elem.config.inputWrap = attrs.className;
+						if (elem.config.inline) inputWrap.className.push(`f-${fieldType}-inline`);
+						if (option.selected) input.attrs.checked = true;
+						if (isPreview) optionLabel.attrs.contenteditable = true;
+						return inputWrap;
+					};
+					return {
+						select: () => {
+							const defaultAttrs = option.attrs || option;
+							const { label, checked, selected, attrs } = {
+								attrs: defaultAttrs,
+								...option,
+								...defaultAttrs
+							};
+							return {
+								tag: "option",
+								attrs: {
+									...attrs,
+									selected: !!(checked || selected)
+								},
+								children: label
+							};
+						},
+						button: (option) => {
+							const { type, label, className, id } = option;
+							return {
+								...elem,
+								attrs: { type },
+								className,
+								id: id || uuid(),
+								options: void 0,
+								children: label,
+								action: elem.action
+							};
+						},
+						checkbox: defaultInput,
+						radio: defaultInput
+					}[fieldType]?.(option);
+				};
+				return options.map(optionMap);
+			}
+			/**
+			* Checks if there is a closing tag, if so it can hold content
+			* @param  {Object} element DOM element
+			* @return {Boolean} holdsContent
+			*/
+			holdsContent(element) {
+				return element.outerHTML.includes("/");
+			}
+			/**
+			* Is this a textarea, select or other block input
+			* also isContentEditable
+			* @param  {Object}  element
+			* @return {Boolean}
+			*/
+			isBlockInput(element) {
+				return !this.isInput(element) && this.holdsContent(element);
+			}
+			/**
+			* Determine if an element is an input field
+			* @param  {String|Object} tag tagName or DOM element
+			* @return {Boolean} isInput
+			*/
+			isInput(tagArg) {
+				let tag = tagArg;
+				if (typeof tag !== "string") tag = tag.tagName;
+				return inputTags.has(tag);
+			}
+			/**
+			* Converts escaped HTML into usable HTML
+			* @param  {String} html escaped HTML
+			* @return {String}      parsed HTML
+			*/
+			parsedHtml(html) {
+				const escapeElement = document.createElement("textarea");
+				escapeElement.innerHTML = html;
+				return escapeElement.textContent;
+			}
+			/**
+			* Test if label should be display before or after an element
+			* @param  {Object} elem config
+			* @return {Boolean} labelAfter
+			*/
+			labelAfter(elem) {
+				const type = helpers.get(elem, "attrs.type");
+				const labelAfter = helpers.get(elem, "config.labelAfter");
+				return labelAfter === void 0 ? type === "checkbox" || type === "radio" : labelAfter;
+			}
+			/**
+			* A required checkbox group needs at least one checked box, not every box.
+			* Every box stays `required` while none is checked; once one is checked none is.
+			* Boxes inside a hidden container are never required.
+			* @param {Element} groupElem wrapper holding the group's checkboxes
+			*/
+			syncCheckboxGroupRequired(groupElem) {
+				const boxes = Array.from(groupElem.querySelectorAll("input[type=\"checkbox\"]"));
+				const isHidden = Boolean(groupElem.closest("[hidden]"));
+				const noneChecked = !boxes.some((box) => box.checked);
+				for (const box of boxes) box.required = !isHidden && noneChecked;
+			}
+			requiredMark = () => ({
+				tag: "span",
+				className: "text-error",
+				children: "*"
 			});
-		});
-		document.addEventListener("confirmClearAll", (evt) => {
-			evt = {
-				timeStamp: evt.timeStamp,
-				type: evt.type,
-				confirmationMessage: evt.detail.confirmationMessage,
-				clearAllAction: evt.detail.clearAllAction,
-				btnCoords: evt.detail.btnCoords
+			tooltip = (tooltip) => ({
+				tag: "span",
+				className: "f-tooltip",
+				dataset: { tooltip },
+				content: dom.icon("info-circle")
+			});
+			helpText = (helpText) => ({
+				tag: "small",
+				className: "f-help-text",
+				children: helpText
+			});
+			/**
+			* Generate a label
+			* @param  {Object} elem config object
+			* @param  {String} fMap map to label's value in formData
+			* @return {Object}      config object
+			*/
+			label(elem, fMap) {
+				const required = helpers.get(elem, "attrs.required") || helpers.get(elem, "config.required");
+				let { config: { label: labelText = "", helpText = "", tooltip = null } } = elem;
+				const { id: elemId, attrs } = elem;
+				if (typeof labelText === "function") labelText = labelText();
+				const fieldLabel = {
+					tag: "label",
+					attrs: { for: elemId || attrs?.id },
+					className: [],
+					children: [
+						labelText,
+						required && this.requiredMark(),
+						tooltip && this.tooltip(tooltip),
+						helpText && this.helpText(helpText)
+					],
+					action: {}
+				};
+				if (fMap) {
+					fieldLabel.attrs.for = void 0;
+					fieldLabel.attrs.contenteditable = true;
+					fieldLabel.fMap = fMap;
+				}
+				return fieldLabel;
+			}
+			/**
+			* Determine content type
+			* @param  {Node | String | Array | Object} content
+			* @return {String}
+			*/
+			childType(content) {
+				if (content === void 0) return content;
+				return [
+					["array", (content) => Array.isArray(content)],
+					["node", (content) => content instanceof window.Node || content instanceof window.HTMLElement],
+					["component", () => content?.dom],
+					[typeof content, () => true]
+				].find((typeCondition) => typeCondition[1](content))[0];
+			}
+			/**
+			* Get the computed style for DOM element
+			* @param  {Object}  elem     dom element
+			* @param  {Boolean} property style eg. width, height, opacity
+			* @return {String}           computed style
+			*/
+			getStyle(elem, property = false) {
+				let style;
+				if (window.getComputedStyle) style = window.getComputedStyle(elem, null);
+				else if (elem.currentStyle) style = elem.currentStyle;
+				return property ? style[property] : style;
+			}
+			/**
+			* Retrieves an element by config object, string id,
+			* or existing reference
+			* @param  {Object|String|Node} elem
+			* @return {Object}             DOM element
+			*/
+			getElement(elem) {
+				return {
+					node: () => elem,
+					object: () => document.getElementById(elem.id),
+					string: () => document.getElementById(elem)
+				}[this.childType(elem)]();
+			}
+			/**
+			* Util to remove contents of DOM Object
+			* @param  {Object} elem
+			* @return {Object} element with its children removed
+			*/
+			empty(elem) {
+				while (elem.firstChild) this.remove(elem.firstChild);
+				return elem;
+			}
+			/**
+			* Remove elements without f children
+			* @param  {Object} element DOM element
+			* @return {Object} formData
+			*/
+			removeEmpty = (element) => {
+				const parent = element.parentElement;
+				const type = componentType(element);
+				const children = parent.getElementsByClassName(`formeo-${type}`);
+				this.remove(element);
+				if (!children.length) {
+					if (!this.isStage(parent)) return this.removeEmpty(parent);
+					return this.emptyClass(parent);
+				}
 			};
-			events.opts.confirmClearAll(evt);
+			/**
+			* Removes element from DOM and data
+			* @param  {Object} elem
+			* @return  {Object} parent element
+			*/
+			remove(elem) {
+				const type = componentType(elem);
+				if (type) return components.remove(`${type}s.${elem.id}`);
+				return elem.parentElement.removeChild(elem);
+			}
+			/**
+			* Removes a class or classes from nodeList
+			*
+			* @param  {NodeList|Node} nodeList
+			* @param  {String | Array} className
+			*/
+			removeClasses(nodeList, className) {
+				const removeClass = {
+					string: (elem) => elem.classList.remove(className),
+					array: (elem) => {
+						for (const name of className) elem.classList.remove(name);
+					}
+				};
+				removeClass.object = removeClass.string;
+				helpers.forEach(nodeList, removeClass[this.childType(className)]);
+			}
+			/**
+			* Adds a class or classes from nodeList
+			*
+			* @param  {NodeList} nodeList
+			* @param  {String | Array} className
+			*/
+			addClasses(nodeList, className) {
+				helpers.forEach(nodeList, {
+					string: (elem) => elem.classList.add(className),
+					array: (elem) => {
+						for (const name of className) elem.classList.add(name);
+					}
+				}[this.childType(className)]);
+			}
+			/**
+			* Wrap content in a formGroup
+			* @param  {Object|Array|String} content
+			* @param  {String} className
+			* @return {Object} formGroup config
+			*/
+			formGroup(content, className = "") {
+				return {
+					className: ["f-field-group", className],
+					children: content
+				};
+			}
+			/**
+			* Returns the {x, y} coordinates for the
+			* center of a given element
+			* @param  {DOM} element
+			* @return {Object}      {x,y} coordinates
+			*/
+			coords(element) {
+				const elemPosition = element.getBoundingClientRect();
+				const bodyRect = document.body.getBoundingClientRect();
+				return {
+					pageX: elemPosition.left + elemPosition.width / 2,
+					pageY: elemPosition.top - bodyRect.top - elemPosition.height / 2
+				};
+			}
+			/**
+			* Removes all fields and resets a stage
+			* @param  {DOM} stage DOM element
+			*/
+			clearStage(stage) {
+				stage.classList.add("removing-all-fields");
+				const resetStage = () => {
+					dom.empty(stage);
+					stage.classList.remove("removing-all-fields");
+					dom.emptyClass(stage);
+					animate.slideDown(stage, 300);
+				};
+				animate.slideUp(stage, 600, resetStage);
+			}
+			/**
+			* Toggles a sortables `disabled` option.
+			* @param  {Object} elem DOM element
+			* @param  {Boolean} state
+			*/
+			toggleSortable(elem, stateArg) {
+				let state = stateArg;
+				const fType = componentType(elem);
+				if (!fType) return;
+				const pFtype = componentType(elem.parentElement);
+				const sortable = dom[fType].get(elem.id).sortable;
+				if (!state) state = !sortable.option("disabled");
+				sortable.option("disabled", state);
+				if (pFtype && [
+					"rows",
+					"columns",
+					"stages"
+				].includes(pFtype)) this.toggleSortable(elem.parentElement, state);
+			}
+			/**
+			* Apply empty class to element if does not have children
+			* @param  {Object} elem
+			*/
+			emptyClass(elem) {
+				const children = elem.getElementsByClassName(CHILD_CLASSNAME_MAP.get(elem.classList.item(0)));
+				elem.classList.toggle("empty", !children.length);
+			}
+			btnTemplate = ({ title = "", ...rest }) => ({
+				tag: "button",
+				attrs: {
+					type: "button",
+					title
+				},
+				...rest
+			});
+			isControls = (node) => componentType(node) === CONTROL_GROUP_CLASSNAME;
+			isStage = (node) => componentType(node) === STAGE_CLASSNAME;
+			isRow = (node) => componentType(node) === ROW_CLASSNAME;
+			isColumn = (node) => componentType(node) === COLUMN_CLASSNAME;
+			isField = (node) => componentType(node) === FIELD_CLASSNAME;
+			asComponent = (elem) => components[`${componentType(elem)}s`].get(elem.id);
+			isDOMElement(variable) {
+				return variable instanceof window.Element || variable instanceof window.HTMLElement || !!(variable && typeof variable === "object" && variable.nodeType === 1 && typeof variable.nodeName === "string");
+			}
+			/**
+			* Resolve a container option to a DOM element
+			* @param {String|Element|Object} container selector, element, or jQuery object (its first element is used)
+			* @return {Element|null|undefined}
+			*/
+			resolveContainer(container) {
+				if (typeof container === "string") return document.querySelector(container);
+				if (container?.jquery) return container[0] || null;
+				return container;
+			}
+		};
+		dom = new DOM();
+	}));
+	//#endregion
+	//#region src/lib/js/components/dialog.js
+	var defaults$1, Dialog;
+	var init_dialog = __esmMin((() => {
+		init_i18n_es_min();
+		init_dom();
+		init_utils();
+		init_helpers();
+		defaults$1 = Object.freeze({
+			title: "",
+			content: null,
+			confirmText: () => labelHelper("save"),
+			cancelText: () => labelHelper("cancel"),
+			onConfirm: () => {},
+			onCancel: () => {},
+			className: "",
+			closeOnEscape: true,
+			position: "top",
+			triggerElement: null,
+			triggerCoords: null
 		});
-		document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { formData } }) => {
-			const evt = {
-				timeStamp,
-				type,
-				formData
-			};
-			events.opts.onSave(evt);
-		});
-		document.addEventListener("formeoLoaded", (evt) => {
-			events.opts.formeoLoaded(evt.detail.formeo);
-		});
-		window.addEventListener("resize", onResizeWindow);
+		Dialog = class Dialog {
+			/**
+			* Creates a new Dialog instance
+			* @param {Object} options - Dialog configuration options
+			* @param {string} [options.title] - Dialog title
+			* @param {Object|Array} [options.content] - DOM config for dialog body content
+			* @param {Function} [options.onConfirm] - Callback when form is submitted (receives FormData)
+			* @param {Function} [options.onCancel] - Callback when dialog is cancelled
+			* @param {string|Function} [options.confirmText] - Confirm button text
+			* @param {string|Function} [options.cancelText] - Cancel button text
+			* @param {string} [options.className] - Additional CSS class name(s)
+			* @param {boolean} [options.closeOnEscape] - Whether Escape key closes dialog
+			* @param {string} [options.position] - Positioning mode: 'top' (upper center), 'center', or 'trigger' (near trigger element)
+			* @param {HTMLElement} [options.triggerElement] - Element that triggered dialog (for position: 'trigger')
+			* @param {Object} [options.triggerCoords] - Manual coordinates {x, y} (for position: 'trigger')
+			*/
+			constructor(options) {
+				this.opts = merge(defaults$1, options);
+				this.dialog = null;
+			}
+			/**
+			* Creates the dialog DOM structure
+			* @returns {HTMLDialogElement} The created dialog element
+			*/
+			createDialog() {
+				const { title, content, confirmText, cancelText, className, closeOnEscape, position } = this.opts;
+				const positionClass = `dialog-position-${position}`;
+				const formChildren = [];
+				if (title) formChildren.push({
+					tag: "h3",
+					className: "dialog-title",
+					textContent: title
+				});
+				if (content) formChildren.push({
+					tag: "div",
+					className: "dialog-body",
+					children: Array.isArray(content) ? content : [content]
+				});
+				formChildren.push({
+					tag: "div",
+					className: "dialog-actions",
+					children: [{
+						tag: "button",
+						type: "button",
+						className: "btn btn-sm btn-secondary",
+						textContent: typeof cancelText === "function" ? cancelText() : cancelText,
+						action: { click: () => this.handleCancel() }
+					}, {
+						tag: "button",
+						type: "submit",
+						className: "btn btn-sm btn-primary",
+						textContent: typeof confirmText === "function" ? confirmText() : confirmText
+					}]
+				});
+				return dom.create({
+					tag: "dialog",
+					className: [
+						"formeo-dialog",
+						"formeo",
+						positionClass,
+						className
+					],
+					children: [{
+						tag: "form",
+						className: "dialog-form",
+						method: "dialog",
+						children: formChildren,
+						action: { submit: (e) => this.handleSubmit(e) }
+					}],
+					action: { cancel: (e) => {
+						if (closeOnEscape) this.handleCancel();
+						else e.preventDefault();
+					} }
+				});
+			}
+			/**
+			* Handles form submission
+			* @param {Event} e - Submit event
+			*/
+			handleSubmit(e) {
+				e.preventDefault();
+				const formData = new FormData(e.target);
+				this.opts.onConfirm(formData, this);
+				this.close();
+			}
+			/**
+			* Handles dialog cancellation
+			*/
+			handleCancel() {
+				this.opts.onCancel(this);
+				this.close();
+			}
+			/**
+			* Sets dialog position based on trigger element or coordinates
+			*/
+			setPosition() {
+				const { position, triggerElement, triggerCoords } = this.opts;
+				if (position !== "trigger" || !this.dialog) return;
+				let coords = triggerCoords;
+				if (!coords && triggerElement) {
+					const rect = triggerElement.getBoundingClientRect();
+					coords = {
+						x: rect.left + rect.width / 2,
+						y: rect.bottom + 8
+					};
+				}
+				if (coords) {
+					const dialogRect = this.dialog.getBoundingClientRect();
+					const viewportWidth = window.innerWidth;
+					const viewportHeight = window.innerHeight;
+					let left = coords.x - dialogRect.width / 2;
+					let top = coords.y;
+					const padding = 16;
+					left = Math.max(padding, Math.min(left, viewportWidth - dialogRect.width - padding));
+					top = Math.max(padding, Math.min(top, viewportHeight - dialogRect.height - padding));
+					this.dialog.style.left = `${left}px`;
+					this.dialog.style.top = `${top}px`;
+					this.dialog.style.transform = "none";
+				}
+			}
+			/**
+			* Opens the dialog
+			* @returns {Dialog} This dialog instance for chaining
+			*/
+			open() {
+				if (!this.dialog) this.dialog = this.createDialog();
+				document.body.appendChild(this.dialog);
+				this.dialog.showModal();
+				if (this.opts.position === "trigger") {
+					const setTimeoutId = setTimeout(() => {
+						this.setPosition();
+						clearTimeout(setTimeoutId);
+					}, 0);
+				}
+				return this;
+			}
+			/**
+			* Closes and removes the dialog
+			*/
+			close() {
+				if (this.dialog) {
+					this.dialog.close();
+					this.dialog.remove();
+					this.dialog = null;
+				}
+			}
+			/**
+			* Static shorthand for simple alert dialog
+			* @param {string} message - Alert message
+			* @param {Function} [onConfirm] - Optional callback when confirmed
+			* @returns {Dialog} Dialog instance
+			*/
+			static alert(message, onConfirm = () => {}) {
+				return new Dialog({
+					content: {
+						tag: "p",
+						className: "dialog-message",
+						textContent: message
+					},
+					confirmText: () => s.get("ok") || "OK",
+					cancelText: "",
+					onConfirm: () => onConfirm()
+				});
+			}
+			/**
+			* Static shorthand for confirmation dialog
+			* @param {string} message - Confirmation question
+			* @param {Function} [onConfirm] - Callback when confirmed
+			* @param {Function} [onCancel] - Callback when cancelled
+			* @returns {Dialog} Dialog instance
+			*/
+			static confirm(message, onConfirm = () => {}, onCancel = () => {}) {
+				return new Dialog({
+					content: {
+						tag: "p",
+						className: "dialog-message",
+						textContent: message
+					},
+					confirmText: () => s.get("confirm") || "Confirm",
+					onConfirm: () => onConfirm(),
+					onCancel: () => onCancel()
+				});
+			}
+			/**
+			* Static shorthand for prompt dialog
+			* @param {string} message - Prompt message
+			* @param {Function} onSubmit - Callback with user input value
+			* @param {string} [defaultValue] - Default input value
+			* @returns {Dialog} Dialog instance
+			*/
+			static prompt(message, onSubmit = () => {}, defaultValue = "") {
+				return new Dialog({
+					content: [{
+						tag: "label",
+						className: "dialog-prompt-label",
+						children: [{
+							tag: "p",
+							className: "dialog-message",
+							textContent: message
+						}, {
+							tag: "input",
+							type: "text",
+							name: "prompt-value",
+							className: "dialog-prompt-input",
+							value: defaultValue
+						}]
+					}],
+					onConfirm: (formData) => {
+						onSubmit(formData.get("prompt-value"));
+					}
+				});
+			}
+		};
 	}));
 	//#endregion
 	//#region src/lib/js/common/actions.js
-	var defaultActions, actions;
+	var ATTRIBUTE_NAME, attributeProblem, openAddAttributeDialog, defaultActions, actions;
 	var init_actions = __esmMin((() => {
 		init_i18n_es_min();
+		init_dialog();
 		init_constants();
 		init_events();
 		init_utils();
+		ATTRIBUTE_NAME = /^[A-Za-z_:][-A-Za-z0-9_:]*$/;
+		attributeProblem = (rawValue, evt) => {
+			const attr = rawValue.trim();
+			if (!attr) return rawValue ? s.get("attributeNameRequired") || "Enter an attribute name" : "";
+			if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`)) return s.get("attributeNotPermitted", { attribute: attr }) || `Attribute "${attr}" is not permitted`;
+			return "";
+		};
+		openAddAttributeDialog = (evt) => new Dialog({
+			className: "add-attribute-dialog",
+			content: [{
+				tag: "input",
+				attrs: {
+					type: "text",
+					name: "attrName",
+					className: "attr-name-input",
+					required: true,
+					autocomplete: "off"
+				},
+				config: { label: evt.message.attr },
+				action: { input: ({ target }) => target.setCustomValidity(attributeProblem(target.value, evt)) }
+			}, {
+				tag: "input",
+				attrs: {
+					type: "text",
+					name: "attrValue",
+					className: "attr-value-input",
+					autocomplete: "off"
+				},
+				config: { label: evt.message.value }
+			}],
+			onConfirm: (formData) => {
+				const attr = String(formData.get("attrName") ?? "").trim();
+				if (attr && !attributeProblem(attr, evt)) evt.addAction(attr, String(formData.get("attrValue") ?? ""));
+			}
+		}).open();
 		defaultActions = {
 			add: {
-				attr: (evt) => {
-					const attr = globalThis.prompt(evt.message.attr);
-					if (attr && evt.isDisabled(attr)) {
-						globalThis.alert(s.get("attributeNotPermitted", attr));
-						return actions.add.attrs(evt);
-					}
-					let val;
-					if (attr) {
-						val = String(globalThis.prompt(evt.message.value, ""));
-						evt.addAction(attr, val);
-					}
-				},
+				attr: (evt) => openAddAttributeDialog(evt),
 				option: (evt) => {
 					evt.addAction();
 				},
@@ -17878,9 +17977,10 @@ Author: Draggable https://draggable.io
 		* @param  {String|Object}   userFormData loaded formData
 		* @return {Object}          formeo references and actions
 		*/
-		constructor({ formData, ...options }, userFormData) {
+		constructor({ formData, ...options } = {}, userFormData) {
 			const { actions: actions$1, events: events$1, debug, config, editorContainer, ...opts } = merge(defaults.editor, options);
 			if (editorContainer) this.editorContainer = dom.resolveContainer(editorContainer) || null;
+			this.editorContainerOption = editorContainer;
 			this.opts = opts;
 			dom.setOptions = opts;
 			components.config = config;
@@ -18082,6 +18182,10 @@ Author: Draggable https://draggable.io
 				if (controlsContainer !== this.editor) dom.empty(controlsContainer);
 				controlsContainer.appendChild(this.controls.dom);
 			}
+			if (!this.editorContainer && this.editorContainerOption) {
+				this.editorContainer = dom.resolveContainer(this.editorContainerOption) || null;
+				if (!this.editorContainer) console.warn(`Formeo: editorContainer ${String(this.editorContainerOption)} was not found, so the editor was not added to the page.`);
+			}
 			if (this.editorContainer) {
 				dom.empty(this.editorContainer);
 				this.editorContainer.appendChild(this.editor);
@@ -18096,8 +18200,8 @@ Author: Draggable https://draggable.io
 	init_dom();
 	init_utils();
 	init_constants();
-	var containerLookup = (container) => typeof container === "string" ? document.querySelector(container) : container;
-	var processOptions = ({ editorContainer, renderContainer, formData, ...opts }) => {
+	var containerLookup = (container) => dom.resolveContainer(container);
+	var processOptions = ({ editorContainer, renderContainer, formData, ...opts } = {}) => {
 		const processedOptions = {
 			renderContainer: containerLookup(renderContainer),
 			editorContainer: containerLookup(editorContainer),
@@ -18292,12 +18396,13 @@ Author: Draggable https://draggable.io
 	init_string();
 	init_constants();
 	var FormeoRenderer$1 = class {
-		constructor(opts, formDataArg) {
-			const { renderContainer: container, elements, formData, config } = processOptions(opts);
+		constructor(opts = {}, formDataArg) {
+			const { renderContainer: container, elements, formData, config, events } = processOptions(opts);
 			this.container = container;
 			this.form = cleanFormData(formDataArg || formData);
 			this.elements = elements;
 			this.config = config;
+			this.events = { ...events };
 			this.components = Object.create(null);
 			this.dom = dom;
 		}
@@ -18324,14 +18429,7 @@ Author: Draggable https://draggable.io
 		* { username: 'john', hobbies: ['reading', 'gaming'] }
 		*/
 		get userData() {
-			const form = this.container.querySelector(".formeo-render") || this.renderedForm;
-			if (!form) return {};
-			const formEntries = new FormData(form);
-			const formDataObj = {};
-			for (const [key, value] of formEntries.entries()) if (formDataObj[key]) if (Array.isArray(formDataObj[key])) formDataObj[key].push(value);
-			else formDataObj[key] = [formDataObj[key], value];
-			else formDataObj[key] = value;
-			return formDataObj;
+			return userDataOf(this.container?.querySelector(".formeo-render") || this.renderedForm);
 		}
 		/**
 		* Gets the user form data as an array of field objects.
@@ -18381,11 +18479,17 @@ Author: Draggable https://draggable.io
 		* @param {Object} formData
 		*/
 		render(formData = this.form) {
+			if (!this.container) throw new Error("FormeoRenderer: renderContainer is required for render(); use getRenderedForm() or html without one");
 			this.form = cleanFormData(formData);
 			const renderedForm = this.getRenderedForm(formData);
 			const existingRenderedForm = this.container.querySelector(".formeo-render");
 			if (existingRenderedForm) existingRenderedForm.replaceWith(renderedForm);
 			else this.container.appendChild(renderedForm);
+			this.events.onRender?.({
+				form: renderedForm,
+				renderer: this,
+				formData: this.form
+			});
 		}
 		getRenderedForm(formData = this.form) {
 			this.form = cleanFormData(formData);
@@ -18400,6 +18504,7 @@ Author: Draggable https://draggable.io
 			this.renderedForm = dom.render(config);
 			this.renderedForm.addEventListener("reset", this.syncRequiredGroupsAfterReset);
 			this.applyConditions();
+			this.bindFormEvents(this.renderedForm);
 			return this.renderedForm;
 		}
 		/**
@@ -18412,6 +18517,24 @@ Author: Draggable https://draggable.io
 				for (const group of form.querySelectorAll(`[data-${REQUIRED_GROUP_ATTR}]`)) dom.syncCheckboxGroupRequired(group);
 			}, 0);
 		};
+		/**
+		* Wire the renderer's onChange/onSubmit callbacks to a freshly rendered <form>
+		* @param {HTMLFormElement} form
+		*/
+		bindFormEvents(form) {
+			const { onChange, onSubmit } = this.events;
+			if (onChange) form.addEventListener("input", (event) => onChange({
+				event,
+				target: event.target,
+				form,
+				userData: userDataOf(form)
+			}));
+			if (onSubmit) form.addEventListener("submit", (event) => onSubmit({
+				event,
+				form,
+				userData: userDataOf(form)
+			}));
+		}
 		get html() {
 			return (this.renderedForm || this.getRenderedForm()).outerHTML;
 		}
@@ -18630,6 +18753,21 @@ Author: Draggable https://draggable.io
 			components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`));
 			return components;
 		};
+	};
+	/**
+	* Converts a rendered form's fields to a plain object, the same shape the `userData`
+	* getter exposes. Handles multiple values for the same key by converting them to arrays.
+	* @param {HTMLFormElement} [form]
+	* @return {Object.<string, string|string[]>}
+	*/
+	var userDataOf = (form) => {
+		if (!form) return {};
+		const formEntries = new FormData(form);
+		const formDataObj = {};
+		for (const [key, value] of formEntries.entries()) if (Object.hasOwn(formDataObj, key)) if (Array.isArray(formDataObj[key])) formDataObj[key].push(value);
+		else formDataObj[key] = [formDataObj[key], value];
+		else formDataObj[key] = value;
+		return formDataObj;
 	};
 	var isCheckable = (elem) => ["checkbox", "radio"].includes(elem?.type);
 	var checkableInputs = (fields) => {
