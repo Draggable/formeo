@@ -15,7 +15,7 @@ import animate from './animation.js'
 import h, { forEach } from './helpers.mjs'
 import { loaded } from './loaders.js'
 import { componentType, merge, uuid } from './utils/index.mjs'
-import { extractTextFromHtml, slugify, truncateByWord } from './utils/string.mjs'
+import { extractTextFromHtml, groupInputName, slugify, truncateByWord } from './utils/string.mjs'
 
 const iconFontTemplates = {
   glyphicons: icon => `<span class="glyphicon glyphicon-${icon}" aria-hidden="true"></span>`,
@@ -532,7 +532,7 @@ class DOM {
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
     // the editor preview keeps id-based names so two groups sharing a name can't interfere with each other there
-    const name = (!isPreview && attrs.name) || id
+    const name = isPreview ? id : groupInputName(attrs.name || id, fieldType, options.length)
     const sharedInputAttrs = Object.fromEntries(
       OPTION_INPUT_ATTRS.filter(key => key in attrs).map(key => [key, attrs[key]])
     )

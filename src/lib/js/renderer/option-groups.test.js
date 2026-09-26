@@ -75,12 +75,12 @@ describe('checkbox and radio groups', () => {
       )
     })
 
-    test('checkbox group inputs use attrs.name when it is set', () => {
+    test('checkbox group inputs use attrs.name when it is set, with a [] suffix so every checked value posts (#128)', () => {
       render({ 'checkbox-1': groupField('checkbox-1', 'checkbox', { name: 'toppings' }) })
 
       assert.deepEqual(
         inputsOf('checkbox-1').map(input => input.name),
-        ['toppings', 'toppings']
+        ['toppings[]', 'toppings[]']
       )
     })
 

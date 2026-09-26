@@ -86,14 +86,17 @@ export default class FormeoRenderer {
    */
   componentByName(name) {
     return (
-      this.components[baseId(name)] || Object.values(this.components).find(component => component.attrs?.name === name)
+      this.components[baseId(name)] ||
+      Object.values(this.components).find(
+        component => component.attrs?.name === name || component.attrs?.name === `${name}[]`
+      )
     )
   }
 
   set userData(data = {}) {
     const form = this.container.querySelector('form')
     for (const key of Object.keys(data)) {
-      const fields = form.elements[key]
+      const fields = form.elements[key] ?? form.elements[`${key}[]`]
       // a group with a single option resolves to the input itself rather than a RadioNodeList
       const checkables = checkableInputs(fields)
 
@@ -498,12 +501,18 @@ export default class FormeoRenderer {
   getComponents = address => {
     const components = []
     const componentId = address.slice(address.indexOf('.') + 1)
+    const name = `f-${componentId}`
 
-    components.push(...this.renderedForm.querySelectorAll(`[name=f-${componentId}]`))
+    // an unnamed multi-option checkbox group falls back to this name but renders it as `name[]` (#128)
+    components.push(...this.renderedForm.querySelectorAll(`[name="${name}"], [name="${name}[]"]`))
 
     return components
   }
 }
+
+// a checkbox group's inputs share a name ending in [] (#128) so every checked value posts; userData
+// itself is keyed by the plain name
+const fieldKey = key => (key.endsWith('[]') ? key.slice(0, -2) : key)
 
 /**
  * Converts a rendered form's fields to a plain object, the same shape the `userData`
@@ -518,7 +527,8 @@ const userDataOf = form => {
   const formEntries = new FormData(form)
 
   const formDataObj = {}
-  for (const [key, value] of formEntries.entries()) {
+  for (const [rawKey, value] of formEntries.entries()) {
+    const key = fieldKey(rawKey)
     if (Object.hasOwn(formDataObj, key)) {
       if (Array.isArray(formDataObj[key])) {
         formDataObj[key].push(value)

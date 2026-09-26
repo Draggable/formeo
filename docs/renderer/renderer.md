@@ -221,6 +221,8 @@ Fires synchronously after `render()` attaches the rendered `<form>` to `renderCo
 
 Fires on every `input` event within the rendered form, including one fired by a condition's `value` action after the form has rendered. The conditions applied while rendering don't fire it. `userData` has the same shape as `renderer.userData` and is read from the form the event came from, at the time of the event.
 
+For a multi-option checkbox group, `target.name` ends in `[]` but the matching `userData` key does not. Look it up with `userData[target.name.replace(/\[\]$/, '')]`.
+
 ### `onSubmit({ event, form, userData })`
 
 Fires on the form's native `submit` event. Formeo does not call `event.preventDefault()` for you — the app decides whether to stop the browser's default submission and how to handle `userData`.
@@ -315,7 +317,7 @@ renderer.userData = { firstName: 'John' }
 
 A checkbox or radio group is one field with `options`. It renders as a wrapper element (`id="f-<fieldId>"`, the element conditions target) that holds one `<input>` per option.
 
-- **Name.** Every option input is named `attrs.name` when it is set. Otherwise it falls back to `attrs.id`, then to the rendered field id (`f-<fieldId>`). `userData` is keyed by that name. Give two groups different names: radio groups that share a name act as one group.
+- **Name.** Every option input is named `attrs.name` when it is set. Otherwise it falls back to `attrs.id`, then to the rendered field id (`f-<fieldId>`). `userData` is keyed by that name. Give two groups different names: radio groups that share a name act as one group. Checkbox groups with more than one option render their inputs as `name[]`, so a regular form POST sends every checked value (PHP, Rails and Express's `extended` parser read these as arrays). `userData` drops a trailing `[]` from every field name, including one the author already put in `attrs.name`, so `{ hobbies: ['reading', 'coding'] }` either way. One checked value is still a string. The `userData` setter accepts either form of the name (`hobbies` or `hobbies[]`).
 - **Required.** A required radio group needs one option picked. A required checkbox group needs **at least one** box checked, not all of them. The browser's own validation message appears either way, and the group label shows `*`.
 - **Other attributes.** `disabled` and `form` are copied to every option input. Everything else set on the group (`data-*`, `aria-*`, `title`, custom attributes) goes on the wrapper element.
 
@@ -327,6 +329,9 @@ renderer.userData = { toppings: ['cheese', 'olives'] }
 renderer.userData
 // { toppings: ['cheese', 'olives'] } if several are checked
 // { toppings: 'cheese' } if only one is checked
+
+// With more than one option, the group's inputs are actually named "toppings[]" so a native
+// <form> POST keeps every checked value; userData strips the suffix either way.
 ```
 
 #### Radio Buttons
@@ -729,6 +734,7 @@ const component = renderer.components[componentId]
 - Make sure the form has been rendered
 - Check that form fields have proper `name` attributes
 - Checkbox and radio groups submit under attrs.name, falling back to attrs.id, then f-<fieldId>
+- Checkbox groups with more than one option add `[]` to that name
 
 **Checkbox values not appearing as arrays:**
 - If only one checkbox is selected, it returns a single value
