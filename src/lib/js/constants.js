@@ -25,6 +25,10 @@ export const ROW_CLASSNAME = `${PACKAGE_NAME}-row`
 export const COLUMN_CLASSNAME = `${PACKAGE_NAME}-column`
 export const FIELD_CLASSNAME = `${PACKAGE_NAME}-field`
 
+// hidden by a condition: a stage hidden by the renderer's pagination is an inactive page, not a condition,
+// so it never keeps a control's `required` off
+export const HIDDEN_BY_CONDITION_SELECTOR = `[hidden]:not(.${STAGE_CLASSNAME})`
+
 export const CUSTOM_COLUMN_OPTION_CLASSNAME = 'custom-column-widths'
 export const COLUMN_PRESET_CLASSNAME = 'column-preset'
 export const COLUMN_RESIZE_CLASSNAME = 'resizing-columns'

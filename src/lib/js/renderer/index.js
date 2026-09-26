@@ -9,22 +9,48 @@ import {
   createRemoveButton,
   groupIfConditions,
   isCheckableGroup,
+  normalizePagination,
   processOptions,
   propertyMap,
   RENDER_PREFIX,
   targetPropertyMap,
 } from './helpers.js'
+import { paginate } from './pagination.js'
 
 export default class FormeoRenderer {
   constructor(opts = {}, formDataArg) {
-    const { renderContainer: container, elements, formData, config, events } = processOptions(opts)
+    const { renderContainer: container, elements, formData, config, events, pagination } = processOptions(opts)
     this.container = container
     this.form = cleanFormData(formDataArg || formData)
     this.elements = elements
     this.config = config
     this.events = { ...events }
+    this.pagination = normalizePagination(pagination)
     this.components = Object.create(null)
     this.dom = dom
+  }
+
+  /**
+   * Index of the page on show when the `pagination` option splits the form's stages into pages
+   * @return {Number} 0 without pagination
+   */
+  get page() {
+    return this.pager?.index ?? 0
+  }
+
+  /**
+   * Shows a page without validating the one being left. Out-of-range indexes are clamped.
+   * @param {Number} index
+   */
+  set page(index) {
+    this.pager?.show(index)
+  }
+
+  /**
+   * @return {Number} number of pages, 1 when the form is not paginated
+   */
+  get pageCount() {
+    return this.pager?.count ?? 1
   }
 
   get formData() {
@@ -168,8 +194,22 @@ export default class FormeoRenderer {
     this.applyConditions()
     // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
     this.bindFormEvents(this.renderedForm)
+    this.pager = this.paginateForm(this.renderedForm)
 
     return this.renderedForm
+  }
+
+  /**
+   * Splits a freshly rendered <form> into pages when the `pagination` option is set
+   * @param {HTMLFormElement} form
+   * @return {Object|null} the pager, or null when the form is shown as one page
+   */
+  paginateForm(form) {
+    if (!this.pagination) {
+      return null
+    }
+    const onChange = (page, previousPage) => this.events.onPageChange?.({ page, previousPage, form, renderer: this })
+    return paginate(form, this.pagination, Object.values(this.form.stages), onChange)
   }
 
   /**

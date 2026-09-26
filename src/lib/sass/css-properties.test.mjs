@@ -122,6 +122,17 @@ suite('formeo CSS custom properties', () => {
     )
   })
 
+  test('multi-page rules use logical inline properties, so they mirror in right-to-left forms (#122)', t => {
+    const physical = /(?:^|[\s;{])((?:margin|padding|border)-(?:left|right)[a-z-]*|left|right)\s*:/
+    const rules = [...compileFormeoCss().matchAll(/([^{}]*)\{([^{}]*)\}/g)].filter(([, selector]) =>
+      selector.includes('.formeo-pages')
+    )
+    t.assert.ok(rules.length > 0, 'expected the multi-page rules to compile')
+    for (const [, selector, body] of rules) {
+      t.assert.doesNotMatch(body, physical, `${selector.trim()} uses a physical left/right property`)
+    }
+  })
+
   test('allowed additions are stripped before the baseline comparison', t => {
     const { css } = resolveFormeoProperties(compileFormeoCss())
     for (const fragment of ['formeo-dark', ':where(.svg-icon)', ':where(.editing-field)']) {
