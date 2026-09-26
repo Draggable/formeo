@@ -101,6 +101,7 @@ test.describe('Options panel', () => {
       await expect(handle).toBeVisible()
       // the arrow glyph itself must paint, not just the empty button
       await expect(handle.locator('svg path')).toBeVisible()
+      await expect(handle).toHaveCSS('cursor', 'grab')
 
       const r = await remove.boundingBox()
       const h = await handle.boundingBox()
