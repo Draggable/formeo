@@ -283,3 +283,60 @@ test.describe('FormeoEditor#destroy (#166)', () => {
     expect(warnings.filter(text => text.includes('sessionStorage key "destroy-key"'))).toHaveLength(0)
   })
 })
+
+test.describe('moving the last field out of a column (#166)', () => {
+  const twoRowForm = () => ({
+    id: 'form-move',
+    stages: { 'stage-move': { id: 'stage-move', children: ['row-1', 'row-2'] } },
+    rows: {
+      'row-1': { id: 'row-1', config: {}, children: ['col-1'] },
+      'row-2': { id: 'row-2', config: {}, children: ['col-2'] },
+    },
+    columns: {
+      'col-1': { id: 'col-1', config: { width: '100%' }, children: ['field-1'] },
+      'col-2': { id: 'col-2', config: { width: '100%' }, children: ['field-2'] },
+    },
+    fields: {
+      'field-1': { id: 'field-1', tag: 'input', attrs: { type: 'text' }, config: { label: 'First' } },
+      'field-2': { id: 'field-2', tag: 'input', attrs: { type: 'text' }, config: { label: 'Second' } },
+    },
+  })
+
+  test('removes the emptied column and keeps the moved field', async ({ page }) => {
+    const errors = []
+    page.on('pageerror', err => errors.push(err.message))
+    await page.setViewportSize({ width: 1280, height: 1800 })
+    await gotoEditor(page)
+    await page.evaluate(async formData => {
+      window.frameworkLoader.currentDemo.editor.destroy()
+      window.__moveEditor = new window.FormeoEditor({ editorContainer: '.build-form', sessionStorage: false }, formData)
+      await window.__moveEditor.whenReady()
+    }, twoRowForm())
+
+    const field = page.locator('.formeo-field#field-1')
+    await field.locator('.field-actions').hover()
+    const handle = field.locator('.field-actions .item-move')
+    await handle.waitFor({ state: 'visible' })
+    const target = page.locator('.formeo-field#field-2')
+    const from = await handle.boundingBox()
+    const to = await target.boundingBox()
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(from.x + from.width / 2 + 10, from.y + from.height / 2, { steps: 5 })
+    await page.waitForTimeout(100)
+    await page.mouse.move(to.x + to.width / 2, to.y + to.height - 5, { steps: 25 })
+    await page.waitForTimeout(150)
+    await page.mouse.up()
+
+    await expect
+      .poll(() => page.evaluate(() => window.__moveEditor.formData.columns['col-2']?.children))
+      .toEqual(['field-2', 'field-1'])
+    const formData = await page.evaluate(() => window.__moveEditor.formData)
+    expect(Object.keys(formData.columns)).toEqual(['col-2'])
+    expect(Object.keys(formData.fields).sort()).toEqual(['field-1', 'field-2'])
+    await expect(page.locator('.formeo-column')).toHaveCount(1)
+    // the drop finishes normally: the source's onEnd clears the hover state it set
+    await expect(page.locator('[class*="hovering-"]')).toHaveCount(0)
+    expect(errors).toEqual([])
+  })
+})
