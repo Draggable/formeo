@@ -213,8 +213,7 @@ export class FormeoEditor {
       .then(controls => {
         if (this.isDestroyed) {
           // destroyed while the controls were being built: release them, they were never on the page
-          destroySortables(controls.dom)
-          controls.panels?.destroy()
+          controls.destroy()
           return this
         }
         this.controls = controls
@@ -276,8 +275,7 @@ export class FormeoEditor {
     }
     const controls = await new Controls(this.Components).init(this.opts.controls, this.opts.stickyControls)
     if (this.isDestroyed) {
-      destroySortables(controls.dom)
-      controls.panels?.destroy()
+      controls.destroy()
       return this
     }
     this.controls = controls
@@ -471,9 +469,8 @@ export class FormeoEditor {
       }
     }
 
-    const controlsDom = this.controls?.dom
+    this.controls?.destroy()
     destroySortables(this.editor)
-    destroySortables(controlsDom)
 
     for (const type of ['stages', 'rows', 'columns', 'fields']) {
       for (const component of Object.values(this.Components[type]?.data || {})) {
@@ -481,9 +478,7 @@ export class FormeoEditor {
       }
       this.Components[type]?.empty()
     }
-    this.controls?.panels?.destroy()
 
-    controlsDom?.remove()
     this.editor?.remove()
     this.Components.empty()
 

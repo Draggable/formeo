@@ -136,6 +136,25 @@ test.describe('FormeoEditor#destroy (#166)', () => {
     })
   })
 
+  test('ends a control drag in progress: removes its ghost and restores the page overflow', async ({ page }) => {
+    const overflowBefore = await page.evaluate(() => document.documentElement.style.overflow)
+    const control = page.getByRole('button', { name: 'Text Input' })
+    await control.hover()
+    const from = await control.boundingBox()
+    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(from.x + from.width / 2 + 10, from.y + from.height / 2, { steps: 5 })
+    await page.mouse.move(from.x + from.width / 2 + 60, from.y + from.height / 2 + 60, { steps: 10 })
+    await expect(page.locator('.control-moving')).toHaveCount(1)
+    expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe('hidden')
+
+    await page.evaluate(() => window.frameworkLoader.currentDemo.editor.destroy())
+    await page.mouse.up()
+
+    await expect(page.locator('.control-moving')).toHaveCount(0)
+    expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe(overflowBefore)
+  })
+
   test('switching demo frameworks leaves exactly one editor', async ({ page }) => {
     await page.evaluate(() => window.frameworkLoader.switchFramework('angular'))
     await page.evaluate(() => window.frameworkLoader.switchFramework('vanilla'))
