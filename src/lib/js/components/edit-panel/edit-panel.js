@@ -142,9 +142,16 @@ export default class EditPanel {
    * @param {Number} fromIndex
    * @param {Number} toIndex
    */
-  moveOption = (fromIndex, toIndex) => {
-    const options = this.component.get('options')
-    if (!Array.isArray(options) || fromIndex === toIndex || options[fromIndex] === undefined) {
+    if (
+      !Array.isArray(options) ||
+      !Number.isInteger(fromIndex) ||
+      !Number.isInteger(toIndex) ||
+      fromIndex === toIndex ||
+      fromIndex < 0 ||
+      fromIndex >= options.length ||
+      toIndex < 0 ||
+      toIndex >= options.length
+    ) {
       return
     }
     const reordered = [...options]
