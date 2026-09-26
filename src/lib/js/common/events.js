@@ -1,4 +1,3 @@
-import components, { Columns, Controls } from '../components/index.js'
 import {
   ANIMATION_SPEED_BASE,
   ANIMATION_SPEED_FAST,
@@ -27,214 +26,170 @@ const NO_TRANSITION_CLASS_NAME = 'no-transition'
 // Refactor events as part of https://github.com/Draggable/formeo/issues/381
 // should have a consolidated approach to events
 
-// Default options
-const defaults = {
-  debug: false, // enable debug mode
-  bubbles: true, // bubble events from components
-  formeoLoaded: _evt => {},
-  onAdd: () => {},
-  onRemove: () => {},
-  onChange: evt => events.opts?.debug && console.log(evt),
-  onUpdate: evt => events.opts?.debug && console.log(evt),
-  onUpdateStage: evt => events.opts?.debug && console.log(evt),
-  onUpdateRow: evt => events.opts?.debug && console.log(evt),
-  onUpdateColumn: evt => events.opts?.debug && console.log(evt),
-  onUpdateField: evt => events.opts?.debug && console.log(evt),
-  onAddRow: evt => events.opts?.debug && console.log(evt),
-  onAddColumn: evt => events.opts?.debug && console.log(evt),
-  onAddField: evt => events.opts?.debug && console.log(evt),
-  onRemoveRow: evt => events.opts?.debug && console.log(evt),
-  onRemoveColumn: evt => events.opts?.debug && console.log(evt),
-  onRemoveField: evt => events.opts?.debug && console.log(evt),
-  onRender: evt => events.opts?.debug && console.log(evt),
-  onSave: _evt => {},
-  confirmClearAll: evt => {
-    if (globalThis.confirm(evt.confirmationMessage)) {
-      evt.clearAllAction(evt)
-    }
-  },
-}
+/**
+ * Option callbacks each DOM event triggers, in call order. formeoUpdated is handled on its own:
+ * it is throttled and reports the whole formData.
+ */
+const EVENT_CALLBACKS = new Map([
+  [EVENT_FORMEO_UPDATED_STAGE, ['onUpdate', 'onUpdateStage']],
+  [EVENT_FORMEO_UPDATED_ROW, ['onUpdate', 'onUpdateRow']],
+  [EVENT_FORMEO_UPDATED_COLUMN, ['onUpdate', 'onUpdateColumn']],
+  [EVENT_FORMEO_UPDATED_FIELD, ['onUpdate', 'onUpdateField']],
+  [EVENT_FORMEO_ADDED_ROW, ['onAdd', 'onAddRow']],
+  [EVENT_FORMEO_ADDED_COLUMN, ['onAdd', 'onAddColumn']],
+  [EVENT_FORMEO_ADDED_FIELD, ['onAdd', 'onAddField']],
+  [EVENT_FORMEO_REMOVED_ROW, ['onRemove', 'onRemoveRow']],
+  [EVENT_FORMEO_REMOVED_COLUMN, ['onRemove', 'onRemoveColumn']],
+  [EVENT_FORMEO_REMOVED_FIELD, ['onRemove', 'onRemoveField']],
+  [EVENT_FORMEO_ON_RENDER, ['onRender']],
+])
 
-const defaultCustomEvent = ({ src, ...evtData }, type = EVENT_FORMEO_UPDATED) => {
-  const evt = new globalThis.CustomEvent(type, {
-    detail: evtData,
-    bubbles: events.opts?.debug || events.opts?.bubbles,
-  })
-  evt.data = (src || document).dispatchEvent(evt)
-
-  // Also dispatch formeoChanged as an alias for formeoUpdated
-  if (type === EVENT_FORMEO_UPDATED) {
-    const changedEvt = new globalThis.CustomEvent(EVENT_FORMEO_CHANGED, {
-      detail: evtData,
-      bubbles: events.opts?.debug || events.opts?.bubbles,
-    })
-    ;(src || document).dispatchEvent(changedEvt)
-  }
-
-  return evt
-}
+// Before #152 every callback ran from a page-wide `document` listener, so only events that got to the
+// document triggered one. Keep that rule so single-editor pages see exactly the same calls.
+const reachesDocument = evt => evt.target === document || Boolean(evt.bubbles && evt.target?.isConnected)
 
 /**
- * Events class is used to register events and throttle their callbacks
+ * One editor's event hub: dispatches formeo DOM events (unchanged, for page listeners) and calls
+ * that editor's own option callbacks.
  */
-const events = {
-  init: function (options) {
-    this.opts = { ...defaults, ...options }
+export class Events {
+  components = null
+
+  constructor() {
+    this.opts = this.defaults()
+    this.formeoUpdatedThrottled = throttle(
+      () => {
+        const eventData = {
+          timeStamp: globalThis.performance.now(),
+          type: EVENT_FORMEO_UPDATED,
+          detail: this.components?.formData,
+        }
+        this.opts.onUpdate(eventData)
+        // Also call onChange if it's different from onUpdate
+        if (this.opts.onChange !== this.opts.onUpdate) {
+          this.opts.onChange(eventData)
+        }
+      },
+      ANIMATION_SPEED_FAST,
+      { trailing: true }
+    )
+  }
+
+  defaults() {
+    const log = evt => this.opts?.debug && console.log(evt)
+    return {
+      debug: false, // enable debug mode
+      bubbles: true, // bubble events from components
+      formeoLoaded: _formeo => {},
+      onAdd: () => {},
+      onRemove: () => {},
+      onChange: log,
+      onUpdate: log,
+      onUpdateStage: log,
+      onUpdateRow: log,
+      onUpdateColumn: log,
+      onUpdateField: log,
+      onAddRow: log,
+      onAddColumn: log,
+      onAddField: log,
+      onRemoveRow: log,
+      onRemoveColumn: log,
+      onRemoveField: log,
+      onRender: log,
+      onSave: _evt => {},
+      confirmClearAll: evt => {
+        if (globalThis.confirm(evt.confirmationMessage)) {
+          evt.clearAllAction(evt)
+        }
+      },
+    }
+  }
+
+  init(options) {
+    this.opts = { ...this.defaults(), ...options }
     return this
-  },
-  formeoSaved: evt => defaultCustomEvent(evt, EVENT_FORMEO_SAVED),
-  formeoUpdated: (evt, eventType) => defaultCustomEvent(evt, eventType || EVENT_FORMEO_UPDATED),
-  formeoCleared: evt => defaultCustomEvent(evt, EVENT_FORMEO_CLEARED),
-  formeoOnRender: evt => defaultCustomEvent(evt, EVENT_FORMEO_ON_RENDER),
-  formeoConditionUpdated: evt => defaultCustomEvent(evt, EVENT_FORMEO_CONDITION_UPDATED),
-  formeoAddedRow: evt => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_ROW),
-  formeoAddedColumn: evt => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_COLUMN),
-  formeoAddedField: evt => defaultCustomEvent(evt, EVENT_FORMEO_ADDED_FIELD),
-  formeoRemovedRow: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_ROW),
-  formeoRemovedColumn: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_COLUMN),
-  formeoRemovedField: evt => defaultCustomEvent(evt, EVENT_FORMEO_REMOVED_FIELD),
-}
-
-const formeoUpdatedThrottled = throttle(
-  () => {
-    const eventData = {
-      timeStamp: globalThis.performance.now(),
-      type: EVENT_FORMEO_UPDATED,
-      detail: components.formData,
-    }
-    events.opts.onUpdate(eventData)
-    // Also call onChange if it's different from onUpdate
-    if (events.opts.onChange !== events.opts.onUpdate) {
-      events.opts.onChange(eventData)
-    }
-  },
-  ANIMATION_SPEED_FAST,
-  { trailing: true }
-)
-
-document.addEventListener(EVENT_FORMEO_UPDATED, formeoUpdatedThrottled)
-document.addEventListener(EVENT_FORMEO_UPDATED_STAGE, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onUpdate(eventData)
-  events.opts.onUpdateStage(eventData)
-})
-document.addEventListener(EVENT_FORMEO_UPDATED_ROW, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onUpdate(eventData)
-  events.opts.onUpdateRow(eventData)
-})
-document.addEventListener(EVENT_FORMEO_UPDATED_COLUMN, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onUpdate(eventData)
-  events.opts.onUpdateColumn(eventData)
-})
-document.addEventListener(EVENT_FORMEO_UPDATED_FIELD, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onUpdate(eventData)
-  events.opts.onUpdateField(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_ADDED_ROW, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onAdd(eventData)
-  events.opts.onAddRow(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_ADDED_COLUMN, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onAdd(eventData)
-  events.opts.onAddColumn(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_ADDED_FIELD, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onAdd(eventData)
-  events.opts.onAddField(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_REMOVED_ROW, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onRemove(eventData)
-  events.opts.onRemoveRow(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_REMOVED_COLUMN, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onRemove(eventData)
-  events.opts.onRemoveColumn(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_REMOVED_FIELD, evt => {
-  const { timeStamp, type, detail } = evt
-  const eventData = { timeStamp, type, detail }
-  events.opts.onRemove(eventData)
-  events.opts.onRemoveField(eventData)
-})
-
-document.addEventListener(EVENT_FORMEO_ON_RENDER, evt => {
-  const { timeStamp, type, detail } = evt
-  events.opts.onRender({
-    timeStamp,
-    type,
-    detail,
-  })
-})
-
-document.addEventListener('confirmClearAll', evt => {
-  evt = {
-    timeStamp: evt.timeStamp,
-    type: evt.type,
-    confirmationMessage: evt.detail.confirmationMessage,
-    clearAllAction: evt.detail.clearAllAction,
-    btnCoords: evt.detail.btnCoords,
   }
 
-  events.opts.confirmClearAll(evt)
-})
+  dispatch(type, { src, ...evtData }) {
+    const eventInit = { detail: evtData, bubbles: this.opts.debug || this.opts.bubbles }
+    const evt = new globalThis.CustomEvent(type, eventInit)
+    evt.data = (src || document).dispatchEvent(evt)
 
-document.addEventListener(EVENT_FORMEO_SAVED, ({ timeStamp, type, detail: { formData } }) => {
-  const evt = {
-    timeStamp,
-    type,
-    formData,
+    // Also dispatch formeoChanged as an alias for formeoUpdated
+    if (type === EVENT_FORMEO_UPDATED) {
+      ;(src || document).dispatchEvent(new globalThis.CustomEvent(EVENT_FORMEO_CHANGED, eventInit))
+    }
+
+    if (reachesDocument(evt)) {
+      this.runCallbacks(evt)
+    }
+
+    return evt
   }
-  events.opts.onSave(evt)
-})
 
-document.addEventListener('formeoLoaded', evt => {
-  events.opts.formeoLoaded(evt.detail.formeo)
-})
+  runCallbacks({ type, timeStamp, detail }) {
+    if (type === EVENT_FORMEO_UPDATED) {
+      return this.formeoUpdatedThrottled()
+    }
+    if (type === EVENT_FORMEO_SAVED) {
+      return this.opts.onSave({ timeStamp, type, formData: detail.formData })
+    }
+    for (const name of EVENT_CALLBACKS.get(type) || []) {
+      this.opts[name]({ timeStamp, type, detail })
+    }
+  }
 
-let throttling
+  formeoSaved = evt => this.dispatch(EVENT_FORMEO_SAVED, evt)
+  formeoUpdated = (evt, eventType) => this.dispatch(eventType || EVENT_FORMEO_UPDATED, evt)
+  formeoCleared = evt => this.dispatch(EVENT_FORMEO_CLEARED, evt)
+  formeoOnRender = evt => this.dispatch(EVENT_FORMEO_ON_RENDER, evt)
+  formeoConditionUpdated = evt => this.dispatch(EVENT_FORMEO_CONDITION_UPDATED, evt)
+  formeoAddedRow = evt => this.dispatch(EVENT_FORMEO_ADDED_ROW, evt)
+  formeoAddedColumn = evt => this.dispatch(EVENT_FORMEO_ADDED_COLUMN, evt)
+  formeoAddedField = evt => this.dispatch(EVENT_FORMEO_ADDED_FIELD, evt)
+  formeoRemovedRow = evt => this.dispatch(EVENT_FORMEO_REMOVED_ROW, evt)
+  formeoRemovedColumn = evt => this.dispatch(EVENT_FORMEO_REMOVED_COLUMN, evt)
+  formeoRemovedField = evt => this.dispatch(EVENT_FORMEO_REMOVED_FIELD, evt)
 
-function onResizeWindow() {
-  throttling =
-    throttling ||
-    window.requestAnimationFrame(() => {
-      throttling = false
-      for (const column of Object.values(Columns.data)) {
+  /** detail: { confirmationMessage, clearAllAction, btnCoords } */
+  confirmClearAll = detail => {
+    const evt = new globalThis.CustomEvent('confirmClearAll', { detail })
+    document.dispatchEvent(evt)
+    this.opts.confirmClearAll({ timeStamp: evt.timeStamp, type: evt.type, ...detail })
+  }
+
+  formeoLoaded = formeo => {
+    document.dispatchEvent(new globalThis.CustomEvent('formeoLoaded', { detail: { formeo } }))
+    this.opts.formeoLoaded(formeo)
+  }
+
+  columnResized = detail => document.dispatchEvent(new globalThis.CustomEvent('columnResized', { detail }))
+
+  /**
+   * Window resize handler for one editor; FormeoEditor registers it (and can remove it, see #166)
+   */
+  onResizeWindow = () => {
+    const { columns, controls } = this.components || {}
+    if (!columns || !controls?.dom || this.resizeFrame) {
+      return
+    }
+    this.resizeFrame = window.requestAnimationFrame(() => {
+      this.resizeFrame = null
+      for (const column of Object.values(columns.data)) {
         column.dom.classList.add(NO_TRANSITION_CLASS_NAME)
-        Controls.dom.classList.add(NO_TRANSITION_CLASS_NAME)
-        Controls.panels.nav.refresh()
+        controls.dom.classList.add(NO_TRANSITION_CLASS_NAME)
+        controls.panels.nav.refresh()
         column.refreshFieldPanels()
         throttle(() => {
           column.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
-          Controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
+          controls.dom.classList.remove(NO_TRANSITION_CLASS_NAME)
         }, ANIMATION_SPEED_BASE)
       }
     })
+  }
 }
 
-// handle event
-window.addEventListener('resize', onResizeWindow)
+// standalone instance for existing tests; editor code must use its own (see singletons.test.mjs)
+const events = new Events()
 
 export default events

@@ -1,4 +1,5 @@
 // biome-ignore assist/source/organizeImports: import order necessary for Controls circular dependency
+import defaultEvents from '../common/events.js' // temporary until per-editor wiring (#152)
 import { buildFlatDataStructure, clone, isAddress, parseData, sessionStorage } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { COMPONENT_INDEX_TYPE_MAP, DEFAULT_FORMDATA, SESSION_FORMDATA_KEY, version } from '../constants.js'
@@ -160,5 +161,6 @@ export class Components extends Data {
 }
 
 const components = new Components()
+defaultEvents.components = components // temporary until per-editor wiring (#152)
 
 export default components

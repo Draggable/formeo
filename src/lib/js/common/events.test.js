@@ -23,7 +23,7 @@ import {
   EVENT_FORMEO_UPDATED_ROW,
   EVENT_FORMEO_UPDATED_STAGE,
 } from '../constants.js'
-import Events from './events.js'
+import Events, { Events as EventsClass } from './events.js'
 
 describe('Events System', () => {
   let eventListeners = []
@@ -667,6 +667,112 @@ describe('Events System', () => {
 
         Events.formeoRemovedRow({ componentId: 'row-test' })
       })
+    })
+  })
+
+  describe('callbacks after the multi-instance refactor (#152)', () => {
+    it('calls each callback once per event', () => {
+      const onUpdateRow = mock.fn()
+      const onUpdate = mock.fn()
+      Events.init({ onUpdateRow, onUpdate })
+
+      Events.formeoUpdated({ changePath: 'rows.x.config' }, EVENT_FORMEO_UPDATED_ROW)
+
+      assert.equal(onUpdateRow.mock.callCount(), 1)
+      assert.equal(onUpdate.mock.callCount(), 1)
+    })
+
+    it('skips callbacks for events that would not have reached document', () => {
+      const onUpdateField = mock.fn()
+      Events.init({ onUpdateField })
+      const detached = document.createElement('div')
+
+      Events.formeoUpdated({ src: detached }, EVENT_FORMEO_UPDATED_FIELD)
+
+      assert.equal(onUpdateField.mock.callCount(), 0)
+    })
+  })
+
+  describe('default opts before init() (#152 follow-up 4)', () => {
+    afterEach(() => {
+      mock.timers.reset()
+    })
+
+    it('never throws emitting or removing before init() is called', () => {
+      mock.timers.enable({ apis: ['setTimeout'] })
+
+      const freshEvents = new EventsClass()
+      const connected = document.createElement('div')
+      document.body.appendChild(connected)
+
+      try {
+        assert.doesNotThrow(() => {
+          freshEvents.formeoUpdated({ changePath: 'rows.x.config' })
+          freshEvents.formeoRemovedRow({ src: connected, componentId: 'row-test' })
+          mock.timers.tick(1000)
+        })
+      } finally {
+        connected.remove()
+      }
+    })
+  })
+
+  describe('confirmClearAll (#152 fix round 1)', () => {
+    it('dispatches the confirmClearAll DOM event on document with the right detail', () => {
+      return new Promise(resolve => {
+        const detail = { confirmationMessage: 'Sure?', clearAllAction: mock.fn(), btnCoords: { x: 1, y: 2 } }
+
+        addTestListener('confirmClearAll', evt => {
+          assert.deepEqual(evt.detail, detail)
+          resolve()
+        })
+
+        Events.init({ confirmClearAll: mock.fn() })
+        Events.confirmClearAll(detail)
+      })
+    })
+
+    it('calls the option callback exactly once with the documented shape', () => {
+      const confirmClearAll = mock.fn()
+      Events.init({ confirmClearAll })
+      const detail = { confirmationMessage: 'Sure?', clearAllAction: mock.fn(), btnCoords: { x: 1, y: 2 } }
+
+      Events.confirmClearAll(detail)
+
+      assert.equal(confirmClearAll.mock.callCount(), 1)
+      const arg = confirmClearAll.mock.calls[0].arguments[0]
+      assert.equal(arg.type, 'confirmClearAll')
+      assert.equal(typeof arg.timeStamp, 'number')
+      assert.equal(arg.confirmationMessage, detail.confirmationMessage)
+      assert.equal(arg.clearAllAction, detail.clearAllAction)
+      assert.deepEqual(arg.btnCoords, detail.btnCoords)
+    })
+  })
+
+  describe('formeoLoaded (#152 fix round 1)', () => {
+    it('dispatches the formeoLoaded DOM event on document with the formeo instance', () => {
+      return new Promise(resolve => {
+        const formeo = { id: 'editor-a' }
+
+        addTestListener('formeoLoaded', evt => {
+          assert.equal(evt.detail.formeo, formeo)
+          resolve()
+        })
+
+        Events.init({})
+        Events.formeoLoaded(formeo)
+      })
+    })
+
+    it('calls the option callback exactly once with the formeo instance', () => {
+      const formeoLoaded = mock.fn()
+      Events.init({ formeoLoaded })
+      const formeo = { id: 'editor-a' }
+
+      Events.formeoLoaded(formeo)
+
+      assert.equal(formeoLoaded.mock.callCount(), 1)
+      assert.equal(formeoLoaded.mock.calls[0].arguments[0], formeo)
     })
   })
 })

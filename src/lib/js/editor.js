@@ -57,6 +57,8 @@ export class FormeoEditor {
     this.dom = dom
     Events.init({ debug, ...events })
     Actions.init({ debug, sessionStorage: opts.sessionStorage, ...actions })
+    // events.js no longer registers this at import time; temporary until per-editor wiring (#152)
+    window.addEventListener('resize', Events.onResizeWindow)
 
     // Load remote resources such as css and svg sprite
     if (document.readyState === 'loading') {
@@ -338,13 +340,7 @@ export class FormeoEditor {
       this.editorContainer.appendChild(this.editor)
     }
 
-    Events.formeoLoaded = new globalThis.CustomEvent('formeoLoaded', {
-      detail: {
-        formeo: this,
-      },
-    })
-
-    document.dispatchEvent(Events.formeoLoaded)
+    Events.formeoLoaded(this)
   }
 }
 

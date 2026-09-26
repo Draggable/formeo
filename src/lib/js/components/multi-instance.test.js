@@ -86,5 +86,9 @@ describe('Multi-instance isolation (#152)', () => {
     it('uses a string option as the key', () => {
       assert.equal(formDataStorageKey('orders-form'), 'orders-form')
     })
+
+    it('falls back to the historical key for an empty string', () => {
+      assert.equal(formDataStorageKey(''), SESSION_FORMDATA_KEY)
+    })
   })
 })

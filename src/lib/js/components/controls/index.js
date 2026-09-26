@@ -160,22 +160,18 @@ export class Controls {
       action: {
         click: evt => {
           if (Rows.size) {
-            events.confirmClearAll = new window.CustomEvent('confirmClearAll', {
-              detail: {
-                confirmationMessage: i18n.get('confirmClearAll'),
-                clearAllAction: () => {
-                  Stages.clearAll().then(() => {
-                    const evtData = {
-                      src: evt.target,
-                    }
-                    events.formeoCleared(evtData)
-                  })
-                },
-                btnCoords: dom.coords(evt.target),
+            events.confirmClearAll({
+              confirmationMessage: i18n.get('confirmClearAll'),
+              clearAllAction: () => {
+                Stages.clearAll().then(() => {
+                  const evtData = {
+                    src: evt.target,
+                  }
+                  events.formeoCleared(evtData)
+                })
               },
+              btnCoords: dom.coords(evt.target),
             })
-
-            document.dispatchEvent(events.confirmClearAll)
           } else {
             window.alert(i18n.get('cannotClearFields'))
           }

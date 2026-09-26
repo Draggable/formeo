@@ -9,6 +9,7 @@ import {
   COMPONENT_TYPE_CLASSNAMES_REGEXP,
   DEFAULT_FORMDATA,
   INTERNAL_COMPONENT_INDEX_REGEX,
+  SESSION_FORMDATA_KEY,
 } from '../../constants.js'
 
 const uuidv4 = () => crypto.randomUUID().slice(0, 8)
@@ -225,6 +226,14 @@ export const memoize = (fn, resolver) => {
   memoized.cache = new Map()
   return memoized
 }
+
+/**
+ * sessionStorage key an editor saves its formData under. `sessionStorage: true` keeps the historical key;
+ * a string is used as the key so several editors on one page can each keep their own form.
+ * @param {Boolean|String} option the editor's `sessionStorage` option
+ * @return {String}
+ */
+export const formDataStorageKey = option => (typeof option === 'string' && option ? option : SESSION_FORMDATA_KEY)
 
 export const sessionStorage = Object.create(null, {
   get: {
