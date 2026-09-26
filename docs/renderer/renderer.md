@@ -17,7 +17,7 @@ The `FormeoRenderer` class is responsible for rendering Formeo form data into in
 ## Installation
 
 ```javascript
-import FormeoRenderer from './path/to/renderer/index.js'
+import { FormeoRenderer } from 'formeo'
 ```
 
 ## Basic Usage
@@ -502,7 +502,7 @@ Both examples are covered by tests in `src/lib/js/renderer/conditions.test.js`.
 ### Example 1: Basic Form Rendering
 
 ```javascript
-import FormeoRenderer from './renderer/index.js'
+import { FormeoRenderer } from 'formeo'
 
 const formData = {
   id: 'my-form',
