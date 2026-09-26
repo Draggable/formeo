@@ -475,6 +475,23 @@ describe('renderer conditions', () => {
       assert.equal(form().checkValidity(), false)
     })
 
+    test('showing a field on a hidden stage (an inactive page) makes it required again (#122)', () => {
+      render({
+        'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
+        [TARGET_ID]: inputField(TARGET_ID, 'text', { attrs: { type: 'text', required: true } }),
+      })
+      const source = container.querySelector('#f-source-1')
+      const target = container.querySelector(`#f-${TARGET_ID}`)
+
+      typeInto(source, 'hide')
+      assert.equal(target.required, false)
+
+      // pagination hides every page but the current one; a page is not a condition
+      container.querySelector('.formeo-stage').hidden = true
+      typeInto(source, 'show')
+      assert.equal(target.required, true, 'the stage being hidden does not keep required off')
+    })
+
     test('"isNotVisible" on a column hides its whole row, as documented', () => {
       const formData = buildFormData({
         'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide('columns.column-a') }),

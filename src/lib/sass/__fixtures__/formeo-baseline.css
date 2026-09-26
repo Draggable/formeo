@@ -1992,6 +1992,131 @@ button[class*=-clone]:hover .svg-icon {
   align-items: center;
   gap: 4px;
 }
+.formeo.formeo-render .formeo-pages-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.formeo.formeo-render .formeo-pages-tabs {
+  gap: 0;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #cccccc;
+}
+.formeo.formeo-render .formeo-pages-tab {
+  margin-bottom: -1px;
+  padding: 8px 16px;
+  border: 0 none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #333333;
+  cursor: pointer;
+}
+.formeo.formeo-render .formeo-pages-tab:hover {
+  color: rgb(25.5, 25.5, 25.5);
+}
+.formeo.formeo-render .formeo-pages-tab[aria-selected=true] {
+  border-bottom-color: rgb(50, 93, 136);
+  color: rgb(25.5, 25.5, 25.5);
+}
+.formeo.formeo-render .formeo-pages-tab:focus-visible {
+  outline: 2px solid rgb(102, 175, 233);
+  outline-offset: -2px;
+}
+.formeo.formeo-render .formeo-pages-wizard {
+  justify-content: space-between;
+  margin-top: 16px;
+}
+.formeo.formeo-render .formeo-pages-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+  counter-reset: formeo-pages-step;
+}
+.formeo.formeo-render .formeo-pages-step {
+  display: flex;
+  align-items: center;
+  counter-increment: formeo-pages-step;
+}
+.formeo.formeo-render .formeo-pages-step:not(:last-child)::after {
+  content: "";
+  width: 24px;
+  height: 1px;
+  margin: 0 8px;
+  background: #cccccc;
+}
+.formeo.formeo-render .formeo-pages-step button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0 none;
+  background: transparent;
+  color: #333333;
+  cursor: pointer;
+  font: inherit;
+}
+.formeo.formeo-render .formeo-pages-step button::before {
+  content: counter(formeo-pages-step);
+  content: counter(formeo-pages-step)/"";
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #999999;
+  border-radius: 50%;
+  color: #333333;
+  font-size: 0.75em;
+}
+.formeo.formeo-render .formeo-pages-step button:hover {
+  color: rgb(25.5, 25.5, 25.5);
+}
+.formeo.formeo-render .formeo-pages-step button:focus-visible {
+  outline: 2px solid rgb(102, 175, 233);
+  outline-offset: 2px;
+}
+.formeo.formeo-render .formeo-pages-step[data-state=current] button {
+  color: rgb(25.5, 25.5, 25.5);
+  font-weight: bold;
+}
+.formeo.formeo-render .formeo-pages-step[data-state=current] button::before {
+  border-color: rgb(50, 93, 136);
+  background: rgb(50, 93, 136);
+  color: #fff;
+}
+.formeo.formeo-render .formeo-pages-step[data-state=done] button::before {
+  content: "";
+  border-color: rgb(147, 197, 75);
+  background: rgb(147, 197, 75);
+}
+.formeo.formeo-render .formeo-pages-step[data-state=done] button::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  inset-inline-start: 0;
+  width: 32px;
+  height: 32px;
+  transform: translateY(-50%);
+  background: #fff;
+  clip-path: polygon(9% 45%, 22% 33%, 40% 52%, 78% 12%, 89% 25%, 40% 74%);
+}
+.formeo.formeo-render .formeo-pages-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 .formeo button .svg-icon {
   max-width: 100%;
   max-height: 100%;
