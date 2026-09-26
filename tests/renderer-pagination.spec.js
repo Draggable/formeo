@@ -1,0 +1,206 @@
+// @ts-check
+import { expect, test } from '@playwright/test'
+
+const page = (n, fields, title) => ({ n, fields, title })
+const buildPages = pages => {
+  const data = { id: 'pages', stages: {}, rows: {}, columns: {}, fields: {} }
+  for (const { n, fields, title } of pages) {
+    data.stages[`p-${n}`] = { id: `p-${n}`, config: title ? { title } : {}, children: [`r-${n}`] }
+    data.rows[`r-${n}`] = { id: `r-${n}`, config: {}, children: [`c-${n}`] }
+    data.columns[`c-${n}`] = { id: `c-${n}`, config: { width: '100%' }, children: fields.map(f => f.id) }
+    for (const f of fields) data.fields[f.id] = f
+  }
+  return data
+}
+const input = (name, attrs = {}) => ({
+  id: name,
+  tag: 'input',
+  attrs: { type: 'text', name, ...attrs },
+  config: { label: name },
+})
+
+// the shape Formeo's button control saves; it renders <button type="submit"> without a name
+const submitButton = {
+  id: 'send',
+  tag: 'button',
+  attrs: { className: 'f-btn-group' },
+  config: { label: 'Button', hideLabel: true },
+  meta: { group: 'common', icon: 'button', id: 'button' },
+  options: [{ label: 'Send', type: 'submit', className: '' }],
+}
+
+// a real wizard ends with a submit button, so Enter on the last page submits natively
+const twoPages = buildPages([
+  page(1, [input('name')], 'About you'),
+  page(2, [input('email', { type: 'email', required: true }), submitButton]),
+])
+
+/**
+ * Renders formData into a fresh container with the given pagination option; submitted userData
+ * lands in window.__submitted. With `toggleSubmit`, an onChange handler disables the submit button
+ * while `form.checkValidity()` fails, a common pattern.
+ */
+const mount = async (browserPage, data, pagination, { toggleSubmit = false } = {}) => {
+  await browserPage.goto('/')
+  await expect(browserPage.locator('.formeo-editor')).toBeVisible()
+  await browserPage.evaluate(
+    ([data, pagination, toggleSubmit]) => {
+      window.__submitted = null
+      const container = Object.assign(document.createElement('div'), { id: 'pages-container' })
+      document.body.appendChild(container)
+      const onChange = ({ form }) => {
+        form.querySelector('button[type="submit"]').disabled = !form.checkValidity()
+      }
+      window.__pager = new window.FormeoRenderer({
+        renderContainer: container,
+        pagination,
+        events: {
+          ...(toggleSubmit && { onChange }),
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault()
+            window.__submitted = userData
+          },
+        },
+      })
+      window.__pager.render(data)
+    },
+    [data, pagination, toggleSubmit]
+  )
+  return browserPage.locator('#pages-container')
+}
+
+test.describe('multi-page forms (#122)', () => {
+  test('wizard: an invalid field on another page is shown and focused on submit', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPages, 'wizard')
+    await root.locator('input[name="name"]').fill('Ada')
+    await browserPage.evaluate(() => {
+      window.__pager.page = 0
+      document.querySelector('#pages-container form').requestSubmit()
+    })
+    await expect(root.locator('input[name="email"]')).toBeVisible()
+    expect(await browserPage.evaluate(() => document.activeElement?.getAttribute('name'))).toBe('email')
+
+    await root.locator('input[name="email"]').fill('ada@example.com')
+    await browserPage.evaluate(() => document.querySelector('#pages-container form').requestSubmit())
+    expect(await browserPage.evaluate(() => window.__submitted)).toEqual({ name: 'Ada', email: 'ada@example.com' })
+  })
+
+  test('wizard: Enter moves to the next page and only submits from the last one', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPages, 'wizard')
+    await root.locator('input[name="name"]').fill('Ada')
+    await root.locator('input[name="name"]').press('Enter')
+    await expect(root.locator('input[name="email"]')).toBeVisible()
+    await expect(root.locator('input[name="email"]')).toBeFocused()
+    expect(await browserPage.evaluate(() => window.__submitted)).toBeNull()
+
+    await root.locator('input[name="email"]').fill('ada@example.com')
+    await root.locator('input[name="email"]').press('Enter')
+    await expect
+      .poll(() => browserPage.evaluate(() => window.__submitted))
+      .toEqual({
+        name: 'Ada',
+        email: 'ada@example.com',
+      })
+  })
+
+  test('wizard: the step list jumps back freely but not past an invalid page', async ({ page: browserPage }) => {
+    const data = buildPages([
+      page(1, [input('a', { required: true })], 'One'),
+      page(2, [input('b')], 'Two'),
+      page(3, [input('c')], 'Three'),
+    ])
+    const root = await mount(browserPage, data, 'wizard')
+    const step = name => root.locator('.formeo-pages-step').filter({ hasText: name }).getByRole('button')
+    await step('Three').click()
+    await expect(root.locator('input[name="a"]')).toBeVisible()
+    await root.locator('input[name="a"]').fill('x')
+    await step('Three').click()
+    await expect(root.locator('input[name="c"]')).toBeVisible()
+    await expect(step('Three')).toHaveAttribute('aria-current', 'step')
+    await step('One').click()
+    await expect(root.locator('input[name="a"]')).toBeVisible()
+  })
+
+  test('wizard: step buttons are named for their title alone, not the step number or check mark', async ({
+    page: browserPage,
+  }) => {
+    const data = buildPages([
+      page(1, [input('a')], 'One'),
+      page(2, [input('b')], 'Two'),
+      page(3, [input('c')], 'Three'),
+    ])
+    const root = await mount(browserPage, data, 'wizard')
+    await expect(root.getByRole('button', { name: 'Three', exact: true })).toBeVisible()
+    await root.locator('.formeo-pages-next').click()
+    // page 2 is now "done", so its step shows the check mark instead of its number
+    await expect(
+      root.locator('.formeo-pages-step').filter({ hasText: 'One' }).getByRole('button')
+    ).toHaveAccessibleName('One')
+  })
+
+  test('wizard: Next stays on the invalid control when it is not the page’s first field', async ({
+    page: browserPage,
+  }) => {
+    const data = buildPages([
+      page(1, [input('a'), input('b', { required: true })], 'One'),
+      page(2, [input('c')], 'Two'),
+    ])
+    const root = await mount(browserPage, data, 'wizard')
+    await root.locator('.formeo-pages-next').click()
+    await expect(root.locator('input[name="a"]')).toBeVisible()
+    await expect(root.locator('input[name="b"]')).toBeFocused()
+  })
+
+  test('wizard: a forward step jump stops on the invalid control of a later page, not its first field', async ({
+    page: browserPage,
+  }) => {
+    const data = buildPages([
+      page(1, [input('x')], 'One'),
+      page(2, [input('a'), input('b', { required: true })], 'Two'),
+      page(3, [input('c')], 'Three'),
+    ])
+    const root = await mount(browserPage, data, 'wizard')
+    const step = name => root.locator('.formeo-pages-step').filter({ hasText: name }).getByRole('button')
+    await step('Three').click()
+    await expect(root.locator('input[name="b"]')).toBeVisible()
+    await expect(root.locator('input[name="b"]')).toBeFocused()
+  })
+
+  test('clicking submit shows and focuses the first invalid field, even on an earlier page', async ({
+    page: browserPage,
+  }) => {
+    const data = buildPages([
+      page(1, [input('a', { required: true })], 'One'),
+      page(2, [input('b', { required: true }), submitButton], 'Two'),
+    ])
+    const root = await mount(browserPage, data, 'wizard')
+    await browserPage.evaluate(() => {
+      window.__pager.page = 1
+    })
+    // a trusted submit: the browser validates between microtasks, unlike requestSubmit() from a script
+    await root.getByRole('button', { name: 'Send' }).click()
+    await expect(root.locator('input[name="a"]')).toBeVisible()
+    await expect(root.locator('input[name="a"]')).toBeFocused()
+    expect(await browserPage.evaluate(() => window.__pager.page)).toBe(0)
+    expect(await browserPage.evaluate(() => window.__submitted)).toBeNull()
+  })
+
+  test('a checkValidity() call from onChange never moves the user to another page', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPages, 'wizard', { toggleSubmit: true })
+    await root.locator('input[name="name"]').pressSequentially('Ada')
+    await expect(root.locator('input[name="name"]')).toBeFocused()
+    await expect(root.locator('input[name="email"]')).toBeHidden()
+    expect(await browserPage.evaluate(() => window.__pager.page)).toBe(0)
+    await expect(root.locator('button[type="submit"]')).toBeDisabled()
+  })
+
+  test('tabs: arrow keys move between tabs', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPages, 'tabs')
+    await root.getByRole('tab', { name: 'About you' }).focus()
+    await browserPage.keyboard.press('ArrowRight')
+    await expect(root.getByRole('tab', { name: 'Page 2' })).toBeFocused()
+    await expect(root.getByRole('tab', { name: 'Page 2' })).toHaveAttribute('aria-selected', 'true')
+    await expect(root.locator('input[name="email"]')).toBeVisible()
+    await expect(root.locator('input[name="name"]')).toBeHidden()
+  })
+})

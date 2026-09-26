@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual.js'
 import dom, { REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
-import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, STAGE_CLASSNAME, UUID_REGEXP } from '../constants.js'
+import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, HIDDEN_BY_CONDITION_SELECTOR, UUID_REGEXP } from '../constants.js'
 
 export const RENDER_PREFIX = 'f-'
 
@@ -14,6 +14,26 @@ export const processOptions = ({ editorContainer, renderContainer, formData, ...
   }
 
   return { elements: {}, ...opts, ...processedOptions }
+}
+
+const PAGINATION_TYPES = ['tabs', 'wizard']
+const PAGINATION_LABELS = { previous: 'Previous', next: 'Next', page: 'Page {n}' }
+
+/**
+ * Expands the renderer's `pagination` option. `progress` only affects the wizard.
+ * @param {String|Object} [pagination] 'tabs' | 'wizard' | { type, progress, labels: { previous, next, page } }
+ * @return {{type: String, progress: Boolean, labels: {previous: String, next: String, page: String}}|null}
+ * null when the option is missing or its type is unknown
+ */
+export const normalizePagination = pagination => {
+  const opts = typeof pagination === 'string' ? { type: pagination } : pagination
+  if (!PAGINATION_TYPES.includes(opts?.type)) {
+    return null
+  }
+  const { type, progress = true, labels } = opts
+  // a label left undefined (or set to anything but a string) keeps its default
+  const customLabels = Object.entries(labels ?? {}).filter(([, value]) => typeof value === 'string')
+  return { type, progress: Boolean(progress), labels: { ...PAGINATION_LABELS, ...Object.fromEntries(customLabels) } }
 }
 
 export const baseId = id => {
@@ -228,9 +248,6 @@ export const suspendRequired = elem => {
   }
 }
 
-// a stage hidden by pagination is an inactive page, not a condition, so it never keeps `required` off
-const HIDDEN_BY_CONDITION = `[hidden]:not(.${STAGE_CLASSNAME})`
-
 /**
  * Undoes suspendRequired. Controls that were never suspended are left alone, and so are controls
  * still inside a container a condition hid: they keep their saved `required` until it is shown.
@@ -238,7 +255,7 @@ const HIDDEN_BY_CONDITION = `[hidden]:not(.${STAGE_CLASSNAME})`
  */
 export const restoreRequired = elem => {
   for (const control of selfAndDescendants(elem, FORM_CONTROL_SELECTOR)) {
-    if (control._required !== undefined && !control.closest(HIDDEN_BY_CONDITION)) {
+    if (control._required !== undefined && !control.closest(HIDDEN_BY_CONDITION_SELECTOR)) {
       control.required = control._required
       delete control._required
     }

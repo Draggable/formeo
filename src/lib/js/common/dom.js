@@ -6,6 +6,7 @@ import {
   COLUMN_CLASSNAME,
   CONTROL_GROUP_CLASSNAME,
   FIELD_CLASSNAME,
+  HIDDEN_BY_CONDITION_SELECTOR,
   iconPrefix,
   ROW_CLASSNAME,
   STAGE_CLASSNAME,
@@ -682,12 +683,12 @@ class DOM {
   /**
    * A required checkbox group needs at least one checked box, not every box.
    * Every box stays `required` while none is checked; once one is checked none is.
-   * Boxes inside a hidden container are never required.
+   * Boxes inside a container a condition hid are never required; an inactive page is not such a container.
    * @param {Element} groupElem wrapper holding the group's checkboxes
    */
   syncCheckboxGroupRequired(groupElem) {
     const boxes = Array.from(groupElem.querySelectorAll('input[type="checkbox"]'))
-    const isHidden = Boolean(groupElem.closest('[hidden]'))
+    const isHidden = Boolean(groupElem.closest(HIDDEN_BY_CONDITION_SELECTOR))
     const noneChecked = !boxes.some(box => box.checked)
     for (const box of boxes) {
       box.required = !isHidden && noneChecked

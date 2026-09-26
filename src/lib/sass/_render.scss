@@ -137,3 +137,157 @@ fieldset.formeo-row-wrap {
   align-items: center;
   gap: mixins.space();
 }
+
+// multi-page forms: the `pagination` renderer option (#122)
+.formeo-pages-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: mixins.space(1);
+}
+
+.formeo-pages-tabs {
+  gap: 0;
+  margin-bottom: mixins.space(2);
+  border-bottom: 1px solid t.$border;
+}
+
+.formeo-pages-tab {
+  margin-bottom: -1px;
+  padding: mixins.space(1) mixins.space(2);
+  border: 0 none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: t.$text-secondary;
+  cursor: pointer;
+
+  &:hover {
+    color: t.$text-strong;
+  }
+
+  &[aria-selected="true"] {
+    border-bottom-color: t.$primary;
+    color: t.$text-strong;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$focus;
+    outline-offset: -2px;
+  }
+}
+
+.formeo-pages-wizard {
+  justify-content: space-between;
+  margin-top: mixins.space(2);
+}
+
+// the wizard's clickable step list, shown above the pages when `progress` is on (default)
+.formeo-pages-steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0 0 mixins.space(2);
+  padding: 0;
+  list-style: none;
+  counter-reset: formeo-pages-step;
+}
+
+.formeo-pages-step {
+  display: flex;
+  align-items: center;
+  counter-increment: formeo-pages-step;
+
+  &:not(:last-child)::after {
+    content: "";
+    width: mixins.space(3);
+    height: 1px;
+    margin: 0 mixins.space(1);
+    background: t.$border;
+  }
+
+  button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: mixins.space(1);
+    padding: 0;
+    border: 0 none;
+    background: transparent;
+    color: t.$text-secondary;
+    cursor: pointer;
+    font: inherit;
+
+    &::before {
+      // the plain counter is the fallback; browsers that support CSS alt text (the second
+      // declaration) read only the title as the button's accessible name, not "1 One"
+      content: counter(formeo-pages-step);
+      content: counter(formeo-pages-step) / "";
+      display: inline-flex;
+      flex-shrink: 0;
+      align-items: center;
+      justify-content: center;
+      width: mixins.space(4);
+      height: mixins.space(4);
+      border: 1px solid t.$border-strong;
+      border-radius: 50%;
+      color: t.$text-secondary;
+      font-size: 0.75em;
+    }
+
+    &:hover {
+      color: t.$text-strong;
+    }
+
+    &:focus-visible {
+      outline: 2px solid t.$focus;
+      outline-offset: 2px;
+    }
+  }
+
+  &[data-state="current"] button {
+    color: t.$text-strong;
+    font-weight: bold;
+
+    &::before {
+      border-color: t.$primary;
+      background: t.$primary;
+      color: t.$on-accent;
+    }
+  }
+
+  // drawn with clip-path rather than a "✓" character: a literal check mark forces Sass to emit a
+  // non-ASCII byte (adding @charset to the whole stylesheet) and would read out as part of the
+  // button's accessible name
+  &[data-state="done"] button {
+    &::before {
+      content: "";
+      border-color: t.$success;
+      background: t.$success;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      inset-inline-start: 0;
+      width: mixins.space(4);
+      height: mixins.space(4);
+      transform: translateY(-50%);
+      background: t.$on-accent;
+      clip-path: polygon(9% 45%, 22% 33%, 40% 52%, 78% 12%, 89% 25%, 40% 74%);
+    }
+  }
+}
+
+// "N / M" is announced to screen readers without taking up room
+.formeo-pages-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
