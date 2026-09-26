@@ -11,6 +11,7 @@ The `FormeoRenderer` class is responsible for rendering Formeo form data into in
 - [Methods](#methods)
 - [Events](#events)
 - [Working with User Data](#working-with-user-data)
+- [Multi-page forms](#multi-page-forms)
 - [Conditional Logic](#conditional-logic)
 - [Examples](#examples)
 
@@ -51,7 +52,8 @@ Creates a new FormeoRenderer instance.
   - `formData` (Object): The form structure data to render
   - `config` (Object): Additional rendering configuration
     - `attrs` (Object): Attributes for the rendered `<form>`, e.g. `method`, `action`, `enctype`, `novalidate`
-  - `events` (Object): `onRender`, `onChange`, `onSubmit` callbacks (see [Events](#events))
+  - `pagination` (String|Object, optional): Show the form's stages one at a time as tabs or a wizard. See [Multi-page forms](#multi-page-forms)
+  - `events` (Object): `onRender`, `onChange`, `onSubmit`, `onPageChange` callbacks (see [Events](#events))
 - `formDataArg` (Object, optional): Alternative way to pass form data
 
 **Example:**
@@ -127,6 +129,22 @@ Returns the rendered form as an HTML string.
 const htmlString = renderer.html
 ```
 
+#### `page`
+
+The index (0-based) of the currently shown page, when the `pagination` option is set. `0` when there is no pagination (see [Multi-page forms](#multi-page-forms)).
+
+```javascript
+renderer.page // 0
+```
+
+#### `pageCount`
+
+The number of pages. `1` when there is no pagination or the form has a single stage.
+
+```javascript
+renderer.pageCount // 1
+```
+
 ### Setters
 
 #### `formData`
@@ -135,6 +153,14 @@ Sets the form structure data and cleans it.
 
 ```javascript
 renderer.formData = newFormData
+```
+
+#### `page`
+
+Shows a page without validating the one being left. Out-of-range indexes are clamped to the available pages. A no-op without pagination.
+
+```javascript
+renderer.page = 1
 ```
 
 #### `userData`
@@ -207,6 +233,9 @@ const renderer = new FormeoRenderer({
       event.preventDefault() // the app decides whether/how to prevent the default submit
       console.log('submitted', userData)
     },
+    onPageChange: ({ page, previousPage, form, renderer }) => {
+      console.log('page changed', previousPage, '->', page)
+    },
   },
 })
 
@@ -226,6 +255,10 @@ For a multi-option checkbox group, `target.name` ends in `[]` but the matching `
 ### `onSubmit({ event, form, userData })`
 
 Fires on the form's native `submit` event. Formeo does not call `event.preventDefault()` for you — the app decides whether to stop the browser's default submission and how to handle `userData`.
+
+### `onPageChange({ page, previousPage, form, renderer })`
+
+Fires with the `pagination` option (see [Multi-page forms](#multi-page-forms)) on every real page change: clicking a tab or a step, Previous/Next, Enter acting as Next, setting `renderer.page`, or a validation pass jumping to the page of the first invalid control. It does **not** fire on the initial render, or when the target page is the same as the current one (for example clicking the current tab, or setting `renderer.page` to its current value).
 
 ### Legacy: `config.action.onRender`
 
@@ -376,6 +409,143 @@ new FormeoRenderer({
 ```
 
 Give the upload field a `name` attribute in the editor to control the key your server receives.
+
+## Multi-page forms
+
+Each **stage** in `formData` is one page. Pass the `pagination` option to show them one at a time as tabs or a wizard, instead of all at once in a single `<form>`. Pagination only applies with **2 or more stages** — a single-stage form always renders as before, with no navigation added.
+
+```javascript
+const renderer = new FormeoRenderer({
+  renderContainer: document.getElementById('form-container'),
+  pagination: 'tabs', // or 'wizard', or an options object
+})
+```
+
+### Options
+
+`pagination` accepts:
+
+- `'tabs'` — a `role="tablist"` of buttons, one per page, with the ARIA tabs pattern (see [Tabs](#tabs) below).
+- `'wizard'` — Previous/Next buttons with an optional step list (see [Wizard](#wizard) below).
+- An options object: `{ type, progress, labels: { previous, next, page } }`
+
+| Key | Default | Meaning |
+|-----|---------|---------|
+| `type` | — (required) | `'tabs'` or `'wizard'` |
+| `progress` | `true` | Wizard only: show the clickable step list above the pages. `false` leaves it out. |
+| `labels.previous` | `'Previous'` | Wizard's Previous button text |
+| `labels.next` | `'Next'` | Wizard's Next button text |
+| `labels.page` | `'Page {n}'` | Fallback page title, used when a stage has no `config.title`. `{n}` is replaced with the 1-based page number. |
+
+Any other value for `pagination` (including `undefined`, `null`, or an unrecognized `type`) is treated as no pagination, and every stage renders visibly as it did before this feature.
+
+### Page titles
+
+A page's title comes from `stages[<id>].config.title`. If a stage has no title, the page falls back to `labels.page` (`'Page 2'`, or `'Seite 2'` with `labels: { page: 'Seite {n}' }`). Titles show up as tab labels and, in a wizard, as step list labels.
+
+```javascript
+formData.stages['stage-1'].config = { title: 'About you' }
+```
+
+### Tabs
+
+Clicking a tab shows its page immediately; there is no validation on switching. The tablist follows the [WAI-ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) with automatic activation and roving `tabindex`:
+
+- `ArrowLeft` / `ArrowRight` move to the previous/next tab and wrap around at the ends. In a right-to-left form (`dir="rtl"`), they swap: `ArrowLeft` moves to the next tab.
+- `Home` / `End` jump to the first/last tab.
+- Moving focus to a tab shows its page right away.
+
+Each page gets an `id` unique to its form (the tab's `aria-controls` points at it), because the stage's own id is also used by the editor and by any other form rendered from the same `formData`. The stage id stays on the page as `data-stage-id`.
+
+### Wizard
+
+A wizard adds:
+
+- An optional step list (`<ol class="formeo-pages-steps">`, on by default — set `progress: false` to remove it). Each step shows the page's title and a `data-state` of `"done"`, `"current"` or `"upcoming"`. Clicking a step ahead of the current page validates every page in between (see [Validation](#validation) below); clicking a step behind the current page is always allowed.
+- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden "N / M" status (`aria-live="polite"`, announced to screen readers on every page change). Next validates the current page before moving on. Next is hidden on the last page, and Previous is disabled on the first.
+- Pressing <kbd>Enter</kbd> in a text `<input>` (not a submit/button/reset/image/file input) acts as Next on every page but the last, instead of submitting a half-filled form. Textareas keep their newline behavior. On the last page, Enter submits the form natively.
+- A wizard should end with a submit button on its last page, since the Next button disappears there and nothing else advances the form.
+
+### Validation
+
+Whether the user submits the form or clicks Next/a step, an invalid control never gets silently skipped:
+
+- The wizard's Next button and step list validate the current page (and, for a step further ahead, every page up to but not including the target) the way native submission would, stopping at and reporting the first invalid control.
+- Submitting the form (a submit button, <kbd>Enter</kbd>'s implicit submission, or `form.requestSubmit()`) or calling `form.reportValidity()` shows the page holding the **first** invalid control, so the browser's native validation bubble lands on a visible field.
+- A plain `checkValidity()`, on the form or on a single control, is silent and never switches pages. It's safe to call from `onChange`, for example to disable a submit button until the form is valid.
+- A [condition](#conditional-logic) that hides a field suspends only its `required`: the field stops being required until it's shown again (see [`then` actions](#then-actions)), regardless of which page it lives on. A hidden field that fails another constraint, such as `pattern` or a value that doesn't match its `type`, still blocks submission and Next, as it would natively.
+- A form with `novalidate` is never checked, just as native submission skips it: Next, Enter and the step list move on freely.
+
+### `renderer.page`, `renderer.pageCount`, `onPageChange`
+
+```javascript
+renderer.page // 0-based index of the page currently shown
+renderer.page = 1 // shows a page directly; out-of-range indexes are clamped; does not validate
+renderer.pageCount // number of pages (1 without pagination or with a single stage)
+```
+
+Pass `events.onPageChange` to run code on every real page change — see [`onPageChange`](#onpagechange-page-previouspage-form-renderer-).
+
+### Styling
+
+Pagination renders these class names for styling:
+
+| Class | Element |
+|-------|---------|
+| `.formeo-pages-nav` | The tablist (`<nav role="tablist">`) or the wizard's Previous/Next bar (`<div role="group">`) |
+| `.formeo-pages-tabs` | Modifier on `.formeo-pages-nav` when it's the tablist |
+| `.formeo-pages-tab` | A tab button |
+| `.formeo-pages-wizard` | Modifier on `.formeo-pages-nav` when it's the wizard's Previous/Next bar |
+| `.formeo-pages-steps` | The wizard's step list (`<ol>`) |
+| `.formeo-pages-step[data-state]` | A step (`<li>`); `data-state` is `"done"`, `"current"` or `"upcoming"` |
+| `.formeo-pages-previous` | The wizard's Previous button |
+| `.formeo-pages-next` | The wizard's Next button |
+| `.formeo-pages-status` | The wizard's "N / M" status (visually hidden, screen-reader only) |
+
+### Example
+
+```javascript
+const formData = {
+  id: 'signup',
+  stages: {
+    'stage-1': { id: 'stage-1', config: { title: 'About you' }, children: ['row-1'] },
+    'stage-2': { id: 'stage-2', config: { title: 'Account' }, children: ['row-2'] },
+  },
+  rows: {
+    'row-1': { id: 'row-1', config: {}, children: ['col-1'] },
+    'row-2': { id: 'row-2', config: {}, children: ['col-2'] },
+  },
+  columns: {
+    'col-1': { id: 'col-1', config: { width: '100%' }, children: ['name'] },
+    'col-2': { id: 'col-2', config: { width: '100%' }, children: ['email'] },
+  },
+  fields: {
+    name: { id: 'name', tag: 'input', attrs: { type: 'text', name: 'name' }, config: { label: 'Name' } },
+    email: {
+      id: 'email',
+      tag: 'input',
+      attrs: { type: 'email', name: 'email', required: true },
+      config: { label: 'Email' },
+    },
+  },
+}
+
+const renderer = new FormeoRenderer({
+  renderContainer: document.getElementById('form-container'),
+  pagination: 'wizard',
+  events: {
+    onPageChange: ({ page }) => console.log(`page ${page + 1}`),
+  },
+})
+
+renderer.render(formData)
+```
+
+### Limitations
+
+- The editor has no page UI yet — there's no way to add, rename or switch pages from the visual builder. Pages are defined directly in `formData`, for example by setting `stages[<id>].config.title` by hand or from your own tooling.
+- `render()` starts over on the first page and does not fire `onPageChange`.
+- The static `html` getter serializes whatever is currently rendered; it has no page switching of its own. Every stage is present in that HTML string, `hidden` or not, exactly as attached to the DOM at the time `html` is read.
 
 ## Conditional Logic
 
@@ -721,6 +891,9 @@ const component = renderer.components[componentId]
 | `userData` (set) | - | Set/pre-fill form field values |
 | `userFormData` (get) | Array | Get user data with labels and metadata |
 | `html` (get) | String | Get rendered form as HTML string |
+| `page` (get) | Number | Get the 0-based index of the currently shown page |
+| `page` (set) | - | Show a page without validating; index is clamped |
+| `pageCount` (get) | Number | Get the number of pages (1 without pagination) |
 | `render(formData)` | - | Render form to container |
 | `getRenderedForm(formData)` | HTMLElement | Get rendered form element |
 
