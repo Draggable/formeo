@@ -39,7 +39,7 @@ const imageAnnotateControl = {
   // action.onRender runs on the editor's field preview, once it is in the page
   action: {
     onRender: elem => {
-      window.annotate.init(elem.querySelector('.image-annotate'))
+      window.annotate.init(elem)
     },
   },
 }
@@ -68,7 +68,7 @@ class ImageAnnotateControl extends Control {
       children: [{ tag: 'input', attrs: { type: 'hidden', name: 'annotation' } }],
       dependencies: { js: 'https://cdn.example.com/annotate.min.js' },
       action: {
-        onRender: elem => window.annotate.init(elem.querySelector('.image-annotate')),
+        onRender: elem => window.annotate.init(elem),
       },
     })
   }
@@ -110,7 +110,7 @@ const renderer = new FormeoRenderer({
     'image-annotate': {
       dependencies: { js: 'https://cdn.example.com/annotate.min.js' },
       action: {
-        onRender: elem => window.annotate.init(elem.querySelector('.image-annotate')),
+        onRender: elem => window.annotate.init(elem),
       },
     },
   },
@@ -131,7 +131,7 @@ it changes, e.g. as a data URL after the user finishes annotating:
 action: {
   onRender: elem => {
     const hiddenInput = elem.querySelector('input[name="annotation"]')
-    window.annotate.init(elem.querySelector('.image-annotate'), {
+    window.annotate.init(elem, {
       onChange: dataUrl => {
         hiddenInput.value = dataUrl
       },
