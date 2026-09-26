@@ -148,6 +148,10 @@ describe('DOM Class', async _t => {
     const resolvedNonExistent = dom.resolveContainer('#non-existent-element')
     assert.equal(resolvedNonExistent, null)
 
+    // jQuery objects resolve to their first element (#266)
+    assert.equal(dom.resolveContainer({ jquery: '3.7.1', 0: testDiv, length: 1 }), testDiv)
+    assert.equal(dom.resolveContainer({ jquery: '3.7.1', length: 0 }), null)
+
     // Cleanup
     document.body.removeChild(testDiv)
   })

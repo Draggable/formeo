@@ -36,13 +36,14 @@ export class FormeoEditor {
    * @param  {String|Object}   userFormData loaded formData
    * @return {Object}          formeo references and actions
    */
-  constructor({ formData, ...options }, userFormData) {
+  constructor({ formData, ...options } = {}, userFormData) {
     const mergedOptions = merge(defaults.editor, options)
 
     const { actions, events, debug, config, editorContainer, ...opts } = mergedOptions
     if (editorContainer) {
       this.editorContainer = dom.resolveContainer(editorContainer) || null
     }
+    this.editorContainerOption = editorContainer
     this.opts = opts
     dom.setOptions = opts
     Components.config = config
@@ -321,6 +322,15 @@ export class FormeoEditor {
         dom.empty(controlsContainer)
       }
       controlsContainer.appendChild(this.controls.dom)
+    }
+
+    if (!this.editorContainer && this.editorContainerOption) {
+      this.editorContainer = dom.resolveContainer(this.editorContainerOption) || null
+      if (!this.editorContainer) {
+        console.warn(
+          `Formeo: editorContainer ${String(this.editorContainerOption)} was not found, so the editor was not added to the page.`
+        )
+      }
     }
 
     if (this.editorContainer) {

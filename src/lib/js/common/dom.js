@@ -995,8 +995,19 @@ class DOM {
     )
   }
 
+  /**
+   * Resolve a container option to a DOM element
+   * @param {String|Element|Object} container selector, element, or jQuery object (its first element is used)
+   * @return {Element|null|undefined}
+   */
   resolveContainer(container) {
-    return typeof container === 'string' ? document.querySelector(container) : container
+    if (typeof container === 'string') {
+      return document.querySelector(container)
+    }
+    if (container?.jquery) {
+      return container[0] || null
+    }
+    return container
   }
 }
 

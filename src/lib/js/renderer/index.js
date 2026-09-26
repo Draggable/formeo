@@ -16,7 +16,7 @@ import {
 } from './helpers.js'
 
 export default class FormeoRenderer {
-  constructor(opts, formDataArg) {
+  constructor(opts = {}, formDataArg) {
     const { renderContainer: container, elements, formData, config, events } = processOptions(opts)
     this.container = container
     this.form = cleanFormData(formDataArg || formData)
@@ -147,6 +147,11 @@ export default class FormeoRenderer {
    * @param {Object} formData
    */
   render(formData = this.form) {
+    if (!this.container) {
+      throw new Error(
+        'FormeoRenderer: renderContainer is required for render(); use getRenderedForm() or html without one'
+      )
+    }
     this.form = cleanFormData(formData)
     const renderedForm = this.getRenderedForm(formData)
     const existingRenderedForm = this.container.querySelector('.formeo-render')

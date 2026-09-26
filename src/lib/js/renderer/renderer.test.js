@@ -746,4 +746,28 @@ describe('FormeoRenderer', () => {
       assert.deepEqual(seen, ['FORM'])
     })
   })
+
+  describe('containers (#266)', () => {
+    const emptyForm = { id: 'c-form', stages: {}, rows: {}, columns: {}, fields: {} }
+
+    test('can be constructed without options', () => {
+      assert.doesNotThrow(() => new FormeoRenderer())
+    })
+
+    test('render() without a container explains what is missing', () => {
+      assert.throws(() => new FormeoRenderer().render(emptyForm), /renderContainer/)
+    })
+
+    test('html works without a container', () => {
+      const renderer = new FormeoRenderer()
+      renderer.formData = emptyForm
+      assert.ok(renderer.html.startsWith('<form'))
+    })
+
+    test('accepts a jQuery object as renderContainer', () => {
+      const renderer = new FormeoRenderer({ renderContainer: { jquery: '3.7.1', 0: container, length: 1 } })
+      renderer.render(emptyForm)
+      assert.ok(container.querySelector('.formeo-render'))
+    })
+  })
 })

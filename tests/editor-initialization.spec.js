@@ -81,6 +81,28 @@ test.describe('Editor Initialization', () => {
 
     expect(hasInitState).toBe(true)
   })
+
+  test('new FormeoEditor() without options does not throw (#266)', async ({ page }) => {
+    const result = await page.evaluate(() => {
+      try {
+        new window.FormeoEditor()
+        return 'ok'
+      } catch (err) {
+        return err.message
+      }
+    })
+    expect(result).toBe('ok')
+  })
+
+  test('warns when editorContainer cannot be found (#266)', async ({ page }) => {
+    const warnings = []
+    page.on('console', msg => msg.type() === 'warning' && warnings.push(msg.text()))
+    await page.evaluate(async () => {
+      const editor = new window.FormeoEditor({ editorContainer: '#does-not-exist' })
+      await editor.whenReady()
+    })
+    expect(warnings.some(text => text.includes('#does-not-exist'))).toBe(true)
+  })
 })
 
 test.describe('Form Data Persistence', () => {

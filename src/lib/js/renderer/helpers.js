@@ -5,9 +5,8 @@ import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, UUID_REGEXP } from '../cons
 
 export const RENDER_PREFIX = 'f-'
 
-export const containerLookup = container =>
-  typeof container === 'string' ? document.querySelector(container) : container
-export const processOptions = ({ editorContainer, renderContainer, formData, ...opts }) => {
+export const containerLookup = container => dom.resolveContainer(container)
+export const processOptions = ({ editorContainer, renderContainer, formData, ...opts } = {}) => {
   const processedOptions = {
     renderContainer: containerLookup(renderContainer),
     editorContainer: containerLookup(editorContainer),
