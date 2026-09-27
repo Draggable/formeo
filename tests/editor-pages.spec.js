@@ -1,6 +1,6 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
-import { callsOf, clearDemo, formDataOf, mountEditor, threePageForm } from './helpers/pages.js'
+import { callsOf, clearDemo, dragTo, formDataOf, mountEditor, threePageForm } from './helpers/pages.js'
 
 const visibleStages = editor => editor.locator('.formeo-stage:visible')
 
@@ -248,5 +248,20 @@ test.describe('Editor page tabs (#122)', () => {
     await editor.getByRole('button', { name: 'Remove page "Page 3"' }).click()
     await expect(editor.getByRole('tab')).toHaveCount(3)
     expect(await page.evaluate(() => window.e2eVetoed['e2e-pages'])).toEqual(['p-s3'])
+  })
+
+  test('dragging a tab reorders the pages', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await dragTo(page, editor.getByRole('tab', { name: 'Page 3' }), editor.getByRole('tab', { name: 'About you' }))
+    await expect.poll(async () => Object.keys((await formDataOf(page)).stages)).toEqual(['p-s3', 'p-s1', 'p-s2'])
+    await expect(editor.getByRole('tab')).toHaveText(['Page 1', 'About you', 'Account'])
+  })
+
+  test('Alt+ArrowRight moves the focused page', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'About you' }).focus()
+    await page.keyboard.press('Alt+ArrowRight')
+    expect(Object.keys((await formDataOf(page)).stages)).toEqual(['p-s2', 'p-s1', 'p-s3'])
+    await expect(editor.getByRole('tab', { name: 'About you' })).toBeFocused()
   })
 })

@@ -1,3 +1,4 @@
+import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { destroySortables } from '../../common/sortable.js'
 import { pageText } from './page-text.mjs'
@@ -468,9 +469,69 @@ export class EditorPages {
     return true
   }
 
-  // Task 9 replaces these two
-  movePage(_stageId, _toIndex) {}
-  createTabSorter() {}
+  /** Tabs can be dragged along the tablist to reorder pages */
+  createTabSorter() {
+    Sortable.create(this.tablist, {
+      animation: 150,
+      direction: 'horizontal',
+      draggable: '.formeo-page-tab-wrap',
+      handle: '.formeo-page-tab',
+      filter: '.formeo-page-title-input',
+      preventOnFilter: false,
+      forceFallback: true,
+      fallbackTolerance: 5,
+      group: { name: `page-tabs-${this.components.instanceId}`, pull: false, put: false },
+      onEnd: () => this.reorderFromDom(),
+    })
+  }
+
+  /** Puts the pages in the order their tabs now have; a rename in progress on another tab is committed first */
+  reorderFromDom() {
+    this.commitRename()
+    const ids = [...this.tablist.children].map(wrap => wrap.dataset.stageId)
+    if (this.stages.reorder(ids)) {
+      this.afterReorder()
+    } else {
+      this.orderTabs()
+    }
+  }
+
+  /**
+   * Moves a page to a new position (Alt+ArrowLeft/Right)
+   * @param {String} stageId
+   * @param {Number} toIndex
+   */
+  movePage(stageId, toIndex) {
+    const ids = this.ids
+    if (toIndex < 0 || toIndex >= ids.length || ids.indexOf(stageId) === toIndex) {
+      return
+    }
+    const order = ids.filter(id => id !== stageId)
+    order.splice(toIndex, 0, stageId)
+    if (this.stages.reorder(order)) {
+      this.afterReorder()
+      this.tabFor(stageId)?.focus()
+    }
+  }
+
+  /** Puts the tabs back in page order, e.g. when a reorder was refused */
+  orderTabs() {
+    for (const id of this.ids) {
+      const wrap = this.wrapFor(id)
+      if (wrap) {
+        this.tablist.append(wrap)
+      }
+    }
+  }
+
+  afterReorder() {
+    this.orderTabs()
+    for (const id of this.ids) {
+      this.wrapper?.append(this.stages.get(id).dom)
+    }
+    this.refreshLabels()
+    this.sync()
+  }
 
   // Task 10 replaces this
   createDropTarget(_wrap, _stageId) {}

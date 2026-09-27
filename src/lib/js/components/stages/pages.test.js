@@ -220,8 +220,9 @@ describe('EditorPages add, labels and destroy (#122)', () => {
     const { editor, pages, components } = setup()
     const tablist = editor.querySelector('.formeo-page-tabs')
     const stage = components.stages.get('p-3')
+    assert.ok(Sortable.get(tablist) instanceof Sortable, 'the tablist has a real Sortable before destroy()')
     pages.destroy()
-    assert.equal(Sortable.get(tablist), undefined)
+    assert.equal(Sortable.get(tablist), null)
     stage.set('config.title', 'After')
     assert.equal(tabs(editor)[2].textContent, 'Page 3')
   })
@@ -394,5 +395,45 @@ describe('EditorPages remove (#122)', () => {
     pages.requestRemove('p-1')
     assert.equal(page.mock.callCount(), 2)
     assert.equal(pages.count, 1)
+  })
+})
+
+describe('EditorPages reorder (#122)', () => {
+  it('Alt+ArrowRight moves a page later and keeps focus on it', () => {
+    const { editor, components } = setup()
+    const [first] = tabs(editor)
+    first.focus()
+    key(first, 'ArrowRight', { altKey: true })
+    assert.deepEqual(Object.keys(components.formData.stages), ['p-2', 'p-1', 'p-3'])
+    assert.deepEqual(
+      tabs(editor).map(tab => tab.textContent),
+      ['Account', 'About you', 'Page 3']
+    )
+    assert.equal(document.activeElement.textContent, 'About you')
+  })
+
+  it('Alt+Arrow stops at the ends and swaps in RTL', () => {
+    const { editor, components } = setup()
+    editor.dir = 'rtl'
+    const [first] = tabs(editor)
+    first.focus()
+    key(first, 'ArrowRight', { altKey: true })
+    assert.deepEqual(Object.keys(components.formData.stages), ['p-1', 'p-2', 'p-3'])
+    key(first, 'ArrowLeft', { altKey: true })
+    assert.deepEqual(Object.keys(components.formData.stages), ['p-2', 'p-1', 'p-3'])
+  })
+
+  it('renumbers untitled pages after a move', () => {
+    const { editor, pages } = setup()
+    pages.movePage('p-3', 0)
+    assert.equal(tabs(editor)[0].textContent, 'Page 1')
+  })
+
+  it('reorderFromDom follows the tabs order', () => {
+    const { editor, pages, components } = setup()
+    const tablist = editor.querySelector('.formeo-page-tabs')
+    tablist.prepend(tablist.lastElementChild)
+    pages.reorderFromDom()
+    assert.deepEqual(Object.keys(components.formData.stages), ['p-3', 'p-1', 'p-2'])
   })
 })
