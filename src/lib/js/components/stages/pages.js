@@ -3,6 +3,15 @@ import dom from '../../common/dom.js'
 import { destroySortables } from '../../common/sortable.js'
 import { pageText } from './page-text.mjs'
 
+/** How long a tab stays highlighted after content moves to its page, in ms */
+const FLASH_DURATION = 1000
+
+/**
+ * How long the live region stays empty before an announcement, in ms. Screen readers need to see it change, and a
+ * message set in the same task it was cleared in (e.g. a second "Moved to Account") may not be read again.
+ */
+export const ANNOUNCE_DELAY = 100
+
 /**
  * Creates an element with attributes, text and children. Titles are user data, so text is never parsed as HTML.
  * @param {String} tag
@@ -41,7 +50,9 @@ export class EditorPages {
     this.tablist = null
     this.status = null
     this.renaming = null
-    this.flashTimers = new Set()
+    // stage id => timer ending its tab's flash
+    this.flashTimers = new Map()
+    this.announceTimer = null
     this.stageListeners = new Map()
   }
 
@@ -298,10 +309,16 @@ export class EditorPages {
    * @param {String} text
    */
   announce(text) {
-    if (this.status) {
-      this.status.textContent = ''
-      this.status.textContent = text
+    const { status } = this
+    if (!status) {
+      return
     }
+    clearTimeout(this.announceTimer)
+    status.textContent = ''
+    this.announceTimer = setTimeout(() => {
+      this.announceTimer = null
+      status.textContent = text
+    }, ANNOUNCE_DELAY)
   }
 
   onClick = ({ target }) => {
@@ -533,19 +550,91 @@ export class EditorPages {
     this.sync()
   }
 
-  // Task 10 replaces this
-  createDropTarget(_wrap, _stageId) {}
+  /**
+   * Makes a tab accept rows, columns, fields and controls from this editor; what lands on it goes to the end
+   * of its page, and the page on screen stays the same
+   * @param {HTMLElement} wrap .formeo-page-tab-wrap
+   * @param {String} stageId
+   */
+  createDropTarget(wrap, stageId) {
+    const group = name => `${name}-${this.components.instanceId}`
+    Sortable.create(wrap, {
+      group: { name: group('page-tab'), pull: false, put: ['stage', 'row', 'column', 'controls'].map(group) },
+      sort: false,
+      // nothing in a tab is draggable from here: tabs are dragged by the tablist's own Sortable
+      draggable: '.formeo-page-drop-item',
+      onAdd: evt => this.onTabDrop(evt, stageId),
+    })
+  }
 
-  /** Releases the bar's Sortables and timers; the stages keep their DOM */
+  /**
+   * Moves what was dropped on a tab to the end of that tab's page. The target stage's own onAdd sorts out
+   * what it becomes: a row moves, a column gets a new row, a field a new row and column, a control its field.
+   */
+  onTabDrop({ item, from }, stageId) {
+    const stage = this.stageAt(stageId)
+    if (!stage) {
+      return
+    }
+    const children = stage.dom.querySelector('.children')
+    children.appendChild(item)
+    stage.onAdd({ from, to: children, item, newIndex: children.children.length - 1 })
+    this.afterMove(stageId)
+  }
+
+  /**
+   * Moves a row to the end of another page ("Move to page")
+   * @param {Row} row
+   * @param {String} stageId
+   * @return {Boolean} whether it moved
+   */
+  moveToPage(row, stageId) {
+    const stage = this.stageAt(stageId)
+    const source = row?.parent
+    if (!stage || !source || source === stage) {
+      return false
+    }
+    stage.dom.querySelector('.children').appendChild(row.dom)
+    for (const changed of [stage, source]) {
+      changed.saveChildOrder()
+      changed.emptyClass()
+    }
+    this.afterMove(stageId)
+    return true
+  }
+
+  /**
+   * Highlights a page's tab for a moment and announces "Moved to {title}"
+   * @param {String} stageId
+   */
+  afterMove(stageId) {
+    const wrap = this.wrapFor(stageId)
+    if (wrap) {
+      clearTimeout(this.flashTimers.get(stageId))
+      wrap.classList.add('formeo-page-tab-flash')
+      this.flashTimers.set(
+        stageId,
+        setTimeout(() => {
+          wrap.classList.remove('formeo-page-tab-flash')
+          this.flashTimers.delete(stageId)
+        }, FLASH_DURATION)
+      )
+    }
+    this.announce(pageText('pages.moved', { title: this.titleOf(stageId) }))
+  }
+
+  /** Releases the bar's Sortables (the tab sorter and every tab's drop target) and timers; the stages keep their DOM */
   teardown() {
     this.commitRename()
     if (this.tablist) {
       destroySortables(this.tablist)
     }
-    for (const timer of this.flashTimers) {
+    for (const timer of this.flashTimers.values()) {
       clearTimeout(timer)
     }
     this.flashTimers.clear()
+    clearTimeout(this.announceTimer)
+    this.announceTimer = null
   }
 
   /**

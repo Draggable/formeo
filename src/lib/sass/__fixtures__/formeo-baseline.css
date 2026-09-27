@@ -1840,6 +1840,13 @@ button[class*=-clone]:hover .svg-icon {
   align-items: center;
   max-inline-size: 16em;
 }
+.formeo.formeo-editor .formeo-page-tab-wrap > :not(.formeo-page-tab, .formeo-page-remove, .formeo-page-title-input) {
+  display: none !important;
+}
+.formeo.formeo-editor .formeo-page-tab-wrap:has(> :not(.formeo-page-tab, .formeo-page-remove, .formeo-page-title-input)) .formeo-page-tab, .formeo.formeo-editor .formeo-page-tab-wrap.formeo-page-tab-flash .formeo-page-tab {
+  background-color: rgb(185.3507109005, 181.7890995261, 244.7109004739);
+  color: #111827;
+}
 .formeo.formeo-editor .formeo-page-tab {
   overflow: hidden;
   margin-block-end: -1px;

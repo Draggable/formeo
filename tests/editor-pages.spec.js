@@ -1,6 +1,6 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
-import { callsOf, clearDemo, dragTo, formDataOf, mountEditor, threePageForm } from './helpers/pages.js'
+import { callsOf, clearDemo, dragTo, formDataOf, mountEditor, moveHandle, threePageForm } from './helpers/pages.js'
 
 const visibleStages = editor => editor.locator('.formeo-stage:visible')
 
@@ -263,5 +263,47 @@ test.describe('Editor page tabs (#122)', () => {
     await page.keyboard.press('Alt+ArrowRight')
     expect(Object.keys((await formDataOf(page)).stages)).toEqual(['p-s2', 'p-s1', 'p-s3'])
     await expect(editor.getByRole('tab', { name: 'About you' })).toBeFocused()
+  })
+
+  test('a row dropped on a tab moves to that page', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await dragTo(page, await moveHandle(editor, 'row', 'p-r1'), editor.getByRole('tab', { name: 'Page 3' }))
+    await expect.poll(async () => (await formDataOf(page)).stages['p-s3'].children).toEqual(['p-r1'])
+    await expect(editor.locator('.formeo-pages-status')).toHaveText('Moved to Page 3')
+    await expect(editor.locator('[id="p-s1"]')).toBeVisible()
+  })
+
+  test('a field dropped on a tab lands on that page in a new row', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Account' }).click()
+    await dragTo(page, await moveHandle(editor, 'field', 'p-f2'), editor.getByRole('tab', { name: 'About you' }))
+    await expect.poll(async () => (await formDataOf(page)).stages['p-s1'].children.length).toBe(2)
+    const data = await formDataOf(page)
+    const newRow = data.stages['p-s1'].children[1]
+    expect(data.columns[data.rows[newRow].children[0]].children).toEqual(['p-f2'])
+  })
+
+  test('a control dropped on a tab creates its field on that page', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await dragTo(page, editor.getByRole('button', { name: 'Text Input' }), editor.getByRole('tab', { name: 'Page 3' }))
+    await expect.poll(async () => (await formDataOf(page)).stages['p-s3'].children.length).toBe(1)
+  })
+
+  test('another editor’s tab refuses a row or a control', async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 2000 })
+    const editor = await mountEditor(page)
+    const other = await mountEditor(page, { id: 'e2e-other', formData: threePageForm('q') })
+    const theirs = await formDataOf(page, 'e2e-other')
+    const target = other.getByRole('tab', { name: 'Page 3' })
+
+    await dragTo(page, await moveHandle(editor, 'row', 'p-r1'), target)
+    // a refused control may stay where Sortable last placed it on its way out of this editor, so only the other
+    // editor is checked for it
+    await dragTo(page, editor.getByRole('button', { name: 'Text Input' }), target)
+
+    await expect(other.locator('.formeo-page-tab-wrap > :not(button, input)')).toHaveCount(0)
+    expect(await formDataOf(page, 'e2e-other')).toEqual(theirs)
+    await expect(other.locator('.formeo-pages-status')).toHaveText('')
+    expect((await formDataOf(page)).stages['p-s1'].children).toContain('p-r1')
   })
 })

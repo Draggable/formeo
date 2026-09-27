@@ -4,7 +4,7 @@ import Sortable from 'sortablejs'
 import { Actions } from '../../common/actions.js'
 import { Events } from '../../common/events.js'
 import { Components } from '../index.js'
-import { EditorPages } from './pages.js'
+import { ANNOUNCE_DELAY, EditorPages } from './pages.js'
 
 export const threePages = (key = 'p') => ({
   id: `form-${key}`,
@@ -435,5 +435,98 @@ describe('EditorPages reorder (#122)', () => {
     tablist.prepend(tablist.lastElementChild)
     pages.reorderFromDom()
     assert.deepEqual(Object.keys(components.formData.stages), ['p-3', 'p-1', 'p-2'])
+  })
+})
+
+describe('EditorPages moving content (#122)', () => {
+  it('moveToPage appends a row to another page and announces it', t => {
+    t.mock.timers.enable({ apis: ['setTimeout'] })
+    const { editor, pages, components } = setup()
+    const row = components.rows.get('p-r1')
+    assert.equal(pages.moveToPage(row, 'p-3'), true)
+    assert.deepEqual(components.formData.stages['p-3'].children, ['p-r1'])
+    assert.deepEqual(components.formData.stages['p-1'].children, [])
+    t.mock.timers.tick(ANNOUNCE_DELAY)
+    assert.equal(editor.querySelector('.formeo-pages-status').textContent, 'Moved to Page 3')
+    assert.ok(pages.wrapFor('p-3').classList.contains('formeo-page-tab-flash'))
+    assert.deepEqual(visibleStageIds(editor), ['p-1'])
+  })
+
+  it('moveToPage does nothing for the row’s own page', () => {
+    const { pages, components } = setup()
+    assert.equal(pages.moveToPage(components.rows.get('p-r1'), 'p-1'), false)
+  })
+
+  it('moveToPage does nothing for an unknown page or a missing row', () => {
+    const { pages, components } = setup()
+    assert.equal(pages.moveToPage(components.rows.get('p-r1'), 'nope'), false)
+    assert.equal(pages.moveToPage(undefined, 'p-2'), false)
+    assert.deepEqual(components.formData.stages['p-1'].children, ['p-r1'])
+  })
+
+  it('a row dropped on a tab moves to the end of that page', () => {
+    const { pages, components } = setup()
+    const row = components.rows.get('p-r1')
+    const from = row.dom.parentElement
+    const wrap = pages.wrapFor('p-2')
+    wrap.appendChild(row.dom)
+    pages.onTabDrop({ item: row.dom, from }, 'p-2')
+    components.stages.get('p-1').saveChildOrder()
+    assert.deepEqual(components.formData.stages['p-2'].children, ['p-r1'])
+    assert.equal(wrap.querySelector('.formeo-row'), null)
+  })
+
+  it('every tab is a drop target in a group of this editor', () => {
+    const { pages, components } = setup()
+    // Sortable normalises group.put into a function, so only the name is checked here; the Playwright
+    // "another editor's tab" test covers what is accepted
+    for (const id of pages.ids) {
+      assert.equal(Sortable.get(pages.wrapFor(id)).options.group.name, `page-tab-${components.instanceId}`)
+    }
+  })
+
+  it('flashes the tab for about a second, restarting on a second move', t => {
+    t.mock.timers.enable({ apis: ['setTimeout'] })
+    const { pages } = setup()
+    const flashing = () => pages.wrapFor('p-3').classList.contains('formeo-page-tab-flash')
+    pages.afterMove('p-3')
+    t.mock.timers.tick(600)
+    pages.afterMove('p-3')
+    t.mock.timers.tick(600)
+    assert.ok(flashing(), 'the second move restarts the flash')
+    t.mock.timers.tick(400)
+    assert.ok(!flashing())
+  })
+
+  it('announces a repeated message again, and only the latest of several', t => {
+    t.mock.timers.enable({ apis: ['setTimeout'] })
+    const { editor, pages } = setup()
+    const status = editor.querySelector('.formeo-pages-status')
+    pages.announce('Moved to Account')
+    t.mock.timers.tick(ANNOUNCE_DELAY)
+    assert.equal(status.textContent, 'Moved to Account')
+    pages.announce('Moved to Account')
+    assert.equal(status.textContent, '', 'cleared first, so the same text is a new change')
+    t.mock.timers.tick(ANNOUNCE_DELAY)
+    assert.equal(status.textContent, 'Moved to Account')
+    pages.announce('Moved to Page 3')
+    pages.announce('Moved to About you')
+    t.mock.timers.tick(ANNOUNCE_DELAY)
+    assert.equal(status.textContent, 'Moved to About you')
+  })
+
+  it('destroy() releases the drop targets and cancels pending flashes and announcements', t => {
+    t.mock.timers.enable({ apis: ['setTimeout'] })
+    const { editor, pages } = setup()
+    const wraps = [...editor.querySelectorAll('.formeo-page-tab-wrap')]
+    const status = editor.querySelector('.formeo-pages-status')
+    pages.afterMove('p-3')
+    pages.destroy()
+    t.mock.timers.runAll()
+    for (const wrap of wraps) {
+      assert.equal(Sortable.get(wrap), null)
+    }
+    assert.ok(wraps[2].classList.contains('formeo-page-tab-flash'), 'the flash timer was cleared, not run')
+    assert.equal(status.textContent, '', 'the announcement was cancelled')
   })
 })
