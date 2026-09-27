@@ -41,9 +41,14 @@ describe('stage add and remove events (#122)', () => {
     const onAddStage = mock.fn()
     const components = editorState({ onAdd, onAddStage })
     let stage
-    const seen = listen(EVENT_FORMEO_ADDED_STAGE, () => {
+const seen = []
+    const listener = evt => seen.push(evt.detail)
+    document.addEventListener(EVENT_FORMEO_ADDED_STAGE, listener)
+    try {
       stage = components.stages.add()
-    })
+    } finally {
+      document.removeEventListener(EVENT_FORMEO_ADDED_STAGE, listener)
+    }
 
     assert.deepEqual(
       seen.map(({ componentId, componentType }) => ({ componentId, componentType })),
