@@ -102,7 +102,8 @@
 }
 
 .stage-edit {
-  padding: mixins.space(2);
+  // inline padding lives on the nav and panels: overflow clips at the padding edge, so padding here would show the next panel
+  padding-block: mixins.space(2);
   background-color: t.$bg;
   margin-top: 0;
   margin-bottom: mixins.space(2);
@@ -110,6 +111,12 @@
 
   .panel-nav {
     border-bottom: 0 none !important;
+    margin-inline: mixins.space(2);
+  }
+
+  .f-panel {
+    box-sizing: border-box;
+    padding-inline: mixins.space(2);
   }
 
   .conditions-prop-inputs {

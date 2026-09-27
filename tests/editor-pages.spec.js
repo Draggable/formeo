@@ -218,6 +218,19 @@ test.describe('Editor page tabs (#122)', () => {
     await expect(editor.getByRole('tab', { name: 'Your details' })).toBeVisible()
   })
 
+  test("the stage edit panel's Conditions panel does not show the Configuration panel's Title", async ({ page }) => {
+    const editor = await mountEditor(page)
+    const stage = editor.locator('[id="p-s1"]')
+    await stage.locator('> .stage-actions').hover()
+    await stage.locator('> .stage-actions .edit-toggle').click()
+    const stageEdit = stage.locator('.stage-edit')
+    await expect(stageEdit.getByRole('heading', { name: 'Conditions', level: 5 })).toHaveClass(/active-tab/)
+    // the clip is the panel's border box: the Title item must sit wholly past its right edge
+    const editBox = await stageEdit.boundingBox()
+    const titleBox = await stageEdit.locator('.field-config-title').boundingBox()
+    expect(titleBox.x).toBeGreaterThanOrEqual(editBox.x + editBox.width)
+  })
+
   test('an empty page is removed at once', async ({ page }) => {
     const editor = await mountEditor(page)
     await editor.getByRole('tab', { name: 'Page 3' }).click()

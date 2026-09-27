@@ -1740,7 +1740,7 @@ button[class*=-clone]:hover .svg-icon {
   border-bottom-width: 0;
 }
 .formeo.formeo-editor .stage-edit {
-  padding: 16px;
+  padding-block: 16px;
   background-color: #fff;
   margin-top: 0;
   margin-bottom: 16px;
@@ -1748,6 +1748,11 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-editor .stage-edit .panel-nav {
   border-bottom: 0 none !important;
+  margin-inline: 16px;
+}
+.formeo.formeo-editor .stage-edit .f-panel {
+  box-sizing: border-box;
+  padding-inline: 16px;
 }
 .formeo.formeo-editor .stage-edit .conditions-prop-inputs {
   border-top: 1px solid #cccccc;
@@ -1829,6 +1834,7 @@ button[class*=-clone]:hover .svg-icon {
   gap: 8px;
   margin-block-end: 8px;
   border-block-end: 1px solid #cccccc;
+  max-width: calc(100% - 32px);
 }
 .formeo.formeo-editor .formeo-page-tabs {
   display: flex;
