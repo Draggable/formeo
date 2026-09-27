@@ -33,6 +33,7 @@
   gap: mixins.space(1);
   margin-block-end: mixins.space(1);
   border-block-end: 1px solid t.$border;
+  max-width: calc(100% - mixins.space(4));
 }
 
 .formeo-page-tabs {
