@@ -1,3 +1,24 @@
+# [5.7.0](https://github.com/Draggable/formeo/compare/v5.6.0...v5.7.0) (2026-09-27)
+
+
+### Bug Fixes
+
+* stage panels isolation ([7ce9b82](https://github.com/Draggable/formeo/commit/7ce9b8212309dac2d42030be7439567b9148f391))
+
+
+### Features
+
+* **actions:** add a cancelable remove.page action ([05372af](https://github.com/Draggable/formeo/commit/05372afe93b6ac4b7a52bdd508dbbd29d29f5932)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** add a Move to page row action ([1ef0d2d](https://github.com/Draggable/formeo/commit/1ef0d2da18681df2fd4ebf997b94c2de38d3bb7e)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** add page titles and reordering to the stages store ([77406d0](https://github.com/Draggable/formeo/commit/77406d0530de5ac7f04fb8942510f719626cdd1d)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** add the EditorPages tab bar ([70c4a3c](https://github.com/Draggable/formeo/commit/70c4a3cf1e527d0e7f57890188831456d080bf3d)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** fire add and remove events for stages ([49d914e](https://github.com/Draggable/formeo/commit/49d914ebce8acb0bc86041288f167749dec66204)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** move content to another page by dropping it on its tab ([705c076](https://github.com/Draggable/formeo/commit/705c0767a8e5ef1a22222365aea7340b2ec69084)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** remove pages from their tab ([bf2d500](https://github.com/Draggable/formeo/commit/bf2d500e6f79d1e9a3119f014570bb8ac947ea00)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** rename pages from their tab or the stage edit panel ([a3e3f70](https://github.com/Draggable/formeo/commit/a3e3f70b97b5444686a17653f7e89ee12fbe77e3)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** reorder pages by dragging their tabs ([a699e2f](https://github.com/Draggable/formeo/commit/a699e2fc464738f38df6b01bf7448f8509c57db9)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** show page tabs with the pages option ([8a949bc](https://github.com/Draggable/formeo/commit/8a949bcfad5cdc4c17cc8a1f9ac7b193af61f4c2)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+
 # [5.6.0](https://github.com/Draggable/formeo/compare/v5.5.0...v5.6.0) (2026-09-26)
 
 
