@@ -130,6 +130,89 @@ describe('Stages page helpers (#122)', () => {
     warn.mock.restore()
   })
 
+  it('honors an order that integer-like ids allow: they stay first, in ascending order', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const components = editorState(
+        form({
+          1: { id: '1', children: [] },
+          2: { id: '2', children: [] },
+          abc: { id: 'abc', children: [] },
+          def: { id: 'def', children: [] },
+        })
+      )
+      const data = components.stages.data
+      assert.equal(components.stages.reorder(['1', '2', 'def', 'abc']), true)
+      assert.deepEqual(Object.keys(components.formData.stages), ['1', '2', 'def', 'abc'])
+      assert.strictEqual(components.stages.data, data)
+      assert.strictEqual(components.get('stages'), data)
+      assert.equal(warn.mock.callCount(), 0)
+    } finally {
+      warn.mock.restore()
+    }
+  })
+
+  it('refuses an order that puts another page before an integer-like id, even from a partial list', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const { stages } = editorState(
+        form({
+          1: { id: '1', children: [] },
+          2: { id: '2', children: [] },
+          abc: { id: 'abc', children: [] },
+          def: { id: 'def', children: [] },
+        })
+      )
+      assert.equal(stages.reorder(['1', 'abc', '2', 'def']), false)
+      // missing ids go to the end: ['def', '1', '2', 'abc'], which can't be kept either
+      assert.equal(stages.reorder(['def']), false)
+      assert.deepEqual(Object.keys(stages.data), ['1', '2', 'abc', 'def'])
+      assert.equal(warn.mock.callCount(), 2)
+    } finally {
+      warn.mock.restore()
+    }
+  })
+
+  it('compares integer-like ids as numbers, not text', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const { stages } = editorState(
+        form({
+          2: { id: '2', children: [] },
+          10: { id: '10', children: [] },
+          abc: { id: 'abc', children: [] },
+          xyz: { id: 'xyz', children: [] },
+        })
+      )
+      assert.deepEqual(Object.keys(stages.data), ['2', '10', 'abc', 'xyz'])
+      assert.equal(stages.reorder(['10', '2', 'abc', 'xyz']), false)
+      assert.equal(stages.reorder(['2', '10', 'xyz', 'abc']), true)
+      assert.deepEqual(Object.keys(stages.data), ['2', '10', 'xyz', 'abc'])
+      assert.equal(warn.mock.callCount(), 1)
+    } finally {
+      warn.mock.restore()
+    }
+  })
+
+  it('treats ids that only look numeric ("01", "4294967295") as ordinary ids', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const { stages } = editorState(
+        form({
+          abc: { id: 'abc', children: [] },
+          '01': { id: '01', children: [] },
+          4294967295: { id: '4294967295', children: [] },
+        })
+      )
+      assert.deepEqual(Object.keys(stages.data), ['abc', '01', '4294967295'])
+      assert.equal(stages.reorder(['4294967295', '01', 'abc']), true)
+      assert.deepEqual(Object.keys(stages.data), ['4294967295', '01', 'abc'])
+      assert.equal(warn.mock.callCount(), 0)
+    } finally {
+      warn.mock.restore()
+    }
+  })
+
   it('never auto-generates an integer-like page id, even when uuid() looks numeric', () => {
     // JS objects list an integer-like key ("12345678") before any string key regardless of insertion order, which
     // would silently jump a newly added page to the front instead of appending it (#122). uuid() is 8 hex

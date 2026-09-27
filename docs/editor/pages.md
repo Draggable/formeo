@@ -200,12 +200,13 @@ any other component's data is kept in `formData` but not shown in its edit panel
 
 ## A note on `stages.reorder()`
 
-Page order is the key order of `formData.stages`. `stages.reorder(ids)` (used to drag-reorder tabs and for
-Alt+Arrow) refuses to reorder — with a console warning, and no change — when any of the given ids look like an
-array index (`"1"`, `"2"`, …), because such a key would always sort to the front of the object regardless of
-when it was added. Formeo's own generated stage ids never look like this, but if you supply your own stage ids
-directly in `formData`, keep them from looking like array indexes if you want to reorder pages by dragging or
-with Alt+Arrow.
+Page order is the key order of `formData.stages`. JavaScript always lists keys that look like an array index (`"1"`,
+`"2"`, …) first, in ascending numeric order, regardless of when they were added. So pages with such ids always come
+first, in that order: `stages.reorder(ids)` (used to drag-reorder tabs and for Alt+Arrow) refuses an order that puts
+another page before one of them or reorders them among themselves, with a console warning and no change, and the tabs
+go back to their places. Any other reorder works. Formeo's own generated stage ids never look like this, but if you
+supply your own stage ids directly in `formData`, keep them from looking like array indexes if you want to reorder
+pages freely.
 
 ## Limitations
 

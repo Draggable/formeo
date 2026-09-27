@@ -17,6 +17,17 @@ const DEFAULT_CONFIG = () => ({
   },
 })
 
+/**
+ * Whether an order can be kept as an object's key order. JS lists integer-like keys ("1", "2") first, in ascending
+ * numeric order, whatever their insertion order (#122), so they must already lead, in that order.
+ * @param {String[]} ids
+ * @return {Boolean}
+ */
+const isRepresentableOrder = ids => {
+  const indexIds = ids.filter(looksLikeArrayIndex)
+  return indexIds.every((id, i) => ids[i] === id && (i === 0 || Number(indexIds[i - 1]) < Number(id)))
+}
+
 export class Stages extends ComponentData {
   constructor(stageData) {
     super('stages', stageData)
@@ -60,7 +71,8 @@ export class Stages extends ComponentData {
 
   /**
    * Puts the stages (pages) in a new order. Page order is the key order of this store's data, the same object as
-   * the editor's formData.stages, so the keys are re-inserted in place.
+   * the editor's formData.stages, so the keys are re-inserted in place. Integer-like ids always come first, in
+   * ascending order, so an order that moves another page before one of them, or reorders them, is refused.
    * @param {String[]} ids stage ids in the new order; unknown ids are ignored, missing ones keep their order at the end
    * @return {Boolean} whether the order changed
    */
@@ -70,7 +82,7 @@ export class Stages extends ComponentData {
     if (wanted.every((id, i) => id === current[i])) {
       return false
     }
-    if (wanted.some(looksLikeArrayIndex)) {
+    if (!isRepresentableOrder(wanted)) {
       console.warn(
         'formeo: pages whose ids look like array indexes ("1", "2") keep their order; use other ids to reorder them.'
       )
