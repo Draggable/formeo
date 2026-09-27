@@ -107,7 +107,7 @@ export const uuid = elem => {
 }
 
 // JS objects list an integer-like key ("1", "2") before any string key, whatever its insertion order (#122)
-export const looksLikeArrayIndex = id => String(Number.parseInt(id, 10)) === id
+export const looksLikeArrayIndex = id => /^(?:0|[1-9]\d*)$/.test(id) && Number(id) < 2 ** 32 - 1
 
 /**
  * A fresh id that never looks like an array index, for ids whose *store's key order* is meaningful (e.g. stage/page
