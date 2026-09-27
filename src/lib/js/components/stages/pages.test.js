@@ -21,9 +21,12 @@ export const threePages = (key = 'p') => ({
 })
 
 const mounted = []
-export const setup = ({ formData = threePages(), callbacks = {}, actions = {} } = {}) => {
+export const setup = ({ formData = threePages(), callbacks = {}, actions = {}, config } = {}) => {
   const events = new Events().init(callbacks)
   const components = new Components({ events, actions: new Actions(events).init(actions) })
+  if (config) {
+    components.config = config
+  }
   components.load(formData, { pages: true })
   const pages = new EditorPages(components)
   components.pages = pages
@@ -462,6 +465,25 @@ describe('EditorPages moving content (#122)', () => {
     assert.equal(pages.moveToPage(components.rows.get('p-r1'), 'nope'), false)
     assert.equal(pages.moveToPage(undefined, 'p-2'), false)
     assert.deepEqual(components.formData.stages['p-1'].children, ['p-r1'])
+  })
+
+  it('only rows move: a column or field is never moved, offered the dialog, or given the button', () => {
+    const withPage = { actionButtons: { buttons: ['page'] } }
+    const { pages, components } = setup({
+      config: { stages: {}, rows: {}, columns: { all: withPage }, fields: { all: withPage } },
+    })
+    const column = components.columns.get('p-c1')
+    const field = components.fields.get('p-f1')
+    for (const component of [column, field]) {
+      assert.equal(component.dom.querySelector('.item-page'), null, `${component.name} has no page button`)
+      assert.equal(pages.moveToPage(component, 'p-2'), false)
+      pages.openMoveDialog(component)
+      assert.equal(document.querySelector('dialog.move-to-page-dialog'), null)
+    }
+    assert.ok(components.rows.get('p-r1').dom.querySelector('.row-actions .item-page'), 'the row keeps its button')
+    assert.deepEqual(components.formData.stages['p-1'].children, ['p-r1'])
+    assert.deepEqual(components.formData.rows['p-r1'].children, ['p-c1'])
+    assert.deepEqual(components.formData.columns['p-c1'].children, ['p-f1'])
   })
 
   it('a row dropped on a tab moves to the end of that page', () => {

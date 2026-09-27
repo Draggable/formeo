@@ -24,6 +24,7 @@ import {
 import Data from './data.js'
 import EditPanel from './edit-panel/edit-panel.js'
 import Panels from './panels.js'
+import { pageText } from './stages/page-text.mjs'
 
 const propertyOptions = objectFromStringArray(PROPERTY_OPTIONS)
 
@@ -443,10 +444,30 @@ export default class Component extends Data {
           },
         }
       },
+      page: (icon = 'page-move') => ({
+        ...dom.btnTemplate({ content: dom.icon(icon), title: pageText('pages.moveTo') }),
+        className: ['item-page'],
+        meta: {
+          id: 'page',
+        },
+        action: {
+          click: () => this.components.pages?.openMoveDialog(this),
+        },
+      }),
     }
 
     const { buttons, disabled } = this.config.actionButtons
-    const activeButtons = buttons.filter(btn => !disabled.includes(btn))
+    // with page tabs every row gets "Move to page" before its remove button (#122); hide it with disabled: ['page']
+    const pagesOn = Boolean(this.components.opts?.pages)
+    let rowButtons = buttons
+    if (pagesOn && this.name === 'row' && !buttons.includes('page')) {
+      const at = buttons.indexOf('remove')
+      rowButtons = at === -1 ? [...buttons, 'page'] : [...buttons.slice(0, at), 'page', ...buttons.slice(at)]
+    }
+    // only rows move between pages: a column or field moved on its own would be left without a parent
+    const activeButtons = rowButtons.filter(
+      btn => !disabled.includes(btn) && (btn !== 'page' || (pagesOn && this.name === 'row'))
+    )
     const actionButtonsConfigs = activeButtons.map(btn => buttonConfig[btn]?.() || btn)
 
     this.actionButtons = actionButtonsConfigs

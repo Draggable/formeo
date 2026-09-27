@@ -1,6 +1,7 @@
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { destroySortables } from '../../common/sortable.js'
+import { Dialog } from '../dialog.js'
 import { pageText } from './page-text.mjs'
 
 /** How long a tab stays highlighted after content moves to its page, in ms */
@@ -591,7 +592,8 @@ export class EditorPages {
   moveToPage(row, stageId) {
     const stage = this.stageAt(stageId)
     const source = row?.parent
-    if (!stage || !source || source === stage) {
+    // only rows: a column or field moved on its own would be left without a parent
+    if (row?.name !== 'row' || !stage || !source || source === stage) {
       return false
     }
     stage.dom.querySelector('.children').appendChild(row.dom)
@@ -601,6 +603,31 @@ export class EditorPages {
     }
     this.afterMove(stageId)
     return true
+  }
+
+  /**
+   * Asks which page a row should move to, then moves it there
+   * @param {Row} row
+   */
+  openMoveDialog(row) {
+    const currentId = row?.parent?.id
+    const targets = this.ids.filter(id => id !== currentId)
+    if (row?.name !== 'row' || !targets.length) {
+      return
+    }
+    const label = pageText('pages.moveTo')
+    const select = el(
+      'select',
+      { name: 'page', className: 'move-to-page-select', 'aria-label': label },
+      targets.map(id => el('option', { value: id, text: this.titleOf(id) }))
+    )
+    new Dialog({
+      title: label,
+      className: 'move-to-page-dialog',
+      content: select,
+      confirmText: () => pageText('pages.move'),
+      onConfirm: formData => this.moveToPage(row, String(formData.get('page'))),
+    }).open()
   }
 
   /**

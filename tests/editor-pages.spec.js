@@ -306,4 +306,44 @@ test.describe('Editor page tabs (#122)', () => {
     await expect(other.locator('.formeo-pages-status')).toHaveText('')
     expect((await formDataOf(page)).stages['p-s1'].children).toContain('p-r1')
   })
+
+  test('Move to page moves a row through a dialog', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await page.evaluate(() => {
+      window.e2eFormeoUpdated = 0
+      document.addEventListener('formeoUpdated', () => {
+        window.e2eFormeoUpdated += 1
+      })
+    })
+    const row = editor.locator('[id="p-r1"]')
+    await row.locator('> .row-actions').hover()
+    await row.locator('> .row-actions .item-page').click()
+    const dialog = page.locator('dialog.move-to-page-dialog')
+    await expect(dialog.getByRole('combobox')).toHaveText(/Account\s*Page 3/)
+    await dialog.getByRole('combobox').selectOption({ label: 'Page 3' })
+    await dialog.getByRole('button', { name: 'Move' }).click()
+    await expect.poll(async () => (await formDataOf(page)).stages['p-s3'].children).toEqual(['p-r1'])
+    expect(await page.evaluate(() => window.e2eFormeoUpdated)).toBeGreaterThan(0)
+  })
+
+  test('Move to page lists titles as text', async ({ page }) => {
+    const formData = threePageForm()
+    formData.stages['p-s2'].config.title = '<b>Bold</b>'
+    const editor = await mountEditor(page, { formData })
+    const row = editor.locator('[id="p-r1"]')
+    await row.locator('> .row-actions').hover()
+    await row.locator('> .row-actions .item-page').click()
+    await expect(page.locator('dialog.move-to-page-dialog option').first()).toHaveText('<b>Bold</b>')
+  })
+
+  test('the Move to page button hides on a single page and can be disabled', async ({ page }) => {
+    const single = await mountEditor(page, { id: 'e2e-single', formData: null })
+    await single.getByRole('button', { name: 'Text Input' }).click()
+    await expect(single.locator('.item-page')).toBeHidden()
+    const disabled = await mountEditor(page, {
+      id: 'e2e-disabled',
+      options: { config: { rows: { all: { actionButtons: { disabled: ['page'] } } } } },
+    })
+    await expect(disabled.locator('.item-page')).toHaveCount(0)
+  })
 })
