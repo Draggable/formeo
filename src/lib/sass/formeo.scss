@@ -28,6 +28,7 @@
 
     @include meta.load-css("components/component");
     @include meta.load-css("components/stage");
+    @include meta.load-css("components/pages");
 
     @include meta.load-css("base/rtl");
   }

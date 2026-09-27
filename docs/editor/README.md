@@ -5,6 +5,7 @@
 - [Initialization Lifecycle](initialization.md) - how the editor loads resources and when it is ready
 - [Component Events](component-events.md) - events fired by stages, rows, columns and fields
 - [Clear Method](editor-clear-method.md) - resetting the editor to an empty form
+- [Page Tabs](pages.md) - multi-page forms: add, rename, remove, reorder and switch pages
 - [Options](../options/README.md) - everything you can pass to the constructor
 
 ## Constructor
@@ -32,6 +33,7 @@ Set `editorContainer` to an element or selector, otherwise the editor is built b
 | `isReady`     | Boolean | `true` once `initState` is `'ready'`.                                               |
 | `isDestroyed` | Boolean | `true` once `destroy()` has been called.                                            |
 | `i18n.setLang` | Function | Switch the editor language at runtime. Available once ready. See [i18n](../options/i18n/README.md). |
+| `pages`       | EditorPages \| null | Page tabs API when the `pages` option is on. See [Page Tabs](pages.md). |
 
 ## Methods
 

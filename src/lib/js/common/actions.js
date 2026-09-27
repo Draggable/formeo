@@ -1,5 +1,6 @@
 import i18n from '@draggable/i18n'
 import Dialog from '../components/dialog.js'
+import { pageText } from '../components/stages/page-text.mjs'
 import { CONDITION_TEMPLATE } from '../constants.js'
 import { formDataStorageKey, identity, sessionStorage } from './utils/index.mjs'
 
@@ -61,6 +62,27 @@ const openAddAttributeDialog = evt =>
     },
   }).open()
 
+/**
+ * Default page removal (#122): an empty page goes at once, a page with content asks first
+ * @param {Object} evt { stage, stageId, index, title, isEmpty, removeAction }
+ * @return {Dialog|*}
+ */
+const removePage = evt => {
+  if (evt.isEmpty) {
+    return evt.removeAction()
+  }
+  return new Dialog({
+    className: 'remove-page-dialog',
+    content: {
+      tag: 'p',
+      className: 'remove-page-message',
+      textContent: pageText('pages.removeConfirm', { title: evt.title }),
+    },
+    confirmText: () => i18n.get('remove') || 'Remove',
+    onConfirm: () => evt.removeAction(),
+  }).open()
+}
+
 // Default options
 const defaultActions = {
   add: {
@@ -85,6 +107,7 @@ const defaultActions = {
     conditions: evt => {
       evt.removeAction()
     },
+    page: removePage,
   },
   click: {
     btn: evt => {
@@ -149,6 +172,9 @@ export class Actions {
     },
     conditions: evt => {
       return this.opts.remove.conditions(evt)
+    },
+    page: evt => {
+      return (this.opts?.remove?.page || defaultActions.remove.page)(evt)
     },
   }
 

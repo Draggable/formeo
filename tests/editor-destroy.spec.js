@@ -155,6 +155,50 @@ test.describe('FormeoEditor#destroy (#166)', () => {
     expect(await page.evaluate(() => document.documentElement.style.overflow)).toBe(overflowBefore)
   })
 
+  for (const pages of [false, true]) {
+    test(`destroy() mid control-drag over the stage fires no callbacks (pages ${pages ? 'on' : 'off'})`, async ({
+      page,
+    }) => {
+      await page.evaluate(async withPages => {
+        window.frameworkLoader.currentDemo.editor.destroy()
+        window.e2eCallbacks = []
+        const container = document.createElement('div')
+        container.id = 'destroy-mid-drag'
+        document.body.appendChild(container)
+        const record = name => () => window.e2eCallbacks.push(name)
+        window.e2eMidDrag = new window.FormeoEditor({
+          editorContainer: container,
+          sessionStorage: false,
+          style: null,
+          pages: withPages,
+          events: { onAdd: record('onAdd'), onAddField: record('onAddField'), onUpdate: record('onUpdate') },
+        })
+        await window.e2eMidDrag.whenReady()
+        await new Promise(resolve => setTimeout(resolve, 300))
+        window.e2eCallbacks.length = 0
+      }, pages)
+      const editor = page.locator('#destroy-mid-drag')
+      const control = editor.getByRole('button', { name: 'Text Input' })
+      const stage = editor.locator('.formeo-stage').first()
+      await control.hover()
+      const from = await control.boundingBox()
+      const to = await stage.boundingBox()
+      await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2)
+      await page.mouse.down()
+      await page.mouse.move(from.x + from.width / 2 + 10, from.y + from.height / 2, { steps: 5 })
+      await page.waitForTimeout(100)
+      await page.mouse.move(to.x + to.width / 2, to.y + to.height - 10, { steps: 25 })
+      await page.waitForTimeout(150)
+      await expect(page.locator('.control-moving')).toHaveCount(1)
+
+      await page.evaluate(() => window.e2eMidDrag.destroy())
+      await page.mouse.up()
+      await page.waitForTimeout(500)
+
+      expect(await page.evaluate(() => window.e2eCallbacks)).toEqual([])
+    })
+  }
+
   for (const [where, hook] of [
     ['onLoad', 'onLoad'],
     ['the formeoLoaded event callback', 'formeoLoaded'],

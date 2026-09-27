@@ -121,4 +121,44 @@ export default class Stage extends Component {
       component.parent.autoColumnWidths()
     }
   }
+
+  /**
+   * Removes this stage, a page with the editor's `pages` option (#122), with everything on it.
+   * formData always keeps one stage, so the last one is never removed.
+   * @return {String|null} the removed id, or null when nothing was removed
+   */
+  removeStage() {
+    const { stages, events } = this.components
+    if (stages.size <= 1) {
+      return null
+    }
+    const previousValue = Object.keys(stages.data)
+    const children = [...this.children]
+
+    this.dispatchComponentEvent('onRemove', { parent: null, children })
+    for (const row of children) {
+      row.remove()
+    }
+    this.dom.remove()
+    this.panels?.destroy()
+    this.releaseSortables()
+    stages.delete(this.id)
+    if (stages.active === this) {
+      stages.active = Object.values(stages.data)[0]
+    }
+
+    events.formeoRemovedStage({ componentId: this.id, componentType: this.name })
+    events.formeoUpdated({
+      entity: this,
+      componentId: this.id,
+      componentType: this.name,
+      dataPath: 'stages',
+      changePath: 'stages',
+      value: Object.keys(stages.data),
+      previousValue,
+      changeType: 'removed',
+    })
+
+    return this.id
+  }
 }

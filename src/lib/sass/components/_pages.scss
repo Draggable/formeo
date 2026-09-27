@@ -1,0 +1,155 @@
+@use '../base/tokens' as t;
+@use '../base/mixins';
+
+// Editor page tabs (#122): a tab bar above the stages, one stage shown at a time
+.formeo-pages-editor {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  inline-size: 73%;
+  min-inline-size: 0;
+
+  @include mixins.breakpoint('phone-lrg') {
+    inline-size: calc(100% - 50px);
+  }
+
+  > .formeo-stage {
+    inline-size: auto;
+
+    // !important: Clear All's slide animation leaves an inline display: block on every stage
+    &[hidden] {
+      display: none !important;
+    }
+  }
+
+  &[data-page-count="1"] .item-page {
+    display: none;
+  }
+}
+
+.formeo-pages-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: mixins.space(1);
+  margin-block-end: mixins.space(1);
+  border-block-end: 1px solid t.$border;
+  max-width: calc(100% - mixins.space(4));
+}
+
+.formeo-page-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  min-inline-size: 0;
+}
+
+.formeo-page-tab-wrap {
+  display: flex;
+  align-items: center;
+  max-inline-size: 16em;
+
+  // Sortable parks a dragged row, column, field or control in the tab while it hovers it: hide it there
+  > :not(.formeo-page-tab, .formeo-page-remove, .formeo-page-title-input) {
+    display: none !important;
+  }
+
+  &:has(> :not(.formeo-page-tab, .formeo-page-remove, .formeo-page-title-input)) .formeo-page-tab,
+  &.formeo-page-tab-flash .formeo-page-tab {
+    background-color: t.$stage-highlight;
+    color: t.$stage-highlight-text;
+  }
+}
+
+.formeo-page-tab {
+  overflow: hidden;
+  margin-block-end: -1px;
+  padding-block: mixins.space(1);
+  padding-inline: mixins.space(2);
+  border: 0 none;
+  border-block-end: 2px solid transparent;
+  background: transparent;
+  color: t.$text-secondary;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:hover {
+    color: t.$text-strong;
+  }
+
+  &[aria-selected="true"] {
+    border-block-end-color: t.$stage-outline;
+    color: t.$text-strong;
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$focus;
+    outline-offset: -2px;
+  }
+}
+
+.formeo-page-remove {
+  display: inline-flex;
+  visibility: hidden;
+  padding: 0;
+  border: 0 none;
+  background: transparent;
+  color: t.$text-muted;
+  cursor: pointer;
+
+  &:hover {
+    // overrides base/_icons.scss's button[class*='-remove']:hover chip: a bare danger-coloured × on hover, no chip
+    background-color: transparent !important;
+    color: t.$danger;
+
+    .svg-icon {
+      fill: t.$danger;
+    }
+  }
+
+  .svg-icon {
+    inline-size: 1em;
+    block-size: 1em;
+  }
+}
+
+.formeo-page-tab-wrap:hover .formeo-page-remove,
+.formeo-page-tab-wrap:focus-within .formeo-page-remove,
+.formeo-page-tab[aria-selected="true"] + .formeo-page-remove {
+  visibility: visible;
+}
+
+.formeo-page-add {
+  flex: none;
+  align-self: center;
+  padding-block: mixins.space(1);
+  padding-inline: mixins.space(1);
+  border: 0 none;
+  background: transparent;
+  color: t.$text-secondary;
+  cursor: pointer;
+
+  &:hover {
+    color: t.$text-strong;
+  }
+}
+
+.formeo-page-title-input {
+  inline-size: 12em;
+  margin-block-end: -1px;
+  padding-block: mixins.space(1);
+  padding-inline: mixins.space(1);
+  border: 1px solid t.$border-strong;
+  border-radius: 0;
+  background: t.$bg;
+  color: t.$text-strong;
+}
+
+// live region for "Moved to …"; visually hidden
+.formeo-pages-status {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

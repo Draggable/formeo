@@ -7,7 +7,7 @@
  */
 
 import { strict as assert } from 'node:assert'
-import { beforeEach, describe, it } from 'node:test'
+import { beforeEach, describe, it, mock } from 'node:test'
 import Components from './components/index.js'
 import { DEFAULT_FORMDATA } from './constants.js'
 
@@ -193,5 +193,29 @@ describe('DEFAULT_FORMDATA', () => {
 
     const stageIds = Object.keys(data.stages)
     assert.equal(stageIds.length, 1, 'Should have exactly one stage')
+  })
+
+  it('never gives a blank editor an integer-like page id, even when uuid() looks numeric (#122)', () => {
+    // JS objects list an integer-like key ("12345678") before any string key regardless of insertion order. A
+    // blank editor's one stage getting such an id wouldn't break rendering, but every later stages.reorder() would
+    // then refuse (see Stages#reorder's guard) and silently do nothing. uuid() is 8 hex characters, so this
+    // happens for roughly 1 in 43 blank editors; DEFAULT_FORMDATA's stage id must retry past it.
+    const real = crypto.randomUUID.bind(crypto)
+    let calls = 0
+    const spy = mock.method(crypto, 'randomUUID', () => {
+      calls += 1
+      // force the first two calls to look like array indexes: whichever of the two lands on the form's own id
+      // vs. the stage's, the stage id's generator must retry past its forced attempt(s)
+      return calls <= 2 ? '12345678-0000-0000-0000-000000000000' : real()
+    })
+    try {
+      const data = DEFAULT_FORMDATA()
+      const [stageId] = Object.keys(data.stages)
+      assert.notEqual(stageId, '12345678')
+      assert.notEqual(String(Number.parseInt(stageId, 10)), stageId)
+      assert.ok(calls >= 3, 'expected the stage id generator to retry past the forced numeric id')
+    } finally {
+      spy.mock.restore()
+    }
   })
 })

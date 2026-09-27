@@ -90,25 +90,25 @@ export const INPUT_TYPE_ACTION = {
       }
 
       field.set(dataKey, target.checked)
-      field.updatePreview()
+      field.updatePreview?.()
     },
   }),
   string: (dataKey, field) => ({
     input: ({ target: { value } }) => {
       field.set(dataKey, value)
-      field.debouncedUpdatePreview()
+      field.debouncedUpdatePreview?.()
     },
   }),
   number: (dataKey, field) => ({
     input: ({ target: { value } }) => {
       field.set(dataKey, Number(value))
-      field.debouncedUpdatePreview()
+      field.debouncedUpdatePreview?.()
     },
   }),
   array: (dataKey, field) => ({
     change: ({ target: { value } }) => {
       field.set(dataKey, value)
-      field.debouncedUpdatePreview()
+      field.debouncedUpdatePreview?.()
     },
   }),
   object: () => ({}),

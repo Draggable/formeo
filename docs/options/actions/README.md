@@ -9,6 +9,7 @@
 | `remove.attrs`      | Function | Defined, but no "Clear All" button is currently rendered in the attributes panel; calls `evt.removeAction()`  |
 | `remove.options`    | Function | Defined, but no "Clear All" button is currently rendered in the options panel; calls `evt.removeAction()`    |
 | `remove.conditions` | Function | Called by "Clear All" in the conditions panel; calls `evt.removeAction()` |
+| `remove.page`       | Function | Called before a page is removed from its tab; call `evt.removeAction()` to remove it. Default: removes an empty page, asks first for a page with content. See [Page Tabs](../../editor/pages.md#actions) |
 | `click.button`      | Function | Called when clicking a form action button                                 |
 | `save`              | Function | Called when saving                                                        |
 

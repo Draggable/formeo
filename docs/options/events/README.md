@@ -33,7 +33,9 @@ const editor = new FormeoEditor({
 | -------------------- | -------- | ---------------------------------------- |
 | `formeoLoaded`       | Function | Fires when Formeo loads                  |
 | `onAdd`              | Function | Fires when element is added              |
-| `onRemove`           | Function | Fires when a row, column or field is removed |
+| `onRemove`           | Function | Fires when a row, column or field is removed, or a page (with `pages`) |
+| `onAddStage`         | Function | Fires when a page (stage) is added. See [Page Tabs](../../editor/pages.md#events) |
+| `onRemoveStage`      | Function | Fires when a page (stage) is removed. See [Page Tabs](../../editor/pages.md#events) |
 | `onChange`           | Function | Fires when form data changes             |
 | `onUpdate`           | Function | Fires when form data changes, including removals (throttled; receives the whole formData as detail) |
 | `onUpdateStage`      | Function | Fires when stage is updated              |
@@ -48,9 +50,10 @@ const editor = new FormeoEditor({
 | `onRemoveField`      | Function | Fires when field is removed              |
 | `onSave`             | Function | Fires when form is saved                 |
 | `onRender`           | Function | Fires when an element is rendered        |
+| `onPageChange`       | Function | Fires when the active page tab switches (with the `pages` option). See [Page Tabs](../../editor/pages.md#events) |
 | `confirmClearAll`    | Function | Fires when form is cleared               |
 
-`onAdd`, `onAddRow`, `onAddColumn` and `onAddField` fire for rows, columns and fields added after the editor loads, not for the ones loaded from `formData`.
+`onAdd`, `onAddRow`, `onAddColumn` and `onAddField` fire for rows, columns and fields added after the editor loads, not for the ones loaded from `formData`. `onAdd` also fires, with `onAddStage`, for a page added after the editor loads (with `pages`).
 
 ## DOM Event Listeners
 

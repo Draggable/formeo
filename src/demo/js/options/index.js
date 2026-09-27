@@ -25,6 +25,7 @@ export const editorOptions = {
   style: null,
   // debug: true,
   sessionStorage: true,
+  pages: true, // editor page tabs (#122)
   // controlOnLeft: true,
   onLoad: () => {
     console.log('demo loaded')
@@ -39,6 +40,7 @@ export const editorOptions = {
 
 export const renderOptions = {
   renderContainer,
+  pagination: 'tabs',
   elements: {
     tinymce: {
       action: {
