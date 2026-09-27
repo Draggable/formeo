@@ -551,7 +551,7 @@ renderer.render(formData)
 
 ### Limitations
 
-- The editor has no page UI yet — there's no way to add, rename or switch pages from the visual builder. Pages are defined directly in `formData`, for example by setting `stages[<id>].config.title` by hand or from your own tooling.
+- The editor builds pages with its `pages` option (see [Page Tabs](../editor/pages.md)); you can also define them directly in `formData`.
 - `render()` starts over on the first page and does not fire `onPageChange`.
 - The static `html` getter serializes whatever is currently rendered; it has no page switching of its own. Every stage is present in that HTML string, `hidden` or not, exactly as attached to the DOM at the time `html` is read.
 

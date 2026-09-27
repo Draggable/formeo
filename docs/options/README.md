@@ -11,6 +11,7 @@
 | iconFont                            | String       | use existing icon font as fallback                                              | `'glyphicons'`              | `null`                            |
 | [stickyControls](#stickycontrols)   | Boolean      | keep the controls panel in view while scrolling                                | `true` \| `false`           | `false`                           |
 | [controlOnLeft](#controlonleft)     | Boolean      | show controls left of the stage                                                | `true` \| `false`           | `false`                           |
+| [pages](../editor/pages.md)         | Boolean      | show page tabs, one per stage, to build multi-page forms                       | `true` \| `false`           | `false`                           |
 | [onLoad](#onload)                   | Function     | called with the editor once it is ready                                        | `editor => {}`              | `() => {}` (no-op)                |
 | [i18n](i18n/)                       | Object       | `{ location, locale, … }` for `@draggable/i18n`                                | (see [i18n](i18n/))         | `{ location: 'https://draggable.github.io/formeo/assets/lang/' }` |
 | [events](events/)                   | Object       | define callbacks for specific events                                            | (see [events](events/))     | `{}`                              |
