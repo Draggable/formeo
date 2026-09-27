@@ -1,8 +1,8 @@
 import i18n from '@draggable/i18n'
 
 /**
- * English fallbacks for the editor's page tab strings (#122), used until @draggable/formeo-languages ships the
- * `pages.*` keys and for locales that don't translate them.
+ * English fallbacks for the editor's page tab strings (#122), for locales that don't translate them.
+ * @draggable/formeo-languages ships the same en-US text from 3.6.0.
  */
 export const PAGE_TEXT = Object.freeze({
   'pages.label': 'Pages',

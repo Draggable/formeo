@@ -183,9 +183,8 @@ right-to-left `dir` work without any extra CSS.
 | `pages.move` | Move |
 | `pages.moved` | Moved to {title} |
 
-These strings use `i18n.get(key) || <fallback>`, so they respect the editor's `i18n` option once
-`@draggable/formeo-languages` ships them; until then (and for locales it doesn't cover), the English fallback
-above is shown everywhere.
+These strings come from `@draggable/formeo-languages` (3.6.0 and later) and follow the editor's `i18n` option. For a
+locale that doesn't have one of them, the English fallback above is shown.
 
 ## "Clear All"
 

@@ -1,5 +1,6 @@
 import { strict as assert } from 'node:assert'
 import { describe, it, mock } from 'node:test'
+import { enUS } from '@draggable/formeo-languages'
 import i18n from '@draggable/i18n'
 import { Actions } from '../../common/actions.js'
 import { Events } from '../../common/events.js'
@@ -58,6 +59,12 @@ describe('pageText (#122)', () => {
       'pages.rename',
       'pages.untitled',
     ])
+  })
+
+  it('@draggable/formeo-languages ships every pages.* key, matching the English fallback', () => {
+    for (const [key, text] of Object.entries(PAGE_TEXT)) {
+      assert.equal(enUS[key], text, key)
+    }
   })
 })
 
