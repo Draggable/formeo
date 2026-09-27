@@ -201,6 +201,30 @@ test.describe('Editor page tabs (#122)', () => {
     expect(await callsOf(page)).toEqual([])
   })
 
+  // events first, so nothing torn down afterwards can reach the integrator's callbacks; controls before pages,
+  // so releasing the tabs' Sortables can't end a controls drag early (see the two tests above)
+  test('destroy() tears down events, then controls, then pages', async ({ page }) => {
+    await mountEditor(page)
+    const order = await page.evaluate(() => {
+      const e = window.e2eEditors['e2e-pages']
+      const order = []
+      for (const [name, part] of [
+        ['events', e.events],
+        ['controls', e.controls],
+        ['pages', e.pages],
+      ]) {
+        const destroy = part.destroy.bind(part)
+        part.destroy = (...args) => {
+          order.push(name)
+          return destroy(...args)
+        }
+      }
+      e.destroy()
+      return order
+    })
+    expect(order).toEqual(['events', 'controls', 'pages'])
+  })
+
   test('double-click renames a page', async ({ page }) => {
     const editor = await mountEditor(page)
     await editor.getByRole('tab', { name: 'Page 3' }).dblclick()
@@ -218,6 +242,72 @@ test.describe('Editor page tabs (#122)', () => {
     await page.keyboard.type('Nope')
     await page.keyboard.press('Escape')
     await expect(editor.getByRole('tab', { name: 'About you' })).toBeVisible()
+  })
+
+  test('arrow keys, Home and End move between tabs with a roving tabindex', async ({ page }) => {
+    const editor = await mountEditor(page)
+    const tab = name => editor.getByRole('tab', { name })
+    const tabIndexes = () => editor.getByRole('tab').evaluateAll(tabs => tabs.map(tab => tab.tabIndex))
+
+    await tab('About you').focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(tab('Account')).toBeFocused()
+    await expect(tab('Account')).toHaveAttribute('aria-selected', 'true')
+    await expect(editor.locator('[id="p-s2"]')).toBeVisible()
+    expect(await tabIndexes()).toEqual([-1, 0, -1])
+
+    await page.keyboard.press('End')
+    await expect(tab('Page 3')).toBeFocused()
+    await page.keyboard.press('ArrowRight')
+    await expect(tab('About you')).toBeFocused()
+    await page.keyboard.press('ArrowLeft')
+    await expect(tab('Page 3')).toBeFocused()
+    await page.keyboard.press('Home')
+    await expect(tab('About you')).toBeFocused()
+    await expect(editor.locator('[id="p-s1"]')).toBeVisible()
+    expect(await tabIndexes()).toEqual([0, -1, -1])
+  })
+
+  test('Delete on a focused tab removes an empty page at once and asks first for one with content', async ({
+    page,
+  }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Page 3' }).focus()
+    await page.keyboard.press('Delete')
+    await expect(editor.getByRole('tab')).toHaveText(['About you', 'Account'])
+
+    await editor.getByRole('tab', { name: 'About you' }).focus()
+    await page.keyboard.press('Delete')
+    const dialog = page.locator('dialog.remove-page-dialog')
+    await expect(dialog).toContainText('Remove "About you" and everything on it?')
+    await dialog.getByRole('button', { name: 'Cancel' }).click()
+    await expect(editor.getByRole('tab')).toHaveText(['About you', 'Account'])
+  })
+
+  test('Delete on the only page does nothing', async ({ page }) => {
+    const editor = await mountEditor(page, { formData: null })
+    await editor.getByRole('tab', { name: 'Page 1' }).focus()
+    await page.keyboard.press('Delete')
+    await expect(editor.getByRole('tab')).toHaveText(['Page 1'])
+    await expect(page.locator('dialog.remove-page-dialog')).toHaveCount(0)
+  })
+
+  test('in a right-to-left editor the arrow keys and Alt+Arrow swap', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await page.evaluate(() => {
+      document.querySelector('#e2e-pages .formeo-editor').dir = 'rtl'
+    })
+    const tab = name => editor.getByRole('tab', { name })
+
+    await tab('About you').focus()
+    await page.keyboard.press('ArrowLeft')
+    await expect(tab('Account')).toBeFocused()
+    await page.keyboard.press('ArrowRight')
+    await expect(tab('About you')).toBeFocused()
+
+    await page.keyboard.press('Alt+ArrowLeft')
+    expect(Object.keys((await formDataOf(page)).stages)).toEqual(['p-s2', 'p-s1', 'p-s3'])
+    await expect(tab('About you')).toBeFocused()
   })
 
   test('the stage edit panel renames the tab', async ({ page }) => {
@@ -329,6 +419,9 @@ test.describe('Editor page tabs (#122)', () => {
     await dragTo(page, await moveHandle(editor, 'row', 'p-r1'), editor.getByRole('tab', { name: 'Page 3' }))
     await expect.poll(async () => (await formDataOf(page)).stages['p-s3'].children).toEqual(['p-r1'])
     await expect(editor.locator('.formeo-pages-status')).toHaveText('Moved to Page 3')
+    const target = editor.locator('.formeo-page-tab-wrap[data-stage-id="p-s3"]')
+    await expect(target).toHaveClass(/\bformeo-page-tab-flash\b/)
+    await expect(target).not.toHaveClass(/\bformeo-page-tab-flash\b/, { timeout: 3000 })
     await expect(editor.locator('[id="p-s1"]')).toBeVisible()
   })
 
