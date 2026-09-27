@@ -4,6 +4,20 @@ import { callsOf, clearDemo, dragTo, formDataOf, mountEditor, moveHandle, threeP
 
 const visibleStages = editor => editor.locator('.formeo-stage:visible')
 
+// four pages whose first two ids look like array indexes, so they always sort first (#122)
+const indexLikeForm = () => ({
+  id: 'form-idx',
+  stages: {
+    1: { id: '1', config: { title: 'One' }, children: [] },
+    2: { id: '2', config: { title: 'Two' }, children: [] },
+    abc: { id: 'abc', config: { title: 'Letters' }, children: [] },
+    def: { id: 'def', config: { title: 'More letters' }, children: [] },
+  },
+  rows: {},
+  columns: {},
+  fields: {},
+})
+
 test.describe('Editor page tabs (#122)', () => {
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize({ width: 1400, height: 1000 })
@@ -276,6 +290,38 @@ test.describe('Editor page tabs (#122)', () => {
     await page.keyboard.press('Alt+ArrowRight')
     expect(Object.keys((await formDataOf(page)).stages)).toEqual(['p-s2', 'p-s1', 'p-s3'])
     await expect(editor.getByRole('tab', { name: 'About you' })).toBeFocused()
+  })
+
+  test('a tab drag that integer-like page ids cannot keep snaps back', async ({ page }) => {
+    const warnings = []
+    page.on('console', msg => {
+      if (msg.type() === 'warning') {
+        warnings.push(msg.text())
+      }
+    })
+    const editor = await mountEditor(page, { formData: indexLikeForm() })
+    await dragTo(
+      page,
+      editor.getByRole('tab', { name: 'Letters', exact: true }),
+      editor.getByRole('tab', { name: 'One' })
+    )
+
+    // console messages arrive asynchronously; the warning also proves the drag reached reorder()
+    await expect.poll(() => warnings.some(text => text.includes('look like array indexes'))).toBe(true)
+    await expect(editor.getByRole('tab')).toHaveText(['One', 'Two', 'Letters', 'More letters'])
+    expect(Object.keys((await formDataOf(page)).stages)).toEqual(['1', '2', 'abc', 'def'])
+  })
+
+  test('a tab drag that integer-like page ids allow reorders the pages', async ({ page }) => {
+    const editor = await mountEditor(page, { formData: indexLikeForm() })
+    await dragTo(
+      page,
+      editor.getByRole('tab', { name: 'More letters' }),
+      editor.getByRole('tab', { name: 'Letters', exact: true })
+    )
+
+    await expect.poll(async () => Object.keys((await formDataOf(page)).stages)).toEqual(['1', '2', 'def', 'abc'])
+    await expect(editor.getByRole('tab')).toHaveText(['One', 'Two', 'More letters', 'Letters'])
   })
 
   test('a row dropped on a tab moves to that page', async ({ page }) => {

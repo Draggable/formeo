@@ -20,6 +20,18 @@ export const threePages = (key = 'p') => ({
   },
 })
 
+const indexLikePages = () => ({
+  id: 'form-idx',
+  stages: {
+    1: { id: '1', config: { title: 'One' }, children: [] },
+    2: { id: '2', config: { title: 'Two' }, children: [] },
+    abc: { id: 'abc', config: { title: 'Letters' }, children: [] },
+  },
+  rows: {},
+  columns: {},
+  fields: {},
+})
+
 const mounted = []
 export const setup = ({ formData = threePages(), callbacks = {}, actions = {}, config } = {}) => {
   const events = new Events().init(callbacks)
@@ -486,6 +498,46 @@ describe('EditorPages reorder (#122)', () => {
     tablist.prepend(tablist.lastElementChild)
     pages.reorderFromDom()
     assert.deepEqual(Object.keys(components.formData.stages), ['p-3', 'p-1', 'p-2'])
+  })
+
+  it('puts the tabs back when the order they were dragged into cannot be kept', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const { editor, pages, components } = setup({ formData: indexLikePages() })
+      const tablist = editor.querySelector('.formeo-page-tabs')
+      // what a drag of "Letters" to the front leaves behind before Sortable's onEnd
+      tablist.prepend(tablist.lastElementChild)
+      pages.reorderFromDom()
+
+      assert.deepEqual(Object.keys(components.formData.stages), ['1', '2', 'abc'])
+      assert.deepEqual(
+        [...tablist.children].map(wrap => wrap.dataset.stageId),
+        ['1', '2', 'abc']
+      )
+      assert.equal(warn.mock.callCount(), 1)
+    } finally {
+      warn.mock.restore()
+    }
+  })
+
+  it('Alt+Arrow that would break integer-like order changes nothing and keeps focus', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const { editor, components } = setup({ formData: indexLikePages() })
+      const letters = tabs(editor)[2]
+      letters.focus()
+      key(letters, 'ArrowLeft', { altKey: true })
+
+      assert.deepEqual(Object.keys(components.formData.stages), ['1', '2', 'abc'])
+      assert.deepEqual(
+        tabs(editor).map(tab => tab.textContent),
+        ['One', 'Two', 'Letters']
+      )
+      assert.equal(document.activeElement, letters)
+      assert.equal(warn.mock.callCount(), 1)
+    } finally {
+      warn.mock.restore()
+    }
   })
 })
 
