@@ -408,7 +408,8 @@ export class EditorPages {
     input.addEventListener('blur', () => this.commitRename())
     tab.hidden = true
     tab.after(input)
-    this.renaming = { stageId, input, tab }
+    // the Stage itself, not just its id: a load() of the same ids swaps in new Stage objects under an open rename
+    this.renaming = { stageId, stage, input, tab }
     input.focus()
     input.select()
   }
@@ -428,7 +429,8 @@ export class EditorPages {
     this.renaming = null
     const stage = this.stages.get(renaming.stageId)
     const title = renaming.input.value.trim()
-    if (save && stage && title !== (stage.get('config.title') || '')) {
+    // text typed against a stage that has since been reloaded or removed is stale: discard it
+    if (save && stage === renaming.stage && title !== (stage.get('config.title') || '')) {
       stage.set('config.title', title)
     }
     renaming.input.remove()

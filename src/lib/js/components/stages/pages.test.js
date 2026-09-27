@@ -315,6 +315,54 @@ describe('EditorPages rename (#122)', () => {
     assert.equal(components.stages.get('p-3').get('config.title'), 'Review')
   })
 
+  it('a reload of the same page ids discards a rename left open', () => {
+    const onUpdateStage = mock.fn()
+    const { editor, pages, components } = setup({ callbacks: { onUpdateStage } })
+    pages.startRename('p-1')
+    input(editor).value = 'Typed before the reload'
+    const reloaded = threePages()
+    reloaded.stages['p-1'].config.title = 'Loaded'
+    components.load(reloaded, { pages: true })
+    onUpdateStage.mock.resetCalls()
+
+    input(editor).dispatchEvent(new window.FocusEvent('blur'))
+
+    assert.equal(onUpdateStage.mock.callCount(), 0)
+    assert.equal(input(editor), null)
+    assert.equal(tabs(editor)[0].hidden, false)
+    assert.equal(components.stages.get('p-1').get('config.title'), 'Loaded')
+    assert.equal(components.formData.stages['p-1'].config.title, 'Loaded')
+  })
+
+  it('a re-render after such a reload discards the rename too', () => {
+    const { editor, pages, components } = setup()
+    pages.startRename('p-2')
+    input(editor).value = 'Typed before the reload'
+    components.load(threePages(), { pages: true })
+
+    editor.replaceChildren(pages.render())
+
+    assert.equal(input(editor), null)
+    assert.equal(components.stages.get('p-2').get('config.title'), 'Account')
+    assert.deepEqual(
+      tabs(editor).map(tab => tab.textContent),
+      ['About you', 'Account', 'Page 3']
+    )
+  })
+
+  it('a reload with other page ids closes the rename without writing anything', () => {
+    const { editor, pages, components } = setup()
+    pages.startRename('p-1')
+    input(editor).value = 'Typed before the reload'
+    components.load(threePages('q'), { pages: true })
+
+    assert.doesNotThrow(() => input(editor).dispatchEvent(new window.FocusEvent('blur')))
+
+    assert.equal(input(editor), null)
+    assert.equal(components.stages.get('q-1').get('config.title'), 'About you')
+    assert.equal(components.stages.get('p-1'), undefined)
+  })
+
   it('destroying the editor mid-rename discards the unsaved title and does not throw', () => {
     const { editor, pages, components } = setup()
     pages.startRename('p-3')
