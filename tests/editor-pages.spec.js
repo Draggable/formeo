@@ -347,3 +347,83 @@ test.describe('Editor page tabs (#122)', () => {
     await expect(disabled.locator('.item-page')).toHaveCount(0)
   })
 })
+
+test.describe('Editor page tabs: events and several editors (#122)', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 1800 })
+    await clearDemo(page)
+  })
+
+  test('page changes fire their callbacks', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Account' }).click()
+    await editor.getByRole('button', { name: 'Add page' }).click()
+    await editor.getByRole('tab', { name: 'Page 4' }).dblclick()
+    await editor.getByRole('textbox', { name: 'Rename page' }).fill('Review')
+    await page.keyboard.press('Enter')
+    await editor.getByRole('button', { name: 'Remove page "Review"' }).click()
+
+    const calls = await callsOf(page)
+    const newId = calls.find(call => call.name === 'onAddStage').componentId
+    expect(
+      calls.filter(call => call.name === 'onPageChange').map(({ page, previousPage }) => [page, previousPage])
+    ).toEqual([
+      [1, 0],
+      [3, 1],
+      [2, 3],
+    ])
+    expect(calls.find(call => call.name === 'onUpdateStage' && call.changePath.endsWith('config.title'))).toMatchObject(
+      {
+        changePath: `stages.${newId}.config.title`,
+        value: 'Review',
+      }
+    )
+    expect(calls.find(call => call.name === 'onRemoveStage')).toMatchObject({
+      componentId: newId,
+      componentType: 'stage',
+    })
+  })
+
+  test('formeoPageChanged reaches the page, from the tablist', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await page.evaluate(() => {
+      window.e2eDom = []
+      document.addEventListener('formeoPageChanged', evt =>
+        window.e2eDom.push({ stageId: evt.detail.stageId, fromTablist: evt.target.matches('.formeo-page-tabs') })
+      )
+    })
+    await editor.getByRole('tab', { name: 'Account' }).click()
+    expect(await page.evaluate(() => window.e2eDom)).toEqual([{ stageId: 'p-s2', fromTablist: true }])
+  })
+
+  test('setLang keeps the page on screen', async ({ page }) => {
+    const editor = await mountEditor(page)
+    await editor.getByRole('tab', { name: 'Account' }).click()
+    await page.evaluate(() => window.e2eEditors['e2e-pages'].i18n.setLang('en-US'))
+    await expect(editor.getByRole('tab', { name: 'Account' })).toHaveAttribute('aria-selected', 'true')
+    await expect(editor.locator('[id="p-s2"]')).toBeVisible()
+  })
+
+  test('two editors keep separate tabs, pages and events', async ({ page }) => {
+    const a = await mountEditor(page, { id: 'e2e-a', formData: threePageForm('p') })
+    const b = await mountEditor(page, { id: 'e2e-b', formData: threePageForm('p') })
+
+    const tabIds = await page.locator('.formeo-page-tab').evaluateAll(tabs => tabs.map(tab => tab.id))
+    expect(new Set(tabIds).size).toBe(6)
+
+    await a.getByRole('tab', { name: 'Account' }).click()
+    await expect(a.getByRole('tab', { name: 'Account' })).toHaveAttribute('aria-selected', 'true')
+    await expect(b.getByRole('tab', { name: 'About you' })).toHaveAttribute('aria-selected', 'true')
+    expect(await callsOf(page, 'e2e-b')).toEqual([])
+    expect((await callsOf(page, 'e2e-a')).filter(call => call.name === 'onPageChange')).toHaveLength(1)
+  })
+
+  test('content cannot be dropped on another editor’s tab', async ({ page }) => {
+    const a = await mountEditor(page, { id: 'e2e-a', formData: threePageForm('a') })
+    const b = await mountEditor(page, { id: 'e2e-b', formData: threePageForm('b') })
+    await dragTo(page, await moveHandle(a, 'row', 'a-r1'), b.getByRole('tab', { name: 'Page 3' }))
+    await page.waitForTimeout(300)
+    expect((await formDataOf(page, 'e2e-b')).stages['b-s3'].children).toEqual([])
+    expect((await formDataOf(page, 'e2e-a')).stages['a-s1'].children).toEqual(['a-r1'])
+  })
+})
