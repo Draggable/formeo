@@ -281,4 +281,13 @@ test.describe('multi-page forms (#122)', () => {
     await root.getByRole('button', { name: 'Submit' }).click()
     await expect.poll(() => browserPage.evaluate(() => window.__submitted)).toEqual({ name: 'Ada', email: '' })
   })
+
+  test('wizard with heading: each page shows its title and is named by it', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPages, { type: 'wizard', heading: true })
+    await expect(root.getByRole('heading', { level: 2, name: 'About you' })).toBeVisible()
+    await expect(root.getByRole('group', { name: 'About you' })).toBeVisible()
+    await root.getByRole('button', { name: 'Next' }).click()
+    await expect(root.getByRole('heading', { level: 2, name: 'Page 2' })).toBeVisible()
+    await expect(root.getByRole('heading', { name: 'About you' })).toBeHidden()
+  })
 })

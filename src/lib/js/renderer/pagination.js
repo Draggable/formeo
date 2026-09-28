@@ -68,7 +68,7 @@ const focusFirst = page => {
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
  * @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
  */
-export const paginate = (form, { type, progress, submit, labels }, stages, onChange) => {
+export const paginate = (form, { type, progress, submit, heading, labels }, stages, onChange) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
   if (pages.length < 2) {
     return null
@@ -88,6 +88,10 @@ export const paginate = (form, { type, progress, submit, labels }, stages, onCha
   const playable = pages.map((_page, i) => i)
   const isFirstPlayable = i => i === playable[0]
   const isLastPlayable = i => i === playable.at(-1)
+
+  // a stage's own id is also its id in the editor and in any other form rendered from the same formData, so
+  // ids made here (tabs, pages, headings) carry a prefix unique to this form
+  const idPrefix = `formeo-pages-${++paginatedForms}`
 
   // steps before the current page are done, the current one is current, the rest are upcoming
   const stepState = i => (i < current ? 'done' : i === current ? 'current' : 'upcoming')
@@ -231,13 +235,23 @@ export const paginate = (form, { type, progress, submit, labels }, stages, onCha
     submitButton.type = 'submit'
   }
 
+  if (heading) {
+    pages.forEach((page, i) => {
+      const pageHeading = create(`h${heading}`, 'formeo-pages-heading', title(i))
+      pageHeading.id = `${idPrefix}-heading-${i + 1}`
+      page.prepend(pageHeading)
+      // a tab panel is already named by its tab; a wizard page is named by its heading
+      if (type === 'wizard') {
+        page.setAttribute('role', 'group')
+        page.setAttribute('aria-labelledby', pageHeading.id)
+      }
+    })
+  }
+
   if (type === 'tabs') {
     const tablist = create('nav', 'formeo-pages-nav formeo-pages-tabs')
     tablist.setAttribute('role', 'tablist')
     tablist.setAttribute('aria-label', labels.tablist)
-    // a stage's own id is also its id in the editor and in any other form rendered from the same
-    // formData, so aria-controls needs ids unique to this form; the stage id moves to data-stage-id
-    const idPrefix = `formeo-pages-${++paginatedForms}`
     tabs = pages.map((page, i) => {
       page.dataset.stageId = page.id
       page.id = `${idPrefix}-page-${i + 1}`

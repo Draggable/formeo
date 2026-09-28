@@ -599,6 +599,74 @@ describe('pagination (#122)', () => {
     })
   })
 
+  describe('page headings', () => {
+    const headings = () => [...container.querySelectorAll('.formeo-pages-heading')]
+
+    test('are left out by default', () => {
+      render('wizard')
+      assert.equal(headings().length, 0)
+    })
+
+    test('heading: true puts an <h2> with the page title first in each page', () => {
+      render({ type: 'wizard', heading: true })
+      assert.deepEqual(
+        headings().map(h => [h.tagName, h.textContent]),
+        [
+          ['H2', 'About you'],
+          ['H2', 'Page 2'],
+        ]
+      )
+      pages().forEach((page, i) => {
+        assert.equal(page.firstElementChild, headings()[i])
+      })
+    })
+
+    test('a number from 2 to 6 picks the level, and labels.page names untitled pages', () => {
+      render({ type: 'tabs', heading: 4, labels: { page: 'Seite {n}' } })
+      assert.deepEqual(
+        headings().map(h => [h.tagName, h.textContent]),
+        [
+          ['H4', 'About you'],
+          ['H4', 'Seite 2'],
+        ]
+      )
+    })
+
+    test('titles are text, never markup', () => {
+      const title = '<img src=x onerror="window.pwned = 1">'
+      render({ type: 'wizard', heading: true }, buildPages([[field('a')], [field('b')]], [title]))
+      assert.equal(headings()[0].textContent, title)
+      assert.equal(container.querySelector('.formeo-pages-heading img'), null)
+    })
+
+    test('in a wizard, each page is a group labelled by its heading', () => {
+      render({ type: 'wizard', heading: true })
+      pages().forEach((page, i) => {
+        assert.equal(page.getAttribute('role'), 'group')
+        assert.equal(page.getAttribute('aria-labelledby'), headings()[i].id)
+        assert.match(headings()[i].id, new RegExp(`^formeo-pages-\\d+-heading-${i + 1}$`))
+      })
+    })
+
+    test('in tabs, pages stay labelled by their tab', () => {
+      render({ type: 'tabs', heading: true })
+      pages().forEach((page, i) => {
+        assert.equal(page.getAttribute('role'), 'tabpanel')
+        assert.equal(page.getAttribute('aria-labelledby'), tabs()[i].id)
+      })
+    })
+
+    test('two forms on one page get their own heading ids', () => {
+      const second = document.createElement('div')
+      document.body.append(second)
+      render({ type: 'wizard', heading: true })
+      new FormeoRenderer({ renderContainer: second, pagination: { type: 'wizard', heading: true } }).render(twoPages())
+      const ids = [...document.querySelectorAll('.formeo-pages-heading')].map(h => h.id)
+      assert.equal(ids.length, 4)
+      assert.equal(new Set(ids).size, 4)
+    })
+  })
+
   describe('validation across pages', () => {
     test('reportValidity() brings an invalid control on a hidden page into view', () => {
       const renderer = render('tabs')

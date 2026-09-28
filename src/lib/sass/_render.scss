@@ -188,6 +188,11 @@ fieldset.formeo-row-wrap {
   margin-block-start: mixins.space(2);
 }
 
+// a page's title shown inside the page (`heading`)
+.formeo-pages-heading {
+  margin-block: 0 mixins.space(2);
+}
+
 // the wizard's clickable step list, shown above the pages when `progress` is on (default)
 .formeo-pages-steps {
   display: flex;

@@ -2168,6 +2168,9 @@ button[class*=-clone]:hover .svg-icon {
   justify-content: flex-end;
   margin-block-start: 16px;
 }
+.formeo.formeo-render .formeo-pages-heading {
+  margin-block: 0 16px;
+}
 .formeo.formeo-render .formeo-pages-steps {
   display: flex;
   flex-wrap: wrap;

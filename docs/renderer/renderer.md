@@ -464,6 +464,17 @@ A page's title comes from `stages[<id>].config.title`. If a stage has no title, 
 formData.stages['stage-1'].config = { title: 'About you' }
 ```
 
+### Page headings
+
+With `heading`, each page starts with a heading holding its title (the same text as its tab or step, including the
+`labels.page` fallback): `<h2 class="formeo-pages-heading">` for `heading: true`, or pick the level that fits your
+page's outline with `heading: 2` to `heading: 6`. In a wizard, each page is a `role="group"` named by its heading; tab
+panels stay named by their tab.
+
+```javascript
+new FormeoRenderer({ renderContainer, pagination: { type: 'wizard', heading: 3 } })
+```
+
 ### Tabs
 
 Clicking a tab shows its page immediately; there is no validation on switching. The tablist follows the [WAI-ARIA tabs pattern](https://www.w3.org/WAI/ARIA/apg/patterns/tabs/) with automatic activation and roving `tabindex`:
@@ -544,6 +555,7 @@ Pagination renders these class names for styling:
 | `.formeo-pages-next` | The wizard's Next button |
 | `.formeo-pages-submit` | The Submit button added by `submit: true` |
 | `.formeo-pages-actions` | In tabs, the bar below the pages holding the Submit button |
+| `.formeo-pages-heading` | A page's heading, added by `heading` |
 | `.formeo-pages-status` | The wizard's page status, e.g. "About you (1 of 2)" (visually hidden, screen-reader only) |
 
 ### Example
