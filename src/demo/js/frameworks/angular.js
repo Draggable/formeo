@@ -6,8 +6,7 @@ import { editorOptions, renderOptions } from '../options/index.js'
  *
  * Note: This demo simulates Angular patterns rather than loading the full framework
  * due to browser compatibility and performance considerations. For a real Angular
- * integration, see the complete Angular project example in /docs/angular-integration-example/
- * Full integration to come in codesandbox.io/angular example in future.
+ * integration, see docs/angular-integration.md.
  */
 export async function loadAngularDemo(container) {
   // Show loading state while demo initializes
@@ -38,8 +37,8 @@ export async function loadAngularDemo(container) {
         <div class="demo-description">
           <p>This demo shows how to integrate Formeo with Angular applications using modern patterns.</p>
           <div class="notice">
-            <strong>Note:</strong> This is a pattern demonstration. For a complete Angular v20 project with Formeo, 
-            see <code>/docs/angular-integration-example/</code> in the repository.
+            <strong>Note:</strong> This is a pattern demonstration. For a complete Angular integration guide,
+            see <code>docs/angular-integration.md</code> in the repository.
           </div>
         </div>
 

@@ -173,7 +173,7 @@ editor.whenReady().then(() => {
 Formeo can be integrated with popular frontend frameworks:
 
 - **[React Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/react-integration.md)** - Custom hooks, functional components, and Context API patterns
-- **[Angular Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/angular-integration.md)** - Services, components, and standalone patterns
+- **[Angular Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/angular-integration.md)** - A standalone component, SSR-safe setup, and reading submitted answers
 
 ## Theming
 
