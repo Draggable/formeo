@@ -27,6 +27,8 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Check demo language files
+        run: test -f dist/demo/assets/lang/en-US.lang && test -f dist/demo/assets/lang/de-DE.lang
       - name: Test built package
         run: npm run test:dist
       - name: Publish

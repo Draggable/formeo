@@ -25,6 +25,8 @@ jobs:
       - name: Build
         if: success()
         run: npm run build
+      - name: Check demo language files
+        run: test -f dist/demo/assets/lang/en-US.lang && test -f dist/demo/assets/lang/de-DE.lang
       - name: Deploy - https://draggable.github.io/formeo/
         if: success()
         uses: peaceiris/actions-gh-pages@v4
