@@ -92,6 +92,8 @@ const describeAdd = (detail: BeforeAddDetail): string => {
       return `${detail.addedVia} ${detail.parent.id} ${detail.index}`
     case 'stage':
       return `page ${detail.index}`
+    case 'controlSet':
+      return `${detail.data.layout} ${detail.data.fields.length}`
   }
 }
 

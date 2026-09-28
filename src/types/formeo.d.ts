@@ -229,10 +229,33 @@ export interface FieldControlDefinition extends ControlDefinitionBase {
   children?: unknown
   /** e.g. `onRender`, run on the field's preview; functions are not saved in formData. */
   action?: Record<string, AnyFunction>
+  controlSet?: never
   [key: string]: unknown
 }
 
-export type ControlDefinition = FieldControlDefinition
+/** One field of a control set (#227). */
+export interface ControlSetMember extends FieldProps {
+  /** `meta.id` of a field control to start from; the member's other keys are merged over it (arrays replace). */
+  control?: string
+}
+
+export type ControlSetLayout = 'stacked' | 'columns'
+
+export interface ControlSet {
+  /** `stacked` (default): one column; `columns`: one column per field. */
+  layout?: ControlSetLayout
+  /** Data for the new row, e.g. `{ config: { fieldset: true, legend: 'Address' } }`. */
+  row?: RowProps
+  fields: ControlSetMember[]
+}
+
+/** A control that adds one new row holding several fields (#227). */
+export interface ControlSetDefinition extends ControlDefinitionBase {
+  controlSet: ControlSet
+  tag?: never
+}
+
+export type ControlDefinition = FieldControlDefinition | ControlSetDefinition
 
 /**
  * A subclass of formeo's internal `Control` class. `Control` is not exported by the package,
@@ -423,13 +446,29 @@ export interface BeforeAddLayoutDetail extends BeforeAddPlacement {
   data: Record<string, never>
 }
 
+export interface ControlSetData {
+  layout: ControlSetLayout
+  row: Record<string, unknown>
+  fields: NewFieldData[]
+}
+
+export interface BeforeAddControlSetDetail extends BeforeAddPlacement {
+  componentType: 'controlSet'
+  /** The expanded set. Treat it as read-only. */
+  data: ControlSetData
+}
+
 /** The + page tab (editor `pages` option). */
 export interface BeforeAddPageDetail {
   componentType: 'stage'
   index: number
 }
 
-export type BeforeAddDetail = BeforeAddFieldDetail | BeforeAddLayoutDetail | BeforeAddPageDetail
+export type BeforeAddDetail =
+  | BeforeAddFieldDetail
+  | BeforeAddLayoutDetail
+  | BeforeAddControlSetDetail
+  | BeforeAddPageDetail
 
 export interface BeforeRemoveComponentDetail {
   component: FormeoComponent
