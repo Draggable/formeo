@@ -183,7 +183,8 @@ export interface FormeoComponent {
   set(path: string, value: unknown): unknown
   /** Removes the property at `path`, or the component itself when called without one. */
   remove(path?: string): unknown
-  addChild(childData?: Record<string, unknown> | ComponentId, index?: number): FormeoComponent
+  /** `null` when this component's type can't have children (e.g. a field). */
+  addChild(childData?: Record<string, unknown> | ComponentId, index?: number): FormeoComponent | null
   addEventListener(eventName: string, handler: ComponentEventHandler): void
   removeEventListener(eventName: string, handler: ComponentEventHandler): void
 }
@@ -380,9 +381,20 @@ export interface FormeoEvent<TDetail = unknown> {
   detail: TDetail
 }
 
+/**
+ * A component-type data store (`stages`, `rows`, `columns` or `fields`), as opposed to a single component. A
+ * page reorder's `formeoUpdated`/`onUpdate` detail sets `entity` to this (the stages store itself), not a
+ * {@link FormeoComponent}.
+ */
+export interface ComponentStore {
+  readonly name: 'stages' | 'rows' | 'columns' | 'fields'
+  readonly data: Record<ComponentId, FormeoComponent>
+  readonly size: number
+}
+
 /** `detail` of the added, removed and updated events; which keys are set depends on the event. */
 export interface FormeoChangeDetail {
-  entity?: FormeoComponent
+  entity?: FormeoComponent | ComponentStore
   componentId?: ComponentId
   componentType?: ComponentType
   parent?: FormeoComponent
@@ -390,7 +402,8 @@ export interface FormeoChangeDetail {
   changePath?: string
   value?: unknown
   previousValue?: unknown
-  changeType?: 'added' | 'removed' | 'changed' | 'unchanged'
+  /** `'reordered'` is a page (stage) reorder; `value`/`previousValue` are the new/old stage id order. */
+  changeType?: 'added' | 'removed' | 'changed' | 'unchanged' | 'reordered'
   data?: unknown
   [key: string]: unknown
 }
@@ -698,11 +711,15 @@ export interface FormeoActions {
 /** A jQuery object (or anything array-like with a `jquery` key); its first element is used. */
 export interface JQueryLike {
   readonly jquery: string
-  readonly [index: number]: HTMLElement | undefined
+  readonly [index: number]: Element | undefined
 }
 
-/** A selector, an element, or a jQuery object. */
-export type ContainerOption = string | HTMLElement | JQueryLike | null
+/**
+ * A selector, an element, or a jQuery object. `dom.resolveContainer()` accepts any `Element`, not just
+ * `HTMLElement` (e.g. an SVGElement), and passes `null`/`undefined` straight through with no fallback of its own;
+ * the editor and renderer then treat a container that resolves to nothing as "not attached" rather than throwing.
+ */
+export type ContainerOption = string | Element | JQueryLike | null
 
 export interface I18nOptions {
   /** Where language files are fetched from. */
@@ -894,5 +911,9 @@ declare global {
     FormeoEditor: typeof FormeoEditor
     FormeoRenderer: typeof FormeoRenderer
   }
+  // Formeo events bubble to `document` unless `events.bubbles` is `false`, but they're dispatched on the
+  // editor's own elements first, so both event maps need the same members (docs/options/events/README.md
+  // recommends listening on the editor's container).
   interface DocumentEventMap extends FormeoDomEventMap {}
+  interface HTMLElementEventMap extends FormeoDomEventMap {}
 }

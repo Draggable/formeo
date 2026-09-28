@@ -6,6 +6,7 @@ import {
   type ComponentEvents,
   type ControlDefinition,
   type FormData,
+  type FormeoChangeDetail,
   type FormeoComponent,
   FormeoEditor,
   type FormeoEditorOptions,
@@ -76,11 +77,21 @@ const componentEvents: ComponentEvents = {
   onAddChild: evt => {
     if ('component' in evt) {
       evt.component.id
+      const grandchild = evt.component.addChild()
+      // @ts-expect-error addChild returns null when the component can't have children (e.g. a field); narrow first
+      grandchild.id
     } else {
       evt.parent.id
       evt.child.id
     }
   },
+}
+
+// A page reorder's `formeoUpdated`/`onUpdate` detail: `entity` is the stages store, not a FormeoComponent.
+const describeReorder = (detail: FormeoChangeDetail) => {
+  if (detail.changeType === 'reordered') {
+    return detail.value
+  }
 }
 
 const describeAdd = (detail: BeforeAddDetail): string => {
@@ -175,6 +186,9 @@ if (editor.initState === 'destroyed' || editor.isDestroyed) {
 }
 const bare = new FormeoEditor()
 const jquery = new FormeoEditor({ editorContainer: { jquery: '3.7.1', 0: document.body } })
+// document.querySelector() returns Element | null; the runtime accepts any element as a container.
+const queriedContainer: Element | null = document.querySelector('#x')
+const queried = new FormeoEditor({ editorContainer: queriedContainer })
 
 document.addEventListener('formeoBeforeRemove', evt => {
   if (evt.detail.componentType === 'row') {
@@ -182,9 +196,12 @@ document.addEventListener('formeoBeforeRemove', evt => {
   }
 })
 document.addEventListener('formeoEditOpened', evt => evt.detail.componentId)
+// Formeo DOM events bubble on the editor's own elements too, not just `document`.
+editor.editorContainer?.addEventListener('formeoEditOpened', e => e.detail.componentId)
 
+const queriedRenderContainer: Element | null = document.querySelector('#formeo-renderer')
 const rendererOptions: FormeoRendererOptions = {
-  renderContainer: '#formeo-renderer',
+  renderContainer: queriedRenderContainer,
   formData,
   pagination: { type: 'wizard', heading: 3, submit: true, labels: { next: 'Weiter', status: '{title} ({n}/{count})' } },
   elements: { email: { action: { onRender: elem => elem.focus() } } },
@@ -265,12 +282,14 @@ export {
   bare,
   clearAll,
   componentEvents,
+  describeReorder,
   fromGlobal,
   headless,
   html,
   jquery,
   json,
   newPage,
+  queried,
   typo,
   unnarrowed,
   unnarrowedAddChild,
