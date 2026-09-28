@@ -94,7 +94,8 @@ See [Controlling Attribute Visibility](../../controls/custom-attribute-types.md#
 
 See [Custom controls](../../controls/custom-controls.md) for a full editor + renderer example.
 
-An element with a `controlSet` key adds a group of fields at once; see [Control sets](../../controls/custom-controls.md#control-sets).
+An element with a `controlSet` key adds a group of fields at once; see
+[Control sets](../../controls/custom-controls.md#control-sets).
 
 ## elementOrder
 
