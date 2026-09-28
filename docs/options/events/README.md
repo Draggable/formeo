@@ -188,9 +188,10 @@ don't run them.
 
 `onEditOpen` and `onEditClose` fire when a stage, row, column or field's edit panel opens or closes, with
 `detail: { component, componentType, componentId }`; `componentType` is `'stage'`, `'row'`, `'column'` or `'field'`
-(with the `pages` option, a stage's panel is a page's settings). The `formeoEditOpened` and `formeoEditClosed` DOM events carry
-the same `detail`; they're dispatched on the component's element and bubble to `document`. They only fire when the
-panel actually opens or closes, can't be cancelled, and don't fire when a component is removed with its panel open.
+(with the `pages` option, a stage's panel is a page's settings). The `formeoEditOpened` and `formeoEditClosed` DOM
+events carry the same `detail`; they're dispatched on the component's element and bubble to `document`. They only
+fire when the panel actually opens or closes, can't be cancelled, and don't fire when a component is removed with
+its panel open.
 formBuilder's `onOpenFieldEdit`/`onCloseFieldEdit` map to these, filtered to `componentType === 'field'`.
 
 ```javascript

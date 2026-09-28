@@ -7,6 +7,11 @@ modules or CommonJS). There is nothing extra to install. Projects still on `modu
 types through the top-level `types` field on TypeScript 6 or older; TypeScript 7 removed that mode, so switch to
 `bundler` or `nodenext` there.
 
+Requires TypeScript 4.7+ (the `exports` conditions need `moduleResolution: node16`/`nodenext`, which 4.7 added;
+`moduleResolution: bundler` needs 5.0+). Your `lib` needs `"dom"` — without it, most of this file's types don't
+resolve (`HTMLElement`, `CustomEvent`, and the rest), and with the common `skipLibCheck: true` those errors are
+silently skipped because they'd be reported inside a `.d.ts` file; set `skipLibCheck: false` at least once to check.
+
 ## What is typed
 
 - `FormeoEditor` and `FormeoRenderer`: constructors, properties and methods, including `destroy()`, `editor.pages`
@@ -98,5 +103,22 @@ program, for example with `/// <reference types="formeo" />` in one file.
 
 ## Replacing your own declarations
 
-If your project has its own `declare module 'formeo'` block, delete it. In a module file it clashes with the shipped
-types (TS2300 duplicate identifier); in a global `.d.ts` it replaces them.
+If your project has its own `declare module 'formeo'` block, delete it. What happens if you don't depends on where
+it lives and on `skipLibCheck`:
+
+- In a **module file** (one with its own `import`/`export`) with the common `skipLibCheck: true`, it merges with the
+  shipped types silently — the shipped declaration wins, and any error shows up where your code reads a member only
+  your shim declared, not where the shim is. With `skipLibCheck: false` it's a hard clash (TS2300 duplicate
+  identifier) at both declarations.
+- In a **global file** (no `import`/`export`) as a bodyless shorthand — `declare module 'formeo'` with no `{ }` —
+  it replaces the shipped types with `any`, regardless of `skipLibCheck`.
+
+The same silent-merge-under-`skipLibCheck: true` behavior applies to a `declare global { interface Window {
+FormeoEditor: any } }` some projects added before formeo shipped its own `Window` typing: with `skipLibCheck: true`
+it merges without error, but your `any` wins there, so `window.FormeoEditor` loses the shipped typing wherever it's
+read; with `skipLibCheck: false` it's TS2717 ("subsequent property declarations must have the same type"). Either
+way, remove it now that formeo types `Window.FormeoEditor` itself.
+
+Since formeo's public surface used to be untyped (`any`) everywhere, removing a shim like this — or just upgrading
+past a version that lacked these types — can surface type errors in code that compiled before, now that TypeScript
+is actually checking it.
