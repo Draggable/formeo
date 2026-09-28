@@ -1,3 +1,21 @@
+# [5.11.0](https://github.com/Draggable/formeo/compare/v5.10.0...v5.11.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* **events:** re-check a page or component after an async onBeforeRemove ([b9ef33c](https://github.com/Draggable/formeo/commit/b9ef33c33ff401b26a603fcc4e143700c344ceed)), closes [#281](https://github.com/Draggable/formeo/issues/281)
+
+
+### Features
+
+* **actions:** let apps confirm or cancel removing a row, column or field ([6a58b3d](https://github.com/Draggable/formeo/commit/6a58b3d2cb89dad80857a200cebae009a3a052d0)), closes [#281](https://github.com/Draggable/formeo/issues/281)
+* **actions:** send single attribute, option and condition removals through actions.remove ([f4a74b8](https://github.com/Draggable/formeo/commit/f4a74b8906ff5aba3b2ffc4cb78eb39ea429c051)), closes [#281](https://github.com/Draggable/formeo/issues/281)
+* **events:** add a before-hook runner that can cancel or hold a user action ([c0c4324](https://github.com/Draggable/formeo/commit/c0c4324de8c72f4790657b64fdd7ddf1169fbbbf)), closes [Events#before](https://github.com/Events/issues/before) [#281](https://github.com/Draggable/formeo/issues/281)
+* **events:** add onBeforeAdd to cancel or hold adding from the controls or the page tab ([bf4bf4b](https://github.com/Draggable/formeo/commit/bf4bf4b5e002ca653102350df52f3bfe215cbcae)), closes [#281](https://github.com/Draggable/formeo/issues/281)
+* **events:** add onBeforeClone and onBeforeSave ([42dab0b](https://github.com/Draggable/formeo/commit/42dab0bb45abecf9e57586ddfbbe970128fbf7b5)), closes [#281](https://github.com/Draggable/formeo/issues/281)
+* **events:** add onBeforeRemove to cancel or hold removing a component or page ([1a0155d](https://github.com/Draggable/formeo/commit/1a0155da3d4b1236606fa3d1b8bdaa6e1971b873)), closes [#281](https://github.com/Draggable/formeo/issues/281)
+* **events:** fire onEditOpen and onEditClose when an edit panel opens or closes ([f2e18f0](https://github.com/Draggable/formeo/commit/f2e18f01e72b5b9b0481ddd01d9b7d6cf9dc3c34)), closes [#316](https://github.com/Draggable/formeo/issues/316)
+
 # [5.10.0](https://github.com/Draggable/formeo/compare/v5.9.3...v5.10.0) (2026-09-28)
 
 
