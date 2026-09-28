@@ -139,7 +139,7 @@
     "zod": "^4.4.3"
   },
   "dependencies": {
-    "@draggable/formeo-languages": "^3.7.0",
+    "@draggable/formeo-languages": "^3.8.0",
     "@draggable/i18n": "^1.0.7",
     "@draggable/tooltip": "^1.2.2",
     "lodash": "^4.17.21",
