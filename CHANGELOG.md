@@ -1,3 +1,17 @@
+# [5.13.0](https://github.com/Draggable/formeo/compare/v5.12.0...v5.13.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* **types:** accept any Element as a container, and type page reorders and a field's addChild ([80d128b](https://github.com/Draggable/formeo/commit/80d128b8434462188f71e487bdf12220e954b107)), closes [#184](https://github.com/Draggable/formeo/issues/184)
+* **types:** type the legacy second call of component onRender and onAddChild ([fcdb782](https://github.com/Draggable/formeo/commit/fcdb782f3c3da7764c7fbcb33e69c06b8d131602)), closes [#184](https://github.com/Draggable/formeo/issues/184)
+
+
+### Features
+
+* **types:** add TypeScript definitions for the public API ([7440a17](https://github.com/Draggable/formeo/commit/7440a1723716662e1b5c4f9038638b1e38cc27a9)), closes [#184](https://github.com/Draggable/formeo/issues/184)
+* **types:** type control set definitions and their onBeforeAdd detail ([7a70dfd](https://github.com/Draggable/formeo/commit/7a70dfded462329fc1c3c1ddacd5aa4fa13ac99b)), closes [#227](https://github.com/Draggable/formeo/issues/227)
+
 # [5.12.0](https://github.com/Draggable/formeo/compare/v5.11.0...v5.12.0) (2026-09-28)
 
 
