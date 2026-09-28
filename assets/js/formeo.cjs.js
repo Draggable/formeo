@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.7.0
+Version: 5.8.0
 Author: Draggable https://draggable.io
 */
 
@@ -71,7 +71,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Laat Kies toe",
 		and: "en",
 		attribute: "kenmerk",
-		attributeNotPermitted: "Attribuut \"{attribuut}\" is nie toegelaat nie, kies asseblief 'n ander.",
+		attributeNotPermitted: "Kenmerk \" {attribute} \" word nie toegelaat nie, kies asseblief 'n ander een.",
 		attributes: "eienskappe",
 		"attrs.class": "klas",
 		"attrs.className": "klas",
@@ -205,10 +205,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "Opsie",
 		optional: "opsioneel",
 		optionEmpty: "Opsie waarde vereis",
-		optionLabel: "Opsie (tel)",
+		optionLabel: "Opsie {count}",
 		options: "opsies",
 		or: "of",
 		order: "Orde",
+		"pages.add": "Voeg bladsy by",
+		"pages.label": "Bladsye",
+		"pages.move": "Beweeg",
+		"pages.moved": "Geskuif na {title}",
+		"pages.moveTo": "Skuif na bladsy",
+		"pages.remove": "Verwyder bladsy \" {title} \"",
+		"pages.removeConfirm": "Verwyder \" {title} \" en alles daarop?",
+		"pages.rename": "Hernoem bladsy",
+		"pages.untitled": "Bladsy {n}",
 		"panel.label.attrs": "eienskappe",
 		"panel.label.conditions": "voorwaardes",
 		"panel.label.config": "opset",
@@ -231,7 +240,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "primêre",
 		remove: "verwyder",
 		removeMessage: "Verwyder Element",
-		removeType: "Verwyder {tipe}",
+		removeType: "Verwyder {type}",
 		required: "vereis",
 		reset: "herstel",
 		richText: "Rich Text Editor",
@@ -394,7 +403,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"input.date": "تاريخ",
 		"input.text": "نص",
 		label: "التسمية",
-		labelCount: "{التسمية} {العدد}",
+		labelCount: "{label} {count}",
 		labelEmpty: "التسمية لا يمكن أن يكون فارغا",
 		"lang.af": "الأفريقي",
 		"lang.ar": "عربي",
@@ -427,7 +436,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "ملصق",
 		minOptionMessage: "يتطلب هذا المجال لا تقل عن 2 خيارات",
 		name: "الإسم",
-		newOptionLabel: "نوع جديد",
+		newOptionLabel: "نوع جديد {type}",
 		no: "لا",
 		number: "رقم",
 		off: "عاطل",
@@ -441,10 +450,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "خيار",
 		optional: "خيار",
 		optionEmpty: "قيمة الخيار المطلوبة",
-		optionLabel: "الخيار {العدد}",
+		optionLabel: "الخيار {count}",
 		options: "خيارات",
 		or: "أو",
 		order: "طلب",
+		"pages.add": "إضافة صفحة",
+		"pages.label": "الصفحات",
+		"pages.move": "يتحرك",
+		"pages.moved": "نُقل إلى {title}",
+		"pages.moveTo": "انتقل إلى الصفحة",
+		"pages.remove": "إزالة الصفحة \" {title} \"",
+		"pages.removeConfirm": "هل تريد حذف \" {title} \" وكل ما يحتويه؟",
+		"pages.rename": "إعادة تسمية الصفحة",
+		"pages.untitled": "الصفحة {n}",
 		"panel.label.attrs": "صفات",
 		"panel.label.conditions": "شروط",
 		"panel.label.config": "إعدادات",
@@ -467,7 +485,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "أساسي",
 		remove: "&#215;",
 		removeMessage: "إزالة عنصر",
-		removeType: "إزالة {النوع}",
+		removeType: "إزالة {type}",
 		required: "إجبارية",
 		reset: "إعادة ضبط",
 		richText: "محرر WYSIWYG",
@@ -681,6 +699,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Možnosti",
 		or: "nebo",
 		order: "Objednávka",
+		"pages.add": "Přidat stránku",
+		"pages.label": "Stránky",
+		"pages.move": "Pohyb",
+		"pages.moved": "Přesunuto do {title}",
+		"pages.moveTo": "Přesunout na stránku",
+		"pages.remove": "Odebrat stránku „ {title} “",
+		"pages.removeConfirm": "Odebrat „ {title} “ a vše, co je na něm?",
+		"pages.rename": "Přejmenovat stránku",
+		"pages.untitled": "Stránka {n}",
 		"panel.label.attrs": "Atributy",
 		"panel.label.conditions": "Podmínky",
 		"panel.label.config": "Konfigurace",
@@ -779,7 +806,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Auswahl zulassen",
 		and: "und",
 		attribute: "Attribut",
-		attributeNotPermitted: "Attribut \"{Attribut}\" ist nicht zulässig, bitte wählen Sie ein anderes.",
+		attributeNotPermitted: "Das Attribut \" {attribute} \" ist nicht zulässig. Bitte wählen Sie ein anderes.",
 		attributes: "Attribute",
 		"attrs.class": "Klasse",
 		"attrs.className": "Klasse",
@@ -813,7 +840,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		control: "Steuerung",
 		"controlGroups.nextGroup": "Nächste Gruppe",
 		"controlGroups.prevGroup": "Vorherige Gruppe",
-		"controls.filteringTerm": "Filtern \"{Begriff}\"",
+		"controls.filteringTerm": "Filtern \" {term} \"",
 		"controls.form.button": "Taste",
 		"controls.form.checkbox-group": "Kontrollkästchen Gruppe",
 		"controls.form.input.date": "Datum",
@@ -899,7 +926,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Etikette",
 		minOptionMessage: "Dieses Feld erfordert mindestens 2 Optionen",
 		name: "Name",
-		newOptionLabel: "Neuer Typ}",
+		newOptionLabel: "Neuer {type}",
 		no: "Nein",
 		number: "Nummer",
 		off: "aus",
@@ -917,6 +944,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Optionen",
 		or: "oder",
 		order: "Auftrag",
+		"pages.add": "Seite hinzufügen",
+		"pages.label": "Seiten",
+		"pages.move": "Bewegen",
+		"pages.moved": "Verschoben nach {title}",
+		"pages.moveTo": "Zur Seite wechseln",
+		"pages.remove": "Seite \" {title} \" entfernen",
+		"pages.removeConfirm": "\" {title} \" und alles, was darauf steht, entfernen?",
+		"pages.rename": "Seite umbenennen",
+		"pages.untitled": "Seite {n}",
 		"panel.label.attrs": "Attribute",
 		"panel.label.conditions": "Bedingungen",
 		"panel.label.config": "Aufbau",
@@ -939,7 +975,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "Primär",
 		remove: "Löschen",
 		removeMessage: "Element entfernen",
-		removeType: "{Type} entfernen",
+		removeType: "Entfernen Sie {type}",
 		required: "Erforderlich",
 		reset: "Zurücksetzen",
 		richText: "Rich-Text-Editor",
@@ -1148,6 +1184,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Options",
 		or: "or",
 		order: "Order",
+		"pages.add": "Add page",
+		"pages.label": "Pages",
+		"pages.move": "Move",
+		"pages.moveTo": "Move to page",
+		"pages.moved": "Moved to {title}",
+		"pages.remove": "Remove page \"{title}\"",
+		"pages.removeConfirm": "Remove \"{title}\" and everything on it?",
+		"pages.rename": "Rename page",
+		"pages.untitled": "Page {n}",
 		"panel.label.attrs": "Attributes",
 		"panel.label.conditions": "Conditions",
 		"panel.label.config": "Configuration",
@@ -1367,7 +1412,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Etiqueta",
 		minOptionMessage: "Este campo requiere un mínimo de 2 opciones.",
 		name: "Nombre",
-		newOptionLabel: "Nuevo tipo}",
+		newOptionLabel: "Nuevo {type}",
 		no: "No",
 		number: "Número",
 		off: "Apagado",
@@ -1381,10 +1426,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "Opción",
 		optional: "Opcional",
 		optionEmpty: "Valor de opción requerido",
-		optionLabel: "Opción {cuenta}",
+		optionLabel: "Opción {count}",
 		options: "Opciones",
 		or: "o",
 		order: "Orden",
+		"pages.add": "Agregar página",
+		"pages.label": "Páginas",
+		"pages.move": "Mover",
+		"pages.moved": "Trasladado a {title}",
+		"pages.moveTo": "Ir a la página",
+		"pages.remove": "Eliminar página \" {title} \"",
+		"pages.removeConfirm": "¿Eliminar \" {title} \" y todo lo que contiene?",
+		"pages.rename": "Cambiar nombre de página",
+		"pages.untitled": "Página {n}",
 		"panel.label.attrs": "Atributos",
 		"panel.label.conditions": "Condiciones",
 		"panel.label.config": "Configuración",
@@ -1407,7 +1461,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "Primario",
 		remove: "retirar",
 		removeMessage: "Eliminar Elemento",
-		removeType: "Eliminar {tipo}",
+		removeType: "Eliminar {type}",
 		required: "Necesario",
 		reset: "Reiniciar",
 		richText: "Editor de texto enriquecido",
@@ -1621,6 +1675,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "گزینه ها",
 		or: "یا",
 		order: "سفارش",
+		"pages.add": "اضافه کردن صفحه",
+		"pages.label": "صفحات",
+		"pages.move": "حرکت",
+		"pages.moved": "به {title} منتقل شد",
+		"pages.moveTo": "انتقال به صفحه",
+		"pages.remove": "حذف صفحه \" {title} \"",
+		"pages.removeConfirm": "\" {title} \" و هر چیزی که روی آن است را حذف کنید؟",
+		"pages.rename": "تغییر نام صفحه",
+		"pages.untitled": "صفحه {n}",
 		"panel.label.attrs": "ویژگی ها",
 		"panel.label.conditions": "شروط",
 		"panel.label.config": "پیکربندی",
@@ -1857,6 +1920,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Vaihtoehdot",
 		or: "tai",
 		order: "Tilata",
+		"pages.add": "Lisää sivu",
+		"pages.label": "Sivut",
+		"pages.move": "Liikkua",
+		"pages.moved": "Siirretty kansioon {title}",
+		"pages.moveTo": "Siirry sivulle",
+		"pages.remove": "Poista sivu \" {title} \"",
+		"pages.removeConfirm": "Poistetaanko \" {title} \" ja kaikki siinä oleva?",
+		"pages.rename": "Nimeä sivu uudelleen",
+		"pages.untitled": "Sivu {n}",
 		"panel.label.attrs": "Attribuutit",
 		"panel.label.conditions": "ehdot",
 		"panel.label.config": "Kokoonpano",
@@ -2093,6 +2165,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Options",
 		or: "ou",
 		order: "Organiser",
+		"pages.add": "Ajouter une page",
+		"pages.label": "Pages",
+		"pages.move": "Se déplacer",
+		"pages.moved": "Déplacé vers {title}",
+		"pages.moveTo": "Aller à la page",
+		"pages.remove": "Supprimer la page \" {title} \"",
+		"pages.removeConfirm": "Supprimer « {title} » et tout ce qui s'y trouve ?",
+		"pages.rename": "Renommer la page",
+		"pages.untitled": "Page {n}",
 		"panel.label.attrs": "Attributs",
 		"panel.label.conditions": "Conditions",
 		"panel.label.config": "Configuration",
@@ -2311,7 +2392,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "מַדבֵּקָה",
 		minOptionMessage: "שדה זה דורש לפחות 2 אפשרויות",
 		name: "שֵׁם",
-		newOptionLabel: "{סוג} חדש",
+		newOptionLabel: "{type} חדש",
 		no: "לֹא",
 		number: "מִספָּר",
 		off: "כבוי",
@@ -2329,6 +2410,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "אפשרויות",
 		or: "אוֹ",
 		order: "לְהַזמִין",
+		"pages.add": "הוסף דף",
+		"pages.label": "דפים",
+		"pages.move": "מַהֲלָך",
+		"pages.moved": "הועבר ל- {title}",
+		"pages.moveTo": "מעבר לדף",
+		"pages.remove": "הסר את הדף \" {title} \"",
+		"pages.removeConfirm": "להסיר את \" {title} \" ואת כל מה שבתוכה?",
+		"pages.rename": "שינוי שם הדף",
+		"pages.untitled": "עמוד {n}",
 		"panel.label.attrs": "תכונות",
 		"panel.label.conditions": "תנאים",
 		"panel.label.config": "תְצוּרָה",
@@ -2461,7 +2551,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		control: "नियंत्रण",
 		"controlGroups.nextGroup": "अगला समूह",
 		"controlGroups.prevGroup": "पिछला समूह",
-		"controls.filteringTerm": "फ़िल्टरिंग \"{शब्द}\"",
+		"controls.filteringTerm": "फ़िल्टरिंग \" {term} \"",
 		"controls.form.button": "बटन",
 		"controls.form.checkbox-group": "चेकबॉक्स समूह",
 		"controls.form.input.date": "तारीख",
@@ -2514,7 +2604,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"input.date": "तारीख",
 		"input.text": "मूलपाठ",
 		label: "लेबल",
-		labelCount: "{लेबल} {गिनती}",
+		labelCount: "{label} {count}",
 		labelEmpty: "फ़ील्ड लेबल रिक्त नहीं हो सकता",
 		"lang.af": "अफ़्रीकी",
 		"lang.ar": "अरबी",
@@ -2547,7 +2637,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "लेबल",
 		minOptionMessage: "इस फ़ील्ड में कम से कम 2 विकल्प होने चाहिए",
 		name: "नाम",
-		newOptionLabel: "नया {प्रकार}",
+		newOptionLabel: "नया {type}",
 		no: "नहीं",
 		number: "संख्या",
 		off: "बंद",
@@ -2561,10 +2651,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "विकल्प",
 		optional: "वैकल्पिक",
 		optionEmpty: "विकल्प मान आवश्यक",
-		optionLabel: "विकल्प {गिनती}",
+		optionLabel: "विकल्प {count}",
 		options: "विकल्प",
 		or: "या",
 		order: "आदेश",
+		"pages.add": "पृष्ठ जोड़ें",
+		"pages.label": "पृष्ठों",
+		"pages.move": "कदम",
+		"pages.moved": "{title} पर स्थानांतरित किया गया",
+		"pages.moveTo": "अगले पृष्ठ पर जाएँ",
+		"pages.remove": "पृष्ठ \" {title} \" हटाएं",
+		"pages.removeConfirm": "क्या आप \" {title} \" और उस पर मौजूद सब कुछ हटा सकते हैं?",
+		"pages.rename": "पृष्ठ का नाम बदलें",
+		"pages.untitled": "पृष्ठ {n}",
 		"panel.label.attrs": "गुण",
 		"panel.label.conditions": "स्थितियाँ",
 		"panel.label.config": "विन्यास",
@@ -2587,7 +2686,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "प्राथमिक",
 		remove: "निकालना",
 		removeMessage: "तत्व हटाएँ",
-		removeType: "{प्रकार} हटाएं",
+		removeType: "{type} को हटाएँ",
 		required: "आवश्यक",
 		reset: "रीसेट करें",
 		richText: "रिच टेक्स्ट एडिटर",
@@ -2783,7 +2882,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Címke",
 		minOptionMessage: "Ez a mező legalább 2 opciót igényel",
 		name: "Név",
-		newOptionLabel: "Új {típus}",
+		newOptionLabel: "Új {type}",
 		no: "Nem",
 		number: "Szám",
 		off: "Ki",
@@ -2801,6 +2900,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opciók",
 		or: "vagy",
 		order: "Sorrend",
+		"pages.add": "Oldal hozzáadása",
+		"pages.label": "Oldalak",
+		"pages.move": "Mozog",
+		"pages.moved": "Áthelyezve ide: {title}",
+		"pages.moveTo": "Ugrás az oldalra",
+		"pages.remove": "A(z) „ {title} ” oldal eltávolítása",
+		"pages.removeConfirm": "Eltávolítja a(z) „ {title} ” fájlt és mindent, ami rajta van?",
+		"pages.rename": "Oldal átnevezése",
+		"pages.untitled": "{n} oldal",
 		"panel.label.attrs": "attribútumok",
 		"panel.label.conditions": "Körülmények",
 		"panel.label.config": "Configuration",
@@ -3019,7 +3127,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Etichetta",
 		minOptionMessage: "Questo campo richiede un minimo di 2 opzioni",
 		name: "Nome",
-		newOptionLabel: "Nuovo tipo}",
+		newOptionLabel: "Nuovo {type}",
 		no: "No",
 		number: "Numero",
 		off: "via",
@@ -3037,6 +3145,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opzioni",
 		or: "o",
 		order: "Ordine",
+		"pages.add": "Aggiungi pagina",
+		"pages.label": "Pagine",
+		"pages.move": "Mossa",
+		"pages.moved": "Spostato in {title}",
+		"pages.moveTo": "Vai alla pagina",
+		"pages.remove": "Rimuovi la pagina \" {title} \"",
+		"pages.removeConfirm": "Rimuovere \" {title} \" e tutto ciò che contiene?",
+		"pages.rename": "Rinomina pagina",
+		"pages.untitled": "Pagina {n}",
 		"panel.label.attrs": "attributi",
 		"panel.label.conditions": "condizioni",
 		"panel.label.config": "Configurazione",
@@ -3059,7 +3176,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "Primario",
 		remove: "Rimuovere",
 		removeMessage: "Rimuovi elemento",
-		removeType: "Rimuovi {tipo}",
+		removeType: "Rimuovi {type}",
 		required: "necessario",
 		reset: "Reset",
 		richText: "Rich Text Editor",
@@ -3135,7 +3252,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "選択を許可する",
 		and: "そして",
 		attribute: "属性",
-		attributeNotPermitted: "属性 \"{属性}\"は許可されていません。別の属性を選択してください。",
+		attributeNotPermitted: "属性「 {attribute} 」は許可されていません。別の属性を選択してください。",
 		attributes: "属性",
 		"attrs.class": "クラス",
 		"attrs.className": "クラス",
@@ -3255,7 +3372,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "ラベル",
 		minOptionMessage: "このフィールドには最低2つのオプションが必要です",
 		name: "名",
-		newOptionLabel: "新しいタイプ}",
+		newOptionLabel: "新しい{type}",
 		no: "いいえ",
 		number: "数",
 		off: "オフ",
@@ -3273,6 +3390,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "オプション",
 		or: "または",
 		order: "注文",
+		"pages.add": "ページを追加",
+		"pages.label": "ページ",
+		"pages.move": "動く",
+		"pages.moved": "{title}に移動しました",
+		"pages.moveTo": "ページへ移動",
+		"pages.remove": "ページ「 {title} 」を削除",
+		"pages.removeConfirm": "「 {title} 」とその中のすべてを削除しますか？",
+		"pages.rename": "ページ名の変更",
+		"pages.untitled": "ページ{n}",
 		"panel.label.attrs": "属性",
 		"panel.label.conditions": "条件",
 		"panel.label.config": "構成",
@@ -3295,7 +3421,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "一次",
 		remove: "削除する",
 		removeMessage: "要素を削除する",
-		removeType: "{タイプ}を削除",
+		removeType: "{type}を削除します",
 		required: "必須",
 		reset: "リセット",
 		richText: "リッチテキストエディタ",
@@ -3505,10 +3631,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "Alternativ",
 		optional: "valgfri",
 		optionEmpty: "Valgmulighet som kreves",
-		optionLabel: "Alternativ {teller}",
+		optionLabel: "Alternativ {count}",
 		options: "alternativer",
 		or: "eller",
 		order: "Rekkefølge",
+		"pages.add": "Legg til side",
+		"pages.label": "Sider",
+		"pages.move": "Flytte",
+		"pages.moved": "Flyttet til {title}",
+		"pages.moveTo": "Flytt til side",
+		"pages.remove": "Fjern siden « {title} »",
+		"pages.removeConfirm": "Fjerne « {title} » og alt på den?",
+		"pages.rename": "Gi siden nytt navn",
+		"pages.untitled": "Side {n}",
 		"panel.label.attrs": "Egenskaper",
 		"panel.label.conditions": "Forhold",
 		"panel.label.config": "konfigurasjon",
@@ -3607,7 +3742,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Zezwalaj Wybierz",
 		and: "i",
 		attribute: "Atrybut",
-		attributeNotPermitted: "Atrybut \"{atrybut}\" jest niedozwolony, wybierz inny.",
+		attributeNotPermitted: "Atrybut „ {attribute} ” jest niedozwolony, proszę wybrać inny.",
 		attributes: "Atrybuty",
 		"attrs.class": "Klasa",
 		"attrs.className": "Klasa",
@@ -3727,7 +3862,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Etykieta",
 		minOptionMessage: "To pole wymaga co najmniej 2 opcji",
 		name: "Imię",
-		newOptionLabel: "Nowy typ}",
+		newOptionLabel: "Nowy {type}",
 		no: "Nie",
 		number: "Numer",
 		off: "Poza",
@@ -3745,6 +3880,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opcje",
 		or: "lub",
 		order: "Zamówienie",
+		"pages.add": "Dodaj stronę",
+		"pages.label": "Strony",
+		"pages.move": "Przenosić",
+		"pages.moved": "Przeniesiono do {title}",
+		"pages.moveTo": "Przejdź do strony",
+		"pages.remove": "Usuń stronę „ {title} ”",
+		"pages.removeConfirm": "Usunąć „ {title} ” i wszystko, co się na nim znajduje?",
+		"pages.rename": "Zmień nazwę strony",
+		"pages.untitled": "Strona {n}",
 		"panel.label.attrs": "Atrybuty",
 		"panel.label.conditions": "Warunki",
 		"panel.label.config": "Konfiguracja",
@@ -3823,7 +3967,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"fi-FI": "finlandês (Finlândia)",
 		"fr-FR": "francês (França)",
 		"he-IL": "hebraico (Israel)",
-		"hi-IN": "híndi (Índia)",
+		"hi-IN": "hindi (Índia)",
 		"hu-HU": "húngaro (Hungria)",
 		"it-IT": "italiano (Itália)",
 		"ja-JP": "japonês (Japão)",
@@ -3930,7 +4074,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"input.date": "Data",
 		"input.text": "Texto",
 		label: "Rótulo",
-		labelCount: "{rótulo} {contagem}",
+		labelCount: "{label} {count}",
 		labelEmpty: "O rótulo do campo não pode estar vazio",
 		"lang.af": "africano",
 		"lang.ar": "árabe",
@@ -3942,7 +4086,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"lang.fi": "finlandês",
 		"lang.fr": "Francês",
 		"lang.he": "hebraico",
-		"lang.hi": "híndi",
+		"lang.hi": "hindi",
 		"lang.hu": "húngaro",
 		"lang.it": "italiano",
 		"lang.ja": "japonês",
@@ -3963,7 +4107,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Rótulo",
 		minOptionMessage: "Este campo requer um mínimo de 2 opções",
 		name: "Nome",
-		newOptionLabel: "Novo {tipo}",
+		newOptionLabel: "Novo {type}",
 		no: "Não",
 		number: "Número",
 		off: "Desligado",
@@ -3981,6 +4125,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opções",
 		or: "ou",
 		order: "Ordem",
+		"pages.add": "Adicionar página",
+		"pages.label": "Páginas",
+		"pages.move": "Mover",
+		"pages.moved": "Movido para {title}",
+		"pages.moveTo": "Ir para a página",
+		"pages.remove": "Remover página \" {title} \"",
+		"pages.removeConfirm": "Remover \" {title} \" e tudo o que estiver nele?",
+		"pages.rename": "Renomear página",
+		"pages.untitled": "Página {n}",
 		"panel.label.attrs": "Atributos",
 		"panel.label.conditions": "Condições",
 		"panel.label.config": "Configuração",
@@ -4003,7 +4156,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "Primário",
 		remove: "Remover",
 		removeMessage: "Remover Elemento",
-		removeType: "Remover {tipo}",
+		removeType: "Remover {type}",
 		required: "Obrigatório",
 		reset: "Reiniciar",
 		richText: "Editor de texto rico",
@@ -4166,7 +4319,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"input.date": "Data",
 		"input.text": "Texto",
 		label: "Rótulo",
-		labelCount: "{rótulo} {contagem}",
+		labelCount: "{label} {count}",
 		labelEmpty: "O rótulo do campo não pode estar vazio",
 		"lang.af": "africano",
 		"lang.ar": "árabe",
@@ -4199,7 +4352,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Rótulo",
 		minOptionMessage: "Este campo requer um mínimo de 2 opções",
 		name: "Nome",
-		newOptionLabel: "Novo {tipo}",
+		newOptionLabel: "Novo {type}",
 		no: "Não",
 		number: "Número",
 		off: "Desligado",
@@ -4217,6 +4370,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opções",
 		or: "ou",
 		order: "Ordem",
+		"pages.add": "Adicionar página",
+		"pages.label": "Páginas",
+		"pages.move": "Mover",
+		"pages.moved": "Movido para {title}",
+		"pages.moveTo": "Ir para a página",
+		"pages.remove": "Remover página \" {title} \"",
+		"pages.removeConfirm": "Remover \" {title} \" e tudo o que está nele?",
+		"pages.rename": "Renomear página",
+		"pages.untitled": "Página {n}",
 		"panel.label.attrs": "Atributos",
 		"panel.label.conditions": "Condições",
 		"panel.label.config": "Configuração",
@@ -4239,7 +4401,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "Primário",
 		remove: "Remover",
 		removeMessage: "Remover Elemento",
-		removeType: "Remover {tipo}",
+		removeType: "Remover {type}",
 		required: "Obrigatório",
 		reset: "Reiniciar",
 		richText: "Editor de texto rico",
@@ -4315,7 +4477,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Permiteți selectarea",
 		and: "și",
 		attribute: "Atribut",
-		attributeNotPermitted: "Atributul \"{atribut}\" nu este permis, vă rugăm să alegeți altul.",
+		attributeNotPermitted: "Atributul „ {attribute} ” nu este permis, vă rugăm să alegeți altul.",
 		attributes: "atribute",
 		"attrs.class": "Clasă",
 		"attrs.className": "Clasă",
@@ -4435,7 +4597,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Eticheta",
 		minOptionMessage: "Acest câmp necesită minim 2 opțiuni",
 		name: "Nume",
-		newOptionLabel: "Tip nou}",
+		newOptionLabel: "Nou {type}",
 		no: "Nu",
 		number: "Număr",
 		off: "de pe",
@@ -4453,6 +4615,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opțiuni",
 		or: "sau",
 		order: "Ordin",
+		"pages.add": "Adăugați o pagină",
+		"pages.label": "Pagini",
+		"pages.move": "Mişcare",
+		"pages.moved": "Mutat la {title}",
+		"pages.moveTo": "Mută la pagină",
+		"pages.remove": "Eliminați pagina „ {title} ”",
+		"pages.removeConfirm": "Să elimini „ {title} ” și tot ce conține?",
+		"pages.rename": "Redenumiți pagina",
+		"pages.untitled": "Pagina {n}",
 		"panel.label.attrs": "atribute",
 		"panel.label.conditions": "Condiții",
 		"panel.label.config": "configurație",
@@ -4689,6 +4860,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Опции",
 		or: "или же",
 		order: "порядок",
+		"pages.add": "Добавить страницу",
+		"pages.label": "Страницы",
+		"pages.move": "Двигаться",
+		"pages.moved": "Перенесено в {title}",
+		"pages.moveTo": "Перейти на страницу",
+		"pages.remove": "Удалить страницу \" {title} \"",
+		"pages.removeConfirm": "Удалить \" {title} \" и все, что в нем содержится?",
+		"pages.rename": "Переименовать страницу",
+		"pages.untitled": "Страница {n}",
 		"panel.label.attrs": "Атрибуты",
 		"panel.label.conditions": "условия",
 		"panel.label.config": "конфигурация",
@@ -4874,7 +5054,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"input.date": "วันที่",
 		"input.text": "ข้อความ",
 		label: "ฉลาก",
-		labelCount: "{ป้าย} {จำนวน}",
+		labelCount: "{label} {count}",
 		labelEmpty: "ป้ายชื่อฟิลด์ไม่สามารถว่างเปล่าได้",
 		"lang.af": "แอฟริกัน",
 		"lang.ar": "ภาษาอาหรับ",
@@ -4907,7 +5087,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "ฉลาก",
 		minOptionMessage: "ฟิลด์นี้จำเป็นต้องมีตัวเลือกอย่างน้อย 2 ตัวเลือก",
 		name: "ชื่อ",
-		newOptionLabel: "ใหม่ {ประเภท}",
+		newOptionLabel: "ใหม่ {type}",
 		no: "เลขที่",
 		number: "ตัวเลข",
 		off: "ปิด",
@@ -4921,10 +5101,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "ตัวเลือก",
 		optional: "ไม่จำเป็น",
 		optionEmpty: "ค่าตัวเลือกที่ต้องการ",
-		optionLabel: "ตัวเลือก {จำนวน}",
+		optionLabel: "ตัวเลือก {count}",
 		options: "ตัวเลือก",
 		or: "หรือ",
 		order: "คำสั่ง",
+		"pages.add": "เพิ่มหน้า",
+		"pages.label": "หน้า",
+		"pages.move": "เคลื่อนไหว",
+		"pages.moved": "ย้ายไปที่ {title}",
+		"pages.moveTo": "ไปยังหน้าถัดไป",
+		"pages.remove": "ลบหน้า \" {title} \"",
+		"pages.removeConfirm": "ลบ \" {title} \" และทุกอย่างที่อยู่บนนั้นออกหรือไม่?",
+		"pages.rename": "เปลี่ยนชื่อหน้า",
+		"pages.untitled": "หน้า {n}",
 		"panel.label.attrs": "คุณสมบัติ",
 		"panel.label.conditions": "เงื่อนไข",
 		"panel.label.config": "การกำหนดค่า",
@@ -5023,7 +5212,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Seçime İzin Ver",
 		and: "ve",
 		attribute: "nitelik",
-		attributeNotPermitted: "\"{Attribute}\" özelliğine izin verilmiyor, lütfen başka bir tane seçin.",
+		attributeNotPermitted: "\" {attribute} \" özniteliğine izin verilmiyor, lütfen başka bir öznitelik seçin.",
 		attributes: "Öznitellikler",
 		"attrs.class": "Sınıf",
 		"attrs.className": "Sınıf",
@@ -5057,7 +5246,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		control: "Kontrol",
 		"controlGroups.nextGroup": "Sonraki grup",
 		"controlGroups.prevGroup": "Önceki Grup",
-		"controls.filteringTerm": "\"{Term}\" filtrelemesi",
+		"controls.filteringTerm": "\" {term} \" filtreleniyor",
 		"controls.form.button": "Buton",
 		"controls.form.checkbox-group": "Onay Kutusu Grubu",
 		"controls.form.input.date": "tarih",
@@ -5143,7 +5332,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "Etiket",
 		minOptionMessage: "Bu alan en az 2 seçenek gerektirir",
 		name: "isim",
-		newOptionLabel: "Yeni tip}",
+		newOptionLabel: "Yeni {type}",
 		no: "Yok hayır",
 		number: "Numara",
 		off: "kapalı",
@@ -5161,6 +5350,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Seçenekler",
 		or: "veya",
 		order: "Sipariş",
+		"pages.add": "Sayfa ekle",
+		"pages.label": "Sayfalar",
+		"pages.move": "Taşınmak",
+		"pages.moved": "{title} adresine taşındı.",
+		"pages.moveTo": "Sayfaya git",
+		"pages.remove": "Sayfayı kaldır \" {title} \"",
+		"pages.removeConfirm": "\" {title} \" ve üzerindeki her şeyi kaldırmak mı?",
+		"pages.rename": "Sayfayı yeniden adlandır",
+		"pages.untitled": "Sayfa {n}",
 		"panel.label.attrs": "Öznitellikler",
 		"panel.label.conditions": "Koşullar",
 		"panel.label.config": "Yapılandırma",
@@ -5183,7 +5381,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "Birincil",
 		remove: "Kaldır",
 		removeMessage: "Öğeyi Kaldır",
-		removeType: "{Type} öğesini kaldır",
+		removeType: "{type} öğesini kaldır",
 		required: "gereklidir",
 		reset: "Reset",
 		richText: "Zengin metin editörü",
@@ -5379,7 +5577,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "标签",
 		minOptionMessage: "此字段至少需要2个选项",
 		name: "名称",
-		newOptionLabel: "新型}",
+		newOptionLabel: "{type}",
 		no: "没有",
 		number: "数",
 		off: "离",
@@ -5397,6 +5595,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "选项",
 		or: "要么",
 		order: "订购",
+		"pages.add": "添加页面",
+		"pages.label": "页",
+		"pages.move": "移动",
+		"pages.moved": "已移至{title}",
+		"pages.moveTo": "跳转到页面",
+		"pages.remove": "删除页面“ {title} ”",
+		"pages.removeConfirm": "删除“ {title} ”及其所有内容？",
+		"pages.rename": "重命名页面",
+		"pages.untitled": "第{n}",
 		"panel.label.attrs": "属性",
 		"panel.label.conditions": "条件",
 		"panel.label.config": "组态",
@@ -5582,7 +5789,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"input.date": "日期",
 		"input.text": "文字",
 		label: "標籤",
-		labelCount: "{標籤} {計數}",
+		labelCount: "{label} {count}",
 		labelEmpty: "字段標籤不能為空",
 		"lang.af": "非洲人",
 		"lang.ar": "阿拉伯",
@@ -5615,7 +5822,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"meta.label": "標籤",
 		minOptionMessage: "該欄位至少需要 2 個選項",
 		name: "姓名",
-		newOptionLabel: "新型}",
+		newOptionLabel: "{type}",
 		no: "不",
 		number: "數位",
 		off: "離開",
@@ -5629,10 +5836,19 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		option: "選項",
 		optional: "選修的",
 		optionEmpty: "所需選項值",
-		optionLabel: "選項{計數}",
+		optionLabel: "選項{count}",
 		options: "選項",
 		or: "或者",
 		order: "命令",
+		"pages.add": "新增頁面",
+		"pages.label": "頁",
+		"pages.move": "移動",
+		"pages.moved": "已移至{title}",
+		"pages.moveTo": "跳到頁面",
+		"pages.remove": "刪除頁面“ {title} ”",
+		"pages.removeConfirm": "刪除“ {title} ”及其所有內容？",
+		"pages.rename": "重新命名頁面",
+		"pages.untitled": "第{n}",
 		"panel.label.attrs": "屬性",
 		"panel.label.conditions": "狀況",
 		"panel.label.config": "配置",
@@ -5655,7 +5871,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		primary: "基本的",
 		remove: "消除",
 		removeMessage: "刪除元素",
-		removeType: "刪除{類型}",
+		removeType: "移除{type}",
 		required: "必需的",
 		reset: "重置",
 		richText: "富文本編輯器",
@@ -5708,7 +5924,7 @@ e$1["de-DE"];
 //#region node_modules/@draggable/formeo-languages/dist/formeo-languages.es.js
 /**
 @draggable/formeo-languages - https://github.com/Draggable/formeo-languages#readme
-Version: 3.5.0
+Version: 3.5.1
 Author: Kevin Chappell <kevin.b.chappell@gmail.com> (https://kevin-chappell.com)
 */
 var s$1 = e$1["en-US"];
@@ -6061,7 +6277,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.7.0";
+	version$2 = "5.8.0";
 	type = "module";
 	main = "dist/formeo.cjs.js";
 	module$1 = "dist/formeo.es.js";
@@ -6168,7 +6384,7 @@ var init_package = __esmMin((() => {
 		"zod": "^4.4.3"
 	};
 	dependencies = {
-		"@draggable/formeo-languages": "^3.4.1",
+		"@draggable/formeo-languages": "^3.6.0",
 		"@draggable/i18n": "^1.0.7",
 		"@draggable/tooltip": "^1.2.2",
 		"lodash": "^4.17.21",
@@ -17950,6 +18166,16 @@ var DEFAULT_CONFIG = () => ({
 		]
 	}
 });
+/**
+* Whether an order can be kept as an object's key order. JS lists integer-like keys ("1", "2") first, in ascending
+* numeric order, whatever their insertion order (#122), so they must already lead, in that order.
+* @param {String[]} ids
+* @return {Boolean}
+*/
+var isRepresentableOrder = (ids) => {
+	const indexIds = ids.filter(looksLikeArrayIndex);
+	return indexIds.every((id, i) => ids[i] === id && (i === 0 || Number(indexIds[i - 1]) < Number(id)));
+};
 var Stages = class extends ComponentData {
 	constructor(stageData) {
 		super("stages", stageData);
@@ -17993,7 +18219,8 @@ var Stages = class extends ComponentData {
 	}
 	/**
 	* Puts the stages (pages) in a new order. Page order is the key order of this store's data, the same object as
-	* the editor's formData.stages, so the keys are re-inserted in place.
+	* the editor's formData.stages, so the keys are re-inserted in place. Integer-like ids always come first, in
+	* ascending order, so an order that moves another page before one of them, or reorders them, is refused.
 	* @param {String[]} ids stage ids in the new order; unknown ids are ignored, missing ones keep their order at the end
 	* @return {Boolean} whether the order changed
 	*/
@@ -18001,7 +18228,7 @@ var Stages = class extends ComponentData {
 		const current = Object.keys(this.data);
 		const wanted = unique([...ids.filter((id) => Object.hasOwn(this.data, id)), ...current]);
 		if (wanted.every((id, i) => id === current[i])) return false;
-		if (wanted.some(looksLikeArrayIndex)) {
+		if (!isRepresentableOrder(wanted)) {
 			console.warn("formeo: pages whose ids look like array indexes (\"1\", \"2\") keep their order; use other ids to reorder them.");
 			return false;
 		}
@@ -18518,6 +18745,7 @@ var EditorPages = class {
 		tab.after(input);
 		this.renaming = {
 			stageId,
+			stage,
 			input,
 			tab
 		};
@@ -18536,7 +18764,7 @@ var EditorPages = class {
 		this.renaming = null;
 		const stage = this.stages.get(renaming.stageId);
 		const title = renaming.input.value.trim();
-		if (save && stage && title !== (stage.get("config.title") || "")) stage.set("config.title", title);
+		if (save && stage === renaming.stage && title !== (stage.get("config.title") || "")) stage.set("config.title", title);
 		renaming.input.remove();
 		renaming.tab.hidden = false;
 		this.refreshLabels();
@@ -19162,22 +19390,39 @@ var PAGINATION_TYPES = ["tabs", "wizard"];
 var PAGINATION_LABELS = {
 	previous: "Previous",
 	next: "Next",
-	page: "Page {n}"
+	page: "Page {n}",
+	submit: "Submit",
+	tablist: "Pages",
+	steps: "Progress",
+	navigation: "Page navigation",
+	status: "{title} ({n} of {count})"
+};
+/**
+* `heading: true` means an <h2>; a whole number from 2 to 6 picks the level; anything else leaves headings out
+* @param {*} heading
+* @return {Number} 0 when off
+*/
+var headingLevel = (heading) => {
+	if (heading === true) return 2;
+	return Number.isInteger(heading) && heading >= 2 && heading <= 6 ? heading : 0;
 };
 /**
 * Expands the renderer's `pagination` option. `progress` only affects the wizard.
-* @param {String|Object} [pagination] 'tabs' | 'wizard' | { type, progress, labels: { previous, next, page } }
-* @return {{type: String, progress: Boolean, labels: {previous: String, next: String, page: String}}|null}
+* @param {String|Object} [pagination] 'tabs' | 'wizard' |
+*   { type, progress, submit, heading, labels: { previous, next, page, submit, tablist, steps, navigation, status } }
+* @return {{type: String, progress: Boolean, submit: Boolean, heading: Number, labels: Object}|null}
 * null when the option is missing or its type is unknown
 */
 var normalizePagination = (pagination) => {
 	const opts = typeof pagination === "string" ? { type: pagination } : pagination;
 	if (!PAGINATION_TYPES.includes(opts?.type)) return null;
-	const { type, progress = true, labels } = opts;
+	const { type, progress = true, submit = false, heading = false, labels } = opts;
 	const customLabels = Object.entries(labels ?? {}).filter(([, value]) => typeof value === "string");
 	return {
 		type,
 		progress: Boolean(progress),
+		submit: Boolean(submit),
+		heading: headingLevel(heading),
 		labels: {
 			...PAGINATION_LABELS,
 			...Object.fromEntries(customLabels)
@@ -19399,6 +19644,42 @@ var create = (tag, className, text = "") => {
 	return elem;
 };
 /**
+* Creates the Submit button, a real one so Enter on the last page (or a form with no navigation at all)
+* submits natively even with no submit field in the form
+* @param {Object} labels
+* @return {HTMLButtonElement}
+*/
+var createSubmitButton = (labels) => {
+	const submitButton = create("button", "formeo-pages-submit", labels.submit);
+	submitButton.type = "submit";
+	return submitButton;
+};
+/**
+* Wraps a Submit button in the actions bar appended after the pages: used by tabs, and by a form with
+* fewer than 2 pages (a wizard's own Submit sits in its Previous/Next bar instead, see `paginate`)
+* @param {HTMLButtonElement} submitButton
+* @return {HTMLDivElement}
+*/
+var wrapInSubmitActions = (submitButton) => {
+	const actions = create("div", "formeo-pages-actions");
+	actions.append(submitButton);
+	return actions;
+};
+/**
+* Creates the Submit button already wrapped in its actions bar, for a form with fewer than 2 pages
+* @param {Object} labels
+* @return {HTMLDivElement}
+*/
+var createSubmitActions = (labels) => wrapInSubmitActions(createSubmitButton(labels));
+/**
+* Fills `{name}` placeholders from `values`, leaving unknown ones as typed. A replacer function rather than a
+* replacement string, so `$&` or `$$` in a page title stays literal.
+* @param {String} text
+* @param {Object} values
+* @return {String}
+*/
+var fillLabel = (text, values) => text.replace(/\{(\w+)\}/g, (token, name) => Object.hasOwn(values, name) ? String(values[name]) : token);
+/**
 * Moves focus to the first control a user can reach on a page, or to the page itself when it has none,
 * so that focus is never lost to the body
 * @param {HTMLElement} page
@@ -19415,23 +19696,34 @@ var focusFirst = (page) => {
 /**
 * Shows one stage of a rendered form at a time, as tabs or as a wizard
 * @param {HTMLFormElement} form rendered form
-* @param {{type: String, progress: Boolean, labels: Object}} options output of normalizePagination;
-*   `progress` only affects the wizard, adding a clickable step list above the pages
+* @param {{type: String, progress: Boolean, submit: Boolean, heading: Number, labels: Object}} options output of
+*   normalizePagination; `progress` only affects the wizard, adding a clickable step list above the pages
 * @param {Array<Object>} stages stage data in render order, for page titles
 * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
-* @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
+* @param {String} [startStageId] the stage id of the page to start on (e.g. the one on show before a re-render);
+*   the first page when no stage has it
+* @return {{show: Function, index: Number, stageId: String|null, count: Number, destroy: Function}|null} null when
+*   there is only one page
 */
-var paginate = (form, { type, progress, labels }, stages, onChange) => {
+var paginate = (form, { type, progress, submit, heading, labels }, stages, onChange, startStageId) => {
 	const pages = Array.from(form.children).filter((elem) => elem.classList.contains(STAGE_CLASSNAME));
-	if (pages.length < 2) return null;
+	if (pages.length < 2) {
+		if (submit) form.append(createSubmitActions(labels));
+		return null;
+	}
 	const count = pages.length;
 	const last = count - 1;
-	let current = 0;
+	const startIndex = stages.findIndex((stage) => stage?.id === startStageId);
+	let current = startIndex > -1 && startIndex < count ? startIndex : 0;
 	let tabs = [];
 	let steps = [];
 	let previous;
 	let next;
 	let status;
+	const playable = pages.map((_page, i) => i);
+	const isFirstPlayable = (i) => i === playable[0];
+	const isLastPlayable = (i) => i === playable.at(-1);
+	const idPrefix = `formeo-pages-${++paginatedForms}`;
 	const stepState = (i) => i < current ? "done" : i === current ? "current" : "upcoming";
 	const update = () => {
 		pages.forEach((page, i) => {
@@ -19442,9 +19734,14 @@ var paginate = (form, { type, progress, labels }, stages, onChange) => {
 			tab.tabIndex = i === current ? 0 : -1;
 		});
 		if (type === "wizard") {
-			previous.disabled = current === 0;
-			next.hidden = current === last;
-			status.textContent = `${current + 1} / ${count}`;
+			previous.disabled = isFirstPlayable(current);
+			next.hidden = isLastPlayable(current);
+			if (submitButton) submitButton.hidden = !isLastPlayable(current);
+			status.textContent = fillLabel(labels.status, {
+				title: title(current),
+				n: playable.indexOf(current) + 1,
+				count: playable.length
+			});
 			steps.forEach((step, i) => {
 				step.dataset.state = stepState(i);
 				const button = step.querySelector("button");
@@ -19532,10 +19829,21 @@ var paginate = (form, { type, progress, labels }, stages, onChange) => {
 	};
 	const goNext = () => goTo(current + 1);
 	const title = (i) => stages[i]?.config?.title || labels.page.replaceAll("{n}", String(i + 1));
+	let submitButton;
+	if (submit) submitButton = createSubmitButton(labels);
+	if (heading) pages.forEach((page, i) => {
+		const pageHeading = create(`h${heading}`, "formeo-pages-heading", title(i));
+		pageHeading.id = `${idPrefix}-heading-${i + 1}`;
+		page.prepend(pageHeading);
+		if (type === "wizard") {
+			page.setAttribute("role", "group");
+			page.setAttribute("aria-labelledby", pageHeading.id);
+		}
+	});
 	if (type === "tabs") {
 		const tablist = create("nav", "formeo-pages-nav formeo-pages-tabs");
 		tablist.setAttribute("role", "tablist");
-		const idPrefix = `formeo-pages-${++paginatedForms}`;
+		tablist.setAttribute("aria-label", labels.tablist);
 		tabs = pages.map((page, i) => {
 			page.dataset.stageId = page.id;
 			page.id = `${idPrefix}-page-${i + 1}`;
@@ -19561,10 +19869,12 @@ var paginate = (form, { type, progress, labels }, stages, onChange) => {
 			tabs[target].focus();
 		});
 		form.prepend(tablist);
+		if (submitButton) form.append(wrapInSubmitActions(submitButton));
 	} else {
 		if (progress) {
 			const stepList = document.createElement("ol");
 			stepList.className = "formeo-pages-steps";
+			stepList.setAttribute("aria-label", labels.steps);
 			steps = pages.map((_page, i) => {
 				const step = document.createElement("li");
 				step.className = "formeo-pages-step";
@@ -19587,21 +19897,24 @@ var paginate = (form, { type, progress, labels }, stages, onChange) => {
 		next.addEventListener("click", goNext);
 		const bar = create("div", "formeo-pages-nav formeo-pages-wizard");
 		bar.setAttribute("role", "group");
+		bar.setAttribute("aria-label", labels.navigation);
 		bar.append(previous, status, next);
+		if (submitButton) bar.append(submitButton);
 		form.append(bar);
 		form.addEventListener("keydown", (event) => {
 			const { target } = event;
-			if (event.key !== "Enter" || event.isComposing || event.defaultPrevented || current === last || target.tagName !== "INPUT" || ENTER_NATIVE_TYPES.has(target.type)) return;
+			if (event.key !== "Enter" || event.isComposing || event.defaultPrevented || isLastPlayable(current) || target.tagName !== "INPUT" || ENTER_NATIVE_TYPES.has(target.type)) return;
 			event.preventDefault();
+			reporting = false;
 			goNext();
 		});
 	}
 	let reporting = false;
 	const markReported = () => {
 		reporting = true;
-		queueMicrotask(() => {
+		setTimeout(() => {
 			reporting = false;
-		});
+		}, 0);
 	};
 	const withReportedValidation = (call) => {
 		reporting = true;
@@ -19640,6 +19953,9 @@ var paginate = (form, { type, progress, labels }, stages, onChange) => {
 		show,
 		get index() {
 			return current;
+		},
+		get stageId() {
+			return stages[current]?.id ?? null;
 		},
 		count,
 		destroy() {
@@ -19784,6 +20100,7 @@ var FormeoRenderer$1 = class {
 		this.components = Object.create(null);
 	}
 	getRenderedForm(formData = this.form) {
+		const startStageId = this.pager?.stageId;
 		this.form = cleanFormData(formData);
 		this.pager?.destroy();
 		this.pager = null;
@@ -19799,15 +20116,16 @@ var FormeoRenderer$1 = class {
 		this.renderedForm.addEventListener("reset", this.syncRequiredGroupsAfterReset);
 		this.applyConditions();
 		this.bindFormEvents(this.renderedForm);
-		this.pager = this.paginateForm(this.renderedForm);
+		this.pager = this.paginateForm(this.renderedForm, startStageId);
 		return this.renderedForm;
 	}
 	/**
 	* Splits a freshly rendered <form> into pages when the `pagination` option is set
 	* @param {HTMLFormElement} form
+	* @param {String} [startStageId] the stage id of the page to start on; the first page when it isn't in the form
 	* @return {Object|null} the pager, or null when the form is shown as one page
 	*/
-	paginateForm(form) {
+	paginateForm(form, startStageId) {
 		if (!this.pagination) return null;
 		const onChange = (page, previousPage) => this.events.onPageChange?.({
 			page,
@@ -19815,7 +20133,7 @@ var FormeoRenderer$1 = class {
 			form,
 			renderer: this
 		});
-		return paginate(form, this.pagination, Object.values(this.form.stages), onChange);
+		return paginate(form, this.pagination, Object.values(this.form.stages), onChange, startStageId);
 	}
 	/**
 	* A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
