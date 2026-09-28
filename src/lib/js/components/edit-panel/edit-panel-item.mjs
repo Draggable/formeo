@@ -194,6 +194,27 @@ export default class EditPanelItem {
     }
   }
 
+  /**
+   * The remove button: the panel's actions.remove.attrs|options|conditions decides whether and when (#281).
+   * Panels without one (config) remove at once. removeAction works once, and not after the panel was rebuilt,
+   * since this item's key may then name another item.
+   */
+  requestRemove = () => {
+    let called = false
+    const removeAction = () => {
+      if (called || !this.dom.isConnected) {
+        return
+      }
+      called = true
+      animate.slideUp(this.dom, ANIMATION_SPEED_BASE, this.removeItem)
+    }
+    const hook = this.field.components?.actions?.remove[this.panelName]
+    if (!hook) {
+      return removeAction()
+    }
+    return hook({ type: this.panelName, itemKey: this.itemKey, component: this.field, isClearAll: false, removeAction })
+  }
+
   get itemControls() {
     if (this.isLocked) {
       const controls = {
@@ -210,9 +231,7 @@ export default class EditPanelItem {
         className: 'prop-remove prop-control',
       },
       action: {
-        click: () => {
-          animate.slideUp(this.dom, ANIMATION_SPEED_BASE, this.removeItem)
-        },
+        click: this.requestRemove,
         mouseover: _evt => {
           this.dom.classList.add('to-remove')
         },

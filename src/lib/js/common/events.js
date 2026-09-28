@@ -5,9 +5,15 @@ import {
   EVENT_FORMEO_ADDED_FIELD,
   EVENT_FORMEO_ADDED_ROW,
   EVENT_FORMEO_ADDED_STAGE,
+  EVENT_FORMEO_BEFORE_ADD,
+  EVENT_FORMEO_BEFORE_CLONE,
+  EVENT_FORMEO_BEFORE_REMOVE,
+  EVENT_FORMEO_BEFORE_SAVE,
   EVENT_FORMEO_CHANGED,
   EVENT_FORMEO_CLEARED,
   EVENT_FORMEO_CONDITION_UPDATED,
+  EVENT_FORMEO_EDIT_CLOSED,
+  EVENT_FORMEO_EDIT_OPENED,
   EVENT_FORMEO_ON_RENDER,
   EVENT_FORMEO_PAGE_CHANGED,
   EVENT_FORMEO_REMOVED_COLUMN,
@@ -25,9 +31,15 @@ import { throttle } from './utils/index.mjs'
 
 const NO_TRANSITION_CLASS_NAME = 'no-transition'
 
-// @todo
-// Refactor events as part of https://github.com/Draggable/formeo/issues/381
-// should have a consolidated approach to events
+/**
+ * Before-hooks (#281): what the user is about to do → [option callback, cancelable DOM event]
+ */
+const BEFORE_HOOKS = {
+  add: ['onBeforeAdd', EVENT_FORMEO_BEFORE_ADD],
+  remove: ['onBeforeRemove', EVENT_FORMEO_BEFORE_REMOVE],
+  clone: ['onBeforeClone', EVENT_FORMEO_BEFORE_CLONE],
+  save: ['onBeforeSave', EVENT_FORMEO_BEFORE_SAVE],
+}
 
 /**
  * Option callbacks each DOM event triggers, in call order. formeoUpdated is handled on its own:
@@ -61,6 +73,8 @@ const reachesDocument = evt => evt.target === document || Boolean(evt.bubbles &&
 export class Events {
   components = null
   destroyed = false
+  // guard keys of before-hooks still waiting on a Promise
+  pendingBefore = new Set()
 
   constructor() {
     this.opts = this.defaults()
@@ -111,6 +125,12 @@ export class Events {
       onRender: log,
       onPageChange: () => {},
       onSave: _evt => {},
+      onBeforeAdd: () => {},
+      onBeforeRemove: () => {},
+      onBeforeClone: () => {},
+      onBeforeSave: () => {},
+      onEditOpen: () => {},
+      onEditClose: () => {},
       confirmClearAll: evt => {
         if (globalThis.confirm(evt.confirmationMessage)) {
           evt.clearAllAction(evt)
@@ -153,6 +173,95 @@ export class Events {
     }
     for (const name of EVENT_CALLBACKS.get(type) || []) {
       this.opts[name]({ timeStamp, type, detail })
+    }
+  }
+
+  /**
+   * Lets page listeners and this editor's onBefore* callback cancel, or hold, something a user is about to do (#281).
+   * A DOM listener cancels with preventDefault(). The callback cancels with preventDefault(), by returning false,
+   * or by returning a Promise that resolves to false or rejects. When nothing returned a Promise, proceed runs
+   * synchronously. After destroy() nothing runs.
+   * @param {String} name 'add', 'remove', 'clone' or 'save'
+   * @param {Object} detail what is about to happen
+   * @param {Function} proceed does it
+   * @param {Object} [options]
+   * @param {EventTarget} [options.src] where the DOM event is dispatched, document by default
+   * @param {String} [options.guardKey] while a request with this key waits, more requests with it are ignored
+   * @return {Boolean|Promise<Boolean>} whether proceed ran
+   */
+  before(name, detail, proceed, { src, guardKey } = {}) {
+    const [callbackName, type] = BEFORE_HOOKS[name]
+    if (this.destroyed || (guardKey && this.pendingBefore.has(guardKey))) {
+      return false
+    }
+    const domEvent = new globalThis.CustomEvent(type, {
+      detail,
+      bubbles: Boolean(this.opts.debug || this.opts.bubbles),
+      cancelable: true,
+    })
+    ;(src || document).dispatchEvent(domEvent)
+    if (domEvent.defaultPrevented) {
+      return false
+    }
+
+    let prevented = false
+    const evt = {
+      timeStamp: domEvent.timeStamp,
+      type,
+      detail,
+      preventDefault: () => {
+        prevented = true
+      },
+      get defaultPrevented() {
+        return prevented
+      },
+    }
+    const cancelOnError = error => {
+      console.error(`formeo: ${callbackName} failed, so the ${name} was cancelled.`, error)
+      return false
+    }
+    const settle = result => {
+      if (prevented || result === false || this.destroyed) {
+        return false
+      }
+      proceed()
+      return true
+    }
+
+    let result
+    try {
+      result = this.opts[callbackName]?.(evt)
+    } catch (error) {
+      return cancelOnError(error)
+    }
+    if (typeof result?.then !== 'function') {
+      return settle(result)
+    }
+    if (guardKey) {
+      this.pendingBefore.add(guardKey)
+    }
+    return Promise.resolve(result)
+      .then(value => {
+        if (guardKey) {
+          this.pendingBefore.delete(guardKey)
+        }
+        return settle(value)
+      }, cancelOnError)
+      .finally(() => guardKey && this.pendingBefore.delete(guardKey))
+  }
+
+  /**
+   * A component's edit panel opened or closed (#316). The callback runs even when the DOM event can't reach document.
+   * @param {Component} component
+   * @param {Boolean} open
+   */
+  editToggled(component, open) {
+    const type = open ? EVENT_FORMEO_EDIT_OPENED : EVENT_FORMEO_EDIT_CLOSED
+    const detail = { component, componentType: component.name, componentId: component.id }
+    const evt = new globalThis.CustomEvent(type, { detail, bubbles: Boolean(this.opts.debug || this.opts.bubbles) })
+    ;(component.dom || document).dispatchEvent(evt)
+    if (!this.destroyed) {
+      this.opts[open ? 'onEditOpen' : 'onEditClose']?.({ timeStamp: evt.timeStamp, type, detail })
     }
   }
 

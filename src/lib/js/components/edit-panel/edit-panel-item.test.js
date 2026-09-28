@@ -1,4 +1,5 @@
 import { mock, suite, test } from 'node:test'
+import { Actions } from '../../common/actions.js'
 import { get, set } from '../../common/utils/object.mjs'
 import { EditPanelItem } from './edit-panel-item.mjs'
 
@@ -162,5 +163,60 @@ suite('EditPanelItem removal (#306)', () => {
     const { field, item } = buildOptionItem()
     field.debouncedUpdatePreview = undefined
     t.assert.doesNotThrow(() => item.removeItem())
+  })
+})
+
+suite('EditPanelItem removal goes through actions.remove (#281)', () => {
+  const buildItem = (panelName, actionOptions = {}) => {
+    const field = new MockField()
+    field.config = { panels: { [panelName]: { hideDisabled: true } } }
+    field.components = { actions: new Actions(null).init(actionOptions) }
+    field.remove = mock.fn()
+    field.debouncedUpdatePreview = mock.fn()
+    const panel = { name: panelName, updateProps: mock.fn() }
+    const key = panelName === 'options' ? 'options[1]' : `${panelName}.x`
+    const item = new EditPanelItem({ key, data: { label: 'Two', value: 'two' }, index: 1, field, panel })
+    document.body.appendChild(item.dom)
+    return { field, item }
+  }
+  const clickRemove = item => item.dom.querySelector('.prop-remove').click()
+
+  test('a custom actions.remove.options can hold removing one option, then finish it once', t => {
+    const seen = []
+    const { field, item } = buildItem('options', { remove: { options: evt => seen.push(evt) } })
+    clickRemove(item)
+    t.assert.equal(field.remove.mock.callCount(), 0)
+    t.assert.equal(seen.length, 1)
+    t.assert.equal(seen[0].type, 'options')
+    t.assert.equal(seen[0].itemKey, 'options[1]')
+    t.assert.equal(seen[0].component, field)
+    t.assert.equal(seen[0].isClearAll, false)
+    seen[0].removeAction()
+    seen[0].removeAction()
+    t.assert.deepEqual(
+      field.remove.mock.calls.map(call => call.arguments),
+      [['options[1]']]
+    )
+  })
+
+  test('the default actions.remove.attrs removes at once', t => {
+    const { field, item } = buildItem('attrs')
+    clickRemove(item)
+    t.assert.deepEqual(field.remove.mock.calls[0].arguments, ['attrs.x'])
+  })
+
+  test('panels without a remove action (config) remove directly', t => {
+    const { field, item } = buildItem('config')
+    clickRemove(item)
+    t.assert.deepEqual(field.remove.mock.calls[0].arguments, ['config.x'])
+  })
+
+  test('a removal held past a panel rebuild does nothing', t => {
+    const seen = []
+    const { field, item } = buildItem('options', { remove: { options: evt => seen.push(evt) } })
+    clickRemove(item)
+    item.dom.remove() // updateProps rebuilt the list, so this item's index may now name another option
+    seen[0].removeAction()
+    t.assert.equal(field.remove.mock.callCount(), 0)
   })
 })

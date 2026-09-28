@@ -394,6 +394,7 @@ export default class EditPanel {
 
     const removeEvt = {
       type: this.name,
+      isClearAll: true,
       removeAction: () => {
         this.component.set(this.name, emptyValue)
         this.updateProps()

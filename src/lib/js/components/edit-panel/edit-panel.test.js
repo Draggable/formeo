@@ -187,3 +187,28 @@ describe('EditPanel config.title (#122)', () => {
     assert.ok(!configKeys(field).includes('config.title'))
   })
 })
+
+describe('EditPanel#clearAllItems (#281)', () => {
+  it('tells actions.remove.* that it is a Clear All', () => {
+    const events = new Events().init({})
+    const seen = []
+    const editorComponents = new Components({
+      events,
+      actions: new Actions(events).init({ remove: { options: evt => seen.push(evt) } }),
+    })
+    const field = new Field(
+      {
+        tag: 'input',
+        attrs: { type: 'radio' },
+        config: { label: 'Colour', controlId: 'radio' },
+        options: [{ label: 'Red', value: 'red', selected: false }],
+      },
+      editorComponents
+    )
+    field.editPanels.get('options').clearAllItems()
+    assert.equal(seen.length, 1)
+    assert.equal(seen[0].type, 'options')
+    assert.equal(seen[0].isClearAll, true)
+    assert.equal(field.get('options').length, 1, 'held: nothing cleared yet')
+  })
+})

@@ -134,7 +134,7 @@ export class EditorPages {
       title: addLabel,
     })
     addButton.innerHTML = dom.icon('plus')
-    addButton.addEventListener('click', () => this.add())
+    addButton.addEventListener('click', () => this.requestAdd())
 
     this.status = el('span', { className: 'formeo-pages-status', 'aria-live': 'polite' })
     const bar = el('div', { className: 'formeo-pages-bar' }, [this.tablist, addButton, this.status])
@@ -252,6 +252,16 @@ export class EditorPages {
         previousStageId,
       })
     }
+  }
+
+  /**
+   * The + tab: onBeforeAdd decides whether and when a page is added (#281)
+   * @return {Boolean|Promise<Boolean>} see Events#before
+   */
+  requestAdd() {
+    return this.components.events.before('add', { componentType: 'stage', index: this.count }, () => this.add(), {
+      src: this.tablist,
+    })
   }
 
   /**
@@ -442,7 +452,7 @@ export class EditorPages {
   }
 
   /**
-   * Asks the editor's actions.remove.page to remove a page; the last page is never offered
+   * Asks onBeforeRemove, then the editor's actions.remove.page, to remove a page (#281); the last page is never offered
    * @param {String} stageId
    */
   requestRemove(stageId) {
@@ -452,14 +462,29 @@ export class EditorPages {
     }
     this.commitRename()
     const index = this.ids.indexOf(stageId)
-    this.components.actions.remove.page({
-      stage,
-      stageId,
-      index,
-      title: this.titleOf(stageId),
-      isEmpty: !stage.children.length,
-      removeAction: () => this.removePage(stageId),
-    })
+    const title = this.titleOf(stageId)
+    const isEmpty = !stage.children.length
+    const { events, actions } = this.components
+    return events.before(
+      'remove',
+      { component: stage, componentType: stage.name, componentId: stageId, index, title, isEmpty },
+      () => {
+        // re-read: the page may have gained content, or been removed some other way, while the hook waited (#281)
+        const currentStage = this.stageAt(stageId)
+        if (!currentStage || this.count <= 1) {
+          return
+        }
+        actions.remove.page({
+          stage: currentStage,
+          stageId,
+          index: this.ids.indexOf(stageId),
+          title: this.titleOf(stageId),
+          isEmpty: !currentStage.children.length,
+          removeAction: () => this.removePage(stageId),
+        })
+      },
+      { src: stage.dom, guardKey: `remove:${stageId}` }
+    )
   }
 
   /**

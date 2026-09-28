@@ -27,7 +27,7 @@ export class Controls {
         return group && this.panels.nav.refresh(indexOfNode(group))
       },
       click: ({ target }) => {
-        this.addElement(target.parentElement.id)
+        this.requestAddElement(target.parentElement.id)
       },
     }
   }
@@ -186,15 +186,18 @@ export class Controls {
       action: {
         click: ({ target }) => {
           const { formData } = this.components
-          const saveEvt = {
-            action: () => {},
-            coords: dom.coords(target),
-            message: '',
-            button: target,
+          const save = () => {
+            const saveEvt = {
+              action: () => {},
+              coords: dom.coords(target),
+              message: '',
+              button: target,
+            }
+            this.components.actions.click.btn(saveEvt)
+            this.components.actions.save.form(formData)
           }
-          this.components.actions.click.btn(saveEvt)
-
-          return this.components.actions.save.form(formData)
+          // onBeforeSave decides whether and when to save (#281)
+          return this.components.events.before('save', { formData }, save, { src: target, guardKey: 'save' })
         },
       },
     }
@@ -345,28 +348,55 @@ export class Controls {
   }
 
   layoutTypes = {
-    row: () => this.components.stages.active.addChild(),
-    column: () => this.layoutTypes.row().addChild(),
-    field: controlData => this.layoutTypes.column().addChild(controlData),
+    row: (stage = this.components.stages.active) => stage.addChild(),
+    column: stage => this.layoutTypes.row(stage).addChild(),
+    field: (controlData, stage) => this.layoutTypes.column(stage).addChild(controlData),
   }
 
   /**
-   * Append an element to the stage
-   * @param {String} id of elements
+   * What a control creates
+   * @param {String} id control id (its element's id)
+   * @return {{componentType: String, controlId: String, data: Object}} componentType is 'row' or 'column' for a
+   * layout control, else 'field'; data is what a new field starts from ({} for layout controls, whose rows and
+   * columns start from their own defaults)
    */
-  addElement = id => {
+  describeControl = id => {
     const {
-      meta: { group, id: metaId },
+      meta: { id: controlId },
       ...elementData
     } = get(this.get(id), 'controlData')
+    set(elementData, 'config.controlId', controlId)
+    const layoutType = controlId.replace(/^layout-/, '')
+    const isLayout =
+      controlId.startsWith('layout-') && Object.hasOwn(this.layoutTypes, layoutType) && layoutType !== 'field'
+    return { componentType: isLayout ? layoutType : 'field', controlId, data: isLayout ? {} : elementData }
+  }
 
-    set(elementData, 'config.controlId', metaId)
-
-    if (group === 'layout') {
-      return this.layoutTypes[metaId.replace('layout-', '')]()
+  /**
+   * Append an element to a stage
+   * @param {String} id control id
+   * @param {Stage} [stage] the active stage by default
+   * @return {Component} the new row, column or field
+   */
+  addElement = (id, stage = this.components.stages.active) => {
+    const { componentType, data } = this.describeControl(id)
+    if (componentType === 'field') {
+      return this.layoutTypes.field(data, stage)
     }
+    return this.layoutTypes[componentType](stage)
+  }
 
-    return this.layoutTypes.field(elementData)
+  /**
+   * A control's click: onBeforeAdd decides whether and when it is added to the active stage (#281)
+   * @param {String} id control id
+   * @return {Boolean|Promise<Boolean>} see Events#before
+   */
+  requestAddElement = id => {
+    const stage = this.components.stages.active
+    const detail = { ...this.describeControl(id), parent: stage, index: stage.children.length, addedVia: 'click' }
+    return this.components.events.before('add', detail, () => stage.isRegistered && this.addElement(id, stage), {
+      src: this.dom,
+    })
   }
 
   /**
