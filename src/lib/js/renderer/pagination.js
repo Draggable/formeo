@@ -321,7 +321,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
     tablist.setAttribute('role', 'tablist')
     tablist.setAttribute('aria-label', labels.tablist)
     tabs = pages.map((page, i) => {
-      page.dataset.stageId = page.id
+      // data-stage-id is already set on every stage by getRenderedForm, before this id is replaced
       page.id = `${idPrefix}-page-${i + 1}`
       const tab = create('button', 'formeo-pages-tab', title(i))
       tab.type = 'button'
