@@ -13,7 +13,7 @@ test.afterEach(() => {
 })
 
 test.describe('actions.remove.component (#281)', () => {
-  test('the default removes a field at once', async ({ page }) => {
+  test('a remove action that calls removeAction removes the field at once', async ({ page }) => {
     const editor = await mountHookedEditor(page)
     await clickFieldAction(editor.locator('.formeo-field'), 'item-remove')
     await expect(editor.locator('.formeo-field')).toHaveCount(0)
