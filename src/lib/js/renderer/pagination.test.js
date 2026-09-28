@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { afterEach, beforeEach, describe, test } from 'node:test'
+import { afterEach, beforeEach, describe, mock, test } from 'node:test'
 import { JSDOM } from 'jsdom'
 import { normalizePagination } from './helpers.js'
 import FormeoRenderer from './index.js'
@@ -1044,6 +1044,157 @@ describe('pagination (#122)', () => {
         [0, 1],
         [1, 0],
       ])
+    })
+
+    describe('page conditions (#122)', () => {
+      /**
+       * Adds a pair of conditions to stage `on`: `source` holding `value` skips `stageId`, anything else brings it back
+       * @param {Object} data formData
+       * @param {String} value
+       * @param {String} stageId
+       * @param {{on?: String, source?: String}} [where]
+       * @return {Object} data
+       */
+      const skipWhen = (data, value, stageId, { on = 'p-1', source = 'a' } = {}) => {
+        const clause = comparison => [
+          { source: `fields.${source}`, sourceProperty: 'value', comparison, target: value },
+        ]
+        data.stages[on].conditions = [
+          ...(data.stages[on].conditions ?? []),
+          { if: clause('=='), then: [{ target: `stages.${stageId}`, targetProperty: 'isNotVisible' }] },
+          { if: clause('!='), then: [{ target: `stages.${stageId}`, targetProperty: 'isVisible' }] },
+        ]
+        return data
+      }
+      // page 2 has a required field and one the author disabled
+      const threePages = () =>
+        buildPages(
+          [[field('a')], [field('b', { required: true }), field('b2', { disabled: true })], [field('c')]],
+          ['One', 'Two', 'Three']
+        )
+      const stage = id => [...container.querySelectorAll('.formeo-stage')].find(elem => elem.dataset.stageId === id)
+      const skipped = () => pages().map(page => page.hasAttribute('data-skipped'))
+
+      test('every stage names its stage id, in every mode', () => {
+        for (const pagination of [undefined, 'tabs', 'wizard']) {
+          render(pagination, threePages())
+          assert.deepEqual(
+            pages().map(page => page.dataset.stageId),
+            ['p-1', 'p-2', 'p-3'],
+            String(pagination)
+          )
+        }
+      })
+
+      test('without pagination, a skipped page disappears and its answers leave the submission', () => {
+        const renderer = render(undefined, skipWhen(threePages(), 'skip', 'p-2'))
+        input('b').value = 'kept'
+        typeInto(input('a'), 'skip')
+
+        assert.equal(stage('p-2').hidden, true)
+        assert.deepEqual(skipped(), [false, true, false])
+        assert.equal(input('b').disabled, true)
+        assert.equal(input('b').hasAttribute('data-formeo-skip-disabled'), true)
+        assert.equal(input('b').value, 'kept')
+        assert.deepEqual(Object.keys(renderer.userData), ['a', 'c'])
+        // empty the required field while it is skipped: it must not block
+        input('b').value = ''
+        assert.equal(container.querySelector('form').checkValidity(), true, 'a skipped required field never blocks')
+
+        typeInto(input('a'), 'go')
+        assert.equal(stage('p-2').hidden, false)
+        assert.deepEqual(skipped(), [false, false, false])
+        assert.equal(input('b').disabled, false)
+        assert.equal(input('b').hasAttribute('data-formeo-skip-disabled'), false)
+        assert.deepEqual(Object.keys(renderer.userData), ['a', 'b', 'c'])
+        assert.equal(container.querySelector('form').checkValidity(), false, 'the required field blocks again')
+
+        // a value typed before the skip is still there when the page comes back
+        input('b').value = 'kept'
+        typeInto(input('a'), 'skip')
+        typeInto(input('a'), 'go')
+        assert.equal(input('b').value, 'kept')
+      })
+
+      test('controls the author disabled stay disabled after the page comes back', () => {
+        render(undefined, skipWhen(threePages(), 'skip', 'p-2'))
+        typeInto(input('a'), 'skip')
+        assert.equal(input('b2').hasAttribute('data-formeo-skip-disabled'), false)
+        typeInto(input('a'), 'go')
+        assert.equal(input('b2').disabled, true)
+      })
+
+      test('skipping or bringing back a page twice changes nothing more', () => {
+        const renderer = render(undefined, threePages())
+        renderer.setStageSkipped(stage('p-2'), true)
+        renderer.setStageSkipped(stage('p-2'), true)
+        assert.equal(stage('p-2').querySelectorAll('[data-formeo-skip-disabled]').length, 1)
+        renderer.setStageSkipped(stage('p-2'), false)
+        renderer.setStageSkipped(stage('p-2'), false)
+        assert.equal(input('b').disabled, false)
+        assert.equal(input('b2').disabled, true)
+      })
+
+      test('a condition can never skip the last page left in play', () => {
+        const warn = mock.method(console, 'warn', () => {})
+        try {
+          for (const pagination of [undefined, 'wizard']) {
+            warn.mock.resetCalls()
+            const data = buildPages([[field('a')], [field('b')]])
+            skipWhen(data, 'skip', 'p-1')
+            skipWhen(data, 'skip', 'p-2')
+            render(pagination, data)
+            typeInto(input('a'), 'skip')
+            assert.deepEqual(skipped(), [true, false], String(pagination))
+            assert.equal(warn.mock.callCount(), 1, String(pagination))
+          }
+        } finally {
+          warn.mock.restore()
+        }
+      })
+
+      test('a stage target only takes isVisible or isNotVisible, and never hides the form', () => {
+        const data = threePages()
+        data.stages['p-1'].conditions = [
+          {
+            if: [{ source: 'fields.a', sourceProperty: 'value', comparison: '==', target: 'x' }],
+            then: [
+              { target: 'stages.p-2', targetProperty: 'value', assignment: '=', value: 'y' },
+              { target: 'stages.p-2', targetProperty: 'isChecked' },
+            ],
+          },
+        ]
+        render(undefined, data)
+        typeInto(input('a'), 'x')
+        assert.equal(container.querySelector('form').hidden, false)
+        assert.equal(stage('p-2').hidden, false)
+        assert.deepEqual(skipped(), [false, false, false])
+      })
+
+      test('a stage id that is not a valid selector still resolves', () => {
+        const data = threePages()
+        data.stages = {
+          'p-1': data.stages['p-1'],
+          'p:2': { ...data.stages['p-2'], id: 'p:2' },
+          'p-3': data.stages['p-3'],
+        }
+        render(undefined, skipWhen(data, 'skip', 'p:2'))
+        typeInto(input('a'), 'skip')
+        assert.deepEqual(skipped(), [false, true, false])
+      })
+
+      test('two forms from the same formData skip their own pages', () => {
+        const second = document.createElement('div')
+        document.body.append(second)
+        render('wizard', skipWhen(threePages(), 'skip', 'p-2'))
+        new FormeoRenderer({ renderContainer: second, pagination: 'wizard' }).render(
+          skipWhen(threePages(), 'skip', 'p-2')
+        )
+        typeInto(input('a'), 'skip')
+        assert.deepEqual(skipped(), [false, true, false])
+        const otherStage = [...second.querySelectorAll('.formeo-stage')][1]
+        assert.equal(otherStage.hasAttribute('data-skipped'), false)
+      })
     })
   })
 })

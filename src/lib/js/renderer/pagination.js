@@ -15,6 +15,9 @@ const TAB_KEYS = {
 // in a right-to-left form the tabs run from right to left, so the arrows swap
 const RTL_TAB_KEYS = { ...TAB_KEYS, ArrowRight: previousTab, ArrowLeft: nextTab }
 
+// set on a stage a page condition skips (FormeoRenderer#setStageSkipped); the pager leaves such pages out
+export const SKIPPED_ATTR = 'data-skipped'
+
 // numbers each paginated form, so its tab and page ids never clash with another form's or the editor's
 let paginatedForms = 0
 
