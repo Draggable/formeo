@@ -64,6 +64,8 @@ textarea {
   @include mixins.input-style;
 
   height: auto;
+  max-width: 100%;
+  resize: vertical;
 }
 
 button {

@@ -493,6 +493,8 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo textarea {
   height: auto;
+  max-width: 100%;
+  resize: vertical;
 }
 .formeo button {
   border-radius: 4px;
