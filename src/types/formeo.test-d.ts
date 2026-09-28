@@ -2,8 +2,11 @@
 // Every `@ts-expect-error` below must stay an error; if one stops erroring, tsc fails with TS2578.
 import {
   type BeforeAddDetail,
+  type ComponentEventData,
+  type ComponentEvents,
   type ControlDefinition,
   type FormData,
+  type FormeoComponent,
   FormeoEditor,
   type FormeoEditorOptions,
   type FormeoFormData,
@@ -59,6 +62,25 @@ const emailControl: ControlDefinition = {
   meta: { group: 'common', id: 'email', icon: '@' },
   dependencies: { js: ['https://cdn.example.com/a.js'], css: 'https://cdn.example.com/a.css' },
   action: { onRender: (elem: HTMLElement) => elem.id },
+}
+
+// onRender and onAddChild are also called the legacy way; narrow before reading `component`/`parent`/`child`.
+const componentEvents: ComponentEvents = {
+  onRender: evt => {
+    if (evt instanceof HTMLElement) {
+      evt.classList.add('rendered')
+    } else {
+      evt.component.id
+    }
+  },
+  onAddChild: evt => {
+    if ('component' in evt) {
+      evt.component.id
+    } else {
+      evt.parent.id
+      evt.child.id
+    }
+  },
 }
 
 const describeAdd = (detail: BeforeAddDetail): string => {
@@ -223,6 +245,14 @@ const clearAll = (evt: RemoveItemsActionEvent<'conditions'>) =>
   // @ts-expect-error "Clear All" has no itemKey, so check isClearAll first
   evt.itemKey
 
+const unnarrowedRender = (evt: ComponentEventData | HTMLElement) =>
+  // @ts-expect-error `evt` may be the bare element from the legacy onRender call; narrow with `instanceof HTMLElement` first
+  evt.component
+
+const unnarrowedAddChild = (evt: ComponentEventData | { parent: FormeoComponent; child: FormeoComponent }) =>
+  // @ts-expect-error `evt` may be the legacy `{ parent, child }` payload; narrow with `'component' in evt` first
+  evt.component
+
 export {
   and,
   badFormActions,
@@ -232,6 +262,7 @@ export {
   badStage,
   bare,
   clearAll,
+  componentEvents,
   fromGlobal,
   headless,
   html,
@@ -240,5 +271,7 @@ export {
   newPage,
   typo,
   unnarrowed,
+  unnarrowedAddChild,
+  unnarrowedRender,
   values,
 }

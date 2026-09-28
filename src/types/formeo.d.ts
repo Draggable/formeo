@@ -299,9 +299,11 @@ export interface ComponentEventData {
 
 export interface ComponentEvents {
   onAdd?: ComponentEventHandler
-  onAddChild?: ComponentEventHandler
+  /** Also called the legacy way, with `{ parent, child }` and no `component`/`target` — narrow first. */
+  onAddChild?: (event: ComponentEventData | { parent: FormeoComponent; child: FormeoComponent }) => void
   onRemove?: ComponentEventHandler
-  onRender?: ComponentEventHandler
+  /** Also called the legacy way, with the rendered element itself once it is in the page — narrow first. */
+  onRender?: (event: ComponentEventData | HTMLElement) => void
   onClone?: ComponentEventHandler
   onUpdate?: ComponentEventHandler
 }
