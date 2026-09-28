@@ -1245,18 +1245,90 @@ describe('pagination (#122)', () => {
       })
 
       test('skipping a page re-runs only the conditions that read it', () => {
-        const data = vatPages()
-        // an unrelated value action on p-1: a == 'skip' fills c with 'auto'
+        const data = buildPages([[field('a'), field('d')], [field('b')], [field('c')]])
+        skipWhen(data, 'skip', 'p-2')
+        // an unrelated value action on p-1: d == 'x' fills c with 'auto'; it still matches when p-2 comes back
         data.stages['p-1'].conditions.push({
-          if: [{ source: 'fields.a', sourceProperty: 'value', comparison: '==', target: 'skip' }],
+          if: [{ source: 'fields.d', sourceProperty: 'value', comparison: '==', target: 'x' }],
           then: [{ target: 'fields.c', targetProperty: 'value', assignment: '=', value: 'auto' }],
         })
         render('wizard', data)
-        typeInto(input('a'), 'skip')
+        typeInto(input('d'), 'x')
         typeInto(input('c'), 'mine')
-        typeInto(input('b'), 'yes') // b is on the skipped p-2; nothing that reads a should re-run
-        typeInto(input('a'), '') // p-2 comes back: only conditions watching p-2 (b) re-run
+        typeInto(input('a'), 'skip')
+        typeInto(input('a'), '') // p-2 comes back: re-running d's condition would overwrite the user's 'mine'
         assert.equal(input('c').value, 'mine')
+      })
+
+      test('a condition showing a page and the next one neither undoes its skip nor keeps the next page in play', () => {
+        // p-1: a skips p-2; p-2: b == 'yes' shows p-2 and p-3 in one condition, b != 'yes' skips p-3
+        const data = skipWhen(buildPages([[field('a')], [field('b')], [field('c')]]), 'skip', 'p-2')
+        const clause = comparison => [{ source: 'fields.b', sourceProperty: 'value', comparison, target: 'yes' }]
+        data.stages['p-2'].conditions = [
+          {
+            if: clause('=='),
+            then: [
+              { target: 'stages.p-2', targetProperty: 'isVisible' },
+              { target: 'stages.p-3', targetProperty: 'isVisible' },
+            ],
+          },
+          { if: clause('!='), then: [{ target: 'stages.p-3', targetProperty: 'isNotVisible' }] },
+        ]
+        render('wizard', data)
+        typeInto(input('b'), 'yes')
+        assert.deepEqual(skipped(), [false, false, false])
+        typeInto(input('a'), 'skip')
+        assert.deepEqual(skipped(), [false, true, true])
+      })
+
+      test("an action on another page reads a skipped page as unanswered, even beside that page's own action", () => {
+        // p-1: a skips p-2, d is just another answer; p-2: b == 'yes' and d == 'go' skips p-2 and shows p-3 in ONE
+        // condition, b != 'yes' skips p-3
+        const data = skipWhen(buildPages([[field('a'), field('d')], [field('b')], [field('c')]]), 'skip', 'p-2')
+        const b = comparison => ({ source: 'fields.b', sourceProperty: 'value', comparison, target: 'yes' })
+        data.stages['p-2'].conditions = [
+          {
+            if: [
+              b('=='),
+              { source: 'fields.d', sourceProperty: 'value', comparison: '==', target: 'go', logical: '&&' },
+            ],
+            then: [
+              { target: 'stages.p-2', targetProperty: 'isNotVisible' },
+              { target: 'stages.p-3', targetProperty: 'isVisible' },
+            ],
+          },
+          { if: [b('!=')], then: [{ target: 'stages.p-3', targetProperty: 'isNotVisible' }] },
+        ]
+        render('wizard', data)
+        typeInto(input('b'), 'yes')
+        typeInto(input('a'), 'skip')
+        assert.deepEqual(skipped(), [false, true, true])
+        // d re-runs the condition while p-2 is skipped: skipping p-2 again reads b as it is, showing p-3 must not
+        typeInto(input('d'), 'go')
+        assert.deepEqual(skipped(), [false, true, true])
+      })
+
+      test('a condition that also acts on its own page still re-runs for its other pages when that page is skipped', () => {
+        // p-1: a skips p-2; p-2: b == 'yes' shows p-3, b != 'yes' skips p-3 and keeps p-2 in ONE condition
+        const data = skipWhen(buildPages([[field('a')], [field('b')], [field('c')]]), 'skip', 'p-2')
+        const clause = comparison => [{ source: 'fields.b', sourceProperty: 'value', comparison, target: 'yes' }]
+        data.stages['p-2'].conditions = [
+          { if: clause('=='), then: [{ target: 'stages.p-3', targetProperty: 'isVisible' }] },
+          {
+            if: clause('!='),
+            then: [
+              { target: 'stages.p-3', targetProperty: 'isNotVisible' },
+              { target: 'stages.p-2', targetProperty: 'isVisible' },
+            ],
+          },
+        ]
+        render('wizard', data)
+        typeInto(input('b'), 'yes')
+        typeInto(input('a'), 'skip')
+        // re-run for p-3 only: its p-2 action is left alone, so it doesn't undo the skip
+        assert.deepEqual(skipped(), [false, true, true])
+        typeInto(input('a'), '')
+        assert.deepEqual(skipped(), [false, false, false])
       })
 
       test('a page skipped by its own answer stays skipped, while other pages read that answer as unanswered', () => {

@@ -1075,6 +1075,18 @@ describe('FormeoRenderer', () => {
       assert.equal(container.querySelectorAll('.formeo-render').length, 1)
     })
 
+    test("releases the conditions' runners, so a later page skip can't run them", () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      const formData = emptyStageForm()
+      formData.stages['s-1'].conditions = [
+        { if: [{ source: 'fields.x', sourceProperty: 'value', comparison: '==', target: 'y' }], then: [] },
+      ]
+      renderer.render(formData)
+      assert.equal(renderer.conditionRunners.length, 1)
+      renderer.destroy()
+      assert.deepEqual(renderer.conditionRunners, [])
+    })
+
     test('is safe to call twice or before render()', () => {
       const renderer = new FormeoRenderer({ renderContainer: container })
       assert.doesNotThrow(() => {

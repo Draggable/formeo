@@ -555,7 +555,9 @@ While a page is skipped, conditions read its fields as unanswered: an empty valu
 answers stay on the page and count again if it comes back. So if "Account type" skips the Company page, a VAT page
 shown only when "VAT registered?" (a field on the Company page) is "yes" drops out along with Company, and returns
 with it. A condition that skips or brings back a page still reads that page's own fields as they are, so a page can
-skip itself.
+skip itself. Conditions reading a page's fields run again whenever it's skipped or comes back, so a `value` action
+driven by its answers can fire then too: "VAT registered?" `!=` "yes" setting another field to "none" sets it as
+Company is skipped.
 
 A skipped page can hold the author's own submit field. With `submit: false` (the default), skipping the page holding
 it disables that button along with every other control on the page, leaving the form with no enabled submit — Enter

@@ -204,6 +204,7 @@ export default class FormeoRenderer {
     this.renderedForm?.remove()
     this.renderedForm = null
     this.components = Object.create(null)
+    this.conditionRunners = []
   }
 
   getRenderedForm(formData = this.form) {
@@ -511,24 +512,33 @@ export default class FormeoRenderer {
 
   applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
     const clauseGroups = groupIfConditions(ifConditions)
-    // the pages this condition skips or brings back: it reads their fields as they are, or skipping a page by its own
-    // answer would make them read as unanswered and bring the page straight back
-    const ownStages = thenConditions
-      .filter(({ target }) => isAddress(target) && splitAddress(target)[0] === 'stages')
-      .map(({ target }) => this.getComponent(target)?.component)
-      .filter(Boolean)
+    // an action that skips or brings back a page reads that page's own fields as they are, or skipping a page by its
+    // own answer would make them read as unanswered and bring the page straight back. Every other action, even one in
+    // the same condition, reads a skipped page's fields as unanswered.
+    const actions = thenConditions.map(action => ({ action, page: this.stageTargetOf(action) }))
     // a `value` action fires `input` on its target; when the condition watches that target,
     // the event would re-enter run and set the value again, forever
     let running = false
-    const run = evt => {
+    /**
+     * @param {Event|{target: null}} evt
+     * @param {HTMLElement} [exceptPage] a page whose skip state just changed; its own actions are left alone
+     */
+    const run = (evt, exceptPage) => {
       if (running) {
         return
       }
       running = true
       try {
-        if (this.evaluateClauseGroups(clauseGroups, ownStages)) {
-          for (const thenCondition of thenConditions) {
-            this.execResult(thenCondition, evt)
+        // every clause is read before any action runs, so one action can't change what the next one sees
+        const matches = new Map()
+        for (const { page } of actions) {
+          if (!matches.has(page)) {
+            matches.set(page, this.evaluateClauseGroups(clauseGroups, page ? [page] : []))
+          }
+        }
+        for (const { action, page } of actions) {
+          if (page !== exceptPage && matches.get(page)) {
+            this.execResult(action, evt)
           }
         }
       } finally {
@@ -542,20 +552,29 @@ export default class FormeoRenderer {
       this.listenForChanges(options || component, run)
     }
     const watched = [...watchedAddresses].map(address => this.getComponent(address)?.component).filter(Boolean)
-    this.conditionRunners.push({ watched, ownStages, run })
+    this.conditionRunners.push({ watched, pages: actions.map(({ page }) => page), run })
 
     run({ target: null })
   }
 
   /**
+   * @param {Object} action a then-action
+   * @return {HTMLElement|null} the stage it skips or brings back, null for any other action
+   */
+  stageTargetOf = ({ target }) =>
+    isAddress(target) && splitAddress(target)[0] === 'stages' ? (this.getComponent(target)?.component ?? null) : null
+
+  /**
    * A page's skip state changes what its fields read as, so re-runs the conditions watching anything on it. Only
-   * those: re-running every condition would re-apply unrelated `value` actions over the user's later input.
+   * those: re-running every condition would re-apply unrelated `value` actions over the user's later input. The
+   * actions that skip or bring back that same page read it as it is, so they're left alone rather than undoing the
+   * skip that caused the re-run.
    * @param {HTMLElement} stage
    */
   rerunConditionsReading = stage => {
-    for (const { watched, ownStages, run } of this.conditionRunners) {
-      if (!ownStages.includes(stage) && watched.some(component => stage.contains(component))) {
-        run({ target: null })
+    for (const { watched, pages, run } of this.conditionRunners) {
+      if (pages.some(page => page !== stage) && watched.some(component => stage.contains(component))) {
+        run({ target: null }, stage)
       }
     }
   }
@@ -590,7 +609,7 @@ export default class FormeoRenderer {
   /**
    * Evaulate conditions
    * @param {Object} clause one if-clause
-   * @param {HTMLElement[]} [ownStages] stages the condition skips or brings back; see getComponentProperty
+   * @param {HTMLElement[]} [ownStages] stages the action being decided skips or brings back; see getComponentProperty
    * @return {Boolean}
    */
   evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }, ownStages = []) => {
@@ -635,7 +654,7 @@ export default class FormeoRenderer {
 
   /**
    * Reads a property of a rendered component. While its page is skipped, a field reads as unanswered (#122), except
-   * to a condition that skips or brings back that same page, so a page can skip itself by its own answer.
+   * to an action that skips or brings back that same page, so a page can skip itself by its own answer.
    * @param {String} address e.g. `fields.abc`
    * @param {String} propertyName e.g. `value`, `isChecked`
    * @param {HTMLElement[]} [ownStages] stages whose fields are read as they are even while skipped
