@@ -1,3 +1,23 @@
+# [5.8.0](https://github.com/Draggable/formeo/compare/v5.7.0...v5.8.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* **editor:** discard a page rename left open across a reload ([6eeedb4](https://github.com/Draggable/formeo/commit/6eeedb4114881224453a9fe09384477eb0eb8ad4)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** reorder pages whenever integer-like ids allow it ([690d673](https://github.com/Draggable/formeo/commit/690d6739028f988344ad0c80576ff54745ed2419)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** keep a silent checkValidity() from moving the wizard after Enter ([2316e10](https://github.com/Draggable/formeo/commit/2316e1047b0aa0db72bcd8491f81351e76b0df24)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** show an earlier invalid page on a trusted submit click ([ed496d1](https://github.com/Draggable/formeo/commit/ed496d16a2de1337c81a247850a54a7dd0c1a8d8)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+
+
+### Features
+
+* **renderer:** accept submit, heading and navigation labels in pagination ([d439f2c](https://github.com/Draggable/formeo/commit/d439f2c77ff9b617fc81abfbf5da7d9087d5e579)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** add a Submit button to paginated forms ([83228c4](https://github.com/Draggable/formeo/commit/83228c49114aa6bea797ae531d47ea8ae8987d63)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** add the Submit button to a one-page form too ([c9c94c4](https://github.com/Draggable/formeo/commit/c9c94c4c0533d1331919a053d7a2c441f2dea75d)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** keep the page on show across render() ([a0d8e00](https://github.com/Draggable/formeo/commit/a0d8e00b03881219338c5637eaffeab3e9207c6b)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** name the page navigation and announce the page title ([a1b733b](https://github.com/Draggable/formeo/commit/a1b733bd873a16abeac3e8e7146da451d9fdf866)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** show each page's title as a heading ([b5d2b98](https://github.com/Draggable/formeo/commit/b5d2b98df83471ae932b9012c39258de9765171e)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+
 # [5.7.0](https://github.com/Draggable/formeo/compare/v5.6.0...v5.7.0) (2026-09-27)
 
 
