@@ -120,4 +120,8 @@ Remove the rendered form from the page and stop its pagination (the page navigat
 - [Component Events](editor/component-events.md) - Component lifecycle event system
 - [Clear Method](editor/editor-clear-method.md) - Resetting the editor to initial state
 
+## [TypeScript](typescript.md)
+
+Type definitions ship with the package; this page lists what is typed and how to narrow the before-hook details.
+
 ## [Build Tools](tools/)

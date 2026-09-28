@@ -23,6 +23,7 @@ npm run build:lib            # Build library for distribution (both minified and
 ### Testing
 ```bash
 npm test                                # Run unit tests with Node.js native test runner
+npm run test:types                      # Type-check src/types/formeo.d.ts against its fixtures
 npm run test:watch                      # Run tests in watch mode
 npm run test:updateSnapshots            # Update test snapshots
 npm run playwright:test                 # Run e2e tests
@@ -136,7 +137,7 @@ The `FormeoRenderer` class (`/src/lib/js/renderer/index.js`) converts formData i
 - **Internationalization**: Uses `@draggable/i18n` package. Language files loaded from CDN by default. See `/src/lib/js/config.js` for i18n config.
 - **Icons**: SVG sprite generated at build time from `/src/lib/icons/`. Icon references use the pattern `#formeo-sprite-{icon-name}`.
 - **SessionStorage**: Editor can persist formData to sessionStorage. Controlled by `sessionStorage` option.
-- **TypeScript**: No TypeScript source files, but type definitions should be maintained for consumers.
+- **TypeScript**: No TypeScript sources. Public types are hand-written in src/types/formeo.d.ts and copied to dist/formeo.d.ts + dist/formeo.d.cts by tools/build-types.mjs after build:lib. Any change to the public API (options, events, before hooks, actions, DOM events, methods, formData shape) must update that file and src/types/*.test-d.ts, and npm run test:types must pass. Keep FormeoFormData in sync with tools/formdata-schema.mjs.
 
 ## Git Hooks
 
@@ -153,6 +154,7 @@ The build process produces:
 - `dist/formeo.umd.js` - UMD bundle (unpkg default)
 - `dist/formeo.min.{es.js,cjs,umd.js}` - Minified versions
 - `dist/formeo.min.css` - Compiled styles
+- `dist/formeo.d.ts`, `dist/formeo.d.cts` - TypeScript definitions (ESM/UMD and CommonJS)
 - `dist/formeo-sprite.svg` - Icon sprite
 - `dist/formData_schema.json` - JSON Schema for form data validation
 

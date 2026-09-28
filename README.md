@@ -125,10 +125,10 @@ import 'formeo/dist/formeo.min.css'
 const editor = new FormeoEditor({
   editorContainer: '#formeo-editor',
   events: {
-    onSave: (formData) => {
+    onSave: ({ formData }) => {
       console.log('Form saved:', formData)
       // Render the form
-      renderer.render(formData.formData)
+      renderer.render(formData)
     }
   }
 })
@@ -141,19 +141,30 @@ const renderer = new FormeoRenderer({
 
 ### TypeScript
 
-Formeo includes TypeScript definitions. Import and use with full type support:
+Formeo ships its own type definitions (`dist/formeo.d.ts`, `dist/formeo.d.cts`); TypeScript picks them up when you
+import `formeo`. See [TypeScript](https://github.com/Draggable/formeo/blob/main/docs/typescript.md) for what is typed.
 
 ```typescript
 import { FormeoEditor, FormeoRenderer } from 'formeo'
-import type { FormeoOptions, FormData } from 'formeo'
+import type { FormeoEditorOptions, FormeoFormData } from 'formeo'
 
-const options: FormeoOptions = {
-  editorContainer: '#formeo-editor'
+const renderer = new FormeoRenderer({ renderContainer: '#formeo-renderer' })
+
+const options: FormeoEditorOptions = {
+  editorContainer: '#formeo-editor',
+  events: {
+    onSave: ({ formData }) => renderer.render(formData),
+  },
 }
 
 const editor = new FormeoEditor(options)
-const formData: FormData = editor.formData
+editor.whenReady().then(() => {
+  const formData: FormeoFormData = editor.formData
+  console.log(Object.keys(formData.fields))
+})
 ```
+
+`FormeoOptions` and `FormData` still work as aliases of `FormeoEditorOptions` and `FormeoFormData`.
 
 ## Framework Integration
 
@@ -202,6 +213,7 @@ Comprehensive documentation is available in the [docs](https://github.com/Dragga
 - **[Events](https://github.com/Draggable/formeo/blob/main/docs/options/events/README.md)** - Available events and callbacks
 - **[Actions](https://github.com/Draggable/formeo/blob/main/docs/options/actions/README.md)** - Action handlers
 - **[Editor API](https://github.com/Draggable/formeo/blob/main/docs/editor/README.md)** - Editor methods and properties
+- **[TypeScript](https://github.com/Draggable/formeo/blob/main/docs/typescript.md)** - Shipped type definitions and typed events
 - **[Build Tools](https://github.com/Draggable/formeo/blob/main/docs/tools/README.md)** - Development and build utilities
 
 ## Development

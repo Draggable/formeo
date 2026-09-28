@@ -18,7 +18,7 @@ const editor = new FormeoEditor(options, formData)
 
 | Argument   | Type             | Description                                                                                  |
 | ---------- | ---------------- | -------------------------------------------------------------------------------------------- |
-| `options`  | Object           | Required. See [Options](../options/README.md). Pass `{}` for defaults.                        |
+| `options`  | Object           | Optional. See [Options](../options/README.md).                                                 |
 | `formData` | Object \| String | Optional form definition (or its JSON string) to load. Takes priority over `options.formData`. |
 
 Set `editorContainer` to an element or selector, otherwise the editor is built but not attached to the page.
