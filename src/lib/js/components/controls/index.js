@@ -8,6 +8,7 @@ import { get, set } from '../../common/utils/object.mjs'
 import { CONTROL_GROUP_CLASSNAME, PANEL_CLASSNAME } from '../../constants.js'
 import Panels from '../panels.js'
 import Control from './control.js'
+import { CONTROL_SET, expandControlSet, insertControlSet, isControlSet } from './control-set.mjs'
 import defaultOptions from './options.js'
 
 /**
@@ -301,8 +302,9 @@ export class Controls {
           // Copy the item's id to the clone so we can identify what control it represents
           clone.id = item.id
 
-          if (this.options.ghostPreview) {
-            const { controlData } = this.get(item.id)
+          const { controlData } = this.get(item.id)
+          // a control set's drag keeps its own button: a single field's preview would mislead (#227)
+          if (this.options.ghostPreview && !isControlSet(controlData)) {
             // Dynamically import Field to avoid circular dependency
             import('../fields/field.js').then(({ default: Field }) => {
               clone.innerHTML = ''
@@ -354,17 +356,36 @@ export class Controls {
   }
 
   /**
+   * A field control's data for a control set member, or undefined when controlId is unknown, a layout control or
+   * another set (#227)
+   * @param {String} controlId a control's meta.id
+   * @return {Object|undefined} a copy without meta
+   */
+  lookupMemberControl = controlId => {
+    const controlData = this.data.get(controlId)
+    if (!controlData?.meta || controlId.startsWith('layout-') || isControlSet(controlData)) {
+      return undefined
+    }
+    const { meta: _meta, ...fieldData } = clone(controlData)
+    return fieldData
+  }
+
+  /**
    * What a control creates
    * @param {String} id control id (its element's id)
-   * @return {{componentType: String, controlId: String, data: Object}} componentType is 'row' or 'column' for a
-   * layout control, else 'field'; data is what a new field starts from ({} for layout controls, whose rows and
-   * columns start from their own defaults)
+   * @return {{componentType: String, controlId: String, data: Object}} componentType is 'controlSet' for a control
+   * set (data: its layout, row and fields), 'row' or 'column' for a layout control ({} data: rows and columns start
+   * from their own defaults), else 'field' (data: what the new field starts from)
    */
   describeControl = id => {
+    const controlData = get(this.get(id), 'controlData')
     const {
       meta: { id: controlId },
       ...elementData
-    } = get(this.get(id), 'controlData')
+    } = controlData
+    if (isControlSet(controlData)) {
+      return { componentType: CONTROL_SET, controlId, data: expandControlSet(controlData, this.lookupMemberControl) }
+    }
     set(elementData, 'config.controlId', controlId)
     const layoutType = controlId.replace(/^layout-/, '')
     const isLayout =
@@ -373,13 +394,15 @@ export class Controls {
   }
 
   /**
-   * Append an element to a stage
-   * @param {String} id control id
-   * @param {Stage} [stage] the active stage by default
-   * @return {Component} the new row, column or field
+   * Adds what describeControl described to a stage
+   * @param {{componentType: String, data: Object}} described
+   * @param {Stage} stage
+   * @return {Component|undefined} the new row, column or field; undefined for a control set with no fields
    */
-  addElement = (id, stage = this.components.stages.active) => {
-    const { componentType, data } = this.describeControl(id)
+  addDescribed = ({ componentType, data }, stage) => {
+    if (componentType === CONTROL_SET) {
+      return data.fields.length ? insertControlSet(stage, data) : undefined
+    }
     if (componentType === 'field') {
       return this.layoutTypes.field(data, stage)
     }
@@ -387,16 +410,34 @@ export class Controls {
   }
 
   /**
-   * A control's click: onBeforeAdd decides whether and when it is added to the active stage (#281)
+   * Append an element to a stage
+   * @param {String} id control id
+   * @param {Stage} [stage] the active stage by default
+   * @return {Component|undefined} the new row, column or field
+   */
+  addElement = (id, stage = this.components.stages.active) => this.addDescribed(this.describeControl(id), stage)
+
+  /**
+   * A control's click: onBeforeAdd decides whether and when it is added to the active stage (#281). A control set
+   * with no fields adds nothing and runs no hook (#227).
    * @param {String} id control id
    * @return {Boolean|Promise<Boolean>} see Events#before
    */
   requestAddElement = id => {
     const stage = this.components.stages.active
-    const detail = { ...this.describeControl(id), parent: stage, index: stage.children.length, addedVia: 'click' }
-    return this.components.events.before('add', detail, () => stage.isRegistered && this.addElement(id, stage), {
-      src: this.dom,
-    })
+    const described = this.describeControl(id)
+    if (described.componentType === CONTROL_SET && !described.data.fields.length) {
+      return false
+    }
+    const detail = { ...described, parent: stage, index: stage.children.length, addedVia: 'click' }
+    return this.components.events.before(
+      'add',
+      detail,
+      () => stage.isRegistered && this.addDescribed(described, stage),
+      {
+        src: this.dom,
+      }
+    )
   }
 
   /**

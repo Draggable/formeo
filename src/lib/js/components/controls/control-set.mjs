@@ -52,3 +52,26 @@ export const expandControlSet = (controlData, lookupControl) => {
   const { id: _rowId, ...row } = clone(controlSet.row || {})
   return { layout: controlSet.layout === 'columns' ? 'columns' : 'stacked', row, fields }
 }
+
+/**
+ * Adds a control set to a stage as one new row (#227)
+ * @param {Stage} stage
+ * @param {{layout: String, row: Object, fields: Array<Object>}} expanded what expandControlSet returned
+ * @param {Number} [index] the new row's position in the stage; the end by default
+ * @return {Row} the new row
+ */
+export const insertControlSet = (stage, { layout, row, fields }, index) => {
+  const newRow = stage.addChild(clone(row), index)
+  if (layout === 'columns') {
+    for (const fieldData of fields) {
+      newRow.addChild().addChild(clone(fieldData))
+    }
+    newRow.autoColumnWidths()
+    return newRow
+  }
+  const column = newRow.addChild()
+  for (const fieldData of fields) {
+    column.addChild(clone(fieldData))
+  }
+  return newRow
+}
