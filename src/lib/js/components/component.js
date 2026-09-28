@@ -21,6 +21,7 @@ import {
   PARENT_TYPE_MAP,
   PROPERTY_OPTIONS,
 } from '../constants.js'
+import { CONTROL_SET, controlSetDropTarget, insertControlSet } from './controls/control-set.mjs'
 import Data from './data.js'
 import EditPanel from './edit-panel/edit-panel.js'
 import Panels from './panels.js'
@@ -768,13 +769,31 @@ export default class Component extends Data {
     // either way; addChild appends when newIndex is past the end, so a smaller list by then is fine.
     const control = this.components.controls.describeControl(item.id)
     dom.remove(item)
+    const isControlSet = control.componentType === CONTROL_SET
+    if (isControlSet && !control.data.fields.length) {
+      // an empty control set adds nothing and runs no hook (#227)
+      this.emptyClass()
+      return undefined
+    }
     let added
-    const proceed = () => {
+    let proceed = () => {
       if (this.isRegistered) {
         added = finish(onAddConditions.controls(control))
       }
     }
-    const detail = { ...control, parent: this, index: newIndex, addedVia: 'dragDrop' }
+    let detail = { ...control, parent: this, index: newIndex, addedVia: 'dragDrop' }
+    if (isControlSet) {
+      // a control set is always a new row of the stage: at the drop index, or right after the row it was dropped in
+      // (#227); the component that received the drop keeps its own children, so its empty state is recomputed
+      const target = controlSetDropTarget(this, newIndex)
+      detail = { ...control, parent: target.stage, index: target.index, addedVia: 'dragDrop' }
+      proceed = () => {
+        if (this.isRegistered && target.stage.isRegistered) {
+          added = finish(insertControlSet(target.stage, control.data, target.index))
+          this.emptyClass()
+        }
+      }
+    }
     const result = this.components.events.before('add', detail, proceed, { src: this.dom })
     const restoreIfCancelled = proceeded => proceeded || (this.isRegistered && this.emptyClass())
     if (result instanceof Promise) {

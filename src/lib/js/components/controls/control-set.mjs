@@ -1,4 +1,5 @@
 import mergeWith from 'lodash/mergeWith.js'
+import { indexOfNode } from '../../common/helpers.mjs'
 import { clone } from '../../common/utils/index.mjs'
 
 /**
@@ -74,4 +75,22 @@ export const insertControlSet = (stage, { layout, row, fields }, index) => {
     column.addChild(clone(fieldData))
   }
   return newRow
+}
+
+/**
+ * Where a control set dropped on a component goes: a stage takes it at the drop index; a row, column or field
+ * sends it to a new row right after its own row (#227)
+ * @param {Component} component the stage, row, column or field that received the drop
+ * @param {Number} newIndex the drop index
+ * @return {{stage: Stage, index: Number}}
+ */
+export const controlSetDropTarget = (component, newIndex) => {
+  if (component.name === 'stage') {
+    return { stage: component, index: newIndex }
+  }
+  let row = component
+  while (row.name !== 'row') {
+    row = row.parent
+  }
+  return { stage: row.parent, index: indexOfNode(row.dom) + 1 }
 }

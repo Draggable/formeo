@@ -5,6 +5,7 @@ import { Actions } from '../common/actions.js'
 import { Events } from '../common/events.js'
 import { loaded } from '../common/loaders.js'
 import { CONTROL_GROUP_CLASSNAME } from '../constants.js'
+import { controlSetDropTarget } from './controls/control-set.mjs'
 import TinyMCEControl from './controls/html/tinymce.js'
 import { Components, Controls } from './index.js'
 
@@ -239,5 +240,144 @@ describe('clicking a control set (#227)', () => {
     await tick()
     assert.ok(clone.querySelector('button'), 'still the control button')
     assert.equal(clone.querySelector('.formeo-field'), null)
+  })
+})
+
+/**
+ * Drops a control's element on a component the way Sortable does: the clone sits at newIndex, then onAdd runs
+ * @param {Component} target stage, row or column
+ * @param {Element} controlItem the control's <li>
+ * @param {Number} newIndex
+ */
+const dropControl = (target, controlItem, newIndex) => {
+  const item = document.createElement('li')
+  item.id = controlItem.id
+  const from = document.createElement('ul')
+  from.className = CONTROL_GROUP_CLASSNAME
+  const to = target.dom.querySelector('.children')
+  to.insertBefore(item, to.children[newIndex] || null)
+  return { item, result: target.onAdd({ from, to, item, newIndex }) }
+}
+
+const legendOf = row => row.get('config.legend')
+
+describe('dropping a control set (#227)', () => {
+  it('controlSetDropTarget: a stage at the drop index, otherwise right after the target row', async () => {
+    const { components, stage } = await setup()
+    assert.deepEqual(controlSetDropTarget(stage, 1), { stage, index: 1 })
+    assert.deepEqual(controlSetDropTarget(components.rows.get('row-s1'), 0), { stage, index: 1 })
+    assert.deepEqual(controlSetDropTarget(components.columns.get('col-s2'), 0), { stage, index: 2 })
+  })
+
+  it('a set dropped on the stage goes in at the drop index', async () => {
+    const seen = []
+    const { controls, stage } = await setup({ onBeforeAdd: ({ detail }) => seen.push(detail) })
+    const { item, result } = dropControl(stage, controlElement(controls, 'address-stacked'), 1)
+    assert.equal(item.isConnected, false)
+    assert.deepEqual(
+      stage.children.map(row => row.id).filter(id => id.startsWith('row-s')),
+      ['row-s1', 'row-s2']
+    )
+    assert.equal(stage.children.length, 3)
+    assert.equal(stage.children[1], result, 'onAdd returns the new row')
+    assert.equal(legendOf(stage.children[1]), 'Address')
+    assert.deepEqual(
+      stage.get('children'),
+      stage.children.map(row => row.id),
+      'child order saved'
+    )
+    assert.equal(seen[0].componentType, 'controlSet')
+    assert.equal(seen[0].parent, stage)
+    assert.equal(seen[0].index, 1)
+    assert.equal(seen[0].addedVia, 'dragDrop')
+  })
+
+  it('a set dropped in a column goes in as a new row right after that row; the column keeps its field', async () => {
+    const seen = []
+    const { components, controls, stage } = await setup({ onBeforeAdd: ({ detail }) => seen.push(detail) })
+    const column = components.columns.get('col-s1')
+    dropControl(column, controlElement(controls, 'address-stacked'), 0)
+    assert.equal(stage.children.length, 3)
+    assert.equal(stage.children[0].id, 'row-s1')
+    assert.equal(legendOf(stage.children[1]), 'Address')
+    assert.equal(stage.children[2].id, 'row-s2')
+    assert.deepEqual(
+      column.children.map(field => field.id),
+      ['field-s1']
+    )
+    assert.equal(seen[0].parent, stage)
+    assert.equal(seen[0].index, 1)
+  })
+
+  it('a set dropped in a column with no fields leaves that column marked empty', async () => {
+    const { components, controls } = await setup()
+    components.fields.get('field-s1').remove()
+    const column = components.columns.get('col-s1')
+    dropControl(column, controlElement(controls, 'address-stacked'), 0)
+    assert.equal(column.children.length, 0)
+    assert.equal(column.dom.classList.contains('empty'), true)
+  })
+
+  it('a cancelled set drop removes the placeholder and adds nothing', async () => {
+    const { components, controls, stage } = await setup({ onBeforeAdd: () => false })
+    const { item } = dropControl(stage, controlElement(controls, 'address-stacked'), 0)
+    assert.equal(item.isConnected, false)
+    assert.equal(stage.children.length, 2)
+    assert.equal(fieldCount(components), 2)
+  })
+
+  it('a held set drop is added once allowed, appended if its index no longer fits', async () => {
+    let resolve
+    const { components, controls, stage } = await setup({
+      onBeforeAdd: () =>
+        new Promise(res => {
+          resolve = res
+        }),
+    })
+    dropControl(stage, controlElement(controls, 'address-stacked'), 2)
+    components.rows.get('row-s2').remove()
+    resolve(true)
+    await tick()
+    assert.equal(stage.children.length, 2)
+    assert.equal(stage.children[0].id, 'row-s1')
+    assert.equal(legendOf(stage.children[1]), 'Address')
+  })
+
+  it('a held set drop whose target row was removed while waiting adds nothing', async () => {
+    let resolve
+    const { components, controls, stage } = await setup({
+      onBeforeAdd: () =>
+        new Promise(res => {
+          resolve = res
+        }),
+    })
+    dropControl(components.columns.get('col-s1'), controlElement(controls, 'address-stacked'), 0)
+    components.rows.get('row-s1').remove()
+    resolve(true)
+    await tick()
+    assert.deepEqual(
+      stage.children.map(row => row.id),
+      ['row-s2']
+    )
+    assert.equal(fieldCount(components), 1)
+  })
+
+  it('dropping a set with no fields removes the placeholder, adds nothing and asks nothing', async () => {
+    mock.method(console, 'warn', () => {})
+    const onBeforeAdd = mock.fn()
+    const { controls, stage } = await setup({ onBeforeAdd })
+    const { item } = dropControl(stage, controlElement(controls, 'empty-set'), 0)
+    assert.equal(item.isConnected, false)
+    assert.equal(onBeforeAdd.mock.callCount(), 0)
+    assert.equal(stage.children.length, 2)
+  })
+
+  it('dropping a field control is unchanged', async () => {
+    const { components, controls } = await setup()
+    const column = components.columns.get('col-s1')
+    const textControl = controls.dom.querySelector('.text-input-control')
+    const { result } = dropControl(column, textControl, 1)
+    assert.equal(column.children.length, 2)
+    assert.equal(column.children[1], result)
   })
 })
