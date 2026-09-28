@@ -459,6 +459,37 @@ describe('EditorPages remove (#122)', () => {
     assert.equal(page.mock.callCount(), 2)
     assert.equal(pages.count, 1)
   })
+
+  it('asks onBeforeRemove first, which can cancel before actions.remove.page (#281)', () => {
+    const seen = []
+    const page = mock.fn()
+    const { pages } = setup({
+      callbacks: {
+        onBeforeRemove: ({ detail }) => {
+          seen.push(detail)
+          return false
+        },
+      },
+      actions: { remove: { page } },
+    })
+    pages.requestRemove('p-2')
+    assert.equal(page.mock.callCount(), 0)
+    assert.equal(pages.count, 3)
+    assert.equal(seen[0].componentType, 'stage')
+    assert.equal(seen[0].componentId, 'p-2')
+    assert.equal(seen[0].index, 1)
+    assert.equal(seen[0].title, 'Account')
+    assert.equal(seen[0].isEmpty, true)
+    assert.equal(seen[0].component.id, 'p-2')
+  })
+
+  it('goes on to actions.remove.page when onBeforeRemove allows it (#281)', () => {
+    const page = mock.fn(evt => evt.removeAction())
+    const { pages } = setup({ callbacks: { onBeforeRemove: () => true }, actions: { remove: { page } } })
+    pages.requestRemove('p-2')
+    assert.equal(page.mock.callCount(), 1)
+    assert.equal(pages.count, 2)
+  })
 })
 
 describe('EditorPages reorder (#122)', () => {

@@ -102,3 +102,54 @@ describe('canvas remove button → actions.remove.component (#281)', () => {
     assert.equal(components.fields.get('field-h'), undefined)
   })
 })
+
+describe('onBeforeRemove (#281)', () => {
+  it('runs before actions.remove.component and can cancel it', () => {
+    const order = []
+    const { components, field } = setup({
+      callbacks: {
+        onBeforeRemove: ({ detail }) => {
+          order.push(['before', detail.componentType, detail.componentId, detail.component === field])
+          return false
+        },
+      },
+      actions: { remove: { component: () => order.push(['action']) } },
+    })
+    clickAction(field, 'item-remove')
+    assert.deepEqual(order, [['before', 'field', 'field-h', true]])
+    assert.equal(components.fields.get('field-h'), field)
+  })
+
+  it('removes after an async onBeforeRemove resolves', async () => {
+    let resolve
+    const { components, column } = setup({
+      callbacks: {
+        onBeforeRemove: () =>
+          new Promise(res => {
+            resolve = res
+          }),
+      },
+    })
+    const result = column.requestRemove()
+    assert.equal(components.columns.get('col-h'), column)
+    resolve(true)
+    await result
+    assert.equal(components.columns.get('col-h'), undefined)
+  })
+
+  it('a second click while waiting is ignored', async () => {
+    let resolve
+    const onBeforeRemove = mock.fn(
+      () =>
+        new Promise(res => {
+          resolve = res
+        })
+    )
+    const { field } = setup({ callbacks: { onBeforeRemove } })
+    const first = field.requestRemove()
+    clickAction(field, 'item-remove')
+    assert.equal(onBeforeRemove.mock.callCount(), 1)
+    resolve()
+    await first
+  })
+})

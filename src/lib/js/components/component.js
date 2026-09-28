@@ -343,11 +343,18 @@ export default class Component extends Data {
   }
 
   /**
-   * The canvas remove button: actions.remove.component decides whether and when to remove (#281)
+   * The canvas remove button: onBeforeRemove, then actions.remove.component, decide whether and when to remove (#281)
+   * @return {Boolean|Promise<Boolean>} see Events#before
    */
   requestRemove() {
+    const { events, actions } = this.components
     const detail = { component: this, componentType: this.name, componentId: this.id }
-    return this.components.actions.remove.component({ ...detail, removeAction: this.createRemoveAction() })
+    return events.before(
+      'remove',
+      detail,
+      () => actions.remove.component({ ...detail, removeAction: this.createRemoveAction() }),
+      { src: this.dom, guardKey: `remove:${this.id}` }
+    )
   }
 
   /**

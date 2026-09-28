@@ -107,6 +107,9 @@ new FormeoEditor({
 
 `actions.remove.page(evt)` is called before a page is removed, whether by its `×` or by <kbd>Delete</kbd>:
 
+Before that, the `onBeforeRemove` [before hook](../options/events/README.md#before-hooks) runs with
+`componentType: 'stage'`, and can cancel the removal before `actions.remove.page` is asked.
+
 | `evt` field | Description |
 |---|---|
 | `stage` | The `Stage` about to be removed |

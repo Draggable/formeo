@@ -442,7 +442,7 @@ export class EditorPages {
   }
 
   /**
-   * Asks the editor's actions.remove.page to remove a page; the last page is never offered
+   * Asks onBeforeRemove, then the editor's actions.remove.page, to remove a page (#281); the last page is never offered
    * @param {String} stageId
    */
   requestRemove(stageId) {
@@ -452,14 +452,16 @@ export class EditorPages {
     }
     this.commitRename()
     const index = this.ids.indexOf(stageId)
-    this.components.actions.remove.page({
-      stage,
-      stageId,
-      index,
-      title: this.titleOf(stageId),
-      isEmpty: !stage.children.length,
-      removeAction: () => this.removePage(stageId),
-    })
+    const title = this.titleOf(stageId)
+    const isEmpty = !stage.children.length
+    const { events, actions } = this.components
+    return events.before(
+      'remove',
+      { component: stage, componentType: stage.name, componentId: stageId, index, title, isEmpty },
+      () =>
+        actions.remove.page({ stage, stageId, index, title, isEmpty, removeAction: () => this.removePage(stageId) }),
+      { src: stage.dom, guardKey: `remove:${stageId}` }
+    )
   }
 
   /**
