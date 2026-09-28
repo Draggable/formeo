@@ -9,6 +9,8 @@ Configure Formeo to use any language.
 | `langs`     | Array  | array of available locales     | `['en-US', 'pt-PT']`                   | `['en-US']`      |
 | `override`  | Object | entire dictionary or overrides | `{'en-US': {textInput: 'Short Text'}}` | `{en-US: {...}}` |
 
+`locale` is used on first load. A language picked later with `editor.i18n.setLang()` is kept in sessionStorage for the tab and wins over this option.
+
 Full Example
 
 ```javascript
