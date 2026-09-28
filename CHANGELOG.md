@@ -1,3 +1,18 @@
+# [5.12.0](https://github.com/Draggable/formeo/compare/v5.11.0...v5.12.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* **controls:** keep a row's column widths when a control set is dropped on it ([27b3f99](https://github.com/Draggable/formeo/commit/27b3f99a0e5ef535d0eba65c2fe07c26494d2b4e)), closes [Row#onAdd](https://github.com/Row/issues/onAdd) [#227](https://github.com/Draggable/formeo/issues/227)
+* **controls:** skip a control set member that is not an object ([909c1e9](https://github.com/Draggable/formeo/commit/909c1e902a3564b93fc8c588e0edd08deb1a9cb2)), closes [Component#onAdd](https://github.com/Component/issues/onAdd) [#227](https://github.com/Draggable/formeo/issues/227)
+
+
+### Features
+
+* **controls:** add a control set's row and fields when its control is clicked ([f6a0527](https://github.com/Draggable/formeo/commit/f6a0527783e6e19396900315a9864e89d7de4655)), closes [#227](https://github.com/Draggable/formeo/issues/227)
+* **controls:** drop a control set onto a stage, row or column ([06d72b8](https://github.com/Draggable/formeo/commit/06d72b891391e10c1e17283f1a71a11dfce1984f)), closes [Stage#onAdd](https://github.com/Stage/issues/onAdd) [#227](https://github.com/Draggable/formeo/issues/227)
+* **controls:** expand a control set definition into its row and fields ([8fae4c0](https://github.com/Draggable/formeo/commit/8fae4c0f98b67209c966c714a09c36657a413ae3)), closes [#227](https://github.com/Draggable/formeo/issues/227)
+
 # [5.11.0](https://github.com/Draggable/formeo/compare/v5.10.0...v5.11.0) (2026-09-28)
 
 
