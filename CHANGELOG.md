@@ -1,3 +1,18 @@
+# [5.10.0](https://github.com/Draggable/formeo/compare/v5.9.3...v5.10.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* **edit-panel:** compare field names verbatim, as the renderer submits them ([36d84c7](https://github.com/Draggable/formeo/commit/36d84c7986e1db7f1a9c0f9e3587bba342012c7c)), closes [#331](https://github.com/Draggable/formeo/issues/331)
+* **edit-panel:** keep duplicate-name hints quiet and cover every field ([d1530d8](https://github.com/Draggable/formeo/commit/d1530d8be9b5206dd4979c6623232c50a2708a2a)), closes [#331](https://github.com/Draggable/formeo/issues/331)
+* **edit-panel:** stop + Attribute and the keyboard from changing locked attributes ([467ce72](https://github.com/Draggable/formeo/commit/467ce720566f68a497ca7aef0386ca3cc161ee20)), closes [EditPanel#addAttribute](https://github.com/EditPanel/issues/addAttribute) [#116](https://github.com/Draggable/formeo/issues/116) [#159](https://github.com/Draggable/formeo/issues/159)
+* **editor:** use the configured i18n.locale when no language is stored ([31c6723](https://github.com/Draggable/formeo/commit/31c6723082181768dd32f46ca51e4dd5daf41e6a))
+
+
+### Features
+
+* **edit-panel:** warn when two fields share a name ([d1de298](https://github.com/Draggable/formeo/commit/d1de2984904fea85f13c5b20a8f95321fc003253)), closes [#331](https://github.com/Draggable/formeo/issues/331) [#331](https://github.com/Draggable/formeo/issues/331)
+
 ## [5.9.3](https://github.com/Draggable/formeo/compare/v5.9.2...v5.9.3) (2026-09-28)
 
 
