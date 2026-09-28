@@ -489,6 +489,12 @@ new FormeoRenderer({
 
 Give the upload field a `name` attribute in the editor to control the key your server receives.
 
+### Consent-aware attribution
+
+Capturing marketing attribution (`utm_source`, `gclid`, and similar) from the URL and adding it to `userData`, only
+after the host app's own consent check passes, is a host-side recipe — see
+[Consent-Aware Attribution](consent-aware-attribution.md).
+
 ## Multi-page forms
 
 Each **stage** in `formData` is one page. Pass the `pagination` option to show them one at a time as tabs or a wizard, instead of all at once in a single `<form>`. Navigation (tabs, the wizard's Previous/Next bar and step list, and page headings) only applies with **2 or more stages** — a single-stage form always renders as before, with no navigation added, except that a Submit button is still appended below it when `submit: true` (see [Options](#options) below).
