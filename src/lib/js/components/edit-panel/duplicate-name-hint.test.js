@@ -1,0 +1,115 @@
+import { strict as assert } from 'node:assert'
+import { before, describe, it } from 'node:test'
+import i18n from '@draggable/i18n'
+import { Actions } from '../../common/actions.js'
+import { Events } from '../../common/events.js'
+import { Components } from '../index.js'
+
+const textField = (id, attrs = {}) => ({ id, tag: 'input', attrs: { type: 'text', ...attrs }, config: { label: id } })
+
+const formWith = (key, fields) => ({
+  id: `form-${key}`,
+  stages: { [`stage-${key}`]: { id: `stage-${key}`, children: [`row-${key}`] } },
+  rows: { [`row-${key}`]: { id: `row-${key}`, config: {}, children: [`col-${key}`] } },
+  columns: { [`col-${key}`]: { id: `col-${key}`, config: { width: '100%' }, children: fields.map(({ id }) => id) } },
+  fields: Object.fromEntries(fields.map(field => [field.id, field])),
+})
+
+const editorWith = (key, fields) => {
+  const events = new Events().init({})
+  const components = new Components({ events, actions: new Actions(events).init({}) })
+  components.load(formWith(key, fields))
+  return components
+}
+
+// hints are refreshed in a microtask so a whole load or clone costs one scan
+const flush = () => new Promise(resolve => setImmediate(resolve))
+
+const nameRow = field => field.dom.querySelector('.field-attrs-name')
+const nameInput = field => nameRow(field).querySelector('input')
+const visibleHint = field => {
+  const hint = nameRow(field)?.querySelector('.duplicate-name-hint')
+  return hint?.textContent.trim() ? hint : null
+}
+
+describe('duplicate field name hint (#331)', () => {
+  before(() => {
+    i18n.current ??= {}
+  })
+
+  it('shows a warning under the name of every field sharing it', async () => {
+    const editor = editorWith('dup', [textField('a', { name: 'email' }), textField('b', { name: 'email' })])
+    await flush()
+
+    for (const id of ['a', 'b']) {
+      const field = editor.fields.get(id)
+      const hint = visibleHint(field)
+      assert.ok(hint, `field ${id} shows the hint`)
+      assert.match(hint.textContent, /email/)
+      assert.equal(hint.tagName, 'SMALL')
+      assert.ok(hint.classList.contains('f-help-text'))
+      assert.ok(hint.classList.contains('text-warning'))
+      assert.equal(hint.getAttribute('role'), 'status')
+      assert.equal(nameInput(field).getAttribute('aria-describedby'), hint.id)
+    }
+  })
+
+  it('clears both hints once one field is renamed', async () => {
+    const editor = editorWith('rename', [textField('a', { name: 'email' }), textField('b', { name: 'email' })])
+    await flush()
+
+    editor.fields.get('b').set('attrs.name', 'phone')
+    await flush()
+
+    for (const id of ['a', 'b']) {
+      const field = editor.fields.get(id)
+      assert.equal(visibleHint(field), null, `field ${id} hint is hidden`)
+      assert.equal(nameInput(field).hasAttribute('aria-describedby'), false)
+    }
+  })
+
+  it('shows nothing for a field whose name is unique', async () => {
+    const editor = editorWith('single', [textField('a', { name: 'email' }), textField('b')])
+    await flush()
+
+    assert.equal(visibleHint(editor.fields.get('a')), null)
+  })
+
+  it('ignores fields in another editor', async () => {
+    const one = editorWith('one', [textField('one-a', { name: 'email' })])
+    const two = editorWith('two', [textField('two-a', { name: 'email' })])
+    await flush()
+
+    assert.equal(visibleHint(one.fields.get('one-a')), null)
+    assert.equal(visibleHint(two.fields.get('two-a')), null)
+  })
+
+  it('warns about a clone, and stops once the clone is removed', async () => {
+    const editor = editorWith('clone', [textField('a', { name: 'email' })])
+    await flush()
+    const original = editor.fields.get('a')
+
+    const copy = original.clone()
+    await flush()
+    assert.ok(visibleHint(original), 'original shows the hint')
+    assert.ok(visibleHint(copy), 'clone shows the hint')
+
+    copy.remove()
+    await flush()
+    assert.equal(visibleHint(original), null)
+  })
+
+  it('stops warning when the other field loses its name attribute', async () => {
+    const editor = editorWith('attr', [textField('a', { name: 'email' }), textField('b', { name: 'email' })])
+    await flush()
+
+    const nameItem = editor.fields
+      .get('b')
+      .editPanels.get('attrs')
+      .editPanelItems.find(item => item.itemKey === 'attrs.name')
+    nameItem.removeItem()
+    await flush()
+
+    assert.equal(visibleHint(editor.fields.get('a')), null)
+  })
+})
