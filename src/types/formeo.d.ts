@@ -717,7 +717,8 @@ export interface JQueryLike {
 /**
  * A selector, an element, or a jQuery object. `dom.resolveContainer()` accepts any `Element`, not just
  * `HTMLElement` (e.g. an SVGElement), and passes `null`/`undefined` straight through with no fallback of its own;
- * the editor and renderer then treat a container that resolves to nothing as "not attached" rather than throwing.
+ * the editor then treats a container that resolves to nothing as "not attached" rather than throwing. The renderer
+ * does the same when it is created, but `render()` throws if the container never resolved.
  */
 export type ContainerOption = string | Element | JQueryLike | null
 

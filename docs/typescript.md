@@ -113,11 +113,9 @@ it lives and on `skipLibCheck`:
 - In a **global file** (no `import`/`export`) as a bodyless shorthand — `declare module 'formeo'` with no `{ }` —
   it replaces the shipped types with `any`, regardless of `skipLibCheck`.
 
-The same silent-merge-under-`skipLibCheck: true` behavior applies to a `declare global { interface Window {
-FormeoEditor: any } }` some projects added before formeo shipped its own `Window` typing: with `skipLibCheck: true`
-it merges without error, but your `any` wins there, so `window.FormeoEditor` loses the shipped typing wherever it's
-read; with `skipLibCheck: false` it's TS2717 ("subsequent property declarations must have the same type"). Either
-way, remove it now that formeo types `Window.FormeoEditor` itself.
+If you declared `Window.FormeoEditor` or `FormeoRenderer` yourself, delete it: it now conflicts with formeo's own
+declaration. Depending on where it lives and your `skipLibCheck` setting, the conflict shows up as TS2717, as errors
+elsewhere in your code, or by silently replacing formeo's type.
 
 Since formeo's public surface used to be untyped (`any`) everywhere, removing a shim like this — or just upgrading
 past a version that lacked these types — can surface type errors in code that compiled before, now that TypeScript
