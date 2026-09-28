@@ -1,145 +1,147 @@
-# Angular + Formeo Integration Guide
+# Angular + Formeo Integration
 
-## Why the Demo Doesn't Load Real Angular v20
+A standalone Angular component that builds a form with `FormeoEditor`, previews it with `FormeoRenderer`, and
+cleans up both on destroy. Verified against `formeo` 5.13.1; Angular 17+ syntax (standalone components,
+`afterNextRender`).
 
-The current Angular demo in `src/demo/js/frameworks/angular.js` simulates Angular patterns rather than loading the actual Angular framework for several technical reasons:
-
-### Technical Limitations
-
-1. **Dynamic ES Module Loading Complexity**
-   - Angular v20 requires complex module resolution
-   - Dependencies between @angular/core, @angular/common, @angular/platform-browser
-   - Browser ES module loading limitations
-
-2. **Bundle Size Impact**
-   - Angular v20 with dependencies is ~200KB+ minified
-   - Would significantly slow down demo loading
-   - Not suitable for quick demonstrations
-
-3. **Build Tool Requirements**
-   - Angular typically requires compilation (TypeScript → JavaScript)
-   - Template compilation and bundling
-   - Zone.js and other runtime dependencies
-
-4. **Runtime Environment Mismatch**
-   - Demo runs in vanilla browser environment
-   - Angular expects Node.js tooling ecosystem
-
-## Recommended Alternatives
-
-### Option 1: Complete Angular Project Example (Recommended)
-
-Create a separate Angular project that demonstrates real integration:
+## Install
 
 ```bash
-# Create new Angular project
-ng new formeo-angular-example --routing --style=scss
-cd formeo-angular-example
-
-# Install Formeo
 npm install formeo
-
-# Run development server
-ng serve
 ```
 
-**Benefits:**
-- Real Angular v20 environment
-- Proper TypeScript support
-- Full Angular CLI tooling
-- Production-ready patterns
+Add the stylesheet in `angular.json`:
 
-### Option 2: Improved CDN Loading (Experimental)
-
-Update the demo to use Angular's standalone CDN bundles:
-
-```javascript
-// Load Angular via CDN (Angular v20 standalone)
-async function loadAngularFromCDN() {
-  const scripts = [
-    'https://unpkg.com/@angular/core@20/bundles/core.umd.js',
-    'https://unpkg.com/@angular/common@20/bundles/common.umd.js',
-    'https://unpkg.com/@angular/platform-browser@20/bundles/platform-browser.umd.js'
-  ];
-  
-  for (const src of scripts) {
-    await loadScript(src);
+```json
+{
+  "projects": {
+    "my-app": {
+      "architect": {
+        "build": {
+          "options": {
+            "styles": ["node_modules/formeo/dist/formeo.min.css", "src/styles.scss"]
+          }
+        }
+      }
+    }
   }
 }
 ```
 
-**Limitations:**
-- Still complex dependency management
-- Large download size
-- Limited TypeScript support
-- Not recommended for production
+(Or `@import 'formeo/dist/formeo.min.css';` from a global stylesheet instead, if you'd rather not touch
+`angular.json`.)
 
-### Option 3: Web Components Approach
-
-Use Angular Elements to create a web component:
+## The component
 
 ```typescript
-// Create Angular Element
-import { createCustomElement } from '@angular/elements';
-import { FormBuilderComponent } from './form-builder.component';
+import { Component, ElementRef, OnDestroy, ViewChild, afterNextRender } from '@angular/core'
+import { FormeoEditor, FormeoRenderer } from 'formeo'
 
-const FormBuilderElement = createCustomElement(FormBuilderComponent, { injector });
-customElements.define('formeo-angular-builder', FormBuilderElement);
-```
+@Component({
+  selector: 'app-form-builder',
+  standalone: true,
+  template: `
+    <div #editorRef></div>
+    <button type="button" (click)="preview()">Preview</button>
+    <div #previewRef></div>
+  `,
+})
+export class FormBuilderComponent implements OnDestroy {
+  @ViewChild('editorRef', { static: true }) editorRef!: ElementRef<HTMLElement>
+  @ViewChild('previewRef', { static: true }) previewRef!: ElementRef<HTMLElement>
 
-**Benefits:**
-- Can be loaded in any environment
-- Encapsulated Angular functionality
-- Framework-agnostic usage
+  private editor?: FormeoEditor
+  private renderer?: FormeoRenderer
 
-### Option 4: Stackblitz/CodeSandbox Integration
+  constructor() {
+    // afterNextRender only runs in the browser (see "Server-side rendering" below), after the view
+    // holding editorRef/previewRef has rendered.
+    afterNextRender(() => {
+      this.editor = new FormeoEditor({ editorContainer: this.editorRef.nativeElement })
+      this.renderer = new FormeoRenderer({
+        renderContainer: this.previewRef.nativeElement,
+        events: {
+          onSubmit: ({ event, userData }) => {
+            event.preventDefault() // formeo doesn't call this for you
+            console.log('submitted:', userData)
+          },
+        },
+      })
+    })
+  }
 
-Embed live Angular examples using online IDEs:
+  preview(): void {
+    this.renderer?.render(this.editor?.formData)
+  }
 
-```html
-<iframe src="https://stackblitz.com/edit/formeo-angular-v20?embed=1"
-        width="100%" height="600px"></iframe>
-```
-
-## Current Demo Value
-
-The current simulated demo is still valuable because it:
-
-1. **Shows Integration Patterns**: Demonstrates proper Angular component structure
-2. **Provides Copy-Paste Code**: Complete, working examples for real projects
-3. **Educational Value**: Teaches Angular + Formeo integration concepts
-4. **Performance**: Loads quickly without framework overhead
-
-## Implementation Recommendation
-
-For your use case, I recommend:
-
-1. **Keep the current demo** for quick pattern demonstration
-2. **Add a complete Angular project** in `/docs/angular-integration-example/`
-3. **Update the demo documentation** to clearly explain the simulation
-4. **Add links to the full project** for developers who want real integration
-
-This approach provides both quick learning (demo) and complete implementation (separate project).
-
-## Migration Path
-
-If you want to enhance the current demo:
-
-```javascript
-// Enhanced demo with better Angular simulation
-export async function loadAngularDemo(container) {
-  // 1. Show comprehensive setup instructions
-  // 2. Provide modern Angular v20 code examples
-  // 3. Demonstrate advanced patterns (signals, standalone components)
-  // 4. Include service-based architecture examples
-  // 5. Add TypeScript type definitions
+  ngOnDestroy(): void {
+    this.editor?.destroy()
+    this.renderer?.destroy()
+  }
 }
 ```
 
-The updated demo now includes:
-- Modern Angular v20 patterns
-- Standalone components
-- Angular signals
-- Service-based architecture
-- Better TypeScript examples
-- Comprehensive integration guide
+Notes:
+
+- `editorContainer`/`renderContainer` take an `Element` directly, so the `@ViewChild` refs' `.nativeElement`
+  work without a selector string.
+- `editor.formData` is a getter — it always returns the editor's current form definition, so `preview()` just
+  reads it and hands it to `renderer.render()`.
+- `editor.destroy()` and `renderer.destroy()` both exist and are safe to call more than once; call them in
+  `ngOnDestroy` so a routed-away component doesn't leak Sortable instances or DOM listeners.
+
+## Reading submitted answers
+
+The renderer's `onSubmit` event fires on the rendered `<form>`'s native `submit` event and hands you
+`{ event, form, userData }`, where `userData` is the form's values keyed by field name (repeated names — checkbox
+groups, multi-selects — become arrays). Formeo does not call `event.preventDefault()` itself, so call it yourself
+if you're not doing a normal form POST. This fragment replaces the `onSubmit` handler inside the `FormeoRenderer`
+constructor in the component above, and assumes an injected `HttpClient` (`private http = inject(HttpClient)`,
+alongside `provideHttpClient()` in your app config):
+
+```typescript
+events: {
+  onSubmit: ({ event, userData }) => {
+    event.preventDefault()
+    this.http.post('/api/submissions', userData).subscribe()
+  },
+}
+```
+
+## Server-side rendering (SSR)
+
+`FormeoEditor` and `FormeoRenderer` both touch `document`, so only construct them in the browser. `afterNextRender`
+(used above) already guarantees this — Angular's server renderer never invokes its callback, so no extra guard is
+needed.
+
+If you're not using `afterNextRender` (e.g. an older Angular version, or constructing Formeo somewhere other than
+a component's injection context), guard the same code with `isPlatformBrowser`. This fragment replaces the
+constructor's `afterNextRender(...)` call in the component above with an `ngAfterViewInit` lifecycle hook instead
+(so the class also needs `implements AfterViewInit`, and the extra imports shown here):
+
+```typescript
+import { AfterViewInit, Component, PLATFORM_ID, inject } from '@angular/core'
+import { isPlatformBrowser } from '@angular/common'
+
+export class FormBuilderComponent implements AfterViewInit {
+  private platformId = inject(PLATFORM_ID)
+
+  ngAfterViewInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.editor = new FormeoEditor({ editorContainer: this.editorRef.nativeElement })
+    }
+  }
+}
+```
+
+## TypeScript
+
+Formeo ships its own type definitions (`dist/formeo.d.ts`, `dist/formeo.d.cts`) — nothing extra to install or
+declare. See [TypeScript](typescript.md) for what's typed, including the editor and renderer constructors, their
+options, and the `events` callbacks used above.
+
+## The demo's Angular tab
+
+The demo (`npm start`, then the Angular tab) shows the same construction pattern hand-rolled against plain DOM,
+without loading Angular itself — see `src/demo/js/frameworks/angular.js`. It's there to demonstrate the pattern
+quickly in the browser, not as a real Angular app; use the component above for that.

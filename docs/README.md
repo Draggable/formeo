@@ -124,4 +124,12 @@ Remove the rendered form from the page and stop its pagination (the page navigat
 
 Type definitions ship with the package; this page lists what is typed and how to narrow the before-hook details.
 
+## [Using a CSS Framework](css-frameworks.md)
+
+The rendered markup and its classes, adding framework classes with `className`, and editor theming.
+
+## [Migrating from formBuilder](migrating-from-formbuilder.md)
+
+Batch-converting formBuilder form exports to Formeo's `formData` shape with `formBuilder2Formeo`.
+
 ## [Build Tools](tools/)

@@ -17,9 +17,34 @@ The `FormeoRenderer` class is responsible for rendering Formeo form data into in
 
 ## Installation
 
+Formeo ships ESM, CommonJS and UMD builds. Pick the one that matches how you load it.
+
+### ESM
+
 ```javascript
 import { FormeoRenderer } from 'formeo'
+import 'formeo/dist/formeo.min.css'
 ```
+
+### CommonJS
+
+```javascript
+const { FormeoRenderer } = require('formeo')
+```
+
+This works in Node from the release that ships the `.cjs` build (5.9.1+). Formeo renders in a browser, so in Node this is for bundlers and SSR imports, not for calling `render()` server-side.
+
+### UMD (CDN, no build step)
+
+```html
+<script
+  src="https://unpkg.com/formeo@5.13.1/dist/formeo.umd.js"
+  integrity="sha384-REPLACE_WITH_THE_HASH_FOR_THE_PINNED_VERSION"
+  crossorigin="anonymous"
+></script>
+```
+
+Pin a version instead of `@latest` so the hash stays valid, and add the matching `integrity` hash (shown on unpkg's file listing for that version) with `crossorigin="anonymous"`. This exposes `window.FormeoRenderer` (and `window.FormeoEditor`) globally.
 
 ## Basic Usage
 

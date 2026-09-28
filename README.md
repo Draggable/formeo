@@ -59,6 +59,8 @@ For quick prototyping or simple projects, you can use a CDN:
 <link rel="stylesheet" href="https://unpkg.com/formeo@latest/dist/formeo.min.css">
 ```
 
+This exposes the `window.FormeoEditor` and `window.FormeoRenderer` globals. For production, pin a version (e.g. `formeo@5.13.1`) instead of `@latest` and add an `integrity` hash with `crossorigin="anonymous"` — see [Installation](docs/renderer/renderer.md#installation) in the renderer docs.
+
 ## Usage
 
 ### Basic Setup
@@ -171,7 +173,7 @@ editor.whenReady().then(() => {
 Formeo can be integrated with popular frontend frameworks:
 
 - **[React Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/react-integration.md)** - Custom hooks, functional components, and Context API patterns
-- **[Angular Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/angular-integration.md)** - Services, components, and standalone patterns
+- **[Angular Integration Guide](https://github.com/Draggable/formeo/blob/main/docs/angular-integration.md)** - A standalone component, SSR-safe setup, and reading submitted answers
 
 ## Theming
 
@@ -214,6 +216,7 @@ Comprehensive documentation is available in the [docs](https://github.com/Dragga
 - **[Actions](https://github.com/Draggable/formeo/blob/main/docs/options/actions/README.md)** - Action handlers
 - **[Editor API](https://github.com/Draggable/formeo/blob/main/docs/editor/README.md)** - Editor methods and properties
 - **[TypeScript](https://github.com/Draggable/formeo/blob/main/docs/typescript.md)** - Shipped type definitions and typed events
+- **[Using a CSS Framework](https://github.com/Draggable/formeo/blob/main/docs/css-frameworks.md)** - Style rendered forms with Bootstrap or any framework
 - **[Build Tools](https://github.com/Draggable/formeo/blob/main/docs/tools/README.md)** - Development and build utilities
 
 ## Development
