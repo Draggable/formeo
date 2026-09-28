@@ -155,9 +155,9 @@ edit button) and use its **Conditions** panel:
 3. Add a second condition that brings the page back (the opposite **If**, and **is visible**), because a condition is
    never undone on its own.
 
-The renderer then leaves the page out of the tabs or the wizard while it's skipped. A skipped page's answers still
-count as sources for other conditions, so a page depending on an answer given on a skippable page should be skipped
-along with it. See [Skipping pages](../renderer/renderer.md#skipping-pages) for the details and an example.
+The renderer then leaves the page out of the tabs or the wizard while it's skipped. While a page is skipped, other
+conditions read its answers as empty. See [Skipping pages](../renderer/renderer.md#skipping-pages) for the details and
+an example.
 
 ## Styling
 
@@ -200,9 +200,8 @@ right-to-left `dir` work without any extra CSS.
 | `pages.page` | Page |
 
 These strings come from `@draggable/formeo-languages` (3.6.0 and later) and follow the editor's `i18n` option. For a
-locale that doesn't have one of them, the English fallback above is shown. `pages.page` (the type shown next to a
-page in the condition target list) is new, and shows in English until a release of `@draggable/formeo-languages`
-ships it.
+locale that doesn't have one of them, the English fallback above is shown. `@draggable/formeo-languages` 3.7.0 and
+later translate `pages.page` (the type shown next to a page in the condition target list).
 
 ## "Clear All"
 
