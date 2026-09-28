@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
-import { afterEach, beforeEach, describe, test } from 'node:test'
+import { afterEach, beforeEach, describe, mock, test } from 'node:test'
 import { JSDOM } from 'jsdom'
+import { convertedForm } from './__fixtures__/formbuilder2formeo.mjs'
 import FormeoRenderer from './index.js'
 
 describe('FormeoRenderer', () => {
@@ -1024,6 +1025,111 @@ describe('FormeoRenderer', () => {
     })
   })
 
+  describe('userData setter with keys the form lacks (#123, #229)', () => {
+    const formData = () => ({
+      id: 'ud-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['txt', 'multi'] } },
+      fields: {
+        txt: { id: 'txt', tag: 'input', attrs: { type: 'text', name: 'txt' }, config: { label: 'Text' } },
+        multi: {
+          id: 'multi',
+          tag: 'select',
+          attrs: { name: 'multi', multiple: true },
+          config: { label: 'Multi' },
+          options: [
+            { label: 'X', value: 'x' },
+            { label: 'Y', value: 'y' },
+            { label: 'Z', value: 'z' },
+          ],
+        },
+      },
+    })
+    const mounted = () => {
+      const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+      renderer.render(formData())
+      return renderer
+    }
+
+    test('skips an unknown key and still applies the keys after it', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        const renderer = mounted()
+        assert.doesNotThrow(() => {
+          renderer.userData = { nope: 1, txt: 'later' }
+        })
+        assert.equal(document.querySelector('[name="txt"]').value, 'later')
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('warns once, listing every unmatched key', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        mounted().userData = { nope: 1, txt: 'a', other: 2 }
+        assert.equal(warn.mock.callCount(), 1)
+        assert.equal(warn.mock.calls[0].arguments[0], 'formeo: renderer.userData has no field named: nope, other')
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('treats form control collection property names as unmatched keys', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        mounted().userData = { item: 1, txt: 'a', length: 2 }
+        assert.equal(document.querySelector('[name="txt"]').value, 'a')
+        assert.equal(warn.mock.callCount(), 1)
+        assert.equal(warn.mock.calls[0].arguments[0], 'formeo: renderer.userData has no field named: item, length')
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('does not warn when every key matches', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        mounted().userData = { txt: 'a' }
+        assert.equal(warn.mock.callCount(), 0)
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('never throws before render or for null, and warns once before render()', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+        assert.doesNotThrow(() => {
+          renderer.userData = { txt: 'a' }
+        })
+        assert.equal(warn.mock.callCount(), 1)
+        assert.equal(
+          warn.mock.calls[0].arguments[0],
+          'formeo: renderer.userData was set before render(); nothing to fill'
+        )
+
+        warn.mock.resetCalls()
+
+        assert.doesNotThrow(() => {
+          mounted().userData = null
+        })
+        assert.equal(warn.mock.callCount(), 0)
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('selects every value of an array for a multiple select', () => {
+      const renderer = mounted()
+      renderer.userData = { multi: ['x', 'z'] }
+      const selected = [...document.querySelector('[name="multi"]').selectedOptions].map(option => option.value)
+      assert.deepEqual(selected, ['x', 'z'])
+    })
+  })
+
   describe('custom controls (#228)', () => {
     test('elements[controlId].action.onRender runs for a custom control once it is in the page', async () => {
       const seen = []
@@ -1081,6 +1187,59 @@ describe('FormeoRenderer', () => {
         renderer.destroy()
         renderer.destroy()
       })
+    })
+  })
+
+  describe('formData without config objects (#212)', () => {
+    const renderForm = data => {
+      const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+      renderer.render(data)
+      return document.querySelector('#container form')
+    }
+
+    test('renders formBuilder2Formeo output, whose columns have no config', () => {
+      const form = renderForm(convertedForm())
+      for (const name of ['text-1532560573320', 'hidden-1532560563828', 'select-1532560573336']) {
+        assert.ok(form.elements[name], name)
+      }
+      // columns have no class of their own; the inline width style is what identifies them
+      const columns = [...form.querySelectorAll('[style]')]
+      assert.equal(columns.length, 3)
+      for (const column of columns) {
+        assert.match(column.getAttribute('style'), /width: 100%/)
+      }
+    })
+
+    test('renders a row with no config', () => {
+      const data = convertedForm()
+      for (const row of Object.values(data.rows)) {
+        delete row.config
+      }
+      assert.ok(renderForm(data).elements['text-1532560573320'])
+    })
+
+    test('renders an option group with no config', () => {
+      const data = convertedForm()
+      data.fields['fb-text'] = {
+        id: 'fb-text',
+        tag: 'input',
+        attrs: { type: 'radio', name: 'size', className: 'form-control' },
+        options: [
+          { label: 'S', value: 's' },
+          { label: 'M', value: 'm' },
+        ],
+      }
+      const form = renderForm(data)
+      assert.equal(form.querySelectorAll('input[type="radio"]').length, 2)
+      // a field-level className with no config lands on the option group's wrap, not the inputs
+      assert.equal(form.querySelector('#f-fb-text').className, 'form-control')
+    })
+
+    test('renders a row or column with no children', () => {
+      const data = convertedForm()
+      delete data.rows['row-fb-text'].children
+      delete data.columns['col-fb-select'].children
+      assert.ok(renderForm(data).elements['hidden-1532560563828'])
     })
   })
 })

@@ -125,10 +125,23 @@ export default class FormeoRenderer {
     )
   }
 
-  set userData(data = {}) {
-    const form = this.container.querySelector('form')
-    for (const key of Object.keys(data)) {
-      const fields = form.elements[key] ?? form.elements[`${key}[]`]
+  set userData(data) {
+    const form = this.container?.querySelector('.formeo-render') || this.renderedForm
+    const keys = Object.keys(data ?? {})
+    if (!form) {
+      // no rendered form to blame missing fields on; the answers just have nowhere to go yet
+      if (keys.length) {
+        console.warn('formeo: renderer.userData was set before render(); nothing to fill')
+      }
+      return
+    }
+    const unmatched = []
+    for (const key of keys) {
+      const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`)
+      if (!fields) {
+        unmatched.push(key)
+        continue
+      }
       // a group with a single option resolves to the input itself rather than a RadioNodeList
       const checkables = checkableInputs(fields)
 
@@ -152,10 +165,21 @@ export default class FormeoRenderer {
           field.checked = field.value === data[key]
         }
       }
+      // A multiple select takes every value in an array
+      else if (fields.type === 'select-multiple') {
+        const values = [data[key]].flat().map(String)
+        for (const option of fields.options) {
+          option.selected = values.includes(option.value)
+        }
+      }
       // Handle single inputs
       else if (fields.type) {
         fields.value = data[key]
       }
+    }
+    // saved answers can outlive the form they came from, so a missing field is a warning, never an error
+    if (unmatched.length) {
+      console.warn(`formeo: renderer.userData has no field named: ${unmatched.join(', ')}`)
     }
   }
 
@@ -337,7 +361,7 @@ export default class FormeoRenderer {
     return renderedForm.outerHTML
   }
 
-  orderChildren = (type, order) =>
+  orderChildren = (type, order = []) =>
     order.reduce((acc, cur) => {
       acc.push(this.form[type][cur])
       return acc
@@ -350,11 +374,12 @@ export default class FormeoRenderer {
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumn = ({ id, ...columnData }) => ({
+  processColumn = ({ id, config = {}, ...columnData }) => ({
     ...columnData,
+    config,
     id: this.prefixId(id),
     children: this.processFields(columnData.children),
-    style: `width: ${columnData.config.width || '100%'}`,
+    style: `width: ${config.width || '100%'}`,
   })
 
   processRows = stageId =>
@@ -376,7 +401,7 @@ export default class FormeoRenderer {
    * @return {Object} row config object
    */
   processRow = (data, type = 'row') => {
-    const { config, id } = data
+    const { config = {}, id } = data
     const className = [`formeo-${type}-wrap`]
     const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) }
     this.cacheComponent(rowData)

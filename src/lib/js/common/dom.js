@@ -570,10 +570,10 @@ class DOM {
         }
 
         if (attrs.className) {
-          elem.config.inputWrap = attrs.className
+          elem.config = { ...elem.config, inputWrap: attrs.className }
         }
 
-        if (elem.config.inline) {
+        if (elem.config?.inline) {
           inputWrap.className.push(`f-${fieldType}-inline`)
         }
 
