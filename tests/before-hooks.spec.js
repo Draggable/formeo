@@ -142,15 +142,21 @@ test.describe('onBeforeAdd (#281)', () => {
       window.__hooks.mode.beforeAdd = 'defer'
     })
     await editor.getByRole('button', { name: 'Text Input' }).click()
-    // destroy() empties the Components store, so formData can't tell "nothing added" from "everything gone";
-    // check the DOM instead. The editor's own DOM is removed by destroy(), so this is really just confirming
-    // resolving the hook afterwards doesn't throw - the pageerror check in afterEach is the real assertion.
-    const fields = await page.evaluate(async () => {
+    // destroy() empties the Components store (FormeoEditor#destroy calls Components.empty()), so formData's
+    // baseline field count is 0 once destroyed. If the held add still went through after that, it would create
+    // a field entry and bring the count back to 1 - that's the real regression check. The pageerror check in
+    // afterEach covers "throws nothing".
+    const result = await page.evaluate(async () => {
+      let addedAfterDestroy = false
+      document.addEventListener('formeoAddedField', () => {
+        addedAfterDestroy = true
+      })
       window.__editor.destroy()
       window.__hooks.resolve.beforeAdd(true)
       await new Promise(resolve => setTimeout(resolve, 300))
-      return document.querySelectorAll('#e2e-hooks .formeo-field').length
+      return { fields: Object.keys(window.__editor.formData.fields).length, addedAfterDestroy }
     })
-    expect(fields).toBe(0)
+    expect(result.fields).toBe(0)
+    expect(result.addedAfterDestroy).toBe(false)
   })
 })
