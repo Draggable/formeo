@@ -16,9 +16,10 @@ before(() => {
   global.FormData = window.FormData
 })
 
-const addAttrEvt = () => ({
+const addAttrEvt = ({ isLocked = () => false } = {}) => ({
   message: { attr: 'What attribute would you like to add?', value: 'Default Value' },
   isDisabled: mock.fn(propName => propName === 'attrs.type'),
+  isLocked: mock.fn(isLocked),
   addAction: mock.fn(),
 })
 
@@ -79,6 +80,25 @@ describe('actions.add.attrs default (#233)', () => {
     assert.ok(dialog(), 'still open')
     assert.equal(input.validity.valid, false)
     assert.deepEqual(evt.isDisabled.mock.calls.at(-1).arguments, ['attrs.type'])
+  })
+
+  it('rejects a locked attribute name', () => {
+    const evt = addAttrEvt({ isLocked: name => name === 'attrs.required' })
+    actions.add.attrs(evt)
+    const input = submit('required')
+    assert.equal(evt.addAction.mock.callCount(), 0)
+    assert.ok(dialog(), 'still open')
+    assert.equal(input.validity.valid, false)
+    assert.deepEqual(evt.isLocked.mock.calls.at(-1).arguments, ['attrs.required'])
+  })
+
+  it('accepts a name when the event has no isLocked', () => {
+    const evt = addAttrEvt()
+    delete evt.isLocked
+    actions.add.attrs(evt)
+    assert.doesNotThrow(() => submit('data-x', '1'))
+    assert.deepEqual(evt.addAction.mock.calls[0].arguments, ['data-x', '1'])
+    assert.equal(dialog(), null)
   })
 
   it('rejects names that are not valid attribute names', () => {

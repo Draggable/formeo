@@ -25,7 +25,7 @@ const attributeProblem = (rawValue, evt) => {
     // relying on `required`.
     return rawValue ? i18n.get('attributeNameRequired') || 'Enter an attribute name' : ''
   }
-  if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`)) {
+  if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`) || evt.isLocked?.(`attrs.${attr}`)) {
     return i18n.get('attributeNotPermitted', { attribute: attr }) || `Attribute "${attr}" is not permitted`
   }
   return ''

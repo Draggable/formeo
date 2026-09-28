@@ -284,8 +284,13 @@ export default class EditPanelItem {
       name: baseConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
     }
 
-    attrs.disabled = this.isDisabled
-    attrs.readonly = this.isLocked
+    // readonly does nothing on checkboxes, radios and selects, so a locked one is disabled instead
+    if (this.isLocked) {
+      const isTextControl =
+        baseConfig.tag === 'textarea' ||
+        (baseConfig.tag === 'input' && !['checkbox', 'radio'].includes(baseConfig.attrs?.type))
+      attrs[isTextControl ? 'readonly' : 'disabled'] = true
+    }
 
     const itemInputAction = itemInputActions.get(this.itemSlug)?.(this)
 

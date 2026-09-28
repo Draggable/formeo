@@ -59,7 +59,7 @@ const controlOptions = {
       config: {
         label: 'Email',
         disabledAttrs: ['type'], // hidden from the edit panel and cannot be re-added
-        lockedAttrs: [], // shown, but cannot be removed
+        lockedAttrs: [], // shown, but can't be removed, re-added with + Attribute, or changed; locked checkboxes and selects are disabled
       },
       meta: {
         group: 'common',

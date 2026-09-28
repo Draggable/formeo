@@ -263,6 +263,11 @@ export default class EditPanel {
    * @param {String|Array} val
    */
   addAttribute = (attr, valArg) => {
+    // locked and disabled attributes can't be added or overwritten, whoever calls this
+    if (this.component.isLockedProp(`attrs.${attr}`) || this.component.isDisabledProp(`attrs.${attr}`)) {
+      return
+    }
+
     let val = valArg
     const safeAttr = safeAttrName(attr)
     const itemKey = `attrs.${safeAttr}`

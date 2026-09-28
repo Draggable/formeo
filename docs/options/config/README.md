@@ -116,4 +116,4 @@ new FormeoEditor({
 })
 ```
 
-Locked attributes can't be removed from the edit panel. If one was removed before you locked it, add it back with **+ Attribute** (name `required`, value `true`).
+A locked attribute can't be removed, re-added with **+ Attribute**, or changed; locked checkboxes and selects are disabled. If one was removed before you locked it, remove the `locked` config entry, add it back with **+ Attribute** (name `required`, value `true`), then restore the lock.
