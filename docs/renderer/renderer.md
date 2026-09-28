@@ -38,7 +38,7 @@ This works in Node from the release that ships the `.cjs` build (5.9.1+). Formeo
 
 ```html
 <script
-  src="https://unpkg.com/formeo@5.13.0/dist/formeo.umd.js"
+  src="https://unpkg.com/formeo@5.13.1/dist/formeo.umd.js"
   integrity="sha384-REPLACE_WITH_THE_HASH_FOR_THE_PINNED_VERSION"
   crossorigin="anonymous"
 ></script>

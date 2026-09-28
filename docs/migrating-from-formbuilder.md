@@ -36,9 +36,9 @@ A few things to know before running it:
 ## The batch script
 
 This script reads every `*.json` file from an input directory, converts each one, post-processes the result (see
-[below](#post-processing-and-why)), and writes `<name>.formeo.json` to an output directory. It's the exact script
-used to produce the sample output referenced further down — save it next to (or one level above) your
-`formBuilder2Formeo` checkout as `batch-convert.mjs`, adjusting the import path if your layout differs:
+[below](#post-processing-and-why)), and writes `<name>.formeo.json` to an output directory. Save it next to (or one
+level above) your `formBuilder2Formeo` checkout as `batch-convert.mjs`, adjusting the import path if your layout
+differs:
 
 ```javascript
 // batch-convert.mjs
@@ -55,16 +55,10 @@ import { basename, join } from 'node:path'
 import convertDataModule from './formBuilder2Formeo/src/convert-data.js'
 const convertData = convertDataModule.default || convertDataModule
 
-// formBuilder's field `type` (landed verbatim in each converted field's `meta.id`) to the
-// control this needs to be in Formeo's own terms: `attrs.type` (only for fields the renderer
-// or a control gates on it — see src/lib/js/renderer/index.js's
-// `['checkbox', 'radio'].includes(attrs.type)` check) and `controlId` (Formeo's own control
-// `meta.id`, read from src/lib/js/components/controls/form/*.js and .../html/*.js). Without
-// the controlId remap, a converted field keeps formBuilder's control id (e.g. 'radio-group'),
-// which doesn't match any registered Formeo control: the editor can't find the control's
-// `disabledAttrs`/`lockedAttrs` (so a converted radio/checkbox group loses its locked `type`
-// attribute), and `Field#isCheckable` — which the Conditions panel's autocomplete uses to
-// offer an option list — checks `config.controlId` against `'radio'`/`'checkbox'` exactly.
+// Maps each formBuilder field type to its Formeo equivalent: `attrsType` (Formeo's
+// `attrs.type`, where the renderer needs one) and `controlId` (so the editor recognises
+// each field's control, offers its option list in the Conditions panel, and applies its
+// locked/disabled attributes).
 const formeoControlByFormBuilderType = {
   hidden: { controlId: 'hidden', attrsType: 'hidden' },
   'radio-group': { controlId: 'radio', attrsType: 'radio' },
@@ -90,9 +84,7 @@ function postProcess(formeoData) {
     if (mapping.attrsType) {
       field.attrs = { ...field.attrs, type: mapping.attrsType }
     }
-    // Formeo's Field#isCheckable and its control-attribute lookup (applyControlAttrConfig)
-    // both key off config.controlId / meta.id matching a *registered Formeo control's*
-    // meta.id, not formBuilder's — so both need to be rewritten, not just attrs.type.
+    // so the editor recognises each field's control
     field.meta = { ...field.meta, id: mapping.controlId }
     field.config = { ...field.config, controlId: mapping.controlId }
   }
@@ -181,14 +173,15 @@ Each `output/*.formeo.json` file is a Formeo `formData` object — hand it to `n
   for older Formeo versions — but setting `config: {}` explicitly is harmless either way, so the script always does
   it.
 
-This was verified two ways, both in a scratch unit probe against a real converted, post-processed output:
+With this post-processing applied, a converted, post-processed form behaves like a native Formeo one in both
+places that matter:
 
-- Rendering it with `FormeoRenderer`: the radio group rendered three `<input type="radio">` elements, the checkbox
-  group rendered one `<input type="checkbox">`, and the hidden field rendered as `<input type="hidden">`.
-- Loading it into the editor's `Components` store with Formeo's built-in controls registered: the converted radio
-  and checkbox group fields' `isCheckable` was `true` (so Conditions offers their option list), and their `type`
-  attribute stayed disabled in the edit panel. Loading the *unfixed* output (formBuilder's own `'radio-group'` id
-  left in place) reproduced the bug — `isCheckable` came back `false`.
+- **Rendered with `FormeoRenderer`:** the radio group renders three `<input type="radio">` elements, the checkbox
+  group renders one `<input type="checkbox">`, and the hidden field renders as `<input type="hidden">`.
+- **Loaded in the editor:** the converted radio and checkbox group fields show up in the Conditions panel's option
+  list, and their `type` attribute stays disabled in the edit panel, the same as a radio/checkbox group built in
+  the editor itself. Skipping the `controlId`/`meta.id` remap (leaving formBuilder's own `'radio-group'` id in
+  place) is what causes those fields to silently disappear from Conditions' option list.
 
 ## XML input
 

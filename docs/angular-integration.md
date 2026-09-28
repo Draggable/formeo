@@ -1,7 +1,7 @@
 # Angular + Formeo Integration
 
 A standalone Angular component that builds a form with `FormeoEditor`, previews it with `FormeoRenderer`, and
-cleans up both on destroy. Verified against `formeo` 5.13.0; Angular 17+ syntax (standalone components,
+cleans up both on destroy. Verified against `formeo` 5.13.1; Angular 17+ syntax (standalone components,
 `afterNextRender`).
 
 ## Install
@@ -95,7 +95,9 @@ Notes:
 The renderer's `onSubmit` event fires on the rendered `<form>`'s native `submit` event and hands you
 `{ event, form, userData }`, where `userData` is the form's values keyed by field name (repeated names — checkbox
 groups, multi-selects — become arrays). Formeo does not call `event.preventDefault()` itself, so call it yourself
-if you're not doing a normal form POST:
+if you're not doing a normal form POST. This fragment replaces the `onSubmit` handler inside the `FormeoRenderer`
+constructor in the component above, and assumes an injected `HttpClient` (`private http = inject(HttpClient)`,
+alongside `provideHttpClient()` in your app config):
 
 ```typescript
 events: {
@@ -113,13 +115,15 @@ events: {
 needed.
 
 If you're not using `afterNextRender` (e.g. an older Angular version, or constructing Formeo somewhere other than
-a component's injection context), guard the same code with `isPlatformBrowser`:
+a component's injection context), guard the same code with `isPlatformBrowser`. This fragment replaces the
+constructor's `afterNextRender(...)` call in the component above with an `ngAfterViewInit` lifecycle hook instead
+(so the class also needs `implements AfterViewInit`, and the extra imports shown here):
 
 ```typescript
-import { Component, PLATFORM_ID, inject } from '@angular/core'
+import { AfterViewInit, Component, PLATFORM_ID, inject } from '@angular/core'
 import { isPlatformBrowser } from '@angular/common'
 
-export class FormBuilderComponent {
+export class FormBuilderComponent implements AfterViewInit {
   private platformId = inject(PLATFORM_ID)
 
   ngAfterViewInit(): void {
@@ -133,8 +137,8 @@ export class FormBuilderComponent {
 ## TypeScript
 
 Formeo ships its own type definitions (`dist/formeo.d.ts`, `dist/formeo.d.cts`) — nothing extra to install or
-declare. See [TypeScript](typescript.md) for what's typed, including `FormeoRendererEvents['onSubmit']` and the
-`UserData` type used above.
+declare. See [TypeScript](typescript.md) for what's typed, including the editor and renderer constructors, their
+options, and the `events` callbacks used above.
 
 ## The demo's Angular tab
 

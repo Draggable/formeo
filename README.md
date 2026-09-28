@@ -59,7 +59,7 @@ For quick prototyping or simple projects, you can use a CDN:
 <link rel="stylesheet" href="https://unpkg.com/formeo@latest/dist/formeo.min.css">
 ```
 
-This exposes the `window.FormeoEditor` and `window.FormeoRenderer` globals. For production, pin a version (e.g. `formeo@5.13.0`) instead of `@latest` and add an `integrity` hash with `crossorigin="anonymous"` — see [Installation](docs/renderer/renderer.md#installation) in the renderer docs.
+This exposes the `window.FormeoEditor` and `window.FormeoRenderer` globals. For production, pin a version (e.g. `formeo@5.13.1`) instead of `@latest` and add an `integrity` hash with `crossorigin="anonymous"` — see [Installation](docs/renderer/renderer.md#installation) in the renderer docs.
 
 ## Usage
 

@@ -7,10 +7,13 @@ rendering it, and getting its value into `userData`). This page only covers what
 text editor: waiting for the script to load before initializing, and syncing the editor's HTML back to the
 `<textarea>` Formeo renders.
 
-The built-in [`TinyMCEControl`](../../src/lib/js/components/controls/html/tinymce.js) follows the same
-`dependencies` + `action.onRender` pattern shown here, against an older TinyMCE CDN build.
+The built-in [`TinyMCEControl`](https://github.com/Draggable/formeo/blob/main/src/lib/js/components/controls/html/tinymce.js)
+follows the same `dependencies` + `action.onRender` pattern shown here, against an older TinyMCE CDN build.
 
 ## The control
+
+CKEditor 5's CDN build of `ClassicEditor` ships without any plugins built in — you choose which ones to load and
+pass them explicitly, along with the toolbar buttons that use them:
 
 ```javascript
 const ckeditorControl = {
@@ -30,9 +33,11 @@ const ckeditorControl = {
   },
   action: {
     onRender: elem => {
-      whenGlobal('CKEDITOR').then(({ ClassicEditor }) => {
+      whenGlobal('CKEDITOR').then(({ ClassicEditor, Essentials, Paragraph, Bold, Italic, Link, List }) => {
         ClassicEditor.create(elem, {
           licenseKey: 'YOUR_LICENSE_KEY', // see "License key" below
+          plugins: [Essentials, Paragraph, Bold, Italic, Link, List],
+          toolbar: ['undo', 'redo', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList'],
         }).then(editor => {
           // keep the source <textarea> (and so renderer.userData / a native form submit) in sync as the user types
           editor.model.document.on('change:data', () => {
@@ -69,11 +74,10 @@ and point `dependencies.js`/`dependencies.css` at your own copy instead of the C
 
 ## Waiting for the CDN script: `whenGlobal`
 
-`dependencies` are fetched with `fetchDependencies()`, but the renderer's `processFields` calls it **without
-awaiting it** (`src/lib/js/renderer/index.js:492-499`), so `action.onRender` can run before `ckeditor5.umd.js` has
-finished loading and `window.CKEDITOR` exists yet. A small helper that polls for the global covers this — and works
-for the editor's field preview too, since a control's own dependencies aren't guaranteed to be loaded by the time
-its `action.onRender` fires there either:
+The renderer fetches `dependencies` but doesn't wait for them before calling `action.onRender`, so `onRender` can
+run before `ckeditor5.umd.js` has finished loading and `window.CKEDITOR` exists yet. A small helper that polls for
+the global covers this — and works for the editor's field preview too, since a control's own dependencies aren't
+guaranteed to be loaded by the time its `action.onRender` fires there either:
 
 ```javascript
 const whenGlobal = (name, { interval = 50, timeout = 15000 } = {}) =>
