@@ -287,4 +287,76 @@ describe('onBeforeAdd (#281)', () => {
     await new Promise(res => setTimeout(res, 0))
     assert.equal(fieldCount(components), 0)
   })
+
+  it('clone asks onBeforeClone, and false clones nothing', async () => {
+    const seen = []
+    const { components, field, column } = await withControls({
+      callbacks: {
+        onBeforeClone: ({ detail }) => {
+          seen.push(detail)
+          return false
+        },
+      },
+    })
+    clickAction(field, 'item-clone')
+    assert.equal(fieldCount(components), 1)
+    assert.equal(seen[0].component, field)
+    assert.equal(seen[0].componentType, 'field')
+    assert.equal(seen[0].componentId, 'field-h')
+    assert.equal(seen[0].parent, column)
+  })
+
+  it('clone goes ahead when onBeforeClone allows it', async () => {
+    const { components, field } = await withControls({ callbacks: { onBeforeClone: () => true } })
+    clickAction(field, 'item-clone')
+    assert.equal(fieldCount(components), 2)
+  })
+
+  it('save asks onBeforeSave with the formData; false skips click.btn, save.form and onSave', async () => {
+    const seen = []
+    const onSave = mock.fn()
+    const form = mock.fn()
+    const btn = mock.fn()
+    const { controls } = await withControls({
+      callbacks: {
+        onSave,
+        onBeforeSave: ({ detail }) => {
+          seen.push(detail)
+          return false
+        },
+      },
+      actions: { save: { form }, click: { btn } },
+    })
+    controls.dom.querySelector('.save-form').click()
+    assert.equal(seen[0].formData.id, 'form-h')
+    assert.equal(onSave.mock.callCount(), 0)
+    assert.equal(form.mock.callCount(), 0)
+    assert.equal(btn.mock.callCount(), 0)
+  })
+
+  it('an allowed save saves the formData the hook saw', async () => {
+    const seen = []
+    const form = mock.fn()
+    const { controls } = await withControls({
+      callbacks: { onBeforeSave: ({ detail }) => seen.push(detail.formData) },
+      actions: { save: { form } },
+    })
+    controls.dom.querySelector('.save-form').click()
+    assert.equal(form.mock.calls[0].arguments[0], seen[0])
+  })
+
+  it('a second Save while one waits is ignored', async () => {
+    let resolve
+    const onBeforeSave = mock.fn(
+      () =>
+        new Promise(res => {
+          resolve = res
+        })
+    )
+    const { controls } = await withControls({ callbacks: { onBeforeSave } })
+    controls.dom.querySelector('.save-form').click()
+    controls.dom.querySelector('.save-form').click()
+    assert.equal(onBeforeSave.mock.callCount(), 1)
+    resolve(false)
+  })
 })

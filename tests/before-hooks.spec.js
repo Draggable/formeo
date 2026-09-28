@@ -160,3 +160,35 @@ test.describe('onBeforeAdd (#281)', () => {
     expect(result.addedAfterDestroy).toBe(false)
   })
 })
+
+test.describe('onBeforeClone and onBeforeSave (#281)', () => {
+  test('onBeforeClone can cancel cloning a field', async ({ page }) => {
+    const editor = await mountHookedEditor(page)
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeClone = 'cancel'
+    })
+    await clickFieldAction(editor.locator('.formeo-field'), 'item-clone')
+    await page.waitForTimeout(300)
+    await expect(editor.locator('.formeo-field')).toHaveCount(1)
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeClone = 'allow'
+    })
+    await clickFieldAction(editor.locator('.formeo-field').first(), 'item-clone')
+    await expect(editor.locator('.formeo-field')).toHaveCount(2)
+  })
+
+  test('onBeforeSave can cancel the save, and onSave only fires once allowed', async ({ page }) => {
+    const editor = await mountHookedEditor(page)
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeSave = 'cancel'
+    })
+    await editor.locator('.save-form').click()
+    expect(await hookCalls(page, 'save')).toEqual([])
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeSave = 'allow'
+    })
+    await editor.locator('.save-form').click()
+    expect(await hookCalls(page, 'save')).toEqual([{ name: 'save' }])
+    expect(await hookCalls(page, 'beforeSave')).toHaveLength(2)
+  })
+})

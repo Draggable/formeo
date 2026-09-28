@@ -50,6 +50,8 @@ const editor = new FormeoEditor({
 | `onRemoveField`      | Function | Fires when field is removed              |
 | `onBeforeRemove`     | Function | Runs before a row, column, field or page is removed by the user; can cancel or hold it. See [Before hooks](#before-hooks) |
 | `onBeforeAdd`        | Function | Runs before the user adds a row, column or field from the controls, or a page; can cancel or hold it. See [Before hooks](#before-hooks) |
+| `onBeforeClone`      | Function | Runs before the user clones a row, column or field; can cancel or hold it. See [Before hooks](#before-hooks) |
+| `onBeforeSave`       | Function | Runs before the Save button saves; can cancel or hold it. See [Before hooks](#before-hooks) |
 | `onSave`             | Function | Fires when form is saved                 |
 | `onRender`           | Function | Fires when an element is rendered        |
 | `onPageChange`       | Function | Fires when the active page tab switches (with the `pages` option). See [Page Tabs](../../editor/pages.md#events) |
@@ -98,6 +100,8 @@ document.addEventListener('formeoUpdatedField', (event) => {
 | `formeoRemovedField`     | Field component was removed              |
 | `formeoBeforeRemove`     | Before a user removes a row, column, field or page; cancelable. See [Before hooks](#before-hooks) |
 | `formeoBeforeAdd`        | Before a user adds a row, column, field or page; cancelable. See [Before hooks](#before-hooks) |
+| `formeoBeforeClone`      | Before a user clones a row, column or field; cancelable. See [Before hooks](#before-hooks) |
+| `formeoBeforeSave`       | Before the Save button saves; cancelable. See [Before hooks](#before-hooks) |
 | `formeoCleared`          | Form has been cleared                    |
 | `formeoOnRender`         | Component has been rendered              |
 | `formeoConditionUpdated` | Conditional logic has been updated       |
@@ -115,6 +119,8 @@ option callback and a cancelable DOM event.
 | ---------------- | -------------------- | ----------------------------------------------------------------------------------------------------------- | -------- |
 | `onBeforeAdd`    | `formeoBeforeAdd`    | a row, column or field is added by clicking or dropping a control, or a page with the + tab (with `pages`)    | `{ componentType, controlId, data, parent, index, addedVia }`; a page has only `componentType: 'stage'` and `index` |
 | `onBeforeRemove` | `formeoBeforeRemove` | a row, column or field is removed with its × button, or a page with its × or <kbd>Delete</kbd> (with `pages`) | `{ component, componentType, componentId }`; a page adds `index`, `title` and `isEmpty` |
+| `onBeforeClone`  | `formeoBeforeClone`  | a row, column or field is cloned with its clone button                                                        | `{ component, componentType, componentId, parent }` |
+| `onBeforeSave`   | `formeoBeforeSave`   | the Save button saves (before `actions.click.btn`, `actions.save.form`, the `sessionStorage` copy and `onSave`) | `{ formData }`; an allowed save saves this same formData |
 
 For `onBeforeAdd`, `componentType` is what the control creates (`'field'`, or `'row'`/`'column'` for the layout
 controls), `controlId` is the control's id (e.g. `'text-input'`), and `data` is what a new field starts from; treat it as
@@ -141,6 +147,15 @@ new FormeoEditor({
 })
 ```
 
+```javascript
+new FormeoEditor({
+  events: {
+    // don't save a form without fields
+    onBeforeSave: ({ detail }) => Object.keys(detail.formData.fields).length > 0,
+  },
+})
+```
+
 The DOM event is dispatched on the component's element and bubbles to `document` (unless `bubbles: false`). A listener
 cancels with `evt.preventDefault()`, synchronously only:
 
@@ -153,7 +168,8 @@ document.addEventListener('formeoBeforeRemove', evt => {
 The order is: the DOM event, then the callback (skipped if a listener cancelled), then the
 [action](../actions/README.md) if there is one (`actions.remove.component`, or `actions.remove.page` for a page), then
 the change and its usual events (`onRemove`, `onUpdate`, …). While a removal waits on its hook, clicking × again for
-the same component is ignored. If the editor is destroyed while a hook waits, the change never happens.
+the same component is ignored, and while a save waits, clicking Save again is ignored. If the editor is destroyed
+while a hook waits, the change never happens.
 
 Before hooks only run for changes the user makes in the editor. Calling `addChild()`, `remove()`, `pages.add()` or
 `clear()` from your code, dragging an existing component to a new place, and "Clear All" (see `confirmClearAll`)

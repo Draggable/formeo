@@ -358,6 +358,28 @@ export default class Component extends Data {
   }
 
   /**
+   * The canvas clone button: onBeforeClone decides whether and when to clone (#281)
+   * @return {Boolean|Promise<Boolean>} see Events#before
+   */
+  requestClone() {
+    const detail = { component: this, componentType: this.name, componentId: this.id, parent: this.parent }
+    return this.components.events.before(
+      'clone',
+      detail,
+      () => {
+        if (!this.isRegistered) {
+          return
+        }
+        this.clone(this.parent)
+        if (this.name === 'column') {
+          this.parent.autoColumnWidths()
+        }
+      },
+      { src: this.dom }
+    )
+  }
+
+  /**
    * Move, close, and edit buttons for row, column and field
    * @return {Object} element config object
    */
@@ -471,12 +493,7 @@ export default class Component extends Data {
             id: 'clone',
           },
           action: {
-            click: () => {
-              this.clone(this.parent)
-              if (this.name === 'column') {
-                this.parent.autoColumnWidths()
-              }
-            },
+            click: () => this.requestClone(),
           },
         }
       },

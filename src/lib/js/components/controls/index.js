@@ -186,15 +186,18 @@ export class Controls {
       action: {
         click: ({ target }) => {
           const { formData } = this.components
-          const saveEvt = {
-            action: () => {},
-            coords: dom.coords(target),
-            message: '',
-            button: target,
+          const save = () => {
+            const saveEvt = {
+              action: () => {},
+              coords: dom.coords(target),
+              message: '',
+              button: target,
+            }
+            this.components.actions.click.btn(saveEvt)
+            this.components.actions.save.form(formData)
           }
-          this.components.actions.click.btn(saveEvt)
-
-          return this.components.actions.save.form(formData)
+          // onBeforeSave decides whether and when to save (#281)
+          return this.components.events.before('save', { formData }, save, { src: target, guardKey: 'save' })
         },
       },
     }
