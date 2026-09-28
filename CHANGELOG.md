@@ -1,3 +1,19 @@
+# [5.9.0](https://github.com/Draggable/formeo/compare/v5.8.0...v5.9.0) (2026-09-28)
+
+
+### Bug Fixes
+
+* **renderer:** keep focus when an unpaginated page skips itself ([681d818](https://github.com/Draggable/formeo/commit/681d818f2ec73c651ebc5213ef6f152f82092379)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+
+
+### Features
+
+* **editor:** list pages by title as condition targets ([3f22da0](https://github.com/Draggable/formeo/commit/3f22da0e1bccc740cb8e0bd58253c8919d266fe4)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **editor:** offer only visibility for a page condition target ([21d74f5](https://github.com/Draggable/formeo/commit/21d74f52cd63f343aa8e19bcca77a8be30c73a2f)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** let a condition skip a page ([fdcbc4f](https://github.com/Draggable/formeo/commit/fdcbc4f0f27b5a64c1f10c771ce55fef858cde28)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** move off a page when it is skipped, and name stages in onPageChange ([cf21f0b](https://github.com/Draggable/formeo/commit/cf21f0b932f2b9b0f5c69f65c1c79a06efffc507)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** pass over skipped pages in the wizard and the tabs ([33aee88](https://github.com/Draggable/formeo/commit/33aee88a3483162b3bf03a966f6da60e609cc43d)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+
 # [5.8.0](https://github.com/Draggable/formeo/compare/v5.7.0...v5.8.0) (2026-09-28)
 
 
