@@ -342,6 +342,9 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
         return
       }
       event.preventDefault()
+      // this Enter can never become a submission now, so a checkValidity() call from onPageChange (e.g. to
+      // toggle a submit button) below must not be mistaken for the reported pass markReported() just armed
+      reporting = false
       goNext()
     })
   }

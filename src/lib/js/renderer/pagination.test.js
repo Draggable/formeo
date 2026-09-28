@@ -432,6 +432,15 @@ describe('pagination (#122)', () => {
       assert.equal(key(input('email'), 'Enter').defaultPrevented, false, 'the last page submits natively')
     })
 
+    test('Enter as Next does not leave the reporting flag set for an onPageChange checkValidity() call (#122)', () => {
+      // page 2 is valid; page 3 has an empty required field. A silent checkValidity() from onPageChange
+      // must never be mistaken for a reported pass, or Enter on page 1 jumps straight to page 3.
+      const data = buildPages([[field('a')], [field('b')], [field('c', { required: true })]], ['One', 'Two', 'Three'])
+      const renderer = render('wizard', data, { events: { onPageChange: ({ form }) => form.checkValidity() } })
+      key(input('a'), 'Enter')
+      assert.equal(renderer.page, 1, 'Enter must land on page 2, not skip it for the invalid page 3')
+    })
+
     test('Enter in a textarea keeps its newline', () => {
       render('wizard', buildPages([[field('notes', { tag: 'textarea' })], [field('b')]]))
       assert.equal(key(container.querySelector('textarea'), 'Enter').defaultPrevented, false)
