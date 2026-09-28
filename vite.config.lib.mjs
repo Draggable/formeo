@@ -4,6 +4,9 @@ import banner from 'vite-plugin-banner'
 
 import pkg from './package.json'
 
+// CommonJS needs a .cjs extension: package.json is "type": "module", so Node reads any .js as ESM
+const LIB_FILE_SUFFIX = { es: 'es.js', cjs: 'cjs', umd: 'umd.js' }
+
 const bannerTemplate = `
 /**
 ${pkg.name} - ${pkg.homepage}
@@ -21,7 +24,7 @@ export default defineConfig(({ mode }) => {
       lib: {
         entry: resolve(__dirname, 'src/lib/js/index.js'),
         name: 'formeo',
-        fileName: format => (isMinified ? `[name].min.${format}.js` : `[name].${format}.js`),
+        fileName: format => `[name].${isMinified ? 'min.' : ''}${LIB_FILE_SUFFIX[format]}`,
         formats: ['es', 'cjs', 'umd'],
       },
       outDir: 'dist',

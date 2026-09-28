@@ -149,9 +149,9 @@ Lefthook is configured with:
 
 The build process produces:
 - `dist/formeo.es.js` - ES module
-- `dist/formeo.cjs.js` - CommonJS module
+- `dist/formeo.cjs` - CommonJS module (`.cjs` because the package is `"type": "module"`)
 - `dist/formeo.umd.js` - UMD bundle (unpkg default)
-- `dist/formeo.min.*.js` - Minified versions
+- `dist/formeo.min.{es.js,cjs,umd.js}` - Minified versions
 - `dist/formeo.min.css` - Compiled styles
 - `dist/formeo-sprite.svg` - Icon sprite
 - `dist/formData_schema.json` - JSON Schema for form data validation

@@ -1,7 +1,7 @@
 import Editor from './editor'
 import Renderer from './renderer'
 
-if (window !== undefined) {
+if (typeof window !== 'undefined') {
   window.FormeoEditor = Editor
   window.FormeoRenderer = Renderer
 }
