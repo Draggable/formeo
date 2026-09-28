@@ -15,9 +15,12 @@ const formWith = (key, fields) => ({
   fields: Object.fromEntries(fields.map(field => [field.id, field])),
 })
 
-const editorWith = (key, fields) => {
+const editorWith = (key, fields, fieldsConfig) => {
   const events = new Events().init({})
   const components = new Components({ events, actions: new Actions(events).init({}) })
+  if (fieldsConfig) {
+    components.fields.config = fieldsConfig
+  }
   components.load(formWith(key, fields))
   return components
 }
@@ -97,6 +100,50 @@ describe('duplicate field name hint (#331)', () => {
     copy.remove()
     await flush()
     assert.equal(visibleHint(original), null)
+  })
+
+  it('leaves an unchanged hint alone while another field is renamed', async () => {
+    const editor = editorWith('quiet', [
+      textField('a', { name: 'email' }),
+      textField('b', { name: 'email' }),
+      textField('c', { name: 'phone' }),
+    ])
+    await flush()
+    const textNode = visibleHint(editor.fields.get('a')).firstChild
+
+    editor.fields.get('c').set('attrs.name', 'mobile')
+    await flush()
+
+    // rewriting the same text would make the status region announce it again
+    assert.strictEqual(visibleHint(editor.fields.get('a')).firstChild, textNode)
+  })
+
+  it('warns when a field without a name row is given a duplicate name in code', async () => {
+    const editor = editorWith('api', [textField('a', { name: 'email' }), textField('b')])
+    await flush()
+    assert.equal(nameRow(editor.fields.get('b')), null, 'b has no name row')
+
+    editor.fields.get('b').set('attrs.name', 'email')
+    await flush()
+
+    assert.ok(visibleHint(editor.fields.get('a')), 'a shows the hint')
+  })
+
+  it('describes a picklist name control too', async () => {
+    const picklist = [
+      { label: 'email', value: 'email' },
+      { label: 'phone', value: 'phone' },
+    ]
+    const withControl = (id, name) => ({ ...textField(id, { name }), config: { label: id, controlId: 'text-input' } })
+    const editor = editorWith('picklist', [withControl('a', 'email'), withControl('b', 'email')], {
+      'text-input': { attrs: { name: picklist } },
+    })
+    await flush()
+
+    const field = editor.fields.get('a')
+    const select = nameRow(field).querySelector('select')
+    assert.ok(select, 'name renders as a select')
+    assert.equal(select.getAttribute('aria-describedby'), visibleHint(field).id)
   })
 
   it('stops warning when the other field loses its name attribute', async () => {

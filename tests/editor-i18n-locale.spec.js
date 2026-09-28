@@ -22,7 +22,6 @@ const mountEditor = (page, { stored } = {}) =>
         i18n: { locale, override: { [locale]: { save: marker } } },
       })
       await editor.whenReady()
-      return editor
     },
     { locale: LOCALE, marker: MARKER, stored }
   )

@@ -42,9 +42,14 @@ const renderHint = (field, row, name) => {
     })
     row.appendChild(hint)
   }
-  hint.textContent = name ? hintText(name) : ''
+  // rewriting the same text would make the status region announce it again
+  const text = name ? hintText(name) : ''
+  if (hint.textContent !== text) {
+    hint.textContent = text
+  }
 
-  const input = row.querySelector('.prop-inputs input')
+  // an integrator can give `name` a picklist, which renders a select
+  const input = row.querySelector('.prop-inputs input, .prop-inputs select')
   if (name) {
     input?.setAttribute('aria-describedby', hint.id)
   } else {
@@ -61,6 +66,8 @@ export const refreshDuplicateNameHints = components => {
   const duplicates = duplicateNameIds(fields.map(field => [field.id, field.get('attrs.name')]))
 
   for (const field of fields) {
+    // a field without a name row can still be given a name in code
+    watchFieldName(field)
     const row = field.dom?.querySelector('.field-attrs-name')
     if (row) {
       renderHint(field, row, duplicates.has(field.id) ? fieldNameKey(field.get('attrs.name')) : '')
