@@ -126,12 +126,14 @@ option callback and a cancelable DOM event.
 | `onBeforeClone`  | `formeoBeforeClone`  | a row, column or field is cloned with its clone button                                                        | `{ component, componentType, componentId, parent }` |
 | `onBeforeSave`   | `formeoBeforeSave`   | the Save button saves (before `actions.click.btn`, `actions.save.form`, the `sessionStorage` copy and `onSave`) | `{ formData }`; an allowed save saves this same formData |
 
-For `onBeforeAdd`, `componentType` is what the control creates (`'field'`, or `'row'`/`'column'` for the layout
-controls), `controlId` is the control's id (e.g. `'text-input'`), and `data` is what a new field starts from; treat it as
-read-only. `parent` and `index` say where it goes: the page and its row count for a click (every click adds a new row
-at the end), or the stage, row or column it was dropped on and the drop position. `addedVia` is `'click'` or
-`'dragDrop'`. A field dropped on a page or row also gets a new row or column around it; those don't run hooks of
-their own. If the component it was dropped on is removed while the hook waits, nothing is added.
+For `onBeforeAdd`, `componentType` is what the control creates (`'field'`, `'row'`/`'column'` for the layout
+controls, or `'controlSet'` for a [control set](../../controls/custom-controls.md#control-sets)), `controlId` is the
+control's id (e.g. `'text-input'`), and `data` is what a new field starts from, or a set's `{ layout, row, fields }`;
+treat it as read-only. `parent` and `index` say where it goes: the page and its row count for a click (every click
+adds a new row at the end), or the stage, row or column it was dropped on and the drop position. `addedVia` is
+`'click'` or `'dragDrop'`. A field dropped on a page or row also gets a new row or column around it; those don't run
+hooks of their own. A control set always becomes a new row: `parent` and `index` are its page and position. If the
+component it was dropped on is removed while the hook waits, nothing is added.
 
 A callback cancels by returning `false` or calling `evt.preventDefault()`. To make Formeo wait, return a Promise: the
 change happens when it resolves, and is cancelled if it resolves to `false`. A callback that throws, or a Promise that

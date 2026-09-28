@@ -94,6 +94,8 @@ See [Controlling Attribute Visibility](../../controls/custom-attribute-types.md#
 
 See [Custom controls](../../controls/custom-controls.md) for a full editor + renderer example.
 
+An element with a `controlSet` key adds a group of fields at once; see [Control sets](../../controls/custom-controls.md#control-sets).
+
 ## elementOrder
 
 Set the element order within a control group. May be overridden if [sortable](#sortable) is set to true
