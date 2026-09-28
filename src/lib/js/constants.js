@@ -173,6 +173,9 @@ export const EVENT_FORMEO_BEFORE_ADD = 'formeoBeforeAdd'
 export const EVENT_FORMEO_BEFORE_REMOVE = 'formeoBeforeRemove'
 export const EVENT_FORMEO_BEFORE_CLONE = 'formeoBeforeClone'
 export const EVENT_FORMEO_BEFORE_SAVE = 'formeoBeforeSave'
+// an edit panel opened or closed (#316)
+export const EVENT_FORMEO_EDIT_OPENED = 'formeoEditOpened'
+export const EVENT_FORMEO_EDIT_CLOSED = 'formeoEditClosed'
 export const COMPARISON_OPERATORS = {
   equals: '==',
   notEquals: '!=',

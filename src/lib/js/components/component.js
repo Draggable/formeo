@@ -420,10 +420,11 @@ export default class Component extends Data {
   }
 
   /**
-   * Toggles the edit window
+   * Toggles the edit window; reports an actual open or close through onEditOpen/onEditClose (#316)
    * @param {Boolean} open whether to open or close the edit window
    */
   toggleEdit(open = !this.isEditing) {
+    const changed = Boolean(open) !== Boolean(this.isEditing)
     this.isEditing = open
     const element = this.dom
     const editingClassName = 'editing'
@@ -438,6 +439,10 @@ export default class Component extends Data {
 
     element.classList.toggle(editingClassName, open)
     element.classList.toggle(editingComponentClassname, open)
+
+    if (changed) {
+      this.components.events.editToggled(this, open)
+    }
   }
 
   get buttons() {

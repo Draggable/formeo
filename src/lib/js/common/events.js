@@ -12,6 +12,8 @@ import {
   EVENT_FORMEO_CHANGED,
   EVENT_FORMEO_CLEARED,
   EVENT_FORMEO_CONDITION_UPDATED,
+  EVENT_FORMEO_EDIT_CLOSED,
+  EVENT_FORMEO_EDIT_OPENED,
   EVENT_FORMEO_ON_RENDER,
   EVENT_FORMEO_PAGE_CHANGED,
   EVENT_FORMEO_REMOVED_COLUMN,
@@ -127,6 +129,8 @@ export class Events {
       onBeforeRemove: () => {},
       onBeforeClone: () => {},
       onBeforeSave: () => {},
+      onEditOpen: () => {},
+      onEditClose: () => {},
       confirmClearAll: evt => {
         if (globalThis.confirm(evt.confirmationMessage)) {
           evt.clearAllAction(evt)
@@ -244,6 +248,21 @@ export class Events {
         return settle(value)
       }, cancelOnError)
       .finally(() => guardKey && this.pendingBefore.delete(guardKey))
+  }
+
+  /**
+   * A component's edit panel opened or closed (#316). The callback runs even when the DOM event can't reach document.
+   * @param {Component} component
+   * @param {Boolean} open
+   */
+  editToggled(component, open) {
+    const type = open ? EVENT_FORMEO_EDIT_OPENED : EVENT_FORMEO_EDIT_CLOSED
+    const detail = { component, componentType: component.name, componentId: component.id }
+    const evt = new globalThis.CustomEvent(type, { detail, bubbles: Boolean(this.opts.debug || this.opts.bubbles) })
+    ;(component.dom || document).dispatchEvent(evt)
+    if (!this.destroyed) {
+      this.opts[open ? 'onEditOpen' : 'onEditClose']?.({ timeStamp: evt.timeStamp, type, detail })
+    }
   }
 
   formeoSaved = evt => this.dispatch(EVENT_FORMEO_SAVED, evt)

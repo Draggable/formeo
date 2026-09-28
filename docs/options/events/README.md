@@ -54,6 +54,8 @@ const editor = new FormeoEditor({
 | `onBeforeSave`       | Function | Runs before the Save button saves; can cancel or hold it. See [Before hooks](#before-hooks) |
 | `onSave`             | Function | Fires when form is saved                 |
 | `onRender`           | Function | Fires when an element is rendered        |
+| `onEditOpen`         | Function | Fires when a row, column or field's edit panel opens. See [Edit panel events](#edit-panel-events) |
+| `onEditClose`        | Function | Fires when a row, column or field's edit panel closes. See [Edit panel events](#edit-panel-events) |
 | `onPageChange`       | Function | Fires when the active page tab switches (with the `pages` option). See [Page Tabs](../../editor/pages.md#events) |
 | `confirmClearAll`    | Function | Fires when form is cleared               |
 
@@ -104,6 +106,8 @@ document.addEventListener('formeoUpdatedField', (event) => {
 | `formeoBeforeSave`       | Before the Save button saves; cancelable. See [Before hooks](#before-hooks) |
 | `formeoCleared`          | Form has been cleared                    |
 | `formeoOnRender`         | Component has been rendered              |
+| `formeoEditOpened`       | A row, column or field's edit panel opened |
+| `formeoEditClosed`       | A row, column or field's edit panel closed |
 | `formeoConditionUpdated` | Conditional logic has been updated       |
 
 Like the callbacks, `formeoAddedRow`, `formeoAddedColumn` and `formeoAddedField` fire for components added after load, not for components loaded from `formData`.
@@ -174,6 +178,25 @@ while a hook waits, the change never happens.
 Before hooks only run for changes the user makes in the editor. Calling `addChild()`, `remove()`, `pages.add()` or
 `clear()` from your code, dragging an existing component to a new place, and "Clear All" (see `confirmClearAll`)
 don't run them.
+
+## Edit panel events
+
+`onEditOpen` and `onEditClose` fire when a row, column or field's edit panel opens or closes, with
+`detail: { component, componentType, componentId }`. The `formeoEditOpened` and `formeoEditClosed` DOM events carry
+the same `detail`; they're dispatched on the component's element and bubble to `document`. They only fire when the
+panel actually opens or closes, can't be cancelled, and don't fire when a component is removed with its panel open.
+formBuilder's `onOpenFieldEdit`/`onCloseFieldEdit` map to these, filtered to `componentType === 'field'`.
+
+```javascript
+new FormeoEditor({
+  events: {
+    onEditOpen: ({ detail }) => {
+      if (detail.componentType === 'field') showFieldHelp(detail.componentId)
+    },
+    onEditClose: () => hideFieldHelp(),
+  },
+})
+```
 
 ## Event Data Structure
 
