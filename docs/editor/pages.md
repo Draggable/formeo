@@ -200,9 +200,8 @@ right-to-left `dir` work without any extra CSS.
 | `pages.page` | Page |
 
 These strings come from `@draggable/formeo-languages` (3.6.0 and later) and follow the editor's `i18n` option. For a
-locale that doesn't have one of them, the English fallback above is shown. `pages.page` (the type shown next to a
-page in the condition target list) is new, and shows in English until a release of `@draggable/formeo-languages`
-ships it.
+locale that doesn't have one of them, the English fallback above is shown. `@draggable/formeo-languages` 3.7.0 and
+later translate `pages.page` (the type shown next to a page in the condition target list).
 
 ## "Clear All"
 
