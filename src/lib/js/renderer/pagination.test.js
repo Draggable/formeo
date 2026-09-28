@@ -1284,6 +1284,21 @@ describe('pagination (#122)', () => {
           key(tabs()[2], 'ArrowRight')
           assert.equal(renderer.page, 0)
         })
+
+        test('a programmatic click on the hidden Next/Previous is a no-op at the ends', () => {
+          const renderer = render('wizard', skipWhen(threePages(), 'skip', 'p-2'))
+          typeInto(input('a'), 'skip')
+          assert.equal(renderer.page, 0, 'first page in play')
+          // Previous is disabled here, but nothing stops a programmatic click on it
+          previous().click()
+          assert.equal(renderer.page, 0)
+
+          renderer.page = 2
+          assert.equal(renderer.page, 2, 'last page in play')
+          // Next is hidden here; clicking it must not fall through to goTo(undefined) and jump to page 0
+          next().click()
+          assert.equal(renderer.page, 2)
+        })
       })
 
       describe('the page on show', () => {
