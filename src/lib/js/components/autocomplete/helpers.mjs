@@ -1,6 +1,6 @@
-import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
+import { pageText } from '../stages/page-text.mjs'
 
 export const BASE_NAME = 'f-autocomplete'
 export const DISPLAY_FIELD_CLASSNAME = `${BASE_NAME}-display-field`
@@ -157,8 +157,7 @@ export const componentOptions = autocomplete => {
     const label = getComponentLabel(component, autocomplete.key, autocomplete.components)
     if (label) {
       const componentType = component.name
-      const typeLabel =
-        componentType === 'stage' && listsPages ? i18n.get('pages.page') || 'Page' : toTitleCase(componentType)
+      const typeLabel = componentType === 'stage' && listsPages ? pageText('pages.page') : toTitleCase(componentType)
       const typeConfig = {
         tag: 'span',
         content: ` ${typeLabel}`,
