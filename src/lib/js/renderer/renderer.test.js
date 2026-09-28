@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, mock, test } from 'node:test'
 import { JSDOM } from 'jsdom'
+import { convertedForm } from './__fixtures__/formbuilder2formeo.mjs'
 import FormeoRenderer from './index.js'
 
 describe('FormeoRenderer', () => {
@@ -1165,6 +1166,54 @@ describe('FormeoRenderer', () => {
         renderer.destroy()
         renderer.destroy()
       })
+    })
+  })
+
+  describe('formData without config objects (#212)', () => {
+    const renderForm = data => {
+      const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+      renderer.render(data)
+      return document.querySelector('#container form')
+    }
+
+    test('renders formBuilder2Formeo output, whose columns have no config', () => {
+      const form = renderForm(convertedForm())
+      for (const name of ['text-1532560573320', 'hidden-1532560563828', 'select-1532560573336']) {
+        assert.ok(form.elements[name], name)
+      }
+      // columns have no class of their own; the inline width style is what identifies them
+      for (const column of form.querySelectorAll('[style]')) {
+        assert.match(column.getAttribute('style'), /width: 100%/)
+      }
+    })
+
+    test('renders a row with no config', () => {
+      const data = convertedForm()
+      for (const row of Object.values(data.rows)) {
+        delete row.config
+      }
+      assert.ok(renderForm(data).elements['text-1532560573320'])
+    })
+
+    test('renders an option group with no config', () => {
+      const data = convertedForm()
+      data.fields['fb-text'] = {
+        id: 'fb-text',
+        tag: 'input',
+        attrs: { type: 'radio', name: 'size' },
+        options: [
+          { label: 'S', value: 's' },
+          { label: 'M', value: 'm' },
+        ],
+      }
+      assert.equal(renderForm(data).querySelectorAll('input[type="radio"]').length, 2)
+    })
+
+    test('renders a row or column with no children', () => {
+      const data = convertedForm()
+      delete data.rows['row-fb-text'].children
+      delete data.columns['col-fb-select'].children
+      assert.ok(renderForm(data).elements['hidden-1532560563828'])
     })
   })
 })

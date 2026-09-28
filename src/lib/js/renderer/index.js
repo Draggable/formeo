@@ -353,7 +353,7 @@ export default class FormeoRenderer {
     return renderedForm.outerHTML
   }
 
-  orderChildren = (type, order) =>
+  orderChildren = (type, order = []) =>
     order.reduce((acc, cur) => {
       acc.push(this.form[type][cur])
       return acc
@@ -366,11 +366,12 @@ export default class FormeoRenderer {
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumn = ({ id, ...columnData }) => ({
+  processColumn = ({ id, config = {}, ...columnData }) => ({
     ...columnData,
+    config,
     id: this.prefixId(id),
     children: this.processFields(columnData.children),
-    style: `width: ${columnData.config.width || '100%'}`,
+    style: `width: ${config.width || '100%'}`,
   })
 
   processRows = stageId =>
@@ -392,7 +393,7 @@ export default class FormeoRenderer {
    * @return {Object} row config object
    */
   processRow = (data, type = 'row') => {
-    const { config, id } = data
+    const { config = {}, id } = data
     const className = [`formeo-${type}-wrap`]
     const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) }
     this.cacheComponent(rowData)
