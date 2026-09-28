@@ -137,7 +137,7 @@ export default class FormeoRenderer {
     }
     const unmatched = []
     for (const key of keys) {
-      const fields = form?.elements[key] ?? form?.elements[`${key}[]`]
+      const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`)
       if (!fields) {
         unmatched.push(key)
         continue

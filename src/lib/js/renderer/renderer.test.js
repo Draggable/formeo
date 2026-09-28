@@ -1076,6 +1076,18 @@ describe('FormeoRenderer', () => {
       }
     })
 
+    test('treats form control collection property names as unmatched keys', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        mounted().userData = { item: 1, txt: 'a', length: 2 }
+        assert.equal(document.querySelector('[name="txt"]').value, 'a')
+        assert.equal(warn.mock.callCount(), 1)
+        assert.equal(warn.mock.calls[0].arguments[0], 'formeo: renderer.userData has no field named: item, length')
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
     test('does not warn when every key matches', () => {
       const warn = mock.method(console, 'warn', () => {})
       try {
