@@ -235,8 +235,17 @@ export default class FormeoRenderer {
     if (!this.pagination) {
       return null
     }
-    const onChange = (page, previousPage) => this.events.onPageChange?.({ page, previousPage, form, renderer: this })
-    return paginate(form, this.pagination, Object.values(this.form.stages), onChange, startStageId)
+    const stages = Object.values(this.form.stages)
+    const onChange = (page, previousPage) =>
+      this.events.onPageChange?.({
+        page,
+        previousPage,
+        stageId: stages[page]?.id ?? null,
+        previousStageId: stages[previousPage]?.id ?? null,
+        form,
+        renderer: this,
+      })
+    return paginate(form, this.pagination, stages, onChange, startStageId)
   }
 
   /**

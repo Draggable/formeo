@@ -102,8 +102,8 @@ const focusFirst = page => {
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
  * @param {String} [startStageId] the stage id of the page to start on (e.g. the one on show before a re-render);
  *   the first page when no stage has it
- * @return {{show: Function, index: Number, stageId: String|null, count: Number, destroy: Function}|null} null when
- *   there is only one page
+ * @return {{show: Function, refresh: Function, index: Number, stageId: String|null, count: Number,
+ *   destroy: Function}|null} null when there is only one page
  */
 export const paginate = (form, { type, progress, submit, heading, labels }, stages, onChange, startStageId) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
@@ -129,9 +129,11 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
   const isLastPlayable = i => i === playable.at(-1)
   const nextPlayable = i => playable.find(p => p > i)
   const previousPlayable = i => playable.findLast(p => p < i)
+  // a skipped page is never shown: the next page in play stands in for it, or the previous one at the end
+  const resolve = i => (playable.includes(i) ? i : (nextPlayable(i) ?? previousPlayable(i) ?? i))
   // starting on a page is not a page change: no onChange and no focus move
   const startIndex = stages.findIndex(stage => stage?.id === startStageId)
-  let current = startIndex > -1 && startIndex < count ? startIndex : 0
+  let current = resolve(startIndex > -1 && startIndex < count ? startIndex : 0)
   let tabs = []
   let steps = []
   let previous
@@ -188,7 +190,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
     const previousPage = current
     const parsed = Number(index)
     const normalized = Number.isFinite(parsed) ? Math.trunc(parsed) : 0
-    current = Math.max(0, Math.min(normalized, last))
+    current = resolve(Math.max(0, Math.min(normalized, last)))
     update()
     if (focus) {
       focusFirst(pages[current])
@@ -199,11 +201,17 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
   }
 
   /**
-   * Re-reads which pages are skipped and redraws the navigation; FormeoRenderer#setStageSkipped calls it
+   * Re-reads which pages are skipped; FormeoRenderer#setStageSkipped calls it. When the page on show was just
+   * skipped, the next page in play (or the previous one) takes its place, firing onChange.
+   * @param {{focus: Boolean}} [options] focus the new page's first control, when focus was on the skipped page
    */
-  const refresh = () => {
+  const refresh = ({ focus = false } = {}) => {
     computePlayable()
-    update()
+    if (playable.includes(current)) {
+      update()
+      return
+    }
+    show(current, { focus })
   }
 
   // set while the wizard checks a page itself, so the `invalid` listener below leaves the page alone

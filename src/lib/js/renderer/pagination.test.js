@@ -1046,6 +1046,19 @@ describe('pagination (#122)', () => {
       ])
     })
 
+    test('onPageChange names the stages it moves between', () => {
+      const calls = []
+      const renderer = render('tabs', twoPages(), {
+        events: { onPageChange: ({ stageId, previousStageId }) => calls.push([stageId, previousStageId]) },
+      })
+      tabs()[1].click()
+      renderer.page = 0
+      assert.deepEqual(calls, [
+        ['p-2', 'p-1'],
+        ['p-1', 'p-2'],
+      ])
+    })
+
     describe('page conditions (#122)', () => {
       /**
        * Adds a pair of conditions to stage `on`: `source` holding `value` skips `stageId`, anything else brings it back
@@ -1270,6 +1283,72 @@ describe('pagination (#122)', () => {
           assert.equal(renderer.page, 2)
           key(tabs()[2], 'ArrowRight')
           assert.equal(renderer.page, 0)
+        })
+      })
+
+      describe('the page on show', () => {
+        const events = calls => ({
+          events: {
+            onPageChange: ({ page, previousPage, stageId, previousStageId }) =>
+              calls.push({ page, previousPage, stageId, previousStageId }),
+          },
+        })
+
+        test('when it is skipped, the next page in play takes its place, with onPageChange and focus', () => {
+          const calls = []
+          // page 2 skips itself when its own field says so
+          const data = skipWhen(threePages(), 'skip', 'p-2', { on: 'p-2', source: 'b' })
+          const renderer = render('wizard', data, events(calls))
+          renderer.page = 1
+          calls.length = 0
+          input('b').focus()
+          typeInto(input('b'), 'skip')
+          assert.equal(renderer.page, 2)
+          assert.deepEqual(calls, [{ page: 2, previousPage: 1, stageId: 'p-3', previousStageId: 'p-2' }])
+          assert.equal(dom.window.document.activeElement, input('c'))
+        })
+
+        test('at the end, the previous page takes its place, and focus from elsewhere stays put', () => {
+          const data = skipWhen(threePages(), 'skip', 'p-3', { on: 'p-3', source: 'c' })
+          const renderer = render('tabs', data)
+          renderer.page = 2
+          const outside = document.createElement('button')
+          document.body.append(outside)
+          outside.focus()
+          typeInto(input('c'), 'skip')
+          assert.equal(renderer.page, 1)
+          assert.equal(dom.window.document.activeElement, outside)
+        })
+
+        test('a skipped first page starts the form on the next page in play, without onPageChange', () => {
+          const calls = []
+          // c is empty on render, so page 1 is skipped from the start
+          const renderer = render('wizard', skipWhen(threePages(), '', 'p-1', { source: 'c' }), events(calls))
+          assert.equal(renderer.page, 1)
+          assert.deepEqual(hiddenPages(), [true, false, true])
+          assert.deepEqual(calls, [])
+        })
+
+        test('a kept page that the new data skips gives way to the next page in play, without onPageChange', () => {
+          const calls = []
+          const renderer = render('tabs', threePages(), events(calls))
+          renderer.page = 1
+          calls.length = 0
+          renderer.render(skipWhen(threePages(), '', 'p-2', { source: 'c' }))
+          assert.equal(renderer.page, 2)
+          assert.deepEqual(calls, [])
+        })
+
+        test('renderer.page on a skipped page shows the next page in play, or the previous one at the end', () => {
+          let renderer = render('tabs', skipWhen(threePages(), 'skip', 'p-2'))
+          typeInto(input('a'), 'skip')
+          renderer.page = 1
+          assert.equal(renderer.page, 2)
+
+          renderer = render('tabs', skipWhen(threePages(), 'skip', 'p-3'))
+          typeInto(input('a'), 'skip')
+          renderer.page = 2
+          assert.equal(renderer.page, 1)
         })
       })
     })
