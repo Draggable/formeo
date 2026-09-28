@@ -47,7 +47,7 @@ used to produce the sample output referenced further down — save it next to (o
 //   npx tsx batch-convert.mjs <inputDir> <outputDir>
 //
 // Requires a checkout of Draggable/formBuilder2Formeo with its dependencies installed
-// (`npm install lodash uuid@3` inside that checkout).
+// (`npm install lodash uuid@3` inside that checkout) — see docs/migrating-from-formbuilder.md.
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { basename, join } from 'node:path'
 // Adjust this path to your formBuilder2Formeo checkout.
@@ -55,26 +55,46 @@ import { basename, join } from 'node:path'
 import convertDataModule from './formBuilder2Formeo/src/convert-data.js'
 const convertData = convertDataModule.default || convertDataModule
 
-// formBuilder's field `type` (landed in each converted field's `meta.id`) to the
-// `attrs.type` Formeo's own controls use (src/lib/js/components/controls/form/*.js).
-// Without this, hidden fields render as text inputs and radio/checkbox groups render
-// as a single bare input instead of a group (the renderer checks `attrs.type`, not `meta.id`).
-const attrsTypeByMetaId = {
-  hidden: 'hidden',
-  'radio-group': 'radio',
-  'checkbox-group': 'checkbox',
-  date: 'date',
-  number: 'number',
-  file: 'file',
-  text: 'text',
+// formBuilder's field `type` (landed verbatim in each converted field's `meta.id`) to the
+// control this needs to be in Formeo's own terms: `attrs.type` (only for fields the renderer
+// or a control gates on it — see src/lib/js/renderer/index.js's
+// `['checkbox', 'radio'].includes(attrs.type)` check) and `controlId` (Formeo's own control
+// `meta.id`, read from src/lib/js/components/controls/form/*.js and .../html/*.js). Without
+// the controlId remap, a converted field keeps formBuilder's control id (e.g. 'radio-group'),
+// which doesn't match any registered Formeo control: the editor can't find the control's
+// `disabledAttrs`/`lockedAttrs` (so a converted radio/checkbox group loses its locked `type`
+// attribute), and `Field#isCheckable` — which the Conditions panel's autocomplete uses to
+// offer an option list — checks `config.controlId` against `'radio'`/`'checkbox'` exactly.
+const formeoControlByFormBuilderType = {
+  hidden: { controlId: 'hidden', attrsType: 'hidden' },
+  'radio-group': { controlId: 'radio', attrsType: 'radio' },
+  'checkbox-group': { controlId: 'checkbox', attrsType: 'checkbox' },
+  date: { controlId: 'date-input', attrsType: 'date' },
+  number: { controlId: 'number', attrsType: 'number' },
+  file: { controlId: 'upload', attrsType: 'file' },
+  text: { controlId: 'text-input', attrsType: 'text' },
+  select: { controlId: 'select' }, // tag is already 'select'; not gated by attrs.type
+  textarea: { controlId: 'textarea' },
+  button: { controlId: 'button' },
+  header: { controlId: 'html.header' },
+  paragraph: { controlId: 'paragraph' },
+  // Any formBuilder type not listed here (a custom formBuilder field plugin, e.g.
+  // "starRating") has no built-in Formeo control: it's left as-is, and needs either a
+  // custom Formeo control (see controls/custom-controls.md) or manual cleanup.
 }
 
 function postProcess(formeoData) {
   for (const field of Object.values(formeoData.fields)) {
-    const attrsType = attrsTypeByMetaId[field.meta?.id]
-    if (attrsType) {
-      field.attrs = { ...field.attrs, type: attrsType }
+    const mapping = formeoControlByFormBuilderType[field.meta?.id]
+    if (!mapping) continue
+    if (mapping.attrsType) {
+      field.attrs = { ...field.attrs, type: mapping.attrsType }
     }
+    // Formeo's Field#isCheckable and its control-attribute lookup (applyControlAttrConfig)
+    // both key off config.controlId / meta.id matching a *registered Formeo control's*
+    // meta.id, not formBuilder's — so both need to be rewritten, not just attrs.type.
+    field.meta = { ...field.meta, id: mapping.controlId }
+    field.config = { ...field.config, controlId: mapping.controlId }
   }
   // Columns from formBuilder2Formeo have no `config` at all. Formeo >=5.9.3 (#212) defaults
   // that on render, but set it explicitly for older versions too.
@@ -114,36 +134,61 @@ Each `output/*.formeo.json` file is a Formeo `formData` object — hand it to `n
 
 ## Post-processing and why
 
-`convertData`'s output is close to Formeo's shape but not quite ready to render:
+`convertData`'s output is close to Formeo's shape but not quite ready to use, in the editor or the renderer:
 
-- **Fields carry no `attrs.type`.** formBuilder's field `type` lands in each converted field's `meta.id` (`hidden`,
-  `radio-group`, `checkbox-group`, `date`, `number`, `file`, `text`, …), but Formeo's renderer and its own controls
-  (`src/lib/js/components/controls/form/*.js`) key off `attrs.type`, not `meta.id` — for example the renderer only
-  treats a field as an option group when `attrs.type` is `'checkbox'` or `'radio'`. Left unset, a converted hidden
-  field renders as a plain text input, and a converted radio or checkbox group renders as one bare input instead of
-  a group. The mapping the script above applies:
+- **Fields keep formBuilder's control id, not Formeo's.** formBuilder's field `type` (`hidden`, `radio-group`,
+  `checkbox-group`, `date`, `number`, `file`, `text`, `select`, `textarea`, `button`, `header`, `paragraph`, …)
+  lands verbatim in each converted field's `meta.id`, but that's formBuilder's own control naming, not Formeo's.
+  Formeo's built-in controls (`src/lib/js/components/controls/form/*.js` and `.../html/*.js`) register under their
+  own `meta.id`, and several parts of Formeo look a field's control up by that id:
 
-  | formBuilder `meta.id` | Formeo `attrs.type` |
-  | ---------------------- | -------------------- |
-  | `hidden`                | `hidden`              |
-  | `radio-group`           | `radio`               |
-  | `checkbox-group`        | `checkbox`            |
-  | `date`                  | `date`                |
-  | `number`                | `number`              |
-  | `file`                  | `file`                |
-  | `text`                  | `text`                |
+  - The renderer and Formeo's controls key rendering off `attrs.type`, not `meta.id` — for example the renderer
+    only treats a field as an option group when `attrs.type` is `'checkbox'` or `'radio'`. Left unset, a converted
+    hidden field renders as a plain text input, and a converted radio or checkbox group renders as one bare input
+    instead of a group.
+  - The editor's `Field#applyControlAttrConfig` looks up the registered control by `config.controlId` (falling
+    back to `meta.id`) to read that control's `disabledAttrs`/`lockedAttrs` — for the built-in radio and checkbox
+    controls, `disabledAttrs: ['type']`. If the id doesn't match a registered control, that lookup finds nothing.
+  - `Field#isCheckable`, which the Conditions panel's autocomplete uses to decide whether to offer a field's
+    option list, checks `config.controlId` against exactly `'radio'` or `'checkbox'` — formBuilder's
+    `'radio-group'`/`'checkbox-group'` don't match, so a converted group's options silently don't show up as
+    condition targets.
 
-  (`select` needs no change — its `tag` is already `select`, which Formeo's `SelectControl` also uses, and it isn't
-  gated by `attrs.type`.)
+  The script above fixes both at once — `attrs.type` for the fields the renderer or a control gates on it, and
+  `meta.id`/`config.controlId` for Formeo's own control id, read from each control's source file:
+
+  | formBuilder `meta.id` | Formeo `attrs.type` | Formeo control id (`meta.id`/`config.controlId`) |
+  | ---------------------- | -------------------- | -------------------------------------------------- |
+  | `hidden`                | `hidden`              | `hidden`                                             |
+  | `radio-group`           | `radio`               | `radio`                                              |
+  | `checkbox-group`        | `checkbox`            | `checkbox`                                           |
+  | `date`                  | `date`                | `date-input`                                         |
+  | `number`                | `number`              | `number`                                             |
+  | `file`                  | `file`                | `upload`                                             |
+  | `text`                  | `text`                | `text-input`                                         |
+  | `select`                | _(unchanged)_          | `select`                                             |
+  | `textarea`              | _(unchanged)_          | `textarea`                                           |
+  | `button`                | _(unchanged)_          | `button`                                             |
+  | `header`                | _(unchanged)_          | `html.header`                                        |
+  | `paragraph`             | _(unchanged)_          | `paragraph`                                          |
+
+  A formBuilder type outside this table — a custom formBuilder field plugin, such as the sample data's
+  `starRating` field — has no built-in Formeo control, so it's left as-is; give it a
+  [custom control](controls/custom-controls.md) or handle it by hand.
 
 - **Columns carry no `config` at all.** Formeo 5.9.3 fixed the renderer to default missing row/column config (see
   the CHANGELOG entry closing [#212](https://github.com/Draggable/formeo/issues/212)), so this step is only needed
   for older Formeo versions — but setting `config: {}` explicitly is harmless either way, so the script always does
   it.
 
-This was verified by rendering one converted, post-processed output with `FormeoRenderer` in a scratch unit test:
-the radio group rendered three `<input type="radio">` elements, the checkbox group rendered one
-`<input type="checkbox">`, and the hidden field rendered as `<input type="hidden">`.
+This was verified two ways, both in a scratch unit probe against a real converted, post-processed output:
+
+- Rendering it with `FormeoRenderer`: the radio group rendered three `<input type="radio">` elements, the checkbox
+  group rendered one `<input type="checkbox">`, and the hidden field rendered as `<input type="hidden">`.
+- Loading it into the editor's `Components` store with Formeo's built-in controls registered: the converted radio
+  and checkbox group fields' `isCheckable` was `true` (so Conditions offers their option list), and their `type`
+  attribute stayed disabled in the edit panel. Loading the *unfixed* output (formBuilder's own `'radio-group'` id
+  left in place) reproduced the bug — `isCheckable` came back `false`.
 
 ## XML input
 
