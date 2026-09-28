@@ -501,12 +501,12 @@ single-page form with `submit: true` gets this same button and wrapper, with no 
 A wizard adds:
 
 - An optional step list (`<ol class="formeo-pages-steps">`, on by default — set `progress: false` to remove it). Each step shows the page's title and a `data-state` of `"done"`, `"current"` or `"upcoming"`. Clicking a step ahead of the current page validates every page in between (see [Validation](#validation) below); clicking a step behind the current page is always allowed.
-- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden status such as "Account (2 of 3)" (`aria-live="polite"`, announced to screen readers on every page change; set its wording with `labels.status`). Next validates the current page before moving on. Next is hidden on the last page, and Previous is disabled on the first.
-- Pressing <kbd>Enter</kbd> in a text `<input>` (not a submit/button/reset/image/file input) acts as Next on every page but the last, instead of submitting a half-filled form. Textareas keep their newline behavior. On the last page, Enter submits the form natively.
+- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden status such as "Account (2 of 3)" (`aria-live="polite"`, announced to screen readers on every page change; set its wording with `labels.status`). Next validates the current page before moving on. Next is hidden on the [last page in play](#skipping-pages), and Previous is disabled on the first.
+- Pressing <kbd>Enter</kbd> in a text `<input>` (not a submit/button/reset/image/file input) acts as Next on every page but the last page in play, instead of submitting a half-filled form. Textareas keep their newline behavior. On the last page in play, Enter submits the form natively.
 - With `submit: true`, a Submit button (`<button type="submit" class="formeo-pages-submit">`, text from
-  `labels.submit`) takes Next's place on the last page. Without it, end the wizard with a submit field of your own on
-  its last page: Next disappears there, and without a submit button some browsers won't submit on <kbd>Enter</kbd>.
-  A single-page wizard with `submit: true` gets this button below the page too, in its own
+  `labels.submit`) takes Next's place on the last page in play. Without it, end the wizard with a submit field of your
+  own on its last page in play: Next disappears there, and without a submit button some browsers won't submit on
+  <kbd>Enter</kbd>. A single-page wizard with `submit: true` gets this button below the page too, in its own
   `<div class="formeo-pages-actions">`, since there's no Previous/Next bar to hold it.
 
 ### Skipping pages
