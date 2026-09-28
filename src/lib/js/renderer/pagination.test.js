@@ -86,11 +86,24 @@ describe('normalizePagination (#122)', () => {
     assert.equal(normalizePagination({ type: 'accordion' }), null)
   })
 
-  test('expands the string shorthand with default labels and progress on', () => {
+  const DEFAULT_LABELS = {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page {n}',
+    submit: 'Submit',
+    tablist: 'Pages',
+    steps: 'Progress',
+    navigation: 'Page navigation',
+    status: '{title} ({n} of {count})',
+  }
+
+  test('expands the string shorthand with the defaults', () => {
     assert.deepEqual(normalizePagination('wizard'), {
       type: 'wizard',
       progress: true,
-      labels: { previous: 'Previous', next: 'Next', page: 'Page {n}' },
+      submit: false,
+      heading: 0,
+      labels: DEFAULT_LABELS,
     })
   })
 
@@ -98,16 +111,46 @@ describe('normalizePagination (#122)', () => {
     assert.deepEqual(normalizePagination({ type: 'wizard', progress: false, labels: { next: 'Weiter' } }), {
       type: 'wizard',
       progress: false,
-      labels: { previous: 'Previous', next: 'Weiter', page: 'Page {n}' },
+      submit: false,
+      heading: 0,
+      labels: { ...DEFAULT_LABELS, next: 'Weiter' },
     })
   })
 
   test('ignores label values that are not strings', () => {
-    assert.deepEqual(normalizePagination({ type: 'tabs', labels: { page: undefined, next: 3 } }).labels, {
-      previous: 'Previous',
-      next: 'Next',
-      page: 'Page {n}',
-    })
+    assert.deepEqual(
+      normalizePagination({ type: 'tabs', labels: { page: undefined, next: 3, status: null } }).labels,
+      DEFAULT_LABELS
+    )
+  })
+
+  test('accepts every navigation label', () => {
+    const labels = {
+      submit: 'Senden',
+      tablist: 'Seiten',
+      steps: 'Fortschritt',
+      navigation: 'Seitennavigation',
+      status: '{n}/{count}',
+    }
+    assert.deepEqual(normalizePagination({ type: 'wizard', labels }).labels, { ...DEFAULT_LABELS, ...labels })
+  })
+
+  test('submit is a boolean, off by default', () => {
+    assert.equal(normalizePagination({ type: 'tabs' }).submit, false)
+    assert.equal(normalizePagination({ type: 'wizard', submit: true }).submit, true)
+    assert.equal(normalizePagination({ type: 'wizard', submit: 1 }).submit, true)
+    assert.equal(normalizePagination({ type: 'wizard', submit: 0 }).submit, false)
+  })
+
+  test('heading is a level from 2 to 6, true meaning 2, anything else off', () => {
+    const level = heading => normalizePagination({ type: 'wizard', heading }).heading
+    assert.equal(level(true), 2)
+    for (const n of [2, 3, 4, 5, 6]) {
+      assert.equal(level(n), n)
+    }
+    for (const off of [false, undefined, null, 0, 1, 7, '2', 2.5, 'h2']) {
+      assert.equal(level(off), 0, String(off))
+    }
   })
 })
 
@@ -247,6 +290,13 @@ describe('pagination (#122)', () => {
         ['About you', 'Page 2']
       )
     })
+
+    test('the tablist is named by labels.tablist', () => {
+      render('tabs')
+      assert.equal(container.querySelector('[role="tablist"]').getAttribute('aria-label'), 'Pages')
+      render({ type: 'tabs', labels: { tablist: 'Seiten' } })
+      assert.equal(container.querySelector('[role="tablist"]').getAttribute('aria-label'), 'Seiten')
+    })
   })
 
   describe('wizard', () => {
@@ -269,13 +319,33 @@ describe('pagination (#122)', () => {
       assert.equal(renderer.page, 0)
     })
 
-    test('the status reads "N / M" in a live region', () => {
+    test('the status names the page and its place, in a live region', () => {
       render('wizard')
       const status = container.querySelector('.formeo-pages-status')
       assert.equal(status.getAttribute('aria-live'), 'polite')
-      assert.equal(status.textContent, '1 / 2')
+      assert.equal(status.textContent, 'About you (1 of 2)')
       next().click()
-      assert.equal(status.textContent, '2 / 2')
+      assert.equal(status.textContent, 'Page 2 (2 of 2)')
+    })
+
+    test('a custom status fills every placeholder each time, keeps $ patterns literal and unknown ones as typed', () => {
+      render(
+        { type: 'wizard', labels: { status: '{n}/{count}: {title} – {title} {unknown}' } },
+        buildPages([[field('a')], [field('b')]], ['Pay $& now $$', 'Two'])
+      )
+      assert.equal(
+        container.querySelector('.formeo-pages-status').textContent,
+        '1/2: Pay $& now $$ – Pay $& now $$ {unknown}'
+      )
+    })
+
+    test('the step list and the Previous/Next bar are named by labels.steps and labels.navigation', () => {
+      render('wizard')
+      assert.equal(container.querySelector('.formeo-pages-steps').getAttribute('aria-label'), 'Progress')
+      assert.equal(container.querySelector('.formeo-pages-wizard').getAttribute('aria-label'), 'Page navigation')
+      render({ type: 'wizard', labels: { steps: 'Fortschritt', navigation: 'Seitennavigation' } })
+      assert.equal(container.querySelector('.formeo-pages-steps').getAttribute('aria-label'), 'Fortschritt')
+      assert.equal(container.querySelector('.formeo-pages-wizard').getAttribute('aria-label'), 'Seitennavigation')
     })
 
     test('the Previous/Next bar is a group, not a navigation landmark inside the form', () => {
@@ -360,6 +430,15 @@ describe('pagination (#122)', () => {
       key(input('name'), 'Enter')
       assert.equal(renderer.page, 1)
       assert.equal(key(input('email'), 'Enter').defaultPrevented, false, 'the last page submits natively')
+    })
+
+    test('Enter as Next does not leave the reporting flag set for an onPageChange checkValidity() call (#122)', () => {
+      // page 2 is valid; page 3 has an empty required field. A silent checkValidity() from onPageChange
+      // must never be mistaken for a reported pass, or Enter on page 1 jumps straight to page 3.
+      const data = buildPages([[field('a')], [field('b')], [field('c', { required: true })]], ['One', 'Two', 'Three'])
+      const renderer = render('wizard', data, { events: { onPageChange: ({ form }) => form.checkValidity() } })
+      key(input('a'), 'Enter')
+      assert.equal(renderer.page, 1, 'Enter must land on page 2, not skip it for the invalid page 3')
     })
 
     test('Enter in a textarea keeps its newline', () => {
@@ -468,6 +547,257 @@ describe('pagination (#122)', () => {
     })
   })
 
+  describe('submit button', () => {
+    const submitButton = () => container.querySelector('.formeo-pages-submit')
+    const next = () => container.querySelector('.formeo-pages-next')
+    const threePages = () => buildPages([[field('a')], [field('b')], [field('c')]], ['One', 'Two', 'Three'])
+
+    test('is left out by default', () => {
+      render('wizard')
+      assert.equal(submitButton(), null)
+      render('tabs')
+      assert.equal(submitButton(), null)
+    })
+
+    test('in a wizard, replaces Next on the last page only', () => {
+      const renderer = render({ type: 'wizard', submit: true }, threePages())
+      const submit = submitButton()
+      assert.equal(submit.type, 'submit')
+      assert.equal(submit.textContent, 'Submit')
+      assert.equal(submit.parentElement, container.querySelector('.formeo-pages-wizard'))
+      assert.equal(submit.parentElement.lastElementChild, submit)
+      const shown = () => [submit.hidden, next().hidden]
+      assert.deepEqual(shown(), [true, false])
+      renderer.page = 1
+      assert.deepEqual(shown(), [true, false])
+      renderer.page = 2
+      assert.deepEqual(shown(), [false, true])
+      renderer.page = 0
+      assert.deepEqual(shown(), [true, false])
+    })
+
+    test('uses labels.submit', () => {
+      render({ type: 'wizard', submit: true, labels: { submit: 'Senden' } })
+      assert.equal(submitButton().textContent, 'Senden')
+    })
+
+    test('in tabs, sits after the last page and is always shown', () => {
+      const renderer = render({ type: 'tabs', submit: true })
+      const form = container.querySelector('form')
+      const actions = form.querySelector('.formeo-pages-actions')
+      assert.equal(actions.parentElement, form)
+      assert.equal(actions.previousElementSibling, pages().at(-1))
+      assert.equal(submitButton().parentElement, actions)
+      assert.equal(submitButton().hidden, false)
+      renderer.page = 1
+      assert.equal(submitButton().hidden, false)
+    })
+
+    test('Enter on the last page is left to the browser', () => {
+      const renderer = render({ type: 'wizard', submit: true })
+      assert.equal(key(input('name'), 'Enter').defaultPrevented, true)
+      renderer.page = 1
+      assert.equal(key(input('email'), 'Enter').defaultPrevented, false)
+    })
+
+    test('clicking it with an invalid control on an earlier page shows that page', () => {
+      const renderer = render({ type: 'wizard', submit: true }, twoPages({ requiredFirst: true }))
+      renderer.page = 1
+      submitButton().click()
+      assert.equal(renderer.page, 0)
+    })
+
+    describe('on a one-page form', () => {
+      const onePage = () => {
+        const data = twoPages()
+        delete data.stages['p-2']
+        return data
+      }
+
+      for (const type of ['wizard', 'tabs']) {
+        test(`with submit: true, ${type} still gets the Submit button below the page, and no navigation`, () => {
+          const renderer = render({ type, submit: true }, onePage())
+          const actions = container.querySelector('.formeo-pages-actions')
+          assert.notEqual(actions, null)
+          assert.equal(actions.parentElement, container.querySelector('form'))
+          assert.equal(actions.previousElementSibling, pages().at(-1))
+          const submit = submitButton()
+          assert.equal(submit.parentElement, actions)
+          assert.equal(submit.hidden, false)
+          assert.equal(submit.type, 'submit')
+          assert.equal(submit.textContent, 'Submit')
+          assert.equal(container.querySelectorAll('.formeo-pages-submit').length, 1)
+          assert.equal(container.querySelector('.formeo-pages-nav'), null)
+          assert.equal(container.querySelector('.formeo-pages-steps'), null)
+          assert.equal(renderer.pageCount, 1)
+          assert.equal(renderer.page, 0)
+        })
+      }
+
+      test('with submit: true and heading: true, no heading is added: headings need 2+ pages', () => {
+        render({ type: 'wizard', submit: true, heading: true }, onePage())
+        assert.equal(container.querySelector('.formeo-pages-heading'), null)
+      })
+
+      test('without submit, a one-page form gets no actions bar either', () => {
+        render({ type: 'wizard' }, onePage())
+        assert.equal(container.querySelector('.formeo-pages-actions'), null)
+        assert.equal(submitButton(), null)
+      })
+
+      test('re-rendering does not duplicate the Submit button', () => {
+        const renderer = render({ type: 'wizard', submit: true }, onePage())
+        renderer.render(onePage())
+        assert.equal(container.querySelectorAll('.formeo-pages-submit').length, 1)
+      })
+    })
+  })
+
+  describe('page headings', () => {
+    const headings = () => [...container.querySelectorAll('.formeo-pages-heading')]
+
+    test('are left out by default', () => {
+      render('wizard')
+      assert.equal(headings().length, 0)
+    })
+
+    test('heading: true puts an <h2> with the page title first in each page', () => {
+      render({ type: 'wizard', heading: true })
+      assert.deepEqual(
+        headings().map(h => [h.tagName, h.textContent]),
+        [
+          ['H2', 'About you'],
+          ['H2', 'Page 2'],
+        ]
+      )
+      pages().forEach((page, i) => {
+        assert.equal(page.firstElementChild, headings()[i])
+      })
+    })
+
+    test('a number from 2 to 6 picks the level, and labels.page names untitled pages', () => {
+      render({ type: 'tabs', heading: 4, labels: { page: 'Seite {n}' } })
+      assert.deepEqual(
+        headings().map(h => [h.tagName, h.textContent]),
+        [
+          ['H4', 'About you'],
+          ['H4', 'Seite 2'],
+        ]
+      )
+    })
+
+    test('titles are text, never markup', () => {
+      const title = '<img src=x onerror="window.pwned = 1">'
+      render({ type: 'wizard', heading: true }, buildPages([[field('a')], [field('b')]], [title]))
+      assert.equal(headings()[0].textContent, title)
+      assert.equal(container.querySelector('.formeo-pages-heading img'), null)
+    })
+
+    test('in a wizard, each page is a group labelled by its heading', () => {
+      render({ type: 'wizard', heading: true })
+      pages().forEach((page, i) => {
+        assert.equal(page.getAttribute('role'), 'group')
+        assert.equal(page.getAttribute('aria-labelledby'), headings()[i].id)
+        assert.match(headings()[i].id, new RegExp(`^formeo-pages-\\d+-heading-${i + 1}$`))
+      })
+    })
+
+    test('in tabs, pages stay labelled by their tab', () => {
+      render({ type: 'tabs', heading: true })
+      pages().forEach((page, i) => {
+        assert.equal(page.getAttribute('role'), 'tabpanel')
+        assert.equal(page.getAttribute('aria-labelledby'), tabs()[i].id)
+      })
+    })
+
+    test('two forms on one page get their own heading ids', () => {
+      const second = document.createElement('div')
+      document.body.append(second)
+      render({ type: 'wizard', heading: true })
+      new FormeoRenderer({ renderContainer: second, pagination: { type: 'wizard', heading: true } }).render(twoPages())
+      const ids = [...document.querySelectorAll('.formeo-pages-heading')].map(h => h.id)
+      assert.equal(ids.length, 4)
+      assert.equal(new Set(ids).size, 4)
+    })
+  })
+
+  describe('keeping the page across render()', () => {
+    const threePages = () => buildPages([[field('a')], [field('b')], [field('c')]], ['One', 'Two', 'Three'])
+
+    test('render() keeps the page on show, without onPageChange or moving focus', () => {
+      const calls = []
+      const renderer = render('tabs', threePages(), { events: { onPageChange: ({ page }) => calls.push(page) } })
+      renderer.page = 2
+      calls.length = 0
+      const focused = dom.window.document.activeElement
+      renderer.render(threePages())
+      assert.equal(renderer.page, 2)
+      assert.deepEqual(hiddenPages(), [true, true, false])
+      assert.equal(tabs()[2].getAttribute('aria-selected'), 'true')
+      assert.deepEqual(calls, [])
+      assert.equal(dom.window.document.activeElement, focused)
+    })
+
+    test('the kept page follows its stage when the stages are reordered', () => {
+      const renderer = render('wizard', threePages())
+      renderer.page = 1
+      const data = threePages()
+      const { 'p-2': second, ...rest } = data.stages
+      data.stages = { ...rest, 'p-2': second }
+      renderer.render(data)
+      assert.equal(renderer.page, 2)
+      assert.equal(container.querySelector('.formeo-pages-status').textContent, 'Two (3 of 3)')
+    })
+
+    test('starts on the first page when the kept stage is gone', () => {
+      const renderer = render('wizard', threePages())
+      renderer.page = 1
+      const data = threePages()
+      delete data.stages['p-2']
+      renderer.render(data)
+      assert.equal(renderer.page, 0)
+    })
+
+    test('starts on the first page for a different form', () => {
+      const renderer = render('tabs', threePages())
+      renderer.page = 1
+      const other = threePages()
+      other.stages = Object.fromEntries(
+        Object.values(other.stages).map(stage => [`q${stage.id}`, { ...stage, id: `q${stage.id}` }])
+      )
+      renderer.render(other)
+      assert.equal(renderer.page, 0)
+    })
+
+    test('getRenderedForm() keeps the page too', () => {
+      const renderer = render('tabs', threePages())
+      renderer.page = 1
+      renderer.getRenderedForm(threePages())
+      assert.equal(renderer.page, 1)
+    })
+
+    test('destroy() forgets the page', () => {
+      const renderer = render('wizard', threePages())
+      renderer.page = 2
+      renderer.destroy()
+      renderer.render(threePages())
+      assert.equal(renderer.page, 0)
+    })
+
+    test('two renderers keep their own page', () => {
+      const second = document.createElement('div')
+      document.body.append(second)
+      const a = render('tabs', threePages())
+      const b = new FormeoRenderer({ renderContainer: second, pagination: 'tabs' })
+      b.render(threePages())
+      a.page = 2
+      a.render(threePages())
+      b.render(threePages())
+      assert.equal(a.page, 2)
+      assert.equal(b.page, 0)
+    })
+  })
+
   describe('validation across pages', () => {
     test('reportValidity() brings an invalid control on a hidden page into view', () => {
       const renderer = render('tabs')
@@ -523,6 +853,33 @@ describe('pagination (#122)', () => {
       container.querySelector('form').checkValidity()
       assert.equal(renderer.page, 1)
     })
+
+    // a browser runs microtasks after each listener of a trusted click or keydown, before the validation
+    // pass it triggers; jsdom has no such pass, so checkValidity() stands in for it after a microtask
+    const reportedTriggers = {
+      'a submit click': form => {
+        const button = document.createElement('button')
+        form.append(button)
+        // stop jsdom's own synchronous submission
+        form.addEventListener('click', event => event.preventDefault())
+        button.click()
+      },
+      'Enter in an input': () => key(input('name'), 'Enter'),
+    }
+    for (const [trigger, run] of Object.entries(reportedTriggers)) {
+      test(`${trigger} still counts as reported after a microtask, but not in a later task`, async () => {
+        const renderer = render('tabs')
+        const form = container.querySelector('form')
+        run(form)
+        await Promise.resolve()
+        form.checkValidity()
+        assert.equal(renderer.page, 1)
+        renderer.page = 0
+        await new Promise(resolve => setTimeout(resolve, 0))
+        form.checkValidity()
+        assert.equal(renderer.page, 0)
+      })
+    }
 
     test('plain checkValidity() calls never switch pages', () => {
       const calls = []

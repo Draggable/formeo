@@ -189,6 +189,8 @@ export default class FormeoRenderer {
   }
 
   getRenderedForm(formData = this.form) {
+    // the page on show, found again by its stage id once the form is rebuilt
+    const startStageId = this.pager?.stageId
     this.form = cleanFormData(formData)
     this.pager?.destroy()
     this.pager = null
@@ -208,7 +210,7 @@ export default class FormeoRenderer {
     this.applyConditions()
     // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
     this.bindFormEvents(this.renderedForm)
-    this.pager = this.paginateForm(this.renderedForm)
+    this.pager = this.paginateForm(this.renderedForm, startStageId)
 
     return this.renderedForm
   }
@@ -216,14 +218,15 @@ export default class FormeoRenderer {
   /**
    * Splits a freshly rendered <form> into pages when the `pagination` option is set
    * @param {HTMLFormElement} form
+   * @param {String} [startStageId] the stage id of the page to start on; the first page when it isn't in the form
    * @return {Object|null} the pager, or null when the form is shown as one page
    */
-  paginateForm(form) {
+  paginateForm(form, startStageId) {
     if (!this.pagination) {
       return null
     }
     const onChange = (page, previousPage) => this.events.onPageChange?.({ page, previousPage, form, renderer: this })
-    return paginate(form, this.pagination, Object.values(this.form.stages), onChange)
+    return paginate(form, this.pagination, Object.values(this.form.stages), onChange, startStageId)
   }
 
   /**

@@ -17,12 +17,34 @@ export const processOptions = ({ editorContainer, renderContainer, formData, ...
 }
 
 const PAGINATION_TYPES = ['tabs', 'wizard']
-const PAGINATION_LABELS = { previous: 'Previous', next: 'Next', page: 'Page {n}' }
+const PAGINATION_LABELS = {
+  previous: 'Previous',
+  next: 'Next',
+  page: 'Page {n}',
+  submit: 'Submit',
+  tablist: 'Pages',
+  steps: 'Progress',
+  navigation: 'Page navigation',
+  status: '{title} ({n} of {count})',
+}
+
+/**
+ * `heading: true` means an <h2>; a whole number from 2 to 6 picks the level; anything else leaves headings out
+ * @param {*} heading
+ * @return {Number} 0 when off
+ */
+const headingLevel = heading => {
+  if (heading === true) {
+    return 2
+  }
+  return Number.isInteger(heading) && heading >= 2 && heading <= 6 ? heading : 0
+}
 
 /**
  * Expands the renderer's `pagination` option. `progress` only affects the wizard.
- * @param {String|Object} [pagination] 'tabs' | 'wizard' | { type, progress, labels: { previous, next, page } }
- * @return {{type: String, progress: Boolean, labels: {previous: String, next: String, page: String}}|null}
+ * @param {String|Object} [pagination] 'tabs' | 'wizard' |
+ *   { type, progress, submit, heading, labels: { previous, next, page, submit, tablist, steps, navigation, status } }
+ * @return {{type: String, progress: Boolean, submit: Boolean, heading: Number, labels: Object}|null}
  * null when the option is missing or its type is unknown
  */
 export const normalizePagination = pagination => {
@@ -30,10 +52,16 @@ export const normalizePagination = pagination => {
   if (!PAGINATION_TYPES.includes(opts?.type)) {
     return null
   }
-  const { type, progress = true, labels } = opts
+  const { type, progress = true, submit = false, heading = false, labels } = opts
   // a label left undefined (or set to anything but a string) keeps its default
   const customLabels = Object.entries(labels ?? {}).filter(([, value]) => typeof value === 'string')
-  return { type, progress: Boolean(progress), labels: { ...PAGINATION_LABELS, ...Object.fromEntries(customLabels) } }
+  return {
+    type,
+    progress: Boolean(progress),
+    submit: Boolean(submit),
+    heading: headingLevel(heading),
+    labels: { ...PAGINATION_LABELS, ...Object.fromEntries(customLabels) },
+  }
 }
 
 export const baseId = id => {

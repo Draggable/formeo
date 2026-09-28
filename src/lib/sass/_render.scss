@@ -181,6 +181,18 @@ fieldset.formeo-row-wrap {
   margin-top: mixins.space(2);
 }
 
+// the Submit button of a tabbed form (`submit: true`), below every page
+.formeo-pages-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: mixins.space(2);
+}
+
+// a page's title shown inside the page (`heading`)
+.formeo-pages-heading {
+  margin-block: 0 mixins.space(2);
+}
+
 // the wizard's clickable step list, shown above the pages when `progress` is on (default)
 .formeo-pages-steps {
   display: flex;
@@ -279,7 +291,7 @@ fieldset.formeo-row-wrap {
   }
 }
 
-// "N / M" is announced to screen readers without taking up room
+// the page status ("About you (1 of 2)") is announced to screen readers without taking up room
 .formeo-pages-status {
   position: absolute;
   width: 1px;

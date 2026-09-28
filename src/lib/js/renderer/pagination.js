@@ -33,6 +33,47 @@ const create = (tag, className, text = '') => {
 }
 
 /**
+ * Creates the Submit button, a real one so Enter on the last page (or a form with no navigation at all)
+ * submits natively even with no submit field in the form
+ * @param {Object} labels
+ * @return {HTMLButtonElement}
+ */
+const createSubmitButton = labels => {
+  const submitButton = create('button', 'formeo-pages-submit', labels.submit)
+  submitButton.type = 'submit'
+  return submitButton
+}
+
+/**
+ * Wraps a Submit button in the actions bar appended after the pages: used by tabs, and by a form with
+ * fewer than 2 pages (a wizard's own Submit sits in its Previous/Next bar instead, see `paginate`)
+ * @param {HTMLButtonElement} submitButton
+ * @return {HTMLDivElement}
+ */
+const wrapInSubmitActions = submitButton => {
+  const actions = create('div', 'formeo-pages-actions')
+  actions.append(submitButton)
+  return actions
+}
+
+/**
+ * Creates the Submit button already wrapped in its actions bar, for a form with fewer than 2 pages
+ * @param {Object} labels
+ * @return {HTMLDivElement}
+ */
+const createSubmitActions = labels => wrapInSubmitActions(createSubmitButton(labels))
+
+/**
+ * Fills `{name}` placeholders from `values`, leaving unknown ones as typed. A replacer function rather than a
+ * replacement string, so `$&` or `$$` in a page title stays literal.
+ * @param {String} text
+ * @param {Object} values
+ * @return {String}
+ */
+const fillLabel = (text, values) =>
+  text.replace(/\{(\w+)\}/g, (token, name) => (Object.hasOwn(values, name) ? String(values[name]) : token))
+
+/**
  * Moves focus to the first control a user can reach on a page, or to the page itself when it has none,
  * so that focus is never lost to the body
  * @param {HTMLElement} page
@@ -52,26 +93,45 @@ const focusFirst = page => {
 /**
  * Shows one stage of a rendered form at a time, as tabs or as a wizard
  * @param {HTMLFormElement} form rendered form
- * @param {{type: String, progress: Boolean, labels: Object}} options output of normalizePagination;
- *   `progress` only affects the wizard, adding a clickable step list above the pages
+ * @param {{type: String, progress: Boolean, submit: Boolean, heading: Number, labels: Object}} options output of
+ *   normalizePagination; `progress` only affects the wizard, adding a clickable step list above the pages
  * @param {Array<Object>} stages stage data in render order, for page titles
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
- * @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
+ * @param {String} [startStageId] the stage id of the page to start on (e.g. the one on show before a re-render);
+ *   the first page when no stage has it
+ * @return {{show: Function, index: Number, stageId: String|null, count: Number, destroy: Function}|null} null when
+ *   there is only one page
  */
-export const paginate = (form, { type, progress, labels }, stages, onChange) => {
+export const paginate = (form, { type, progress, submit, heading, labels }, stages, onChange, startStageId) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
   if (pages.length < 2) {
+    // no navigation to add, but `submit: true` still promises a way to submit the form
+    if (submit) {
+      form.append(createSubmitActions(labels))
+    }
     return null
   }
 
   const count = pages.length
   const last = count - 1
-  let current = 0
+  // starting on a page is not a page change: no onChange and no focus move
+  const startIndex = stages.findIndex(stage => stage?.id === startStageId)
+  let current = startIndex > -1 && startIndex < count ? startIndex : 0
   let tabs = []
   let steps = []
   let previous
   let next
   let status
+
+  // the pages a user can reach, in order. Every page for now; page conditions will leave skipped ones out, and
+  // "first", "last" and the status count follow this list rather than the stage count
+  const playable = pages.map((_page, i) => i)
+  const isFirstPlayable = i => i === playable[0]
+  const isLastPlayable = i => i === playable.at(-1)
+
+  // a stage's own id is also its id in the editor and in any other form rendered from the same formData, so
+  // ids made here (tabs, pages, headings) carry a prefix unique to this form
+  const idPrefix = `formeo-pages-${++paginatedForms}`
 
   // steps before the current page are done, the current one is current, the rest are upcoming
   const stepState = i => (i < current ? 'done' : i === current ? 'current' : 'upcoming')
@@ -85,9 +145,16 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
       tab.tabIndex = i === current ? 0 : -1
     })
     if (type === 'wizard') {
-      previous.disabled = current === 0
-      next.hidden = current === last
-      status.textContent = `${current + 1} / ${count}`
+      previous.disabled = isFirstPlayable(current)
+      next.hidden = isLastPlayable(current)
+      if (submitButton) {
+        submitButton.hidden = !isLastPlayable(current)
+      }
+      status.textContent = fillLabel(labels.status, {
+        title: title(current),
+        n: playable.indexOf(current) + 1,
+        count: playable.length,
+      })
       steps.forEach((step, i) => {
         step.dataset.state = stepState(i)
         const button = step.querySelector('button')
@@ -201,12 +268,28 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
 
   const title = i => stages[i]?.config?.title || labels.page.replaceAll('{n}', String(i + 1))
 
+  let submitButton
+  if (submit) {
+    submitButton = createSubmitButton(labels)
+  }
+
+  if (heading) {
+    pages.forEach((page, i) => {
+      const pageHeading = create(`h${heading}`, 'formeo-pages-heading', title(i))
+      pageHeading.id = `${idPrefix}-heading-${i + 1}`
+      page.prepend(pageHeading)
+      // a tab panel is already named by its tab; a wizard page is named by its heading
+      if (type === 'wizard') {
+        page.setAttribute('role', 'group')
+        page.setAttribute('aria-labelledby', pageHeading.id)
+      }
+    })
+  }
+
   if (type === 'tabs') {
     const tablist = create('nav', 'formeo-pages-nav formeo-pages-tabs')
     tablist.setAttribute('role', 'tablist')
-    // a stage's own id is also its id in the editor and in any other form rendered from the same
-    // formData, so aria-controls needs ids unique to this form; the stage id moves to data-stage-id
-    const idPrefix = `formeo-pages-${++paginatedForms}`
+    tablist.setAttribute('aria-label', labels.tablist)
     tabs = pages.map((page, i) => {
       page.dataset.stageId = page.id
       page.id = `${idPrefix}-page-${i + 1}`
@@ -236,10 +319,15 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
       tabs[target].focus()
     })
     form.prepend(tablist)
+    if (submitButton) {
+      // below every page, and always shown: any tab may be the last one a user fills in
+      form.append(wrapInSubmitActions(submitButton))
+    }
   } else {
     if (progress) {
       const stepList = document.createElement('ol')
       stepList.className = 'formeo-pages-steps'
+      stepList.setAttribute('aria-label', labels.steps)
       steps = pages.map((_page, i) => {
         const step = document.createElement('li')
         step.className = 'formeo-pages-step'
@@ -264,7 +352,11 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     // a group, not a <nav>: moving between the pages of one form is not site navigation
     const bar = create('div', 'formeo-pages-nav formeo-pages-wizard')
     bar.setAttribute('role', 'group')
+    bar.setAttribute('aria-label', labels.navigation)
     bar.append(previous, status, next)
+    if (submitButton) {
+      bar.append(submitButton)
+    }
     form.append(bar)
 
     // Enter before the last page moves on instead of submitting a half-filled form
@@ -274,13 +366,16 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
         event.key !== 'Enter' ||
         event.isComposing ||
         event.defaultPrevented ||
-        current === last ||
+        isLastPlayable(current) ||
         target.tagName !== 'INPUT' ||
         ENTER_NATIVE_TYPES.has(target.type)
       ) {
         return
       }
       event.preventDefault()
+      // this Enter can never become a submission now, so a checkValidity() call from onPageChange (e.g. to
+      // toggle a submit button) below must not be mistaken for the reported pass markReported() just armed
+      reporting = false
       goNext()
     })
   }
@@ -290,11 +385,13 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
   // checkValidity() - e.g. an onChange handler toggling a submit button - must leave the page alone.
   // The flag only covers the browser validation pass triggered by a reported action.
   let reporting = false
+  // a click or Enter keeps the flag for the rest of the task: a trusted event runs microtasks after
+  // each listener, before the validation pass it triggers, so a microtask reset would come too soon
   const markReported = () => {
     reporting = true
-    queueMicrotask(() => {
+    setTimeout(() => {
       reporting = false
-    })
+    }, 0)
   }
   const withReportedValidation = call => {
     reporting = true
@@ -355,6 +452,9 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     show,
     get index() {
       return current
+    },
+    get stageId() {
+      return stages[current]?.id ?? null
     },
     count,
     // the only listeners that outlive the form: everything else is on the form and goes with it
