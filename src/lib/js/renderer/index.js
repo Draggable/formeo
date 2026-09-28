@@ -521,9 +521,9 @@ export default class FormeoRenderer {
     let running = false
     /**
      * @param {Event|{target: null}} evt
-     * @param {HTMLElement} [exceptPage] a page whose skip state just changed; its own actions are left alone
+     * @param {(runnerAction: {action: Object, page: HTMLElement|null}) => boolean} [skipAction]
      */
-    const run = (evt, exceptPage) => {
+    const run = (evt, skipAction = () => false) => {
       if (running) {
         return
       }
@@ -536,8 +536,9 @@ export default class FormeoRenderer {
             matches.set(page, this.evaluateClauseGroups(clauseGroups, page ? [page] : []))
           }
         }
-        for (const { action, page } of actions) {
-          if (page !== exceptPage && matches.get(page)) {
+        for (const runnerAction of actions) {
+          const { action, page } = runnerAction
+          if (!skipAction(runnerAction) && matches.get(page)) {
             this.execResult(action, evt)
           }
         }
@@ -552,7 +553,7 @@ export default class FormeoRenderer {
       this.listenForChanges(options || component, run)
     }
     const watched = [...watchedAddresses].map(address => this.getComponent(address)?.component).filter(Boolean)
-    this.conditionRunners.push({ watched, pages: actions.map(({ page }) => page), run })
+    this.conditionRunners.push({ watched, run })
 
     run({ target: null })
   }
@@ -572,9 +573,12 @@ export default class FormeoRenderer {
    * @param {HTMLElement} stage
    */
   rerunConditionsReading = stage => {
-    for (const { watched, pages, run } of this.conditionRunners) {
-      if (pages.some(page => page !== stage) && watched.some(component => stage.contains(component))) {
-        run({ target: null }, stage)
+    for (const { watched, run } of this.conditionRunners) {
+      if (watched.some(component => stage.contains(component))) {
+        run({ target: null }, ({ action, page }) => {
+          const stageSkip = action && Object.hasOwn(STAGE_SKIP_PROPERTIES, action.targetProperty)
+          return page === stage && stageSkip && !STAGE_SKIP_PROPERTIES[action.targetProperty]
+        })
       }
     }
   }

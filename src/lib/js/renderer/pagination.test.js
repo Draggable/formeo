@@ -1351,6 +1351,22 @@ describe('pagination (#122)', () => {
         assert.equal(renderer.getComponentProperty('fields.b', 'value', [stage('p-2')]), 'skip')
       })
 
+      test('bringing back a self-skipping page re-runs its self-skip condition', () => {
+        const data = skipWhen(buildPages([[field('a')], [field('b')], [field('c')]]), 'skip', 'p-2')
+        const clause = comparison => [{ source: 'fields.b', sourceProperty: 'value', comparison, target: 'skip' }]
+        data.stages['p-2'].conditions = [
+          { if: clause('=='), then: [{ target: 'stages.p-2', targetProperty: 'isNotVisible' }] },
+          { if: clause('!='), then: [{ target: 'stages.p-2', targetProperty: 'isVisible' }] },
+        ]
+        render('wizard', data)
+        typeInto(input('b'), 'skip')
+        assert.deepEqual(skipped(), [false, true, false])
+        typeInto(input('a'), 'skip')
+        assert.deepEqual(skipped(), [false, true, false])
+        typeInto(input('a'), '')
+        assert.deepEqual(skipped(), [false, true, false])
+      })
+
       describe('navigation', () => {
         const next = () => container.querySelector('.formeo-pages-next')
         const previous = () => container.querySelector('.formeo-pages-previous')
