@@ -307,6 +307,29 @@ describe('onBeforeAdd (#281)', () => {
     assert.equal(fieldCount(components), 0)
   })
 
+  it('a held drop that resolves true adds once allowed, clamped to the end if the index no longer fits', async () => {
+    let resolve
+    const { components, column, field, textControl } = await withControls({
+      callbacks: {
+        onBeforeAdd: () =>
+          new Promise(res => {
+            resolve = res
+          }),
+      },
+    })
+    const { result } = dropControl(column, textControl, 1)
+    assert.equal(result, undefined, 'onAdd returns nothing while the drop is held')
+    field.remove() // the only other child is gone by the time the hold resolves, so index 1 is past the end
+    resolve(true)
+    await new Promise(res => setTimeout(res, 0))
+    assert.equal(fieldCount(components), 1)
+    assert.equal(column.children.length, 1)
+    const [added] = column.children
+    assert.notEqual(added.id, 'field-h')
+    assert.deepEqual(column.get('children'), [added.id], 'saveChildOrder ran')
+    assert.equal(column.dom.classList.contains('empty'), false)
+  })
+
   it('clone asks onBeforeClone, and false clones nothing', async () => {
     const seen = []
     const { components, field, column } = await withControls({
