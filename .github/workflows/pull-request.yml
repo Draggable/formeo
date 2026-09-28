@@ -16,5 +16,9 @@ jobs:
         run: npm install
       - name: Test
         run: npm test
+      - name: Build library
+        run: npm run build:lib
+      - name: Test built package
+        run: npm run test:dist
       - name: Check docs links
         run: node tools/check-doc-links.mjs
