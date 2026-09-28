@@ -6,6 +6,28 @@ const controls = {
   },
   elements: [
     {
+      meta: { group: 'common', id: 'address-set', icon: 'rows' },
+      config: { label: 'Address' },
+      controlSet: {
+        row: { config: { fieldset: true, legend: 'Address' } },
+        fields: [
+          { control: 'text-input', attrs: { name: 'street' }, config: { label: 'Street' } },
+          { control: 'text-input', attrs: { name: 'city' }, config: { label: 'City' } },
+          { control: 'text-input', attrs: { name: 'postcode' }, config: { label: 'Postcode' } },
+          {
+            control: 'select',
+            attrs: { name: 'country' },
+            config: { label: 'Country' },
+            options: [
+              { label: 'Canada', value: 'ca', selected: false },
+              { label: 'United Kingdom', value: 'uk', selected: false },
+              { label: 'United States', value: 'us', selected: false },
+            ],
+          },
+        ],
+      },
+    },
+    {
       tag: 'input',
       config: {
         label: 'Email',

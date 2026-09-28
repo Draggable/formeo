@@ -120,6 +120,7 @@ export default class Stage extends Component {
     if (component?.name === 'column') {
       component.parent.autoColumnWidths()
     }
+    return component
   }
 
   /**

@@ -143,9 +143,68 @@ action: {
 Once that input's value is set, `renderer.userData.annotation` (and `renderer.userFormData`) reflects it like any
 other field.
 
+## Control sets
+
+A control set adds several fields at once, like formBuilder's `inputSets`: clicking or dropping it adds one new row
+holding all of them. Define it in `controls.elements` with a `controlSet` key instead of `tag`/`attrs`:
+
+```javascript
+const addressSet = {
+  id: 'address-set-control', // this control's own element id, used by controls.addElement(id) below;
+  // give it one distinct from meta.id below, or a generated uuid is used instead
+  meta: { group: 'common', id: 'address-set', icon: 'rows' },
+  config: { label: 'Address' },
+  controlSet: {
+    layout: 'stacked', // default: one column; 'columns' gives each field its own column
+    row: { config: { fieldset: true, legend: 'Address' } }, // optional data for the new row
+    fields: [
+      { control: 'text-input', attrs: { name: 'street' }, config: { label: 'Street' } },
+      { control: 'text-input', attrs: { name: 'city' }, config: { label: 'City' } },
+      {
+        control: 'select',
+        attrs: { name: 'country' },
+        config: { label: 'Country' },
+        options: [
+          { label: 'Canada', value: 'ca', selected: false },
+          { label: 'United States', value: 'us', selected: false },
+        ],
+      },
+    ],
+  },
+}
+
+new FormeoEditor({ editorContainer: '.formeo-editor', controls: { elements: [addressSet] } })
+```
+
+Each entry in `fields` is one field:
+
+- With `control`, it starts from that control's data (what clicking the control would add; `control` is its
+  `meta.id`, e.g. `'text-input'`, `'select'`, `'textarea'` or one of your own) and the entry's other keys override it.
+  Arrays such as `options` replace the control's, rather than being added to them.
+- Without `control`, the entry is the field's data as it is (`tag`, `attrs`, `config`, `options`). It can still name
+  its own control with `meta.id`, which becomes its `config.controlId` — so control-level settings such as locked
+  attributes and a renderer's `elements` actions apply to it, the same as a field added from that control directly.
+- An unknown `control`, a layout control or another set is skipped with a console warning. A set left with no fields
+  adds nothing.
+
+Every add creates new ids, and changing one added field never changes another or the set's definition. `row` takes
+the same data as a row's settings, so `config: { inputGroup: true }` makes the set a repeatable input group.
+
+Where it goes: a click adds the row at the end of the current page. A drop on a page adds it where it was dropped; a
+drop on a row or column adds it as a new row right after that row (a set never goes inside an existing column).
+
+The [`onBeforeAdd`](../options/events/README.md#before-hooks) hook runs once for the whole set, with
+`componentType: 'controlSet'`, the set's `controlId`, and `data: { layout, row, fields }`; `parent` and `index` are
+the page and position the new row goes to. The usual events (`onAddRow`, `onAddColumn`, `onAddField`) follow for what
+is added. `controls.addElement(id)` from your code adds a set without the hook; `id` is the control's own `id` (its
+element id) — a generated uuid unless the definition sets a top-level `id` distinct from `meta.id`, as `address-set`
+does above with `'address-set-control'` — not its `meta.id` itself, which `editor.controls.addElement('address-set')`
+would throw on.
+
 ## See Also
 
 - [Controls](README.md) - Overview of controls and control groups
 - [Control Options](../options/controls/README.md) - Configure the control panel, including `elements`
 - [Custom Attribute Types](custom-attribute-types.md) - Attribute input types for a control's `attrs`
 - [Renderer: Custom Elements](../renderer/renderer.md#advanced-topics) - The renderer's `elements` option
+- [Control sets](#control-sets) - Add several fields at once

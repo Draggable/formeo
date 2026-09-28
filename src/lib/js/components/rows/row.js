@@ -12,6 +12,7 @@ import {
   ROW_CLASSNAME,
 } from '../../constants.js'
 import Component from '../component.js'
+import { isControlSet } from '../controls/control-set.mjs'
 
 const DEFAULT_DATA = () =>
   Object.freeze({
@@ -175,9 +176,14 @@ export default class Row extends Component {
     return editWindow
   }
 
-  onAdd(...args) {
-    super.onAdd(...args)
-    this.autoColumnWidths()
+  onAdd(evt) {
+    const component = super.onAdd(evt)
+    // a control set dropped on this row goes into a new row after it (#227); it never touches this
+    // row's columns, so their widths should not be reset to equal shares
+    if (!isControlSet(this.components.controls?.get(evt.item.id)?.controlData)) {
+      this.autoColumnWidths()
+    }
+    return component
   }
 
   onRemove(...args) {
