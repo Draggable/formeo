@@ -714,7 +714,7 @@ export class FormeoService {
   loadForm(containerId: string, formData: any): void {
     const editor = this.getEditor(containerId);
     if (editor && formData) {
-      editor.render(formData);
+      editor.load(formData);
       this.updateFormData(formData);
     }
   }
