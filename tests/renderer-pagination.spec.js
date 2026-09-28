@@ -348,4 +348,33 @@ test.describe('multi-page forms (#122)', () => {
     // Company is required and empty, so Next stays put
     await expect(root.locator('input[name="company"]')).toBeVisible()
   })
+
+  test("wizard: a skipped page's answers stop showing the pages that depend on them", async ({ page: browserPage }) => {
+    // "person" skips Company; the VAT page is shown only when "vat" (on Company) is "yes"
+    const vatForm = buildPages([
+      page(1, [input('kind')], 'About you'),
+      page(2, [input('vat')], 'Company'),
+      page(3, [input('vat-number')], 'VAT'),
+    ])
+    const vatClause = comparison => [{ source: 'fields.vat', sourceProperty: 'value', comparison, target: 'yes' }]
+    vatForm.stages['p-1'].conditions = skipForm.stages['p-1'].conditions
+    vatForm.stages['p-2'].conditions = [
+      { if: vatClause('=='), then: [{ target: 'stages.p-3', targetProperty: 'isVisible' }] },
+      { if: vatClause('!='), then: [{ target: 'stages.p-3', targetProperty: 'isNotVisible' }] },
+    ]
+    const root = await mount(browserPage, vatForm, 'wizard')
+    const steps = root.getByRole('list', { name: 'Progress' }).getByRole('button')
+    await root.getByRole('button', { name: 'Next' }).click()
+    await root.locator('input[name="vat"]').fill('yes')
+    await expect(steps).toHaveText(['About you', 'Company', 'VAT'])
+
+    await root.getByRole('button', { name: 'Previous' }).click()
+    await root.locator('input[name="kind"]').fill('person')
+    await expect(steps).toHaveText(['About you'])
+    await expect(root.locator('.formeo-pages-status')).toHaveText('About you (1 of 1)')
+
+    await root.locator('input[name="kind"]').fill('')
+    await expect(steps).toHaveText(['About you', 'Company', 'VAT'])
+    await expect(root.locator('.formeo-pages-status')).toHaveText('About you (1 of 3)')
+  })
 })

@@ -155,9 +155,9 @@ edit button) and use its **Conditions** panel:
 3. Add a second condition that brings the page back (the opposite **If**, and **is visible**), because a condition is
    never undone on its own.
 
-The renderer then leaves the page out of the tabs or the wizard while it's skipped. A skipped page's answers still
-count as sources for other conditions, so a page depending on an answer given on a skippable page should be skipped
-along with it. See [Skipping pages](../renderer/renderer.md#skipping-pages) for the details and an example.
+The renderer then leaves the page out of the tabs or the wizard while it's skipped. While a page is skipped, other
+conditions read its answers as empty. See [Skipping pages](../renderer/renderer.md#skipping-pages) for the details and
+an example.
 
 ## Styling
 

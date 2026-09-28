@@ -551,11 +551,11 @@ A skipped page:
 - **Keeps its index.** `renderer.page` and `pageCount` still count every stage. Setting `renderer.page` to a skipped
   page shows the next page in play.
 
-A skipped page's answers stay on the page and still count as sources for other conditions, even though they're left
-out of `userData` and submission while the page is skipped. So a page whose own visibility depends on an answer given
-on a skippable page should also be skipped by whatever skips that page: if "Account type" skips the Company page, a
-VAT page shown by "VAT registered?" (a field on the Company page) should also be skipped whenever Company is, or it
-can show for an answer the user never actually gave in this pass.
+While a page is skipped, conditions read its fields as unanswered: an empty value, unchecked and not visible. Its
+answers stay on the page and count again if it comes back. So if "Account type" skips the Company page, a VAT page
+shown only when "VAT registered?" (a field on the Company page) is "yes" drops out along with Company, and returns
+with it. A condition that skips or brings back a page still reads that page's own fields as they are, so a page can
+skip itself.
 
 A skipped page can hold the author's own submit field. With `submit: false` (the default), skipping the page holding
 it disables that button along with every other control on the page, leaving the form with no enabled submit — Enter

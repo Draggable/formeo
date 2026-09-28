@@ -22,6 +22,15 @@ const SKIP_DISABLED_ATTR = 'data-formeo-skip-disabled'
 const SKIPPABLE_CONTROLS = 'input, select, textarea, button'
 // a page condition can only skip (true) or bring back (false) a stage
 const STAGE_SKIP_PROPERTIES = { isNotVisible: true, isVisible: false }
+// while its page is skipped, a field reads as unanswered, so answers the user can't see don't drive conditions
+const SKIPPED_PAGE_READS = {
+  value: '',
+  checked: '',
+  isChecked: false,
+  isNotChecked: true,
+  isVisible: false,
+  isNotVisible: true,
+}
 
 export default class FormeoRenderer {
   constructor(opts = {}, formDataArg) {
@@ -35,6 +44,9 @@ export default class FormeoRenderer {
     this.components = Object.create(null)
     this.dom = dom
   }
+
+  // every applied condition's runner and the components it watches, so a page's skip can re-run those reading it
+  conditionRunners = []
 
   /**
    * Index of the page on show when the `pagination` option splits the form's stages into pages
@@ -271,6 +283,7 @@ export default class FormeoRenderer {
         control.disabled = false
         control.removeAttribute(SKIP_DISABLED_ATTR)
       }
+      this.rerunConditionsReading(stage)
       this.pager?.refresh()
       return
     }
@@ -289,6 +302,7 @@ export default class FormeoRenderer {
         control.setAttribute(SKIP_DISABLED_ATTR, '')
       }
     }
+    this.rerunConditionsReading(stage)
     this.pager?.refresh({ focus: hadFocus })
     if (!this.pager && hadFocus) {
       // no pager to refocus the next page for us: find it ourselves among the stages still in the form
@@ -478,6 +492,7 @@ export default class FormeoRenderer {
    * whenever a component one of its if-clauses reads from changes.
    */
   applyConditions = () => {
+    this.conditionRunners = []
     for (const { conditions } of Object.values(this.components)) {
       if (!conditions) {
         continue
@@ -496,6 +511,12 @@ export default class FormeoRenderer {
 
   applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
     const clauseGroups = groupIfConditions(ifConditions)
+    // the pages this condition skips or brings back: it reads their fields as they are, or skipping a page by its own
+    // answer would make them read as unanswered and bring the page straight back
+    const ownStages = thenConditions
+      .filter(({ target }) => isAddress(target) && splitAddress(target)[0] === 'stages')
+      .map(({ target }) => this.getComponent(target)?.component)
+      .filter(Boolean)
     // a `value` action fires `input` on its target; when the condition watches that target,
     // the event would re-enter run and set the value again, forever
     let running = false
@@ -505,7 +526,7 @@ export default class FormeoRenderer {
       }
       running = true
       try {
-        if (this.evaluateClauseGroups(clauseGroups)) {
+        if (this.evaluateClauseGroups(clauseGroups, ownStages)) {
           for (const thenCondition of thenConditions) {
             this.execResult(thenCondition, evt)
           }
@@ -520,16 +541,32 @@ export default class FormeoRenderer {
       const { component, options } = this.getComponent(address)
       this.listenForChanges(options || component, run)
     }
+    const watched = [...watchedAddresses].map(address => this.getComponent(address)?.component).filter(Boolean)
+    this.conditionRunners.push({ watched, ownStages, run })
 
     run({ target: null })
   }
 
   /**
+   * A page's skip state changes what its fields read as, so re-runs the conditions watching anything on it. Only
+   * those: re-running every condition would re-apply unrelated `value` actions over the user's later input.
+   * @param {HTMLElement} stage
+   */
+  rerunConditionsReading = stage => {
+    for (const { watched, ownStages, run } of this.conditionRunners) {
+      if (!ownStages.includes(stage) && watched.some(component => stage.contains(component))) {
+        run({ target: null })
+      }
+    }
+  }
+
+  /**
    * @param {Array<Array<Object>>} clauseGroups output of groupIfConditions
+   * @param {HTMLElement[]} [ownStages] see evaluateCondition
    * @return {Boolean} true when every clause of at least one group matches
    */
-  evaluateClauseGroups = clauseGroups =>
-    clauseGroups.some(group => group.length && group.every(clause => this.evaluateCondition(clause)))
+  evaluateClauseGroups = (clauseGroups, ownStages) =>
+    clauseGroups.some(group => group.length && group.every(clause => this.evaluateCondition(clause, ownStages)))
 
   listenForChanges = (component, handler) => {
     if (!component) {
@@ -552,8 +589,11 @@ export default class FormeoRenderer {
 
   /**
    * Evaulate conditions
+   * @param {Object} clause one if-clause
+   * @param {HTMLElement[]} [ownStages] stages the condition skips or brings back; see getComponentProperty
+   * @return {Boolean}
    */
-  evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
+  evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }, ownStages = []) => {
     // a clause without a source address (e.g. half-filled in the editor), or reading from a field
     // that is no longer in the form, never matches
     if (!isAddress(source) || !this.getComponent(source)?.component) {
@@ -561,13 +601,15 @@ export default class FormeoRenderer {
     }
 
     // Compare as string, this allows values like "true" to be checked for properties like "checked".
-    const sourceValue = this.getComponentProperty(source, sourceProperty)
+    const sourceValue = this.getComponentProperty(source, sourceProperty, ownStages)
 
     if (typeof sourceValue === 'boolean') {
       return sourceValue
     }
 
-    const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target)
+    const targetValue = String(
+      isAddress(target) ? this.getComponentProperty(target, targetProperty, ownStages) : target
+    )
 
     return comparisonMap[comparison]?.(sourceValue, targetValue)
   }
@@ -591,13 +633,26 @@ export default class FormeoRenderer {
     targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
   }
 
-  getComponentProperty = (address, propertyName) => {
+  /**
+   * Reads a property of a rendered component. While its page is skipped, a field reads as unanswered (#122), except
+   * to a condition that skips or brings back that same page, so a page can skip itself by its own answer.
+   * @param {String} address e.g. `fields.abc`
+   * @param {String} propertyName e.g. `value`, `isChecked`
+   * @param {HTMLElement[]} [ownStages] stages whose fields are read as they are even while skipped
+   * @return {*}
+   */
+  getComponentProperty = (address, propertyName, ownStages = []) => {
     const { component, option } = this.getComponent(address) || {}
 
     const elem = option || component
 
     if (!elem) {
       return undefined
+    }
+
+    const skippedPage = elem.closest?.(`[${SKIPPED_ATTR}]`)
+    if (skippedPage && !ownStages.includes(skippedPage) && Object.hasOwn(SKIPPED_PAGE_READS, propertyName)) {
+      return SKIPPED_PAGE_READS[propertyName]
     }
 
     // a mapped property must win even when it legitimately resolves to false or an empty value
