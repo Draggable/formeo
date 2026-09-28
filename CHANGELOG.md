@@ -1,3 +1,10 @@
+## [5.13.1](https://github.com/Draggable/formeo/compare/v5.13.0...v5.13.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* **styles:** keep resized textareas inside their column ([bf9dae3](https://github.com/Draggable/formeo/commit/bf9dae315e6a63e257d435de54af4e7d02dcf5f5)), closes [#217](https://github.com/Draggable/formeo/issues/217)
+
 # [5.13.0](https://github.com/Draggable/formeo/compare/v5.12.0...v5.13.0) (2026-09-28)
 
 
