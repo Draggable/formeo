@@ -41,6 +41,18 @@ const twoPagesNoSubmit = buildPages([
   page(2, [input('email', { type: 'email' })]),
 ])
 
+// "person" in the first field skips the Company page; anything else brings it back
+const skipForm = buildPages([
+  page(1, [input('kind')], 'About you'),
+  page(2, [input('company', { required: true })], 'Company'),
+  page(3, [input('email', { type: 'email' })], 'Contact'),
+])
+const kindClause = comparison => [{ source: 'fields.kind', sourceProperty: 'value', comparison, target: 'person' }]
+skipForm.stages['p-1'].conditions = [
+  { if: kindClause('=='), then: [{ target: 'stages.p-2', targetProperty: 'isNotVisible' }] },
+  { if: kindClause('!='), then: [{ target: 'stages.p-2', targetProperty: 'isVisible' }] },
+]
+
 /**
  * Renders formData into a fresh container with the given pagination option; submitted userData
  * lands in window.__submitted. With `toggleSubmit`, an onChange handler disables the submit button
@@ -297,5 +309,43 @@ test.describe('multi-page forms (#122)', () => {
     await browserPage.evaluate(data => window.__pager.render(data), twoPages)
     await expect(root.getByRole('tab', { name: 'Page 2' })).toHaveAttribute('aria-selected', 'true')
     await expect(root.locator('input[name="email"]')).toBeVisible()
+  })
+
+  test('wizard: Enter jumps over a skipped page, whose step takes no number', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, skipForm, { type: 'wizard', submit: true })
+    await root.locator('input[name="kind"]').fill('person')
+    await expect(root.getByRole('list', { name: 'Progress' }).getByRole('button')).toHaveText(['About you', 'Contact'])
+    // a display: none step doesn't increment the CSS counter that numbers the steps
+    expect(
+      await root
+        .locator('.formeo-pages-step')
+        .nth(1)
+        .evaluate(step => getComputedStyle(step).display)
+    ).toBe('none')
+
+    await root.locator('input[name="kind"]').press('Enter')
+    await expect(root.locator('input[name="email"]')).toBeFocused()
+    await expect(root.locator('.formeo-pages-status')).toHaveText('Contact (2 of 2)')
+    await root.locator('input[name="email"]').fill('ada@example.com')
+    await root.locator('input[name="email"]').press('Enter')
+    await expect
+      .poll(() => browserPage.evaluate(() => window.__submitted))
+      .toEqual({ kind: 'person', email: 'ada@example.com' })
+  })
+
+  test('wizard: a skipped page comes back, required again, when the answer changes', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, skipForm, 'wizard')
+    await root.locator('input[name="kind"]').fill('person')
+    await root.locator('input[name="kind"]').fill('business')
+    await expect(root.getByRole('list', { name: 'Progress' }).getByRole('button')).toHaveText([
+      'About you',
+      'Company',
+      'Contact',
+    ])
+    await root.getByRole('button', { name: 'Next' }).click()
+    await expect(root.locator('input[name="company"]')).toBeFocused()
+    await root.getByRole('button', { name: 'Next' }).click()
+    // Company is required and empty, so Next stays put
+    await expect(root.locator('input[name="company"]')).toBeVisible()
   })
 })

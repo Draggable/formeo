@@ -209,6 +209,12 @@ fieldset.formeo-row-wrap {
   align-items: center;
   counter-increment: formeo-pages-step;
 
+  // a skipped page's step (#122): `display: flex` above would otherwise override the `hidden` attribute's
+  // own `display: none`, so it would still take a slot and a number in the list
+  &[hidden] {
+    display: none;
+  }
+
   &:not(:last-child)::after {
     content: "";
     width: mixins.space(3);

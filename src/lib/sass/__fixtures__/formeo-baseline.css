@@ -2185,6 +2185,9 @@ button[class*=-clone]:hover .svg-icon {
   align-items: center;
   counter-increment: formeo-pages-step;
 }
+.formeo.formeo-render .formeo-pages-step[hidden] {
+  display: none;
+}
 .formeo.formeo-render .formeo-pages-step:not(:last-child)::after {
   content: "";
   width: 24px;

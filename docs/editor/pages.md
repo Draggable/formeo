@@ -144,6 +144,21 @@ Clicking it opens a dialog with a `<select>` listing the other pages by title an
 appends the row to the end of the chosen page. Only rows have this button — move a column or a field by
 dropping it onto a tab instead (see [Using the tabs](#using-the-tabs)).
 
+## Skipping pages
+
+A page can be skipped depending on an answer. Conditions live on the stage, so open a page's edit panel (its stage's
+edit button) and use its **Conditions** panel:
+
+1. Set the **If** part to the answer, e.g. "Account type" `value` `==` "personal".
+2. In **Then**, pick the page to skip. Pages are listed by their title and marked "Page". Only **is visible** and **is
+   not visible** are offered for a page, and picking one selects **is not visible**.
+3. Add a second condition that brings the page back (the opposite **If**, and **is visible**), because a condition is
+   never undone on its own.
+
+The renderer then leaves the page out of the tabs or the wizard while it's skipped. A skipped page's answers still
+count as sources for other conditions, so a page depending on an answer given on a skippable page should be skipped
+along with it. See [Skipping pages](../renderer/renderer.md#skipping-pages) for the details and an example.
+
 ## Styling
 
 | Class | Element |
@@ -182,9 +197,12 @@ right-to-left `dir` work without any extra CSS.
 | `pages.moveTo` | Move to page |
 | `pages.move` | Move |
 | `pages.moved` | Moved to {title} |
+| `pages.page` | Page |
 
 These strings come from `@draggable/formeo-languages` (3.6.0 and later) and follow the editor's `i18n` option. For a
-locale that doesn't have one of them, the English fallback above is shown.
+locale that doesn't have one of them, the English fallback above is shown. `pages.page` (the type shown next to a
+page in the condition target list) is new, and shows in English until a release of `@draggable/formeo-languages`
+ships it.
 
 ## "Clear All"
 
@@ -206,9 +224,3 @@ another page before one of them or reorders them among themselves, with a consol
 go back to their places. Any other reorder works. Formeo's own generated stage ids never look like this, but if you
 supply your own stage ids directly in `formData`, keep them from looking like array indexes if you want to reorder
 pages freely.
-
-## Limitations
-
-These are planned for a later phase:
-
-- page conditions and skipping pages

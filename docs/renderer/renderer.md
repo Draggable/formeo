@@ -159,7 +159,8 @@ renderer.formData = newFormData
 
 #### `page`
 
-Shows a page without validating the one being left. Out-of-range indexes are clamped to the available pages. A no-op without pagination.
+Shows a page without validating the one being left. Out-of-range indexes are clamped to the available pages. A
+[skipped page](#skipping-pages) gives way to the next page in play. A no-op without pagination.
 
 ```javascript
 renderer.page = 1
@@ -246,7 +247,7 @@ const renderer = new FormeoRenderer({
       event.preventDefault() // the app decides whether/how to prevent the default submit
       console.log('submitted', userData)
     },
-    onPageChange: ({ page, previousPage, form, renderer }) => {
+    onPageChange: ({ page, previousPage, stageId, form, renderer }) => {
       console.log('page changed', previousPage, '->', page)
     },
   },
@@ -269,9 +270,9 @@ For a multi-option checkbox group, `target.name` ends in `[]` but the matching `
 
 Fires on the form's native `submit` event. Formeo does not call `event.preventDefault()` for you — the app decides whether to stop the browser's default submission and how to handle `userData`.
 
-### `onPageChange({ page, previousPage, form, renderer })`
+### `onPageChange({ page, previousPage, stageId, previousStageId, form, renderer })`
 
-Fires with the `pagination` option (see [Multi-page forms](#multi-page-forms)) on every real page change: clicking a tab or a step, Previous/Next, Enter acting as Next, setting `renderer.page`, or a validation pass jumping to the page of the first invalid control. It does **not** fire on a render (the first one, or a later one that keeps the page), or when the target page is the same as the current one (for example clicking the current tab, or setting `renderer.page` to its current value).
+Fires with the `pagination` option (see [Multi-page forms](#multi-page-forms)) on every real page change: clicking a tab or a step, Previous/Next, Enter acting as Next, setting `renderer.page`, or a validation pass jumping to the page of the first invalid control. It does **not** fire on a render (the first one, or a later one that keeps the page), or when the target page is the same as the current one (for example clicking the current tab, or setting `renderer.page` to its current value). `stageId` and `previousStageId` are the ids of the stages shown and left. A page change caused by a [skipped page](#skipping-pages) fires it too.
 
 ### Legacy: `config.action.onRender`
 
@@ -500,13 +501,70 @@ single-page form with `submit: true` gets this same button and wrapper, with no 
 A wizard adds:
 
 - An optional step list (`<ol class="formeo-pages-steps">`, on by default — set `progress: false` to remove it). Each step shows the page's title and a `data-state` of `"done"`, `"current"` or `"upcoming"`. Clicking a step ahead of the current page validates every page in between (see [Validation](#validation) below); clicking a step behind the current page is always allowed.
-- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden status such as "Account (2 of 3)" (`aria-live="polite"`, announced to screen readers on every page change; set its wording with `labels.status`). Next validates the current page before moving on. Next is hidden on the last page, and Previous is disabled on the first.
-- Pressing <kbd>Enter</kbd> in a text `<input>` (not a submit/button/reset/image/file input) acts as Next on every page but the last, instead of submitting a half-filled form. Textareas keep their newline behavior. On the last page, Enter submits the form natively.
+- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden status such as "Account (2 of 3)" (`aria-live="polite"`, announced to screen readers on every page change; set its wording with `labels.status`). Next validates the current page before moving on. Next is hidden on the [last page in play](#skipping-pages), and Previous is disabled on the first.
+- Pressing <kbd>Enter</kbd> in a text `<input>` (not a submit/button/reset/image/file input) acts as Next on every page but the last page in play, instead of submitting a half-filled form. Textareas keep their newline behavior. On the last page in play, Enter submits the form natively.
 - With `submit: true`, a Submit button (`<button type="submit" class="formeo-pages-submit">`, text from
-  `labels.submit`) takes Next's place on the last page. Without it, end the wizard with a submit field of your own on
-  its last page: Next disappears there, and without a submit button some browsers won't submit on <kbd>Enter</kbd>.
-  A single-page wizard with `submit: true` gets this button below the page too, in its own
+  `labels.submit`) takes Next's place on the last page in play. Without it, end the wizard with a submit field of your
+  own on its last page in play: Next disappears there, and without a submit button some browsers won't submit on
+  <kbd>Enter</kbd>. A single-page wizard with `submit: true` gets this button below the page too, in its own
   `<div class="formeo-pages-actions">`, since there's no Previous/Next bar to hold it.
+
+### Skipping pages
+
+A [condition](#conditional-logic) can skip a page: give it a `then` action whose target is the page's stage,
+`stages.<stageId>`, with `targetProperty: 'isNotVisible'`. `isVisible` brings the page back. Nothing is undone
+automatically, so pair the two, as for fields:
+
+```javascript
+stages: {
+  'about-you': {
+    id: 'about-you',
+    config: { title: 'About you' },
+    children: ['row-1'],
+    conditions: [
+      {
+        if: [{ source: 'fields.account-type', sourceProperty: 'value', comparison: '!=', target: 'business' }],
+        then: [{ target: 'stages.company', targetProperty: 'isNotVisible' }],
+      },
+      {
+        if: [{ source: 'fields.account-type', sourceProperty: 'value', comparison: '==', target: 'business' }],
+        then: [{ target: 'stages.company', targetProperty: 'isVisible' }],
+      },
+    ],
+  },
+  // …
+}
+```
+
+A skipped page:
+
+- **Leaves the navigation.** Its tab or step is hidden. Next, Previous, <kbd>Enter</kbd>, the step list and the tab keys
+  pass over it, and the status counts only the pages still in play ("Contact (2 of 2)"). Steps are numbered without a
+  gap.
+- **Doesn't validate or submit.** Its controls are disabled while it's skipped, so they never block Next or submit, and
+  its answers are left out of `userData` and of a native form POST. Their values stay in the page, so they're back if
+  the page is.
+- **Can be the page on show.** The next page in play takes its place (or the previous one, at the end), and
+  `onPageChange` fires. Focus moves to the new page only when it was on the skipped one. A form, or a page kept by
+  `render()`, whose first page starts out skipped opens on the next page in play without `onPageChange`.
+- **Never leaves the form empty.** A condition can't skip the last page still in play; it logs a warning instead.
+- **Keeps its index.** `renderer.page` and `pageCount` still count every stage. Setting `renderer.page` to a skipped
+  page shows the next page in play.
+
+A skipped page's answers stay on the page and still count as sources for other conditions, even though they're left
+out of `userData` and submission while the page is skipped. So a page whose own visibility depends on an answer given
+on a skippable page should also be skipped by whatever skips that page: if "Account type" skips the Company page, a
+VAT page shown by "VAT registered?" (a field on the Company page) should also be skipped whenever Company is, or it
+can show for an answer the user never actually gave in this pass.
+
+A skipped page can hold the author's own submit field. With `submit: false` (the default), skipping the page holding
+it disables that button along with every other control on the page, leaving the form with no enabled submit — Enter
+does nothing either, since the disabled button was the form's default button. Keep your own submit field on a page no
+condition can skip, or use `submit: true` instead. This applies to tabs, the wizard and an unpaginated form alike.
+
+Without `pagination`, a skipped stage just disappears, with its answers.
+
+The editor writes these conditions from a page's Conditions panel (see [Page Tabs](../editor/pages.md#skipping-pages)).
 
 ### Validation
 
@@ -548,7 +606,7 @@ renderer.page = 1 // shows a page directly; out-of-range indexes are clamped; do
 renderer.pageCount // number of pages (1 without pagination or with a single stage)
 ```
 
-Pass `events.onPageChange` to run code on every real page change — see [`onPageChange`](#onpagechange-page-previouspage-form-renderer-).
+Pass `events.onPageChange` to run code on every real page change — see [`onPageChange`](#onpagechange-page-previouspage-stageid-previousstageid-form-renderer-).
 
 ### Styling
 
@@ -568,6 +626,7 @@ Pagination renders these class names for styling:
 | `.formeo-pages-actions` | In tabs, the bar below the pages holding the Submit button |
 | `.formeo-pages-heading` | A page's heading, added by `heading` |
 | `.formeo-pages-status` | The wizard's page status, e.g. "About you (1 of 2)" (visually hidden, screen-reader only) |
+| `.formeo-stage[data-skipped]` | A page skipped by a condition (also `hidden`) |
 
 ### Example
 
@@ -611,7 +670,6 @@ renderer.render(formData)
 ### Limitations
 
 - The editor builds pages with its `pages` option (see [Page Tabs](../editor/pages.md)); you can also define them directly in `formData`.
-- Page conditions (skipping pages) are planned.
 
 ## Conditional Logic
 

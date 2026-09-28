@@ -217,7 +217,7 @@ export default class Autocomplete {
       return this.value
     }
     const component = this.value && this.components.getAddress(this.value)
-    return (component && getComponentLabel(component, `${this.key}`)) || this.value
+    return (component && getComponentLabel(component, `${this.key}`, this.components)) || this.value
   }
 
   updateOptions() {

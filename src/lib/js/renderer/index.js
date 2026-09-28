@@ -15,7 +15,13 @@ import {
   RENDER_PREFIX,
   targetPropertyMap,
 } from './helpers.js'
-import { paginate } from './pagination.js'
+import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
+
+// marks the controls a page skip disabled, so bringing the page back re-enables only those (#122)
+const SKIP_DISABLED_ATTR = 'data-formeo-skip-disabled'
+const SKIPPABLE_CONTROLS = 'input, select, textarea, button'
+// a page condition can only skip (true) or bring back (false) a stage
+const STAGE_SKIP_PROPERTIES = { isNotVisible: true, isVisible: false }
 
 export default class FormeoRenderer {
   constructor(opts = {}, formDataArg) {
@@ -206,6 +212,10 @@ export default class FormeoRenderer {
 
     this.renderedForm = dom.render(config)
     this.renderedForm.addEventListener('reset', this.syncRequiredGroupsAfterReset)
+    // a condition finds a page by its stage id in every mode; tabs replace the page's own id (#122)
+    for (const stage of this.stageElements()) {
+      stage.dataset.stageId = stage.id
+    }
 
     this.applyConditions()
     // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
@@ -225,8 +235,72 @@ export default class FormeoRenderer {
     if (!this.pagination) {
       return null
     }
-    const onChange = (page, previousPage) => this.events.onPageChange?.({ page, previousPage, form, renderer: this })
-    return paginate(form, this.pagination, Object.values(this.form.stages), onChange, startStageId)
+    const stages = Object.values(this.form.stages)
+    const onChange = (page, previousPage) =>
+      this.events.onPageChange?.({
+        page,
+        previousPage,
+        stageId: stages[page]?.id ?? null,
+        previousStageId: stages[previousPage]?.id ?? null,
+        form,
+        renderer: this,
+      })
+    return paginate(form, this.pagination, stages, onChange, startStageId)
+  }
+
+  /**
+   * @return {HTMLElement[]} the rendered form's stages, in order
+   */
+  stageElements = () =>
+    Array.from(this.renderedForm?.children ?? []).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
+
+  /**
+   * Skips a page (a stage) or brings it back (#122). A skipped stage is hidden and its controls disabled, so they
+   * neither validate nor submit; their values stay for when the page comes back. One stage always stays in play.
+   * @param {HTMLElement} stage
+   * @param {Boolean} skipped
+   */
+  setStageSkipped = (stage, skipped) => {
+    if (stage.hasAttribute(SKIPPED_ATTR) === skipped) {
+      return
+    }
+    if (!skipped) {
+      stage.removeAttribute(SKIPPED_ATTR)
+      stage.hidden = false
+      for (const control of stage.querySelectorAll(`[${SKIP_DISABLED_ATTR}]`)) {
+        control.disabled = false
+        control.removeAttribute(SKIP_DISABLED_ATTR)
+      }
+      this.pager?.refresh()
+      return
+    }
+    const inPlay = this.stageElements().filter(elem => !elem.hasAttribute(SKIPPED_ATTR))
+    if (inPlay.length < 2) {
+      console.warn('formeo: a condition tried to skip the only page left in play', stage.dataset.stageId)
+      return
+    }
+    // read before the controls are disabled and hidden, which can move focus to the body
+    const hadFocus = stage.contains(stage.ownerDocument.activeElement)
+    stage.setAttribute(SKIPPED_ATTR, '')
+    stage.hidden = true
+    for (const control of stage.querySelectorAll(SKIPPABLE_CONTROLS)) {
+      if (!control.disabled) {
+        control.disabled = true
+        control.setAttribute(SKIP_DISABLED_ATTR, '')
+      }
+    }
+    this.pager?.refresh({ focus: hadFocus })
+    if (!this.pager && hadFocus) {
+      // no pager to refocus the next page for us: find it ourselves among the stages still in the form
+      const stages = this.stageElements()
+      const index = stages.indexOf(stage)
+      const target =
+        stages.slice(index + 1).find(elem => !elem.hasAttribute(SKIPPED_ATTR)) ??
+        stages.slice(0, index).findLast(elem => !elem.hasAttribute(SKIPPED_ATTR))
+      if (target) {
+        focusFirst(target)
+      }
+    }
   }
 
   /**
@@ -499,13 +573,22 @@ export default class FormeoRenderer {
   }
 
   execResult = ({ target, targetProperty, assignment, value }) => {
-    if (isAddress(target)) {
-      const { component, option } = this.getComponent(target)
-
-      const elem = option || component
-
-      targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
+    if (!isAddress(target)) {
+      return
     }
+    const { component, option } = this.getComponent(target)
+
+    // a stage can only be skipped or brought back; the generic show/hide would hide its parent, the <form>
+    if (splitAddress(target)[0] === 'stages') {
+      if (component && Object.hasOwn(STAGE_SKIP_PROPERTIES, targetProperty)) {
+        this.setStageSkipped(component, STAGE_SKIP_PROPERTIES[targetProperty])
+      }
+      return
+    }
+
+    const elem = option || component
+
+    targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
   }
 
   getComponentProperty = (address, propertyName) => {
@@ -528,7 +611,13 @@ export default class FormeoRenderer {
     if (!isAddress(address)) {
       return null
     }
-    const [, componentId, optionsKey, optionIndex] = splitAddress(address)
+    const [type, componentId, optionsKey, optionIndex] = splitAddress(address)
+
+    if (type === 'stages') {
+      // matched by attribute, not a selector: tabs rename a page's id, and any stage id works this way
+      result.component = this.stageElements().find(stage => stage.dataset.stageId === componentId) ?? null
+      return result
+    }
 
     let component = null
     try {

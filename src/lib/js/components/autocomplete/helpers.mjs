@@ -1,5 +1,6 @@
 import dom from '../../common/dom.js'
 import { toTitleCase } from '../../common/utils/string.mjs'
+import { pageText } from '../stages/page-text.mjs'
 
 export const BASE_NAME = 'f-autocomplete'
 export const DISPLAY_FIELD_CLASSNAME = `${BASE_NAME}-display-field`
@@ -49,15 +50,25 @@ const labelResolverMap = new Map([
   ['condition.target', resolveComponentLabel],
 ])
 
+// only a then-action's target can be a page (#122)
+const THEN_TARGET_KEYS = new Set(['then.condition.target', 'condition.target'])
+const pagesOn = components => Boolean(components?.opts?.pages)
+
 /**
  * Find or generate a label for components
  * @param {Object} Component
+ * @param {String} key the autocomplete's key, e.g. 'then.condition.target'
+ * @param {Components} [components] the editor's components, to name a stage by its page title when pages are on
  * @return {String} component label
  */
-export const getComponentLabel = ({ id, ...component }, key) => {
+export const getComponentLabel = ({ id, ...component }, key, components) => {
   const { name, label } = component
   if (!name) {
     return label
+  }
+  // with page tabs, a stage is a page, known by its title (#122)
+  if (name === 'stage' && THEN_TARGET_KEYS.has(key) && pagesOn(components)) {
+    return components.stages.pageTitle(components.stages.get(id))
   }
   const labelResolver = labelResolverMap.get(key)
   const resolvedLabel = labelResolver(component)
@@ -137,13 +148,19 @@ export const componentOptions = autocomplete => {
   const selectedId = autocomplete.value
   const labels = []
   const flatList = autocomplete.components.flatList()
+  const listsPages = pagesOn(autocomplete.components)
   const options = Object.entries(flatList).reduce((acc, [value, component]) => {
-    const label = getComponentLabel(component, autocomplete.key)
+    // without page tabs a stage is the whole form, so only a target already set to one stays listed
+    if (component.name === 'stage' && !listsPages && value !== selectedId) {
+      return acc
+    }
+    const label = getComponentLabel(component, autocomplete.key, autocomplete.components)
     if (label) {
       const componentType = component.name
+      const typeLabel = componentType === 'stage' && listsPages ? pageText('pages.page') : toTitleCase(componentType)
       const typeConfig = {
         tag: 'span',
-        content: ` ${toTitleCase(componentType)}`,
+        content: ` ${typeLabel}`,
         className: 'component-type',
       }
       const labelKey = `${componentType}.${label}`

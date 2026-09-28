@@ -3,7 +3,7 @@ import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
 import { debounce } from '../../common/utils/index.mjs'
 import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
-import { segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
+import { adoptStageTargetProperty, segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
 
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
   return fieldOrder.reduce((acc, fieldName) => {
@@ -146,6 +146,10 @@ export class Condition {
   })
 
   onChangeCondition = ({ key, target }) => {
+    if (key === 'target' && this.conditionType === 'then') {
+      adoptStageTargetProperty(this.fields)
+    }
+
     const evtData = {
       changedProperty: key,
       dataPath: this.address,

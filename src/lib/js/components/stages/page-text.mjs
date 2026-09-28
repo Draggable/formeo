@@ -14,6 +14,7 @@ export const PAGE_TEXT = Object.freeze({
   'pages.moveTo': 'Move to page',
   'pages.move': 'Move',
   'pages.moved': 'Moved to {title}',
+  'pages.page': 'Page',
 })
 
 const fill = (text, vars) => text.replace(/\{(\w+)\}/g, (token, name) => (name in vars ? String(vars[name]) : token))
