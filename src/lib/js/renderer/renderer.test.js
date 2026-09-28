@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { afterEach, beforeEach, describe, test } from 'node:test'
+import { afterEach, beforeEach, describe, mock, test } from 'node:test'
 import { JSDOM } from 'jsdom'
 import FormeoRenderer from './index.js'
 
@@ -1021,6 +1021,90 @@ describe('FormeoRenderer', () => {
         ['f-hobbies-1[]', 'f-hobbies-1[]', 'f-hobbies-1[]']
       )
       assert.equal(renderer.getComponents('fields.hobbies-1').length, 3)
+    })
+  })
+
+  describe('userData setter with keys the form lacks (#123, #229)', () => {
+    const formData = () => ({
+      id: 'ud-form',
+      stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['txt', 'multi'] } },
+      fields: {
+        txt: { id: 'txt', tag: 'input', attrs: { type: 'text', name: 'txt' }, config: { label: 'Text' } },
+        multi: {
+          id: 'multi',
+          tag: 'select',
+          attrs: { name: 'multi', multiple: true },
+          config: { label: 'Multi' },
+          options: [
+            { label: 'X', value: 'x' },
+            { label: 'Y', value: 'y' },
+            { label: 'Z', value: 'z' },
+          ],
+        },
+      },
+    })
+    const mounted = () => {
+      const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+      renderer.render(formData())
+      return renderer
+    }
+
+    test('skips an unknown key and still applies the keys after it', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        const renderer = mounted()
+        assert.doesNotThrow(() => {
+          renderer.userData = { nope: 1, txt: 'later' }
+        })
+        assert.equal(document.querySelector('[name="txt"]').value, 'later')
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('warns once, listing every unmatched key', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        mounted().userData = { nope: 1, txt: 'a', other: 2 }
+        assert.equal(warn.mock.callCount(), 1)
+        assert.equal(warn.mock.calls[0].arguments[0], 'formeo: renderer.userData has no field named: nope, other')
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('does not warn when every key matches', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        mounted().userData = { txt: 'a' }
+        assert.equal(warn.mock.callCount(), 0)
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('never throws before render or for null', () => {
+      const warn = mock.method(console, 'warn', () => {})
+      try {
+        const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+        assert.doesNotThrow(() => {
+          renderer.userData = { txt: 'a' }
+        })
+        assert.doesNotThrow(() => {
+          mounted().userData = null
+        })
+      } finally {
+        warn.mock.restore()
+      }
+    })
+
+    test('selects every value of an array for a multiple select', () => {
+      const renderer = mounted()
+      renderer.userData = { multi: ['x', 'z'] }
+      const selected = [...document.querySelector('[name="multi"]').selectedOptions].map(option => option.value)
+      assert.deepEqual(selected, ['x', 'z'])
     })
   })
 

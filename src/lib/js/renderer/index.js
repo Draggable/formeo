@@ -125,10 +125,15 @@ export default class FormeoRenderer {
     )
   }
 
-  set userData(data = {}) {
-    const form = this.container.querySelector('form')
-    for (const key of Object.keys(data)) {
-      const fields = form.elements[key] ?? form.elements[`${key}[]`]
+  set userData(data) {
+    const form = this.container?.querySelector('.formeo-render') || this.renderedForm
+    const unmatched = []
+    for (const key of Object.keys(data ?? {})) {
+      const fields = form?.elements[key] ?? form?.elements[`${key}[]`]
+      if (!fields) {
+        unmatched.push(key)
+        continue
+      }
       // a group with a single option resolves to the input itself rather than a RadioNodeList
       const checkables = checkableInputs(fields)
 
@@ -152,10 +157,21 @@ export default class FormeoRenderer {
           field.checked = field.value === data[key]
         }
       }
+      // A multiple select takes every value in an array
+      else if (fields.type === 'select-multiple') {
+        const values = [data[key]].flat().map(String)
+        for (const option of fields.options) {
+          option.selected = values.includes(option.value)
+        }
+      }
       // Handle single inputs
       else if (fields.type) {
         fields.value = data[key]
       }
+    }
+    // saved answers can outlive the form they came from, so a missing field is a warning, never an error
+    if (unmatched.length) {
+      console.warn(`formeo: renderer.userData has no field named: ${unmatched.join(', ')}`)
     }
   }
 

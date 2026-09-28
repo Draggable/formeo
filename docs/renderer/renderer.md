@@ -182,6 +182,8 @@ renderer.userData = {
 }
 ```
 
+> Keys with no matching field are skipped, and the renderer logs one console warning that lists them. The setter never throws, so answers saved from an older version of a form still restore. A `<select multiple>` takes an array of values.
+
 ## Methods
 
 ### `render(formData)`
@@ -350,6 +352,8 @@ renderer.userData = {
   gender: 'male'
 }
 ```
+
+> Keys with no matching field are skipped, and the renderer logs one console warning that lists them. The setter never throws, so answers saved from an older version of a form still restore. A `<select multiple>` takes an array of values.
 
 ### Handling Different Field Types
 
