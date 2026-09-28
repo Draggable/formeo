@@ -177,6 +177,7 @@ pages.label = דפים
 pages.move = מַהֲלָך
 pages.moved = הועבר ל- {title}
 pages.moveTo = מעבר לדף
+pages.page = עמוד
 pages.remove = הסר את הדף " {title} "
 pages.removeConfirm = להסיר את " {title} " ואת כל מה שבתוכה?
 pages.rename = שינוי שם הדף

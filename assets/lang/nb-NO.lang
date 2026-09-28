@@ -177,6 +177,7 @@ pages.label = Sider
 pages.move = Flytte
 pages.moved = Flyttet til {title}
 pages.moveTo = Flytt til side
+pages.page = Side
 pages.remove = Fjern siden « {title} »
 pages.removeConfirm = Fjerne « {title} » og alt på den?
 pages.rename = Gi siden nytt navn

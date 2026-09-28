@@ -177,6 +177,7 @@ pages.label = Oldalak
 pages.move = Mozog
 pages.moved = Áthelyezve ide: {title}
 pages.moveTo = Ugrás az oldalra
+pages.page = Oldal
 pages.remove = A(z) „ {title} ” oldal eltávolítása
 pages.removeConfirm = Eltávolítja a(z) „ {title} ” fájlt és mindent, ami rajta van?
 pages.rename = Oldal átnevezése

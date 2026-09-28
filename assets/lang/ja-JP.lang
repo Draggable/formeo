@@ -177,6 +177,7 @@ pages.label = ページ
 pages.move = 動く
 pages.moved = {title}に移動しました
 pages.moveTo = ページへ移動
+pages.page = ページ
 pages.remove = ページ「 {title} 」を削除
 pages.removeConfirm = 「 {title} 」とその中のすべてを削除しますか？
 pages.rename = ページ名の変更

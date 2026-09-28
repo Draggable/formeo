@@ -177,6 +177,7 @@ pages.label = الصفحات
 pages.move = يتحرك
 pages.moved = نُقل إلى {title}
 pages.moveTo = انتقل إلى الصفحة
+pages.page = صفحة
 pages.remove = إزالة الصفحة " {title} "
 pages.removeConfirm = هل تريد حذف " {title} " وكل ما يحتويه؟
 pages.rename = إعادة تسمية الصفحة

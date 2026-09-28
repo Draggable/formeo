@@ -177,6 +177,7 @@ pages.label = 頁
 pages.move = 移動
 pages.moved = 已移至{title}
 pages.moveTo = 跳到頁面
+pages.page = 頁
 pages.remove = 刪除頁面“ {title} ”
 pages.removeConfirm = 刪除“ {title} ”及其所有內容？
 pages.rename = 重新命名頁面

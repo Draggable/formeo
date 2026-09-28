@@ -177,6 +177,7 @@ pages.label = Bladsye
 pages.move = Beweeg
 pages.moved = Geskuif na {title}
 pages.moveTo = Skuif na bladsy
+pages.page = Bladsy
 pages.remove = Verwyder bladsy " {title} "
 pages.removeConfirm = Verwyder " {title} " en alles daarop?
 pages.rename = Hernoem bladsy

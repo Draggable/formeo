@@ -177,6 +177,7 @@ pages.label = Stránky
 pages.move = Pohyb
 pages.moved = Přesunuto do {title}
 pages.moveTo = Přesunout na stránku
+pages.page = Stránka
 pages.remove = Odebrat stránku „ {title} “
 pages.removeConfirm = Odebrat „ {title} “ a vše, co je na něm?
 pages.rename = Přejmenovat stránku

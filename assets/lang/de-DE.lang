@@ -177,6 +177,7 @@ pages.label = Seiten
 pages.move = Bewegen
 pages.moved = Verschoben nach {title}
 pages.moveTo = Zur Seite wechseln
+pages.page = Seite
 pages.remove = Seite " {title} " entfernen
 pages.removeConfirm = " {title} " und alles, was darauf steht, entfernen?
 pages.rename = Seite umbenennen

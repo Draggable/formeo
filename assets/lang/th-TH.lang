@@ -177,6 +177,7 @@ pages.label = หน้า
 pages.move = เคลื่อนไหว
 pages.moved = ย้ายไปที่ {title}
 pages.moveTo = ไปยังหน้าถัดไป
+pages.page = หน้า
 pages.remove = ลบหน้า " {title} "
 pages.removeConfirm = ลบ " {title} " และทุกอย่างที่อยู่บนนั้นออกหรือไม่?
 pages.rename = เปลี่ยนชื่อหน้า

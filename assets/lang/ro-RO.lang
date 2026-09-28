@@ -177,6 +177,7 @@ pages.label = Pagini
 pages.move = Mişcare
 pages.moved = Mutat la {title}
 pages.moveTo = Mută la pagină
+pages.page = Pagină
 pages.remove = Eliminați pagina „ {title} ”
 pages.removeConfirm = Să elimini „ {title} ” și tot ce conține?
 pages.rename = Redenumiți pagina

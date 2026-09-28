@@ -177,6 +177,7 @@ pages.label = 页
 pages.move = 移动
 pages.moved = 已移至{title}
 pages.moveTo = 跳转到页面
+pages.page = 页
 pages.remove = 删除页面“ {title} ”
 pages.removeConfirm = 删除“ {title} ”及其所有内容？
 pages.rename = 重命名页面

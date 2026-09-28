@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.9.2
+Version: 5.9.3
 Author: Draggable https://draggable.io
 */
 
@@ -217,6 +217,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Beweeg",
 			"pages.moved": "Geskuif na {title}",
 			"pages.moveTo": "Skuif na bladsy",
+			"pages.page": "Bladsy",
 			"pages.remove": "Verwyder bladsy \" {title} \"",
 			"pages.removeConfirm": "Verwyder \" {title} \" en alles daarop?",
 			"pages.rename": "Hernoem bladsy",
@@ -462,6 +463,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "يتحرك",
 			"pages.moved": "نُقل إلى {title}",
 			"pages.moveTo": "انتقل إلى الصفحة",
+			"pages.page": "صفحة",
 			"pages.remove": "إزالة الصفحة \" {title} \"",
 			"pages.removeConfirm": "هل تريد حذف \" {title} \" وكل ما يحتويه؟",
 			"pages.rename": "إعادة تسمية الصفحة",
@@ -707,6 +709,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Pohyb",
 			"pages.moved": "Přesunuto do {title}",
 			"pages.moveTo": "Přesunout na stránku",
+			"pages.page": "Stránka",
 			"pages.remove": "Odebrat stránku „ {title} “",
 			"pages.removeConfirm": "Odebrat „ {title} “ a vše, co je na něm?",
 			"pages.rename": "Přejmenovat stránku",
@@ -952,6 +955,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Bewegen",
 			"pages.moved": "Verschoben nach {title}",
 			"pages.moveTo": "Zur Seite wechseln",
+			"pages.page": "Seite",
 			"pages.remove": "Seite \" {title} \" entfernen",
 			"pages.removeConfirm": "\" {title} \" und alles, was darauf steht, entfernen?",
 			"pages.rename": "Seite umbenennen",
@@ -1192,6 +1196,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Move",
 			"pages.moveTo": "Move to page",
 			"pages.moved": "Moved to {title}",
+			"pages.page": "Page",
 			"pages.remove": "Remove page \"{title}\"",
 			"pages.removeConfirm": "Remove \"{title}\" and everything on it?",
 			"pages.rename": "Rename page",
@@ -1438,6 +1443,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Mover",
 			"pages.moved": "Trasladado a {title}",
 			"pages.moveTo": "Ir a la página",
+			"pages.page": "Página",
 			"pages.remove": "Eliminar página \" {title} \"",
 			"pages.removeConfirm": "¿Eliminar \" {title} \" y todo lo que contiene?",
 			"pages.rename": "Cambiar nombre de página",
@@ -1683,6 +1689,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "حرکت",
 			"pages.moved": "به {title} منتقل شد",
 			"pages.moveTo": "انتقال به صفحه",
+			"pages.page": "صفحه",
 			"pages.remove": "حذف صفحه \" {title} \"",
 			"pages.removeConfirm": "\" {title} \" و هر چیزی که روی آن است را حذف کنید؟",
 			"pages.rename": "تغییر نام صفحه",
@@ -1928,6 +1935,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Liikkua",
 			"pages.moved": "Siirretty kansioon {title}",
 			"pages.moveTo": "Siirry sivulle",
+			"pages.page": "Sivu",
 			"pages.remove": "Poista sivu \" {title} \"",
 			"pages.removeConfirm": "Poistetaanko \" {title} \" ja kaikki siinä oleva?",
 			"pages.rename": "Nimeä sivu uudelleen",
@@ -2173,6 +2181,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Se déplacer",
 			"pages.moved": "Déplacé vers {title}",
 			"pages.moveTo": "Aller à la page",
+			"pages.page": "Page",
 			"pages.remove": "Supprimer la page \" {title} \"",
 			"pages.removeConfirm": "Supprimer « {title} » et tout ce qui s'y trouve ?",
 			"pages.rename": "Renommer la page",
@@ -2418,6 +2427,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "מַהֲלָך",
 			"pages.moved": "הועבר ל- {title}",
 			"pages.moveTo": "מעבר לדף",
+			"pages.page": "עמוד",
 			"pages.remove": "הסר את הדף \" {title} \"",
 			"pages.removeConfirm": "להסיר את \" {title} \" ואת כל מה שבתוכה?",
 			"pages.rename": "שינוי שם הדף",
@@ -2663,6 +2673,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "कदम",
 			"pages.moved": "{title} पर स्थानांतरित किया गया",
 			"pages.moveTo": "अगले पृष्ठ पर जाएँ",
+			"pages.page": "पृष्ठ",
 			"pages.remove": "पृष्ठ \" {title} \" हटाएं",
 			"pages.removeConfirm": "क्या आप \" {title} \" और उस पर मौजूद सब कुछ हटा सकते हैं?",
 			"pages.rename": "पृष्ठ का नाम बदलें",
@@ -2908,6 +2919,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Mozog",
 			"pages.moved": "Áthelyezve ide: {title}",
 			"pages.moveTo": "Ugrás az oldalra",
+			"pages.page": "Oldal",
 			"pages.remove": "A(z) „ {title} ” oldal eltávolítása",
 			"pages.removeConfirm": "Eltávolítja a(z) „ {title} ” fájlt és mindent, ami rajta van?",
 			"pages.rename": "Oldal átnevezése",
@@ -3153,6 +3165,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Mossa",
 			"pages.moved": "Spostato in {title}",
 			"pages.moveTo": "Vai alla pagina",
+			"pages.page": "Pagina",
 			"pages.remove": "Rimuovi la pagina \" {title} \"",
 			"pages.removeConfirm": "Rimuovere \" {title} \" e tutto ciò che contiene?",
 			"pages.rename": "Rinomina pagina",
@@ -3398,6 +3411,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "動く",
 			"pages.moved": "{title}に移動しました",
 			"pages.moveTo": "ページへ移動",
+			"pages.page": "ページ",
 			"pages.remove": "ページ「 {title} 」を削除",
 			"pages.removeConfirm": "「 {title} 」とその中のすべてを削除しますか？",
 			"pages.rename": "ページ名の変更",
@@ -3643,6 +3657,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Flytte",
 			"pages.moved": "Flyttet til {title}",
 			"pages.moveTo": "Flytt til side",
+			"pages.page": "Side",
 			"pages.remove": "Fjern siden « {title} »",
 			"pages.removeConfirm": "Fjerne « {title} » og alt på den?",
 			"pages.rename": "Gi siden nytt navn",
@@ -3888,6 +3903,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Przenosić",
 			"pages.moved": "Przeniesiono do {title}",
 			"pages.moveTo": "Przejdź do strony",
+			"pages.page": "Strona",
 			"pages.remove": "Usuń stronę „ {title} ”",
 			"pages.removeConfirm": "Usunąć „ {title} ” i wszystko, co się na nim znajduje?",
 			"pages.rename": "Zmień nazwę strony",
@@ -4133,6 +4149,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Mover",
 			"pages.moved": "Movido para {title}",
 			"pages.moveTo": "Ir para a página",
+			"pages.page": "Página",
 			"pages.remove": "Remover página \" {title} \"",
 			"pages.removeConfirm": "Remover \" {title} \" e tudo o que estiver nele?",
 			"pages.rename": "Renomear página",
@@ -4378,6 +4395,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Mover",
 			"pages.moved": "Movido para {title}",
 			"pages.moveTo": "Ir para a página",
+			"pages.page": "Página",
 			"pages.remove": "Remover página \" {title} \"",
 			"pages.removeConfirm": "Remover \" {title} \" e tudo o que está nele?",
 			"pages.rename": "Renomear página",
@@ -4623,6 +4641,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Mişcare",
 			"pages.moved": "Mutat la {title}",
 			"pages.moveTo": "Mută la pagină",
+			"pages.page": "Pagină",
 			"pages.remove": "Eliminați pagina „ {title} ”",
 			"pages.removeConfirm": "Să elimini „ {title} ” și tot ce conține?",
 			"pages.rename": "Redenumiți pagina",
@@ -4868,6 +4887,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Двигаться",
 			"pages.moved": "Перенесено в {title}",
 			"pages.moveTo": "Перейти на страницу",
+			"pages.page": "Страница",
 			"pages.remove": "Удалить страницу \" {title} \"",
 			"pages.removeConfirm": "Удалить \" {title} \" и все, что в нем содержится?",
 			"pages.rename": "Переименовать страницу",
@@ -5113,6 +5133,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "เคลื่อนไหว",
 			"pages.moved": "ย้ายไปที่ {title}",
 			"pages.moveTo": "ไปยังหน้าถัดไป",
+			"pages.page": "หน้า",
 			"pages.remove": "ลบหน้า \" {title} \"",
 			"pages.removeConfirm": "ลบ \" {title} \" และทุกอย่างที่อยู่บนนั้นออกหรือไม่?",
 			"pages.rename": "เปลี่ยนชื่อหน้า",
@@ -5358,6 +5379,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "Taşınmak",
 			"pages.moved": "{title} adresine taşındı.",
 			"pages.moveTo": "Sayfaya git",
+			"pages.page": "Sayfa",
 			"pages.remove": "Sayfayı kaldır \" {title} \"",
 			"pages.removeConfirm": "\" {title} \" ve üzerindeki her şeyi kaldırmak mı?",
 			"pages.rename": "Sayfayı yeniden adlandır",
@@ -5603,6 +5625,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "移动",
 			"pages.moved": "已移至{title}",
 			"pages.moveTo": "跳转到页面",
+			"pages.page": "页",
 			"pages.remove": "删除页面“ {title} ”",
 			"pages.removeConfirm": "删除“ {title} ”及其所有内容？",
 			"pages.rename": "重命名页面",
@@ -5848,6 +5871,7 @@ Author: Draggable https://draggable.io
 			"pages.move": "移動",
 			"pages.moved": "已移至{title}",
 			"pages.moveTo": "跳到頁面",
+			"pages.page": "頁",
 			"pages.remove": "刪除頁面“ {title} ”",
 			"pages.removeConfirm": "刪除“ {title} ”及其所有內容？",
 			"pages.rename": "重新命名頁面",
@@ -5927,7 +5951,7 @@ Author: Draggable https://draggable.io
 	//#region node_modules/@draggable/formeo-languages/dist/formeo-languages.es.js
 	/**
 	@draggable/formeo-languages - https://github.com/Draggable/formeo-languages#readme
-	Version: 3.5.1
+	Version: 3.6.0
 	Author: Kevin Chappell <kevin.b.chappell@gmail.com> (https://kevin-chappell.com)
 	*/
 	var s$1 = e$1["en-US"];
@@ -6280,7 +6304,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.9.2";
+		version$2 = "5.9.3";
 		type = "module";
 		main = "dist/formeo.cjs";
 		module$1 = "dist/formeo.es.js";
@@ -6388,7 +6412,7 @@ Author: Draggable https://draggable.io
 			"zod": "^4.4.3"
 		};
 		dependencies = {
-			"@draggable/formeo-languages": "^3.6.0",
+			"@draggable/formeo-languages": "^3.7.0",
 			"@draggable/i18n": "^1.0.7",
 			"@draggable/tooltip": "^1.2.2",
 			"lodash": "^4.17.21",
@@ -10016,8 +10040,11 @@ Author: Draggable https://draggable.io
 							children: [input, optionLabel],
 							className: [`f-${fieldType}`]
 						};
-						if (attrs.className) elem.config.inputWrap = attrs.className;
-						if (elem.config.inline) inputWrap.className.push(`f-${fieldType}-inline`);
+						if (attrs.className) elem.config = {
+							...elem.config,
+							inputWrap: attrs.className
+						};
+						if (elem.config?.inline) inputWrap.className.push(`f-${fieldType}-inline`);
 						if (option.selected) input.attrs.checked = true;
 						if (isPreview) optionLabel.attrs.contenteditable = true;
 						return inputWrap;
@@ -20027,6 +20054,14 @@ Author: Draggable https://draggable.io
 		isNotVisible: true,
 		isVisible: false
 	};
+	var SKIPPED_PAGE_READS = {
+		value: "",
+		checked: "",
+		isChecked: false,
+		isNotChecked: true,
+		isVisible: false,
+		isNotVisible: true
+	};
 	var FormeoRenderer$1 = class {
 		constructor(opts = {}, formDataArg) {
 			const { renderContainer: container, elements, formData, config, events, pagination } = processOptions(opts);
@@ -20039,6 +20074,7 @@ Author: Draggable https://draggable.io
 			this.components = Object.create(null);
 			this.dom = dom;
 		}
+		conditionRunners = [];
 		/**
 		* Index of the page on show when the `pagination` option splits the form's stages into pages
 		* @return {Number} 0 without pagination
@@ -20113,10 +20149,20 @@ Author: Draggable https://draggable.io
 		componentByName(name) {
 			return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`);
 		}
-		set userData(data = {}) {
-			const form = this.container.querySelector("form");
-			for (const key of Object.keys(data)) {
-				const fields = form.elements[key] ?? form.elements[`${key}[]`];
+		set userData(data) {
+			const form = this.container?.querySelector(".formeo-render") || this.renderedForm;
+			const keys = Object.keys(data ?? {});
+			if (!form) {
+				if (keys.length) console.warn("formeo: renderer.userData was set before render(); nothing to fill");
+				return;
+			}
+			const unmatched = [];
+			for (const key of keys) {
+				const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`);
+				if (!fields) {
+					unmatched.push(key);
+					continue;
+				}
 				const checkables = checkableInputs(fields);
 				if (checkables?.[0].type === "checkbox") {
 					const values = Array.isArray(data[key]) ? data[key] : [data[key]];
@@ -20124,8 +20170,12 @@ Author: Draggable https://draggable.io
 					const group = checkables[0].closest(`[data-${REQUIRED_GROUP_ATTR}]`);
 					if (group) dom.syncCheckboxGroupRequired(group);
 				} else if (checkables?.[0].type === "radio") for (const field of checkables) field.checked = field.value === data[key];
-				else if (fields.type) fields.value = data[key];
+				else if (fields.type === "select-multiple") {
+					const values = [data[key]].flat().map(String);
+					for (const option of fields.options) option.selected = values.includes(option.value);
+				} else if (fields.type) fields.value = data[key];
 			}
+			if (unmatched.length) console.warn(`formeo: renderer.userData has no field named: ${unmatched.join(", ")}`);
 		}
 		/**
 		* Renders the formData to a target Element
@@ -20154,6 +20204,7 @@ Author: Draggable https://draggable.io
 			this.renderedForm?.remove();
 			this.renderedForm = null;
 			this.components = Object.create(null);
+			this.conditionRunners = [];
 		}
 		getRenderedForm(formData = this.form) {
 			const startStageId = this.pager?.stageId;
@@ -20214,6 +20265,7 @@ Author: Draggable https://draggable.io
 					control.disabled = false;
 					control.removeAttribute(SKIP_DISABLED_ATTR);
 				}
+				this.rerunConditionsReading(stage);
 				this.pager?.refresh();
 				return;
 			}
@@ -20228,6 +20280,7 @@ Author: Draggable https://draggable.io
 				control.disabled = true;
 				control.setAttribute(SKIP_DISABLED_ATTR, "");
 			}
+			this.rerunConditionsReading(stage);
 			this.pager?.refresh({ focus: hadFocus });
 			if (!this.pager && hadFocus) {
 				const stages = this.stageElements();
@@ -20267,7 +20320,7 @@ Author: Draggable https://draggable.io
 		get html() {
 			return (this.renderedForm || this.getRenderedForm()).outerHTML;
 		}
-		orderChildren = (type, order) => order.reduce((acc, cur) => {
+		orderChildren = (type, order = []) => order.reduce((acc, cur) => {
 			acc.push(this.form[type][cur]);
 			return acc;
 		}, []);
@@ -20277,11 +20330,12 @@ Author: Draggable https://draggable.io
 		* @param  {Object} columnData
 		* @return {Object} processed column data
 		*/
-		processColumn = ({ id, ...columnData }) => ({
+		processColumn = ({ id, config = {}, ...columnData }) => ({
 			...columnData,
+			config,
 			id: this.prefixId(id),
 			children: this.processFields(columnData.children),
-			style: `width: ${columnData.config.width || "100%"}`
+			style: `width: ${config.width || "100%"}`
 		});
 		processRows = (stageId) => this.orderChildren("rows", this.form.stages[stageId].children).reduce((acc, row) => {
 			if (row) acc.push(this.processRow(row));
@@ -20297,7 +20351,7 @@ Author: Draggable https://draggable.io
 		* @return {Object} row config object
 		*/
 		processRow = (data, type = "row") => {
-			const { config, id } = data;
+			const { config = {}, id } = data;
 			const className = [`formeo-${type}-wrap`];
 			const rowData = {
 				...data,
@@ -20388,6 +20442,7 @@ Author: Draggable https://draggable.io
 		* whenever a component one of its if-clauses reads from changes.
 		*/
 		applyConditions = () => {
+			this.conditionRunners = [];
 			for (const { conditions } of Object.values(this.components)) {
 				if (!conditions) continue;
 				for (const condition of conditions) try {
@@ -20399,12 +20454,25 @@ Author: Draggable https://draggable.io
 		};
 		applyCondition = ({ if: ifConditions = [], then: thenConditions = [] }) => {
 			const clauseGroups = groupIfConditions(ifConditions);
+			const actions = thenConditions.map((action) => ({
+				action,
+				page: this.stageTargetOf(action)
+			}));
 			let running = false;
-			const run = (evt) => {
+			/**
+			* @param {Event|{target: null}} evt
+			* @param {(runnerAction: {action: Object, page: HTMLElement|null}) => boolean} [skipAction]
+			*/
+			const run = (evt, skipAction = () => false) => {
 				if (running) return;
 				running = true;
 				try {
-					if (this.evaluateClauseGroups(clauseGroups)) for (const thenCondition of thenConditions) this.execResult(thenCondition, evt);
+					const matches = /* @__PURE__ */ new Map();
+					for (const { page } of actions) if (!matches.has(page)) matches.set(page, this.evaluateClauseGroups(clauseGroups, page ? [page] : []));
+					for (const runnerAction of actions) {
+						const { action, page } = runnerAction;
+						if (!skipAction(runnerAction) && matches.get(page)) this.execResult(action, evt);
+					}
 				} finally {
 					running = false;
 				}
@@ -20414,13 +20482,37 @@ Author: Draggable https://draggable.io
 				const { component, options } = this.getComponent(address);
 				this.listenForChanges(options || component, run);
 			}
+			const watched = [...watchedAddresses].map((address) => this.getComponent(address)?.component).filter(Boolean);
+			this.conditionRunners.push({
+				watched,
+				run
+			});
 			run({ target: null });
 		};
 		/**
+		* @param {Object} action a then-action
+		* @return {HTMLElement|null} the stage it skips or brings back, null for any other action
+		*/
+		stageTargetOf = ({ target }) => isAddress(target) && splitAddress(target)[0] === "stages" ? this.getComponent(target)?.component ?? null : null;
+		/**
+		* A page's skip state changes what its fields read as, so re-runs the conditions watching anything on it. Only
+		* those: re-running every condition would re-apply unrelated `value` actions over the user's later input. The
+		* actions that skip or bring back that same page read it as it is, so they're left alone rather than undoing the
+		* skip that caused the re-run.
+		* @param {HTMLElement} stage
+		*/
+		rerunConditionsReading = (stage) => {
+			for (const { watched, run } of this.conditionRunners) if (watched.some((component) => stage.contains(component))) run({ target: null }, ({ action, page }) => {
+				const stageSkip = action && Object.hasOwn(STAGE_SKIP_PROPERTIES, action.targetProperty);
+				return page === stage && stageSkip && !STAGE_SKIP_PROPERTIES[action.targetProperty];
+			});
+		};
+		/**
 		* @param {Array<Array<Object>>} clauseGroups output of groupIfConditions
+		* @param {HTMLElement[]} [ownStages] see evaluateCondition
 		* @return {Boolean} true when every clause of at least one group matches
 		*/
-		evaluateClauseGroups = (clauseGroups) => clauseGroups.some((group) => group.length && group.every((clause) => this.evaluateCondition(clause)));
+		evaluateClauseGroups = (clauseGroups, ownStages) => clauseGroups.some((group) => group.length && group.every((clause) => this.evaluateCondition(clause, ownStages)));
 		listenForChanges = (component, handler) => {
 			if (!component) return;
 			if (isNodeCollection(component)) {
@@ -20432,12 +20524,15 @@ Author: Draggable https://draggable.io
 		};
 		/**
 		* Evaulate conditions
+		* @param {Object} clause one if-clause
+		* @param {HTMLElement[]} [ownStages] stages the action being decided skips or brings back; see getComponentProperty
+		* @return {Boolean}
 		*/
-		evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }) => {
+		evaluateCondition = ({ source, sourceProperty, targetProperty, comparison, target }, ownStages = []) => {
 			if (!isAddress(source) || !this.getComponent(source)?.component) return false;
-			const sourceValue = this.getComponentProperty(source, sourceProperty);
+			const sourceValue = this.getComponentProperty(source, sourceProperty, ownStages);
 			if (typeof sourceValue === "boolean") return sourceValue;
-			const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty) : target);
+			const targetValue = String(isAddress(target) ? this.getComponentProperty(target, targetProperty, ownStages) : target);
 			return comparisonMap[comparison]?.(sourceValue, targetValue);
 		};
 		execResult = ({ target, targetProperty, assignment, value }) => {
@@ -20454,10 +20549,20 @@ Author: Draggable https://draggable.io
 				value
 			});
 		};
-		getComponentProperty = (address, propertyName) => {
+		/**
+		* Reads a property of a rendered component. While its page is skipped, a field reads as unanswered (#122), except
+		* to an action that skips or brings back that same page, so a page can skip itself by its own answer.
+		* @param {String} address e.g. `fields.abc`
+		* @param {String} propertyName e.g. `value`, `isChecked`
+		* @param {HTMLElement[]} [ownStages] stages whose fields are read as they are even while skipped
+		* @return {*}
+		*/
+		getComponentProperty = (address, propertyName, ownStages = []) => {
 			const { component, option } = this.getComponent(address) || {};
 			const elem = option || component;
 			if (!elem) return;
+			const skippedPage = elem.closest?.(`[${SKIPPED_ATTR}]`);
+			if (skippedPage && !ownStages.includes(skippedPage) && Object.hasOwn(SKIPPED_PAGE_READS, propertyName)) return SKIPPED_PAGE_READS[propertyName];
 			return propertyMap[propertyName] ? propertyMap[propertyName](elem) : elem[propertyName];
 		};
 		getComponent = (address) => {

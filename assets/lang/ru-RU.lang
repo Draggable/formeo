@@ -177,6 +177,7 @@ pages.label = Страницы
 pages.move = Двигаться
 pages.moved = Перенесено в {title}
 pages.moveTo = Перейти на страницу
+pages.page = Страница
 pages.remove = Удалить страницу " {title} "
 pages.removeConfirm = Удалить " {title} " и все, что в нем содержится?
 pages.rename = Переименовать страницу

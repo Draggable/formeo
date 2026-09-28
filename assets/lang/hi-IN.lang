@@ -177,6 +177,7 @@ pages.label = पृष्ठों
 pages.move = कदम
 pages.moved = {title} पर स्थानांतरित किया गया
 pages.moveTo = अगले पृष्ठ पर जाएँ
+pages.page = पृष्ठ
 pages.remove = पृष्ठ " {title} " हटाएं
 pages.removeConfirm = क्या आप " {title} " और उस पर मौजूद सब कुछ हटा सकते हैं?
 pages.rename = पृष्ठ का नाम बदलें

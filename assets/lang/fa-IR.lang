@@ -177,6 +177,7 @@ pages.label = صفحات
 pages.move = حرکت
 pages.moved = به {title} منتقل شد
 pages.moveTo = انتقال به صفحه
+pages.page = صفحه
 pages.remove = حذف صفحه " {title} "
 pages.removeConfirm = " {title} " و هر چیزی که روی آن است را حذف کنید؟
 pages.rename = تغییر نام صفحه

@@ -177,6 +177,7 @@ pages.label = Pagine
 pages.move = Mossa
 pages.moved = Spostato in {title}
 pages.moveTo = Vai alla pagina
+pages.page = Pagina
 pages.remove = Rimuovi la pagina " {title} "
 pages.removeConfirm = Rimuovere " {title} " e tutto ciò che contiene?
 pages.rename = Rinomina pagina

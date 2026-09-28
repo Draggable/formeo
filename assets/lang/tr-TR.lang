@@ -177,6 +177,7 @@ pages.label = Sayfalar
 pages.move = Taşınmak
 pages.moved = {title} adresine taşındı.
 pages.moveTo = Sayfaya git
+pages.page = Sayfa
 pages.remove = Sayfayı kaldır " {title} "
 pages.removeConfirm = " {title} " ve üzerindeki her şeyi kaldırmak mı?
 pages.rename = Sayfayı yeniden adlandır

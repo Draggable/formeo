@@ -177,6 +177,7 @@ pages.label = Sivut
 pages.move = Liikkua
 pages.moved = Siirretty kansioon {title}
 pages.moveTo = Siirry sivulle
+pages.page = Sivu
 pages.remove = Poista sivu " {title} "
 pages.removeConfirm = Poistetaanko " {title} " ja kaikki siinä oleva?
 pages.rename = Nimeä sivu uudelleen
