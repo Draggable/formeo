@@ -553,8 +553,7 @@ A skipped page:
 
 Without `pagination`, a skipped stage just disappears, with its answers.
 
-Set these conditions directly in `formData` (see [Page Tabs](../editor/pages.md) for the editor's own page support);
-the editor's Conditions panel doesn't offer a page as a target yet.
+The editor writes these conditions from a page's Conditions panel (see [Page Tabs](../editor/pages.md#skipping-pages)).
 
 ### Validation
 

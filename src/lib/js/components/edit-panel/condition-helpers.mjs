@@ -9,6 +9,32 @@ import { ITEM_INPUT_TYPE_MAP } from './helpers.mjs'
 const hiddenPropertyClassname = 'hidden-property'
 const hiddenOptionClassname = 'hidden-option'
 const optionsAddressRegex = /\.options\[\d+\]$/
+const stageAddressRegex = /^stages\./
+const VISIBILITY_VALUES = new Set(VISIBLE_OPTIONS)
+
+/**
+ * A page (stage) target can only be shown or skipped (#122), so every other property is hidden. The selected
+ * value is left alone: loading a condition never rewrites it.
+ * @param {HTMLSelectElement} propertyField
+ */
+const toggleStagePropertyOptions = propertyField => {
+  for (const option of propertyField.querySelectorAll('option')) {
+    option.classList.toggle(hiddenOptionClassname, !VISIBILITY_VALUES.has(option.value))
+  }
+}
+
+/**
+ * When the author picks a page as a then-target, a property a page can't take (e.g. the default "value") becomes
+ * "isNotVisible", so the new condition skips that page (#122)
+ * @param {Map<String, HTMLElement>} fields a condition row's inputs
+ */
+export const adoptStageTargetProperty = fields => {
+  const target = fields.get('target')
+  const targetProperty = fields.get('targetProperty')
+  if (targetProperty && stageAddressRegex.test(target?.value ?? '') && !VISIBILITY_VALUES.has(targetProperty.value)) {
+    targetProperty.value = 'isNotVisible'
+  }
+}
 
 const optionDataMap = {
   'if-sourceProperty': objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
@@ -119,9 +145,12 @@ const fieldVisibilityMap = {
   targetProperty: fields => {
     const target = fields.get('target')
     const targetProperty = fields.get('targetProperty')
-    const targetIsCheckable = !!target.value.match(optionsAddressRegex)
 
-    toggleCheckablePropertyOptions(targetIsCheckable, targetProperty)
+    if (stageAddressRegex.test(target.value)) {
+      toggleStagePropertyOptions(targetProperty)
+    } else {
+      toggleCheckablePropertyOptions(!!target.value.match(optionsAddressRegex), targetProperty)
+    }
 
     return !isInternalAddress(target.value)
   },

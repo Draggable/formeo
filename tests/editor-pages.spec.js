@@ -335,6 +335,58 @@ test.describe('Editor page tabs (#122)', () => {
     expect(titleBox.x).toBeGreaterThanOrEqual(editBox.x + editBox.width)
   })
 
+  test('a page condition built in the editor skips that page in the rendered wizard', async ({ page }) => {
+    const editor = await mountEditor(page)
+    const stage = editor.locator('[id="p-s1"]')
+    await stage.locator('> .stage-actions').hover()
+    await stage.locator('> .stage-actions .edit-toggle').click()
+    const stageEdit = stage.locator('.stage-edit')
+
+    // IF Name == "skip"
+    const source = stageEdit.locator('.condition-source .f-autocomplete-display-field').first()
+    await source.click()
+    await source.fill('Name')
+    await stage.locator('.f-autocomplete-list-item[data-label="Name"]').last().click()
+    await stageEdit.locator('.condition-sourceProperty').first().selectOption('value')
+    await stageEdit.locator('.condition-comparison').first().selectOption('==')
+    const value = stageEdit.locator('.if-conditions-wrap .condition-target .f-autocomplete-display-field').first()
+    await value.fill('skip')
+
+    // THEN the "Account" page: listed by its title as a Page, and only visibility is offered
+    const target = stageEdit.locator('.then-conditions-wrap .condition-target .f-autocomplete-display-field').first()
+    await target.click()
+    await target.fill('Account')
+    const pageItem = stage.locator('.f-autocomplete-list-item[data-label="Account"]').last()
+    await expect(pageItem.locator('.component-type')).toHaveText(/Page/)
+    await pageItem.click()
+    await expect(target).toHaveValue('Account')
+    const targetProperty = stageEdit.locator('.then-conditions-wrap .condition-targetProperty').first()
+    await expect(targetProperty).toHaveValue('isNotVisible')
+    await expect(targetProperty.locator('option[value="value"]')).toHaveClass(/hidden-option/)
+
+    await expect
+      .poll(async () => (await formDataOf(page)).stages['p-s1'].conditions[0])
+      .toMatchObject({
+        if: [{ source: 'fields.p-f1', sourceProperty: 'value', comparison: '==', target: 'skip' }],
+        then: [{ target: 'stages.p-s2', targetProperty: 'isNotVisible' }],
+      })
+
+    const formData = await formDataOf(page)
+    await page.evaluate(data => {
+      const container = Object.assign(document.createElement('div'), { id: 'skip-render' })
+      document.body.appendChild(container)
+      new window.FormeoRenderer({ renderContainer: container, pagination: 'wizard' }).render(data)
+    }, formData)
+    const rendered = page.locator('#skip-render')
+    await rendered.locator('input[name="name"]').fill('skip')
+    await expect(rendered.getByRole('list', { name: 'Progress' }).getByRole('button')).toHaveText([
+      'About you',
+      'Page 3',
+    ])
+    await rendered.getByRole('button', { name: 'Next' }).click()
+    await expect(rendered.locator('.formeo-pages-status')).toHaveText('Page 3 (2 of 2)')
+  })
+
   test('an empty page is removed at once', async ({ page }) => {
     const editor = await mountEditor(page)
     await editor.getByRole('tab', { name: 'Page 3' }).click()
