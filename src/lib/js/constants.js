@@ -168,6 +168,11 @@ export const EVENT_FORMEO_ADDED_STAGE = 'formeoAddedStage'
 export const EVENT_FORMEO_REMOVED_STAGE = 'formeoRemovedStage'
 // the editor's page tabs switched pages (#122); formData is unchanged
 export const EVENT_FORMEO_PAGE_CHANGED = 'formeoPageChanged'
+// cancelable, dispatched before a user adds, removes, clones or saves (#281)
+export const EVENT_FORMEO_BEFORE_ADD = 'formeoBeforeAdd'
+export const EVENT_FORMEO_BEFORE_REMOVE = 'formeoBeforeRemove'
+export const EVENT_FORMEO_BEFORE_CLONE = 'formeoBeforeClone'
+export const EVENT_FORMEO_BEFORE_SAVE = 'formeoBeforeSave'
 export const COMPARISON_OPERATORS = {
   equals: '==',
   notEquals: '!=',

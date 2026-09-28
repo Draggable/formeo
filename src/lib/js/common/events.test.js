@@ -933,4 +933,177 @@ describe('Events System', () => {
       })
     })
   })
+
+  describe('Events#before (#281)', () => {
+    const listeners = []
+    const listen = (type, handler) => {
+      document.addEventListener(type, handler)
+      listeners.push([type, handler])
+    }
+    afterEach(() => {
+      for (const [type, handler] of listeners.splice(0)) {
+        document.removeEventListener(type, handler)
+      }
+      mock.restoreAll()
+    })
+    const make = callbacks => new EventsClass().init(callbacks)
+    const deferred = () => {
+      let resolve
+      let reject
+      const promise = new Promise((res, rej) => {
+        resolve = res
+        reject = rej
+      })
+      return { promise, resolve, reject }
+    }
+
+    it('proceeds synchronously when nothing vetoes', () => {
+      const proceed = mock.fn()
+      assert.equal(make({}).before('remove', { componentType: 'field' }, proceed), true)
+      assert.equal(proceed.mock.callCount(), 1)
+    })
+
+    it('calls onBeforeRemove with { timeStamp, type, detail }', () => {
+      const onBeforeRemove = mock.fn()
+      const detail = { componentType: 'row', componentId: 'r-1' }
+      make({ onBeforeRemove }).before('remove', detail, () => {})
+      const [evt] = onBeforeRemove.mock.calls[0].arguments
+      assert.equal(evt.type, 'formeoBeforeRemove')
+      assert.equal(evt.detail, detail)
+      assert.equal(typeof evt.timeStamp, 'number')
+      assert.equal(typeof evt.preventDefault, 'function')
+    })
+
+    it('dispatches a cancelable, bubbling formeoBefore* DOM event on src', () => {
+      const src = document.createElement('div')
+      document.body.appendChild(src)
+      const seen = []
+      listen('formeoBeforeClone', evt => seen.push(evt))
+      make({}).before('clone', { componentId: 'f-1' }, () => {}, { src })
+      src.remove()
+      assert.equal(seen.length, 1)
+      assert.equal(seen[0].target, src)
+      assert.equal(seen[0].cancelable, true)
+      assert.equal(seen[0].detail.componentId, 'f-1')
+    })
+
+    it('a DOM listener can veto; the callback is then skipped', () => {
+      listen('formeoBeforeAdd', evt => evt.preventDefault())
+      const onBeforeAdd = mock.fn()
+      const proceed = mock.fn()
+      assert.equal(make({ onBeforeAdd }).before('add', {}, proceed), false)
+      assert.equal(onBeforeAdd.mock.callCount(), 0)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('the callback can veto with preventDefault()', () => {
+      const proceed = mock.fn()
+      make({ onBeforeSave: evt => evt.preventDefault() }).before('save', {}, proceed)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('the callback can veto by returning false', () => {
+      const proceed = mock.fn()
+      make({ onBeforeRemove: () => false }).before('remove', {}, proceed)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('waits for a returned Promise, then proceeds', async () => {
+      const hook = deferred()
+      const proceed = mock.fn()
+      const result = make({ onBeforeAdd: () => hook.promise }).before('add', {}, proceed)
+      assert.ok(result instanceof Promise)
+      assert.equal(proceed.mock.callCount(), 0)
+      hook.resolve()
+      assert.equal(await result, true)
+      assert.equal(proceed.mock.callCount(), 1)
+    })
+
+    it('cancels when the Promise resolves false', async () => {
+      const proceed = mock.fn()
+      assert.equal(await make({ onBeforeAdd: async () => false }).before('add', {}, proceed), false)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('cancels when preventDefault() is called before the Promise settles', async () => {
+      const proceed = mock.fn()
+      const onBeforeAdd = evt => Promise.resolve().then(() => evt.preventDefault())
+      assert.equal(await make({ onBeforeAdd }).before('add', {}, proceed), false)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('cancels and logs when the Promise rejects', async () => {
+      const error = mock.method(console, 'error', () => {})
+      const proceed = mock.fn()
+      const onBeforeRemove = () => Promise.reject(new Error('offline'))
+      assert.equal(await make({ onBeforeRemove }).before('remove', {}, proceed), false)
+      assert.equal(proceed.mock.callCount(), 0)
+      assert.equal(error.mock.callCount(), 1)
+    })
+
+    it('cancels and logs when the callback throws', () => {
+      const error = mock.method(console, 'error', () => {})
+      const proceed = mock.fn()
+      const onBeforeClone = () => {
+        throw new Error('boom')
+      }
+      assert.equal(make({ onBeforeClone }).before('clone', {}, proceed), false)
+      assert.equal(proceed.mock.callCount(), 0)
+      assert.equal(error.mock.callCount(), 1)
+    })
+
+    it('never proceeds if the editor is destroyed while waiting', async () => {
+      const hook = deferred()
+      const proceed = mock.fn()
+      const events = make({ onBeforeAdd: () => hook.promise })
+      const result = events.before('add', {}, proceed)
+      events.destroy()
+      hook.resolve(true)
+      assert.equal(await result, false)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('does nothing at all once destroyed', () => {
+      const onBeforeAdd = mock.fn()
+      const proceed = mock.fn()
+      const events = make({ onBeforeAdd })
+      events.destroy()
+      assert.equal(events.before('add', {}, proceed), false)
+      assert.equal(onBeforeAdd.mock.callCount(), 0)
+      assert.equal(proceed.mock.callCount(), 0)
+    })
+
+    it('ignores a request with the same guard key while one is waiting', async () => {
+      const hook = deferred()
+      const onBeforeRemove = mock.fn(() => hook.promise)
+      const events = make({ onBeforeRemove })
+      const first = events.before('remove', {}, () => {}, { guardKey: 'remove:f-1' })
+      assert.equal(
+        events.before('remove', {}, () => {}, { guardKey: 'remove:f-1' }),
+        false
+      )
+      assert.equal(onBeforeRemove.mock.callCount(), 1)
+      hook.resolve()
+      await first
+      events.before('remove', {}, () => {}, { guardKey: 'remove:f-1' })
+      assert.equal(onBeforeRemove.mock.callCount(), 2)
+    })
+
+    it('releases the guard key after a rejection too', async () => {
+      mock.method(console, 'error', () => {})
+      const onBeforeSave = mock.fn(() => Promise.reject(new Error('no')))
+      const events = make({ onBeforeSave })
+      await events.before('save', {}, () => {}, { guardKey: 'save' })
+      await events.before('save', {}, () => {}, { guardKey: 'save' })
+      assert.equal(onBeforeSave.mock.callCount(), 2)
+    })
+
+    it('runs the callback even when the DOM event cannot reach document', () => {
+      const onBeforeClone = mock.fn()
+      const proceed = mock.fn()
+      make({ bubbles: false, onBeforeClone }).before('clone', {}, proceed, { src: document.createElement('div') })
+      assert.equal(onBeforeClone.mock.callCount(), 1)
+      assert.equal(proceed.mock.callCount(), 1)
+    })
+  })
 })
