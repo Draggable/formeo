@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.12.0
+Version: 5.13.0
 Author: Draggable https://draggable.io
 */
 
@@ -6297,19 +6297,29 @@ var SmartTooltip = _SmartTooltip;
 if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 //#endregion
 //#region package.json
-var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
+var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.12.0";
+	version$2 = "5.13.0";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
 	unpkg = "dist/formeo.umd.js";
+	types = "./dist/formeo.d.ts";
 	exports$1 = {
 		".": {
-			"import": "./dist/formeo.es.js",
-			"require": "./dist/formeo.cjs",
-			"default": "./dist/formeo.umd.js"
+			"import": {
+				"types": "./dist/formeo.d.ts",
+				"default": "./dist/formeo.es.js"
+			},
+			"require": {
+				"types": "./dist/formeo.d.cts",
+				"default": "./dist/formeo.cjs"
+			},
+			"default": {
+				"types": "./dist/formeo.d.ts",
+				"default": "./dist/formeo.umd.js"
+			}
 		},
 		"./dist/formeo.min.css": {
 			"import": "./dist/formeo.min.css",
@@ -6370,6 +6380,7 @@ var init_package = __esmMin((() => {
 		"test:updateSnapshots": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
 		"test:ci": "npm test --coverage",
 		"test:dist": "node --test --no-warnings tools/dist.test.mjs",
+		"test:types": "tsc -p src/types/tsconfig.json",
 		"start": "npm-run-all build:icons dev",
 		"semantic-release": "semantic-release --ci --debug",
 		"copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
@@ -6381,7 +6392,8 @@ var init_package = __esmMin((() => {
 		"prepush": "npm test",
 		"prepare": "lefthook install",
 		"postmerge": "lefthook install",
-		"generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts"
+		"generate:jsonSchema": "node --experimental-strip-types --no-warnings ./tools/generate-json-schema.ts",
+		"postbuild:lib": "node tools/build-types.mjs"
 	};
 	devDependencies = {
 		"@biomejs/biome": "^2.3.3",
@@ -6401,6 +6413,7 @@ var init_package = __esmMin((() => {
 		"sass-embedded": "^1.80.1",
 		"semantic-release": "^25.0.2",
 		"svg-sprite": "^2.0.4",
+		"typescript": "^7.0.2",
 		"vite": "^8.0.13",
 		"vite-plugin-banner": "^0.8.0",
 		"vite-plugin-compression": "^0.5.1",
@@ -6458,6 +6471,7 @@ var init_package = __esmMin((() => {
 		main,
 		module: module$1,
 		unpkg,
+		types,
 		exports: exports$1,
 		files,
 		homepage,
