@@ -290,11 +290,13 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
   // checkValidity() - e.g. an onChange handler toggling a submit button - must leave the page alone.
   // The flag only covers the browser validation pass triggered by a reported action.
   let reporting = false
+  // a click or Enter keeps the flag for the rest of the task: a trusted event runs microtasks after
+  // each listener, before the validation pass it triggers, so a microtask reset would come too soon
   const markReported = () => {
     reporting = true
-    queueMicrotask(() => {
+    setTimeout(() => {
       reporting = false
-    })
+    }, 0)
   }
   const withReportedValidation = call => {
     reporting = true

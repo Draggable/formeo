@@ -524,6 +524,33 @@ describe('pagination (#122)', () => {
       assert.equal(renderer.page, 1)
     })
 
+    // a browser runs microtasks after each listener of a trusted click or keydown, before the validation
+    // pass it triggers; jsdom has no such pass, so checkValidity() stands in for it after a microtask
+    const reportedTriggers = {
+      'a submit click': form => {
+        const button = document.createElement('button')
+        form.append(button)
+        // stop jsdom's own synchronous submission
+        form.addEventListener('click', event => event.preventDefault())
+        button.click()
+      },
+      'Enter in an input': () => key(input('name'), 'Enter'),
+    }
+    for (const [trigger, run] of Object.entries(reportedTriggers)) {
+      test(`${trigger} still counts as reported after a microtask, but not in a later task`, async () => {
+        const renderer = render('tabs')
+        const form = container.querySelector('form')
+        run(form)
+        await Promise.resolve()
+        form.checkValidity()
+        assert.equal(renderer.page, 1)
+        renderer.page = 0
+        await new Promise(resolve => setTimeout(resolve, 0))
+        form.checkValidity()
+        assert.equal(renderer.page, 0)
+      })
+    }
+
     test('plain checkValidity() calls never switch pages', () => {
       const calls = []
       const renderer = render('tabs', twoPages(), { events: { onPageChange: () => calls.push(1) } })
