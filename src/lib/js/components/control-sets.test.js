@@ -372,6 +372,42 @@ describe('dropping a control set (#227)', () => {
     assert.equal(stage.children.length, 2)
   })
 
+  it("a set dropped on a row keeps that row's column widths; the row itself is unchanged", async () => {
+    const { components, controls, stage } = await setup()
+    const row = components.rows.get('row-s1')
+    row.addChild()
+    const [col1, col2] = row.children
+    col1.setWidth('25%')
+    col2.setWidth('75%')
+    const { result } = dropControl(row, controlElement(controls, 'address-stacked'), 0)
+    assert.deepEqual(
+      row.children.map(column => column.get('config.width')),
+      ['25%', '75%']
+    )
+    assert.deepEqual(
+      row.children.map(column => column.dom.style.width),
+      ['25%', '75%']
+    )
+    assert.equal(stage.children[0], row, 'row-s1 unchanged, still first')
+    assert.equal(legendOf(stage.children[1]), 'Address')
+    assert.equal(stage.children[1], result, "the row's onAdd returns the new row")
+  })
+
+  it("an empty-set drop on a row also keeps that row's column widths", async () => {
+    mock.method(console, 'warn', () => {})
+    const { components, controls } = await setup()
+    const row = components.rows.get('row-s1')
+    row.addChild()
+    const [col1, col2] = row.children
+    col1.setWidth('25%')
+    col2.setWidth('75%')
+    dropControl(row, controlElement(controls, 'empty-set'), 0)
+    assert.deepEqual(
+      row.children.map(column => column.get('config.width')),
+      ['25%', '75%']
+    )
+  })
+
   it('dropping a field control is unchanged', async () => {
     const { components, controls } = await setup()
     const column = components.columns.get('col-s1')
