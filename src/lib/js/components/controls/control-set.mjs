@@ -29,7 +29,12 @@ export const expandControlSet = (controlData, lookupControl) => {
   const { controlSet, meta } = controlData
   const warn = message => console.warn(`formeo: control set "${meta?.id}" ${message}`)
   const fields = []
-  for (const { control, id: _id, meta: memberMeta, ...member } of controlSet.fields) {
+  for (const rawMember of controlSet.fields) {
+    if (typeof rawMember !== 'object' || rawMember === null) {
+      warn('skips a member: it is not an object.')
+      continue
+    }
+    const { control, id: _id, meta: memberMeta, ...member } = rawMember
     if (!control) {
       const data = clone(member)
       if (memberMeta?.id) {

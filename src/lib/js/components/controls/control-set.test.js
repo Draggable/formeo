@@ -83,6 +83,16 @@ describe('expandControlSet (#227)', () => {
     assert.deepEqual(definition, original)
   })
 
+  it('skips and warns about a null or non-object member instead of throwing', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    const { fields } = expandControlSet(setOf([null, 'text', { control: 'text-input' }]), lookup)
+    assert.equal(fields.length, 1)
+    assert.equal(warn.mock.callCount(), 2)
+    for (const call of warn.mock.calls) {
+      assert.match(call.arguments[0], /^formeo: control set "test-set" skips a member: it is not an object\.$/)
+    }
+  })
+
   it('skips and warns about a member whose control is unknown', () => {
     const warn = mock.method(console, 'warn', () => {})
     const { fields } = expandControlSet(setOf([{ control: 'nope' }, { control: 'text-input' }]), lookup)
