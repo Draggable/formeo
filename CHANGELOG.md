@@ -1,3 +1,10 @@
+## [5.13.2](https://github.com/Draggable/formeo/compare/v5.13.1...v5.13.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* **demo:** call editor.load(), not editor.render(), in the Angular service snippet ([4b8ff8f](https://github.com/Draggable/formeo/commit/4b8ff8fdc50ed3e45a48aaeb79884611fe06f00e)), closes [#184](https://github.com/Draggable/formeo/issues/184)
+
 ## [5.13.1](https://github.com/Draggable/formeo/compare/v5.13.0...v5.13.1) (2026-09-28)
 
 
