@@ -1,13 +1,13 @@
 // copyDir.mjs
 import { promises as fs } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const projectRoot = resolve(__dirname, '..')
 
-const targets = [
+export const targets = [
   {
     src: resolve(projectRoot, 'src/lib/icons/formeo-sprite.svg'),
     dest: resolve(projectRoot, 'dist/demo/assets/img/'),
@@ -17,7 +17,8 @@ const targets = [
     dest: resolve(projectRoot, 'dist/'),
   },
   {
-    src: resolve(projectRoot, 'node_modules', '@draggable/formeo-languages/dist/lang/*'),
+    // Any depth: since 3.5.1 the package nests its files in dist/lang/lang/. They are copied flat by basename.
+    src: resolve(projectRoot, 'node_modules', '@draggable/formeo-languages/dist/lang/**/*'),
     dest: resolve(projectRoot, 'dist/demo/assets/lang'),
   },
   {
@@ -37,22 +38,29 @@ const targets = [
 
 async function copyFile(src, dest, rename = null) {
   for await (const file of fs.glob(src)) {
+    if ((await fs.stat(file)).isDirectory()) continue
     const destPath = rename ? join(dest, rename) : join(dest, basename(file))
     await fs.mkdir(dirname(destPath), { recursive: true })
     await fs.copyFile(file, destPath)
   }
 }
 
-// Entry point
-async function main() {
+/** Copy every target, carrying on past errors; returns the number of targets that failed. */
+export async function copyTargets(targets) {
+  let failures = 0
   for (const target of targets) {
     try {
       await copyFile(target.src, target.dest, target.rename)
       console.log(`Copied ${basename(target.src)} to ${target.dest}`)
     } catch (error) {
+      failures++
       console.error(`Error copying file: ${error.message}`)
     }
   }
+  return failures
 }
 
-main()
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  // A failed copy fails the build, so a broken demo can't be deployed silently.
+  if (await copyTargets(targets)) process.exitCode = 1
+}
