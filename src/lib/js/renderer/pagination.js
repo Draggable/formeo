@@ -33,6 +33,37 @@ const create = (tag, className, text = '') => {
 }
 
 /**
+ * Creates the Submit button, a real one so Enter on the last page (or a form with no navigation at all)
+ * submits natively even with no submit field in the form
+ * @param {Object} labels
+ * @return {HTMLButtonElement}
+ */
+const createSubmitButton = labels => {
+  const submitButton = create('button', 'formeo-pages-submit', labels.submit)
+  submitButton.type = 'submit'
+  return submitButton
+}
+
+/**
+ * Wraps a Submit button in the actions bar appended after the pages: used by tabs, and by a form with
+ * fewer than 2 pages (a wizard's own Submit sits in its Previous/Next bar instead, see `paginate`)
+ * @param {HTMLButtonElement} submitButton
+ * @return {HTMLDivElement}
+ */
+const wrapInSubmitActions = submitButton => {
+  const actions = create('div', 'formeo-pages-actions')
+  actions.append(submitButton)
+  return actions
+}
+
+/**
+ * Creates the Submit button already wrapped in its actions bar, for a form with fewer than 2 pages
+ * @param {Object} labels
+ * @return {HTMLDivElement}
+ */
+const createSubmitActions = labels => wrapInSubmitActions(createSubmitButton(labels))
+
+/**
  * Fills `{name}` placeholders from `values`, leaving unknown ones as typed. A replacer function rather than a
  * replacement string, so `$&` or `$$` in a page title stays literal.
  * @param {String} text
@@ -74,6 +105,10 @@ const focusFirst = page => {
 export const paginate = (form, { type, progress, submit, heading, labels }, stages, onChange, startStageId) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
   if (pages.length < 2) {
+    // no navigation to add, but `submit: true` still promises a way to submit the form
+    if (submit) {
+      form.append(createSubmitActions(labels))
+    }
     return null
   }
 
@@ -233,11 +268,9 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
 
   const title = i => stages[i]?.config?.title || labels.page.replaceAll('{n}', String(i + 1))
 
-  // a real submit button, so Enter on the last page submits natively even with no submit field in the form
   let submitButton
   if (submit) {
-    submitButton = create('button', 'formeo-pages-submit', labels.submit)
-    submitButton.type = 'submit'
+    submitButton = createSubmitButton(labels)
   }
 
   if (heading) {
@@ -288,9 +321,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
     form.prepend(tablist)
     if (submitButton) {
       // below every page, and always shown: any tab may be the last one a user fills in
-      const actions = create('div', 'formeo-pages-actions')
-      actions.append(submitButton)
-      form.append(actions)
+      form.append(wrapInSubmitActions(submitButton))
     }
   } else {
     if (progress) {

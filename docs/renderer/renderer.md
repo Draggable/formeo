@@ -425,7 +425,7 @@ Give the upload field a `name` attribute in the editor to control the key your s
 
 ## Multi-page forms
 
-Each **stage** in `formData` is one page. Pass the `pagination` option to show them one at a time as tabs or a wizard, instead of all at once in a single `<form>`. Pagination only applies with **2 or more stages** — a single-stage form always renders as before, with no navigation added.
+Each **stage** in `formData` is one page. Pass the `pagination` option to show them one at a time as tabs or a wizard, instead of all at once in a single `<form>`. Navigation (tabs, the wizard's Previous/Next bar and step list, and page headings) only applies with **2 or more stages** — a single-stage form always renders as before, with no navigation added, except that a Submit button is still appended below it when `submit: true` (see [Options](#options) below).
 
 ```javascript
 const renderer = new FormeoRenderer({
@@ -446,8 +446,8 @@ const renderer = new FormeoRenderer({
 |-----|---------|---------|
 | `type` | — (required) | `'tabs'` or `'wizard'` |
 | `progress` | `true` | Wizard only: show the clickable step list above the pages. `false` leaves it out. |
-| `submit` | `false` | Add a Submit button: in a wizard it replaces Next on the last page, in tabs it sits below the pages. See [Wizard](#wizard) and [Tabs](#tabs). |
-| `heading` | `false` | Show each page's title as a heading inside the page: `true` for `<h2>`, or a level from `2` to `6`. See [Page headings](#page-headings). |
+| `submit` | `false` | Add a Submit button: in a wizard it replaces Next on the last page, in tabs it sits below the pages. A single-page form (no navigation) still gets the button, appended below the page. See [Wizard](#wizard) and [Tabs](#tabs). |
+| `heading` | `false` | Show each page's title as a heading inside the page, once the form has 2 or more pages: `true` for `<h2>`, or a level from `2` to `6`. See [Page headings](#page-headings). |
 | `labels.previous` | `'Previous'` | Wizard's Previous button text |
 | `labels.next` | `'Next'` | Wizard's Next button text |
 | `labels.submit` | `'Submit'` | The Submit button's text (with `submit: true`) |
@@ -474,7 +474,8 @@ formData.stages['stage-1'].config = { title: 'About you' }
 With `heading`, each page starts with a heading holding its title (the same text as its tab or step, including the
 `labels.page` fallback): `<h2 class="formeo-pages-heading">` for `heading: true`, or pick the level that fits your
 page's outline with `heading: 2` to `heading: 6`. In a wizard, each page is a `role="group"` named by its heading; tab
-panels stay named by their tab.
+panels stay named by their tab. Headings only make sense as navigation aids, so a single-stage form never gets one,
+even with `heading: true`.
 
 ```javascript
 new FormeoRenderer({ renderContainer, pagination: { type: 'wizard', heading: 3 } })
@@ -491,7 +492,8 @@ Clicking a tab shows its page immediately; there is no validation on switching. 
 Each page gets an `id` unique to its form (the tab's `aria-controls` points at it), because the stage's own id is also used by the editor and by any other form rendered from the same `formData`. The stage id stays on the page as `data-stage-id`.
 
 With `submit: true`, a Submit button is added below the pages, in `<div class="formeo-pages-actions">`, and is shown
-on every tab. Submitting still shows the page of the first invalid control (see [Validation](#validation)).
+on every tab. Submitting still shows the page of the first invalid control (see [Validation](#validation)). A
+single-page form with `submit: true` gets this same button and wrapper, with no tablist above it.
 
 ### Wizard
 
@@ -503,6 +505,8 @@ A wizard adds:
 - With `submit: true`, a Submit button (`<button type="submit" class="formeo-pages-submit">`, text from
   `labels.submit`) takes Next's place on the last page. Without it, end the wizard with a submit field of your own on
   its last page: Next disappears there, and without a submit button some browsers won't submit on <kbd>Enter</kbd>.
+  A single-page wizard with `submit: true` gets this button below the page too, in its own
+  `<div class="formeo-pages-actions">`, since there's no Previous/Next bar to hold it.
 
 ### Validation
 
@@ -527,6 +531,8 @@ pagination: {
     previous: 'Zurück',
     next: 'Weiter',
     page: 'Seite {n}',
+    submit: 'Absenden',
+    tablist: 'Seiten',
     steps: 'Fortschritt',
     navigation: 'Seitennavigation',
     status: '{title} ({n} von {count})',

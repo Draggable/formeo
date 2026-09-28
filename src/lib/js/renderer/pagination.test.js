@@ -606,6 +606,51 @@ describe('pagination (#122)', () => {
       submitButton().click()
       assert.equal(renderer.page, 0)
     })
+
+    describe('on a one-page form', () => {
+      const onePage = () => {
+        const data = twoPages()
+        delete data.stages['p-2']
+        return data
+      }
+
+      for (const type of ['wizard', 'tabs']) {
+        test(`with submit: true, ${type} still gets the Submit button below the page, and no navigation`, () => {
+          const renderer = render({ type, submit: true }, onePage())
+          const actions = container.querySelector('.formeo-pages-actions')
+          assert.notEqual(actions, null)
+          assert.equal(actions.parentElement, container.querySelector('form'))
+          assert.equal(actions.previousElementSibling, pages().at(-1))
+          const submit = submitButton()
+          assert.equal(submit.parentElement, actions)
+          assert.equal(submit.hidden, false)
+          assert.equal(submit.type, 'submit')
+          assert.equal(submit.textContent, 'Submit')
+          assert.equal(container.querySelectorAll('.formeo-pages-submit').length, 1)
+          assert.equal(container.querySelector('.formeo-pages-nav'), null)
+          assert.equal(container.querySelector('.formeo-pages-steps'), null)
+          assert.equal(renderer.pageCount, 1)
+          assert.equal(renderer.page, 0)
+        })
+      }
+
+      test('with submit: true and heading: true, no heading is added: headings need 2+ pages', () => {
+        render({ type: 'wizard', submit: true, heading: true }, onePage())
+        assert.equal(container.querySelector('.formeo-pages-heading'), null)
+      })
+
+      test('without submit, a one-page form gets no actions bar either', () => {
+        render({ type: 'wizard' }, onePage())
+        assert.equal(container.querySelector('.formeo-pages-actions'), null)
+        assert.equal(submitButton(), null)
+      })
+
+      test('re-rendering does not duplicate the Submit button', () => {
+        const renderer = render({ type: 'wizard', submit: true }, onePage())
+        renderer.render(onePage())
+        assert.equal(container.querySelectorAll('.formeo-pages-submit').length, 1)
+      })
+    })
   })
 
   describe('page headings', () => {
