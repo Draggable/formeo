@@ -1351,6 +1351,27 @@ describe('pagination (#122)', () => {
           assert.equal(renderer.page, 1)
         })
       })
+
+      describe('without pagination, a self-skip keeps focus', () => {
+        test('focus on the skipped page moves to the next page in play', () => {
+          // page 2 skips itself when its own field says so, same as the paginated case above
+          const data = skipWhen(threePages(), 'skip', 'p-2', { on: 'p-2', source: 'b' })
+          render(undefined, data)
+          input('b').focus()
+          typeInto(input('b'), 'skip')
+          assert.equal(dom.window.document.activeElement, input('c'))
+        })
+
+        test('focus elsewhere is left alone', () => {
+          const data = skipWhen(threePages(), 'skip', 'p-2', { on: 'p-2', source: 'b' })
+          render(undefined, data)
+          const outside = document.createElement('button')
+          document.body.append(outside)
+          outside.focus()
+          typeInto(input('b'), 'skip')
+          assert.equal(dom.window.document.activeElement, outside)
+        })
+      })
     })
   })
 })

@@ -15,7 +15,7 @@ import {
   RENDER_PREFIX,
   targetPropertyMap,
 } from './helpers.js'
-import { paginate, SKIPPED_ATTR } from './pagination.js'
+import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
 
 // marks the controls a page skip disabled, so bringing the page back re-enables only those (#122)
 const SKIP_DISABLED_ATTR = 'data-formeo-skip-disabled'
@@ -290,6 +290,17 @@ export default class FormeoRenderer {
       }
     }
     this.pager?.refresh({ focus: hadFocus })
+    if (!this.pager && hadFocus) {
+      // no pager to refocus the next page for us: find it ourselves among the stages still in the form
+      const stages = this.stageElements()
+      const index = stages.indexOf(stage)
+      const target =
+        stages.slice(index + 1).find(elem => !elem.hasAttribute(SKIPPED_ATTR)) ??
+        stages.slice(0, index).findLast(elem => !elem.hasAttribute(SKIPPED_ATTR))
+      if (target) {
+        focusFirst(target)
+      }
+    }
   }
 
   /**

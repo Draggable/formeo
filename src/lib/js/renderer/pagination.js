@@ -81,7 +81,7 @@ const fillLabel = (text, values) =>
  * so that focus is never lost to the body
  * @param {HTMLElement} page
  */
-const focusFirst = page => {
+export const focusFirst = page => {
   const target = Array.from(page.querySelectorAll(FOCUSABLE)).find(elem => !elem.disabled && !elem.closest('[hidden]'))
   if (target) {
     target.focus()
