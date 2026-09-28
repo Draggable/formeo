@@ -212,8 +212,3 @@ with Alt+Arrow.
 These are planned for a later phase:
 
 - page conditions and skipping pages
-- a submit button only on the last page
-- a page heading
-- the renderer keeping its current page across `render()`
-- a paginated static `html`
-- i18n labels for the renderer's own navigation

@@ -667,6 +667,83 @@ describe('pagination (#122)', () => {
     })
   })
 
+  describe('keeping the page across render()', () => {
+    const threePages = () => buildPages([[field('a')], [field('b')], [field('c')]], ['One', 'Two', 'Three'])
+
+    test('render() keeps the page on show, without onPageChange or moving focus', () => {
+      const calls = []
+      const renderer = render('tabs', threePages(), { events: { onPageChange: ({ page }) => calls.push(page) } })
+      renderer.page = 2
+      calls.length = 0
+      const focused = dom.window.document.activeElement
+      renderer.render(threePages())
+      assert.equal(renderer.page, 2)
+      assert.deepEqual(hiddenPages(), [true, true, false])
+      assert.equal(tabs()[2].getAttribute('aria-selected'), 'true')
+      assert.deepEqual(calls, [])
+      assert.equal(dom.window.document.activeElement, focused)
+    })
+
+    test('the kept page follows its stage when the stages are reordered', () => {
+      const renderer = render('wizard', threePages())
+      renderer.page = 1
+      const data = threePages()
+      const { 'p-2': second, ...rest } = data.stages
+      data.stages = { ...rest, 'p-2': second }
+      renderer.render(data)
+      assert.equal(renderer.page, 2)
+      assert.equal(container.querySelector('.formeo-pages-status').textContent, 'Two (3 of 3)')
+    })
+
+    test('starts on the first page when the kept stage is gone', () => {
+      const renderer = render('wizard', threePages())
+      renderer.page = 1
+      const data = threePages()
+      delete data.stages['p-2']
+      renderer.render(data)
+      assert.equal(renderer.page, 0)
+    })
+
+    test('starts on the first page for a different form', () => {
+      const renderer = render('tabs', threePages())
+      renderer.page = 1
+      const other = threePages()
+      other.stages = Object.fromEntries(
+        Object.values(other.stages).map(stage => [`q${stage.id}`, { ...stage, id: `q${stage.id}` }])
+      )
+      renderer.render(other)
+      assert.equal(renderer.page, 0)
+    })
+
+    test('getRenderedForm() keeps the page too', () => {
+      const renderer = render('tabs', threePages())
+      renderer.page = 1
+      renderer.getRenderedForm(threePages())
+      assert.equal(renderer.page, 1)
+    })
+
+    test('destroy() forgets the page', () => {
+      const renderer = render('wizard', threePages())
+      renderer.page = 2
+      renderer.destroy()
+      renderer.render(threePages())
+      assert.equal(renderer.page, 0)
+    })
+
+    test('two renderers keep their own page', () => {
+      const second = document.createElement('div')
+      document.body.append(second)
+      const a = render('tabs', threePages())
+      const b = new FormeoRenderer({ renderContainer: second, pagination: 'tabs' })
+      b.render(threePages())
+      a.page = 2
+      a.render(threePages())
+      b.render(threePages())
+      assert.equal(a.page, 2)
+      assert.equal(b.page, 0)
+    })
+  })
+
   describe('validation across pages', () => {
     test('reportValidity() brings an invalid control on a hidden page into view', () => {
       const renderer = render('tabs')

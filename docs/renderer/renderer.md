@@ -123,7 +123,9 @@ const formData = renderer.userFormData
 
 #### `html`
 
-Returns the rendered form as an HTML string.
+Returns the rendered form as an HTML string. With [pagination](#multi-page-forms), the string holds every page as it
+is in the DOM at that moment: the navigation, and the pages not on show marked `hidden`. A static string has no page
+switching of its own.
 
 ```javascript
 const htmlString = renderer.html
@@ -184,6 +186,9 @@ renderer.userData = {
 ### `render(formData)`
 
 Renders the form data to the target container element. If a form is already rendered, it replaces the existing form.
+With [pagination](#multi-page-forms), the page on show stays on show when its stage is in the new form data (matched
+by stage id, wherever the stage now sits); otherwise the form starts on its first page. `onPageChange` doesn't fire,
+and focus doesn't move. After `destroy()`, the next render starts on the first page.
 
 **Parameters:**
 - `formData` (Object, optional): Form structure data. Defaults to the instance's current formData.
@@ -266,7 +271,7 @@ Fires on the form's native `submit` event. Formeo does not call `event.preventDe
 
 ### `onPageChange({ page, previousPage, form, renderer })`
 
-Fires with the `pagination` option (see [Multi-page forms](#multi-page-forms)) on every real page change: clicking a tab or a step, Previous/Next, Enter acting as Next, setting `renderer.page`, or a validation pass jumping to the page of the first invalid control. It does **not** fire on the initial render, or when the target page is the same as the current one (for example clicking the current tab, or setting `renderer.page` to its current value).
+Fires with the `pagination` option (see [Multi-page forms](#multi-page-forms)) on every real page change: clicking a tab or a step, Previous/Next, Enter acting as Next, setting `renderer.page`, or a validation pass jumping to the page of the first invalid control. It does **not** fire on a render (the first one, or a later one that keeps the page), or when the target page is the same as the current one (for example clicking the current tab, or setting `renderer.page` to its current value).
 
 ### Legacy: `config.action.onRender`
 
@@ -600,8 +605,7 @@ renderer.render(formData)
 ### Limitations
 
 - The editor builds pages with its `pages` option (see [Page Tabs](../editor/pages.md)); you can also define them directly in `formData`.
-- `render()` starts over on the first page and does not fire `onPageChange`.
-- The static `html` getter serializes whatever is currently rendered; it has no page switching of its own. Every stage is present in that HTML string, `hidden` or not, exactly as attached to the DOM at the time `html` is read.
+- Page conditions (skipping pages) are planned.
 
 ## Conditional Logic
 

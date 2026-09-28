@@ -290,4 +290,12 @@ test.describe('multi-page forms (#122)', () => {
     await expect(root.getByRole('heading', { level: 2, name: 'Page 2' })).toBeVisible()
     await expect(root.getByRole('heading', { name: 'About you' })).toBeHidden()
   })
+
+  test('render() keeps the page on show', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPages, 'tabs')
+    await root.getByRole('tab', { name: 'Page 2' }).click()
+    await browserPage.evaluate(data => window.__pager.render(data), twoPages)
+    await expect(root.getByRole('tab', { name: 'Page 2' })).toHaveAttribute('aria-selected', 'true')
+    await expect(root.locator('input[name="email"]')).toBeVisible()
+  })
 })

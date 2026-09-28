@@ -66,9 +66,12 @@ const focusFirst = page => {
  *   normalizePagination; `progress` only affects the wizard, adding a clickable step list above the pages
  * @param {Array<Object>} stages stage data in render order, for page titles
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
- * @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
+ * @param {String} [startStageId] the stage id of the page to start on (e.g. the one on show before a re-render);
+ *   the first page when no stage has it
+ * @return {{show: Function, index: Number, stageId: String|null, count: Number, destroy: Function}|null} null when
+ *   there is only one page
  */
-export const paginate = (form, { type, progress, submit, heading, labels }, stages, onChange) => {
+export const paginate = (form, { type, progress, submit, heading, labels }, stages, onChange, startStageId) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
   if (pages.length < 2) {
     return null
@@ -76,7 +79,9 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
 
   const count = pages.length
   const last = count - 1
-  let current = 0
+  // starting on a page is not a page change: no onChange and no focus move
+  const startIndex = stages.findIndex(stage => stage?.id === startStageId)
+  let current = startIndex > -1 && startIndex < count ? startIndex : 0
   let tabs = []
   let steps = []
   let previous
@@ -413,6 +418,9 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
     show,
     get index() {
       return current
+    },
+    get stageId() {
+      return stages[current]?.id ?? null
     },
     count,
     // the only listeners that outlive the form: everything else is on the form and goes with it
