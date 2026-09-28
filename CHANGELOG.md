@@ -1,3 +1,16 @@
+## [5.9.3](https://github.com/Draggable/formeo/compare/v5.9.2...v5.9.3) (2026-09-28)
+
+
+### Bug Fixes
+
+* **renderer:** decide each page action's own-page reads separately ([97c61b8](https://github.com/Draggable/formeo/commit/97c61b8245692c5bd823d1782f1b826a8942154f)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** ignore form collection property names ([e011a36](https://github.com/Draggable/formeo/commit/e011a362db019abc150bee6bde829f361d4fe7e2))
+* **renderer:** read a skipped page's answers as unanswered in conditions ([80c978e](https://github.com/Draggable/formeo/commit/80c978e42724ab18138fccf8803c3e2e867b9565)), closes [#122](https://github.com/Draggable/formeo/issues/122)
+* **renderer:** render rows, columns and option groups without a config ([8af6896](https://github.com/Draggable/formeo/commit/8af6896d31e98d2e894b52d8c253abd3aacbb608)), closes [#212](https://github.com/Draggable/formeo/issues/212)
+* **renderer:** rerun self-skip conditions on page unskip ([5b5dd37](https://github.com/Draggable/formeo/commit/5b5dd3765fde8df3c0017ae139e7a7cbf05c832d))
+* **renderer:** say when userData is set before render, and cover the option-wrap className ([75e94cd](https://github.com/Draggable/formeo/commit/75e94cd1eab77f0fa9a42fdf250f02dbe7fdb6be)), closes [#123](https://github.com/Draggable/formeo/issues/123) [#212](https://github.com/Draggable/formeo/issues/212)
+* **renderer:** skip unknown keys in the userData setter instead of throwing ([3f4095c](https://github.com/Draggable/formeo/commit/3f4095cc8ef0ca790a3dfc0910e5b86462d019c2)), closes [#123](https://github.com/Draggable/formeo/issues/123) [#229](https://github.com/Draggable/formeo/issues/229)
+
 ## [5.9.2](https://github.com/Draggable/formeo/compare/v5.9.1...v5.9.2) (2026-09-28)
 
 
