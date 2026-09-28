@@ -11,6 +11,7 @@ Control options can be used to disable, extend and modify the Formeo's control p
 | [groups](#groups)             | Array   | define custom [control groups](../../controls/#control-groups) beyond the default 3 | [see below](#groups)                         | `[]`                           |
 | [groupOrder](#grouporder)     | Array   | set order of [control groups](../../controls/#control-groups)                       | `['html', 'layout']`                         | `['common', 'html', 'layout']` |
 | [ghostPreview](#ghostpreview) | Boolean | use a live preview of the control when dragging                                     | `true`                                       | `false`                        |
+| [panels](#panels)             | Object  | how the control groups are shown: `'slider'` (arrows), `'tabbed'` or `'auto'`       | `{ displayType: 'tabbed' }`                  | `{ displayType: 'slider' }`    |
 
 ## sortable
 
@@ -152,6 +153,32 @@ const formeoOptions = {
 
 const formeo = new FormeoEditor(formeoOptions)
 ```
+
+## panels
+
+Control how the control groups (layout, common, html, ...) are shown in the control panel.
+
+```javascript
+const controlOptions = {
+  panels: { displayType: 'tabbed' },
+}
+
+const formeoOptions = {
+  controls: controlOptions,
+}
+
+const formeo = new FormeoEditor(formeoOptions)
+```
+
+`displayType` accepts:
+
+- `'slider'` (default) - one group is shown at a time, with next/previous arrows to page through the rest.
+- `'tabbed'` - every group's label is shown as a tab, and clicking a tab switches to it.
+- `'auto'` - switches between `'tabbed'` and `'slider'` based on the control panel's width, using a `390px` breakpoint (`'tabbed'` above it, `'slider'` at or below it). It's re-evaluated whenever the panel is resized.
+
+Any other value is treated as `'slider'`.
+
+This only affects the control panel's groups. Field edit panels (the per-field property editor) always use `'auto'` and aren't configurable.
 
 ## ghostPreview
 
