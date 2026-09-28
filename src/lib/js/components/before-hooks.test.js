@@ -290,6 +290,26 @@ describe('onBeforeAdd (#281)', () => {
     assert.equal(result, column.children[0], 'onAdd still returns the new field')
   })
 
+  it('a hook that mutates detail.data.config does not corrupt the control template for the next add (#281)', async () => {
+    let calls = 0
+    const { column, textControl } = await withControls({
+      callbacks: {
+        onBeforeAdd: ({ detail }) => {
+          calls++
+          if (calls === 1) {
+            detail.data.config.label = 'MUTATED'
+          }
+          return true
+        },
+      },
+    })
+    dropControl(column, textControl, 0)
+    dropControl(column, textControl, 1)
+    const [first, second] = column.children
+    assert.equal(first.get('config.label'), 'MUTATED')
+    assert.notEqual(second.get('config.label'), 'MUTATED')
+  })
+
   it('a drop whose column was removed while waiting adds nothing', async () => {
     let resolve
     const { components, row, column, textControl } = await withControls({
