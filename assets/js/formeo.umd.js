@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.9.3
+Version: 5.10.0
 Author: Draggable https://draggable.io
 */
 
@@ -6304,7 +6304,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.9.3";
+		version$2 = "5.10.0";
 		type = "module";
 		main = "dist/formeo.cjs";
 		module$1 = "dist/formeo.es.js";
@@ -11243,7 +11243,7 @@ Author: Draggable https://draggable.io
 	var attributeProblem = (rawValue, evt) => {
 		const attr = rawValue.trim();
 		if (!attr) return rawValue ? s.get("attributeNameRequired") || "Enter an attribute name" : "";
-		if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`)) return s.get("attributeNotPermitted", { attribute: attr }) || `Attribute "${attr}" is not permitted`;
+		if (!ATTRIBUTE_NAME.test(attr) || evt.isDisabled(`attrs.${attr}`) || evt.isLocked?.(`attrs.${attr}`)) return s.get("attributeNotPermitted", { attribute: attr }) || `Attribute "${attr}" is not permitted`;
 		return "";
 	};
 	/**
@@ -14892,6 +14892,86 @@ Author: Draggable https://draggable.io
 		};
 	}));
 	//#endregion
+	//#region src/lib/js/components/fields/duplicate-names.mjs
+	var fieldNameKey, duplicateNameIds;
+	var init_duplicate_names = __esmMin((() => {
+		fieldNameKey = (name) => String(name ?? "").replace(/\[\]$/, "");
+		duplicateNameIds = (entries) => {
+			const idsByName = /* @__PURE__ */ new Map();
+			for (const [id, name] of entries) {
+				const key = fieldNameKey(name);
+				if (key) idsByName.set(key, [...idsByName.get(key) ?? [], id]);
+			}
+			return new Set([...idsByName.values()].filter((ids) => ids.length > 1).flat());
+		};
+	}));
+	//#endregion
+	//#region src/lib/js/components/edit-panel/duplicate-name-hint.js
+	var HINT_CLASSNAME, pending, watchedFields, hintText, formFields, renderHint, refreshDuplicateNameHints, scheduleDuplicateNameHints, nameChanged, watchFieldName;
+	var init_duplicate_name_hint = __esmMin((() => {
+		init_i18n_es_min();
+		init_dom();
+		init_duplicate_names();
+		HINT_CLASSNAME = "duplicate-name-hint";
+		pending = /* @__PURE__ */ new Set();
+		watchedFields = /* @__PURE__ */ new WeakSet();
+		hintText = (name) => s.get("duplicateFieldName", { name }) || `Another field is also named "${name}", so their answers will share one key.`;
+		formFields = (components) => {
+			if (!components?.data?.stages) return [];
+			return Object.entries(components.flatList()).filter(([key]) => key.startsWith("fields.")).map(([, field]) => field);
+		};
+		renderHint = (field, row, name) => {
+			let hint = row.querySelector(`.${HINT_CLASSNAME}`);
+			if (!hint) {
+				hint = dom.create({
+					...dom.helpText(""),
+					className: [
+						"f-help-text",
+						"text-warning",
+						HINT_CLASSNAME
+					],
+					attrs: {
+						id: `${field.id}-${HINT_CLASSNAME}`,
+						role: "status"
+					}
+				});
+				row.appendChild(hint);
+			}
+			const text = name ? hintText(name) : "";
+			if (hint.textContent !== text) hint.textContent = text;
+			const input = row.querySelector(".prop-inputs input, .prop-inputs select");
+			if (name) input?.setAttribute("aria-describedby", hint.id);
+			else input?.removeAttribute("aria-describedby");
+		};
+		refreshDuplicateNameHints = (components) => {
+			const fields = formFields(components);
+			const duplicates = duplicateNameIds(fields.map((field) => [field.id, field.get("attrs.name")]));
+			for (const field of fields) {
+				watchFieldName(field);
+				const row = field.dom?.querySelector(".field-attrs-name");
+				if (row) renderHint(field, row, duplicates.has(field.id) ? fieldNameKey(field.get("attrs.name")) : "");
+			}
+		};
+		scheduleDuplicateNameHints = (components) => {
+			if (!components || pending.has(components)) return;
+			pending.add(components);
+			queueMicrotask(() => {
+				pending.delete(components);
+				refreshDuplicateNameHints(components);
+			});
+		};
+		nameChanged = ({ path }) => {
+			const changed = Array.isArray(path) ? path.join(".") : String(path);
+			return changed === "attrs" || changed === "attrs.name";
+		};
+		watchFieldName = (field) => {
+			if (watchedFields.has(field)) return;
+			watchedFields.add(field);
+			field.addEventListener("onUpdate", (evt) => nameChanged(evt) && scheduleDuplicateNameHints(field.components));
+			field.addEventListener("onRemove", () => scheduleDuplicateNameHints(field.components));
+		};
+	}));
+	//#endregion
 	//#region src/lib/js/components/edit-panel/edit-panel-item.mjs
 	var panelDataKeyMap, toggleOptionMultiSelect, itemInputActions, EditPanelItem;
 	var init_edit_panel_item = __esmMin((() => {
@@ -14904,6 +14984,7 @@ Author: Draggable https://draggable.io
 		init_string();
 		init_constants();
 		init_condition();
+		init_duplicate_name_hint();
 		init_helpers();
 		panelDataKeyMap = new Map([["attrs", ({ itemKey }) => itemKey], ["options", ({ itemKey, key }) => `${itemKey}.${key}`]]);
 		toggleOptionMultiSelect = (isMultiple, field) => {
@@ -14951,6 +15032,10 @@ Author: Draggable https://draggable.io
 						children: [this.itemInputs(), this.itemControls]
 					}
 				});
+				if (this.itemKey === "attrs.name" && field.name === "field") {
+					watchFieldName(this.field);
+					scheduleDuplicateNameHints(this.field.components);
+				}
 			}
 			get itemValues() {
 				const val = this.field.get(this.itemKey);
@@ -15021,6 +15106,7 @@ Author: Draggable https://draggable.io
 				this.dom.remove();
 				this.panel.updateProps();
 				this.field.debouncedUpdatePreview?.();
+				if (this.itemKey === "attrs.name" && this.field.name === "field") scheduleDuplicateNameHints(this.field.components);
 			};
 			get itemControls() {
 				if (this.isLocked) return {
@@ -15106,8 +15192,10 @@ Author: Draggable https://draggable.io
 					].filter(Boolean).join(" ")
 				};
 				const attrs = { name: baseConfig.attrs.type === "checkbox" ? `${name}[]` : name };
-				attrs.disabled = this.isDisabled;
-				attrs.readonly = this.isLocked;
+				if (this.isLocked) {
+					const isTextControl = baseConfig.tag === "textarea" || baseConfig.tag === "input" && !["checkbox", "radio"].includes(baseConfig.attrs?.type);
+					attrs[isTextControl ? "readonly" : "disabled"] = true;
+				}
 				const itemInputAction = itemInputActions.get(this.itemSlug)?.(this);
 				const action = mergeActions(INPUT_TYPE_ACTION[valType](dataKey, this.field), itemInputAction || {});
 				const inputConfig = merge(ITEM_INPUT_TYPE_MAP[valType]({
@@ -15343,6 +15431,7 @@ Author: Draggable https://draggable.io
 			* @param {String|Array} val
 			*/
 			addAttribute = (attr, valArg) => {
+				if (this.component.isLockedProp(`attrs.${attr}`) || this.component.isDisabledProp(`attrs.${attr}`)) return;
 				let val = valArg;
 				const safeAttr = safeAttrName(attr);
 				const itemKey = `attrs.${safeAttr}`;
@@ -19181,13 +19270,14 @@ Author: Draggable https://draggable.io
 			document.removeEventListener("DOMContentLoaded", this.#onDOMContentLoaded);
 			if (this.isDestroyed) return;
 			this.#initState = INIT_STATES.LOADING_RESOURCES;
+			const storedLocale = globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY);
 			const promises = [
 				fetchIcons(this.opts.svgSprite),
 				fetchFormeoStyle(this.opts.style),
 				s.init({
 					preloaded: { "en-US": s$1 },
 					...this.opts.i18n,
-					locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY)
+					...storedLocale && { locale: storedLocale }
 				})
 			].filter(Boolean);
 			try {
