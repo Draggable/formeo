@@ -127,8 +127,16 @@ export default class FormeoRenderer {
 
   set userData(data) {
     const form = this.container?.querySelector('.formeo-render') || this.renderedForm
+    const keys = Object.keys(data ?? {})
+    if (!form) {
+      // no rendered form to blame missing fields on; the answers just have nowhere to go yet
+      if (keys.length) {
+        console.warn('formeo: renderer.userData was set before render(); nothing to fill')
+      }
+      return
+    }
     const unmatched = []
-    for (const key of Object.keys(data ?? {})) {
+    for (const key of keys) {
       const fields = form?.elements[key] ?? form?.elements[`${key}[]`]
       if (!fields) {
         unmatched.push(key)

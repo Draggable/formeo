@@ -1086,16 +1086,25 @@ describe('FormeoRenderer', () => {
       }
     })
 
-    test('never throws before render or for null', () => {
+    test('never throws before render or for null, and warns once before render()', () => {
       const warn = mock.method(console, 'warn', () => {})
       try {
         const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
         assert.doesNotThrow(() => {
           renderer.userData = { txt: 'a' }
         })
+        assert.equal(warn.mock.callCount(), 1)
+        assert.equal(
+          warn.mock.calls[0].arguments[0],
+          'formeo: renderer.userData was set before render(); nothing to fill'
+        )
+
+        warn.mock.resetCalls()
+
         assert.doesNotThrow(() => {
           mounted().userData = null
         })
+        assert.equal(warn.mock.callCount(), 0)
       } finally {
         warn.mock.restore()
       }
@@ -1182,7 +1191,9 @@ describe('FormeoRenderer', () => {
         assert.ok(form.elements[name], name)
       }
       // columns have no class of their own; the inline width style is what identifies them
-      for (const column of form.querySelectorAll('[style]')) {
+      const columns = [...form.querySelectorAll('[style]')]
+      assert.equal(columns.length, 3)
+      for (const column of columns) {
         assert.match(column.getAttribute('style'), /width: 100%/)
       }
     })
@@ -1200,13 +1211,16 @@ describe('FormeoRenderer', () => {
       data.fields['fb-text'] = {
         id: 'fb-text',
         tag: 'input',
-        attrs: { type: 'radio', name: 'size' },
+        attrs: { type: 'radio', name: 'size', className: 'form-control' },
         options: [
           { label: 'S', value: 's' },
           { label: 'M', value: 'm' },
         ],
       }
-      assert.equal(renderForm(data).querySelectorAll('input[type="radio"]').length, 2)
+      const form = renderForm(data)
+      assert.equal(form.querySelectorAll('input[type="radio"]').length, 2)
+      // a field-level className with no config lands on the option group's wrap, not the inputs
+      assert.equal(form.querySelector('#f-fb-text').className, 'form-control')
     })
 
     test('renders a row or column with no children', () => {
