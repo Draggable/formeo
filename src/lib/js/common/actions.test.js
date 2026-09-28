@@ -194,3 +194,38 @@ describe('actions.remove.page default (#122)', () => {
     assert.equal(evt.removeAction.mock.callCount(), 1)
   })
 })
+
+describe('actions.remove.component (#281)', () => {
+  it('runs removeAction by default', () => {
+    const removeAction = mock.fn()
+    new Actions(null).init({}).remove.component({ componentType: 'field', componentId: 'f-1', removeAction })
+    assert.equal(removeAction.mock.callCount(), 1)
+  })
+
+  it('a custom handler can cancel by not calling removeAction', () => {
+    const removeAction = mock.fn()
+    new Actions(null).init({ remove: { component: () => {} } }).remove.component({ removeAction })
+    assert.equal(removeAction.mock.callCount(), 0)
+  })
+
+  it('a custom handler can finish the removal later', async () => {
+    const removeAction = mock.fn()
+    const custom = new Actions(null).init({ remove: { component: evt => setTimeout(evt.removeAction, 0) } })
+    custom.remove.component({ componentType: 'row', componentId: 'r-1', removeAction })
+    await new Promise(resolve => setTimeout(resolve, 5))
+    assert.equal(removeAction.mock.callCount(), 1)
+  })
+
+  it('every dispatcher falls back to the defaults before init()', () => {
+    const fresh = new Actions(null)
+    const removeAction = mock.fn()
+    fresh.remove.component({ removeAction })
+    fresh.remove.options({ removeAction })
+    assert.equal(removeAction.mock.callCount(), 2)
+    const addAction = mock.fn()
+    fresh.add.options({ addAction })
+    assert.equal(addAction.mock.callCount(), 1)
+    assert.doesNotThrow(() => fresh.click.btn({ action: () => {} }))
+    assert.deepEqual(fresh.save.form({ id: 'x' }), { id: 'x' })
+  })
+})

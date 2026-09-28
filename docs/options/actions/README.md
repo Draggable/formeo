@@ -9,6 +9,7 @@
 | `remove.attrs`      | Function | Defined, but no "Clear All" button is currently rendered in the attributes panel; calls `evt.removeAction()`  |
 | `remove.options`    | Function | Defined, but no "Clear All" button is currently rendered in the options panel; calls `evt.removeAction()`    |
 | `remove.conditions` | Function | Called by "Clear All" in the conditions panel; calls `evt.removeAction()` |
+| `remove.component`  | Function | Called when a row, column or field's remove (×) button is clicked; call `evt.removeAction()` to remove it. Default: removes at once. See [Confirm before deleting](#confirm-before-deleting) |
 | `remove.page`       | Function | Called before a page is removed from its tab; call `evt.removeAction()` to remove it. Default: removes an empty page, asks first for a page with content. See [Page Tabs](../../editor/pages.md#actions) |
 | `click.button`      | Function | Called when clicking a form action button                                 |
 | `save`              | Function | Called when saving                                                        |
@@ -36,6 +37,34 @@ const editor = new FormeoEditor({
   actions: {
     add: {
       attr: addAttribute, // pass the function itself; don't call it
+    },
+  },
+})
+```
+
+## Confirm before deleting
+
+`actions.remove.component(evt)` runs when a row, column or field's remove button is clicked. Formeo only removes the
+component when you call `evt.removeAction()`, so you can ask first, or call it later from your own dialog. Not calling
+it cancels the removal.
+
+| `evt` field     | Description                                           |
+| --------------- | ----------------------------------------------------- |
+| `component`     | The row, column or field about to be removed          |
+| `componentType` | `'row'`, `'column'` or `'field'`                      |
+| `componentId`   | Its id                                                |
+| `removeAction`  | Call it to remove the component. Only the first call does anything |
+
+```javascript
+new FormeoEditor({
+  editorContainer: '#formeo-editor',
+  actions: {
+    remove: {
+      component: evt => {
+        if (window.confirm(`Delete this ${evt.componentType}?`)) {
+          evt.removeAction()
+        }
+      },
     },
   },
 })

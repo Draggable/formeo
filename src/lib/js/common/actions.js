@@ -107,6 +107,9 @@ const defaultActions = {
     conditions: evt => {
       evt.removeAction()
     },
+    component: evt => {
+      evt.removeAction()
+    },
     page: removePage,
   },
   click: {
@@ -147,50 +150,45 @@ export class Actions {
     return this
   }
 
+  /**
+   * The editor's handler for an action, or the default one before init() has run
+   * @param {String} group e.g. 'remove'
+   * @param {String} name e.g. 'component'
+   * @return {Function}
+   */
+  handler(group, name) {
+    return this.opts?.[group]?.[name] || defaultActions[group][name]
+  }
+
   add = {
-    attrs: evt => {
-      return this.opts.add.attr(evt)
-    },
-    options: evt => {
-      return this.opts.add.option(evt)
-    },
+    attrs: evt => this.handler('add', 'attr')(evt),
+    options: evt => this.handler('add', 'option')(evt),
     conditions: evt => {
       evt.template = evt.template || CONDITION_TEMPLATE()
-      return this.opts.add.condition(evt)
+      return this.handler('add', 'condition')(evt)
     },
-    config: evt => {
-      return this.opts.add.config(evt)
-    },
+    config: evt => this.handler('add', 'config')(evt),
   }
 
   remove = {
-    attrs: evt => {
-      return this.opts.remove.attrs(evt)
-    },
-    options: evt => {
-      return this.opts.remove.options(evt)
-    },
-    conditions: evt => {
-      return this.opts.remove.conditions(evt)
-    },
-    page: evt => {
-      return (this.opts?.remove?.page || defaultActions.remove.page)(evt)
-    },
+    attrs: evt => this.handler('remove', 'attrs')(evt),
+    options: evt => this.handler('remove', 'options')(evt),
+    conditions: evt => this.handler('remove', 'conditions')(evt),
+    component: evt => this.handler('remove', 'component')(evt),
+    page: evt => this.handler('remove', 'page')(evt),
   }
 
   click = {
-    btn: evt => {
-      return this.opts.click.btn(evt)
-    },
+    btn: evt => this.handler('click', 'btn')(evt),
   }
 
   save = {
     form: formData => {
-      if (this.opts.sessionStorage) {
+      if (this.opts?.sessionStorage) {
         sessionStorage.set(formDataStorageKey(this.opts.sessionStorage), formData)
       }
       this.events?.formeoSaved({ formData })
-      return this.opts.save.form(formData)
+      return this.handler('save', 'form')(formData)
     },
   }
 }

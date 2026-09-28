@@ -311,6 +311,46 @@ export default class Component extends Data {
   emptyClass = () => this.dom.classList.toggle('empty', !this.children.length)
 
   /**
+   * Whether this component is still in its editor's store, i.e. hasn't been removed
+   * @return {Boolean}
+   */
+  get isRegistered() {
+    return this.components?.[`${this.name}s`]?.data?.[this.id] === this
+  }
+
+  /**
+   * A one-shot remover for actions.remove.component: slides this component out, then removes it.
+   * Later calls, and calls after the component was removed some other way, do nothing.
+   * @return {Function}
+   */
+  createRemoveAction() {
+    let called = false
+    return () => {
+      if (called || !this.isRegistered) {
+        return
+      }
+      called = true
+      animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
+        if (!this.isRegistered) {
+          return
+        }
+        if (this.name === 'column') {
+          this.parent.autoColumnWidths()
+        }
+        this.remove()
+      })
+    }
+  }
+
+  /**
+   * The canvas remove button: actions.remove.component decides whether and when to remove (#281)
+   */
+  requestRemove() {
+    const detail = { component: this, componentType: this.name, componentId: this.id }
+    return this.components.actions.remove.component({ ...detail, removeAction: this.createRemoveAction() })
+  }
+
+  /**
    * Move, close, and edit buttons for row, column and field
    * @return {Object} element config object
    */
@@ -412,18 +452,7 @@ export default class Component extends Data {
             id: 'remove',
           },
           action: {
-            click: () => {
-              animate.slideUp(this.dom, ANIMATION_SPEED_BASE, () => {
-                if (this.name === 'column') {
-                  const row = this.parent
-                  row.autoColumnWidths()
-                  this.remove()
-                } else {
-                  this.remove()
-                }
-              })
-              //  @todo add onRemove to Events and Actions
-            },
+            click: () => this.requestRemove(),
           },
         }
       },
