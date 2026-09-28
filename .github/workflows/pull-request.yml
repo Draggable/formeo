@@ -16,6 +16,8 @@ jobs:
         run: npm install
       - name: Test
         run: npm test
+      - name: Type-check public types
+        run: npm run test:types
       - name: Build library
         run: npm run build:lib
       - name: Test built package

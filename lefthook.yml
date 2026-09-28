@@ -3,6 +3,8 @@ pre-push:
   commands:
     run-tests:
       run: npm test
+    type-check:
+      run: npm run test:types
 
 pre-commit:
   parallel: true

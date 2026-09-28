@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": [],
+    "skipLibCheck": false,
+    "verbatimModuleSyntax": true,
+    "paths": { "formeo": ["./formeo.d.ts"] }
+  },
+  "include": ["*.test-d.ts"]
+}

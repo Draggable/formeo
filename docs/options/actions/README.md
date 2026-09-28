@@ -11,8 +11,8 @@
 | `remove.conditions` | Function | Called before a condition is removed with its × button, and by "Clear All" in the conditions panel (`evt.isClearAll: true`); call `evt.removeAction()` to remove |
 | `remove.component`  | Function | Called when a row, column or field's remove (×) button is clicked; call `evt.removeAction()` to remove it. Default: removes at once. See [Confirm before deleting](#confirm-before-deleting) |
 | `remove.page`       | Function | Called before a page is removed from its tab; call `evt.removeAction()` to remove it. Default: removes an empty page, asks first for a page with content. See [Page Tabs](../../editor/pages.md#actions) |
-| `click.button`      | Function | Called when clicking a form action button                                 |
-| `save`              | Function | Called when saving                                                        |
+| `click.btn`         | Function | Called when the Save button is clicked, just before `save.form`; `evt` is `{ action, coords, message, button }` |
+| `save.form`         | Function | Called with the formData when the form is saved                           |
 
 With Actions you can modify or completely replace some editor functions. By default, adding an attribute opens a small dialog in the editor. Define `add.attr` to use your own UI or extra validation.
 
