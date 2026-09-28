@@ -160,13 +160,15 @@ export class FormeoEditor {
     }
     this.#initState = INIT_STATES.LOADING_RESOURCES
 
+    const storedLocale = globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY)
     const promises = [
       fetchIcons(this.opts.svgSprite),
       fetchFormeoStyle(this.opts.style),
       i18n.init({
         preloaded: { 'en-US': enUS },
         ...this.opts.i18n,
-        locale: globalThis.sessionStorage?.getItem(SESSION_LOCALE_KEY),
+        // a locale picked with setLang() wins; otherwise keep the configured one (a null would reset it to en-US)
+        ...(storedLocale && { locale: storedLocale }),
       }),
     ].filter(Boolean)
 

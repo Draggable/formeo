@@ -13,6 +13,7 @@ import {
   REVERSED_CHECKED_TYPES,
 } from '../../constants.js'
 import { Condition } from './condition.mjs'
+import { scheduleDuplicateNameHints, watchFieldName } from './duplicate-name-hint.js'
 import { INPUT_TYPE_ACTION, ITEM_INPUT_TYPE_MAP, labelHelper } from './helpers.mjs'
 
 const panelDataKeyMap = new Map([
@@ -83,6 +84,12 @@ export default class EditPanelItem {
       className: liClassList,
       children: { className: 'component-prop', children: [this.itemInputs(), this.itemControls] },
     })
+
+    // a new or rebuilt field name row needs its duplicate-name hint (#331)
+    if (this.itemKey === 'attrs.name' && field.name === 'field') {
+      watchFieldName(this.field)
+      scheduleDuplicateNameHints(this.field.components)
+    }
   }
 
   get itemValues() {
@@ -181,6 +188,10 @@ export default class EditPanelItem {
     this.dom.remove()
     this.panel.updateProps()
     this.field.debouncedUpdatePreview?.()
+    // removing a path fires no component event, so tell the other fields their name may be unique now
+    if (this.itemKey === 'attrs.name' && this.field.name === 'field') {
+      scheduleDuplicateNameHints(this.field.components)
+    }
   }
 
   get itemControls() {
@@ -284,8 +295,13 @@ export default class EditPanelItem {
       name: baseConfig.attrs.type === 'checkbox' ? `${name}[]` : name,
     }
 
-    attrs.disabled = this.isDisabled
-    attrs.readonly = this.isLocked
+    // readonly does nothing on checkboxes, radios and selects, so a locked one is disabled instead
+    if (this.isLocked) {
+      const isTextControl =
+        baseConfig.tag === 'textarea' ||
+        (baseConfig.tag === 'input' && !['checkbox', 'radio'].includes(baseConfig.attrs?.type))
+      attrs[isTextControl ? 'readonly' : 'disabled'] = true
+    }
 
     const itemInputAction = itemInputActions.get(this.itemSlug)?.(this)
 
