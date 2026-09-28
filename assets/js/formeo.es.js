@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.11.0
+Version: 5.12.0
 Author: Draggable https://draggable.io
 */
 
@@ -6300,7 +6300,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.11.0";
+	version$2 = "5.12.0";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -8574,9 +8574,9 @@ function buildFlatDataStructure(data, componentId, componentType, result = {}) {
 	}
 	return result;
 }
-var import_mergeWith, uuidv4, shortId, match, remove, componentType, unique, uuid, looksLikeArrayIndex, nonIndexId, merge, clone$1, percent, numToPercent, formDataStorageKey, sessionStorage, isAddress, isInternalAddress, cleanFormData;
+var import_mergeWith$1, uuidv4, shortId, match, remove, componentType, unique, uuid, looksLikeArrayIndex, nonIndexId, merge, clone$1, percent, numToPercent, formDataStorageKey, sessionStorage, isAddress, isInternalAddress, cleanFormData;
 var init_utils = __esmMin((() => {
-	import_mergeWith = /* @__PURE__ */ __toESM(require_mergeWith(), 1);
+	import_mergeWith$1 = /* @__PURE__ */ __toESM(require_mergeWith(), 1);
 	init_constants();
 	uuidv4 = () => crypto.randomUUID().slice(0, 8);
 	shortId = () => uuidv4().slice(0, 8);
@@ -8623,7 +8623,7 @@ var init_utils = __esmMin((() => {
 				return srcValue;
 			}
 		};
-		return (0, import_mergeWith.default)({}, obj1, obj2, customizer);
+		return (0, import_mergeWith$1.default)({}, obj1, obj2, customizer);
 	};
 	clone$1 = (obj) => {
 		let copy;
@@ -13895,10 +13895,84 @@ var init_control = __esmMin((() => {
 	};
 }));
 //#endregion
+//#region src/lib/js/components/controls/control-set.mjs
+var import_mergeWith, CONTROL_SET, isControlSet, replaceArrays, expandControlSet, insertControlSet, controlSetDropTarget;
+var init_control_set = __esmMin((() => {
+	import_mergeWith = /* @__PURE__ */ __toESM(require_mergeWith(), 1);
+	init_helpers$2();
+	init_utils();
+	CONTROL_SET = "controlSet";
+	isControlSet = (controlData) => Array.isArray(controlData?.controlSet?.fields);
+	replaceArrays = (_value, override) => Array.isArray(override) ? clone$1(override) : void 0;
+	expandControlSet = (controlData, lookupControl) => {
+		const { controlSet, meta } = controlData;
+		const warn = (message) => console.warn(`formeo: control set "${meta?.id}" ${message}`);
+		const fields = [];
+		for (const rawMember of controlSet.fields) {
+			if (typeof rawMember !== "object" || rawMember === null) {
+				warn("skips a member: it is not an object.");
+				continue;
+			}
+			const { control, id: _id, meta: memberMeta, ...member } = rawMember;
+			if (!control) {
+				const data = clone$1(member);
+				if (memberMeta?.id) data.config = {
+					...data.config,
+					controlId: memberMeta.id
+				};
+				fields.push(data);
+				continue;
+			}
+			const base = lookupControl(control);
+			if (!base) {
+				warn(`skips a member: "${control}" is not a field control.`);
+				continue;
+			}
+			const data = (0, import_mergeWith.default)(base, clone$1(member), replaceArrays);
+			data.config = {
+				...data.config,
+				controlId: control
+			};
+			fields.push(data);
+		}
+		if (!fields.length) warn("has no fields, so it adds nothing.");
+		const { id: _rowId, ...row } = clone$1(controlSet.row || {});
+		return {
+			layout: controlSet.layout === "columns" ? "columns" : "stacked",
+			row,
+			fields
+		};
+	};
+	insertControlSet = (stage, { layout, row, fields }, index) => {
+		const newRow = stage.addChild(clone$1(row), index);
+		if (layout === "columns") {
+			for (const fieldData of fields) newRow.addChild().addChild(clone$1(fieldData));
+			newRow.autoColumnWidths();
+			return newRow;
+		}
+		const column = newRow.addChild();
+		for (const fieldData of fields) column.addChild(clone$1(fieldData));
+		return newRow;
+	};
+	controlSetDropTarget = (component, newIndex) => {
+		if (component.name === "stage") return {
+			stage: component,
+			index: newIndex
+		};
+		let row = component;
+		while (row.name !== "row") row = row.parent;
+		return {
+			stage: row.parent,
+			index: indexOfNode(row.dom) + 1
+		};
+	};
+}));
+//#endregion
 //#region src/lib/js/components/controls/options.js
 init_sortable();
 init_panels();
 init_control();
+init_control_set();
 var defaultOptions = Object.freeze({
 	sortable: true,
 	elementOrder: {},
@@ -16240,16 +16314,36 @@ var init_component = __esmMin((() => {
 			if (fromType !== "controls") return finish(onAddConditions[fromType]?.(item, newIndex));
 			const control = this.components.controls.describeControl(item.id);
 			dom.remove(item);
+			const isControlSet = control.componentType === CONTROL_SET;
+			if (isControlSet && !control.data.fields.length) {
+				this.emptyClass();
+				return;
+			}
 			let added;
-			const proceed = () => {
+			let proceed = () => {
 				if (this.isRegistered) added = finish(onAddConditions.controls(control));
 			};
-			const detail = {
+			let detail = {
 				...control,
 				parent: this,
 				index: newIndex,
 				addedVia: "dragDrop"
 			};
+			if (isControlSet) {
+				const target = controlSetDropTarget(this, newIndex);
+				detail = {
+					...control,
+					parent: target.stage,
+					index: target.index,
+					addedVia: "dragDrop"
+				};
+				proceed = () => {
+					if (this.isRegistered && target.stage.isRegistered) {
+						added = finish(insertControlSet(target.stage, control.data, target.index));
+						this.emptyClass();
+					}
+				};
+			}
 			const result = this.components.events.before("add", detail, proceed, { src: this.dom });
 			const restoreIfCancelled = (proceeded) => proceeded || this.isRegistered && this.emptyClass();
 			if (result instanceof Promise) result.then(restoreIfCancelled);
@@ -17288,6 +17382,7 @@ init_object();
 init_constants();
 init_panels();
 init_control();
+init_control_set();
 /**
 * One editor's control panel. `components` is the editor's Components; it is set by the
 * constructor or by assigning this instance to `components.controls`.
@@ -17523,13 +17618,11 @@ var Controls = class {
 				},
 				onClone: ({ clone, item }) => {
 					clone.id = item.id;
-					if (this.options.ghostPreview) {
-						const { controlData } = this.get(item.id);
-						Promise.resolve().then(() => (init_field(), field_exports)).then(({ default: Field }) => {
-							clone.innerHTML = "";
-							clone.appendChild(new Field(controlData, this.components).preview);
-						});
-					}
+					const { controlData } = this.get(item.id);
+					if (this.options.ghostPreview && !isControlSet(controlData)) Promise.resolve().then(() => (init_field(), field_exports)).then(({ default: Field }) => {
+						clone.innerHTML = "";
+						clone.appendChild(new Field(controlData, this.components).preview);
+					});
 				},
 				onStart: () => {
 					this.originalDocumentOverflow = document.documentElement.style.overflow;
@@ -17569,14 +17662,32 @@ var Controls = class {
 		field: (controlData, stage) => this.layoutTypes.column(stage).addChild(controlData)
 	};
 	/**
+	* A field control's data for a control set member, or undefined when controlId is unknown, a layout control or
+	* another set (#227)
+	* @param {String} controlId a control's meta.id
+	* @return {Object|undefined} a copy without meta
+	*/
+	lookupMemberControl = (controlId) => {
+		const controlData = this.data.get(controlId);
+		if (!controlData?.meta || controlId.startsWith("layout-") || isControlSet(controlData)) return;
+		const { meta: _meta, ...fieldData } = clone$1(controlData);
+		return fieldData;
+	};
+	/**
 	* What a control creates
 	* @param {String} id control id (its element's id)
-	* @return {{componentType: String, controlId: String, data: Object}} componentType is 'row' or 'column' for a
-	* layout control, else 'field'; data is what a new field starts from ({} for layout controls, whose rows and
-	* columns start from their own defaults)
+	* @return {{componentType: String, controlId: String, data: Object}} componentType is 'controlSet' for a control
+	* set (data: its layout, row and fields), 'row' or 'column' for a layout control ({} data: rows and columns start
+	* from their own defaults), else 'field' (data: what the new field starts from)
 	*/
 	describeControl = (id) => {
-		const { meta: { id: controlId }, ...elementData } = get(this.get(id), "controlData");
+		const controlData = get(this.get(id), "controlData");
+		const { meta: { id: controlId }, ...elementData } = controlData;
+		if (isControlSet(controlData)) return {
+			componentType: CONTROL_SET,
+			controlId,
+			data: expandControlSet(controlData, this.lookupMemberControl)
+		};
 		set(elementData, "config.controlId", controlId);
 		const layoutType = controlId.replace(/^layout-/, "");
 		const isLayout = controlId.startsWith("layout-") && Object.hasOwn(this.layoutTypes, layoutType) && layoutType !== "field";
@@ -17587,30 +17698,40 @@ var Controls = class {
 		};
 	};
 	/**
-	* Append an element to a stage
-	* @param {String} id control id
-	* @param {Stage} [stage] the active stage by default
-	* @return {Component} the new row, column or field
+	* Adds what describeControl described to a stage
+	* @param {{componentType: String, data: Object}} described
+	* @param {Stage} stage
+	* @return {Component|undefined} the new row, column or field; undefined for a control set with no fields
 	*/
-	addElement = (id, stage = this.components.stages.active) => {
-		const { componentType, data } = this.describeControl(id);
+	addDescribed = ({ componentType, data }, stage) => {
+		if (componentType === "controlSet") return data.fields.length ? insertControlSet(stage, data) : void 0;
 		if (componentType === "field") return this.layoutTypes.field(data, stage);
 		return this.layoutTypes[componentType](stage);
 	};
 	/**
-	* A control's click: onBeforeAdd decides whether and when it is added to the active stage (#281)
+	* Append an element to a stage
+	* @param {String} id control id
+	* @param {Stage} [stage] the active stage by default
+	* @return {Component|undefined} the new row, column or field
+	*/
+	addElement = (id, stage = this.components.stages.active) => this.addDescribed(this.describeControl(id), stage);
+	/**
+	* A control's click: onBeforeAdd decides whether and when it is added to the active stage (#281). A control set
+	* with no fields adds nothing and runs no hook (#227).
 	* @param {String} id control id
 	* @return {Boolean|Promise<Boolean>} see Events#before
 	*/
 	requestAddElement = (id) => {
 		const stage = this.components.stages.active;
+		const described = this.describeControl(id);
+		if (described.componentType === "controlSet" && !described.data.fields.length) return false;
 		const detail = {
-			...this.describeControl(id),
+			...described,
 			parent: stage,
 			index: stage.children.length,
 			addedVia: "click"
 		};
-		return this.components.events.before("add", detail, () => stage.isRegistered && this.addElement(id, stage), { src: this.dom });
+		return this.components.events.before("add", detail, () => stage.isRegistered && this.addDescribed(described, stage), { src: this.dom });
 	};
 	/**
 	* Remove the controls from the page and release their Sortables and Panels. A control drag in
@@ -18118,6 +18239,7 @@ init_dom();
 init_utils();
 init_constants();
 init_component();
+init_control_set();
 var DEFAULT_DATA$1 = () => Object.freeze({
 	config: {
 		fieldset: false,
@@ -18260,9 +18382,10 @@ var Row = class extends Component {
 			} }
 		});
 	}
-	onAdd(...args) {
-		super.onAdd(...args);
-		this.autoColumnWidths();
+	onAdd(evt) {
+		const component = super.onAdd(evt);
+		if (!isControlSet(this.components.controls?.get(evt.item.id)?.controlData)) this.autoColumnWidths();
+		return component;
 	}
 	onRemove(...args) {
 		super.onRemove(...args);
@@ -18473,6 +18596,7 @@ var Stage = class extends Component {
 	onAdd(...args) {
 		const component = super.onAdd(...args);
 		if (component?.name === "column") component.parent.autoColumnWidths();
+		return component;
 	}
 	/**
 	* Removes this stage, a page with the editor's `pages` option (#122), with everything on it.
