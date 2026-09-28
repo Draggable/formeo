@@ -216,6 +216,7 @@ Comprehensive documentation is available in the [docs](https://github.com/Dragga
 - **[Actions](https://github.com/Draggable/formeo/blob/main/docs/options/actions/README.md)** - Action handlers
 - **[Editor API](https://github.com/Draggable/formeo/blob/main/docs/editor/README.md)** - Editor methods and properties
 - **[TypeScript](https://github.com/Draggable/formeo/blob/main/docs/typescript.md)** - Shipped type definitions and typed events
+- **[Using a CSS Framework](https://github.com/Draggable/formeo/blob/main/docs/css-frameworks.md)** - Style rendered forms with Bootstrap or any framework
 - **[Build Tools](https://github.com/Draggable/formeo/blob/main/docs/tools/README.md)** - Development and build utilities
 
 ## Development
