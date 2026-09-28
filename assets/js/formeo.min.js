@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.8.0
+Version: 5.9.0
 Author: Draggable https://draggable.io
 */
 
@@ -6280,7 +6280,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.8.0";
+		version$2 = "5.9.0";
 		type = "module";
 		main = "dist/formeo.cjs.js";
 		module$1 = "dist/formeo.es.js";
@@ -10361,11 +10361,32 @@ Author: Draggable https://draggable.io
 		dom = new DOM();
 	}));
 	//#endregion
+	//#region src/lib/js/components/stages/page-text.mjs
+	var PAGE_TEXT, fill, pageText;
+	var init_page_text = __esmMin((() => {
+		init_i18n_es_min();
+		PAGE_TEXT = Object.freeze({
+			"pages.label": "Pages",
+			"pages.add": "Add page",
+			"pages.untitled": "Page {n}",
+			"pages.rename": "Rename page",
+			"pages.remove": "Remove page \"{title}\"",
+			"pages.removeConfirm": "Remove \"{title}\" and everything on it?",
+			"pages.moveTo": "Move to page",
+			"pages.move": "Move",
+			"pages.moved": "Moved to {title}",
+			"pages.page": "Page"
+		});
+		fill = (text, vars) => text.replace(/\{(\w+)\}/g, (token, name) => name in vars ? String(vars[name]) : token);
+		pageText = (key, vars = {}) => fill(s.get(key) || PAGE_TEXT[key] || key, vars);
+	}));
+	//#endregion
 	//#region src/lib/js/components/autocomplete/helpers.mjs
-	var BASE_NAME, DISPLAY_FIELD_CLASSNAME, LIST_CLASSNAME, HIGHLIGHT_CLASSNAME, LIST_ITEM_CLASSNAME, labelCount, fieldLabelPaths, rowLabelPaths, componentLabelPaths, resolveFieldLabel, resolveComponentLabel, labelResolverMap, getComponentLabel, makeOptionData, realTarget, makeListItem, makeComponentOptionsList, componentOptions;
+	var BASE_NAME, DISPLAY_FIELD_CLASSNAME, LIST_CLASSNAME, HIGHLIGHT_CLASSNAME, LIST_ITEM_CLASSNAME, labelCount, fieldLabelPaths, rowLabelPaths, componentLabelPaths, resolveFieldLabel, resolveComponentLabel, labelResolverMap, THEN_TARGET_KEYS, pagesOn, getComponentLabel, makeOptionData, realTarget, makeListItem, makeComponentOptionsList, componentOptions;
 	var init_helpers$1 = __esmMin((() => {
 		init_dom();
 		init_string();
+		init_page_text();
 		BASE_NAME = "f-autocomplete";
 		DISPLAY_FIELD_CLASSNAME = `${BASE_NAME}-display-field`;
 		LIST_CLASSNAME = `${BASE_NAME}-list`;
@@ -10397,9 +10418,12 @@ Author: Draggable https://draggable.io
 			["then.condition.target", resolveComponentLabel],
 			["condition.target", resolveComponentLabel]
 		]);
-		getComponentLabel = ({ id, ...component }, key) => {
+		THEN_TARGET_KEYS = new Set(["then.condition.target", "condition.target"]);
+		pagesOn = (components) => Boolean(components?.opts?.pages);
+		getComponentLabel = ({ id, ...component }, key, components) => {
 			const { name, label } = component;
 			if (!name) return label;
+			if (name === "stage" && THEN_TARGET_KEYS.has(key) && pagesOn(components)) return components.stages.pageTitle(components.stages.get(id));
 			return labelResolverMap.get(key)(component);
 		};
 		makeOptionData = ({ selectedId, ...option }) => {
@@ -10466,13 +10490,15 @@ Author: Draggable https://draggable.io
 			const selectedId = autocomplete.value;
 			const labels = [];
 			const flatList = autocomplete.components.flatList();
+			const listsPages = pagesOn(autocomplete.components);
 			return Object.entries(flatList).reduce((acc, [value, component]) => {
-				const label = getComponentLabel(component, autocomplete.key);
+				if (component.name === "stage" && !listsPages && value !== selectedId) return acc;
+				const label = getComponentLabel(component, autocomplete.key, autocomplete.components);
 				if (label) {
 					const componentType = component.name;
 					const typeConfig = {
 						tag: "span",
-						content: ` ${toTitleCase(componentType)}`,
+						content: ` ${componentType === "stage" && listsPages ? pageText("pages.page") : toTitleCase(componentType)}`,
 						className: "component-type"
 					};
 					const labelKey = `${componentType}.${label}`;
@@ -10666,7 +10692,7 @@ Author: Draggable https://draggable.io
 			get label() {
 				if (!isAddress(this.value)) return this.value;
 				const component = this.value && this.components.getAddress(this.value);
-				return component && getComponentLabel(component, `${this.key}`) || this.value;
+				return component && getComponentLabel(component, `${this.key}`, this.components) || this.value;
 			}
 			updateOptions() {
 				let options = this.optionsCache;
@@ -11171,25 +11197,6 @@ Author: Draggable https://draggable.io
 				});
 			}
 		};
-	}));
-	//#endregion
-	//#region src/lib/js/components/stages/page-text.mjs
-	var PAGE_TEXT, fill, pageText;
-	var init_page_text = __esmMin((() => {
-		init_i18n_es_min();
-		PAGE_TEXT = Object.freeze({
-			"pages.label": "Pages",
-			"pages.add": "Add page",
-			"pages.untitled": "Page {n}",
-			"pages.rename": "Rename page",
-			"pages.remove": "Remove page \"{title}\"",
-			"pages.removeConfirm": "Remove \"{title}\" and everything on it?",
-			"pages.moveTo": "Move to page",
-			"pages.move": "Move",
-			"pages.moved": "Moved to {title}"
-		});
-		fill = (text, vars) => text.replace(/\{(\w+)\}/g, (token, name) => name in vars ? String(vars[name]) : token);
-		pageText = (key, vars = {}) => fill(s.get(key) || PAGE_TEXT[key] || key, vars);
 	}));
 	//#endregion
 	//#region src/lib/js/common/actions.js
@@ -14585,7 +14592,7 @@ Author: Draggable https://draggable.io
 		propertyFieldConfig.action = { change: onChange };
 		return propertyFieldConfig;
 	}
-	var hiddenPropertyClassname, hiddenOptionClassname, optionsAddressRegex, optionDataMap, segmentTypes, isVisible$1, fieldVisibilityMap, toggleFieldVisibility, isCheckedValue, isCheckedOption, toggleCheckablePropertyOptions;
+	var hiddenPropertyClassname, hiddenOptionClassname, optionsAddressRegex, stageAddressRegex, VISIBILITY_VALUES, toggleStagePropertyOptions, adoptStageTargetProperty, optionDataMap, segmentTypes, isVisible$1, fieldVisibilityMap, toggleFieldVisibility, isCheckedValue, isCheckedOption, toggleCheckablePropertyOptions;
 	var init_condition_helpers = __esmMin((() => {
 		init_i18n_es_min();
 		init_dom();
@@ -14597,6 +14604,16 @@ Author: Draggable https://draggable.io
 		hiddenPropertyClassname = "hidden-property";
 		hiddenOptionClassname = "hidden-option";
 		optionsAddressRegex = /\.options\[\d+\]$/;
+		stageAddressRegex = /^stages\./;
+		VISIBILITY_VALUES = new Set(VISIBLE_OPTIONS);
+		toggleStagePropertyOptions = (propertyField) => {
+			for (const option of propertyField.querySelectorAll("option")) option.classList.toggle(hiddenOptionClassname, !VISIBILITY_VALUES.has(option.value));
+		};
+		adoptStageTargetProperty = (fields) => {
+			const target = fields.get("target");
+			const targetProperty = fields.get("targetProperty");
+			if (targetProperty && stageAddressRegex.test(target?.value ?? "") && !VISIBILITY_VALUES.has(targetProperty.value)) targetProperty.value = "isNotVisible";
+		};
 		optionDataMap = {
 			"if-sourceProperty": objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
 			"if-targetProperty": objectFromStringArray(PROPERTY_OPTIONS),
@@ -14658,7 +14675,8 @@ Author: Draggable https://draggable.io
 			targetProperty: (fields) => {
 				const target = fields.get("target");
 				const targetProperty = fields.get("targetProperty");
-				toggleCheckablePropertyOptions(!!target.value.match(optionsAddressRegex), targetProperty);
+				if (stageAddressRegex.test(target.value)) toggleStagePropertyOptions(targetProperty);
+				else toggleCheckablePropertyOptions(!!target.value.match(optionsAddressRegex), targetProperty);
 				return !isInternalAddress(target.value);
 			},
 			target: (fields) => {
@@ -14833,6 +14851,7 @@ Author: Draggable https://draggable.io
 				this.components.setAddress(evtData.dataPath, evtData.value);
 			});
 			onChangeCondition = ({ key, target }) => {
+				if (key === "target" && this.conditionType === "then") adoptStageTargetProperty(this.fields);
 				const evtData = {
 					changedProperty: key,
 					dataPath: this.address,
@@ -19632,6 +19651,7 @@ Author: Draggable https://draggable.io
 		ArrowRight: previousTab,
 		ArrowLeft: nextTab
 	};
+	var SKIPPED_ATTR = "data-skipped";
 	var paginatedForms = 0;
 	/**
 	* Creates an element with a class and text, leaving any other attributes to the caller
@@ -19705,8 +19725,8 @@ Author: Draggable https://draggable.io
 	* @param {Function} [onChange] called with (page, previousPage) whenever the page changes
 	* @param {String} [startStageId] the stage id of the page to start on (e.g. the one on show before a re-render);
 	*   the first page when no stage has it
-	* @return {{show: Function, index: Number, stageId: String|null, count: Number, destroy: Function}|null} null when
-	*   there is only one page
+	* @return {{show: Function, refresh: Function, index: Number, stageId: String|null, count: Number,
+	*   destroy: Function}|null} null when there is only one page
 	*/
 	var paginate = (form, { type, progress, submit, heading, labels }, stages, onChange, startStageId) => {
 		const pages = Array.from(form.children).filter((elem) => elem.classList.contains(STAGE_CLASSNAME));
@@ -19716,16 +19736,24 @@ Author: Draggable https://draggable.io
 		}
 		const count = pages.length;
 		const last = count - 1;
+		const isSkipped = (i) => pages[i].hasAttribute(SKIPPED_ATTR);
+		let playable = [];
+		const computePlayable = () => {
+			playable = pages.map((_page, i) => i).filter((i) => !isSkipped(i));
+		};
+		computePlayable();
+		const isFirstPlayable = (i) => i === playable[0];
+		const isLastPlayable = (i) => i === playable.at(-1);
+		const nextPlayable = (i) => playable.find((p) => p > i);
+		const previousPlayable = (i) => playable.findLast((p) => p < i);
+		const resolve = (i) => playable.includes(i) ? i : nextPlayable(i) ?? previousPlayable(i) ?? i;
 		const startIndex = stages.findIndex((stage) => stage?.id === startStageId);
-		let current = startIndex > -1 && startIndex < count ? startIndex : 0;
+		let current = resolve(startIndex > -1 && startIndex < count ? startIndex : 0);
 		let tabs = [];
 		let steps = [];
 		let previous;
 		let next;
 		let status;
-		const playable = pages.map((_page, i) => i);
-		const isFirstPlayable = (i) => i === playable[0];
-		const isLastPlayable = (i) => i === playable.at(-1);
 		const idPrefix = `formeo-pages-${++paginatedForms}`;
 		const stepState = (i) => i < current ? "done" : i === current ? "current" : "upcoming";
 		const update = () => {
@@ -19733,8 +19761,12 @@ Author: Draggable https://draggable.io
 				page.hidden = i !== current;
 			});
 			tabs.forEach((tab, i) => {
+				tab.hidden = isSkipped(i);
 				tab.setAttribute("aria-selected", String(i === current));
 				tab.tabIndex = i === current ? 0 : -1;
+			});
+			steps.forEach((step, i) => {
+				step.hidden = isSkipped(i);
 			});
 			if (type === "wizard") {
 				previous.disabled = isFirstPlayable(current);
@@ -19760,10 +19792,23 @@ Author: Draggable https://draggable.io
 		const show = (index, { focus = false } = {}) => {
 			const previousPage = current;
 			const parsed = Number(index);
-			current = Math.max(0, Math.min(Number.isFinite(parsed) ? Math.trunc(parsed) : 0, last));
+			current = resolve(Math.max(0, Math.min(Number.isFinite(parsed) ? Math.trunc(parsed) : 0, last)));
 			update();
 			if (focus) focusFirst(pages[current]);
 			if (current !== previousPage) onChange?.(current, previousPage);
+		};
+		/**
+		* Re-reads which pages are skipped; FormeoRenderer#setStageSkipped calls it. When the page on show was just
+		* skipped, the next page in play (or the previous one) takes its place, firing onChange.
+		* @param {{focus: Boolean}} [options] focus the new page's first control, when focus was on the skipped page
+		*/
+		const refresh = ({ focus = false } = {}) => {
+			computePlayable();
+			if (playable.includes(current)) {
+				update();
+				return;
+			}
+			show(current, { focus });
 		};
 		let checkingPage = false;
 		/**
@@ -19798,7 +19843,7 @@ Author: Draggable https://draggable.io
 		/**
 		* Moves toward a target page. Clicking the current step is a no-op. Going back is unconditional.
 		* Moving forward validates every page from the current one up to (but not including) the target,
-		* in order, stopping at the first invalid one instead of reaching it:
+		* in order, stopping at the first invalid one instead of reaching it. Only pages in play are checked.
 		*  - when that page is the current, still-visible one, `pageIsValid`'s own `reportValidity` calls
 		*    already focused and reported the problem in place, so nothing more happens here - showing the
 		*    page again would only steal focus back to its first control.
@@ -19810,8 +19855,9 @@ Author: Draggable https://draggable.io
 		* @param {Number} target page to reach
 		*/
 		const goTo = (target) => {
-			if (target === current) return;
-			for (let i = current; i < target && !form.noValidate; i++) {
+			if (target === void 0 || target === current) return;
+			const toCheck = form.noValidate ? [] : playable.filter((i) => i >= current && i < target);
+			for (const i of toCheck) {
 				if (i === current) {
 					if (!pageIsValid(pages[i])) return;
 					continue;
@@ -19830,7 +19876,7 @@ Author: Draggable https://draggable.io
 			}
 			show(target, { focus: true });
 		};
-		const goNext = () => goTo(current + 1);
+		const goNext = () => goTo(nextPlayable(current));
 		const title = (i) => stages[i]?.config?.title || labels.page.replaceAll("{n}", String(i + 1));
 		let submitButton;
 		if (submit) submitButton = createSubmitButton(labels);
@@ -19848,7 +19894,6 @@ Author: Draggable https://draggable.io
 			tablist.setAttribute("role", "tablist");
 			tablist.setAttribute("aria-label", labels.tablist);
 			tabs = pages.map((page, i) => {
-				page.dataset.stageId = page.id;
 				page.id = `${idPrefix}-page-${i + 1}`;
 				const tab = create("button", "formeo-pages-tab", title(i));
 				tab.type = "button";
@@ -19863,11 +19908,11 @@ Author: Draggable https://draggable.io
 			});
 			tablist.append(...tabs);
 			tablist.addEventListener("keydown", (event) => {
-				const index = tabs.indexOf(event.target);
+				const index = playable.indexOf(tabs.indexOf(event.target));
 				const move = (tablist.ownerDocument.defaultView.getComputedStyle(tablist).direction === "rtl" ? RTL_TAB_KEYS : TAB_KEYS)[event.key];
 				if (index === -1 || !move) return;
 				event.preventDefault();
-				const target = move(index, count);
+				const target = playable[move(index, playable.length)];
 				show(target);
 				tabs[target].focus();
 			});
@@ -19892,7 +19937,7 @@ Author: Draggable https://draggable.io
 			}
 			previous = create("button", "formeo-pages-previous", labels.previous);
 			previous.type = "button";
-			previous.addEventListener("click", () => show(current - 1, { focus: true }));
+			previous.addEventListener("click", () => show(previousPlayable(current) ?? current, { focus: true }));
 			status = create("span", "formeo-pages-status");
 			status.setAttribute("aria-live", "polite");
 			next = create("button", "formeo-pages-next", labels.next);
@@ -19954,6 +19999,7 @@ Author: Draggable https://draggable.io
 		update();
 		return {
 			show,
+			refresh,
 			get index() {
 				return current;
 			},
@@ -19974,6 +20020,12 @@ Author: Draggable https://draggable.io
 	init_utils();
 	init_string();
 	init_constants();
+	var SKIP_DISABLED_ATTR = "data-formeo-skip-disabled";
+	var SKIPPABLE_CONTROLS = "input, select, textarea, button";
+	var STAGE_SKIP_PROPERTIES = {
+		isNotVisible: true,
+		isVisible: false
+	};
 	var FormeoRenderer$1 = class {
 		constructor(opts = {}, formDataArg) {
 			const { renderContainer: container, elements, formData, config, events, pagination } = processOptions(opts);
@@ -20117,6 +20169,7 @@ Author: Draggable https://draggable.io
 			};
 			this.renderedForm = dom.render(config);
 			this.renderedForm.addEventListener("reset", this.syncRequiredGroupsAfterReset);
+			for (const stage of this.stageElements()) stage.dataset.stageId = stage.id;
 			this.applyConditions();
 			this.bindFormEvents(this.renderedForm);
 			this.pager = this.paginateForm(this.renderedForm, startStageId);
@@ -20130,14 +20183,58 @@ Author: Draggable https://draggable.io
 		*/
 		paginateForm(form, startStageId) {
 			if (!this.pagination) return null;
+			const stages = Object.values(this.form.stages);
 			const onChange = (page, previousPage) => this.events.onPageChange?.({
 				page,
 				previousPage,
+				stageId: stages[page]?.id ?? null,
+				previousStageId: stages[previousPage]?.id ?? null,
 				form,
 				renderer: this
 			});
-			return paginate(form, this.pagination, Object.values(this.form.stages), onChange, startStageId);
+			return paginate(form, this.pagination, stages, onChange, startStageId);
 		}
+		/**
+		* @return {HTMLElement[]} the rendered form's stages, in order
+		*/
+		stageElements = () => Array.from(this.renderedForm?.children ?? []).filter((elem) => elem.classList.contains(STAGE_CLASSNAME));
+		/**
+		* Skips a page (a stage) or brings it back (#122). A skipped stage is hidden and its controls disabled, so they
+		* neither validate nor submit; their values stay for when the page comes back. One stage always stays in play.
+		* @param {HTMLElement} stage
+		* @param {Boolean} skipped
+		*/
+		setStageSkipped = (stage, skipped) => {
+			if (stage.hasAttribute("data-skipped") === skipped) return;
+			if (!skipped) {
+				stage.removeAttribute(SKIPPED_ATTR);
+				stage.hidden = false;
+				for (const control of stage.querySelectorAll(`[${SKIP_DISABLED_ATTR}]`)) {
+					control.disabled = false;
+					control.removeAttribute(SKIP_DISABLED_ATTR);
+				}
+				this.pager?.refresh();
+				return;
+			}
+			if (this.stageElements().filter((elem) => !elem.hasAttribute("data-skipped")).length < 2) {
+				console.warn("formeo: a condition tried to skip the only page left in play", stage.dataset.stageId);
+				return;
+			}
+			const hadFocus = stage.contains(stage.ownerDocument.activeElement);
+			stage.setAttribute(SKIPPED_ATTR, "");
+			stage.hidden = true;
+			for (const control of stage.querySelectorAll(SKIPPABLE_CONTROLS)) if (!control.disabled) {
+				control.disabled = true;
+				control.setAttribute(SKIP_DISABLED_ATTR, "");
+			}
+			this.pager?.refresh({ focus: hadFocus });
+			if (!this.pager && hadFocus) {
+				const stages = this.stageElements();
+				const index = stages.indexOf(stage);
+				const target = stages.slice(index + 1).find((elem) => !elem.hasAttribute("data-skipped")) ?? stages.slice(0, index).findLast((elem) => !elem.hasAttribute("data-skipped"));
+				if (target) focusFirst(target);
+			}
+		};
 		/**
 		* A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
 		* The `reset` event fires before the controls revert, hence the deferral.
@@ -20343,15 +20440,18 @@ Author: Draggable https://draggable.io
 			return comparisonMap[comparison]?.(sourceValue, targetValue);
 		};
 		execResult = ({ target, targetProperty, assignment, value }) => {
-			if (isAddress(target)) {
-				const { component, option } = this.getComponent(target);
-				const elem = option || component;
-				targetPropertyMap[targetProperty]?.(elem, {
-					targetProperty,
-					assignment,
-					value
-				});
+			if (!isAddress(target)) return;
+			const { component, option } = this.getComponent(target);
+			if (splitAddress(target)[0] === "stages") {
+				if (component && Object.hasOwn(STAGE_SKIP_PROPERTIES, targetProperty)) this.setStageSkipped(component, STAGE_SKIP_PROPERTIES[targetProperty]);
+				return;
 			}
+			const elem = option || component;
+			targetPropertyMap[targetProperty]?.(elem, {
+				targetProperty,
+				assignment,
+				value
+			});
 		};
 		getComponentProperty = (address, propertyName) => {
 			const { component, option } = this.getComponent(address) || {};
@@ -20362,7 +20462,11 @@ Author: Draggable https://draggable.io
 		getComponent = (address) => {
 			const result = { component: null };
 			if (!isAddress(address)) return null;
-			const [, componentId, optionsKey, optionIndex] = splitAddress(address);
+			const [type, componentId, optionsKey, optionIndex] = splitAddress(address);
+			if (type === "stages") {
+				result.component = this.stageElements().find((stage) => stage.dataset.stageId === componentId) ?? null;
+				return result;
+			}
 			let component = null;
 			try {
 				component = this.renderedForm.querySelector(`#f-${componentId}`);
