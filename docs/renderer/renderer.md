@@ -435,15 +435,24 @@ const renderer = new FormeoRenderer({
 
 - `'tabs'` — a `role="tablist"` of buttons, one per page, with the ARIA tabs pattern (see [Tabs](#tabs) below).
 - `'wizard'` — Previous/Next buttons with an optional step list (see [Wizard](#wizard) below).
-- An options object: `{ type, progress, labels: { previous, next, page } }`
+- An options object: `{ type, progress, submit, heading, labels: { previous, next, page, submit, tablist, steps, navigation, status } }`
 
 | Key | Default | Meaning |
 |-----|---------|---------|
 | `type` | — (required) | `'tabs'` or `'wizard'` |
 | `progress` | `true` | Wizard only: show the clickable step list above the pages. `false` leaves it out. |
+| `submit` | `false` | Add a Submit button: in a wizard it replaces Next on the last page, in tabs it sits below the pages. See [Wizard](#wizard) and [Tabs](#tabs). |
+| `heading` | `false` | Show each page's title as a heading inside the page: `true` for `<h2>`, or a level from `2` to `6`. See [Page headings](#page-headings). |
 | `labels.previous` | `'Previous'` | Wizard's Previous button text |
 | `labels.next` | `'Next'` | Wizard's Next button text |
+| `labels.submit` | `'Submit'` | The Submit button's text (with `submit: true`) |
 | `labels.page` | `'Page {n}'` | Fallback page title, used when a stage has no `config.title`. `{n}` is replaced with the 1-based page number. |
+| `labels.tablist` | `'Pages'` | Accessible name of the tablist |
+| `labels.steps` | `'Progress'` | Accessible name of the wizard's step list |
+| `labels.navigation` | `'Page navigation'` | Accessible name of the wizard's Previous/Next bar |
+| `labels.status` | `'{title} ({n} of {count})'` | What screen readers hear on each wizard page change. `{title}` is the page's title, `{n}` its 1-based position and `{count}` the number of pages. |
+
+To translate the navigation, pass your own strings in `labels`. The renderer doesn't load language files.
 
 Any other value for `pagination` (including `undefined`, `null`, or an unrecognized `type`) is treated as no pagination, and every stage renders visibly as it did before this feature.
 

@@ -86,11 +86,24 @@ describe('normalizePagination (#122)', () => {
     assert.equal(normalizePagination({ type: 'accordion' }), null)
   })
 
-  test('expands the string shorthand with default labels and progress on', () => {
+  const DEFAULT_LABELS = {
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page {n}',
+    submit: 'Submit',
+    tablist: 'Pages',
+    steps: 'Progress',
+    navigation: 'Page navigation',
+    status: '{title} ({n} of {count})',
+  }
+
+  test('expands the string shorthand with the defaults', () => {
     assert.deepEqual(normalizePagination('wizard'), {
       type: 'wizard',
       progress: true,
-      labels: { previous: 'Previous', next: 'Next', page: 'Page {n}' },
+      submit: false,
+      heading: 0,
+      labels: DEFAULT_LABELS,
     })
   })
 
@@ -98,16 +111,46 @@ describe('normalizePagination (#122)', () => {
     assert.deepEqual(normalizePagination({ type: 'wizard', progress: false, labels: { next: 'Weiter' } }), {
       type: 'wizard',
       progress: false,
-      labels: { previous: 'Previous', next: 'Weiter', page: 'Page {n}' },
+      submit: false,
+      heading: 0,
+      labels: { ...DEFAULT_LABELS, next: 'Weiter' },
     })
   })
 
   test('ignores label values that are not strings', () => {
-    assert.deepEqual(normalizePagination({ type: 'tabs', labels: { page: undefined, next: 3 } }).labels, {
-      previous: 'Previous',
-      next: 'Next',
-      page: 'Page {n}',
-    })
+    assert.deepEqual(
+      normalizePagination({ type: 'tabs', labels: { page: undefined, next: 3, status: null } }).labels,
+      DEFAULT_LABELS
+    )
+  })
+
+  test('accepts every navigation label', () => {
+    const labels = {
+      submit: 'Senden',
+      tablist: 'Seiten',
+      steps: 'Fortschritt',
+      navigation: 'Seitennavigation',
+      status: '{n}/{count}',
+    }
+    assert.deepEqual(normalizePagination({ type: 'wizard', labels }).labels, { ...DEFAULT_LABELS, ...labels })
+  })
+
+  test('submit is a boolean, off by default', () => {
+    assert.equal(normalizePagination({ type: 'tabs' }).submit, false)
+    assert.equal(normalizePagination({ type: 'wizard', submit: true }).submit, true)
+    assert.equal(normalizePagination({ type: 'wizard', submit: 1 }).submit, true)
+    assert.equal(normalizePagination({ type: 'wizard', submit: 0 }).submit, false)
+  })
+
+  test('heading is a level from 2 to 6, true meaning 2, anything else off', () => {
+    const level = heading => normalizePagination({ type: 'wizard', heading }).heading
+    assert.equal(level(true), 2)
+    for (const n of [2, 3, 4, 5, 6]) {
+      assert.equal(level(n), n)
+    }
+    for (const off of [false, undefined, null, 0, 1, 7, '2', 2.5, 'h2']) {
+      assert.equal(level(off), 0, String(off))
+    }
   })
 })
 
