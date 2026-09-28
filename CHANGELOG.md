@@ -1,3 +1,10 @@
+## [5.9.1](https://github.com/Draggable/formeo/compare/v5.9.0...v5.9.1) (2026-09-28)
+
+
+### Bug Fixes
+
+* **build:** ship the CommonJS build as .cjs so require('formeo') works in Node ([716c272](https://github.com/Draggable/formeo/commit/716c272a37326fe19d2c759c5a67d92d823a5eb3))
+
 # [5.9.0](https://github.com/Draggable/formeo/compare/v5.8.0...v5.9.0) (2026-09-28)
 
 
