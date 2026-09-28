@@ -468,8 +468,21 @@ export class EditorPages {
     return events.before(
       'remove',
       { component: stage, componentType: stage.name, componentId: stageId, index, title, isEmpty },
-      () =>
-        actions.remove.page({ stage, stageId, index, title, isEmpty, removeAction: () => this.removePage(stageId) }),
+      () => {
+        // re-read: the page may have gained content, or been removed some other way, while the hook waited (#281)
+        const currentStage = this.stageAt(stageId)
+        if (!currentStage || this.count <= 1) {
+          return
+        }
+        actions.remove.page({
+          stage: currentStage,
+          stageId,
+          index: this.ids.indexOf(stageId),
+          title: this.titleOf(stageId),
+          isEmpty: !currentStage.children.length,
+          removeAction: () => this.removePage(stageId),
+        })
+      },
       { src: stage.dom, guardKey: `remove:${stageId}` }
     )
   }

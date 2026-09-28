@@ -352,7 +352,13 @@ export default class Component extends Data {
     return events.before(
       'remove',
       detail,
-      () => actions.remove.component({ ...detail, removeAction: this.createRemoveAction() }),
+      () => {
+        // the component may have been removed some other way while the hook waited (#281)
+        if (!this.isRegistered) {
+          return
+        }
+        actions.remove.component({ ...detail, removeAction: this.createRemoveAction() })
+      },
       { src: this.dom, guardKey: `remove:${this.id}` }
     )
   }

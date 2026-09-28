@@ -155,6 +155,25 @@ describe('onBeforeRemove (#281)', () => {
     resolve()
     await first
   })
+
+  it('does nothing if the component was removed some other way while the hook waits (#281)', async () => {
+    let resolve
+    const seen = []
+    const { field } = setup({
+      callbacks: {
+        onBeforeRemove: () =>
+          new Promise(res => {
+            resolve = res
+          }),
+      },
+      actions: { remove: { component: evt => seen.push(evt) } },
+    })
+    const result = field.requestRemove()
+    field.remove() // e.g. its row's × resolved first and took it with it
+    resolve(true)
+    await result
+    assert.equal(seen.length, 0)
+  })
 })
 
 describe('onBeforeAdd (#281)', () => {

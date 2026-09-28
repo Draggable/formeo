@@ -505,6 +505,49 @@ describe('EditorPages remove (#122)', () => {
     assert.equal(page.mock.callCount(), 1)
     assert.equal(pages.count, 2)
   })
+
+  it('re-reads isEmpty so content added while an async onBeforeRemove waits is not lost (#281)', async () => {
+    let resolve
+    const seen = []
+    const { pages, components } = setup({
+      callbacks: {
+        onBeforeRemove: () =>
+          new Promise(res => {
+            resolve = res
+          }),
+      },
+      actions: { remove: { page: evt => seen.push(evt) } },
+    })
+    const result = pages.requestRemove('p-2')
+    components.stages.get('p-2').addChild()
+    resolve(true)
+    await result
+    assert.equal(seen.length, 1)
+    assert.equal(seen[0].isEmpty, false)
+  })
+
+  it('re-reads count and stage so the last page is never offered after a parallel removal (#281)', async () => {
+    const resolvers = []
+    const page = mock.fn(evt => evt.removeAction())
+    const { pages } = setup({
+      callbacks: {
+        onBeforeRemove: () =>
+          new Promise(res => {
+            resolvers.push(res)
+          }),
+      },
+      actions: { remove: { page } },
+    })
+    const a = pages.requestRemove('p-2')
+    const b = pages.requestRemove('p-3')
+    pages.removePage('p-1')
+    resolvers[0](true)
+    resolvers[1](true)
+    await a
+    await b
+    assert.equal(page.mock.callCount(), 1)
+    assert.equal(pages.count, 1)
+  })
 })
 
 describe('EditorPages reorder (#122)', () => {
