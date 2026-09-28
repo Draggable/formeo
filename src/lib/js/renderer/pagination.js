@@ -33,6 +33,16 @@ const create = (tag, className, text = '') => {
 }
 
 /**
+ * Fills `{name}` placeholders from `values`, leaving unknown ones as typed. A replacer function rather than a
+ * replacement string, so `$&` or `$$` in a page title stays literal.
+ * @param {String} text
+ * @param {Object} values
+ * @return {String}
+ */
+const fillLabel = (text, values) =>
+  text.replace(/\{(\w+)\}/g, (token, name) => (Object.hasOwn(values, name) ? String(values[name]) : token))
+
+/**
  * Moves focus to the first control a user can reach on a page, or to the page itself when it has none,
  * so that focus is never lost to the body
  * @param {HTMLElement} page
@@ -52,8 +62,8 @@ const focusFirst = page => {
 /**
  * Shows one stage of a rendered form at a time, as tabs or as a wizard
  * @param {HTMLFormElement} form rendered form
- * @param {{type: String, progress: Boolean, labels: Object}} options output of normalizePagination;
- *   `progress` only affects the wizard, adding a clickable step list above the pages
+ * @param {{type: String, progress: Boolean, submit: Boolean, heading: Number, labels: Object}} options output of
+ *   normalizePagination; `progress` only affects the wizard, adding a clickable step list above the pages
  * @param {Array<Object>} stages stage data in render order, for page titles
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
  * @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
@@ -73,6 +83,12 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
   let next
   let status
 
+  // the pages a user can reach, in order. Every page for now; page conditions will leave skipped ones out, and
+  // "first", "last" and the status count follow this list rather than the stage count
+  const playable = pages.map((_page, i) => i)
+  const isFirstPlayable = i => i === playable[0]
+  const isLastPlayable = i => i === playable.at(-1)
+
   // steps before the current page are done, the current one is current, the rest are upcoming
   const stepState = i => (i < current ? 'done' : i === current ? 'current' : 'upcoming')
 
@@ -85,9 +101,13 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
       tab.tabIndex = i === current ? 0 : -1
     })
     if (type === 'wizard') {
-      previous.disabled = current === 0
-      next.hidden = current === last
-      status.textContent = `${current + 1} / ${count}`
+      previous.disabled = isFirstPlayable(current)
+      next.hidden = isLastPlayable(current)
+      status.textContent = fillLabel(labels.status, {
+        title: title(current),
+        n: playable.indexOf(current) + 1,
+        count: playable.length,
+      })
       steps.forEach((step, i) => {
         step.dataset.state = stepState(i)
         const button = step.querySelector('button')
@@ -204,6 +224,7 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
   if (type === 'tabs') {
     const tablist = create('nav', 'formeo-pages-nav formeo-pages-tabs')
     tablist.setAttribute('role', 'tablist')
+    tablist.setAttribute('aria-label', labels.tablist)
     // a stage's own id is also its id in the editor and in any other form rendered from the same
     // formData, so aria-controls needs ids unique to this form; the stage id moves to data-stage-id
     const idPrefix = `formeo-pages-${++paginatedForms}`
@@ -240,6 +261,7 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     if (progress) {
       const stepList = document.createElement('ol')
       stepList.className = 'formeo-pages-steps'
+      stepList.setAttribute('aria-label', labels.steps)
       steps = pages.map((_page, i) => {
         const step = document.createElement('li')
         step.className = 'formeo-pages-step'
@@ -264,6 +286,7 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     // a group, not a <nav>: moving between the pages of one form is not site navigation
     const bar = create('div', 'formeo-pages-nav formeo-pages-wizard')
     bar.setAttribute('role', 'group')
+    bar.setAttribute('aria-label', labels.navigation)
     bar.append(previous, status, next)
     form.append(bar)
 
@@ -274,7 +297,7 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
         event.key !== 'Enter' ||
         event.isComposing ||
         event.defaultPrevented ||
-        current === last ||
+        isLastPlayable(current) ||
         target.tagName !== 'INPUT' ||
         ENTER_NATIVE_TYPES.has(target.type)
       ) {

@@ -203,4 +203,18 @@ test.describe('multi-page forms (#122)', () => {
     await expect(root.locator('input[name="email"]')).toBeVisible()
     await expect(root.locator('input[name="name"]')).toBeHidden()
   })
+
+  test('the tablist, step list and wizard bar have accessible names, and the status names the page', async ({
+    page: browserPage,
+  }) => {
+    let root = await mount(browserPage, twoPages, 'tabs')
+    await expect(root.getByRole('tablist', { name: 'Pages' })).toBeVisible()
+
+    root = await mount(browserPage, twoPages, 'wizard')
+    await expect(root.getByRole('list', { name: 'Progress' })).toBeVisible()
+    await expect(root.getByRole('group', { name: 'Page navigation' })).toBeVisible()
+    await expect(root.locator('.formeo-pages-status')).toHaveText('About you (1 of 2)')
+    await root.getByRole('button', { name: 'Next' }).click()
+    await expect(root.locator('.formeo-pages-status')).toHaveText('Page 2 (2 of 2)')
+  })
 })

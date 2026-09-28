@@ -290,6 +290,13 @@ describe('pagination (#122)', () => {
         ['About you', 'Page 2']
       )
     })
+
+    test('the tablist is named by labels.tablist', () => {
+      render('tabs')
+      assert.equal(container.querySelector('[role="tablist"]').getAttribute('aria-label'), 'Pages')
+      render({ type: 'tabs', labels: { tablist: 'Seiten' } })
+      assert.equal(container.querySelector('[role="tablist"]').getAttribute('aria-label'), 'Seiten')
+    })
   })
 
   describe('wizard', () => {
@@ -312,13 +319,33 @@ describe('pagination (#122)', () => {
       assert.equal(renderer.page, 0)
     })
 
-    test('the status reads "N / M" in a live region', () => {
+    test('the status names the page and its place, in a live region', () => {
       render('wizard')
       const status = container.querySelector('.formeo-pages-status')
       assert.equal(status.getAttribute('aria-live'), 'polite')
-      assert.equal(status.textContent, '1 / 2')
+      assert.equal(status.textContent, 'About you (1 of 2)')
       next().click()
-      assert.equal(status.textContent, '2 / 2')
+      assert.equal(status.textContent, 'Page 2 (2 of 2)')
+    })
+
+    test('a custom status fills every placeholder each time, keeps $ patterns literal and unknown ones as typed', () => {
+      render(
+        { type: 'wizard', labels: { status: '{n}/{count}: {title} – {title} {unknown}' } },
+        buildPages([[field('a')], [field('b')]], ['Pay $& now $$', 'Two'])
+      )
+      assert.equal(
+        container.querySelector('.formeo-pages-status').textContent,
+        '1/2: Pay $& now $$ – Pay $& now $$ {unknown}'
+      )
+    })
+
+    test('the step list and the Previous/Next bar are named by labels.steps and labels.navigation', () => {
+      render('wizard')
+      assert.equal(container.querySelector('.formeo-pages-steps').getAttribute('aria-label'), 'Progress')
+      assert.equal(container.querySelector('.formeo-pages-wizard').getAttribute('aria-label'), 'Page navigation')
+      render({ type: 'wizard', labels: { steps: 'Fortschritt', navigation: 'Seitennavigation' } })
+      assert.equal(container.querySelector('.formeo-pages-steps').getAttribute('aria-label'), 'Fortschritt')
+      assert.equal(container.querySelector('.formeo-pages-wizard').getAttribute('aria-label'), 'Seitennavigation')
     })
 
     test('the Previous/Next bar is a group, not a navigation landmark inside the form', () => {

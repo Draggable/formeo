@@ -479,7 +479,7 @@ Each page gets an `id` unique to its form (the tab's `aria-controls` points at i
 A wizard adds:
 
 - An optional step list (`<ol class="formeo-pages-steps">`, on by default — set `progress: false` to remove it). Each step shows the page's title and a `data-state` of `"done"`, `"current"` or `"upcoming"`. Clicking a step ahead of the current page validates every page in between (see [Validation](#validation) below); clicking a step behind the current page is always allowed.
-- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden "N / M" status (`aria-live="polite"`, announced to screen readers on every page change). Next validates the current page before moving on. Next is hidden on the last page, and Previous is disabled on the first.
+- A bottom bar (`<div role="group">`) with a Previous button, a Next button, and a visually-hidden status such as "Account (2 of 3)" (`aria-live="polite"`, announced to screen readers on every page change; set its wording with `labels.status`). Next validates the current page before moving on. Next is hidden on the last page, and Previous is disabled on the first.
 - Pressing <kbd>Enter</kbd> in a text `<input>` (not a submit/button/reset/image/file input) acts as Next on every page but the last, instead of submitting a half-filled form. Textareas keep their newline behavior. On the last page, Enter submits the form natively.
 - A wizard should end with a submit button on its last page, since the Next button disappears there and nothing else advances the form.
 
@@ -492,6 +492,26 @@ Whether the user submits the form or clicks Next/a step, an invalid control neve
 - A plain `checkValidity()`, on the form or on a single control, is silent and never switches pages. It's safe to call from `onChange`, for example to disable a submit button until the form is valid.
 - A [condition](#conditional-logic) that hides a field suspends only its `required`: the field stops being required until it's shown again (see [`then` actions](#then-actions)), regardless of which page it lives on. A hidden field that fails another constraint, such as `pattern` or a value that doesn't match its `type`, still blocks submission and Next, as it would natively.
 - A form with `novalidate` is never checked, just as native submission skips it: Next, Enter and the step list move on freely.
+
+### Accessible names
+
+The tablist, the wizard's step list and its Previous/Next bar are named for assistive technology by `labels.tablist`
+(`'Pages'`), `labels.steps` (`'Progress'`) and `labels.navigation` (`'Page navigation'`). Translate them along with the
+button labels:
+
+```javascript
+pagination: {
+  type: 'wizard',
+  labels: {
+    previous: 'Zurück',
+    next: 'Weiter',
+    page: 'Seite {n}',
+    steps: 'Fortschritt',
+    navigation: 'Seitennavigation',
+    status: '{title} ({n} von {count})',
+  },
+}
+```
 
 ### `renderer.page`, `renderer.pageCount`, `onPageChange`
 
@@ -517,7 +537,7 @@ Pagination renders these class names for styling:
 | `.formeo-pages-step[data-state]` | A step (`<li>`); `data-state` is `"done"`, `"current"` or `"upcoming"` |
 | `.formeo-pages-previous` | The wizard's Previous button |
 | `.formeo-pages-next` | The wizard's Next button |
-| `.formeo-pages-status` | The wizard's "N / M" status (visually hidden, screen-reader only) |
+| `.formeo-pages-status` | The wizard's page status, e.g. "About you (1 of 2)" (visually hidden, screen-reader only) |
 
 ### Example
 
