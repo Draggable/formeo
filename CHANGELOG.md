@@ -1,3 +1,10 @@
+## [5.9.2](https://github.com/Draggable/formeo/compare/v5.9.1...v5.9.2) (2026-09-28)
+
+
+### Bug Fixes
+
+* **build:** copy the language files into the demo again ([a1731dd](https://github.com/Draggable/formeo/commit/a1731dd65f035a1cdd5477132a29b9ed3682a879)), closes [#pages](https://github.com/Draggable/formeo/issues/pages)
+
 ## [5.9.1](https://github.com/Draggable/formeo/compare/v5.9.0...v5.9.1) (2026-09-28)
 
 
