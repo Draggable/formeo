@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.13.1
+Version: 5.13.2
 Author: Draggable https://draggable.io
 */
 
@@ -6300,7 +6300,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.13.1";
+	version$2 = "5.13.2";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
