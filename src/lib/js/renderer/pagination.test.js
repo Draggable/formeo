@@ -1195,6 +1195,83 @@ describe('pagination (#122)', () => {
         const otherStage = [...second.querySelectorAll('.formeo-stage')][1]
         assert.equal(otherStage.hasAttribute('data-skipped'), false)
       })
+
+      describe('navigation', () => {
+        const next = () => container.querySelector('.formeo-pages-next')
+        const previous = () => container.querySelector('.formeo-pages-previous')
+        const steps = () => [...container.querySelectorAll('.formeo-pages-step')]
+        const status = () => container.querySelector('.formeo-pages-status').textContent
+
+        test('Next, Previous and Enter jump over a skipped page; its step and the status count leave it out', () => {
+          const renderer = render('wizard', skipWhen(threePages(), 'skip', 'p-2'))
+          typeInto(input('a'), 'skip')
+          assert.deepEqual(
+            steps().map(step => step.hidden),
+            [false, true, false]
+          )
+          assert.equal(status(), 'One (1 of 2)')
+
+          next().click()
+          assert.equal(renderer.page, 2)
+          assert.equal(status(), 'Three (2 of 2)')
+          assert.equal(next().hidden, true)
+
+          previous().click()
+          assert.equal(renderer.page, 0)
+          assert.equal(previous().disabled, true)
+
+          key(input('a'), 'Enter')
+          assert.equal(renderer.page, 2)
+        })
+
+        test('with submit, Submit shows on the last page in play', () => {
+          const renderer = render({ type: 'wizard', submit: true }, skipWhen(threePages(), 'skip', 'p-3'))
+          typeInto(input('a'), 'skip')
+          input('b').value = 'filled'
+          next().click()
+          assert.equal(renderer.page, 1)
+          assert.equal(next().hidden, true)
+          assert.equal(container.querySelector('.formeo-pages-submit').hidden, false)
+        })
+
+        test('a forward step jump validates only the pages in play', () => {
+          const renderer = render('wizard', skipWhen(threePages(), 'skip', 'p-2'))
+          typeInto(input('a'), 'skip')
+          // page 2's required field is empty, but the page is skipped
+          steps()[2].querySelector('button').click()
+          assert.equal(renderer.page, 2)
+        })
+
+        test('a skipped tab is hidden, and arrow keys, Home and End pass over it', () => {
+          const renderer = render('tabs', skipWhen(threePages(), 'skip', 'p-2'))
+          typeInto(input('a'), 'skip')
+          assert.deepEqual(
+            tabs().map(tab => tab.hidden),
+            [false, true, false]
+          )
+          key(tabs()[0], 'ArrowRight')
+          assert.equal(renderer.page, 2)
+          assert.equal(dom.window.document.activeElement, tabs()[2])
+          key(tabs()[2], 'ArrowRight')
+          assert.equal(renderer.page, 0, 'wraps past the skipped tab')
+          key(tabs()[0], 'ArrowLeft')
+          assert.equal(renderer.page, 2)
+          key(tabs()[2], 'Home')
+          assert.equal(renderer.page, 0)
+          key(tabs()[0], 'End')
+          assert.equal(renderer.page, 2)
+        })
+
+        test('in a right-to-left form the swapped arrows pass over a skipped tab too', () => {
+          container.dir = 'rtl'
+          const renderer = render('tabs', skipWhen(threePages(), 'skip', 'p-2'))
+          typeInto(input('a'), 'skip')
+          key(tabs()[0], 'ArrowLeft')
+          assert.equal(renderer.page, 2)
+          key(tabs()[2], 'ArrowRight')
+          assert.equal(renderer.page, 0)
+        })
+      })
     })
   })
 })

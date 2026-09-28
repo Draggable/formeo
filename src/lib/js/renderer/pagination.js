@@ -117,6 +117,18 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
 
   const count = pages.length
   const last = count - 1
+  const isSkipped = i => pages[i].hasAttribute(SKIPPED_ATTR)
+  // the pages a user can reach, in order: page conditions skip the others (FormeoRenderer#setStageSkipped), and
+  // "first", "last", Next/Previous and the status count follow this list rather than the stage count
+  let playable = []
+  const computePlayable = () => {
+    playable = pages.map((_page, i) => i).filter(i => !isSkipped(i))
+  }
+  computePlayable()
+  const isFirstPlayable = i => i === playable[0]
+  const isLastPlayable = i => i === playable.at(-1)
+  const nextPlayable = i => playable.find(p => p > i)
+  const previousPlayable = i => playable.findLast(p => p < i)
   // starting on a page is not a page change: no onChange and no focus move
   const startIndex = stages.findIndex(stage => stage?.id === startStageId)
   let current = startIndex > -1 && startIndex < count ? startIndex : 0
@@ -125,12 +137,6 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
   let previous
   let next
   let status
-
-  // the pages a user can reach, in order. Every page for now; page conditions will leave skipped ones out, and
-  // "first", "last" and the status count follow this list rather than the stage count
-  const playable = pages.map((_page, i) => i)
-  const isFirstPlayable = i => i === playable[0]
-  const isLastPlayable = i => i === playable.at(-1)
 
   // a stage's own id is also its id in the editor and in any other form rendered from the same formData, so
   // ids made here (tabs, pages, headings) carry a prefix unique to this form
@@ -144,8 +150,12 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
       page.hidden = i !== current
     })
     tabs.forEach((tab, i) => {
+      tab.hidden = isSkipped(i)
       tab.setAttribute('aria-selected', String(i === current))
       tab.tabIndex = i === current ? 0 : -1
+    })
+    steps.forEach((step, i) => {
+      step.hidden = isSkipped(i)
     })
     if (type === 'wizard') {
       previous.disabled = isFirstPlayable(current)
@@ -186,6 +196,14 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
     if (current !== previousPage) {
       onChange?.(current, previousPage)
     }
+  }
+
+  /**
+   * Re-reads which pages are skipped and redraws the navigation; FormeoRenderer#setStageSkipped calls it
+   */
+  const refresh = () => {
+    computePlayable()
+    update()
   }
 
   // set while the wizard checks a page itself, so the `invalid` listener below leaves the page alone
@@ -230,7 +248,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
   /**
    * Moves toward a target page. Clicking the current step is a no-op. Going back is unconditional.
    * Moving forward validates every page from the current one up to (but not including) the target,
-   * in order, stopping at the first invalid one instead of reaching it:
+   * in order, stopping at the first invalid one instead of reaching it. Only pages in play are checked.
    *  - when that page is the current, still-visible one, `pageIsValid`'s own `reportValidity` calls
    *    already focused and reported the problem in place, so nothing more happens here - showing the
    *    page again would only steal focus back to its first control.
@@ -242,10 +260,11 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
    * @param {Number} target page to reach
    */
   const goTo = target => {
-    if (target === current) {
+    if (target === undefined || target === current) {
       return
     }
-    for (let i = current; i < target && !form.noValidate; i++) {
+    const toCheck = form.noValidate ? [] : playable.filter(i => i >= current && i < target)
+    for (const i of toCheck) {
       if (i === current) {
         if (!pageIsValid(pages[i])) {
           return
@@ -267,7 +286,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
     show(target, { focus: true })
   }
 
-  const goNext = () => goTo(current + 1)
+  const goNext = () => goTo(nextPlayable(current))
 
   const title = i => stages[i]?.config?.title || labels.page.replaceAll('{n}', String(i + 1))
 
@@ -308,16 +327,17 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
       return tab
     })
     tablist.append(...tabs)
-    // automatic activation: moving to a tab shows its page
+    // automatic activation: moving to a tab shows its page, passing over a skipped page's hidden tab
     tablist.addEventListener('keydown', event => {
-      const index = tabs.indexOf(event.target)
+      // position among the tabs in play, so the keys pass over a skipped page's hidden tab
+      const index = playable.indexOf(tabs.indexOf(event.target))
       const isRtl = tablist.ownerDocument.defaultView.getComputedStyle(tablist).direction === 'rtl'
       const move = (isRtl ? RTL_TAB_KEYS : TAB_KEYS)[event.key]
       if (index === -1 || !move) {
         return
       }
       event.preventDefault()
-      const target = move(index, count)
+      const target = playable[move(index, playable.length)]
       show(target)
       tabs[target].focus()
     })
@@ -346,7 +366,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
 
     previous = create('button', 'formeo-pages-previous', labels.previous)
     previous.type = 'button'
-    previous.addEventListener('click', () => show(current - 1, { focus: true }))
+    previous.addEventListener('click', () => show(previousPlayable(current) ?? current, { focus: true }))
     status = create('span', 'formeo-pages-status')
     status.setAttribute('aria-live', 'polite')
     next = create('button', 'formeo-pages-next', labels.next)
@@ -453,6 +473,7 @@ export const paginate = (form, { type, progress, submit, heading, labels }, stag
 
   return {
     show,
+    refresh,
     get index() {
       return current
     },

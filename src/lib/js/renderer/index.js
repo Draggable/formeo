@@ -262,7 +262,7 @@ export default class FormeoRenderer {
         control.disabled = false
         control.removeAttribute(SKIP_DISABLED_ATTR)
       }
-      this.pager?.refresh?.()
+      this.pager?.refresh()
       return
     }
     const inPlay = this.stageElements().filter(elem => !elem.hasAttribute(SKIPPED_ATTR))
@@ -280,7 +280,7 @@ export default class FormeoRenderer {
         control.setAttribute(SKIP_DISABLED_ATTR, '')
       }
     }
-    this.pager?.refresh?.({ focus: hadFocus })
+    this.pager?.refresh({ focus: hadFocus })
   }
 
   /**
