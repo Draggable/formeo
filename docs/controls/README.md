@@ -26,7 +26,8 @@ const inputElement = {
 
 ## [Control Options](https://github.com/Draggable/formeo/tree/main/docs/options/controls)
 
-See [Custom controls](custom-controls.md) for a full editor + renderer example.
+See [Custom controls](custom-controls.md) for a full editor + renderer example, or
+[Rich Text Editors](rich-text-editors.md) for a worked example wiring in CKEditor 5.
 
 ## Control Groups
 

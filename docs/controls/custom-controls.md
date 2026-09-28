@@ -208,3 +208,4 @@ would throw on.
 - [Custom Attribute Types](custom-attribute-types.md) - Attribute input types for a control's `attrs`
 - [Renderer: Custom Elements](../renderer/renderer.md#advanced-topics) - The renderer's `elements` option
 - [Control sets](#control-sets) - Add several fields at once
+- [Rich Text Editors](rich-text-editors.md) - A full worked example: a CKEditor 5 control
