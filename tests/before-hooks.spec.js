@@ -1,6 +1,7 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
 import { clickFieldAction, hookCalls, mountHookedEditor } from './helpers/hooks.js'
+import { dragControlTo } from './helpers/multi-editor.js'
 
 let errors
 test.beforeEach(({ page }) => {
@@ -86,5 +87,70 @@ test.describe('onBeforeRemove (#281)', () => {
     await expect(editor.locator('.formeo-page-tab-wrap')).toHaveCount(2)
     const [call] = await hookCalls(page, 'beforeRemove')
     expect(call.componentType).toBe('stage')
+  })
+})
+
+test.describe('onBeforeAdd (#281)', () => {
+  test('a click held by a Promise adds the field once it resolves', async ({ page }) => {
+    const editor = await mountHookedEditor(page)
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeAdd = 'defer'
+    })
+    await editor.getByRole('button', { name: 'Text Input' }).click()
+    await page.waitForTimeout(300)
+    await expect(editor.locator('.formeo-field')).toHaveCount(1)
+    expect(await hookCalls(page, 'beforeAdd')).toEqual([
+      { name: 'beforeAdd', componentType: 'field', addedVia: 'click' },
+    ])
+    await page.evaluate(() => window.__hooks.resolve.beforeAdd(true))
+    await expect(editor.locator('.formeo-field')).toHaveCount(2)
+  })
+
+  test('a cancelled drop leaves no field and no empty row', async ({ page }) => {
+    const editor = await mountHookedEditor(page)
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeAdd = 'cancel'
+    })
+    await dragControlTo(page, editor.locator('.text-input-control'), editor.locator('.formeo-stage'))
+    await page.waitForTimeout(300)
+    await expect(editor.locator('.formeo-field')).toHaveCount(1)
+    await expect(editor.locator('.formeo-row')).toHaveCount(1)
+    const [call] = await hookCalls(page, 'beforeAdd')
+    expect(call).toEqual({ name: 'beforeAdd', componentType: 'field', addedVia: 'dragDrop' })
+  })
+
+  test('an allowed drop still adds the field', async ({ page }) => {
+    const editor = await mountHookedEditor(page)
+    await dragControlTo(page, editor.locator('.text-input-control'), editor.locator('.formeo-stage'))
+    await expect(editor.locator('.formeo-field')).toHaveCount(2)
+  })
+
+  test('with pages, it can veto the + tab', async ({ page }) => {
+    const editor = await mountHookedEditor(page, { pages: true })
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeAdd = 'cancel'
+    })
+    await editor.locator('.formeo-page-add').click()
+    await page.waitForTimeout(300)
+    await expect(editor.locator('.formeo-page-tab-wrap')).toHaveCount(1)
+    expect(await hookCalls(page, 'beforeAdd')).toEqual([{ name: 'beforeAdd', componentType: 'stage' }])
+  })
+
+  test('destroying the editor while a hook waits adds nothing and throws nothing', async ({ page }) => {
+    const editor = await mountHookedEditor(page)
+    await page.evaluate(() => {
+      window.__hooks.mode.beforeAdd = 'defer'
+    })
+    await editor.getByRole('button', { name: 'Text Input' }).click()
+    // destroy() empties the Components store, so formData can't tell "nothing added" from "everything gone";
+    // check the DOM instead. The editor's own DOM is removed by destroy(), so this is really just confirming
+    // resolving the hook afterwards doesn't throw - the pageerror check in afterEach is the real assertion.
+    const fields = await page.evaluate(async () => {
+      window.__editor.destroy()
+      window.__hooks.resolve.beforeAdd(true)
+      await new Promise(resolve => setTimeout(resolve, 300))
+      return document.querySelectorAll('#e2e-hooks .formeo-field').length
+    })
+    expect(fields).toBe(0)
   })
 })

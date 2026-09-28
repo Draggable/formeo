@@ -134,7 +134,7 @@ export class EditorPages {
       title: addLabel,
     })
     addButton.innerHTML = dom.icon('plus')
-    addButton.addEventListener('click', () => this.add())
+    addButton.addEventListener('click', () => this.requestAdd())
 
     this.status = el('span', { className: 'formeo-pages-status', 'aria-live': 'polite' })
     const bar = el('div', { className: 'formeo-pages-bar' }, [this.tablist, addButton, this.status])
@@ -252,6 +252,16 @@ export class EditorPages {
         previousStageId,
       })
     }
+  }
+
+  /**
+   * The + tab: onBeforeAdd decides whether and when a page is added (#281)
+   * @return {Boolean|Promise<Boolean>} see Events#before
+   */
+  requestAdd() {
+    return this.components.events.before('add', { componentType: 'stage', index: this.count }, () => this.add(), {
+      src: this.tablist,
+    })
   }
 
   /**

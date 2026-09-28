@@ -51,7 +51,7 @@ export default class Control {
         click: ({ target }) => {
           const controlId = target.closest('.field-control')?.id
           if (controlId) {
-            this.controls.addElement(controlId)
+            this.controls.requestAddElement(controlId)
           }
         },
       },

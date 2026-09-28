@@ -6,7 +6,7 @@ import dom from '../common/dom.js'
 import { forEach, indexOfNode, isInt, map } from '../common/helpers.mjs'
 import { destroySortables } from '../common/sortable.js'
 import { clone, componentType, identity, merge, remove, unique, uuid } from '../common/utils/index.mjs'
-import { get, objectFromStringArray, set } from '../common/utils/object.mjs'
+import { get, objectFromStringArray } from '../common/utils/object.mjs'
 import { splitAddress, toTitleCase, trimKeyPrefix } from '../common/utils/string.mjs'
 import {
   ANIMATION_SPEED_BASE,
@@ -674,21 +674,7 @@ export default class Component extends Data {
     ])
 
     const onAddConditions = {
-      controls: () => {
-        const {
-          controlData: {
-            meta: { id: metaId },
-            ...elementData
-          },
-        } = this.components.controls.get(item.id)
-
-        set(elementData, 'config.controlId', metaId)
-
-        const isLayoutControl = metaId.startsWith('layout-')
-        const controlType = isLayoutControl ? metaId.replace(/^layout-/, '') : 'field'
-        // a layout control carries only the caption of its panel button, never data for the
-        // row or column it creates, which start from their own defaults like they do on click
-        const componentData = isLayoutControl ? {} : elementData
+      controls: ({ componentType: controlType, data: componentData }) => {
         const targets = {
           stage: {
             row: 0,
@@ -709,10 +695,7 @@ export default class Component extends Data {
         }
         const depth = get(targets, `${this.name}.${controlType}`)
         const action = depthMap.get(depth)()
-        dom.remove(item)
-        const component = action(componentData, newIndex)
-
-        return component
+        return action(componentData, newIndex)
       },
       row: () => {
         const targets = {
@@ -733,22 +716,45 @@ export default class Component extends Data {
       },
     }
 
-    const component = onAddConditions[fromType]?.(item, newIndex)
+    const finish = component => {
+      // Dispatch the onAdd event to any configured handlers
+      this.dispatchComponentEvent('onAdd', {
+        from,
+        to,
+        item,
+        newIndex,
+        fromType,
+        toType,
+        addedComponent: component,
+        addedVia: 'dragDrop', // indicate how the component was added
+      })
+      defaultOnAdd()
+      return component
+    }
 
-    // Dispatch the onAdd event to any configured handlers
-    this.dispatchComponentEvent('onAdd', {
-      from,
-      to,
-      item,
-      newIndex,
-      fromType,
-      toType,
-      addedComponent: component,
-      addedVia: 'dragDrop', // indicate how the component was added
-    })
+    if (fromType !== 'controls') {
+      return finish(onAddConditions[fromType]?.(item, newIndex))
+    }
 
-    defaultOnAdd()
-    return component
+    // a new component from a control: onBeforeAdd decides whether and when (#281). The dragged placeholder goes
+    // either way; addChild appends when newIndex is past the end, so a smaller list by then is fine.
+    const control = this.components.controls.describeControl(item.id)
+    dom.remove(item)
+    let added
+    const proceed = () => {
+      if (this.isRegistered) {
+        added = finish(onAddConditions.controls(control))
+      }
+    }
+    const detail = { ...control, parent: this, index: newIndex, addedVia: 'dragDrop' }
+    const result = this.components.events.before('add', detail, proceed, { src: this.dom })
+    const restoreIfCancelled = proceeded => proceeded || (this.isRegistered && this.emptyClass())
+    if (result instanceof Promise) {
+      result.then(restoreIfCancelled)
+    } else {
+      restoreIfCancelled(result)
+    }
+    return added
   }
 
   /**

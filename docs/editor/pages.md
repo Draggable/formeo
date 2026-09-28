@@ -68,6 +68,9 @@ Everything else on `EditorPages` is internal and not part of its public API.
 | Move content (drop on a tab, or "Move to page") | the row's/column's usual events, plus `formeoUpdated` | the same callbacks a drag fires today |
 | Switch page | `formeoPageChanged` | `onPageChange` |
 
+The + tab runs the `onBeforeAdd` [before hook](../options/events/README.md#before-hooks) first, with
+`{ componentType: 'stage', index }`; it can cancel or hold adding the page. `pages.add()` from your code doesn't run it.
+
 Every callback receives `{ timeStamp, type, detail }`, same as the rest of formeo's [events](../options/events/README.md).
 For `onPageChange`, `detail` is `{ page, previousPage, stageId, previousStageId }`, where `page` and `previousPage`
 are 0-based page indexes. It does not fire on the first render, on a re-render (`setLang`, for example), or when

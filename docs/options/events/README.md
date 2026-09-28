@@ -49,6 +49,7 @@ const editor = new FormeoEditor({
 | `onRemoveColumn`     | Function | Fires when column is removed             |
 | `onRemoveField`      | Function | Fires when field is removed              |
 | `onBeforeRemove`     | Function | Runs before a row, column, field or page is removed by the user; can cancel or hold it. See [Before hooks](#before-hooks) |
+| `onBeforeAdd`        | Function | Runs before the user adds a row, column or field from the controls, or a page; can cancel or hold it. See [Before hooks](#before-hooks) |
 | `onSave`             | Function | Fires when form is saved                 |
 | `onRender`           | Function | Fires when an element is rendered        |
 | `onPageChange`       | Function | Fires when the active page tab switches (with the `pages` option). See [Page Tabs](../../editor/pages.md#events) |
@@ -96,6 +97,7 @@ document.addEventListener('formeoUpdatedField', (event) => {
 | `formeoAddedField`       | Field component was added                |
 | `formeoRemovedField`     | Field component was removed              |
 | `formeoBeforeRemove`     | Before a user removes a row, column, field or page; cancelable. See [Before hooks](#before-hooks) |
+| `formeoBeforeAdd`        | Before a user adds a row, column, field or page; cancelable. See [Before hooks](#before-hooks) |
 | `formeoCleared`          | Form has been cleared                    |
 | `formeoOnRender`         | Component has been rendered              |
 | `formeoConditionUpdated` | Conditional logic has been updated       |
@@ -111,7 +113,15 @@ option callback and a cancelable DOM event.
 
 | Callback         | DOM event            | Runs before                                                                                                 | `detail` |
 | ---------------- | -------------------- | ----------------------------------------------------------------------------------------------------------- | -------- |
+| `onBeforeAdd`    | `formeoBeforeAdd`    | a row, column or field is added by clicking or dropping a control, or a page with the + tab (with `pages`)    | `{ componentType, controlId, data, parent, index, addedVia }`; a page has only `componentType: 'stage'` and `index` |
 | `onBeforeRemove` | `formeoBeforeRemove` | a row, column or field is removed with its × button, or a page with its × or <kbd>Delete</kbd> (with `pages`) | `{ component, componentType, componentId }`; a page adds `index`, `title` and `isEmpty` |
+
+For `onBeforeAdd`, `componentType` is what the control creates (`'field'`, or `'row'`/`'column'` for the layout
+controls), `controlId` is the control's id (e.g. `'text-input'`), and `data` is what a new field starts from; treat it as
+read-only. `parent` and `index` say where it goes: the page and its row count for a click (every click adds a new row
+at the end), or the stage, row or column it was dropped on and the drop position. `addedVia` is `'click'` or
+`'dragDrop'`. A field dropped on a page or row also gets a new row or column around it; those don't run hooks of
+their own. If the component it was dropped on is removed while the hook waits, nothing is added.
 
 A callback cancels by returning `false` or calling `evt.preventDefault()`. To make Formeo wait, return a Promise: the
 change happens when it resolves, and is cancelled if it resolves to `false`. A callback that throws, or a Promise that
@@ -145,8 +155,9 @@ The order is: the DOM event, then the callback (skipped if a listener cancelled)
 the change and its usual events (`onRemove`, `onUpdate`, …). While a removal waits on its hook, clicking × again for
 the same component is ignored. If the editor is destroyed while a hook waits, the change never happens.
 
-Before hooks only run for changes the user makes in the editor. Calling `remove()` or `clear()` from your code,
-dragging an existing component to a new place, and "Clear All" (see `confirmClearAll`) don't run them.
+Before hooks only run for changes the user makes in the editor. Calling `addChild()`, `remove()`, `pages.add()` or
+`clear()` from your code, dragging an existing component to a new place, and "Clear All" (see `confirmClearAll`)
+don't run them.
 
 ## Event Data Structure
 

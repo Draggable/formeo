@@ -204,6 +204,21 @@ describe('EditorPages add, labels and destroy (#122)', () => {
     assert.equal(editor.querySelector('.formeo-pages-editor').dataset.pageCount, '4')
   })
 
+  it('the + button asks onBeforeAdd first (#281)', () => {
+    const seen = []
+    const { editor, pages } = setup({
+      callbacks: {
+        onBeforeAdd: ({ detail }) => {
+          seen.push(detail)
+          return false
+        },
+      },
+    })
+    editor.querySelector('.formeo-page-add').click()
+    assert.equal(pages.count, 3)
+    assert.deepEqual(seen, [{ componentType: 'stage', index: 3 }])
+  })
+
   it('add({ title }) returns the stage with that title', () => {
     const { pages } = setup()
     const stage = pages.add({ title: 'Review' })
