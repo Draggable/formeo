@@ -160,8 +160,11 @@ new FormeoEditor({
 })
 ```
 
-The DOM event is dispatched on the component's element and bubbles to `document` (unless `bubbles: false`). A listener
-cancels with `evt.preventDefault()`, synchronously only:
+The DOM event is dispatched somewhere inside the editor, not always on the component's element: on the component's
+element for `formeoBeforeRemove`, `formeoBeforeClone` and a dropped `formeoBeforeAdd`, but on the controls panel for a
+clicked `formeoBeforeAdd`, the Save button for `formeoBeforeSave`, and the page tab list for a page's `formeoBeforeAdd`.
+Either way it bubbles to `document` (unless `bubbles: false`). A listener cancels with `evt.preventDefault()`,
+synchronously only:
 
 ```javascript
 document.addEventListener('formeoBeforeRemove', evt => {

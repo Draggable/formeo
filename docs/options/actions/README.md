@@ -70,6 +70,12 @@ new FormeoEditor({
 })
 ```
 
+While `onBeforeRemove` (see [Before hooks](../events/README.md#before-hooks)) waits, a second click of the same ×
+button is ignored, so `window.confirm` above can't be asked twice. But once `actions.remove.component` itself is
+running, Formeo isn't holding anything: a custom `remove.component` that opens its own non-modal dialog and waits for
+the user can be reached by a second click in the meantime, asking again. Make such a dialog modal, or have it ignore a
+repeat while it's already open.
+
 ## Removing single items
 
 Removing one attribute, option or condition with its × button calls `remove.attrs`, `remove.options` or
