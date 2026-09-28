@@ -128,4 +128,8 @@ Type definitions ship with the package; this page lists what is typed and how to
 
 The rendered markup and its classes, adding framework classes with `className`, and editor theming.
 
+## [Migrating from formBuilder](migrating-from-formbuilder.md)
+
+Batch-converting formBuilder form exports to Formeo's `formData` shape with `formBuilder2Formeo`.
+
 ## [Build Tools](tools/)
