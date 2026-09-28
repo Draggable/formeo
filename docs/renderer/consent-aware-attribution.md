@@ -83,6 +83,7 @@ const renderer = new FormeoRenderer({
     },
   },
 })
+renderer.render()
 ```
 
 `events.onSubmit` fires with `{ event, form, userData }` — `userData` is already `renderer.userData` read from the
@@ -108,9 +109,9 @@ fields: {
 ```
 
 After `render()`, check which of those fields the rendered form actually has, and only fill in the ones present.
-This keeps attribution scoped to fields the form author deliberately added — independent of how `renderer.userData`'s
-setter treats a key with no matching field (it currently skips it and logs one console warning; don't rely on that
-warning, and don't rely on it throwing, since it never throws):
+This keeps attribution scoped to fields the form author deliberately added. It's also independent of how
+`renderer.userData`'s setter treats a key with no matching field: the setter currently skips it and logs one
+console warning, but don't rely on that warning, and don't rely on it throwing, since it never throws:
 
 ```javascript
 const container = document.getElementById('formeo-renderer')
