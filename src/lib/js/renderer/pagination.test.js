@@ -538,6 +538,67 @@ describe('pagination (#122)', () => {
     })
   })
 
+  describe('submit button', () => {
+    const submitButton = () => container.querySelector('.formeo-pages-submit')
+    const next = () => container.querySelector('.formeo-pages-next')
+    const threePages = () => buildPages([[field('a')], [field('b')], [field('c')]], ['One', 'Two', 'Three'])
+
+    test('is left out by default', () => {
+      render('wizard')
+      assert.equal(submitButton(), null)
+      render('tabs')
+      assert.equal(submitButton(), null)
+    })
+
+    test('in a wizard, replaces Next on the last page only', () => {
+      const renderer = render({ type: 'wizard', submit: true }, threePages())
+      const submit = submitButton()
+      assert.equal(submit.type, 'submit')
+      assert.equal(submit.textContent, 'Submit')
+      assert.equal(submit.parentElement, container.querySelector('.formeo-pages-wizard'))
+      assert.equal(submit.parentElement.lastElementChild, submit)
+      const shown = () => [submit.hidden, next().hidden]
+      assert.deepEqual(shown(), [true, false])
+      renderer.page = 1
+      assert.deepEqual(shown(), [true, false])
+      renderer.page = 2
+      assert.deepEqual(shown(), [false, true])
+      renderer.page = 0
+      assert.deepEqual(shown(), [true, false])
+    })
+
+    test('uses labels.submit', () => {
+      render({ type: 'wizard', submit: true, labels: { submit: 'Senden' } })
+      assert.equal(submitButton().textContent, 'Senden')
+    })
+
+    test('in tabs, sits after the last page and is always shown', () => {
+      const renderer = render({ type: 'tabs', submit: true })
+      const form = container.querySelector('form')
+      const actions = form.querySelector('.formeo-pages-actions')
+      assert.equal(actions.parentElement, form)
+      assert.equal(actions.previousElementSibling, pages().at(-1))
+      assert.equal(submitButton().parentElement, actions)
+      assert.equal(submitButton().hidden, false)
+      renderer.page = 1
+      assert.equal(submitButton().hidden, false)
+    })
+
+    test('Enter on the last page is left to the browser', () => {
+      const renderer = render({ type: 'wizard', submit: true })
+      assert.equal(key(input('name'), 'Enter').defaultPrevented, true)
+      renderer.page = 1
+      assert.equal(key(input('email'), 'Enter').defaultPrevented, false)
+    })
+
+    test('clicking it with an invalid control on an earlier page shows that page', () => {
+      const renderer = render({ type: 'wizard', submit: true }, twoPages({ requiredFirst: true }))
+      renderer.page = 1
+      submitButton().click()
+      assert.equal(renderer.page, 0)
+    })
+  })
+
   describe('validation across pages', () => {
     test('reportValidity() brings an invalid control on a hidden page into view', () => {
       const renderer = render('tabs')

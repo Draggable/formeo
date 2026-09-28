@@ -181,6 +181,13 @@ fieldset.formeo-row-wrap {
   margin-top: mixins.space(2);
 }
 
+// the Submit button of a tabbed form (`submit: true`), below every page
+.formeo-pages-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-start: mixins.space(2);
+}
+
 // the wizard's clickable step list, shown above the pages when `progress` is on (default)
 .formeo-pages-steps {
   display: flex;

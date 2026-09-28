@@ -35,6 +35,12 @@ const twoPages = buildPages([
   page(2, [input('email', { type: 'email', required: true }), submitButton]),
 ])
 
+// no submit field anywhere, so only the renderer's own Submit button (`submit: true`) can submit it
+const twoPagesNoSubmit = buildPages([
+  page(1, [input('name', { required: true })], 'About you'),
+  page(2, [input('email', { type: 'email' })]),
+])
+
 /**
  * Renders formData into a fresh container with the given pagination option; submitted userData
  * lands in window.__submitted. With `toggleSubmit`, an onChange handler disables the submit button
@@ -46,6 +52,7 @@ const mount = async (browserPage, data, pagination, { toggleSubmit = false } = {
   await browserPage.evaluate(
     ([data, pagination, toggleSubmit]) => {
       window.__submitted = null
+      window.__submitCount = 0
       const container = Object.assign(document.createElement('div'), { id: 'pages-container' })
       document.body.appendChild(container)
       const onChange = ({ form }) => {
@@ -59,6 +66,7 @@ const mount = async (browserPage, data, pagination, { toggleSubmit = false } = {
           onSubmit: ({ event, userData }) => {
             event.preventDefault()
             window.__submitted = userData
+            window.__submitCount += 1
           },
         },
       })
@@ -216,5 +224,61 @@ test.describe('multi-page forms (#122)', () => {
     await expect(root.locator('.formeo-pages-status')).toHaveText('About you (1 of 2)')
     await root.getByRole('button', { name: 'Next' }).click()
     await expect(root.locator('.formeo-pages-status')).toHaveText('Page 2 (2 of 2)')
+  })
+
+  test('wizard with submit: Enter on the last page submits a form without its own submit field', async ({
+    page: browserPage,
+  }) => {
+    const root = await mount(browserPage, twoPagesNoSubmit, { type: 'wizard', submit: true })
+    await root.locator('input[name="name"]').fill('Ada')
+    await root.locator('input[name="name"]').press('Enter')
+    await expect(root.locator('input[name="email"]')).toBeFocused()
+    await expect(root.getByRole('button', { name: 'Submit' })).toBeVisible()
+    await expect(root.getByRole('button', { name: 'Next' })).toBeHidden()
+
+    await root.locator('input[name="email"]').fill('ada@example.com')
+    await root.locator('input[name="email"]').press('Enter')
+    await expect
+      .poll(() => browserPage.evaluate(() => window.__submitted))
+      .toEqual({ name: 'Ada', email: 'ada@example.com' })
+  })
+
+  test('wizard with submit: Submit shows an invalid earlier page first, then submits', async ({
+    page: browserPage,
+  }) => {
+    const root = await mount(browserPage, twoPagesNoSubmit, { type: 'wizard', submit: true })
+    await browserPage.evaluate(() => {
+      window.__pager.page = 1
+    })
+    await root.getByRole('button', { name: 'Submit' }).click()
+    await expect(root.locator('input[name="name"]')).toBeFocused()
+    expect(await browserPage.evaluate(() => window.__submitted)).toBeNull()
+
+    await root.locator('input[name="name"]').fill('Ada')
+    await browserPage.evaluate(() => {
+      window.__pager.page = 1
+    })
+    await root.getByRole('button', { name: 'Submit' }).click()
+    await expect.poll(() => browserPage.evaluate(() => window.__submitted)).toEqual({ name: 'Ada', email: '' })
+  })
+
+  test('wizard with submit and a submit field of its own: Enter on the last page submits once', async ({
+    page: browserPage,
+  }) => {
+    const root = await mount(browserPage, twoPages, { type: 'wizard', submit: true })
+    await root.locator('input[name="name"]').press('Enter')
+    await root.locator('input[name="email"]').fill('ada@example.com')
+    await root.locator('input[name="email"]').press('Enter')
+    await expect.poll(() => browserPage.evaluate(() => window.__submitCount)).toBe(1)
+    await browserPage.waitForTimeout(200)
+    expect(await browserPage.evaluate(() => window.__submitCount)).toBe(1)
+  })
+
+  test('tabs with submit: the Submit button below the pages submits from any tab', async ({ page: browserPage }) => {
+    const root = await mount(browserPage, twoPagesNoSubmit, { type: 'tabs', submit: true })
+    await root.locator('input[name="name"]').fill('Ada')
+    await expect(root.locator('.formeo-pages-actions').getByRole('button', { name: 'Submit' })).toBeVisible()
+    await root.getByRole('button', { name: 'Submit' }).click()
+    await expect.poll(() => browserPage.evaluate(() => window.__submitted)).toEqual({ name: 'Ada', email: '' })
   })
 })

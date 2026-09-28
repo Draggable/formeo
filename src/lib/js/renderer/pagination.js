@@ -68,7 +68,7 @@ const focusFirst = page => {
  * @param {Function} [onChange] called with (page, previousPage) whenever the page changes
  * @return {{show: Function, index: Number, count: Number, destroy: Function}|null} null when there is only one page
  */
-export const paginate = (form, { type, progress, labels }, stages, onChange) => {
+export const paginate = (form, { type, progress, submit, labels }, stages, onChange) => {
   const pages = Array.from(form.children).filter(elem => elem.classList.contains(STAGE_CLASSNAME))
   if (pages.length < 2) {
     return null
@@ -103,6 +103,9 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     if (type === 'wizard') {
       previous.disabled = isFirstPlayable(current)
       next.hidden = isLastPlayable(current)
+      if (submitButton) {
+        submitButton.hidden = !isLastPlayable(current)
+      }
       status.textContent = fillLabel(labels.status, {
         title: title(current),
         n: playable.indexOf(current) + 1,
@@ -221,6 +224,13 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
 
   const title = i => stages[i]?.config?.title || labels.page.replaceAll('{n}', String(i + 1))
 
+  // a real submit button, so Enter on the last page submits natively even with no submit field in the form
+  let submitButton
+  if (submit) {
+    submitButton = create('button', 'formeo-pages-submit', labels.submit)
+    submitButton.type = 'submit'
+  }
+
   if (type === 'tabs') {
     const tablist = create('nav', 'formeo-pages-nav formeo-pages-tabs')
     tablist.setAttribute('role', 'tablist')
@@ -257,6 +267,12 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
       tabs[target].focus()
     })
     form.prepend(tablist)
+    if (submitButton) {
+      // below every page, and always shown: any tab may be the last one a user fills in
+      const actions = create('div', 'formeo-pages-actions')
+      actions.append(submitButton)
+      form.append(actions)
+    }
   } else {
     if (progress) {
       const stepList = document.createElement('ol')
@@ -288,6 +304,9 @@ export const paginate = (form, { type, progress, labels }, stages, onChange) => 
     bar.setAttribute('role', 'group')
     bar.setAttribute('aria-label', labels.navigation)
     bar.append(previous, status, next)
+    if (submitButton) {
+      bar.append(submitButton)
+    }
     form.append(bar)
 
     // Enter before the last page moves on instead of submitting a half-filled form
