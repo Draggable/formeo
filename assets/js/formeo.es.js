@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.9.0
+Version: 5.9.1
 Author: Draggable https://draggable.io
 */
 
@@ -6276,15 +6276,15 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.9.0";
+	version$2 = "5.9.1";
 	type = "module";
-	main = "dist/formeo.cjs.js";
+	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
 	unpkg = "dist/formeo.umd.js";
 	exports$1 = {
 		".": {
 			"import": "./dist/formeo.es.js",
-			"require": "./dist/formeo.cjs.js",
+			"require": "./dist/formeo.cjs",
 			"default": "./dist/formeo.umd.js"
 		},
 		"./dist/formeo.min.css": {
@@ -6345,6 +6345,7 @@ var init_package = __esmMin((() => {
 		"test:watch": "node --watch --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
 		"test:updateSnapshots": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --no-warnings src/**/*.test.{js,mjs}",
 		"test:ci": "npm test --coverage",
+		"test:dist": "node --test --no-warnings tools/dist.test.mjs",
 		"start": "npm-run-all build:icons dev",
 		"semantic-release": "semantic-release --ci --debug",
 		"copy:lang": "node ./tools/copy-directory.mjs ./node_modules/formeo-i18n/dist/lang ./src/demo/assets/lang",
@@ -20523,7 +20524,7 @@ var LISTEN_TYPE_MAP = (component) => {
 };
 //#endregion
 //#region src/lib/js/index.js
-if (window !== void 0) {
+if (typeof window !== "undefined") {
 	window.FormeoEditor = FormeoEditor$1;
 	window.FormeoRenderer = FormeoRenderer$1;
 }
