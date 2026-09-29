@@ -410,6 +410,42 @@ renderer.userData
 // <form> POST keeps every checked value; userData strips the suffix either way.
 ```
 
+##### Other choice
+
+Set `config.other: true` on a checkbox or radio group to add a last **Other** choice with a text box, so people can
+answer with something you didn't list. In the editor, switch on **Other option** in the field's Configuration panel.
+
+```javascript
+{
+  tag: 'input',
+  attrs: { type: 'checkbox', name: 'hobbies' },
+  config: { label: 'Hobbies', other: true, otherLabel: 'Something else' },
+  options: [
+    { label: 'Reading', value: 'reading' },
+    { label: 'Coding', value: 'coding' },
+  ],
+}
+```
+
+- **Label.** The choice shows `config.otherLabel`, or `Other` when it's empty. When you switch Other on, the editor
+  fills the label in the editor's language, and it's saved with the form.
+- **Values.** Choosing Other submits `other` as one of the group's values, and the typed text posts under the group's
+  name plus `-other`: `{ hobbies: ['reading', 'other'], 'hobbies-other': 'Knitting' }`. The text box is disabled until
+  Other is chosen, so the `-other` key only appears while it is. An unnamed group uses its field id (`f-<fieldId>-other`).
+- **Setting userData.** `renderer.userData = { hobbies: ['other'], 'hobbies-other': 'Knitting' }` checks Other and
+  fills its text box.
+- **userFormData.** The typed text's entry is labelled with the group label and the Other label, for example
+  `Hobbies (Something else)`.
+- **Required.** In a required group the text box is required too, but only while Other is chosen.
+- **Conditions.** A condition can test the group for the value `other`. The typed text can't be a condition source,
+  and Other isn't one of the group's `options`, so a condition can't check or uncheck it.
+- **Names to avoid.** Don't give another field the name `<group name>-other`, or both answers will share that key. If
+  the group already has an option whose value is `other`, as in the
+  [two-field example](#example-show-a-field-for-other), delete that option and its companion field when you switch to
+  the built-in Other.
+- **Static HTML.** `getRenderedForm()` and `html` produce the text box disabled. Enabling it needs the listeners that
+  `render()` attaches.
+
 #### Radio Buttons
 
 ```javascript
@@ -747,6 +783,9 @@ The editor saves the symbol forms (`==`, `&&`); the word forms are accepted too.
 Each condition runs once when the form renders, and again whenever a component its clauses read from changes (`input` for text fields, `change` for selects, checkboxes and radios). Nothing is undone automatically when a condition stops matching. To hide a field **except** when something is true, pair two conditions, as in the first example.
 
 ### Example: show a field for "Other"
+
+For a checkbox or radio group, use the built-in [Other choice](#other-choice) instead. This pattern is for fields
+without one, such as a select.
 
 ```javascript
 fields: {

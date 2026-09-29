@@ -73,6 +73,8 @@ none left. Keys that aren't declared, such as `controlId`, never show.
 
 - `fields.all` declares `label`, `hideLabel`, `helpText`, `labelAfter`, `disableHtmlLabel` and `tooltip`.
 - A control can declare more for its own fields with `configOptions` (see [elements](../controls/README.md#configoptions)).
+- The checkbox and radio group controls declare `other` and `otherLabel`, which add an
+  [Other choice](../../renderer/renderer.md#other-choice) to the group.
 - Stages declare `title` when the editor's [`pages`](../../editor/pages.md) option is on and nothing otherwise, so a
   stage without pages has no Configuration panel.
 

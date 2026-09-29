@@ -77,8 +77,19 @@ const formeoControlByFormBuilderType = {
   // custom Formeo control (see controls/custom-controls.md) or manual cleanup.
 }
 
-function postProcess(formeoData) {
+function postProcess(formeoData, sourceFields = []) {
+  // formBuilder's `other: true`: the converter drops it from radio groups and turns it into a placeholder option on
+  // checkbox groups, so read it from the formBuilder source and use Formeo's built-in Other choice instead
+  const otherNames = new Set(
+    sourceFields
+      .filter(field => field.other && ['checkbox-group', 'radio-group'].includes(field.type))
+      .map(field => field.name)
+  )
   for (const field of Object.values(formeoData.fields)) {
+    if (otherNames.has(field.attrs?.name)) {
+      field.config = { ...field.config, other: true }
+      field.options = (field.options || []).filter(option => !option.editable)
+    }
     const mapping = formeoControlByFormBuilderType[field.meta?.id]
     if (!mapping) continue
     if (mapping.attrsType) {
@@ -101,7 +112,8 @@ const [inputDir, outputDir] = process.argv.slice(2)
 for (const file of readdirSync(inputDir)) {
   if (!file.endsWith('.json')) continue
   const text = readFileSync(join(inputDir, file), 'utf8')
-  const converted = postProcess(convertData(text))
+  const source = JSON.parse(text)
+  const converted = postProcess(convertData(text), Array.isArray(source) ? source : [])
   const outFile = join(outputDir, `${basename(file, '.json')}.formeo.json`)
   writeFileSync(outFile, JSON.stringify(converted, null, 2))
   console.log(`${file} -> ${outFile}`)
@@ -168,6 +180,12 @@ Each `output/*.formeo.json` file is a Formeo `formData` object — hand it to `n
   `starRating` field — has no built-in Formeo control, so it's left as-is; give it a
   [custom control](controls/custom-controls.md) or handle it by hand.
 
+- **formBuilder's `other: true` becomes Formeo's built-in Other choice.** formBuilder's `other` lets people type
+  their own answer in a checkbox or radio group. The converter doesn't carry it over: it drops `other` from radio
+  groups (it's in its `IGNORED_PROPS`), and for checkbox groups it adds a placeholder option
+  (`{ label: 'Other', value: '', editable: true }`) that renders as a plain checkbox with an empty value. The script
+  reads `other` from the formBuilder source instead, sets `config.other: true` on the field with the same `name`, and
+  drops the placeholder. See [Other choice](renderer/renderer.md#other-choice).
 - **Columns carry no `config` at all.** Formeo 5.9.3 fixed the renderer to default missing row/column config (see
   the CHANGELOG entry closing [#212](https://github.com/Draggable/formeo/issues/212)), so this step is only needed
   for older Formeo versions — but setting `config: {}` explicitly is harmless either way, so the script always does
