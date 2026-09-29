@@ -98,6 +98,24 @@ See [Custom controls](../../controls/custom-controls.md) for a full editor + ren
 An element with a `controlSet` key adds a group of fields at once; see
 [Control sets](../../controls/custom-controls.md#control-sets).
 
+### configOptions
+
+`configOptions` declares `config` keys the element's fields offer in their Configuration panel, on top of the keys every
+field has. Each one is `{ default, label }`, as described in
+[Configuration panel keys](../config/README.md#configuration-panel-keys). `configOptions` itself is never saved in
+form data. A field only gets one of these keys when the element's `config` sets it or a user adds it from the dialog.
+The editor's `config` option can still relabel or disable them.
+
+```javascript
+{
+  tag: 'input',
+  attrs: { type: 'number' },
+  config: { label: 'Rating', stars: 5 }, // set here, so it shows in the panel from the start
+  meta: { group: 'common', id: 'rating', icon: 'star' },
+  configOptions: { stars: { default: 5, label: 'Stars' } },
+}
+```
+
 ## elementOrder
 
 Set the element order within a control group. May be overridden if [sortable](#sortable) is set to true

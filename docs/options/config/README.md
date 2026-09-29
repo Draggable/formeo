@@ -54,6 +54,51 @@ panels: {
 }
 ```
 
+You can choose which `config` keys the Configuration panel offers (see [Configuration panel keys](#configuration-panel-keys)):
+
+```javascript
+panels: {
+  config: {
+    options: { hint: { default: '', label: 'Hint' } },
+    disabled: ['tooltip'],
+  },
+}
+```
+
+## Configuration panel keys
+
+A component's Configuration panel shows the `config` keys declared for it in `panels.config.options`. Its
+"Add config" dialog offers the declared keys the component doesn't have yet, and its Add button hides when there are
+none left. Keys that aren't declared, such as `controlId`, never show.
+
+- `fields.all` declares `label`, `hideLabel`, `helpText`, `labelAfter`, `disableHtmlLabel` and `tooltip`.
+- A control can declare more for its own fields with `configOptions` (see [elements](../controls/README.md#configoptions)).
+- Stages declare `title` when the editor's [`pages`](../../editor/pages.md) option is on and nothing otherwise, so a
+  stage without pages has no Configuration panel.
+
+A declaration is `{ default, label }`:
+
+- `default` is the value a key added from the dialog starts with. It must be a boolean (edited with a checkbox), a
+  string or a number (edited with a text input). Other defaults are ignored with a console warning.
+- `label` is optional. It defaults to the `config.<key>` translation, then to the key in title case.
+
+Declarations merge in this order, later ones winning: `all`, the control's own `configOptions`, the field type, then the
+component id. A key listed in `disabled` at any of those levels is hidden from the panel and the dialog. It stays in
+the form data if it's already there.
+
+### Add a "Hint" key to text inputs and hide Tooltip everywhere
+
+```javascript
+const formeoOptions = {
+  config: {
+    fields: {
+      all: { panels: { config: { disabled: ['tooltip'] } } },
+      'text-input': { panels: { config: { options: { hint: { default: '', label: 'Hint' } } } } },
+    },
+  },
+}
+```
+
 ## Examples
 
 Here are a few things you can do with the `config` option.
