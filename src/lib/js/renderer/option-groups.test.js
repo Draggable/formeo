@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { afterEach, beforeEach, describe, test } from 'node:test'
+import { afterEach, beforeEach, describe, mock, test } from 'node:test'
 import { JSDOM } from 'jsdom'
 import FormeoRenderer from './index.js'
 
@@ -387,6 +387,229 @@ describe('checkbox and radio groups', () => {
         selects.map(select => select.name),
         ['favcolor', 'favcolor']
       )
+    })
+  })
+
+  describe('Other choice', () => {
+    const otherGroup = (id, type, attrs = {}) =>
+      groupField(
+        id,
+        type,
+        { name: id, ...attrs },
+        { config: { label: `${type} group`, other: true, otherLabel: 'Something else' } }
+      )
+    const otherOf = id => ({
+      choice: container.querySelector(`#f-${id} input[value="other"]`),
+      text: container.querySelector(`#f-${id} .f-other-value`),
+    })
+    const pick = (input, checked = true) => {
+      input.checked = checked
+      change(input)
+    }
+    const afterReset = () => new Promise(resolve => setTimeout(resolve, 0))
+
+    test('userData has the typed text under {name}-other only while Other is chosen', () => {
+      const renderer = render({ hobbies: otherGroup('hobbies', 'checkbox') })
+      const { choice, text } = otherOf('hobbies')
+      pick(inputsOf('hobbies')[0])
+      pick(choice)
+      text.value = 'Knitting'
+      assert.deepEqual(renderer.userData, { hobbies: ['one', 'other'], 'hobbies-other': 'Knitting' })
+
+      pick(choice, false)
+      assert.equal(text.disabled, true)
+      assert.deepEqual(renderer.userData, { hobbies: 'one' })
+    })
+
+    test('an empty text box still reports its key while Other is chosen', () => {
+      const renderer = render({ color: otherGroup('color', 'radio') })
+      pick(otherOf('color').choice)
+      assert.deepEqual(renderer.userData, { color: 'other', 'color-other': '' })
+    })
+
+    test('picking another radio disables the text box and drops its key', () => {
+      const renderer = render({ color: otherGroup('color', 'radio') })
+      const { choice, text } = otherOf('color')
+      pick(choice)
+      text.value = 'Teal'
+      pick(inputsOf('color')[1])
+      assert.equal(text.disabled, true)
+      assert.deepEqual(renderer.userData, { color: 'two' })
+    })
+
+    for (const [order, data] of [
+      ['group first', { hobbies: ['other'], 'hobbies-other': 'Knitting' }],
+      ['text first', { 'hobbies-other': 'Knitting', hobbies: ['other'] }],
+    ]) {
+      test(`setting userData checks Other and fills its text box (${order}), without warnings`, () => {
+        const warn = mock.method(console, 'warn', () => {})
+        try {
+          const renderer = render({ hobbies: otherGroup('hobbies', 'checkbox') })
+          renderer.userData = data
+          const { choice, text } = otherOf('hobbies')
+          assert.equal(choice.checked, true)
+          assert.equal(text.disabled, false)
+          assert.equal(text.value, 'Knitting')
+          assert.deepEqual(renderer.userData, { hobbies: 'other', 'hobbies-other': 'Knitting' })
+          assert.equal(warn.mock.callCount(), 0)
+        } finally {
+          warn.mock.restore()
+        }
+      })
+    }
+
+    test('setting only the text leaves the box disabled and out of userData', () => {
+      const renderer = render({ hobbies: otherGroup('hobbies', 'checkbox') })
+      renderer.userData = { 'hobbies-other': 'Knitting' }
+      assert.equal(otherOf('hobbies').text.disabled, true)
+      assert.deepEqual(renderer.userData, {})
+    })
+
+    test('setting userData on a disabled group keeps the text box disabled', () => {
+      const renderer = render({ hobbies: otherGroup('hobbies', 'checkbox', { disabled: true }) })
+      renderer.userData = { hobbies: ['other'] }
+      assert.equal(otherOf('hobbies').text.disabled, true)
+    })
+
+    test('resetting the form disables the text box again', async () => {
+      render({ hobbies: otherGroup('hobbies', 'checkbox') })
+      const { choice, text } = otherOf('hobbies')
+      pick(choice)
+      form().reset()
+      await afterReset()
+      assert.equal(choice.checked, false)
+      assert.equal(text.disabled, true)
+    })
+
+    test('a condition checking another radio disables the text box', () => {
+      render({
+        source: {
+          id: 'source',
+          tag: 'input',
+          attrs: { type: 'text' },
+          config: { label: 'source' },
+          conditions: [
+            {
+              if: [{ source: 'fields.source', sourceProperty: 'value', comparison: '==', target: 'one' }],
+              then: [{ target: 'fields.color.options[0]', targetProperty: 'isChecked' }],
+            },
+          ],
+        },
+        color: otherGroup('color', 'radio'),
+      })
+      const { choice, text } = otherOf('color')
+      pick(choice)
+      assert.equal(text.disabled, false)
+
+      const source = container.querySelector('#f-source')
+      source.value = 'one'
+      source.dispatchEvent(new window.Event('input', { bubbles: true }))
+
+      assert.equal(choice.checked, false)
+      assert.equal(text.disabled, true)
+    })
+
+    test('a condition hiding the group suspends the text box required, and showing it restores it', () => {
+      const when = (value, targetProperty) => ({
+        if: [{ source: 'fields.source', sourceProperty: 'value', comparison: '==', target: value }],
+        then: [{ target: 'fields.color', targetProperty }],
+      })
+      render({
+        source: {
+          id: 'source',
+          tag: 'input',
+          attrs: { type: 'text' },
+          config: { label: 'source' },
+          conditions: [when('hide', 'isNotVisible'), when('show', 'isVisible')],
+        },
+        color: otherGroup('color', 'radio', { required: true }),
+      })
+      const { text } = otherOf('color')
+      const typeIntoSource = value => {
+        const source = container.querySelector('#f-source')
+        source.value = value
+        source.dispatchEvent(new window.Event('input', { bubbles: true }))
+      }
+      typeIntoSource('hide')
+      assert.equal(text.required, false)
+      typeIntoSource('show')
+      assert.equal(text.required, true)
+    })
+
+    test('a required group is invalid while Other is chosen and its text box is empty', () => {
+      render({ color: otherGroup('color', 'radio', { required: true }) })
+      const { choice, text } = otherOf('color')
+      pick(inputsOf('color')[0])
+      assert.equal(form().checkValidity(), true, 'a listed option satisfies the group')
+      pick(choice)
+      assert.equal(form().checkValidity(), false, 'Other needs its text')
+      text.value = 'Teal'
+      assert.equal(form().checkValidity(), true)
+    })
+
+    test('userFormData labels the typed text with the group and Other labels', () => {
+      const renderer = render({ color: otherGroup('color', 'radio') })
+      pick(otherOf('color').choice)
+      otherOf('color').text.value = 'Teal'
+      const entry = renderer.userFormData.find(({ key }) => key === 'color-other')
+      assert.deepEqual(entry, { key: 'color-other', value: 'Teal', label: 'radio group (Something else)' })
+      assert.equal(renderer.componentByName('color-other')?.config?.label, 'radio group', 'resolves to its group')
+    })
+
+    test('a page brought back keeps an unchosen Other text box disabled', () => {
+      const formData = {
+        id: 'other-pages',
+        stages: {
+          'stage-1': { id: 'stage-1', children: ['row-1'] },
+          'stage-2': { id: 'stage-2', children: ['row-2'] },
+        },
+        rows: {
+          'row-1': { id: 'row-1', config: {}, children: ['column-1'] },
+          'row-2': { id: 'row-2', config: {}, children: ['column-2'] },
+        },
+        columns: {
+          'column-1': { id: 'column-1', config: { width: '100%' }, children: ['color'] },
+          'column-2': { id: 'column-2', config: { width: '100%' }, children: ['note'] },
+        },
+        fields: {
+          color: otherGroup('color', 'radio'),
+          note: { id: 'note', tag: 'input', attrs: { type: 'text' }, config: { label: 'note' } },
+        },
+      }
+      const renderer = new FormeoRenderer({ renderContainer: container, formData })
+      renderer.render()
+      const { choice, text } = otherOf('color')
+      pick(choice)
+      const [page] = renderer.stageElements()
+
+      renderer.setStageSkipped(page, true)
+      renderer.userData = { color: 'one' }
+      renderer.setStageSkipped(page, false)
+
+      assert.equal(choice.checked, false)
+      assert.equal(text.disabled, true)
+    })
+
+    test('a repeated input group gets its own Other text box', () => {
+      // clone lookup goes through baseId(), which only recognises editor-style hex ids
+      const formData = {
+        id: 'clone-form',
+        stages: { '0a0a0a0a': { id: '0a0a0a0a', children: ['1b1b1b1b'] } },
+        rows: { '1b1b1b1b': { id: '1b1b1b1b', config: { inputGroup: true }, children: ['2c2c2c2c'] } },
+        columns: { '2c2c2c2c': { id: '2c2c2c2c', config: { width: '100%' }, children: ['3d3d3d3d'] } },
+        fields: { '3d3d3d3d': otherGroup('3d3d3d3d', 'radio', { name: 'favcolor' }) },
+      }
+      new FormeoRenderer({ renderContainer: container, formData }).render()
+
+      container.querySelector('.add-input-group').click()
+
+      const texts = Array.from(container.querySelectorAll('.f-other-value'))
+      assert.equal(texts.length, 2, 'the row was cloned')
+      assert.equal(new Set(texts.map(text => text.name)).size, 2, 'original and clone post under different keys')
+      const cloneChoice = texts[1].parentElement.querySelector('input[value="other"]')
+      pick(cloneChoice)
+      assert.equal(texts[1].disabled, false)
+      assert.equal(texts[0].disabled, true, 'the original stays disabled')
     })
   })
 })

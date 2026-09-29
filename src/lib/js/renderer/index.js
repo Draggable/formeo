@@ -1,4 +1,10 @@
-import dom, { getName, REQUIRED_GROUP_ATTR } from '../common/dom.js'
+import dom, {
+  DEFAULT_OTHER_LABEL,
+  getName,
+  OTHER_GROUP_ATTR,
+  OTHER_NAME_SUFFIX,
+  REQUIRED_GROUP_ATTR,
+} from '../common/dom.js'
 import { fetchDependencies } from '../common/loaders.js'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -112,10 +118,14 @@ export default class FormeoRenderer {
   get userFormData() {
     const userFormData = []
     for (const [key, value] of Object.entries(this.userData)) {
+      const otherGroup = this.otherGroupByName(key)
       const fieldData = {
         key,
         value,
-        label: this.componentByName(key)?.config?.label || '',
+        // an Other choice's text reads as "{group label} ({Other label})"
+        label: otherGroup
+          ? `${otherGroup.config?.label || ''} (${otherGroup.config.otherLabel || DEFAULT_OTHER_LABEL})`
+          : this.componentByName(key)?.config?.label || '',
       }
       userFormData.push(fieldData)
     }
@@ -133,8 +143,22 @@ export default class FormeoRenderer {
       this.components[baseId(name)] ||
       Object.values(this.components).find(
         component => component.attrs?.name === name || component.attrs?.name === `${name}[]`
-      )
+      ) ||
+      this.otherGroupByName(name)
     )
+  }
+
+  /**
+   * The checkbox or radio group whose Other choice's text box posts under `name` (`{group key}-other`)
+   * @param {String} name
+   * @return {Object|undefined}
+   */
+  otherGroupByName(name) {
+    if (!name.endsWith(OTHER_NAME_SUFFIX)) {
+      return undefined
+    }
+    const group = this.componentByName(name.slice(0, -OTHER_NAME_SUFFIX.length))
+    return group?.config?.other ? group : undefined
   }
 
   set userData(data) {
@@ -188,6 +212,10 @@ export default class FormeoRenderer {
       else if (fields.type) {
         fields.value = data[key]
       }
+    }
+    // setting `checked` fires no change, so every Other text box follows its choice here, whatever the key order
+    for (const group of form.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) {
+      dom.syncOtherInput(group)
     }
     // saved answers can outlive the form they came from, so a missing field is a warning, never an error
     if (unmatched.length) {
@@ -308,6 +336,10 @@ export default class FormeoRenderer {
         control.disabled = false
         control.removeAttribute(SKIP_DISABLED_ATTR)
       }
+      // a text box re-enabled above may belong to an Other choice unchecked while the page was skipped
+      for (const group of stage.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) {
+        dom.syncOtherInput(group)
+      }
       this.rerunConditionsReading(stage)
       this.pager?.refresh()
       return
@@ -343,14 +375,17 @@ export default class FormeoRenderer {
   }
 
   /**
-   * A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
-   * The `reset` event fires before the controls revert, hence the deferral.
+   * A reset changes checkedness without firing `change`, so required checkbox groups and Other text boxes are
+   * re-synced. The `reset` event fires before the controls revert, hence the deferral.
    * @param {Event} evt the form's reset event
    */
   syncRequiredGroupsAfterReset = ({ currentTarget: form }) => {
     setTimeout(() => {
       for (const group of form.querySelectorAll(`[data-${REQUIRED_GROUP_ATTR}]`)) {
         dom.syncCheckboxGroupRequired(group)
+      }
+      for (const group of form.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) {
+        dom.syncOtherInput(group)
       }
     }, 0)
   }

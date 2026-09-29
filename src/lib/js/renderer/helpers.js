@@ -1,5 +1,5 @@
 import isEqual from 'lodash/isEqual.js'
-import dom, { REQUIRED_GROUP_ATTR } from '../common/dom.js'
+import dom, { OTHER_GROUP_ATTR, REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
 import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, HIDDEN_BY_CONDITION_SELECTOR, UUID_REGEXP } from '../constants.js'
 
@@ -210,25 +210,29 @@ export const assignmentMap = Object.entries(ASSIGNMENT_OPERATORS).reduce((acc, [
 }, {})
 
 /**
- * Setting `checked` fires no `change`, so a required checkbox group the box belongs to is
- * re-synced directly. A synthetic `change` could re-trigger conditions.
+ * Setting `checked` fires no `change`, so the group the box belongs to is re-synced directly: a required checkbox
+ * group's `required`, and an Other choice's text box. A synthetic `change` could re-trigger conditions.
  * @param {Element} elem checkbox or radio input
  */
-const syncRequiredGroupOf = elem => {
-  const group = elem.closest?.(REQUIRED_GROUP_SELECTOR)
-  if (group) {
-    dom.syncCheckboxGroupRequired(group)
+const syncGroupOf = elem => {
+  const requiredGroup = elem.closest?.(REQUIRED_GROUP_SELECTOR)
+  if (requiredGroup) {
+    dom.syncCheckboxGroupRequired(requiredGroup)
+  }
+  const otherGroup = elem.closest?.(OTHER_GROUP_SELECTOR)
+  if (otherGroup) {
+    dom.syncOtherInput(otherGroup)
   }
 }
 
 export const targetPropertyMap = {
   isChecked: elem => {
     elem.checked = true
-    syncRequiredGroupOf(elem)
+    syncGroupOf(elem)
   },
   isNotChecked: elem => {
     elem.checked = false
-    syncRequiredGroupOf(elem)
+    syncGroupOf(elem)
   },
   value: (elem, { assignment, ...rest }) => {
     const assignmentAction = assignmentMap[assignment]?.(elem, rest)
@@ -250,6 +254,7 @@ export const targetPropertyMap = {
 
 const FORM_CONTROL_SELECTOR = 'input, select, textarea'
 const REQUIRED_GROUP_SELECTOR = `[data-${REQUIRED_GROUP_ATTR}]`
+const OTHER_GROUP_SELECTOR = `[data-${OTHER_GROUP_ATTR}]`
 
 /**
  * The element itself when it matches, plus every descendant that does
