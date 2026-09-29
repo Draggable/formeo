@@ -361,4 +361,32 @@ test.describe('Stage Configuration panel', () => {
     await expect(stage.locator('.stage-edit .add-config')).toBeHidden()
     expect(errors).toEqual([])
   })
+
+  test('a declared stage key can be added to a stage saved without config', async ({ page }) => {
+    const errors = collectErrors(page)
+    const editor = await mountEditor(page, {
+      formData: {
+        id: 'form-bare',
+        stages: { 'b-s1': { id: 'b-s1', children: [] } },
+        rows: {},
+        columns: {},
+        fields: {},
+      },
+      options: {
+        pages: false,
+        config: { stages: { all: { panels: { config: { options: { note: { default: '', label: 'Note' } } } } } } },
+      },
+    })
+    const stage = editor.locator('[id="b-s1"]')
+    await openStageEdit(stage)
+    await stage.getByRole('heading', { name: 'Configuration', level: 5 }).click()
+    await stage.locator('.stage-edit .add-config').click()
+
+    const dialog = page.locator('.formeo-dialog.config-item-dialog')
+    await dialog.locator('select.config-key-select').selectOption('note')
+    await dialog.locator('button[type="submit"]').click()
+
+    await expect(stage.locator('.stage-edit .field-config-note label')).toHaveText('Note')
+    expect(errors).toEqual([])
+  })
 })

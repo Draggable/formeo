@@ -1130,17 +1130,23 @@ export default class Component extends Data {
       return null
     }
     const editable = new Set(['object', 'array'])
-    const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)])
+    const hasConfigOptions = configOptionsOf(this.config).size > 0
+    // declared config keys get a Config panel even before the component has any config (a new stage)
+    const panelOrder = unique([
+      ...this.config.panels.order,
+      ...Object.keys(this.data),
+      ...(hasConfigOptions ? ['config'] : []),
+    ])
     const noPanels = new Set(['children', 'meta', 'action', 'events', ...this.config.panels.disabled])
     const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {
       // a Config panel without declared keys would only offer keys that mean nothing for this component
-      if (panelName === 'config' && !configOptionsOf(this.config).size) {
+      if (panelName === 'config' && !hasConfigOptions) {
         this.editPanels.delete(panelName)
         continue
       }
-      const panelData = this.get(panelName)
+      const panelData = panelName === 'config' ? this.get(panelName) || {} : this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.has(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)

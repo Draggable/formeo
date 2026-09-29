@@ -13,6 +13,7 @@ import {
   REVERSED_CHECKED_TYPES,
 } from '../../constants.js'
 import { Condition } from './condition.mjs'
+import { configOptionsOf } from './config-options.mjs'
 import { scheduleDuplicateNameHints, watchFieldName } from './duplicate-name-hint.js'
 import { INPUT_TYPE_ACTION, ITEM_INPUT_TYPE_MAP, labelHelper } from './helpers.mjs'
 
@@ -278,6 +279,17 @@ export default class EditPanelItem {
     return null
   }
 
+  /**
+   * A Config panel item uses its declared label (panels.config.options); other items use their translation
+   * @param {String} labelKey
+   * @return {String}
+   */
+  itemLabel(labelKey) {
+    const declared =
+      this.panelName === 'config' && configOptionsOf(this.field.config).get(labelKey.replace(/^config\./, ''))
+    return declared?.label || labelHelper(labelKey)
+  }
+
   itemInput(key, value) {
     if (this.isDisabled) {
       return null
@@ -303,7 +315,7 @@ export default class EditPanelItem {
     const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue })
     const name = `${this.field.shortId}-${slugifyAddress(dataKey).replaceAll(/-\d+-(selected)/g, '-$1')}`
     const config = {
-      label: this.panelName !== 'options' && labelHelper(labelKey),
+      label: this.panelName !== 'options' && this.itemLabel(labelKey),
       labelAfter: false,
       inputWrap: ['f-input-wrap', this.isLocked && 'locked-prop', this.isDisabled && 'disabled-prop']
         .filter(Boolean)

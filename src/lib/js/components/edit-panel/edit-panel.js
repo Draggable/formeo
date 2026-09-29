@@ -37,7 +37,8 @@ export default class EditPanel {
 
   get data() {
     const data = this.component.get(this.name)
-    return this.type === 'object' ? Object.entries(data) : data
+    // a Config panel can exist before the component has any config
+    return this.type === 'object' ? Object.entries(data || {}) : data
   }
 
   getPanelConfig(data) {

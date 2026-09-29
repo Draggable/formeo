@@ -344,3 +344,45 @@ describe('Config panel "Add config"', () => {
     assert.equal(panel.addConfigButton.hidden, true)
   })
 })
+
+describe('Config panel review fixes', () => {
+  const itemLabel = (component, itemKey) =>
+    component.editPanels
+      .get('config')
+      .editPanelItems.find(item => item.itemKey === itemKey)
+      .dom.querySelector('label')
+      ?.textContent.trim()
+
+  it('a panel item shows its declared label', () => {
+    const field = textField(
+      editorWith({
+        fields: { all: { panels: { config: { options: { tooltip: { default: '', label: 'Hover text' } } } } } },
+      }),
+      { tooltip: 'x' }
+    )
+    assert.equal(itemLabel(field, 'config.tooltip'), 'Hover text')
+  })
+
+  it('with pages a relabelled page title shows its label', () => {
+    const stage = editorWith(
+      { stages: { all: { panels: { config: { options: { title: { default: '', label: 'Page name' } } } } } } },
+      { pages: true }
+    ).stages.get('s-1')
+    assert.equal(itemLabel(stage, 'config.title'), 'Page name')
+  })
+
+  it('a declared stage key can be added to a stage that has no config yet', () => {
+    const events = new Events().init({})
+    const editorComponents = new Components({ events, actions: new Actions(events).init({}) })
+    editorComponents.config = { stages: { all: { panels: { config: { options: { note: { default: '' } } } } } } }
+    editorComponents.load({ id: 'form-bare', stages: { 's-bare': { id: 's-bare', children: [] } } }, {})
+    for (const stage of [editorComponents.stages.get('s-bare'), editorComponents.stages.add()]) {
+      const panel = stage.editPanels.get('config')
+      assert.ok(panel, 'the stage has a Config panel')
+      assert.equal(panel.addConfigButton.hidden, false)
+      panel.addConfigItem('note')
+      assert.equal(stage.get('config.note'), '')
+      assert.deepEqual(panelKeys(stage), ['config.note'])
+    }
+  })
+})
