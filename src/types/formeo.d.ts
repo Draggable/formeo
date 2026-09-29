@@ -230,6 +230,8 @@ export interface FieldControlDefinition extends ControlDefinitionBase {
   children?: unknown
   /** e.g. `onRender`, run on the field's preview; functions are not saved in formData. */
   action?: Record<string, AnyFunction>
+  /** `config` keys this control's fields offer in their Configuration panel, on top of every field's. Not saved in formData. */
+  configOptions?: Record<string, ConfigOptionDeclaration>
   controlSet?: never
   [key: string]: unknown
 }
@@ -332,6 +334,14 @@ export interface ComponentEvents {
   onUpdate?: ComponentEventHandler
 }
 
+/** A `config` key a Configuration panel offers: in `panels.config.options`, or a control's `configOptions`. */
+export interface ConfigOptionDeclaration {
+  /** Shown in the panel and its "Add config" dialog. Defaults to the `config.<key>` translation, then the key in title case. */
+  label?: string
+  /** The value a key added from the dialog starts with. Its type picks the input: a checkbox for boolean, text otherwise. */
+  default: boolean | string | number
+}
+
 export interface ComponentConfig {
   actionButtons?: { buttons?: Array<ActionButtonName | Record<string, unknown>>; disabled?: ActionButtonName[] }
   panels?: {
@@ -343,6 +353,12 @@ export interface ComponentConfig {
       /** Attribute names that can't be removed or changed. Combined with control `lockedAttrs`. */
       locked?: string[]
       hideDisabled?: boolean
+    }
+    config?: {
+      /** `config` keys the Configuration panel and its "Add config" dialog offer, merged per `all`, control id, then id. */
+      options?: Record<string, ConfigOptionDeclaration>
+      /** `config` keys hidden from the panel and the dialog, at whichever level they were declared. */
+      disabled?: string[]
     }
     [panel: string]: unknown
   }

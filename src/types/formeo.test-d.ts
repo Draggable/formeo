@@ -4,7 +4,9 @@ import {
   type BeforeAddDetail,
   type ComponentEventData,
   type ComponentEvents,
+  type ConfigOptionDeclaration,
   type ControlDefinition,
+  type FieldControlDefinition,
   type FormData,
   type FormeoChangeDetail,
   type FormeoComponent,
@@ -65,6 +67,16 @@ const emailControl: ControlDefinition = {
   action: { onRender: (elem: HTMLElement) => elem.id },
 }
 
+const stars: ConfigOptionDeclaration = { default: 5, label: 'Stars' }
+
+const ratingControl: FieldControlDefinition = {
+  tag: 'input',
+  attrs: { type: 'number' },
+  config: { label: 'Rating', stars: 5 },
+  meta: { group: 'common', id: 'rating' },
+  configOptions: { stars },
+}
+
 // onRender and onAddChild are also called the legacy way; narrow before reading `component`/`parent`/`child`.
 const componentEvents: ComponentEvents = {
   onRender: evt => {
@@ -115,16 +127,18 @@ const options: FormeoEditorOptions = {
   svgSprite: null,
   controls: {
     container: document.querySelector<HTMLElement>('.controls'),
-    elements: [emailControl],
+    elements: [emailControl, ratingControl],
     disable: { formActions: ['clearBtn'] },
     panels: { displayType: 'tabbed' },
   },
   config: {
     fields: {
-      all: { panels: { attrs: { locked: ['required'] } } },
+      all: { panels: { attrs: { locked: ['required'] }, config: { disabled: ['tooltip'] } } },
       'text-input': { attrs: { type: [{ label: 'text', value: 'text' }] } },
+      rating: { panels: { config: { options: { stars: { default: 3, label: 'Star count' } } } } },
     },
     rows: { all: { actionButtons: { disabled: ['page'] } } },
+    stages: { all: { panels: { config: { options: { note: { default: '' } } } } } },
   },
   events: {
     onSave: ({ formData }) => formData.fields,
@@ -256,6 +270,33 @@ const badHook: FormeoEditorOptions = {
   },
 }
 
+const badConfigOption: FieldControlDefinition = {
+  tag: 'input',
+  config: { label: 'Bad' },
+  meta: { group: 'common', id: 'bad' },
+  configOptions: {
+    // @ts-expect-error a declared default is a boolean, string or number; the Config panel can't edit an object
+    rules: { default: { min: 1 } },
+  },
+}
+
+const badPanelDefault: FormeoEditorOptions = {
+  config: {
+    stages: {
+      all: {
+        panels: {
+          config: {
+            options: {
+              // @ts-expect-error a declared default is a boolean, string or number
+              flags: { default: [] },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
 const unnarrowed = (detail: BeforeAddDetail) =>
   // @ts-expect-error only a control's detail has a controlId; a page's (componentType 'stage') does not
   detail.controlId
@@ -274,10 +315,12 @@ const unnarrowedAddChild = (evt: ComponentEventData | { parent: FormeoComponent;
 
 export {
   and,
+  badConfigOption,
   badFormActions,
   badHook,
   badLogical,
   badPagination,
+  badPanelDefault,
   badStage,
   bare,
   clearAll,
@@ -290,6 +333,8 @@ export {
   json,
   newPage,
   queried,
+  ratingControl,
+  stars,
   typo,
   unnarrowed,
   unnarrowedAddChild,
