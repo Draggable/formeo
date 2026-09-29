@@ -118,6 +118,10 @@ export interface FieldConfigData {
   editableContent?: boolean
   helpText?: string
   tooltip?: string
+  /** Adds an Other choice with a text box to a checkbox or radio group; its text posts as `{name}-other`. */
+  other?: boolean
+  /** The Other choice's label; `Other` when empty. */
+  otherLabel?: string
   /** Id of the control this field was created from (`meta.id` of the control definition). */
   controlId?: string
   /** Attributes hidden from, and not addable in, the edit panel. Copied from the control definition. */

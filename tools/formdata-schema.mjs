@@ -116,6 +116,8 @@ export const formDataSchema = z
                 controlId: z.string().optional(),
                 disabledAttrs: z.array(z.string()).optional(),
                 lockedAttrs: z.array(z.string()).optional(),
+                other: z.boolean().optional(),
+                otherLabel: z.string().optional(),
               })
               .catchall(z.any())
               .optional(),

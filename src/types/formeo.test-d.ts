@@ -7,6 +7,7 @@ import {
   type ConfigOptionDeclaration,
   type ControlDefinition,
   type FieldControlDefinition,
+  type FieldData,
   type FormData,
   type FormeoChangeDetail,
   type FormeoComponent,
@@ -243,6 +244,22 @@ const fromGlobal = new window.FormeoEditor({ editorContainer: document.body })
 
 const and: LogicalOperator = '&&'
 
+const otherChoiceForm: FormeoFormData = {
+  id: 'other-form',
+  stages: {},
+  rows: {},
+  columns: {},
+  fields: {
+    hobbies: {
+      id: 'hobbies',
+      tag: 'input',
+      attrs: { type: 'checkbox', name: 'hobbies' },
+      config: { label: 'Hobbies', other: true, otherLabel: 'Something else' },
+      options: [{ label: 'Reading', value: 'reading' }],
+    },
+  },
+}
+
 // --- negative cases: these must stay type errors ---------------------------------
 
 // @ts-expect-error `logical` is case-sensitive
@@ -313,12 +330,16 @@ const unnarrowedAddChild = (evt: ComponentEventData | { parent: FormeoComponent;
   // @ts-expect-error `evt` may be the legacy `{ parent, child }` payload; narrow with `'component' in evt` first
   evt.component
 
+// @ts-expect-error `other` switches the Other choice on or off; it is a boolean
+const badOther: FieldData = { id: 'x', tag: 'input', config: { other: 'yes' } }
+
 export {
   and,
   badConfigOption,
   badFormActions,
   badHook,
   badLogical,
+  badOther,
   badPagination,
   badPanelDefault,
   badStage,
@@ -332,6 +353,7 @@ export {
   jquery,
   json,
   newPage,
+  otherChoiceForm,
   queried,
   ratingControl,
   stars,
