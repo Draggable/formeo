@@ -1,6 +1,6 @@
 import i18n from '@draggable/i18n'
 import animate from '../../common/animation.js'
-import dom from '../../common/dom.js'
+import dom, { DEFAULT_OTHER_LABEL } from '../../common/dom.js'
 import { orderObjectsBy } from '../../common/helpers.mjs'
 import { merge } from '../../common/utils/index.mjs'
 import { mergeActions } from '../../common/utils/object.mjs'
@@ -41,6 +41,20 @@ const itemInputActions = new Map([
       change: ({ target }) => {
         if (editPanelItem.field.controlId === 'select') {
           toggleOptionMultiSelect(target.checked, editPanelItem.field)
+        }
+      },
+    }),
+  ],
+  [
+    'config-other',
+    editPanelItem => ({
+      // switching Other on names it in the editor's language, stored so the renderer (no i18n) shows the same
+      change: ({ target }) => {
+        const { field, panel } = editPanelItem
+        if (target.checked && !field.get('config.otherLabel')) {
+          field.set('config.otherLabel', i18n.get('other') || DEFAULT_OTHER_LABEL)
+          panel.updateProps()
+          field.updatePreview?.()
         }
       },
     }),

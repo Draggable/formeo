@@ -13,6 +13,7 @@ class CheckboxGroupControl extends Control {
       config: {
         label: i18n.get('controls.form.checkbox-group'),
         disabledAttrs: ['type'],
+        other: false,
       },
       meta: {
         group: 'common',
@@ -20,6 +21,11 @@ class CheckboxGroupControl extends Control {
         id: 'checkbox',
       },
       options: generateOptionConfig({ type: 'checkbox', count: 1 }),
+      // Config panel keys: an Other choice with a text box, and its label (#other-choice in docs/renderer)
+      configOptions: {
+        other: { default: false },
+        otherLabel: { default: '' },
+      },
     }
     super(checkboxGroup)
   }
