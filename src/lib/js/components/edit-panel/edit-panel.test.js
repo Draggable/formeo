@@ -5,6 +5,7 @@ import { Actions } from '../../common/actions.js'
 import { Events } from '../../common/events.js'
 import Field from '../fields/field.js'
 import components, { Components } from '../index.js'
+import { configOptionsOf } from './config-options.mjs'
 import EditPanel from './edit-panel.js'
 import { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 
@@ -210,5 +211,75 @@ describe('EditPanel#clearAllItems (#281)', () => {
     assert.equal(seen[0].type, 'options')
     assert.equal(seen[0].isClearAll, true)
     assert.equal(field.get('options').length, 1, 'held: nothing cleared yet')
+  })
+})
+
+// an editor's Components with the given `config` option, loaded with one empty stage `s-1`
+const editorWith = (config = {}, opts = {}) => {
+  const events = new Events().init({})
+  const editorComponents = new Components({ events, actions: new Actions(events).init({}) })
+  editorComponents.config = config
+  editorComponents.load({ id: 'form-decl', stages: { 's-1': { id: 's-1', config: {}, children: [] } } }, opts)
+  return editorComponents
+}
+
+const textField = (editorComponents, config = {}) =>
+  new Field(
+    {
+      id: 'f-decl',
+      tag: 'input',
+      attrs: { type: 'text' },
+      config: { label: 'Name', controlId: 'text-input', ...config },
+    },
+    editorComponents
+  )
+
+const panelKeys = component => component.editPanels.get('config')?.editPanelItems.map(({ itemKey }) => itemKey) ?? []
+
+describe('Config panel declarations', () => {
+  it('a field shows only declared config keys', () => {
+    const field = textField(editorWith(), { hideLabel: false, disabledAttrs: ['type'], custom: 'x' })
+    assert.deepEqual(panelKeys(field), ['config.label', 'config.hideLabel'])
+  })
+
+  it('resolves all, then control id, then component id, and a disabled key stays hidden', () => {
+    const field = textField(
+      editorWith({
+        fields: {
+          all: { panels: { config: { options: { hint: { default: '', label: 'Hint' } } } } },
+          'text-input': { panels: { config: { options: { hint: { default: 'x', label: 'Text hint' } } } } },
+          'f-decl': { panels: { config: { disabled: ['helpText'] } } },
+        },
+      }),
+      { hint: '', helpText: 'Help' }
+    )
+    const options = configOptionsOf(field.config)
+    assert.deepEqual(options.get('hint'), { label: 'Text hint', default: 'x' })
+    assert.equal(options.has('helpText'), false)
+    assert.deepEqual(panelKeys(field), ['config.label', 'config.hint'])
+  })
+
+  it('a stage has no Config panel without pages', () => {
+    const stage = editorWith().stages.get('s-1')
+    assert.equal(stage.editPanels.has('config'), false)
+  })
+
+  it('with pages a stage Config panel offers only its title', () => {
+    const stage = editorWith({}, { pages: true }).stages.get('s-1')
+    assert.deepEqual([...configOptionsOf(stage.config).keys()], ['title'])
+    assert.deepEqual(panelKeys(stage), ['config.title'])
+  })
+
+  it('with pages a page added after load offers its title too', () => {
+    const stage = editorWith({}, { pages: true }).stages.add()
+    assert.deepEqual(panelKeys(stage), ['config.title'])
+  })
+
+  it('the editor config option can relabel the page title and change its default', () => {
+    const stage = editorWith(
+      { stages: { all: { panels: { config: { options: { title: { default: 'Untitled', label: 'Page name' } } } } } } },
+      { pages: true }
+    ).stages.get('s-1')
+    assert.deepEqual(configOptionsOf(stage.config).get('title'), { label: 'Page name', default: 'Untitled' })
   })
 })

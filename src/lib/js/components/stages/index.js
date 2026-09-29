@@ -1,4 +1,4 @@
-import { looksLikeArrayIndex, nonIndexId, unique } from '../../common/utils/index.mjs'
+import { looksLikeArrayIndex, merge, nonIndexId, unique } from '../../common/utils/index.mjs'
 import ComponentData from '../component-data.js'
 import { pageText } from './page-text.mjs'
 import Stage from './stage.js'
@@ -17,6 +17,9 @@ const DEFAULT_CONFIG = () => ({
   },
 })
 
+// with the editor's `pages` option a stage's config.title is its page title (#122), so its Config panel offers it
+const PAGE_TITLE_CONFIG = () => ({ all: { panels: { config: { options: { title: { default: '' } } } } } })
+
 /**
  * Whether an order can be kept as an object's key order. JS lists integer-like keys ("1", "2") first, in ascending
  * numeric order, whatever their insertion order (#122), so they must already lead, in that order.
@@ -33,6 +36,21 @@ export class Stages extends ComponentData {
     super('stages', stageData)
     this.config = { all: DEFAULT_CONFIG() }
   }
+
+  /**
+   * The store's config, from the editor's `config` option. With page tabs it also declares the page title,
+   * beneath that option so an integrator can relabel or disable it.
+   * @return {Object}
+   */
+  get config() {
+    const config = super.config
+    return this.components?.opts?.pages ? merge(PAGE_TITLE_CONFIG(), config) : config
+  }
+
+  set config(config) {
+    super.config = config
+  }
+
   Component(data) {
     return new Stage(this.withPageTitle(data), this.components)
   }

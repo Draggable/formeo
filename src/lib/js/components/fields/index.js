@@ -16,6 +16,17 @@ const DEFAULT_CONFIG = () => ({
       locked: [],
     },
     order: ['attrs', 'options', 'conditions'],
+    // the keys every field's Config panel offers; a control adds its own with `configOptions`
+    config: {
+      options: {
+        label: { default: 'New Field' },
+        hideLabel: { default: false },
+        helpText: { default: '' },
+        labelAfter: { default: false },
+        disableHtmlLabel: { default: false },
+        tooltip: { default: '' },
+      },
+    },
   },
   label: {
     disableHTML: false,

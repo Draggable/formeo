@@ -3,8 +3,9 @@ import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
 import { slugify, toTitleCase } from '../../common/utils/string.mjs'
-import { FILTERED_PANEL_DATA_KEYS, PANEL_CLASSNAME } from '../../constants.js'
+import { PANEL_CLASSNAME } from '../../constants.js'
 import Dialog from '../dialog.js'
+import { configOptionsOf } from './config-options.mjs'
 import EditPanelItem, { toggleOptionMultiSelect } from './edit-panel-item.mjs'
 import { labelHelper } from './helpers.mjs'
 
@@ -74,26 +75,14 @@ export default class EditPanel {
   }
 
   /**
-   * A stage's config.title is its page title (#122): editable only while the editor's page tabs are on
-   * @param {String} keyBase
-   * @return {Boolean}
-   */
-  isPageTitle(keyBase) {
-    return (
-      this.name === 'config' &&
-      keyBase === 'title' &&
-      this.component.name === 'stage' &&
-      Boolean(this.component.components?.opts?.pages)
-    )
-  }
-
-  /**
    * Generates the edit panel for attrs, meta and options for a fields(s)
    * @param  {String} panelName
    * @param  {Object} dataObj   field config object
    * @return {Object}           formeo DOM config object
    */
   createProps(data = this.data) {
+    // the Config panel offers only the keys this component declares (panels.config.options)
+    const configOptions = this.name === 'config' && configOptionsOf(this.component.config)
     this.editPanelItems = Array.from(data)
       .map((dataVal, index) => {
         const isArray = this.type === 'array'
@@ -103,8 +92,7 @@ export default class EditPanel {
         const itemKey = `${this.name}${key}`
 
         const isDisabledProp = this.component.isDisabledProp(itemKey, this.name)
-        const allowedKeys = FILTERED_PANEL_DATA_KEYS.get(this.name)
-        const isEditableProp = !allowedKeys || allowedKeys.has(keyBase) || this.isPageTitle(keyBase)
+        const isEditableProp = !configOptions || configOptions.has(keyBase)
 
         if (isDisabledProp || !isEditableProp) {
           return null

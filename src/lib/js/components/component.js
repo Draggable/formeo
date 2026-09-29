@@ -23,6 +23,7 @@ import {
 } from '../constants.js'
 import { CONTROL_SET, controlSetDropTarget, insertControlSet } from './controls/control-set.mjs'
 import Data from './data.js'
+import { configOptionsOf } from './edit-panel/config-options.mjs'
 import EditPanel from './edit-panel/edit-panel.js'
 import Panels from './panels.js'
 import { pageText } from './stages/page-text.mjs'
@@ -1130,6 +1131,11 @@ export default class Component extends Data {
     const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {
+      // a Config panel without declared keys would only offer keys that mean nothing for this component
+      if (panelName === 'config' && !configOptionsOf(this.config).size) {
+        this.editPanels.delete(panelName)
+        continue
+      }
       const panelData = this.get(panelName)
       const propType = dom.childType(panelData)
       if (editable.has(propType)) {
