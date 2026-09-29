@@ -1626,6 +1626,9 @@ button[class*=-clone]:hover .svg-icon {
   line-height: 24px;
   gap: 4px;
 }
+.formeo.formeo-editor .panel-action-buttons button[hidden] {
+  display: none;
+}
 .formeo.formeo-editor .panel-action-buttons .svg-icon {
   height: 16px;
 }

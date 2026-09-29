@@ -7,7 +7,6 @@ import { PANEL_CLASSNAME } from '../../constants.js'
 import Dialog from '../dialog.js'
 import { configOptionsOf } from './config-options.mjs'
 import EditPanelItem, { toggleOptionMultiSelect } from './edit-panel-item.mjs'
-import { labelHelper } from './helpers.mjs'
 
 // @todo convert these hardcoded lists to use
 // the updated event system from #381
@@ -15,24 +14,6 @@ const addAttributeActions = {
   multiple: (val, field) => {
     toggleOptionMultiSelect(!!val, field)
   },
-}
-
-const defaultConfigOptions = [
-  { label: labelHelper('config.label'), value: 'label' },
-  { label: labelHelper('config.hideLabel'), value: 'hideLabel' },
-  { label: labelHelper('config.helpText'), value: 'helpText' },
-  { label: labelHelper('config.labelAfter'), value: 'labelAfter' },
-  { label: labelHelper('config.disableHtmlLabel'), value: 'disableHtmlLabel' },
-  { label: labelHelper('config.tooltip'), value: 'tooltip' },
-]
-
-const defaultConfigValues = {
-  label: 'New Field',
-  hideLabel: false,
-  helpText: '',
-  labelAfter: false,
-  disableHtmlLabel: false,
-  tooltip: '',
 }
 
 /**
@@ -137,6 +118,7 @@ export default class EditPanel {
     const newProps = this.createProps()
     this.props.replaceWith(newProps)
     this.props = newProps
+    this.syncAddConfigButton()
   }
 
   /**
@@ -235,7 +217,14 @@ export default class EditPanel {
       },
     }
 
-    editPanelButtons.push(addBtn)
+    if (type === 'config') {
+      // kept so it can hide once every declared key is set
+      this.addConfigButton = dom.create(addBtn)
+      this.syncAddConfigButton()
+      editPanelButtons.push(this.addConfigButton)
+    } else {
+      editPanelButtons.push(addBtn)
+    }
 
     const panelEditButtonsWrap = {
       className: 'panel-action-buttons',
@@ -331,9 +320,54 @@ export default class EditPanel {
     this.component.resizePanelWrap()
   }
 
-  addConfiguration = () => {
-    const configData = this.component.get('config')
+  /**
+   * Declared config keys the "Add config" dialog can still add: not disabled and not set yet
+   * @return {Map<String, {label: String, default: boolean|string|number}>}
+   */
+  addableConfigOptions() {
+    const configData = this.component.get('config') || {}
+    const addable = new Map()
+    for (const [key, declaration] of configOptionsOf(this.component.config)) {
+      if (!(key in configData) && !this.component.isDisabledProp(`config.${key}`, 'config')) {
+        addable.set(key, declaration)
+      }
+    }
+    return addable
+  }
 
+  /**
+   * The "Add config" button shows only while there is something left to add
+   */
+  syncAddConfigButton() {
+    if (this.addConfigButton) {
+      this.addConfigButton.hidden = !this.addableConfigOptions().size
+    }
+  }
+
+  /**
+   * Adds a declared config key, set to its declared default, when it can still be added
+   * @param {String} configKey
+   */
+  addConfigItem = configKey => {
+    const declaration = this.addableConfigOptions().get(configKey)
+    if (!declaration) {
+      return
+    }
+    const newConfig = new EditPanelItem({
+      key: `config.${configKey}`,
+      data: declaration.default,
+      field: this.component,
+      panel: this,
+    })
+    this.editPanelItems.push(newConfig)
+    this.props.appendChild(newConfig.dom)
+    this.syncAddConfigButton()
+    // stages have no preview, and a component that was never rendered has no panel wrap to resize
+    this.component.debouncedUpdatePreview?.()
+    this.component.resizePanelWrap?.()
+  }
+
+  addConfiguration = () => {
     const dialog = new Dialog({
       className: 'config-item-dialog',
       content: [
@@ -341,27 +375,10 @@ export default class EditPanel {
           tag: 'select',
           config: { label: i18n.get('selectConfigKey') || 'Select Configuration Key' },
           attrs: { name: 'selectConfigKey', required: true, className: 'config-key-select' },
-          options: defaultConfigOptions.filter(opt => !(opt.value in configData)),
+          options: Array.from(this.addableConfigOptions(), ([value, { label }]) => ({ label, value })),
         },
       ],
-      onConfirm: formData => {
-        const configKey = formData.get('selectConfigKey').trim()
-        const itemKey = `config.${configKey}`
-
-        if (configKey) {
-          const newConfig = new EditPanelItem({
-            key: itemKey,
-            data: defaultConfigValues[configKey],
-            field: this.component,
-            panel: this,
-          })
-          this.editPanelItems.push(newConfig)
-          this.props.appendChild(newConfig.dom)
-
-          this.component.debouncedUpdatePreview()
-          this.component.resizePanelWrap()
-        }
-      },
+      onConfirm: formData => this.addConfigItem(formData.get('selectConfigKey').trim()),
     })
 
     dialog.open()

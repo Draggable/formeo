@@ -465,6 +465,10 @@
     justify-content: center;
     line-height: mixins.space(3);
     gap: mixins.space(0.5);
+
+    &[hidden] {
+      display: none;
+    }
   }
 
   .svg-icon {

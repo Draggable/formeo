@@ -8,6 +8,7 @@ import components, { Components } from '../index.js'
 import { configOptionsOf } from './config-options.mjs'
 import EditPanel from './edit-panel.js'
 import { toggleOptionMultiSelect } from './edit-panel-item.mjs'
+import { labelHelper } from './helpers.mjs'
 
 const selectField = () =>
   new Field(
@@ -281,5 +282,65 @@ describe('Config panel declarations', () => {
       { pages: true }
     ).stages.get('s-1')
     assert.deepEqual(configOptionsOf(stage.config).get('title'), { label: 'Page name', default: 'Untitled' })
+  })
+})
+
+describe('Config panel "Add config"', () => {
+  it('offers the declared keys not set yet, with their labels', () => {
+    const panel = textField(editorWith()).editPanels.get('config')
+    const addable = panel.addableConfigOptions()
+    assert.deepEqual([...addable.keys()], ['hideLabel', 'helpText', 'labelAfter', 'disableHtmlLabel', 'tooltip'])
+    assert.equal(addable.get('tooltip').label, labelHelper('config.tooltip'))
+  })
+
+  it('leaves out a key disabled by full path', () => {
+    const panel = textField(editorWith({ fields: { all: { disabled: ['config.tooltip'] } } })).editPanels.get('config')
+    assert.equal(panel.addableConfigOptions().has('tooltip'), false)
+  })
+
+  it('adds a key with its declared default, once', () => {
+    const field = textField(editorWith())
+    const panel = field.editPanels.get('config')
+    panel.addConfigItem('labelAfter')
+    panel.addConfigItem('labelAfter')
+    assert.equal(field.get('config.labelAfter'), false)
+    const items = panel.editPanelItems.filter(({ itemKey }) => itemKey === 'config.labelAfter')
+    assert.equal(items.length, 1)
+    assert.ok(panel.props.contains(items[0].dom))
+  })
+
+  it('ignores a key that is not declared', () => {
+    const field = textField(editorWith())
+    field.editPanels.get('config').addConfigItem('bogus')
+    assert.equal(field.get('config.bogus'), undefined)
+  })
+
+  it('adds a declared key to a stage, which has no preview, without throwing', () => {
+    const stage = editorWith({
+      stages: { all: { panels: { config: { options: { note: { default: '' } } } } } },
+    }).stages.get('s-1')
+    assert.doesNotThrow(() => stage.editPanels.get('config').addConfigItem('note'))
+    assert.equal(stage.get('config.note'), '')
+    assert.deepEqual(panelKeys(stage), ['config.note'])
+  })
+
+  it('hides the Add button while nothing is left to add, and shows it again after a remove', () => {
+    const field = textField(editorWith(), {
+      hideLabel: false,
+      helpText: '',
+      labelAfter: false,
+      disableHtmlLabel: false,
+      tooltip: '',
+    })
+    const panel = field.editPanels.get('config')
+    assert.equal(panel.addConfigButton.hidden, true)
+    panel.editPanelItems.find(({ itemKey }) => itemKey === 'config.tooltip').removeItem()
+    assert.equal(panel.addConfigButton.hidden, false)
+    assert.ok(panel.addableConfigOptions().has('tooltip'))
+  })
+
+  it('with pages a stage has nothing to add', () => {
+    const panel = editorWith({}, { pages: true }).stages.get('s-1').editPanels.get('config')
+    assert.equal(panel.addConfigButton.hidden, true)
   })
 })
