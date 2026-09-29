@@ -74,6 +74,42 @@ describe('Other choice in the editor', () => {
     assert.ok(addable.has('other') && addable.has('otherLabel'))
   })
 
+  describe('the preview Other choice', () => {
+    const previewChange = input => input.dispatchEvent(new window.Event('change', { bubbles: true }))
+
+    it('is disabled, because Other is never checked by default', () => {
+      const field = fieldFrom('checkbox', { other: true })
+      assert.equal(field.preview.querySelector('.f-checkbox-other input[value="other"]').disabled, true)
+    })
+
+    it('checked in the preview, it neither throws nor stops an option from being saved as checked', () => {
+      // jsdom reports a listener's exception as a window error event rather than throwing from dispatchEvent
+      const errors = []
+      const onError = evt => errors.push(evt.error)
+      window.addEventListener('error', onError)
+      try {
+        for (const controlId of ['checkbox', 'radio']) {
+          const field = fieldFrom(controlId, { other: true })
+          const optionCount = field.get('options').length
+          document.body.replaceChildren(field.dom)
+          const other = field.preview.querySelector('input[value="other"]')
+          other.checked = true
+          previewChange(other)
+
+          const [first] = field.preview.querySelectorAll(`input[type="${controlId}"]`)
+          first.checked = true
+          previewChange(first)
+          const checkedType = controlId === 'radio' ? 'selected' : 'checked'
+          assert.equal(field.get('options')[0][checkedType], true, controlId)
+          assert.equal(field.get('options').length, optionCount, `${controlId}: Other never becomes an option`)
+        }
+        assert.deepEqual(errors, [])
+      } finally {
+        window.removeEventListener('error', onError)
+      }
+    })
+  })
+
   describe('switching Other on', () => {
     // i18n.get reads the locale's table; tests have no language loaded, so i18n.current isn't that table
     const lang = () => {

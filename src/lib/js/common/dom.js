@@ -657,7 +657,7 @@ class DOM {
 
     if (withOther) {
       mappedOptions.push(
-        this.otherChoice({ id, name, fieldType, attrs, config: elem.config, sharedInputAttrs, action })
+        this.otherChoice({ id, name, fieldType, attrs, config: elem.config, sharedInputAttrs, action, isPreview })
       )
     }
 
@@ -675,9 +675,10 @@ class DOM {
    * @param {Object} [group.config] group config (otherLabel, inline)
    * @param {Object} group.sharedInputAttrs attributes every option input shares
    * @param {Object} [group.action] actions every option input shares
+   * @param {Boolean} [group.isPreview] the editor preview, where Other can't be picked as a default
    * @return {Object} DOM config
    */
-  otherChoice({ id, name, fieldType, attrs, config = {}, sharedInputAttrs, action }) {
+  otherChoice({ id, name, fieldType, attrs, config = {}, sharedInputAttrs, action, isPreview = false }) {
     const choiceId = `${id}-other`
     const labelId = `${choiceId}-label`
     const textAttrs = {
@@ -695,6 +696,11 @@ class DOM {
     if ('form' in attrs) {
       textAttrs.form = attrs.form
     }
+    const choiceAttrs = { name, type: fieldType, value: OTHER_VALUE, id: choiceId, ...sharedInputAttrs }
+    // options hold the defaults an author checks in the preview; Other has no option, so it is never checked initially
+    if (isPreview) {
+      choiceAttrs.disabled = true
+    }
     const className = [`f-${fieldType}`, `f-${fieldType}-other`]
     if (config.inline) {
       className.push(`f-${fieldType}-inline`)
@@ -704,7 +710,7 @@ class DOM {
       children: [
         {
           tag: 'input',
-          attrs: { name, type: fieldType, value: OTHER_VALUE, id: choiceId, ...sharedInputAttrs },
+          attrs: choiceAttrs,
           action,
         },
         { tag: 'label', attrs: { for: choiceId, id: labelId }, children: config.otherLabel || DEFAULT_OTHER_LABEL },

@@ -188,6 +188,10 @@ export default class Field extends Component {
           }, {})
 
           for (const option of selectedOptions) {
+            // an input without an option, such as an Other choice, is never a default
+            if (!optionsDataMap[option.value]) {
+              continue
+            }
             optionsDataMap[option.value][checkedType] = option.value === optionsDataMap[option.value].value
           }
 
