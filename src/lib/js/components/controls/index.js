@@ -19,6 +19,8 @@ export class Controls {
   constructor(components = null) {
     this.components = components
     this.data = new Map()
+    // each control's `configOptions`, by control id; its fields' config merges them (Component#config)
+    this.configOptionsById = new Map()
 
     this.buttonActions = {
       // this is used for keyboard navigation. when tabbing through controls it
@@ -138,10 +140,23 @@ export class Controls {
   add(control = Object.create(null)) {
     const controlConfig = clone(control)
     this.data.set(controlConfig.id, controlConfig)
-    if (controlConfig.controlData.meta.id) {
-      this.data.set(controlConfig.controlData.meta.id, controlConfig.controlData)
+    const controlId = controlConfig.controlData.meta.id
+    if (controlId) {
+      this.data.set(controlId, controlConfig.controlData)
+      if (controlConfig.configOptions) {
+        this.configOptionsById.set(controlId, controlConfig.configOptions)
+      }
     }
     return controlConfig
+  }
+
+  /**
+   * Config keys a control's fields offer in their Config panel, from its definition's `configOptions`
+   * @param {String} controlId
+   * @return {Object|undefined}
+   */
+  declaredConfigOptions(controlId) {
+    return this.configOptionsById.get(controlId)
   }
 
   get(controlId) {

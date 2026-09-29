@@ -14,12 +14,14 @@ export default class Control {
    * @param {Object} [config={}] - The configuration object.
    * @param {Object} [config.events={}] - The events associated with the control. ex { click: () => {} }
    * @param {Object} [config.dependencies={}] - The dependencies required by the control. ex { js: 'https://example.com/script.js', css: 'https://example.com/style.css' }
+   * @param {Object} [config.configOptions={}] - Config keys this control's fields offer in their Config panel, on top of every field's. ex { stars: { default: 5, label: 'Stars' } }
    * @param {...Object} [controlData] - Additional configuration properties. ex { meta: {}, config: { label: 'Control Name' } }
    */
-  constructor({ events = {}, dependencies = {}, controlAction, ...controlData }) {
+  constructor({ events = {}, dependencies = {}, controlAction, configOptions, ...controlData }) {
     this.events = events
     this.controlData = controlData
     this.controlAction = controlAction
+    this.configOptions = configOptions
     this.dependencies = dependencies
     this.id = controlData.id || uuid()
   }

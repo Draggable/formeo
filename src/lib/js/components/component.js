@@ -883,16 +883,20 @@ export default class Component extends Data {
    * @description Merges configurations in order of precedence:
    * 1. Existing config (this.configVal)
    * 2. Global config (all)
-   * 3. Control type specific config
-   * 4. Instance specific config
+   * 3. The control's own config panel keys (its definition's `configOptions`)
+   * 4. Control type specific config
+   * 5. Instance specific config
    * The merged result is stored in this.configVal
    */
   set config(config) {
     const allConfig = get(config, 'all')
     const controlId = get(this.data, 'config.controlId')
+    // what the control itself declares sits beneath the editor's config for that control
+    const controlOptions = controlId && this.components?.controls?.declaredConfigOptions?.(controlId)
+    const controlConfig = controlOptions && { panels: { config: { options: controlOptions } } }
     const typeConfig = controlId && get(config, controlId)
     const idConfig = get(config, this.id)
-    const mergedConfig = [allConfig, typeConfig, idConfig].reduce(
+    const mergedConfig = [allConfig, controlConfig, typeConfig, idConfig].reduce(
       (acc, cur) => (cur ? merge(acc, cur) : acc),
       this.configVal
     )
