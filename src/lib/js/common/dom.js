@@ -30,6 +30,21 @@ const inputTags = new Set(['input', 'textarea', 'select'])
 
 // marks a required checkbox group's wrapper so its `required` state can be re-synced (renderer, userData)
 export const REQUIRED_GROUP_ATTR = 'formeo-required-group'
+// marks the wrapper of a checkbox or radio group with an Other choice, so its text box can be re-synced
+export const OTHER_GROUP_ATTR = 'formeo-other-group'
+// the value an Other choice submits; its typed text posts under the group's key plus OTHER_NAME_SUFFIX
+export const OTHER_VALUE = 'other'
+export const OTHER_NAME_SUFFIX = '-other'
+// the Other choice's label when config.otherLabel is empty; the renderer has no i18n, so it stays English
+export const DEFAULT_OTHER_LABEL = 'Other'
+const OTHER_TEXT_CLASSNAME = 'f-other-value'
+
+/**
+ * Whether a field renders an Other choice: a checkbox or radio group with config.other set
+ * @param {Object} elem field config
+ * @return {Boolean}
+ */
+const hasOtherChoice = elem => Boolean(elem.config?.other) && ['checkbox', 'radio'].includes(elem.attrs?.type)
 
 // Checkbox and radio groups render as a wrapper holding one <input> per option.
 // These group attributes are copied onto every option input.
@@ -220,9 +235,24 @@ class DOM {
         wrap.attrs = groupWrapperAttrs(groupAttrs)
         // config.required only drives the label's required mark; `required` itself lives on the option inputs
         wrap.config = { ...elem.config, required: Boolean(groupAttrs.required) }
+        // which of the group's inputs are required or enabled depends on what is checked, so re-sync on change
+        const groupSyncs = []
         if (!isPreview && groupAttrs.type === 'checkbox' && groupAttrs.required) {
           wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = 'true'
-          wrap.action = { change: ({ currentTarget }) => this.syncCheckboxGroupRequired(currentTarget) }
+          groupSyncs.push(group => this.syncCheckboxGroupRequired(group))
+        }
+        if (!isPreview && hasOtherChoice(elem)) {
+          wrap.attrs[`data-${OTHER_GROUP_ATTR}`] = 'true'
+          groupSyncs.push(group => this.syncOtherInput(group))
+        }
+        if (groupSyncs.length) {
+          wrap.action = {
+            change: ({ currentTarget }) => {
+              for (const sync of groupSyncs) {
+                sync(currentTarget)
+              }
+            },
+          }
         }
         return this.create(wrap, isPreview)
       }
@@ -531,8 +561,11 @@ class DOM {
     const { action, attrs = {} } = elem
     const fieldType = attrs.type || elem.tag
     const id = attrs.id || elem.id
+    const withOther = hasOtherChoice(elem)
+    // the Other choice is one more input under the group's name, so it counts toward the [] suffix (#128)
+    const optionCount = options.length + (withOther ? 1 : 0)
     // the editor preview keeps id-based names so two groups sharing a name can't interfere with each other there
-    const name = isPreview ? id : groupInputName(attrs.name || id, fieldType, options.length)
+    const name = isPreview ? id : groupInputName(attrs.name || id, fieldType, optionCount)
     const sharedInputAttrs = Object.fromEntries(
       OPTION_INPUT_ATTRS.filter(key => key in attrs).map(key => [key, attrs[key]])
     )
@@ -622,7 +655,62 @@ class DOM {
 
     const mappedOptions = options.map(optionMap)
 
+    if (withOther) {
+      mappedOptions.push(
+        this.otherChoice({ id, name, fieldType, attrs, config: elem.config, sharedInputAttrs, action })
+      )
+    }
+
     return mappedOptions
+  }
+
+  /**
+   * The Other choice of a checkbox or radio group: one more option input, plus a text box that is enabled only
+   * while that option is checked (see syncOtherInput)
+   * @param {Object} group
+   * @param {String} group.id prefix of the choice's ids
+   * @param {String} group.name the group's input name
+   * @param {String} group.fieldType 'checkbox' or 'radio'
+   * @param {Object} group.attrs group attributes
+   * @param {Object} [group.config] group config (otherLabel, inline)
+   * @param {Object} group.sharedInputAttrs attributes every option input shares
+   * @param {Object} [group.action] actions every option input shares
+   * @return {Object} DOM config
+   */
+  otherChoice({ id, name, fieldType, attrs, config = {}, sharedInputAttrs, action }) {
+    const choiceId = `${id}-other`
+    const labelId = `${choiceId}-label`
+    const textAttrs = {
+      type: 'text',
+      name: `${name.replace(/\[\]$/, '')}${OTHER_NAME_SUFFIX}`,
+      id: `${choiceId}-value`,
+      className: OTHER_TEXT_CLASSNAME,
+      'aria-labelledby': labelId,
+      disabled: true,
+    }
+    // disabled controls skip validation, so a required text box only counts while Other is chosen
+    if (attrs.required) {
+      textAttrs.required = true
+    }
+    if ('form' in attrs) {
+      textAttrs.form = attrs.form
+    }
+    const className = [`f-${fieldType}`, `f-${fieldType}-other`]
+    if (config.inline) {
+      className.push(`f-${fieldType}-inline`)
+    }
+    return {
+      className,
+      children: [
+        {
+          tag: 'input',
+          attrs: { name, type: fieldType, value: OTHER_VALUE, id: choiceId, ...sharedInputAttrs },
+          action,
+        },
+        { tag: 'label', attrs: { for: choiceId, id: labelId }, children: config.otherLabel || DEFAULT_OTHER_LABEL },
+        { tag: 'input', attrs: textAttrs },
+      ],
+    }
   }
 
   /**
@@ -692,6 +780,18 @@ class DOM {
     const noneChecked = !boxes.some(box => box.checked)
     for (const box of boxes) {
       box.required = !isHidden && noneChecked
+    }
+  }
+
+  /**
+   * An Other choice's text box is enabled only while its choice is checked and enabled, so an unchosen Other
+   * neither validates nor submits
+   * @param {Element} groupElem wrapper holding a checkbox or radio group with an Other choice
+   */
+  syncOtherInput(groupElem) {
+    for (const text of groupElem.querySelectorAll(`.${OTHER_TEXT_CLASSNAME}`)) {
+      const choice = text.parentElement.querySelector(`input[value="${OTHER_VALUE}"]`)
+      text.disabled = !choice?.checked || choice.disabled
     }
   }
 
