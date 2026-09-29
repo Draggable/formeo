@@ -1,5 +1,6 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
+import { clearDemo, mountEditor } from './helpers/pages.js'
 
 test.describe('Add Configuration to Field', () => {
   test.beforeEach(async ({ page }) => {
@@ -295,5 +296,69 @@ test.describe('Add Configuration to Field', () => {
     // Verify update event was fired
     const updateEvents = await page.evaluate(() => globalThis.updateEvents)
     expect(updateEvents.length).toBeGreaterThan(0)
+  })
+})
+
+test.describe('Stage Configuration panel', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.setViewportSize({ width: 1400, height: 1000 })
+    await clearDemo(page)
+  })
+
+  const openStageEdit = async stage => {
+    await stage.locator('> .stage-actions').hover()
+    await stage.locator('> .stage-actions .edit-toggle').click()
+    await expect(stage.locator('.stage-edit')).toBeVisible()
+  }
+
+  const collectErrors = page => {
+    const errors = []
+    page.on('pageerror', error => errors.push(error.message))
+    page.on('console', msg => msg.type() === 'error' && errors.push(msg.text()))
+    return errors
+  }
+
+  test('without pages a stage has no Configuration panel', async ({ page }) => {
+    const editor = await mountEditor(page, { options: { pages: false } })
+    const stage = editor.locator('[id="p-s1"]')
+    await openStageEdit(stage)
+    await expect(stage.locator('.stage-edit .config-panel')).toHaveCount(0)
+  })
+
+  test('with pages a stage shows its Title and nothing to add', async ({ page }) => {
+    const errors = collectErrors(page)
+    const editor = await mountEditor(page)
+    const stage = editor.locator('[id="p-s1"]')
+    await openStageEdit(stage)
+    await stage.getByRole('heading', { name: 'Configuration', level: 5 }).click()
+    await expect(stage.locator('.stage-edit .field-config-title input')).toBeVisible()
+    await expect(stage.locator('.stage-edit .config-panel .edit-group > li')).toHaveCount(1)
+    await expect(stage.locator('.stage-edit .add-config')).toBeHidden()
+    expect(errors).toEqual([])
+  })
+
+  test('a stage key declared in the editor config can be added without errors', async ({ page }) => {
+    const errors = collectErrors(page)
+    const editor = await mountEditor(page, {
+      options: {
+        pages: false,
+        config: { stages: { all: { panels: { config: { options: { note: { default: '', label: 'Note' } } } } } } },
+      },
+    })
+    const stage = editor.locator('[id="p-s1"]')
+    await openStageEdit(stage)
+    await stage.getByRole('heading', { name: 'Configuration', level: 5 }).click()
+    await stage.locator('.stage-edit .add-config').click()
+
+    const dialog = page.locator('.formeo-dialog.config-item-dialog')
+    await expect(dialog).toBeVisible()
+    await expect(dialog.locator('select.config-key-select option')).toHaveText(['Note'])
+    await dialog.locator('select.config-key-select').selectOption('note')
+    await dialog.locator('button[type="submit"]').click()
+    await expect(dialog).not.toBeVisible()
+
+    await expect(stage.locator('.stage-edit .field-config-note')).toBeVisible()
+    await expect(stage.locator('.stage-edit .add-config')).toBeHidden()
+    expect(errors).toEqual([])
   })
 })
