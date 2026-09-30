@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.13.2
+Version: 5.14.0
 Author: Draggable https://draggable.io
 */
 
@@ -70,7 +70,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Laat Kies toe",
 		and: "en",
 		attribute: "kenmerk",
-		attributeNotPermitted: "Kenmerk \" {attribute} \" word nie toegelaat nie, kies asseblief 'n ander een.",
+		attributeNameRequired: "Voer 'n kenmerknaam in",
+		attributeNotPermitted: "Kenmerk \"{attribute}\" word nie toegelaat nie, kies asseblief 'n ander een.",
 		attributes: "eienskappe",
 		"attrs.class": "klas",
 		"attrs.className": "klas",
@@ -99,6 +100,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Of",
 		"condition.type.then": "Toe",
 		"condition.value.placeholder": "waarde",
+		"config.other": "Ander opsie",
+		"config.otherLabel": "Ander opsie-etiket",
 		confirmClearAll: "Is jy seker jy wil alle velde verwyder?",
 		content: "inhoud",
 		control: "beheer",
@@ -130,6 +133,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definieer kolom breedtes",
 		description: "Hulp teks",
 		descriptionField: "beskrywing",
+		duplicateFieldName: "Nog 'n veld word ook \"{name}\" genoem, so hul antwoorde sal een sleutel deel.",
 		"editing.row": "Redigeer tans",
 		editorTitle: "Vorm Elemente",
 		field: "veld",
@@ -208,14 +212,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "opsies",
 		or: "of",
 		order: "Orde",
+		other: "Ander",
 		"pages.add": "Voeg bladsy by",
 		"pages.label": "Bladsye",
 		"pages.move": "Beweeg",
 		"pages.moved": "Geskuif na {title}",
 		"pages.moveTo": "Skuif na bladsy",
 		"pages.page": "Bladsy",
-		"pages.remove": "Verwyder bladsy \" {title} \"",
-		"pages.removeConfirm": "Verwyder \" {title} \" en alles daarop?",
+		"pages.remove": "Verwyder bladsy \"{title}\"",
+		"pages.removeConfirm": "Verwyder \"{title}\" en alles daarop?",
 		"pages.rename": "Hernoem bladsy",
 		"pages.untitled": "Bladsy {n}",
 		"panel.label.attrs": "eienskappe",
@@ -241,6 +246,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "verwyder",
 		removeMessage: "Verwyder Element",
 		removeType: "Verwyder {type}",
+		reorderOption: "Sleep om te herrangskik",
 		required: "vereis",
 		reset: "herstel",
 		richText: "Rich Text Editor",
@@ -254,6 +260,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "sekondêre",
 		select: "Kies",
 		selectColor: "Kies Kleur",
+		selectConfigKey: "Kies Konfigurasiesleutel",
 		selectionsMessage: "Laat meerdere keuses toe",
 		selectOptions: "opsies",
 		separator: "separator",
@@ -316,6 +323,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "السماح بالإختيار",
 		and: "و",
 		attribute: "يصف",
+		attributeNameRequired: "أدخل اسم السمة",
 		attributeNotPermitted: "لا يُسمح بالسمة \"{attribute}\"، يرجى اختيار سمة أخرى.",
 		attributes: "صفات",
 		"attrs.class": "فصل",
@@ -345,6 +353,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "أو",
 		"condition.type.then": "ثم",
 		"condition.value.placeholder": "قيمة",
+		"config.other": "خيار آخر",
+		"config.otherLabel": "خيار آخر",
 		confirmClearAll: "هل أنت متأكد أنك تريد إزالة كافة الحقول؟",
 		content: "محتوى",
 		control: "يتحكم",
@@ -376,6 +386,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "تحديد عرض الأعمدة",
 		description: "نص المساعدة",
 		descriptionField: "وصف",
+		duplicateFieldName: "يوجد حقل آخر يحمل اسم \"{name}\"، لذا ستشترك إجاباتهم في مفتاح واحد.",
 		"editing.row": "تحرير الصف",
 		editorTitle: "عناصر النموذج",
 		field: "مجال",
@@ -454,14 +465,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "خيارات",
 		or: "أو",
 		order: "طلب",
+		other: "آخر",
 		"pages.add": "إضافة صفحة",
 		"pages.label": "الصفحات",
 		"pages.move": "يتحرك",
 		"pages.moved": "نُقل إلى {title}",
 		"pages.moveTo": "انتقل إلى الصفحة",
 		"pages.page": "صفحة",
-		"pages.remove": "إزالة الصفحة \" {title} \"",
-		"pages.removeConfirm": "هل تريد حذف \" {title} \" وكل ما يحتويه؟",
+		"pages.remove": "إزالة الصفحة \"{title}\"",
+		"pages.removeConfirm": "هل تريد حذف \"{title}\" وكل ما يحتويه؟",
 		"pages.rename": "إعادة تسمية الصفحة",
 		"pages.untitled": "الصفحة {n}",
 		"panel.label.attrs": "صفات",
@@ -487,6 +499,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "&#215;",
 		removeMessage: "إزالة عنصر",
 		removeType: "إزالة {type}",
+		reorderOption: "اسحب لإعادة الترتيب",
 		required: "إجبارية",
 		reset: "إعادة ضبط",
 		richText: "محرر WYSIWYG",
@@ -500,6 +513,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "ثانوي",
 		select: "للاختيار",
 		selectColor: "اختيار اللون",
+		selectConfigKey: "حدد مفتاح التكوين",
 		selectionsMessage: "سماح اختيارات متعددة",
 		selectOptions: "خيارات",
 		separator: "فاصل",
@@ -562,6 +576,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Povolit Vybrat",
 		and: "a",
 		attribute: "Atribut",
+		attributeNameRequired: "Zadejte název atributu",
 		attributeNotPermitted: "Atribut \"{attribute}\" není povolen, vyberte prosím jiný.",
 		attributes: "Atributy",
 		"attrs.class": "Třída",
@@ -591,6 +606,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Nebo",
 		"condition.type.then": "Pak",
 		"condition.value.placeholder": "hodnota",
+		"config.other": "Jiná možnost",
+		"config.otherLabel": "Popisek jiné možnosti",
 		confirmClearAll: "Opravdu chcete odstranit všechna pole?",
 		content: "Obsah",
 		control: "Řízení",
@@ -622,6 +639,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definujte šířky sloupců",
 		description: "Text nápovědy",
 		descriptionField: "Popis",
+		duplicateFieldName: "Další pole má také název „{name}“, takže jejich odpovědi budou sdílet jeden klíč.",
 		"editing.row": "Editace řádku",
 		editorTitle: "Prvky formuláře",
 		field: "Pole",
@@ -700,14 +718,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Možnosti",
 		or: "nebo",
 		order: "Objednávka",
+		other: "Ostatní",
 		"pages.add": "Přidat stránku",
 		"pages.label": "Stránky",
 		"pages.move": "Pohyb",
 		"pages.moved": "Přesunuto do {title}",
 		"pages.moveTo": "Přesunout na stránku",
 		"pages.page": "Stránka",
-		"pages.remove": "Odebrat stránku „ {title} “",
-		"pages.removeConfirm": "Odebrat „ {title} “ a vše, co je na něm?",
+		"pages.remove": "Odebrat stránku „{title}“",
+		"pages.removeConfirm": "Odebrat „{title}“ a vše, co je na něm?",
 		"pages.rename": "Přejmenovat stránku",
 		"pages.untitled": "Stránka {n}",
 		"panel.label.attrs": "Atributy",
@@ -733,6 +752,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Odstranit",
 		removeMessage: "Odebrat prvek",
 		removeType: "Odebrat {type}",
+		reorderOption: "Přetažením změníte pořadí",
 		required: "Požadovaný",
 		reset: "Resetovat",
 		richText: "Rich Text Editor",
@@ -746,6 +766,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Sekundární",
 		select: "Vybrat",
 		selectColor: "Vyberte Barva",
+		selectConfigKey: "Vyberte konfigurační klíč",
 		selectionsMessage: "Povolit vícenásobný výběr",
 		selectOptions: "Možnosti",
 		separator: "Oddělovač",
@@ -808,7 +829,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Auswahl zulassen",
 		and: "und",
 		attribute: "Attribut",
-		attributeNotPermitted: "Das Attribut \" {attribute} \" ist nicht zulässig. Bitte wählen Sie ein anderes.",
+		attributeNameRequired: "Geben Sie einen Attributnamen ein",
+		attributeNotPermitted: "Das Attribut \"{attribute}\" ist nicht zulässig. Bitte wählen Sie ein anderes.",
 		attributes: "Attribute",
 		"attrs.class": "Klasse",
 		"attrs.className": "Klasse",
@@ -837,12 +859,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Oder",
 		"condition.type.then": "Dann",
 		"condition.value.placeholder": "Wert",
+		"config.other": "Andere Option",
+		"config.otherLabel": "Bezeichnung für andere Optionen",
 		confirmClearAll: "Möchten Sie wirklich alle Felder entfernen?",
 		content: "Inhalt",
 		control: "Steuerung",
 		"controlGroups.nextGroup": "Nächste Gruppe",
 		"controlGroups.prevGroup": "Vorherige Gruppe",
-		"controls.filteringTerm": "Filtern \" {term} \"",
+		"controls.filteringTerm": "Filtern \"{term}\"",
 		"controls.form.button": "Taste",
 		"controls.form.checkbox-group": "Kontrollkästchen Gruppe",
 		"controls.form.input.date": "Datum",
@@ -868,6 +892,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Spaltenbreiten definieren",
 		description: "Hilfstext",
 		descriptionField: "Beschreibung",
+		duplicateFieldName: "Ein weiteres Feld trägt ebenfalls den Namen \"{name}\", sodass ihre Antworten einen gemeinsamen Schlüssel haben.",
 		"editing.row": "Zeile bearbeiten",
 		editorTitle: "Formularelemente",
 		field: "Feld",
@@ -946,14 +971,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Optionen",
 		or: "oder",
 		order: "Auftrag",
+		other: "Andere",
 		"pages.add": "Seite hinzufügen",
 		"pages.label": "Seiten",
 		"pages.move": "Bewegen",
 		"pages.moved": "Verschoben nach {title}",
 		"pages.moveTo": "Zur Seite wechseln",
 		"pages.page": "Seite",
-		"pages.remove": "Seite \" {title} \" entfernen",
-		"pages.removeConfirm": "\" {title} \" und alles, was darauf steht, entfernen?",
+		"pages.remove": "Seite \"{title}\" entfernen",
+		"pages.removeConfirm": "\"{title}\" und alles, was darauf steht, entfernen?",
 		"pages.rename": "Seite umbenennen",
 		"pages.untitled": "Seite {n}",
 		"panel.label.attrs": "Attribute",
@@ -979,6 +1005,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Löschen",
 		removeMessage: "Element entfernen",
 		removeType: "Entfernen Sie {type}",
+		reorderOption: "Zum Neuanordnen ziehen",
 		required: "Erforderlich",
 		reset: "Zurücksetzen",
 		richText: "Rich-Text-Editor",
@@ -992,6 +1019,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Sekundär",
 		select: "Wählen",
 		selectColor: "Wähle Farbe",
+		selectConfigKey: "Konfigurationsschlüssel auswählen",
 		selectionsMessage: "Mehrfachauswahl zulassen",
 		selectOptions: "Optionen",
 		separator: "Separator",
@@ -1052,6 +1080,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Allow Select",
 		and: "and",
 		attribute: "Attribute",
+		attributeNameRequired: "Enter an attribute name",
 		attributeNotPermitted: "Attribute \"{attribute}\" is not permitted, please choose another.",
 		attributes: "Attributes",
 		"attrs.class": "Class",
@@ -1080,6 +1109,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Or",
 		"condition.type.then": "Then",
 		"condition.value.placeholder": "value",
+		"config.other": "Other option",
+		"config.otherLabel": "Other option label",
 		confirmClearAll: "Are you sure you want to remove all fields?",
 		content: "Content",
 		control: "Control",
@@ -1111,6 +1142,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Define column widths",
 		description: "Help Text",
 		descriptionField: "Description",
+		duplicateFieldName: "Another field is also named \"{name}\", so their answers will share one key.",
 		"editing.row": "Editing Row",
 		editorTitle: "Form Elements",
 		field: "Field",
@@ -1187,6 +1219,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Options",
 		or: "or",
 		order: "Order",
+		other: "Other",
 		"pages.add": "Add page",
 		"pages.label": "Pages",
 		"pages.move": "Move",
@@ -1220,6 +1253,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Remove",
 		removeMessage: "Remove Element",
 		removeType: "Remove {type}",
+		reorderOption: "Drag to reorder",
 		required: "Required",
 		reset: "Reset",
 		richText: "Rich Text Editor",
@@ -1234,6 +1268,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secondary",
 		select: "Select",
 		selectColor: "Select Color",
+		selectConfigKey: "Select Configuration Key",
 		selectionsMessage: "Allow Multiple Selections",
 		selectOptions: "Options",
 		separator: "Separator",
@@ -1296,6 +1331,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Permitir seleccionar",
 		and: "y",
 		attribute: "Atributo",
+		attributeNameRequired: "Introduzca un nombre de atributo",
 		attributeNotPermitted: "El atributo \"{attribute}\" no está permitido, elija otro.",
 		attributes: "Atributos",
 		"attrs.class": "Clase",
@@ -1325,6 +1361,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "O",
 		"condition.type.then": "Entonces",
 		"condition.value.placeholder": "valor",
+		"config.other": "Otra opción",
+		"config.otherLabel": "Etiqueta de otra opción",
 		confirmClearAll: "¿Estás seguro de que quieres eliminar todos los campos?",
 		content: "Contenido",
 		control: "Controlar",
@@ -1356,6 +1394,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definir anchos de columna",
 		description: "texto de ayuda",
 		descriptionField: "Descripción",
+		duplicateFieldName: "Otro campo también se llama \"{name}\", por lo que sus respuestas compartirán una clave.",
 		"editing.row": "Fila de edición",
 		editorTitle: "Elementos de formulario",
 		field: "Campo",
@@ -1434,14 +1473,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opciones",
 		or: "o",
 		order: "Orden",
+		other: "Otro",
 		"pages.add": "Agregar página",
 		"pages.label": "Páginas",
 		"pages.move": "Mover",
 		"pages.moved": "Trasladado a {title}",
 		"pages.moveTo": "Ir a la página",
 		"pages.page": "Página",
-		"pages.remove": "Eliminar página \" {title} \"",
-		"pages.removeConfirm": "¿Eliminar \" {title} \" y todo lo que contiene?",
+		"pages.remove": "Eliminar página \"{title}\"",
+		"pages.removeConfirm": "¿Eliminar \"{title}\" y todo lo que contiene?",
 		"pages.rename": "Cambiar nombre de página",
 		"pages.untitled": "Página {n}",
 		"panel.label.attrs": "Atributos",
@@ -1467,6 +1507,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "retirar",
 		removeMessage: "Eliminar Elemento",
 		removeType: "Eliminar {type}",
+		reorderOption: "Arrastra para reordenar",
 		required: "Necesario",
 		reset: "Reiniciar",
 		richText: "Editor de texto enriquecido",
@@ -1480,6 +1521,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secundario",
 		select: "Seleccionar",
 		selectColor: "Seleccionar el color",
+		selectConfigKey: "Seleccione la clave de configuración",
 		selectionsMessage: "Permitir selecciones múltiples",
 		selectOptions: "Opciones",
 		separator: "Separador",
@@ -1542,6 +1584,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "اجازه انتخاب",
 		and: "وارد",
 		attribute: "ویژگی",
+		attributeNameRequired: "نام ویژگی را وارد کنید",
 		attributeNotPermitted: "ویژگی \"{attribute}\" مجاز نیست, لطفا دیگری را انتخاب کنید.",
 		attributes: "ویژگی ها",
 		"attrs.class": "کلاس",
@@ -1571,6 +1614,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "یا",
 		"condition.type.then": "سپس",
 		"condition.value.placeholder": "مقدار",
+		"config.other": "گزینه دیگر",
+		"config.otherLabel": "برچسب گزینه دیگر",
 		confirmClearAll: "آیا مطمئن هستید که می خواهید همه فیلدها را حذف کنید؟",
 		content: "محتوا",
 		control: "کنترل",
@@ -1602,6 +1647,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "عرض ستون را تعریف کنید",
 		description: "متن راهنما",
 		descriptionField: "شرح",
+		duplicateFieldName: "فیلد دیگری نیز \"{name}\" نامگذاری شده است، بنابراین پاسخ‌های آنها یک کلید مشترک خواهد داشت.",
 		"editing.row": "ویرایش ردیف",
 		editorTitle: "عناصر فرم",
 		field: "فیلد",
@@ -1680,14 +1726,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "گزینه ها",
 		or: "یا",
 		order: "سفارش",
+		other: "دیگر",
 		"pages.add": "اضافه کردن صفحه",
 		"pages.label": "صفحات",
 		"pages.move": "حرکت",
 		"pages.moved": "به {title} منتقل شد",
 		"pages.moveTo": "انتقال به صفحه",
 		"pages.page": "صفحه",
-		"pages.remove": "حذف صفحه \" {title} \"",
-		"pages.removeConfirm": "\" {title} \" و هر چیزی که روی آن است را حذف کنید؟",
+		"pages.remove": "حذف صفحه \"{title}\"",
+		"pages.removeConfirm": "\"{title}\" و هر چیزی که روی آن است را حذف کنید؟",
 		"pages.rename": "تغییر نام صفحه",
 		"pages.untitled": "صفحه {n}",
 		"panel.label.attrs": "ویژگی ها",
@@ -1713,6 +1760,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "حذف",
 		removeMessage: "حذف عنصر",
 		removeType: "حذف {type}",
+		reorderOption: "برای مرتب سازی مجدد بکشید",
 		required: "اجباری",
 		reset: "بازنشانی",
 		richText: "ویرایشگر متن توانمند",
@@ -1726,6 +1774,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "ثانوی",
 		select: "انتخاب",
 		selectColor: "انتخاب رنگ",
+		selectConfigKey: "کلید پیکربندی را انتخاب کنید",
 		selectionsMessage: "اجازه انتخاب های متعدد",
 		selectOptions: "گزینه ها",
 		separator: "جداکننده",
@@ -1788,6 +1837,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Salli Valitse",
 		and: "ja",
 		attribute: "Attribuutti",
+		attributeNameRequired: "Anna attribuutin nimi",
 		attributeNotPermitted: "Attribuutti \"{attribute}\" ei ole sallittu, valitse toinen.",
 		attributes: "Attribuutit",
 		"attrs.class": "Luokka",
@@ -1817,6 +1867,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Tai",
 		"condition.type.then": "Sitten",
 		"condition.value.placeholder": "arvo",
+		"config.other": "Muu vaihtoehto",
+		"config.otherLabel": "Muun vaihtoehdon otsikko",
 		confirmClearAll: "Haluatko varmasti poistaa kaikki kentät?",
 		content: "Sisältö",
 		control: "Ohjaus",
@@ -1848,6 +1900,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Määritä sarakkeiden leveydet",
 		description: "Ohjeteksti",
 		descriptionField: "Kuvaus",
+		duplicateFieldName: "Toinen kenttä on myös nimeltään \"{name}\", joten heidän vastauksillaan on yksi yhteinen avain.",
 		"editing.row": "Muokkaa riviä",
 		editorTitle: "Lomakkeen elementit",
 		field: "Ala",
@@ -1926,14 +1979,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Vaihtoehdot",
 		or: "tai",
 		order: "Tilata",
+		other: "Muut",
 		"pages.add": "Lisää sivu",
 		"pages.label": "Sivut",
 		"pages.move": "Liikkua",
 		"pages.moved": "Siirretty kansioon {title}",
 		"pages.moveTo": "Siirry sivulle",
 		"pages.page": "Sivu",
-		"pages.remove": "Poista sivu \" {title} \"",
-		"pages.removeConfirm": "Poistetaanko \" {title} \" ja kaikki siinä oleva?",
+		"pages.remove": "Poista sivu \"{title}\"",
+		"pages.removeConfirm": "Poistetaanko \"{title}\" ja kaikki siinä oleva?",
 		"pages.rename": "Nimeä sivu uudelleen",
 		"pages.untitled": "Sivu {n}",
 		"panel.label.attrs": "Attribuutit",
@@ -1959,6 +2013,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Poistaa",
 		removeMessage: "Poista elementti",
 		removeType: "Poista {type}",
+		reorderOption: "Vedä järjestääksesi uudelleen",
 		required: "Pakollinen",
 		reset: "Nollaa",
 		richText: "Rich Text Editor",
@@ -1972,6 +2027,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Toissijainen",
 		select: "Valitse",
 		selectColor: "Valitse Väri",
+		selectConfigKey: "Valitse määritysavain",
 		selectionsMessage: "Salli useita valintoja",
 		selectOptions: "Vaihtoehdot",
 		separator: "Erotin",
@@ -2034,6 +2090,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Permettre la sélection",
 		and: "et",
 		attribute: "Attribut",
+		attributeNameRequired: "Saisissez un nom d'attribut",
 		attributeNotPermitted: "Attribut  «{attribute}» non permis, veuillez en choisir un autre.",
 		attributes: "Attributs",
 		"attrs.class": "Classe",
@@ -2063,6 +2120,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Ou",
 		"condition.type.then": "Alors",
 		"condition.value.placeholder": "valeur condition",
+		"config.other": "Autre option",
+		"config.otherLabel": "Autre étiquette d'option",
 		confirmClearAll: "Êtes-vous certain de vouloir supprimer tous les champs?",
 		content: "Contenu",
 		control: "Contrôle",
@@ -2094,6 +2153,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Définir la largeur des colonnes",
 		description: "Texte d'aide",
 		descriptionField: "Description",
+		duplicateFieldName: "Un autre champ est également nommé « {name} », leurs réponses partageront donc une clé.",
 		"editing.row": "Édition de rang",
 		editorTitle: "Éléments de formulaire",
 		field: "Champ",
@@ -2172,13 +2232,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Options",
 		or: "ou",
 		order: "Organiser",
+		other: "Autre",
 		"pages.add": "Ajouter une page",
 		"pages.label": "Pages",
 		"pages.move": "Se déplacer",
 		"pages.moved": "Déplacé vers {title}",
 		"pages.moveTo": "Aller à la page",
 		"pages.page": "Page",
-		"pages.remove": "Supprimer la page \" {title} \"",
+		"pages.remove": "Supprimer la page \"{title}\"",
 		"pages.removeConfirm": "Supprimer « {title} » et tout ce qui s'y trouve ?",
 		"pages.rename": "Renommer la page",
 		"pages.untitled": "Page {n}",
@@ -2205,6 +2266,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Supprimer",
 		removeMessage: "Supprimer l'élément",
 		removeType: "Supprimer {type}",
+		reorderOption: "Faites glisser pour réorganiser",
 		required: "Requis",
 		reset: "Réinitialiser",
 		richText: "Éditeur de texte enrichi",
@@ -2218,6 +2280,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secondaire",
 		select: "Sélection",
 		selectColor: "Selectionner une couleur",
+		selectConfigKey: "Sélectionner la clé de configuration",
 		selectionsMessage: "Permettre une sélection multiple",
 		selectOptions: "Options",
 		separator: "Séparateur",
@@ -2280,6 +2343,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "אפשר בחירה",
 		and: "ו",
 		attribute: "תְכוּנָה",
+		attributeNameRequired: "הזן שם מאפיין",
 		attributeNotPermitted: "התכונה \"{attribute}\" אינה מותרת, אנא בחר אחר.",
 		attributes: "תכונות",
 		"attrs.class": "מַחלָקָה",
@@ -2309,6 +2373,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "אוֹ",
 		"condition.type.then": "אָז",
 		"condition.value.placeholder": "עֵרֶך",
+		"config.other": "אפשרות אחרת",
+		"config.otherLabel": "תווית אפשרות אחרת",
 		confirmClearAll: "האם אתה בטוח שברצונך להסיר את כל השדות?",
 		content: "תוֹכֶן",
 		control: "לִשְׁלוֹט",
@@ -2340,6 +2406,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "הגדר רוחבי עמודות",
 		description: "טקסט עזרה",
 		descriptionField: "תֵאוּר",
+		duplicateFieldName: "שדה נוסף נקרא גם הוא \"{name}\", כך שהתשובות שלהם יחלקו מפתח אחד.",
 		"editing.row": "שורת עריכה",
 		editorTitle: "רכיבי טופס",
 		field: "שָׂדֶה",
@@ -2418,14 +2485,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "אפשרויות",
 		or: "אוֹ",
 		order: "לְהַזמִין",
+		other: "אַחֵר",
 		"pages.add": "הוסף דף",
 		"pages.label": "דפים",
 		"pages.move": "מַהֲלָך",
 		"pages.moved": "הועבר ל- {title}",
 		"pages.moveTo": "מעבר לדף",
 		"pages.page": "עמוד",
-		"pages.remove": "הסר את הדף \" {title} \"",
-		"pages.removeConfirm": "להסיר את \" {title} \" ואת כל מה שבתוכה?",
+		"pages.remove": "הסר את הדף \"{title}\"",
+		"pages.removeConfirm": "להסיר את \"{title}\" ואת כל מה שבתוכה?",
 		"pages.rename": "שינוי שם הדף",
 		"pages.untitled": "עמוד {n}",
 		"panel.label.attrs": "תכונות",
@@ -2451,6 +2519,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "לְהַסִיר",
 		removeMessage: "הסר אלמנט",
 		removeType: "הסר {type}",
+		reorderOption: "גרור כדי לסדר מחדש",
 		required: "דָרוּשׁ",
 		reset: "אִתחוּל",
 		richText: "עורך טקסט עשיר",
@@ -2464,6 +2533,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "מִשׁנִי",
 		select: "לִבחוֹר",
 		selectColor: "בחר צבע",
+		selectConfigKey: "בחר מפתח תצורה",
 		selectionsMessage: "אפשר בחירות מרובות",
 		selectOptions: "אפשרויות",
 		separator: "מפריד",
@@ -2526,6 +2596,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "चयन की अनुमति दें",
 		and: "और",
 		attribute: "गुण",
+		attributeNameRequired: "एक विशेषता का नाम दर्ज करें",
 		attributeNotPermitted: "विशेषता \"{attribute}\" की अनुमति नहीं है, कृपया कोई अन्य चुनें.",
 		attributes: "गुण",
 		"attrs.class": "कक्षा",
@@ -2555,12 +2626,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "या",
 		"condition.type.then": "तब",
 		"condition.value.placeholder": "कीमत",
+		"config.other": "दूसरा विकल्प",
+		"config.otherLabel": "अन्य विकल्प लेबल",
 		confirmClearAll: "क्या आप वाकई सभी फ़ील्ड हटाना चाहते हैं?",
 		content: "सामग्री",
 		control: "नियंत्रण",
 		"controlGroups.nextGroup": "अगला समूह",
 		"controlGroups.prevGroup": "पिछला समूह",
-		"controls.filteringTerm": "फ़िल्टरिंग \" {term} \"",
+		"controls.filteringTerm": "फ़िल्टरिंग \"{term}\"",
 		"controls.form.button": "बटन",
 		"controls.form.checkbox-group": "चेकबॉक्स समूह",
 		"controls.form.input.date": "तारीख",
@@ -2586,6 +2659,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "स्तंभ की चौड़ाई निर्धारित करें",
 		description: "सहायता पाठ",
 		descriptionField: "विवरण",
+		duplicateFieldName: "एक और फ़ील्ड का नाम भी \"{name}\" है, इसलिए उनके उत्तरों में एक ही कुंजी का उपयोग किया जाएगा।",
 		"editing.row": "संपादन पंक्ति",
 		editorTitle: "फॉर्म तत्व",
 		field: "मैदान",
@@ -2664,14 +2738,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "विकल्प",
 		or: "या",
 		order: "आदेश",
+		other: "अन्य",
 		"pages.add": "पृष्ठ जोड़ें",
 		"pages.label": "पृष्ठों",
 		"pages.move": "कदम",
 		"pages.moved": "{title} पर स्थानांतरित किया गया",
 		"pages.moveTo": "अगले पृष्ठ पर जाएँ",
 		"pages.page": "पृष्ठ",
-		"pages.remove": "पृष्ठ \" {title} \" हटाएं",
-		"pages.removeConfirm": "क्या आप \" {title} \" और उस पर मौजूद सब कुछ हटा सकते हैं?",
+		"pages.remove": "पृष्ठ \"{title}\" हटाएं",
+		"pages.removeConfirm": "क्या आप \"{title}\" और उस पर मौजूद सब कुछ हटा सकते हैं?",
 		"pages.rename": "पृष्ठ का नाम बदलें",
 		"pages.untitled": "पृष्ठ {n}",
 		"panel.label.attrs": "गुण",
@@ -2697,6 +2772,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "निकालना",
 		removeMessage: "तत्व हटाएँ",
 		removeType: "{type} को हटाएँ",
+		reorderOption: "पुन: व्यवस्थित करने के लिए खींचें",
 		required: "आवश्यक",
 		reset: "रीसेट करें",
 		richText: "रिच टेक्स्ट एडिटर",
@@ -2710,6 +2786,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "माध्यमिक",
 		select: "चुनना",
 		selectColor: "रंग चुनो",
+		selectConfigKey: "कॉन्फ़िगरेशन कुंजी का चयन करें",
 		selectionsMessage: "एकाधिक चयन की अनुमति दें",
 		selectOptions: "विकल्प",
 		separator: "सेपरेटर",
@@ -2772,6 +2849,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Engedélyezze a Kiválasztást",
 		and: "és",
 		attribute: "Tulajdonság",
+		attributeNameRequired: "Adjon meg egy attribútumnevet",
 		attributeNotPermitted: "A (z) \"{attribute}\" attribútum nem engedélyezett, kérjük, válasszon másikat.",
 		attributes: "attribútumok",
 		"attrs.class": "Osztály",
@@ -2801,6 +2879,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Vagy",
 		"condition.type.then": "Majd",
 		"condition.value.placeholder": "érték",
+		"config.other": "Másik lehetőség",
+		"config.otherLabel": "Egyéb opciócímke",
 		confirmClearAll: "Biztosan eltávolít minden mezőt?",
 		content: "Tartalom",
 		control: "Ellenőrzés",
@@ -2832,6 +2912,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Határozza meg az oszlopszélességeket",
 		description: "Súgószöveg",
 		descriptionField: "Leírás",
+		duplicateFieldName: "Egy másik mező neve szintén \"{name}\", így a válaszaik egy kulcsot fognak használni.",
 		"editing.row": "Sor szerkesztése",
 		editorTitle: "Form Elemek",
 		field: "Mező",
@@ -2910,14 +2991,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opciók",
 		or: "vagy",
 		order: "Sorrend",
+		other: "Más",
 		"pages.add": "Oldal hozzáadása",
 		"pages.label": "Oldalak",
 		"pages.move": "Mozog",
 		"pages.moved": "Áthelyezve ide: {title}",
 		"pages.moveTo": "Ugrás az oldalra",
 		"pages.page": "Oldal",
-		"pages.remove": "A(z) „ {title} ” oldal eltávolítása",
-		"pages.removeConfirm": "Eltávolítja a(z) „ {title} ” fájlt és mindent, ami rajta van?",
+		"pages.remove": "A(z) „{title}” oldal eltávolítása",
+		"pages.removeConfirm": "Eltávolítja a(z) „{title}” fájlt és mindent, ami rajta van?",
 		"pages.rename": "Oldal átnevezése",
 		"pages.untitled": "{n} oldal",
 		"panel.label.attrs": "attribútumok",
@@ -2943,6 +3025,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "eltávolít",
 		removeMessage: "Elem eltávolítása",
 		removeType: "Remove {type}",
+		reorderOption: "Húzd át az átrendezéshez",
 		required: "Kívánt",
 		reset: "Visszaállítás",
 		richText: "Rich Text Editor",
@@ -2956,6 +3039,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Másodlagos",
 		select: "választ",
 		selectColor: "Válassza a Szín lehetőséget",
+		selectConfigKey: "Konfigurációs kulcs kiválasztása",
 		selectionsMessage: "Többszörös kiválasztás engedélyezése",
 		selectOptions: "Opciók",
 		separator: "Szétválasztó",
@@ -3018,6 +3102,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Consenti selezione",
 		and: "e",
 		attribute: "Attributo",
+		attributeNameRequired: "Inserisci il nome di un attributo",
 		attributeNotPermitted: "L'attributo \"{attribute}\" non è permesso, per favore sceglierne un altro.",
 		attributes: "attributi",
 		"attrs.class": "Classe",
@@ -3047,6 +3132,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "O",
 		"condition.type.then": "Poi",
 		"condition.value.placeholder": "valore",
+		"config.other": "Altra opzione",
+		"config.otherLabel": "Etichetta alternativa",
 		confirmClearAll: "Sei sicuro di voler rimuovere tutti i campi?",
 		content: "Soddisfare",
 		control: "Controllo",
@@ -3078,6 +3165,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definire le larghezze delle colonne",
 		description: "Testo guida",
 		descriptionField: "Descrizione",
+		duplicateFieldName: "Anche un altro campo si chiama \"{name}\", quindi le loro risposte condivideranno una chiave.",
 		"editing.row": "Modifica riga",
 		editorTitle: "Elementi del modulo",
 		field: "Campo",
@@ -3156,14 +3244,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opzioni",
 		or: "o",
 		order: "Ordine",
+		other: "Altro",
 		"pages.add": "Aggiungi pagina",
 		"pages.label": "Pagine",
 		"pages.move": "Mossa",
 		"pages.moved": "Spostato in {title}",
 		"pages.moveTo": "Vai alla pagina",
 		"pages.page": "Pagina",
-		"pages.remove": "Rimuovi la pagina \" {title} \"",
-		"pages.removeConfirm": "Rimuovere \" {title} \" e tutto ciò che contiene?",
+		"pages.remove": "Rimuovi la pagina \"{title}\"",
+		"pages.removeConfirm": "Rimuovere \"{title}\" e tutto ciò che contiene?",
 		"pages.rename": "Rinomina pagina",
 		"pages.untitled": "Pagina {n}",
 		"panel.label.attrs": "attributi",
@@ -3189,6 +3278,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Rimuovere",
 		removeMessage: "Rimuovi elemento",
 		removeType: "Rimuovi {type}",
+		reorderOption: "Trascina per riordinare",
 		required: "necessario",
 		reset: "Reset",
 		richText: "Rich Text Editor",
@@ -3202,6 +3292,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secondario",
 		select: "Selezionare",
 		selectColor: "Seleziona colore",
+		selectConfigKey: "Seleziona la chiave di configurazione",
 		selectionsMessage: "Consenti selezioni multiple",
 		selectOptions: "Opzioni",
 		separator: "Separatore",
@@ -3264,7 +3355,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "選択を許可する",
 		and: "そして",
 		attribute: "属性",
-		attributeNotPermitted: "属性「 {attribute} 」は許可されていません。別の属性を選択してください。",
+		attributeNameRequired: "属性名を入力してください",
+		attributeNotPermitted: "属性「{attribute}」は許可されていません。別の属性を選択してください。",
 		attributes: "属性",
 		"attrs.class": "クラス",
 		"attrs.className": "クラス",
@@ -3293,6 +3385,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "または",
 		"condition.type.then": "それから",
 		"condition.value.placeholder": "値",
+		"config.other": "その他の選択肢",
+		"config.otherLabel": "その他のオプションラベル",
 		confirmClearAll: "すべてのフィールドを削除してもよろしいですか？",
 		content: "コンテンツ",
 		control: "コントロール",
@@ -3324,6 +3418,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "列の幅を定義する",
 		description: "ヘルプテキスト",
 		descriptionField: "説明",
+		duplicateFieldName: "別のフィールドも「{name}」という名前なので、それらの回答は1つのキーを共有することになります。",
 		"editing.row": "行の編集",
 		editorTitle: "フォーム要素",
 		field: "フィールド",
@@ -3402,14 +3497,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "オプション",
 		or: "または",
 		order: "注文",
+		other: "他の",
 		"pages.add": "ページを追加",
 		"pages.label": "ページ",
 		"pages.move": "動く",
 		"pages.moved": "{title}に移動しました",
 		"pages.moveTo": "ページへ移動",
 		"pages.page": "ページ",
-		"pages.remove": "ページ「 {title} 」を削除",
-		"pages.removeConfirm": "「 {title} 」とその中のすべてを削除しますか？",
+		"pages.remove": "ページ「{title}」を削除",
+		"pages.removeConfirm": "「{title}」とその中のすべてを削除しますか？",
 		"pages.rename": "ページ名の変更",
 		"pages.untitled": "ページ{n}",
 		"panel.label.attrs": "属性",
@@ -3435,6 +3531,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "削除する",
 		removeMessage: "要素を削除する",
 		removeType: "{type}を削除します",
+		reorderOption: "ドラッグして並べ替える",
 		required: "必須",
 		reset: "リセット",
 		richText: "リッチテキストエディタ",
@@ -3448,6 +3545,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "二次",
 		select: "選択",
 		selectColor: "カラーを選択",
+		selectConfigKey: "構成キーを選択してください",
 		selectionsMessage: "複数の選択を許可する",
 		selectOptions: "オプション",
 		separator: "セパレータ",
@@ -3510,6 +3608,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Tillat Select",
 		and: "og",
 		attribute: "Egenskap",
+		attributeNameRequired: "Skriv inn et attributtnavn",
 		attributeNotPermitted: "Attributt \"{attribute}\" er ikke tillatt, vennligst velg en annen.",
 		attributes: "Egenskaper",
 		"attrs.class": "Klasse",
@@ -3539,6 +3638,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Eller",
 		"condition.type.then": "Da",
 		"condition.value.placeholder": "verdi",
+		"config.other": "Andre alternativer",
+		"config.otherLabel": "Etikett for andre alternativer",
 		confirmClearAll: "Er du sikker på at du vil fjerne alle feltene?",
 		content: "Innhold",
 		control: "Styre",
@@ -3570,6 +3671,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definer kolonnebredder",
 		description: "Hjelpetekst",
 		descriptionField: "Beskrivelse",
+		duplicateFieldName: "Et annet felt heter også «{name}», så svarene deres vil dele én nøkkel.",
 		"editing.row": "Redigerer rad",
 		editorTitle: "Formelementer",
 		field: "Felt",
@@ -3648,14 +3750,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "alternativer",
 		or: "eller",
 		order: "Rekkefølge",
+		other: "Annen",
 		"pages.add": "Legg til side",
 		"pages.label": "Sider",
 		"pages.move": "Flytte",
 		"pages.moved": "Flyttet til {title}",
 		"pages.moveTo": "Flytt til side",
 		"pages.page": "Side",
-		"pages.remove": "Fjern siden « {title} »",
-		"pages.removeConfirm": "Fjerne « {title} » og alt på den?",
+		"pages.remove": "Fjern siden «{title}»",
+		"pages.removeConfirm": "Fjerne «{title}» og alt på den?",
 		"pages.rename": "Gi siden nytt navn",
 		"pages.untitled": "Side {n}",
 		"panel.label.attrs": "Egenskaper",
@@ -3681,6 +3784,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Fjerne",
 		removeMessage: "Fjern elementet",
 		removeType: "Fjern {type}",
+		reorderOption: "Dra for å endre rekkefølgen",
 		required: "Må",
 		reset: "tilbakestille",
 		richText: "Rich Text Editor",
@@ -3694,6 +3798,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "sekundær",
 		select: "Å velge",
 		selectColor: "Velg Farge",
+		selectConfigKey: "Velg konfigurasjonsnøkkel",
 		selectionsMessage: "Tillat flere valg",
 		selectOptions: "alternativer",
 		separator: "separator",
@@ -3756,7 +3861,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Zezwalaj Wybierz",
 		and: "i",
 		attribute: "Atrybut",
-		attributeNotPermitted: "Atrybut „ {attribute} ” jest niedozwolony, proszę wybrać inny.",
+		attributeNameRequired: "Wprowadź nazwę atrybutu",
+		attributeNotPermitted: "Atrybut „{attribute}” jest niedozwolony, proszę wybrać inny.",
 		attributes: "Atrybuty",
 		"attrs.class": "Klasa",
 		"attrs.className": "Klasa",
@@ -3785,6 +3891,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Lub",
 		"condition.type.then": "Następnie",
 		"condition.value.placeholder": "wartość",
+		"config.other": "Inna opcja",
+		"config.otherLabel": "Inna etykieta opcji",
 		confirmClearAll: "Czy na pewno chcesz usunąć wszystkie pola?",
 		content: "Zawartość",
 		control: "Kontrola",
@@ -3816,6 +3924,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Określ szerokość kolumn",
 		description: "Tekst pomocy",
 		descriptionField: "Opis",
+		duplicateFieldName: "Inne pole ma również nazwę „{name}”, więc ich odpowiedzi będą mieć jeden wspólny klucz.",
 		"editing.row": "Edytowanie wiersza",
 		editorTitle: "Formuj elementy",
 		field: "Pole",
@@ -3894,14 +4003,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opcje",
 		or: "lub",
 		order: "Zamówienie",
+		other: "Inny",
 		"pages.add": "Dodaj stronę",
 		"pages.label": "Strony",
 		"pages.move": "Przenosić",
 		"pages.moved": "Przeniesiono do {title}",
 		"pages.moveTo": "Przejdź do strony",
 		"pages.page": "Strona",
-		"pages.remove": "Usuń stronę „ {title} ”",
-		"pages.removeConfirm": "Usunąć „ {title} ” i wszystko, co się na nim znajduje?",
+		"pages.remove": "Usuń stronę „{title}”",
+		"pages.removeConfirm": "Usunąć „{title}” i wszystko, co się na nim znajduje?",
 		"pages.rename": "Zmień nazwę strony",
 		"pages.untitled": "Strona {n}",
 		"panel.label.attrs": "Atrybuty",
@@ -3927,6 +4037,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Usunąć",
 		removeMessage: "Usuń element",
 		removeType: "Usuń {type}",
+		reorderOption: "Przeciągnij, aby zmienić kolejność",
 		required: "wymagany",
 		reset: "Nastawić",
 		richText: "Bogaty edytor tekstu",
@@ -3940,6 +4051,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Wtórny",
 		select: "Wybierz",
 		selectColor: "Wybierz kolor",
+		selectConfigKey: "Wybierz klucz konfiguracji",
 		selectionsMessage: "Zezwalaj na wiele wyborów",
 		selectOptions: "Opcje",
 		separator: "Separator",
@@ -4002,6 +4114,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Permitir Selecionar",
 		and: "e",
 		attribute: "Atributo",
+		attributeNameRequired: "Insira o nome de um atributo.",
 		attributeNotPermitted: "O atributo \"{attribute}\" não é permitido, escolha outro.",
 		attributes: "Atributos",
 		"attrs.class": "Aula",
@@ -4031,6 +4144,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Ou",
 		"condition.type.then": "Então",
 		"condition.value.placeholder": "valor",
+		"config.other": "Outra opção",
+		"config.otherLabel": "Outra opção de rótulo",
 		confirmClearAll: "Tem certeza de que deseja remover todos os campos?",
 		content: "Contente",
 		control: "Controlar",
@@ -4062,6 +4177,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definir larguras de colunas",
 		description: "Texto de ajuda",
 		descriptionField: "Descrição",
+		duplicateFieldName: "Outro campo também é chamado de \"{name}\", então suas respostas compartilharão uma chave.",
 		"editing.row": "Linha de edição",
 		editorTitle: "Elementos de formulário",
 		field: "Campo",
@@ -4140,14 +4256,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opções",
 		or: "ou",
 		order: "Ordem",
+		other: "Outro",
 		"pages.add": "Adicionar página",
 		"pages.label": "Páginas",
 		"pages.move": "Mover",
 		"pages.moved": "Movido para {title}",
 		"pages.moveTo": "Ir para a página",
 		"pages.page": "Página",
-		"pages.remove": "Remover página \" {title} \"",
-		"pages.removeConfirm": "Remover \" {title} \" e tudo o que estiver nele?",
+		"pages.remove": "Remover página \"{title}\"",
+		"pages.removeConfirm": "Remover \"{title}\" e tudo o que estiver nele?",
 		"pages.rename": "Renomear página",
 		"pages.untitled": "Página {n}",
 		"panel.label.attrs": "Atributos",
@@ -4173,6 +4290,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Remover",
 		removeMessage: "Remover Elemento",
 		removeType: "Remover {type}",
+		reorderOption: "Arraste para reordenar",
 		required: "Obrigatório",
 		reset: "Reiniciar",
 		richText: "Editor de texto rico",
@@ -4186,6 +4304,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secundário",
 		select: "Selecione",
 		selectColor: "Selecione a cor",
+		selectConfigKey: "Selecione a chave de configuração",
 		selectionsMessage: "Permitir Seleções Múltiplas",
 		selectOptions: "Opções",
 		separator: "Separador",
@@ -4248,6 +4367,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Permitir Selecionar",
 		and: "e",
 		attribute: "Atributo",
+		attributeNameRequired: "Introduza o nome de um atributo.",
 		attributeNotPermitted: "O atributo \"{attribute}\" não é permitido, escolha outro.",
 		attributes: "Atributos",
 		"attrs.class": "Aula",
@@ -4277,6 +4397,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Ou",
 		"condition.type.then": "Então",
 		"condition.value.placeholder": "valor",
+		"config.other": "Outra opção",
+		"config.otherLabel": "Outra opção de rótulo",
 		confirmClearAll: "Tem certeza de que deseja remover todos os campos?",
 		content: "Contente",
 		control: "Controlar",
@@ -4308,6 +4430,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definir larguras de colunas",
 		description: "Texto de ajuda",
 		descriptionField: "Descrição",
+		duplicateFieldName: "Outro campo também é chamado de \"{name}\", pelo que as suas respostas partilharão uma chave.",
 		"editing.row": "Linha de edição",
 		editorTitle: "Elementos de formulário",
 		field: "Campo",
@@ -4386,14 +4509,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opções",
 		or: "ou",
 		order: "Ordem",
+		other: "Outro",
 		"pages.add": "Adicionar página",
 		"pages.label": "Páginas",
 		"pages.move": "Mover",
 		"pages.moved": "Movido para {title}",
 		"pages.moveTo": "Ir para a página",
 		"pages.page": "Página",
-		"pages.remove": "Remover página \" {title} \"",
-		"pages.removeConfirm": "Remover \" {title} \" e tudo o que está nele?",
+		"pages.remove": "Remover página \"{title}\"",
+		"pages.removeConfirm": "Remover \"{title}\" e tudo o que está nele?",
 		"pages.rename": "Renomear página",
 		"pages.untitled": "Página {n}",
 		"panel.label.attrs": "Atributos",
@@ -4419,6 +4543,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Remover",
 		removeMessage: "Remover Elemento",
 		removeType: "Remover {type}",
+		reorderOption: "Arraste para reordenar",
 		required: "Obrigatório",
 		reset: "Reiniciar",
 		richText: "Editor de texto rico",
@@ -4432,6 +4557,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secundário",
 		select: "Selecione",
 		selectColor: "Selecione a cor",
+		selectConfigKey: "Selecione a chave de configuração",
 		selectionsMessage: "Permitir Seleções Múltiplas",
 		selectOptions: "Opções",
 		separator: "Separador",
@@ -4494,7 +4620,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Permiteți selectarea",
 		and: "și",
 		attribute: "Atribut",
-		attributeNotPermitted: "Atributul „ {attribute} ” nu este permis, vă rugăm să alegeți altul.",
+		attributeNameRequired: "Introduceți un nume de atribut",
+		attributeNotPermitted: "Atributul „{attribute}” nu este permis, vă rugăm să alegeți altul.",
 		attributes: "atribute",
 		"attrs.class": "Clasă",
 		"attrs.className": "Clasă",
@@ -4523,6 +4650,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Sau",
 		"condition.type.then": "Apoi",
 		"condition.value.placeholder": "valoare",
+		"config.other": "Altă opțiune",
+		"config.otherLabel": "Alte etichete de opțiuni",
 		confirmClearAll: "Sigur doriți să eliminați toate câmpurile?",
 		content: "Conţinut",
 		control: "Control",
@@ -4554,6 +4683,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Definiți lățimea coloanelor",
 		description: "Ajutați textul",
 		descriptionField: "Descriere",
+		duplicateFieldName: "Un alt câmp este denumit tot „{name}”, așadar răspunsurile lor vor avea aceeași cheie.",
 		"editing.row": "Editare rând",
 		editorTitle: "Elemente formale",
 		field: "Camp",
@@ -4632,14 +4762,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Opțiuni",
 		or: "sau",
 		order: "Ordin",
+		other: "Alte",
 		"pages.add": "Adăugați o pagină",
 		"pages.label": "Pagini",
 		"pages.move": "Mişcare",
 		"pages.moved": "Mutat la {title}",
 		"pages.moveTo": "Mută la pagină",
 		"pages.page": "Pagină",
-		"pages.remove": "Eliminați pagina „ {title} ”",
-		"pages.removeConfirm": "Să elimini „ {title} ” și tot ce conține?",
+		"pages.remove": "Eliminați pagina „{title}”",
+		"pages.removeConfirm": "Să elimini „{title}” și tot ce conține?",
 		"pages.rename": "Redenumiți pagina",
 		"pages.untitled": "Pagina {n}",
 		"panel.label.attrs": "atribute",
@@ -4665,6 +4796,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Elimina",
 		removeMessage: "Eliminați elementul",
 		removeType: "Eliminați {type}",
+		reorderOption: "Trageți pentru a reordona",
 		required: "Necesar",
 		reset: "restabili",
 		richText: "Editor text îmbogățit",
@@ -4678,6 +4810,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "Secundar",
 		select: "Selectați",
 		selectColor: "Selectați Culoare",
+		selectConfigKey: "Selectați cheia de configurare",
 		selectionsMessage: "Permiteți mai multe selecții",
 		selectOptions: "Opțiuni",
 		separator: "Separator",
@@ -4740,6 +4873,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Разрешить выбор",
 		and: "а также",
 		attribute: "атрибут",
+		attributeNameRequired: "Введите название атрибута",
 		attributeNotPermitted: "Атрибут «{attribute}» не разрешен, выберите другой.",
 		attributes: "Атрибуты",
 		"attrs.class": "Учебный класс",
@@ -4769,6 +4903,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Или",
 		"condition.type.then": "Затем",
 		"condition.value.placeholder": "значение",
+		"config.other": "Другой вариант",
+		"config.otherLabel": "Метка другого варианта",
 		confirmClearAll: "Вы действительно хотите удалить все поля?",
 		content: "содержание",
 		control: "контроль",
@@ -4800,6 +4936,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Определение ширины столбцов",
 		description: "Текст справки",
 		descriptionField: "Описание",
+		duplicateFieldName: "Ещё одно поле также называется \"{name}\", поэтому их ответы будут иметь один общий ключ.",
 		"editing.row": "Редактирование строки",
 		editorTitle: "Элементы формы",
 		field: "поле",
@@ -4878,14 +5015,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Опции",
 		or: "или же",
 		order: "порядок",
+		other: "Другой",
 		"pages.add": "Добавить страницу",
 		"pages.label": "Страницы",
 		"pages.move": "Двигаться",
 		"pages.moved": "Перенесено в {title}",
 		"pages.moveTo": "Перейти на страницу",
 		"pages.page": "Страница",
-		"pages.remove": "Удалить страницу \" {title} \"",
-		"pages.removeConfirm": "Удалить \" {title} \" и все, что в нем содержится?",
+		"pages.remove": "Удалить страницу \"{title}\"",
+		"pages.removeConfirm": "Удалить \"{title}\" и все, что в нем содержится?",
 		"pages.rename": "Переименовать страницу",
 		"pages.untitled": "Страница {n}",
 		"panel.label.attrs": "Атрибуты",
@@ -4911,6 +5049,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Удалить",
 		removeMessage: "Удалить элемент",
 		removeType: "Удалить {type}",
+		reorderOption: "Перетащите, чтобы изменить порядок.",
 		required: "необходимые",
 		reset: "Сброс",
 		richText: "Редактор Rich Text Editor",
@@ -4924,6 +5063,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "второстепенный",
 		select: "Выбрать",
 		selectColor: "Выберите цвет",
+		selectConfigKey: "Выберите ключ конфигурации",
 		selectionsMessage: "Разрешить множественный выбор",
 		selectOptions: "Опции",
 		separator: "Разделитель",
@@ -4986,6 +5126,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "อนุญาตให้เลือก",
 		and: "และ",
 		attribute: "คุณลักษณะ",
+		attributeNameRequired: "ป้อนชื่อแอตทริบิวต์",
 		attributeNotPermitted: "ไม่อนุญาตให้ใช้แอตทริบิวต์ \"{attribute}\" โปรดเลือกแอตทริบิวต์อื่น",
 		attributes: "คุณสมบัติ",
 		"attrs.class": "ระดับ",
@@ -5015,6 +5156,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "หรือ",
 		"condition.type.then": "แล้ว",
 		"condition.value.placeholder": "ค่า",
+		"config.other": "ตัวเลือกอื่น",
+		"config.otherLabel": "ป้ายกำกับตัวเลือกอื่นๆ",
 		confirmClearAll: "คุณแน่ใจว่าต้องการลบข้อมูลทั้งหมดหรือไม่?",
 		content: "เนื้อหา",
 		control: "ควบคุม",
@@ -5046,6 +5189,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "กำหนดความกว้างของคอลัมน์",
 		description: "ข้อความช่วยเหลือ",
 		descriptionField: "คำอธิบาย",
+		duplicateFieldName: "อีกช่องหนึ่งก็มีชื่อว่า \"{name}\" เช่นกัน ดังนั้นคำตอบของพวกเขาจะใช้คีย์เดียวกัน",
 		"editing.row": "การแก้ไขแถว",
 		editorTitle: "องค์ประกอบแบบฟอร์ม",
 		field: "สนาม",
@@ -5124,14 +5268,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "ตัวเลือก",
 		or: "หรือ",
 		order: "คำสั่ง",
+		other: "อื่น",
 		"pages.add": "เพิ่มหน้า",
 		"pages.label": "หน้า",
 		"pages.move": "เคลื่อนไหว",
 		"pages.moved": "ย้ายไปที่ {title}",
 		"pages.moveTo": "ไปยังหน้าถัดไป",
 		"pages.page": "หน้า",
-		"pages.remove": "ลบหน้า \" {title} \"",
-		"pages.removeConfirm": "ลบ \" {title} \" และทุกอย่างที่อยู่บนนั้นออกหรือไม่?",
+		"pages.remove": "ลบหน้า \"{title}\"",
+		"pages.removeConfirm": "ลบ \"{title}\" และทุกอย่างที่อยู่บนนั้นออกหรือไม่?",
 		"pages.rename": "เปลี่ยนชื่อหน้า",
 		"pages.untitled": "หน้า {n}",
 		"panel.label.attrs": "คุณสมบัติ",
@@ -5157,6 +5302,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "ลบ",
 		removeMessage: "ลบองค์ประกอบ",
 		removeType: "ลบ {type}",
+		reorderOption: "ลากเพื่อจัดลำดับใหม่",
 		required: "ที่จำเป็น",
 		reset: "รีเซ็ต",
 		richText: "โปรแกรมแก้ไขข้อความแบบ Rich Text",
@@ -5170,6 +5316,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "มัธยมศึกษาตอนปลาย",
 		select: "เลือก",
 		selectColor: "เลือกสี",
+		selectConfigKey: "เลือกคีย์การกำหนดค่า",
 		selectionsMessage: "อนุญาตให้เลือกได้หลายรายการ",
 		selectOptions: "ตัวเลือก",
 		separator: "ตัวคั่น",
@@ -5232,7 +5379,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "Seçime İzin Ver",
 		and: "ve",
 		attribute: "nitelik",
-		attributeNotPermitted: "\" {attribute} \" özniteliğine izin verilmiyor, lütfen başka bir öznitelik seçin.",
+		attributeNameRequired: "Bir öznitelik adı girin.",
+		attributeNotPermitted: "\"{attribute}\" özniteliğine izin verilmiyor, lütfen başka bir öznitelik seçin.",
 		attributes: "Öznitellikler",
 		"attrs.class": "Sınıf",
 		"attrs.className": "Sınıf",
@@ -5261,12 +5409,14 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Veya",
 		"condition.type.then": "Daha sonra",
 		"condition.value.placeholder": "değer",
+		"config.other": "Diğer seçenek",
+		"config.otherLabel": "Diğer seçenek etiketi",
 		confirmClearAll: "Tüm alanları kaldırmak istediğinizden emin misiniz?",
 		content: "içerik",
 		control: "Kontrol",
 		"controlGroups.nextGroup": "Sonraki grup",
 		"controlGroups.prevGroup": "Önceki Grup",
-		"controls.filteringTerm": "\" {term} \" filtreleniyor",
+		"controls.filteringTerm": "\"{term}\" filtreleniyor",
 		"controls.form.button": "Buton",
 		"controls.form.checkbox-group": "Onay Kutusu Grubu",
 		"controls.form.input.date": "tarih",
@@ -5292,6 +5442,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "Sütun genişliklerini tanımla",
 		description: "Yardım Metni",
 		descriptionField: "Açıklama",
+		duplicateFieldName: "Diğer bir alanın adı da \"{name}\" olduğundan, cevapları tek bir anahtarı paylaşacaktır.",
 		"editing.row": "Satırı Düzenleme",
 		editorTitle: "Form Öğeleri",
 		field: "Alan",
@@ -5370,14 +5521,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "Seçenekler",
 		or: "veya",
 		order: "Sipariş",
+		other: "Diğer",
 		"pages.add": "Sayfa ekle",
 		"pages.label": "Sayfalar",
 		"pages.move": "Taşınmak",
 		"pages.moved": "{title} adresine taşındı.",
 		"pages.moveTo": "Sayfaya git",
 		"pages.page": "Sayfa",
-		"pages.remove": "Sayfayı kaldır \" {title} \"",
-		"pages.removeConfirm": "\" {title} \" ve üzerindeki her şeyi kaldırmak mı?",
+		"pages.remove": "Sayfayı kaldır \"{title}\"",
+		"pages.removeConfirm": "\"{title}\" ve üzerindeki her şeyi kaldırmak mı?",
 		"pages.rename": "Sayfayı yeniden adlandır",
 		"pages.untitled": "Sayfa {n}",
 		"panel.label.attrs": "Öznitellikler",
@@ -5403,6 +5555,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "Kaldır",
 		removeMessage: "Öğeyi Kaldır",
 		removeType: "{type} öğesini kaldır",
+		reorderOption: "Sırayı değiştirmek için sürükleyin",
 		required: "gereklidir",
 		reset: "Reset",
 		richText: "Zengin metin editörü",
@@ -5416,6 +5569,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "İkincil",
 		select: "seçmek",
 		selectColor: "Renk seç",
+		selectConfigKey: "Yapılandırma Anahtarını Seçin",
 		selectionsMessage: "Birden Çok Seçime İzin Ver",
 		selectOptions: "Seçenekler",
 		separator: "Ayırıcı",
@@ -5478,6 +5632,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "允许选择",
 		and: "和",
 		attribute: "属性",
+		attributeNameRequired: "输入属性名称",
 		attributeNotPermitted: "不允许使用属性“{attribute}”，请选择其他属性。",
 		attributes: "属性",
 		"attrs.class": "类",
@@ -5507,6 +5662,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "或者",
 		"condition.type.then": "然后",
 		"condition.value.placeholder": "值",
+		"config.other": "其他选项",
+		"config.otherLabel": "其他选项标签",
 		confirmClearAll: "您确定要删除所有字段吗？",
 		content: "内容",
 		control: "控制",
@@ -5538,6 +5695,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "定义列宽",
 		description: "帮助文字",
 		descriptionField: "描述",
+		duplicateFieldName: "另一个字段也名为“{name}”，因此它们的答案将共享一个键。",
 		"editing.row": "编辑行",
 		editorTitle: "表单元素",
 		field: "领域",
@@ -5616,14 +5774,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "选项",
 		or: "要么",
 		order: "订购",
+		other: "其他",
 		"pages.add": "添加页面",
 		"pages.label": "页",
 		"pages.move": "移动",
 		"pages.moved": "已移至{title}",
 		"pages.moveTo": "跳转到页面",
 		"pages.page": "页",
-		"pages.remove": "删除页面“ {title} ”",
-		"pages.removeConfirm": "删除“ {title} ”及其所有内容？",
+		"pages.remove": "删除页面“{title}”",
+		"pages.removeConfirm": "删除“{title}”及其所有内容？",
 		"pages.rename": "重命名页面",
 		"pages.untitled": "第{n}",
 		"panel.label.attrs": "属性",
@@ -5649,6 +5808,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "去掉",
 		removeMessage: "删除元素",
 		removeType: "删除{type}",
+		reorderOption: "拖动即可重新排序",
 		required: "需要",
 		reset: "重启",
 		richText: "富文本编辑器",
@@ -5662,6 +5822,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "次要",
 		select: "选择",
 		selectColor: "选择颜色",
+		selectConfigKey: "选择配置键",
 		selectionsMessage: "允许多个选择",
 		selectOptions: "选项",
 		separator: "分隔器",
@@ -5724,6 +5885,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		allowSelect: "允許選擇",
 		and: "和",
 		attribute: "屬性",
+		attributeNameRequired: "輸入屬性名稱",
 		attributeNotPermitted: "不允許使用屬性“{attribute}”，請選擇其他屬性。",
 		attributes: "屬性",
 		"attrs.class": "班級",
@@ -5753,6 +5915,8 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "或者",
 		"condition.type.then": "然後",
 		"condition.value.placeholder": "價值",
+		"config.other": "其他選項",
+		"config.otherLabel": "其他選項標籤",
 		confirmClearAll: "您確定要刪除所有欄位嗎？",
 		content: "內容",
 		control: "控制",
@@ -5784,6 +5948,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		defineColumnWidths: "定義列寬",
 		description: "幫助文本",
 		descriptionField: "描述",
+		duplicateFieldName: "另一個欄位也名為“{name}”，因此它們的答案將共用一個鍵。",
 		"editing.row": "編輯行",
 		editorTitle: "表單元素",
 		field: "場地",
@@ -5862,14 +6027,15 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		options: "選項",
 		or: "或者",
 		order: "命令",
+		other: "其他",
 		"pages.add": "新增頁面",
 		"pages.label": "頁",
 		"pages.move": "移動",
 		"pages.moved": "已移至{title}",
 		"pages.moveTo": "跳到頁面",
 		"pages.page": "頁",
-		"pages.remove": "刪除頁面“ {title} ”",
-		"pages.removeConfirm": "刪除“ {title} ”及其所有內容？",
+		"pages.remove": "刪除頁面“{title}”",
+		"pages.removeConfirm": "刪除“{title}”及其所有內容？",
 		"pages.rename": "重新命名頁面",
 		"pages.untitled": "第{n}",
 		"panel.label.attrs": "屬性",
@@ -5895,6 +6061,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		remove: "消除",
 		removeMessage: "刪除元素",
 		removeType: "移除{type}",
+		reorderOption: "拖曳即可重新排序",
 		required: "必需的",
 		reset: "重置",
 		richText: "富文本編輯器",
@@ -5908,6 +6075,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		secondary: "中學",
 		select: "選擇",
 		selectColor: "選擇顏色",
+		selectConfigKey: "選擇配置鍵",
 		selectionsMessage: "允許多項選擇",
 		selectOptions: "選項",
 		separator: "分離器",
@@ -5947,7 +6115,7 @@ e$1["de-DE"];
 //#region node_modules/@draggable/formeo-languages/dist/formeo-languages.es.js
 /**
 @draggable/formeo-languages - https://github.com/Draggable/formeo-languages#readme
-Version: 3.6.0
+Version: 3.8.0
 Author: Kevin Chappell <kevin.b.chappell@gmail.com> (https://kevin-chappell.com)
 */
 var s$1 = e$1["en-US"];
@@ -6300,7 +6468,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.13.2";
+	version$2 = "5.14.0";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -6421,7 +6589,7 @@ var init_package = __esmMin((() => {
 		"zod": "^4.4.3"
 	};
 	dependencies = {
-		"@draggable/formeo-languages": "^3.7.0",
+		"@draggable/formeo-languages": "^3.9.0",
 		"@draggable/i18n": "^1.0.7",
 		"@draggable/tooltip": "^1.2.2",
 		"lodash": "^4.17.21",
@@ -8693,7 +8861,7 @@ var init_utils = __esmMin((() => {
 var formeo_sprite_default;
 var init_formeo_sprite = __esmMin((() => {
 	formeo_sprite_default = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><symbol id=\"f-i-autocomplete\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6,5h1v1H6V5z M4,4H3v1h1V4z M6,4H5v1h1V4z M2,5v1h1V5H2z M3,7h1V6H3V7z M5,7h1V6H5V7z M4,5v1h1V5H4z M2,14h1v-1H2V14z M4,14h1v-1H4V14z M6,14h1v-1H6V14z M9,13H8v1h1V13z M16,3.5v4C16,8.3,15.3,9,14.5,9H14v3v3c0,0.6-0.4,1-1,1H1c-0.6,0-1-0.4-1-1V3.5 C0,2.7,0.7,2,1.5,2h3H8V1.5V1H7H6V0.5V0h2.5H11v0.5V1h-1H9v0.5V2h3h2.5C15.3,2,16,2.7,16,3.5z M13,12H7H1v3h12V12z M3,11v-1H2v1H3z M5,11v-1H4v1H5z M15,3.5C15,3.2,14.8,3,14.5,3H9v2.5V8H8.5H8V7.5V7H7V6h1V5.5V5H7V4h1V3.5V3H1.5C1.2,3,1,3.2,1,3.5v4 C1,7.8,1.2,8,1.5,8H8v1H6v0.5V10h2.5H11V9.5V9H9V8h5.5C14.8,8,15,7.8,15,7.5V3.5z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-bin\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M4 10v20c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-20h-22zM10 28h-2v-14h2v14zM14 28h-2v-14h2v14zM18 28h-2v-14h2v14zM22 28h-2v-14h2v14zM26.5 4h-6.5v-2.5c0-.825-.675-1.5-1.5-1.5h-7c-.825 0-1.5.675-1.5 1.5v2.5h-6.5c-.825 0-1.5.675-1.5 1.5v2.5h26v-2.5c0-.825-.675-1.5-1.5-1.5zM18 4h-6v-1.975h6v1.975z\"/></symbol><symbol id=\"f-i-button\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"acprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"acprefix__rect4140\" d=\"M 0.4765625,4 A 0.47706934,0.47706934 0 0 0 0,4.4765625 L 0,11.523438 A 0.47706934,0.47706934 0 0 0 0.4765625,12 L 15.523438,12 A 0.47706934,0.47706934 0 0 0 16,11.523438 L 16,4.4765625 A 0.47706934,0.47706934 0 0 0 15.523438,4 L 0.4765625,4 Z m 0.4765625,0.953125 14.09375,0 0,6.09375 -14.09375,0 0,-6.09375 z\"/><g id=\"acprefix__layer1\"><g id=\"acprefix__text4203\"><g id=\"acprefix__g4212\" transform=\"translate(0.10112835,0.1001358)\"><path id=\"acprefix__path4208\" d=\"m 6.0690374,6.4093857 q -0.5371093,0 -0.8544922,0.4003906 -0.3149414,0.4003906 -0.3149414,1.0913086 0,0.6884766 0.3149414,1.0888672 0.3173829,0.4003906 0.8544922,0.4003906 0.5371094,0 0.8496094,-0.4003906 0.3149414,-0.4003906 0.3149414,-1.0888672 0,-0.690918 -0.3149414,-1.0913086 -0.3125,-0.4003906 -0.8496094,-0.4003906 z m 0,-0.4003906 q 0.7666016,0 1.225586,0.5151367 0.4589843,0.5126953 0.4589843,1.3769531 0,0.8618164 -0.4589843,1.3769531 -0.4589844,0.5126953 -1.225586,0.5126953 -0.7690429,0 -1.2304687,-0.5126953 -0.4589844,-0.5126953 -0.4589844,-1.3769531 0,-0.8642578 0.4589844,-1.3769531 0.4614258,-0.5151367 1.2304687,-0.5151367 z\"/><path id=\"acprefix__path4210\" d=\"m 8.5250921,6.074913 0.4931641,0 0,1.5405274 1.6357418,-1.5405274 0.634766,0 -1.809082,1.6992188 1.938477,1.9458008 -0.649415,0 -1.7504878,-1.7553711 0,1.7553711 -0.4931641,0 0,-3.6450196 z\"/></g></g></g></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-calendar\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.048 16.961c-0.178 0.257-0.395 0.901-0.652 1.059-0.257 0.157-0.547 0.267-0.869 0.328-0.323 0.062-0.657 0.089-1.002 0.079v1.527h2.467v6.046h1.991v-9.996h-1.584c-0.056 0.381-0.173 0.7-0.351 0.957zM23 8h2c0.553 0 1-0.448 1-1v-6c0-0.552-0.447-1-1-1h-2c-0.553 0-1 0.448-1 1v6c0 0.552 0.447 1 1 1zM7 8h2c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1h-2c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1zM30 4h-2v5c0 0.552-0.447 1-1 1h-6c-0.553 0-1-0.448-1-1v-5h-8v5c0 0.552-0.448 1-1 1h-6c-0.552 0-1-0.448-1-1v-5h-2c-1.104 0-2 0.896-2 2v24c0 1.104 0.896 2 2 2h28c1.104 0 2-0.896 2-2v-24c0-1.104-0.896-2-2-2zM30 29c0 0.553-0.447 1-1 1h-26c-0.552 0-1-0.447-1-1v-16c0-0.552 0.448-1 1-1h26c0.553 0 1 0.448 1 1v16zM15.985 17.982h4.968c-0.936 1.152-1.689 2.325-2.265 3.705-0.575 1.381-0.638 2.818-0.749 4.312h2.131c0.009-0.666-0.195-1.385-0.051-2.156 0.146-0.771 0.352-1.532 0.617-2.285 0.267-0.752 0.598-1.461 0.996-2.127 0.396-0.667 0.853-1.229 1.367-1.686v-1.742h-7.015v1.979z\"/></symbol><symbol id=\"f-i-checkbox\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M13.5,5v8c0,0.8-0.7,1.5-1.5,1.5H3c-0.8,0-1.5-0.7-1.5-1.5V4c0-0.8,0.7-1.5,1.5-1.5h9c0.7,0,1.3,0.5,1.5,1.2l2.4-1.4L13.5,5 z M12.5,6.2L7.7,12L2.8,5.5l4.9,1.6l4.8-2.9V4c0-0.3-0.2-0.5-0.5-0.5H3C2.7,3.5,2.5,3.7,2.5,4v9c0,0.3,0.2,0.5,0.5,0.5h9 c0.3,0,0.5-0.2,0.5-0.5V6.2z\"/></symbol><symbol id=\"f-i-checkbox-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M6,5v1h9V5H6z M15,14v-1H6v1H15z M6,10h9V9H6V10z M4,12l-2.5,1.5L0,13l1.5,2L4,12z M4,8 L1.5,9.5L0,9l1.5,2L4,8z M4,4L1.5,5.5L0,5l1.5,2L4,4z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-columns\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"agprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"agprefix__rect4860-3-5\" d=\"M 16,0.5 A 0.50004997,0.50004997 0 0 0 15.5,0 l -5,0 -5,0 -5,0 A 0.50004997,0.50004997 0 0 0 0,0.5 l 0,15 A 0.50004997,0.50004997 0 0 0 0.5,16 l 5,0 5,0 5,0 A 0.50004997,0.50004997 0 0 0 16,15.5 l 0,-15 z M 15,1 15,15 11,15 11,1 15,1 Z M 10,1 10,15 6,15 6,1 10,1 Z M 5,1 5,15 1,15 1,1 5,1 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-copy\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20 8v-8h-14l-6 6v18h12v8h20v-24h-12zM6 2.828v3.172h-3.172l3.172-3.172zM2 22v-14h6v-6h10v6l-6 6v8h-10zM18 10.828v3.172h-3.172l3.172-3.172zM30 30h-16v-14h6v-6h10v20z\"/></symbol><symbol id=\"f-i-divider\" viewBox=\"0 0 15 15\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aiprefix__metadata10\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><rect y=\"7\" x=\"0\" height=\"1\" width=\"15\" id=\"aiprefix__rect4182\"/></symbol><symbol viewBox=\"0 0 28 32\" id=\"f-i-edit\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M22 2l-4 4 6 6 4-4-6-6zM0 24l0.021 6.018 5.979-0.018 16-16-6-6-16 16zM6 28h-4v-4h2v2h2v2z\"/></symbol><symbol viewBox=\"0 0 24 24\" id=\"f-i-email\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12,2 C17.4292399,2 21.8479317,6.32667079 21.9961582,11.7200952 L22,12 L22,13 C22,15.1729208 20.477434,17 18.5,17 C17.3269391,17 16.3139529,16.3570244 15.6839382,15.3803024 C14.770593,16.3757823 13.4581934,17 12,17 C9.23857625,17 7,14.7614237 7,12 C7,9.23857625 9.23857625,7 12,7 C14.6887547,7 16.8818181,9.12230671 16.9953805,11.7831104 L17,12 L17,13 C17,14.1407877 17.7160103,15 18.5,15 C19.2447902,15 19.928229,14.2245609 19.9947109,13.1689341 L20,13 L20,12 C20,7.581722 16.418278,4 12,4 C7.581722,4 4,7.581722 4,12 C4,16.418278 7.581722,20 12,20 C13.1630948,20 14.2892822,19.7522618 15.3225159,19.2798331 C15.8247876,19.0501777 16.4181317,19.271177 16.647787,19.7734487 C16.8774423,20.2757205 16.656443,20.8690646 16.1541713,21.0987199 C14.861218,21.689901 13.4515463,22 12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 Z M12,9 C10.3431458,9 9,10.3431458 9,12 C9,13.6568542 10.3431458,15 12,15 C13.6568542,15 15,13.6568542 15,12 C15,10.3431458 13.6568542,9 12,9 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-floppy-disk\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M28 0h-28v32h32v-28l-4-4zM16 4h4v8h-4v-8zM28 28h-24v-24h2v10h18v-10h2.343l1.657 1.657v22.343z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aqprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"translate(0,-2)\" id=\"aqprefix__g4220\"><rect id=\"aqprefix__rect4191\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g><g transform=\"translate(0,2)\" id=\"aqprefix__g4220-6\"><rect id=\"aqprefix__rect4191-40\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2-3\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4-9\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-column\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 7h2v2H2zM7 7h2v2H7zM12 7h2v2h-2zM2 12h2v2H2zM7 12h2v2H7zM12 12h2v2h-2z\" transform=\"rotate(90 9.25 9.25)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-field\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.5-6.5h2v2h-2zm-5 0h2v2h-2zm5-5h2v2h-2zm-5 0h2v2h-2z\" transform=\"rotate(90)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-row\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 9.5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Zm10-5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-stage\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 4.5h2v2H2zM7 4.5h2v2H7zM12 4.5h2v2h-2zM2 9.5h2v2H2zM7 9.5h2v2H7zM12 9.5h2v2h-2zM2-.5h2v2H2zM7-.5h2v2H7zM12-.5h2v2h-2z\" transform=\"translate(0 2.5)\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-hash\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"arprefix__icomoon-ignore\"/><path d=\"M448 192v-64h-80.064l16-128h-64l-16 128h-127.968l16-128h-64l-16 128h-111.968v64h103.968l-15.968 128h-88v64h80l-16 128h64l16-128h127.968l-16 128h64.032l16-128h112v-64h-104l15.936-128h88.064zM279.968 320h-127.968l15.968-128h127.968l-15.968 128z\"/></symbol><symbol viewBox=\"0 0 28 28\" id=\"f-i-header\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M26.281 26q-0.688 0-2.070-0.055t-2.086-0.055q-0.688 0-2.063 0.055t-2.063 0.055q-0.375 0-0.578-0.32t-0.203-0.711q0-0.484 0.266-0.719t0.609-0.266 0.797-0.109 0.703-0.234q0.516-0.328 0.516-2.188l-0.016-6.109q0-0.328-0.016-0.484-0.203-0.063-0.781-0.063h-10.547q-0.594 0-0.797 0.063-0.016 0.156-0.016 0.484l-0.016 5.797q0 2.219 0.578 2.562 0.25 0.156 0.75 0.203t0.891 0.055 0.703 0.234 0.313 0.711q0 0.406-0.195 0.75t-0.57 0.344q-0.734 0-2.18-0.055t-2.164-0.055q-0.672 0-2 0.055t-1.984 0.055q-0.359 0-0.555-0.328t-0.195-0.703q0-0.469 0.242-0.703t0.562-0.273 0.742-0.117 0.656-0.234q0.516-0.359 0.516-2.234l-0.016-0.891v-12.703q0-0.047 0.008-0.406t0-0.57-0.023-0.602-0.055-0.656-0.102-0.57-0.172-0.492-0.25-0.281q-0.234-0.156-0.703-0.187t-0.828-0.031-0.641-0.219-0.281-0.703q0-0.406 0.187-0.75t0.562-0.344q0.719 0 2.164 0.055t2.164 0.055q0.656 0 1.977-0.055t1.977-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.266 0.68t-0.602 0.227-0.773 0.063-0.672 0.203q-0.547 0.328-0.547 2.5l0.016 5q0 0.328 0.016 0.5 0.203 0.047 0.609 0.047h10.922q0.391 0 0.594-0.047 0.016-0.172 0.016-0.5l0.016-5q0-2.172-0.547-2.5-0.281-0.172-0.914-0.195t-1.031-0.203-0.398-0.773q0-0.406 0.195-0.75t0.586-0.344q0.688 0 2.063 0.055t2.063 0.055q0.672 0 2.016-0.055t2.016-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.273 0.688t-0.625 0.227-0.805 0.047-0.688 0.195q-0.547 0.359-0.547 2.516l0.016 14.734q0 1.859 0.531 2.188 0.25 0.156 0.719 0.211t0.836 0.070 0.648 0.242 0.281 0.695q0 0.406-0.187 0.75t-0.562 0.344z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-hidden\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12h1v-1H0Zm15-7h1V4h-1zm-1 7h1v-1h-1zm-2 0h1v-1h-1zm-2 0h1v-1h-1Zm-2 0h1v-1H8Zm-2 0h1v-1H6Zm-2 0h1v-1H4Zm-2 0h1v-1H2Zm13-1h1v-1h-1ZM0 10h1V9H0Zm15-1h1V8h-1ZM0 8h1V7H0Zm15-1h1V6h-1ZM0 6h1V5H0Zm13-1h1V4h-1zm-2 0h1V4h-1ZM9 5h1V4H9ZM7 5h1V4H7ZM5 5h1V4H5ZM3 5h1V4H3ZM1 5h1V4H1Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 32 32\" id=\"f-i-info-circle\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m17.962 24.725 1.806.096v2.531h-7.534v-2.406l1.045-.094c.568-.063.916-.254.916-1.014v-8.801c0-.699-.188-.92-.791-.92l-1.106-.062v-2.626h5.666zM15.747 4.648c1.394 0 2.405 1.047 2.405 2.374 0 1.331-1.014 2.313-2.438 2.313-1.454 0-2.404-.982-2.404-2.313 0-1.327.95-2.374 2.437-2.374M16 32C7.178 32 0 24.822 0 16S7.178 0 16 0c8.82 0 16 7.178 16 16s-7.18 16-16 16m0-29C8.832 3 3 8.832 3 16s5.832 13 13 13 13-5.832 13-13S23.168 3 16 3\"/></symbol><symbol viewBox=\"0 0 384 512\" id=\"f-i-menu\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"avprefix__icomoon-ignore\"/><path d=\"M0 96v64h384v-64h-384zM0 288h384v-64h-384v64zM0 416h384v-64h-384v64z\"/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-minus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12L18 12\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M287.744 94.736v129.008h128v-64l96.256 96.256-96.256 96.24v-65.488h-128v129.008h64.496l-96.24 96.24-96.256-96.24h64v-129.008h-128v64.992l-95.744-95.744 95.744-95.744v63.488h128v-129.008h-62.496l94.752-94.736 94.752 94.736h-63.008z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move-vertical\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m 287.744,94.736 0,321.024 64.496,0 L 256,512 l -96.256,-96.24 64,0 0,-321.024 -62.496,0 L 256,0 350.752,94.736 Z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-page-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M96 32h224l96 96v96h-48v-64h-80v-80h-192v384h192v48h-240v-480zM352 288l128 96-128 96v-64h-128v-64h128v-64z\"/></symbol><symbol viewBox=\"0 0 20 28\" id=\"f-i-paragraph\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.969 2.953v1.141q0 0.453-0.289 0.953t-0.664 0.5q-0.781 0-0.844 0.016-0.406 0.094-0.5 0.484-0.047 0.172-0.047 1v18q0 0.391-0.281 0.672t-0.672 0.281h-1.687q-0.391 0-0.672-0.281t-0.281-0.672v-19.031h-2.234v19.031q0 0.391-0.273 0.672t-0.68 0.281h-1.687q-0.406 0-0.68-0.281t-0.273-0.672v-7.75q-2.297-0.187-3.828-0.922-1.969-0.906-3-2.797-1-1.828-1-4.047 0-2.594 1.375-4.469 1.375-1.844 3.266-2.484 1.734-0.578 6.516-0.578h7.484q0.391 0 0.672 0.281t0.281 0.672z\"/></symbol><symbol id=\"f-i-phone-receiver\" viewBox=\"0 0 578.106 578.106\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><g><g><path d=\"M577.83,456.128c1.225,9.385-1.635,17.545-8.568,24.48l-81.396,80.781 c-3.672,4.08-8.465,7.551-14.381,10.404c-5.916,2.857-11.729,4.693-17.439,5.508c-0.408,0-1.635,0.105-3.676,0.309 c-2.037,0.203-4.689,0.307-7.953,0.307c-7.754,0-20.301-1.326-37.641-3.979s-38.555-9.182-63.645-19.584 c-25.096-10.404-53.553-26.012-85.376-46.818c-31.823-20.805-65.688-49.367-101.592-85.68 c-28.56-28.152-52.224-55.08-70.992-80.783c-18.768-25.705-33.864-49.471-45.288-71.299 c-11.425-21.828-19.993-41.616-25.705-59.364S4.59,177.362,2.55,164.51s-2.856-22.95-2.448-30.294 c0.408-7.344,0.612-11.424,0.612-12.24c0.816-5.712,2.652-11.526,5.508-17.442s6.324-10.71,10.404-14.382L98.022,8.756 c5.712-5.712,12.24-8.568,19.584-8.568c5.304,0,9.996,1.53,14.076,4.59s7.548,6.834,10.404,11.322l65.484,124.236 c3.672,6.528,4.692,13.668,3.06,21.42c-1.632,7.752-5.1,14.28-10.404,19.584l-29.988,29.988c-0.816,0.816-1.53,2.142-2.142,3.978 s-0.918,3.366-0.918,4.59c1.632,8.568,5.304,18.36,11.016,29.376c4.896,9.792,12.444,21.726,22.644,35.802 s24.684,30.293,43.452,48.653c18.36,18.77,34.68,33.354,48.96,43.76c14.277,10.4,26.215,18.053,35.803,22.949 c9.588,4.896,16.932,7.854,22.031,8.871l7.648,1.531c0.816,0,2.145-0.307,3.979-0.918c1.836-0.613,3.162-1.326,3.979-2.143 l34.883-35.496c7.348-6.527,15.912-9.791,25.705-9.791c6.938,0,12.443,1.223,16.523,3.672h0.611l118.115,69.768 C571.098,441.238,576.197,447.968,577.83,456.128z\"/></g></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-plus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12H18M12 6V18\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"f-i-radio-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M5,6h10V5H5V6z M15,9H5v1h10V9z M15,14v-1H5v1H15z M1.5,7C0.7,7,0,6.3,0,5.5S0.7,4,1.5,4 S3,4.7,3,5.5S2.3,7,1.5,7z M1.5,5C1.2,5,1,5.2,1,5.5S1.2,6,1.5,6S2,5.8,2,5.5S1.8,5,1.5,5z M1.5,11.1C0.7,11.1,0,10.4,0,9.6 s0.7-1.5,1.5-1.5S3,8.7,3,9.6S2.3,11.1,1.5,11.1z M1.5,9.1C1.2,9.1,1,9.3,1,9.6s0.2,0.5,0.5,0.5S2,9.8,2,9.6S1.8,9.1,1.5,9.1z M1.5,15C0.7,15,0,14.3,0,13.5S0.7,12,1.5,12S3,12.7,3,13.5S2.3,15,1.5,15z M1.5,13C1.2,13,1,13.2,1,13.5S1.2,14,1.5,14 S2,13.8,2,13.5S1.8,13,1.5,13z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-remove\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M193.694-139.2h87.322v510.916h-87.322zM-18.103 159.92V72.597h510.915v87.322z\" transform=\"rotate(45 77.994 208.636)\"/></symbol><symbol id=\"f-i-rich-text\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M15,1H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14c0.6,0,1-0.4,1-1V2C16,1.4,15.6,1,15,1z M1,3.1h0.8v0.3H1V3.1z M1,3.6h0.8 v0.3H1V3.6z M15,14H1V5.1h14V14z M15,4.9H1V4.6h14V4.9z M15,4.4H1V4.1h0.8v0.2h1.5V4.1h1.3v0.2H6V4.1h1.3v0.2h1.5V4.1H10v0.2h1.5 V4.1h1.3v0.2h1.5V4.1H15V4.4z M4.5,3.6v0.3H3.3V3.6H4.5z M3.3,3.4V3.1h1.3v0.3H3.3z M7.3,3.6v0.3H6V3.6H7.3z M6,3.4V3.1h1.3v0.3H6z M10,3.6v0.3H8.8V3.6H10z M8.8,3.4V3.1H10v0.3H8.8z M12.8,3.6v0.3h-1.3V3.6H12.8z M11.5,3.4V3.1h1.3v0.3H11.5z M15,3.9h-0.8V3.6H15 V3.9z M15,3.4h-0.8V3.1H15V3.4z M15,2.9h-0.8V2.8h-1.5v0.2h-1.3V2.8H10v0.2H8.8V2.8H7.3v0.2H6V2.8H4.5v0.2H3.3V2.8H1.8v0.2H1V2.6h14 V2.9z M15,2.4H1V2.1h14V2.4z M3,12v-1h10v1H3z M13,10H3V9h10V10z M11,8H3V7h8V8z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-rows\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"bgprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"matrix(0,1,-1,0,3.0984025,11.835155)\" id=\"bgprefix__g7209\"><path id=\"bgprefix__rect4860-3-5\" d=\"m 4.1640625,-12.402344 a 0.50004997,0.50004997 0 0 0 -0.5,-0.5 l -5,0 -5,0 -5.0000005,0 a 0.50004997,0.50004997 0 0 0 -0.5,0.5 l 0,15.0000002 a 0.50004997,0.50004997 0 0 0 0.5,0.5 l 4.9648442,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 4.9648437,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 5,0 a 0.50004997,0.50004997 0 0 0 0.5,-0.5 l 0,-15.0000002 z m -1,0.5 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4.0000005,0 0,-14.0000002 4.0000005,0 z\"/></g></symbol><symbol id=\"f-i-select\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bhprefix__XMLID_1_\" d=\"M0,0v14h0c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1h0V5h4V0H0z M1,1h10v3H1V1z M1,7h10v3H1V7z M1,14v-3h10v3H1z M15,4h-3V1h3V4z M2,2h1v1H2V2z M2,12h1v1H2V12z M4,12h1v1H4V12z M6,12h1v1H6V12z M9,12v1H8v-1H9z M2,8h1v1H2V8z M4,8h1v1H4V8z M6,8 h1v1H6V8z M13.5,3.1l-1-1.1h1.9L13.5,3.1z M2,6V5h1v1H2L2,6z M4,6V5h1v1H4L4,6z\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-settings\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"biprefix__icomoon-ignore\"/><path d=\"M223.969 175c-44.703 0-80.969 36.266-80.969 81 0 44.688 36.266 81.031 80.969 81.031 44.719 0 80.719-36.344 80.719-81.031-0-44.734-36-81-80.719-81zM386.313 302.531l-14.594 35.156 29.469 57.875-36.094 36.094-59.218-27.969-35.156 14.438-17.844 54.625-2.281 7.25h-51.016l-22.078-61.656-35.156-14.5-57.952 29.344-36.078-36.063 27.938-59.25-14.484-35.125-61.767-20.156v-50.984l61.703-22.109 14.485-35.094-25.953-51.234-3.422-6.719 36.031-36.031 59.297 27.922 35.109-14.516 17.828-54.594 2.297-7.234h51l22.094 61.734 35.063 14.516 58.031-29.406 36.063 36.031-27.938 59.203 14.438 35.172 61.875 20.125v50.969l-61.688 22.187z\"/></symbol><symbol id=\"f-i-text-input\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bjprefix__XMLID_10_\" d=\"M15,4H4.5V3H6V2H4.5h-1H2v1h1.5v1H1C0.4,4,0,4.5,0,5v6c0,0.6,0.4,1,1,1h2.5v1H2v1h4v-1H4.5v-1H15 c0.6,0,1-0.4,1-1V5C16,4.5,15.6,4,15,4z M1,11V5h2.5v6H1z M15,11H4.5V5H15V11z\"/></symbol><symbol id=\"f-i-textarea\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bkprefix__XMLID_1_\" d=\"M3,11v-1h8v1H3L3,11z M3,7h10V6H3V7L3,7z M3,8v1h10V8H3L3,8z M13,4H3v1h10V4L13,4z M16,14V2c0-0.6-0.4-1-1-1 H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14C15.6,15,16,14.6,16,14z M15,2v12H1V2H15z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-down\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12l11.992 11.992 11.992-11.992h-23.984z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-left\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 15.996l11.992 11.992v-23.984l-11.992 11.992z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-right\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0.002 4.008l11.992 11.992-11.992 11.992v-23.984z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-up\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M11.992 8l-11.992 11.992h23.984l-11.992-11.992z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-upload\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"bpprefix__icomoon-ignore\"/><path d=\"M240 352h-240v128h480v-128h-240zM448 416h-64v-32h64v32zM112 160l128-128 128 128h-80v160h-96v-160z\"/></symbol></svg>";
-})), name, version$1, PACKAGE_NAME, formeoSpriteId, FALLBACK_SVG_SPRITE_URL, CSS_URL, FALLBACK_CSS_URL, PANEL_CLASSNAME, CONTROL_GROUP_CLASSNAME, STAGE_CLASSNAME, ROW_CLASSNAME, COLUMN_CLASSNAME, FIELD_CLASSNAME, HIDDEN_BY_CONDITION_SELECTOR, CUSTOM_COLUMN_OPTION_CLASSNAME, COLUMN_PRESET_CLASSNAME, COLUMN_RESIZE_CLASSNAME, CHILD_CLASSNAME_MAP, INTERNAL_COMPONENT_TYPES, INTERNAL_COMPONENT_INDEX_TYPES, INTERNAL_COMPONENT_INDEX_REGEX, COMPONENT_TYPES, COMPONENT_INDEX_TYPES, COMPONENT_INDEX_TYPE_MAP, COMPONENT_TYPE_MAP, COMPONENT_TYPE_CONFIGS, COMPONENT_TYPE_CLASSNAMES, COMPONENT_TYPE_CLASSNAMES_LOOKUP, COMPONENT_TYPE_CLASSNAMES_ARRAY, COMPONENT_TYPE_CLASSNAMES_REGEXP, childTypeMapVals, childTypeIndexMapVals, parentTypeMap, CHILD_TYPE_MAP, CHILD_TYPE_INDEX_MAP, PARENT_TYPE_MAP, columnTemplates, COLUMN_TEMPLATES, SESSION_FORMDATA_KEY, SESSION_LOCALE_KEY, ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW, EVENT_FORMEO_SAVED, EVENT_FORMEO_UPDATED, EVENT_FORMEO_CHANGED, EVENT_FORMEO_UPDATED_STAGE, EVENT_FORMEO_UPDATED_ROW, EVENT_FORMEO_UPDATED_COLUMN, EVENT_FORMEO_UPDATED_FIELD, EVENT_FORMEO_CLEARED, EVENT_FORMEO_ON_RENDER, EVENT_FORMEO_CONDITION_UPDATED, EVENT_FORMEO_ADDED_ROW, EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_REMOVED_ROW, EVENT_FORMEO_REMOVED_COLUMN, EVENT_FORMEO_REMOVED_FIELD, EVENT_FORMEO_ADDED_STAGE, EVENT_FORMEO_REMOVED_STAGE, EVENT_FORMEO_PAGE_CHANGED, EVENT_FORMEO_BEFORE_ADD, EVENT_FORMEO_BEFORE_REMOVE, EVENT_FORMEO_BEFORE_CLONE, EVENT_FORMEO_BEFORE_SAVE, EVENT_FORMEO_EDIT_OPENED, EVENT_FORMEO_EDIT_CLOSED, COMPARISON_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS, CONDITION_INPUT_ORDER, CHECKABLE_OPTIONS, VISIBLE_OPTIONS, PROPERTY_OPTIONS, OPERATORS, conditionTypeThen, CONDITION_TEMPLATE, UUID_REGEXP, bsColRegExp, iconPrefix, DEFAULT_FORMDATA, CHECKED_TYPES, REVERSED_CHECKED_TYPES, FILTERED_PANEL_DATA_KEYS;
+})), name, version$1, PACKAGE_NAME, formeoSpriteId, FALLBACK_SVG_SPRITE_URL, CSS_URL, FALLBACK_CSS_URL, PANEL_CLASSNAME, CONTROL_GROUP_CLASSNAME, STAGE_CLASSNAME, ROW_CLASSNAME, COLUMN_CLASSNAME, FIELD_CLASSNAME, HIDDEN_BY_CONDITION_SELECTOR, CUSTOM_COLUMN_OPTION_CLASSNAME, COLUMN_PRESET_CLASSNAME, COLUMN_RESIZE_CLASSNAME, CHILD_CLASSNAME_MAP, INTERNAL_COMPONENT_TYPES, INTERNAL_COMPONENT_INDEX_TYPES, INTERNAL_COMPONENT_INDEX_REGEX, COMPONENT_TYPES, COMPONENT_INDEX_TYPES, COMPONENT_INDEX_TYPE_MAP, COMPONENT_TYPE_MAP, COMPONENT_TYPE_CONFIGS, COMPONENT_TYPE_CLASSNAMES, COMPONENT_TYPE_CLASSNAMES_LOOKUP, COMPONENT_TYPE_CLASSNAMES_ARRAY, COMPONENT_TYPE_CLASSNAMES_REGEXP, childTypeMapVals, childTypeIndexMapVals, parentTypeMap, CHILD_TYPE_MAP, CHILD_TYPE_INDEX_MAP, PARENT_TYPE_MAP, columnTemplates, COLUMN_TEMPLATES, SESSION_FORMDATA_KEY, SESSION_LOCALE_KEY, ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW, EVENT_FORMEO_SAVED, EVENT_FORMEO_UPDATED, EVENT_FORMEO_CHANGED, EVENT_FORMEO_UPDATED_STAGE, EVENT_FORMEO_UPDATED_ROW, EVENT_FORMEO_UPDATED_COLUMN, EVENT_FORMEO_UPDATED_FIELD, EVENT_FORMEO_CLEARED, EVENT_FORMEO_ON_RENDER, EVENT_FORMEO_CONDITION_UPDATED, EVENT_FORMEO_ADDED_ROW, EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_REMOVED_ROW, EVENT_FORMEO_REMOVED_COLUMN, EVENT_FORMEO_REMOVED_FIELD, EVENT_FORMEO_ADDED_STAGE, EVENT_FORMEO_REMOVED_STAGE, EVENT_FORMEO_PAGE_CHANGED, EVENT_FORMEO_BEFORE_ADD, EVENT_FORMEO_BEFORE_REMOVE, EVENT_FORMEO_BEFORE_CLONE, EVENT_FORMEO_BEFORE_SAVE, EVENT_FORMEO_EDIT_OPENED, EVENT_FORMEO_EDIT_CLOSED, COMPARISON_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS, CONDITION_INPUT_ORDER, CHECKABLE_OPTIONS, VISIBLE_OPTIONS, PROPERTY_OPTIONS, OPERATORS, conditionTypeThen, CONDITION_TEMPLATE, UUID_REGEXP, bsColRegExp, iconPrefix, DEFAULT_FORMDATA, CHECKED_TYPES, REVERSED_CHECKED_TYPES;
 var init_constants = __esmMin((() => {
 	init_package();
 	init_utils();
@@ -8927,14 +9095,6 @@ var init_constants = __esmMin((() => {
 	});
 	CHECKED_TYPES = ["selected", "checked"];
 	REVERSED_CHECKED_TYPES = CHECKED_TYPES.toReversed();
-	FILTERED_PANEL_DATA_KEYS = new Map([["config", new Set([
-		"label",
-		"helpText",
-		"hideLabel",
-		"labelAfter",
-		"disableHtmlLabel",
-		"tooltip"
-	])]]);
 }));
 //#endregion
 //#region src/lib/js/common/animation.js
@@ -9656,10 +9816,7 @@ var init_string = __esmMin((() => {
 	};
 	keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
 	groupInputName = (name, fieldType, optionCount) => fieldType === "checkbox" && optionCount > 1 && name && !name.endsWith("[]") ? `${name}[]` : name;
-}));
-//#endregion
-//#region src/lib/js/common/dom.js
-var iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
+})), iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OTHER_GROUP_ATTR, OTHER_VALUE, OTHER_NAME_SUFFIX, OTHER_TEXT_CLASSNAME, hasOtherChoice, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
 var init_dom = __esmMin((() => {
 	init_constants();
 	init_animation();
@@ -9681,6 +9838,11 @@ var init_dom = __esmMin((() => {
 		"select"
 	]);
 	REQUIRED_GROUP_ATTR = "formeo-required-group";
+	OTHER_GROUP_ATTR = "formeo-other-group";
+	OTHER_VALUE = "other";
+	OTHER_NAME_SUFFIX = "-other";
+	OTHER_TEXT_CLASSNAME = "f-other-value";
+	hasOtherChoice = (elem) => Boolean(elem.config?.other) && ["checkbox", "radio"].includes(elem.attrs?.type);
 	OPTION_INPUT_ATTRS = ["disabled", "form"];
 	GROUP_CONSUMED_ATTRS = new Set([
 		"type",
@@ -9823,10 +9985,18 @@ var init_dom = __esmMin((() => {
 						...elem.config,
 						required: Boolean(groupAttrs.required)
 					};
+					const groupSyncs = [];
 					if (!isPreview && groupAttrs.type === "checkbox" && groupAttrs.required) {
 						wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = "true";
-						wrap.action = { change: ({ currentTarget }) => this.syncCheckboxGroupRequired(currentTarget) };
+						groupSyncs.push((group) => this.syncCheckboxGroupRequired(group));
 					}
+					if (!isPreview && hasOtherChoice(elem)) {
+						wrap.attrs[`data-${OTHER_GROUP_ATTR}`] = "true";
+						groupSyncs.push((group) => this.syncOtherInput(group));
+					}
+					if (groupSyncs.length) wrap.action = { change: ({ currentTarget }) => {
+						for (const sync of groupSyncs) sync(currentTarget);
+					} };
 					return this.create(wrap, isPreview);
 				}
 				processed.push("options");
@@ -10029,7 +10199,9 @@ var init_dom = __esmMin((() => {
 			const { action, attrs = {} } = elem;
 			const fieldType = attrs.type || elem.tag;
 			const id = attrs.id || elem.id;
-			const name = isPreview ? id : groupInputName(attrs.name || id, fieldType, options.length);
+			const withOther = hasOtherChoice(elem);
+			const optionCount = options.length + (withOther ? 1 : 0);
+			const name = isPreview ? id : groupInputName(attrs.name || id, fieldType, optionCount);
 			const sharedInputAttrs = Object.fromEntries(OPTION_INPUT_ATTRS.filter((key) => key in attrs).map((key) => [key, attrs[key]]));
 			if (attrs.required) sharedInputAttrs.required = fieldType !== "checkbox" || !options.some(({ selected, checked }) => selected || checked);
 			const optionMap = (option, i) => {
@@ -10098,7 +10270,78 @@ var init_dom = __esmMin((() => {
 					radio: defaultInput
 				}[fieldType]?.(option);
 			};
-			return options.map(optionMap);
+			const mappedOptions = options.map(optionMap);
+			if (withOther) mappedOptions.push(this.otherChoice({
+				id,
+				name,
+				fieldType,
+				attrs,
+				config: elem.config,
+				sharedInputAttrs,
+				action,
+				isPreview
+			}));
+			return mappedOptions;
+		}
+		/**
+		* The Other choice of a checkbox or radio group: one more option input, plus a text box that is enabled only
+		* while that option is checked (see syncOtherInput)
+		* @param {Object} group
+		* @param {String} group.id prefix of the choice's ids
+		* @param {String} group.name the group's input name
+		* @param {String} group.fieldType 'checkbox' or 'radio'
+		* @param {Object} group.attrs group attributes
+		* @param {Object} [group.config] group config (otherLabel, inline)
+		* @param {Object} group.sharedInputAttrs attributes every option input shares
+		* @param {Object} [group.action] actions every option input shares
+		* @param {Boolean} [group.isPreview] the editor preview, where Other can't be picked as a default
+		* @return {Object} DOM config
+		*/
+		otherChoice({ id, name, fieldType, attrs, config = {}, sharedInputAttrs, action, isPreview = false }) {
+			const choiceId = `${id}-other`;
+			const labelId = `${choiceId}-label`;
+			const textAttrs = {
+				type: "text",
+				name: `${name.replace(/\[\]$/, "")}${OTHER_NAME_SUFFIX}`,
+				id: `${choiceId}-value`,
+				className: OTHER_TEXT_CLASSNAME,
+				"aria-labelledby": labelId,
+				disabled: true
+			};
+			if (attrs.required) textAttrs.required = true;
+			if ("form" in attrs) textAttrs.form = attrs.form;
+			const choiceAttrs = {
+				name,
+				type: fieldType,
+				value: OTHER_VALUE,
+				id: choiceId,
+				...sharedInputAttrs
+			};
+			if (isPreview) choiceAttrs.disabled = true;
+			const className = [`f-${fieldType}`, `f-${fieldType}-other`];
+			if (config.inline) className.push(`f-${fieldType}-inline`);
+			return {
+				className,
+				children: [
+					{
+						tag: "input",
+						attrs: choiceAttrs,
+						action
+					},
+					{
+						tag: "label",
+						attrs: {
+							for: choiceId,
+							id: labelId
+						},
+						children: config.otherLabel || "Other"
+					},
+					{
+						tag: "input",
+						attrs: textAttrs
+					}
+				]
+			};
 		}
 		/**
 		* Checks if there is a closing tag, if so it can hold content
@@ -10158,6 +10401,17 @@ var init_dom = __esmMin((() => {
 			const isHidden = Boolean(groupElem.closest(HIDDEN_BY_CONDITION_SELECTOR));
 			const noneChecked = !boxes.some((box) => box.checked);
 			for (const box of boxes) box.required = !isHidden && noneChecked;
+		}
+		/**
+		* An Other choice's text box is enabled only while its choice is checked and enabled, so an unchosen Other
+		* neither validates nor submits
+		* @param {Element} groupElem wrapper holding a checkbox or radio group with an Other choice
+		*/
+		syncOtherInput(groupElem) {
+			for (const text of groupElem.querySelectorAll(`.${OTHER_TEXT_CLASSNAME}`)) {
+				const choice = text.parentElement.querySelector(`input[value="${OTHER_VALUE}"]`);
+				text.disabled = !choice?.checked || choice.disabled;
+			}
 		}
 		requiredMark = () => ({
 			tag: "span",
@@ -13839,12 +14093,14 @@ var init_control = __esmMin((() => {
 		* @param {Object} [config={}] - The configuration object.
 		* @param {Object} [config.events={}] - The events associated with the control. ex { click: () => {} }
 		* @param {Object} [config.dependencies={}] - The dependencies required by the control. ex { js: 'https://example.com/script.js', css: 'https://example.com/style.css' }
+		* @param {Object} [config.configOptions={}] - Config keys this control's fields offer in their Config panel, on top of every field's. ex { stars: { default: 5, label: 'Stars' } }
 		* @param {...Object} [controlData] - Additional configuration properties. ex { meta: {}, config: { label: 'Control Name' } }
 		*/
-		constructor({ events = {}, dependencies = {}, controlAction, ...controlData }) {
+		constructor({ events = {}, dependencies = {}, controlAction, configOptions, ...controlData }) {
 			this.events = events;
 			this.controlData = controlData;
 			this.controlAction = controlAction;
+			this.configOptions = configOptions;
 			this.dependencies = dependencies;
 			this.id = controlData.id || uuid();
 		}
@@ -14774,6 +15030,37 @@ var init_data = __esmMin((() => {
 	};
 }));
 //#endregion
+//#region src/lib/js/components/edit-panel/config-options.mjs
+var EDITABLE_DEFAULT_TYPES, warnedKeys, configOptionsOf;
+var init_config_options = __esmMin((() => {
+	init_helpers();
+	EDITABLE_DEFAULT_TYPES = new Set([
+		"boolean",
+		"string",
+		"number"
+	]);
+	warnedKeys = /* @__PURE__ */ new Set();
+	configOptionsOf = (componentConfig) => {
+		const { options = {}, disabled = [] } = componentConfig?.panels?.config || {};
+		const declared = /* @__PURE__ */ new Map();
+		for (const [key, declaration] of Object.entries(options)) {
+			if (disabled.includes(key)) continue;
+			if (!EDITABLE_DEFAULT_TYPES.has(typeof declaration?.default)) {
+				if (!warnedKeys.has(key)) {
+					warnedKeys.add(key);
+					console.warn(`formeo: config option "${key}" needs a boolean, string or number default; it is ignored`);
+				}
+				continue;
+			}
+			declared.set(key, {
+				label: declaration.label || labelHelper(`config.${key}`),
+				default: declaration.default
+			});
+		}
+		return declared;
+	};
+}));
+//#endregion
 //#region src/lib/js/components/edit-panel/condition-helpers.mjs
 function getOptionConfigs({ key: fieldName, value: fieldValue, conditionType }) {
 	return Object.entries(optionDataMap[`${conditionType}-${fieldName}`] || {}).map(([key, optionValue]) => makeOptionDomConfig({
@@ -15167,6 +15454,7 @@ var init_edit_panel_item = __esmMin((() => {
 	init_string();
 	init_constants();
 	init_condition();
+	init_config_options();
 	init_duplicate_name_hint();
 	init_helpers();
 	panelDataKeyMap = new Map([["attrs", ({ itemKey }) => itemKey], ["options", ({ itemKey, key }) => `${itemKey}.${key}`]]);
@@ -15183,6 +15471,13 @@ var init_edit_panel_item = __esmMin((() => {
 	};
 	itemInputActions = new Map([["attrs-multiple", (editPanelItem) => ({ change: ({ target }) => {
 		if (editPanelItem.field.controlId === "select") toggleOptionMultiSelect(target.checked, editPanelItem.field);
+	} })], ["config-other", (editPanelItem) => ({ change: ({ target }) => {
+		const { field, panel } = editPanelItem;
+		if (target.checked && !field.get("config.otherLabel")) {
+			field.set("config.otherLabel", s.get("other") || "Other");
+			panel.updateProps();
+			field.updatePreview?.();
+		}
 	} })]]);
 	EditPanelItem = class {
 		/**
@@ -15361,6 +15656,14 @@ var init_edit_panel_item = __esmMin((() => {
 			if (Array.isArray(configValue)) return configValue;
 			return null;
 		}
+		/**
+		* A Config panel item uses its declared label (panels.config.options); other items use their translation
+		* @param {String} labelKey
+		* @return {String}
+		*/
+		itemLabel(labelKey) {
+			return (this.panelName === "config" && configOptionsOf(this.field.config).get(labelKey.replace(/^config\./, "")))?.label || labelHelper(labelKey);
+		}
 		itemInput(key, value) {
 			if (this.isDisabled) return null;
 			let valType = dom.childType(value) || "string";
@@ -15386,7 +15689,7 @@ var init_edit_panel_item = __esmMin((() => {
 			});
 			const name = `${this.field.shortId}-${slugifyAddress(dataKey).replaceAll(/-\d+-(selected)/g, "-$1")}`;
 			const config = {
-				label: this.panelName !== "options" && labelHelper(labelKey),
+				label: this.panelName !== "options" && this.itemLabel(labelKey),
 				labelAfter: false,
 				inputWrap: [
 					"f-input-wrap",
@@ -15419,7 +15722,7 @@ var init_edit_panel_item = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/components/edit-panel/edit-panel.js
-var addAttributeActions, defaultConfigOptions, defaultConfigValues, EditPanel;
+var addAttributeActions, EditPanel;
 var init_edit_panel = __esmMin((() => {
 	init_i18n_es_min();
 	init_sortable_esm();
@@ -15428,45 +15731,11 @@ var init_edit_panel = __esmMin((() => {
 	init_string();
 	init_constants();
 	init_dialog();
+	init_config_options();
 	init_edit_panel_item();
-	init_helpers();
 	addAttributeActions = { multiple: (val, field) => {
 		toggleOptionMultiSelect(!!val, field);
 	} };
-	defaultConfigOptions = [
-		{
-			label: labelHelper("config.label"),
-			value: "label"
-		},
-		{
-			label: labelHelper("config.hideLabel"),
-			value: "hideLabel"
-		},
-		{
-			label: labelHelper("config.helpText"),
-			value: "helpText"
-		},
-		{
-			label: labelHelper("config.labelAfter"),
-			value: "labelAfter"
-		},
-		{
-			label: labelHelper("config.disableHtmlLabel"),
-			value: "disableHtmlLabel"
-		},
-		{
-			label: labelHelper("config.tooltip"),
-			value: "tooltip"
-		}
-	];
-	defaultConfigValues = {
-		label: "New Field",
-		hideLabel: false,
-		helpText: "",
-		labelAfter: false,
-		disableHtmlLabel: false,
-		tooltip: ""
-	};
 	EditPanel = class {
 		/**
 		* Set defaults and load panelData
@@ -15483,7 +15752,7 @@ var init_edit_panel = __esmMin((() => {
 		}
 		get data() {
 			const data = this.component.get(this.name);
-			return this.type === "object" ? Object.entries(data) : data;
+			return this.type === "object" ? Object.entries(data || {}) : data;
 		}
 		getPanelConfig(data) {
 			this.props = this.createProps(data);
@@ -15495,20 +15764,13 @@ var init_edit_panel = __esmMin((() => {
 			};
 		}
 		/**
-		* A stage's config.title is its page title (#122): editable only while the editor's page tabs are on
-		* @param {String} keyBase
-		* @return {Boolean}
-		*/
-		isPageTitle(keyBase) {
-			return this.name === "config" && keyBase === "title" && this.component.name === "stage" && Boolean(this.component.components?.opts?.pages);
-		}
-		/**
 		* Generates the edit panel for attrs, meta and options for a fields(s)
 		* @param  {String} panelName
 		* @param  {Object} dataObj   field config object
 		* @return {Object}           formeo DOM config object
 		*/
 		createProps(data = this.data) {
+			const configOptions = this.name === "config" && configOptionsOf(this.component.config);
 			this.editPanelItems = Array.from(data).map((dataVal, index) => {
 				const isArray = this.type === "array";
 				const keyBase = dataVal[0];
@@ -15516,8 +15778,7 @@ var init_edit_panel = __esmMin((() => {
 				const val = isArray ? dataVal : { [dataVal[0]]: dataVal[1] };
 				const itemKey = `${this.name}${key}`;
 				const isDisabledProp = this.component.isDisabledProp(itemKey, this.name);
-				const allowedKeys = FILTERED_PANEL_DATA_KEYS.get(this.name);
-				const isEditableProp = !allowedKeys || allowedKeys.has(keyBase) || this.isPageTitle(keyBase);
+				const isEditableProp = !configOptions || configOptions.has(keyBase);
 				if (isDisabledProp || !isEditableProp) return null;
 				return new EditPanelItem({
 					key: itemKey,
@@ -15553,6 +15814,7 @@ var init_edit_panel = __esmMin((() => {
 			const newProps = this.createProps();
 			this.props.replaceWith(newProps);
 			this.props = newProps;
+			this.syncAddConfigButton();
 		}
 		/**
 		* Move an option, save the new order and rebuild the option items (their keys are index based)
@@ -15622,7 +15884,11 @@ var init_edit_panel = __esmMin((() => {
 					document.dispatchEvent(customEvt);
 				} }
 			};
-			editPanelButtons.push(addBtn);
+			if (type === "config") {
+				this.addConfigButton = dom.create(addBtn);
+				this.syncAddConfigButton();
+				editPanelButtons.push(this.addConfigButton);
+			} else editPanelButtons.push(addBtn);
 			return {
 				className: "panel-action-buttons",
 				content: editPanelButtons
@@ -15693,8 +15959,42 @@ var init_edit_panel = __esmMin((() => {
 			this.component.set(itemKey, evt.template);
 			this.component.resizePanelWrap();
 		};
+		/**
+		* Declared config keys the "Add config" dialog can still add: not disabled and not set yet
+		* @return {Map<String, {label: String, default: boolean|string|number}>}
+		*/
+		addableConfigOptions() {
+			const configData = this.component.get("config") || {};
+			const addable = /* @__PURE__ */ new Map();
+			for (const [key, declaration] of configOptionsOf(this.component.config)) if (!(key in configData) && !this.component.isDisabledProp(`config.${key}`, "config")) addable.set(key, declaration);
+			return addable;
+		}
+		/**
+		* The "Add config" button shows only while there is something left to add
+		*/
+		syncAddConfigButton() {
+			if (this.addConfigButton) this.addConfigButton.hidden = !this.addableConfigOptions().size;
+		}
+		/**
+		* Adds a declared config key, set to its declared default, when it can still be added
+		* @param {String} configKey
+		*/
+		addConfigItem = (configKey) => {
+			const declaration = this.addableConfigOptions().get(configKey);
+			if (!declaration) return;
+			const newConfig = new EditPanelItem({
+				key: `config.${configKey}`,
+				data: declaration.default,
+				field: this.component,
+				panel: this
+			});
+			this.editPanelItems.push(newConfig);
+			this.props.appendChild(newConfig.dom);
+			this.syncAddConfigButton();
+			this.component.debouncedUpdatePreview?.();
+			this.component.resizePanelWrap?.();
+		};
 		addConfiguration = () => {
-			const configData = this.component.get("config");
 			new Dialog({
 				className: "config-item-dialog",
 				content: [{
@@ -15705,24 +16005,12 @@ var init_edit_panel = __esmMin((() => {
 						required: true,
 						className: "config-key-select"
 					},
-					options: defaultConfigOptions.filter((opt) => !(opt.value in configData))
+					options: Array.from(this.addableConfigOptions(), ([value, { label }]) => ({
+						label,
+						value
+					}))
 				}],
-				onConfirm: (formData) => {
-					const configKey = formData.get("selectConfigKey").trim();
-					const itemKey = `config.${configKey}`;
-					if (configKey) {
-						const newConfig = new EditPanelItem({
-							key: itemKey,
-							data: defaultConfigValues[configKey],
-							field: this.component,
-							panel: this
-						});
-						this.editPanelItems.push(newConfig);
-						this.props.appendChild(newConfig.dom);
-						this.component.debouncedUpdatePreview();
-						this.component.resizePanelWrap();
-					}
-				}
+				onConfirm: (formData) => this.addConfigItem(formData.get("selectConfigKey").trim())
 			}).open();
 		};
 		/**
@@ -15768,6 +16056,7 @@ var init_component = __esmMin((() => {
 	init_string();
 	init_constants();
 	init_data();
+	init_config_options();
 	init_edit_panel();
 	init_page_text();
 	propertyOptions = objectFromStringArray(PROPERTY_OPTIONS);
@@ -16422,15 +16711,18 @@ var init_component = __esmMin((() => {
 		* @description Merges configurations in order of precedence:
 		* 1. Existing config (this.configVal)
 		* 2. Global config (all)
-		* 3. Control type specific config
-		* 4. Instance specific config
+		* 3. The control's own config panel keys (its definition's `configOptions`)
+		* 4. Control type specific config
+		* 5. Instance specific config
 		* The merged result is stored in this.configVal
 		*/
 		set config(config) {
 			const allConfig = get(config, "all");
 			const controlId = get(this.data, "config.controlId");
+			const controlOptions = controlId && this.components?.controls?.declaredConfigOptions?.(controlId);
 			const mergedConfig = [
 				allConfig,
+				controlOptions && { panels: { config: { options: controlOptions } } },
 				controlId && get(config, controlId),
 				get(config, this.id)
 			].reduce((acc, cur) => cur ? merge(acc, cur) : acc, this.configVal);
@@ -16589,7 +16881,12 @@ var init_component = __esmMin((() => {
 		updateEditPanels = () => {
 			if (!this.config) return null;
 			const editable = new Set(["object", "array"]);
-			const panelOrder = unique([...this.config.panels.order, ...Object.keys(this.data)]);
+			const hasConfigOptions = configOptionsOf(this.config).size > 0;
+			const panelOrder = unique([
+				...this.config.panels.order,
+				...Object.keys(this.data),
+				...hasConfigOptions ? ["config"] : []
+			]);
 			const noPanels = new Set([
 				"children",
 				"meta",
@@ -16599,7 +16896,11 @@ var init_component = __esmMin((() => {
 			]);
 			const allowedPanels = panelOrder.filter((panelName) => !noPanels.has(panelName));
 			for (const panelName of allowedPanels) {
-				const panelData = this.get(panelName);
+				if (panelName === "config" && !hasConfigOptions) {
+					this.editPanels.delete(panelName);
+					continue;
+				}
+				const panelData = panelName === "config" ? this.get(panelName) || {} : this.get(panelName);
 				const propType = dom.childType(panelData);
 				if (editable.has(propType)) {
 					const editPanel = new EditPanel(panelData, panelName, this);
@@ -16776,7 +17077,10 @@ var init_field = __esmMin((() => {
 							acc[option.value][checkedType] = false;
 							return acc;
 						}, {});
-						for (const option of selectedOptions) optionsDataMap[option.value][checkedType] = option.value === optionsDataMap[option.value].value;
+						for (const option of selectedOptions) {
+							if (!optionsDataMap[option.value]) continue;
+							optionsDataMap[option.value][checkedType] = option.value === optionsDataMap[option.value].value;
+						}
 						super.set("options", Object.values(optionsDataMap));
 						return this.debouncedUpdateEditPanels();
 					}
@@ -16974,7 +17278,8 @@ var init_checkbox_group = __esmMin((() => {
 				},
 				config: {
 					label: s.get("controls.form.checkbox-group"),
-					disabledAttrs: ["type"]
+					disabledAttrs: ["type"],
+					other: false
 				},
 				meta: {
 					group: "common",
@@ -16984,7 +17289,11 @@ var init_checkbox_group = __esmMin((() => {
 				options: generateOptionConfig({
 					type: "checkbox",
 					count: 1
-				})
+				}),
+				configOptions: {
+					other: { default: false },
+					otherLabel: { default: "" }
+				}
 			};
 			super(checkboxGroup);
 		}
@@ -17141,14 +17450,19 @@ var init_radio_group = __esmMin((() => {
 				},
 				config: {
 					label: s.get("controls.form.radio-group"),
-					disabledAttrs: ["type"]
+					disabledAttrs: ["type"],
+					other: false
 				},
 				meta: {
 					group: "common",
 					icon: "radio-group",
 					id: "radio"
 				},
-				options: generateOptionConfig({ type: "radio" })
+				options: generateOptionConfig({ type: "radio" }),
+				configOptions: {
+					other: { default: false },
+					otherLabel: { default: "" }
+				}
 			};
 			super(radioGroup);
 		}
@@ -17405,6 +17719,7 @@ var Controls = class {
 	constructor(components = null) {
 		this.components = components;
 		this.data = /* @__PURE__ */ new Map();
+		this.configOptionsById = /* @__PURE__ */ new Map();
 		this.buttonActions = {
 			focus: ({ target }) => {
 				const group = target.closest(`.${CONTROL_GROUP_CLASSNAME}`);
@@ -17489,8 +17804,20 @@ var Controls = class {
 	add(control = Object.create(null)) {
 		const controlConfig = clone$1(control);
 		this.data.set(controlConfig.id, controlConfig);
-		if (controlConfig.controlData.meta.id) this.data.set(controlConfig.controlData.meta.id, controlConfig.controlData);
+		const controlId = controlConfig.controlData.meta.id;
+		if (controlId) {
+			this.data.set(controlId, controlConfig.controlData);
+			if (controlConfig.configOptions) this.configOptionsById.set(controlId, controlConfig.configOptions);
+		}
 		return controlConfig;
+	}
+	/**
+	* Config keys a control's fields offer in their Config panel, from its definition's `configOptions`
+	* @param {String} controlId
+	* @return {Object|undefined}
+	*/
+	declaredConfigOptions(controlId) {
+		return this.configOptionsById.get(controlId);
 	}
 	get(controlId) {
 		return clone$1(this.data.get(controlId));
@@ -18198,7 +18525,15 @@ var DEFAULT_CONFIG$2 = () => ({
 			"attrs",
 			"options",
 			"conditions"
-		]
+		],
+		config: { options: {
+			label: { default: "New Field" },
+			hideLabel: { default: false },
+			helpText: { default: "" },
+			labelAfter: { default: false },
+			disableHtmlLabel: { default: false },
+			tooltip: { default: "" }
+		} }
 	},
 	label: { disableHTML: false }
 });
@@ -18667,6 +19002,7 @@ var DEFAULT_CONFIG = () => ({
 		]
 	}
 });
+var PAGE_TITLE_CONFIG = () => ({ all: { panels: { config: { options: { title: { default: "" } } } } } });
 /**
 * Whether an order can be kept as an object's key order. JS lists integer-like keys ("1", "2") first, in ascending
 * numeric order, whatever their insertion order (#122), so they must already lead, in that order.
@@ -18681,6 +19017,18 @@ var Stages = class extends ComponentData {
 	constructor(stageData) {
 		super("stages", stageData);
 		this.config = { all: DEFAULT_CONFIG() };
+	}
+	/**
+	* The store's config, from the editor's `config` option. With page tabs it also declares the page title,
+	* beneath that option so an integrator can relabel or disable it.
+	* @return {Object}
+	*/
+	get config() {
+		const config = super.config;
+		return this.components?.opts?.pages ? merge(PAGE_TITLE_CONFIG(), config) : config;
+	}
+	set config(config) {
+		super.config = config;
 	}
 	Component(data) {
 		return new Stage(this.withPageTitle(data), this.components);
@@ -20055,22 +20403,24 @@ var assignmentMap = Object.entries(ASSIGNMENT_OPERATORS).reduce((acc, [key, valu
 	return acc;
 }, {});
 /**
-* Setting `checked` fires no `change`, so a required checkbox group the box belongs to is
-* re-synced directly. A synthetic `change` could re-trigger conditions.
+* Setting `checked` fires no `change`, so the group the box belongs to is re-synced directly: a required checkbox
+* group's `required`, and an Other choice's text box. A synthetic `change` could re-trigger conditions.
 * @param {Element} elem checkbox or radio input
 */
-var syncRequiredGroupOf = (elem) => {
-	const group = elem.closest?.(REQUIRED_GROUP_SELECTOR);
-	if (group) dom.syncCheckboxGroupRequired(group);
+var syncGroupOf = (elem) => {
+	const requiredGroup = elem.closest?.(REQUIRED_GROUP_SELECTOR);
+	if (requiredGroup) dom.syncCheckboxGroupRequired(requiredGroup);
+	const otherGroup = elem.closest?.(OTHER_GROUP_SELECTOR);
+	if (otherGroup) dom.syncOtherInput(otherGroup);
 };
 var targetPropertyMap = {
 	isChecked: (elem) => {
 		elem.checked = true;
-		syncRequiredGroupOf(elem);
+		syncGroupOf(elem);
 	},
 	isNotChecked: (elem) => {
 		elem.checked = false;
-		syncRequiredGroupOf(elem);
+		syncGroupOf(elem);
 	},
 	value: (elem, { assignment, ...rest }) => {
 		const assignmentAction = assignmentMap[assignment]?.(elem, rest);
@@ -20089,6 +20439,7 @@ var targetPropertyMap = {
 };
 var FORM_CONTROL_SELECTOR = "input, select, textarea";
 var REQUIRED_GROUP_SELECTOR = `[data-${REQUIRED_GROUP_ATTR}]`;
+var OTHER_GROUP_SELECTOR = `[data-${OTHER_GROUP_ATTR}]`;
 /**
 * The element itself when it matches, plus every descendant that does
 * @param {Element} elem
@@ -20611,10 +20962,11 @@ var FormeoRenderer$1 = class {
 	get userFormData() {
 		const userFormData = [];
 		for (const [key, value] of Object.entries(this.userData)) {
+			const otherGroup = this.otherGroupByName(key);
 			const fieldData = {
 				key,
 				value,
-				label: this.componentByName(key)?.config?.label || ""
+				label: otherGroup ? `${otherGroup.config?.label || ""} (${otherGroup.config.otherLabel || "Other"})` : this.componentByName(key)?.config?.label || ""
 			};
 			userFormData.push(fieldData);
 		}
@@ -20626,7 +20978,17 @@ var FormeoRenderer$1 = class {
 	* @return {Object|undefined}
 	*/
 	componentByName(name) {
-		return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`);
+		return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`) || this.otherGroupByName(name);
+	}
+	/**
+	* The checkbox or radio group whose Other choice's text box posts under `name` (`{group key}-other`)
+	* @param {String} name
+	* @return {Object|undefined}
+	*/
+	otherGroupByName(name) {
+		if (!name.endsWith("-other")) return;
+		const group = this.componentByName(name.slice(0, -OTHER_NAME_SUFFIX.length));
+		return group?.config?.other ? group : void 0;
 	}
 	set userData(data) {
 		const form = this.container?.querySelector(".formeo-render") || this.renderedForm;
@@ -20654,6 +21016,7 @@ var FormeoRenderer$1 = class {
 				for (const option of fields.options) option.selected = values.includes(option.value);
 			} else if (fields.type) fields.value = data[key];
 		}
+		for (const group of form.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) dom.syncOtherInput(group);
 		if (unmatched.length) console.warn(`formeo: renderer.userData has no field named: ${unmatched.join(", ")}`);
 	}
 	/**
@@ -20744,6 +21107,7 @@ var FormeoRenderer$1 = class {
 				control.disabled = false;
 				control.removeAttribute(SKIP_DISABLED_ATTR);
 			}
+			for (const group of stage.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) dom.syncOtherInput(group);
 			this.rerunConditionsReading(stage);
 			this.pager?.refresh();
 			return;
@@ -20769,13 +21133,14 @@ var FormeoRenderer$1 = class {
 		}
 	};
 	/**
-	* A reset changes checkedness without firing `change`, so required checkbox groups are re-synced.
-	* The `reset` event fires before the controls revert, hence the deferral.
+	* A reset changes checkedness without firing `change`, so required checkbox groups and Other text boxes are
+	* re-synced. The `reset` event fires before the controls revert, hence the deferral.
 	* @param {Event} evt the form's reset event
 	*/
 	syncRequiredGroupsAfterReset = ({ currentTarget: form }) => {
 		setTimeout(() => {
 			for (const group of form.querySelectorAll(`[data-${REQUIRED_GROUP_ATTR}]`)) dom.syncCheckboxGroupRequired(group);
+			for (const group of form.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) dom.syncOtherInput(group);
 		}, 0);
 	};
 	/**
