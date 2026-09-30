@@ -1,3 +1,24 @@
+# [5.14.0](https://github.com/Draggable/formeo/compare/v5.13.2...v5.14.0) (2026-09-30)
+
+
+### Bug Fixes
+
+* **editor:** add config dialog offers declared keys and works on stages ([a74b2c9](https://github.com/Draggable/formeo/commit/a74b2c9e78c776ebceae2626a9f0b013561d0e89))
+* **editor:** config panel shows only the keys a component declares ([40d4063](https://github.com/Draggable/formeo/commit/40d4063dcef9db17efb7d3a597fa18099c6e5cef))
+* **editor:** keep the preview's Other choice out of option defaults ([269746e](https://github.com/Draggable/formeo/commit/269746e9beb77b8dfe7c48d82fa055d14872061d))
+* **editor:** show declared config labels and offer declared keys on stages without config ([b2e2853](https://github.com/Draggable/formeo/commit/b2e28533ecf8b9e749356d6fde5e379494949b01))
+
+
+### Features
+
+* **editor:** add an Other option toggle for checkbox and radio groups ([89eb759](https://github.com/Draggable/formeo/commit/89eb75914d392584200f7025557e82e7ef94cf29))
+* **editor:** controls declare config panel keys with configOptions ([7d8f813](https://github.com/Draggable/formeo/commit/7d8f81302e4fc4c580afbfe6c74b406deef98c34))
+* **editor:** resolve a component's declared config panel keys ([34a5f17](https://github.com/Draggable/formeo/commit/34a5f17ab9319b8cd961f8bfe27d08a99c8ae373))
+* render an Other choice for checkbox and radio groups ([f193137](https://github.com/Draggable/formeo/commit/f1931371dc4ad172ff2a99139c6af717f810c7ff))
+* **renderer:** report Other choice text in userData, conditions, reset and page skips ([44a01e7](https://github.com/Draggable/formeo/commit/44a01e79e638576a092bdd282fdd314331d68a76))
+* **types:** config panel declarations and control configOptions ([c4ace73](https://github.com/Draggable/formeo/commit/c4ace73d9b9bf1c91af4388932ff3170356e1da3))
+* **types:** other and otherLabel field config ([62cd4cb](https://github.com/Draggable/formeo/commit/62cd4cbe9461b01745b50007394a9a536c039a8e))
+
 ## [5.13.2](https://github.com/Draggable/formeo/compare/v5.13.1...v5.13.2) (2026-09-28)
 
 
