@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.14.0
+Version: 5.15.0
 Author: Draggable https://draggable.io
 */
 
@@ -6472,7 +6472,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.14.0";
+		version$2 = "5.15.0";
 		type = "module";
 		main = "dist/formeo.cjs";
 		module$1 = "dist/formeo.es.js";
@@ -15892,7 +15892,7 @@ Author: Draggable https://draggable.io
 					this.addConfigButton = dom.create(addBtn);
 					this.syncAddConfigButton();
 					editPanelButtons.push(this.addConfigButton);
-				} else editPanelButtons.push(addBtn);
+				} else if (this.component.isAddEnabled(type)) editPanelButtons.push(addBtn);
 				return {
 					className: "panel-action-buttons",
 					content: editPanelButtons
@@ -15912,8 +15912,8 @@ Author: Draggable https://draggable.io
 				if (typeof val === "string" && ["true", "false"].includes(val)) val = JSON.parse(val);
 				this.component.set(`attrs.${attr}`, val);
 				addAttributeActions[safeAttr]?.(val, this.component);
-				const rowClass = `${this.component.name}-attrs-${safeAttr}`;
-				const existingAttr = Array.from(this.props.children).find((row) => row.classList.contains(rowClass));
+				const itemClass = `field-${slugifyAddress(itemKey)}`;
+				const existingAttr = Array.from(this.props.children).find((item) => item.classList.contains(itemClass));
 				const newAttr = new EditPanelItem({
 					key: itemKey,
 					data: { [safeAttr]: val },
@@ -15974,10 +15974,10 @@ Author: Draggable https://draggable.io
 				return addable;
 			}
 			/**
-			* The "Add config" button shows only while there is something left to add
+			* The "Add config" button shows only while there is something left to add and panels.config.add isn't false
 			*/
 			syncAddConfigButton() {
-				if (this.addConfigButton) this.addConfigButton.hidden = !this.addableConfigOptions().size;
+				if (this.addConfigButton) this.addConfigButton.hidden = !this.component.isAddEnabled("config") || !this.addableConfigOptions().size;
 			}
 			/**
 			* Adds a declared config key, set to its declared default, when it can still be added
@@ -16854,6 +16854,12 @@ Author: Draggable https://draggable.io
 				return false;
 			};
 			/**
+			* Whether a panel shows its add button: `panels.<panel>.add: false` hides it (#117)
+			* @param {String} panelName e.g. 'attrs', 'options', 'conditions', 'config'
+			* @return {Boolean}
+			*/
+			isAddEnabled = (panelName) => this.config?.panels?.[panelName]?.add !== false;
+			/**
 			* Generate the markup for field edit mode
 			* @return {Object} fieldEdit element config
 			*/
@@ -16873,19 +16879,36 @@ Author: Draggable https://draggable.io
 				}
 				editWindow.action = { onRender: () => {
 					if (editPanelLength === 0) {
-						const editToggle = this.dom.querySelector(".edit-toggle");
-						const fieldActions = this.dom.querySelector(`.${this.name}-actions`);
-						const actionButtons = fieldActions.getElementsByTagName("button");
-						fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`;
-						dom.remove(editToggle);
+						const actions = this.dom.querySelector(`:scope > .${this.name}-actions`);
+						const actionButtons = actions?.getElementsByTagName("button") ?? [];
+						if (actionButtons.length) actions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`;
+						const editToggle = actions?.querySelector(".edit-toggle");
+						if (editToggle) dom.remove(editToggle);
 					} else this.resizePanelWrap();
 				} };
 				return dom.create(editWindow);
+			}
+			/**
+			* Panels a component builds itself instead of from its data, keyed by the name `panels.order` uses for them,
+			* e.g. a row's Settings (#112). Only names in `panels.order` are shown.
+			* @return {Object<String, {panelConfig: Object}>}
+			*/
+			get customPanels() {
+				return {};
+			}
+			/**
+			* What a panel is built from while its data key is unset, e.g. `{ attrs: {} }` so a row shows an empty Attributes
+			* panel (#112). Fields and stages have none: a control without attrs gets no Attributes panel.
+			* @return {Object}
+			*/
+			get defaultPanelData() {
+				return {};
 			}
 			updateEditPanels = () => {
 				if (!this.config) return null;
 				const editable = new Set(["object", "array"]);
 				const hasConfigOptions = configOptionsOf(this.config).size > 0;
+				const { customPanels, defaultPanelData } = this;
 				const panelOrder = unique([
 					...this.config.panels.order,
 					...Object.keys(this.data),
@@ -16896,31 +16919,42 @@ Author: Draggable https://draggable.io
 					"meta",
 					"action",
 					"events",
+					"className",
 					...this.config.panels.disabled
 				]);
 				const allowedPanels = panelOrder.filter((panelName) => !noPanels.has(panelName));
 				for (const panelName of allowedPanels) {
+					if (customPanels[panelName]) {
+						this.editPanels.set(panelName, customPanels[panelName]);
+						continue;
+					}
 					if (panelName === "config" && !hasConfigOptions) {
 						this.editPanels.delete(panelName);
 						continue;
 					}
-					const panelData = panelName === "config" ? this.get(panelName) || {} : this.get(panelName);
+					const panelData = panelName === "config" ? this.get(panelName) || {} : this.get(panelName) ?? defaultPanelData[panelName];
 					const propType = dom.childType(panelData);
 					if (editable.has(propType)) {
 						const editPanel = new EditPanel(panelData, panelName, this);
 						this.editPanels.set(editPanel.name, editPanel);
 					}
 				}
+				this.panels?.destroy();
+				if (!this.editPanels.size) {
+					this.panels = null;
+					return;
+				}
 				const panelsData = {
 					panels: Array.from(this.editPanels.values()).map(({ panelConfig }) => panelConfig),
 					id: this.id,
 					displayType: "auto"
 				};
-				this.panels?.destroy();
 				this.panels = new Panels(panelsData);
-				if (this.dom) {
-					this.dom.querySelector(".panel-nav").replaceWith(this.panels.panelNav);
-					this.dom.querySelector(".panels").replaceWith(this.panels.panelsWrap);
+				const editWindow = this.dom?.querySelector(`:scope > .${this.name}-edit`);
+				const ownNav = editWindow?.querySelector(":scope > .panel-nav");
+				if (ownNav) {
+					ownNav.replaceWith(this.panels.panelNav);
+					editWindow.querySelector(":scope > .panels").replaceWith(this.panels.panelsWrap);
 				}
 			};
 		};
@@ -18395,14 +18429,11 @@ Author: Draggable https://draggable.io
 		children: [],
 		className: [COLUMN_CLASSNAME]
 	});
-	var DOM_CONFIGS = {
-		resizeHandle: (columnRisizer) => ({
-			className: "resize-x-handle",
-			action: { pointerdown: columnRisizer.onStart.bind(columnRisizer) },
-			content: [dom.icon("triangle-down"), dom.icon("triangle-up")]
-		}),
-		editWindow: () => ({ className: "column-edit group-config" })
-	};
+	var DOM_CONFIGS = { resizeHandle: (columnRisizer) => ({
+		className: "resize-x-handle",
+		action: { pointerdown: columnRisizer.onStart.bind(columnRisizer) },
+		content: [dom.icon("triangle-down"), dom.icon("triangle-up")]
+	}) };
 	/**
 	* Setup Column elements
 	*/
@@ -18417,6 +18448,8 @@ Author: Draggable https://draggable.io
 				...DEFAULT_DATA$2(),
 				...columnData
 			}, components);
+			const actionButtons = this.getActionButtons();
+			if (this.actionButtons.some((button) => button.meta?.id === "edit")) this.updateEditPanels();
 			const childWrap = this.createChildWrap();
 			this.dom = dom.create({
 				tag: "li",
@@ -18425,8 +18458,8 @@ Author: Draggable https://draggable.io
 				id: this.id,
 				content: [
 					this.getComponentTag(),
-					this.getActionButtons(),
-					DOM_CONFIGS.editWindow(),
+					actionButtons,
+					this.editWindow,
 					DOM_CONFIGS.resizeHandle(new ResizeColumn(this.components)),
 					childWrap
 				]
@@ -18455,6 +18488,13 @@ Author: Draggable https://draggable.io
 			});
 		}
 		/**
+		* A column shows an empty Attributes panel before it has any attributes (#112)
+		* @return {Object}
+		*/
+		get defaultPanelData() {
+			return { attrs: {} };
+		}
+		/**
 		* Process column configuration data
 		* @param  {Object} column
 		*/
@@ -18463,7 +18503,7 @@ Author: Draggable https://draggable.io
 			if (columnWidth) this.setDomWidth(columnWidth);
 		}
 		refreshFieldPanels = () => {
-			for (const field of this.children) field.panels.nav.refresh();
+			for (const field of this.children) field.panels?.nav.refresh();
 		};
 		/**
 		* Sets the width data and style for the column
@@ -18485,14 +18525,26 @@ Author: Draggable https://draggable.io
 	};
 	//#endregion
 	//#region src/lib/js/components/columns/index.js
-	var DEFAULT_CONFIG$3 = { actionButtons: {
-		buttons: [
-			"clone",
-			"move",
-			"remove"
-		],
-		disabled: []
-	} };
+	var DEFAULT_CONFIG$3 = {
+		actionButtons: {
+			buttons: [
+				"clone",
+				"move",
+				"edit",
+				"remove"
+			],
+			disabled: []
+		},
+		panels: {
+			disabled: [],
+			order: ["attrs"],
+			attrs: {
+				disabled: ["id", "tag"],
+				hideDisabled: true,
+				locked: []
+			}
+		}
+	};
 	var Columns = class extends ComponentData {
 		constructor(columnData) {
 			super("columns", columnData);
@@ -18616,6 +18668,7 @@ Author: Draggable https://draggable.io
 				...DEFAULT_DATA$1(),
 				...rowData
 			}, components);
+			this.updateEditPanels();
 			const children = this.createChildWrap();
 			this.dom = dom.create({
 				tag: "li",
@@ -18656,10 +18709,26 @@ Author: Draggable https://draggable.io
 			});
 		}
 		/**
-		* Edit window for Row
-		* @return {Object} edit window dom config for Row
+		* A row's Settings panel sits beside its Attributes panel (#112). Built once, so the column layout select it
+		* holds (`columnPresetControl`) exists even when `panels.disabled` hides the panel.
+		* @return {Object<String, {panelConfig: Object}>}
 		*/
-		get editWindow() {
+		get customPanels() {
+			this.settingsPanel ??= { panelConfig: this.settingsPanelConfig() };
+			return { settings: this.settingsPanel };
+		}
+		/**
+		* A row shows an empty Attributes panel before it has any attributes (#112)
+		* @return {Object}
+		*/
+		get defaultPanelData() {
+			return { attrs: {} };
+		}
+		/**
+		* Settings panel for Row: input group, fieldset and legend, and column widths
+		* @return {Object} panel config for Panels
+		*/
+		settingsPanelConfig() {
 			const fieldsetInput = {
 				tag: "input",
 				id: `${this.id}-fieldset`,
@@ -18727,13 +18796,13 @@ Author: Draggable https://draggable.io
 				"hr",
 				dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], "row")
 			];
-			return dom.create({
-				className: `${this.name}-edit group-config`,
-				action: { onRender: (editWindow) => {
-					const elements = editWindowContents.map((elem) => dom.create(elem));
-					editWindow.append(...elements);
+			return {
+				config: { label: s.get("settings") || "Settings" },
+				attrs: { className: `${PANEL_CLASSNAME} settings-panel` },
+				action: { onRender: (panel) => {
+					panel.append(...editWindowContents.map((elem) => dom.create(elem)));
 				} }
-			});
+			};
 		}
 		onAdd(evt) {
 			const component = super.onAdd(evt);
@@ -18847,15 +18916,30 @@ Author: Draggable https://draggable.io
 	};
 	//#endregion
 	//#region src/lib/js/components/rows/index.js
-	var DEFAULT_CONFIG$1 = { actionButtons: {
-		buttons: [
-			"move",
-			"edit",
-			"clone",
-			"remove"
-		],
-		disabled: []
-	} };
+	var DEFAULT_CONFIG$1 = {
+		actionButtons: {
+			buttons: [
+				"move",
+				"edit",
+				"clone",
+				"remove"
+			],
+			disabled: []
+		},
+		panels: {
+			disabled: [],
+			order: ["settings", "attrs"],
+			attrs: {
+				disabled: [
+					"id",
+					"tag",
+					"data-clone-of"
+				],
+				hideDisabled: true,
+				locked: []
+			}
+		}
+	};
 	var Rows = class extends ComponentData {
 		constructor(rowData) {
 			super("rows", rowData);
@@ -20896,6 +20980,45 @@ Author: Draggable https://draggable.io
 		isVisible: false,
 		isNotVisible: true
 	};
+	/**
+	* Class names from a class value: a function is called first, then strings and arrays are flattened
+	* @param {String|Array|Function} [value]
+	* @return {String[]}
+	*/
+	var classNames = (value) => {
+		return [typeof value === "function" ? value() : value].flat(Infinity).filter((name) => typeof name === "string" && name.trim());
+	};
+	/**
+	* A row's or column's own attributes, ready to render (#112). `id` and `tag` are Formeo's: the element is found by
+	* `#f-<id>` (conditions use it) and is always a div. Formeo's own class list (the component's top-level `className`),
+	* `attrs.className` and `attrs.class` become one array on `attrs.className`, so the caller drops the top-level
+	* `className`: dom.create would overwrite a string `attrs.className` with a string top-level one.
+	* @param {Object|null} [attrs]
+	* @param {String|String[]} [ownClassName] the component's top-level `className`
+	* @return {Object}
+	*/
+	var layoutAttrs = (attrs, ownClassName) => {
+		const { id: _id, tag: _tag, class: classAttr, className, ...rest } = attrs ?? {};
+		const classes = [...new Set([
+			...classNames(ownClassName),
+			...classNames(className),
+			...classNames(classAttr)
+		])];
+		if (classes.length) rest.className = classes;
+		return rest;
+	};
+	var STYLE_DECLARATION_SEPARATOR = /;(?![^(]*\))/;
+	var WIDTH_DECLARATION = /^width\s*:/i;
+	/**
+	* A column's own style plus its width. Width declarations in the style are dropped, so `config.width` wins even
+	* over `width: 10px !important`.
+	* @param {String} [style]
+	* @param {String} width e.g. '50%'
+	* @return {String}
+	*/
+	var columnStyle = (style, width) => {
+		return [...(typeof style === "string" ? style.split(STYLE_DECLARATION_SEPARATOR) : []).map((declaration) => declaration.trim()).filter((d) => d && !WIDTH_DECLARATION.test(d)), `width: ${width}`].join("; ");
+	};
 	var FormeoRenderer$1 = class {
 		constructor(opts = {}, formDataArg) {
 			const { renderContainer: container, elements, formData, config, events, pagination } = processOptions(opts);
@@ -21178,13 +21301,17 @@ Author: Draggable https://draggable.io
 		* @param  {Object} columnData
 		* @return {Object} processed column data
 		*/
-		processColumn = ({ id, config = {}, ...columnData }) => ({
-			...columnData,
-			config,
-			id: this.prefixId(id),
-			children: this.processFields(columnData.children),
-			style: `width: ${config.width || "100%"}`
-		});
+		processColumn = ({ id, config = {}, attrs, className, ...columnData }) => {
+			const { style, ...columnAttrs } = layoutAttrs(attrs, className);
+			return {
+				...columnData,
+				attrs: columnAttrs,
+				config,
+				id: this.prefixId(id),
+				children: this.processFields(columnData.children),
+				style: columnStyle(typeof style === "function" ? style() : style, config.width || "100%")
+			};
+		};
 		processRows = (stageId) => this.orderChildren("rows", this.form.stages[stageId].children).reduce((acc, row) => {
 			if (row) acc.push(this.processRow(row));
 			return acc;
@@ -21200,9 +21327,11 @@ Author: Draggable https://draggable.io
 		*/
 		processRow = (data, type = "row") => {
 			const { config = {}, id } = data;
+			const { className: ownClassName, ...rowProps } = data;
 			const className = [`formeo-${type}-wrap`];
 			const rowData = {
-				...data,
+				...rowProps,
+				attrs: layoutAttrs(data.attrs, ownClassName),
 				children: this.processColumns(data.id),
 				id: this.prefixId(id)
 			};
