@@ -68,6 +68,14 @@ export default class Field extends Component {
    * panels.attrs config. Reads both the registered control definition and the field's own
    * saved config so forms saved before a control changed still pick up its rules.
    */
+  applyControlAttrConfig() {
+    const controlConfig = getControlConfig(this.components.controls?.get(this.controlId))
+    const attrConfig = controlAttrPanelConfig(controlConfig, this.get('config'))
+    if (attrConfig) {
+      this.config = { [this.id]: attrConfig }
+    }
+  }
+
   /**
    * Converts legacy config.labelAfter, and an unknown config.labelPosition, to the labelPosition it resolves to (#243).
    * Replaces the config object instead of calling set(), so loading a form fires no update events and the data it was
@@ -77,14 +85,6 @@ export default class Field extends Component {
     const config = normalizeLabelConfig(this.data)
     if (config !== this.data.config) {
       this.data.config = config
-    }
-  }
-
-  applyControlAttrConfig() {
-    const controlConfig = getControlConfig(this.components.controls?.get(this.controlId))
-    const attrConfig = controlAttrPanelConfig(controlConfig, this.get('config'))
-    if (attrConfig) {
-      this.config = { [this.id]: attrConfig }
     }
   }
 

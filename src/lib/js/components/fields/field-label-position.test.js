@@ -71,6 +71,11 @@ describe('Field label position data (#243)', () => {
     assert.equal(labelChanges.length, 0)
   })
 
+  it('constructs a field with an empty config, without writing labelPosition', () => {
+    const field = new Field({ id: 'f-hr', tag: 'hr', config: {} }, editor())
+    assert.equal(field.get('config.labelPosition'), undefined)
+  })
+
   it('shows the converted value in a Label Position dropdown', () => {
     const field = textField(editor(), { labelAfter: true })
     const select = field.editPanels.get('config').props.querySelector('select.config-labelPosition')
