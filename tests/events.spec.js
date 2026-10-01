@@ -92,10 +92,7 @@ test.describe('Formeo Events System', () => {
 
     // Verify we can add a listener for this event type
     const listenerAdded = await page.evaluate(() => {
-      let called = false
-      const handler = () => {
-        called = true
-      }
+      const handler = () => {}
       document.addEventListener('formeoUpdatedField', handler)
       // Clean up
       document.removeEventListener('formeoUpdatedField', handler)
