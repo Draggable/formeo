@@ -1,3 +1,4 @@
+import { LABEL_POSITIONS } from '../../common/label-position.mjs'
 import { parseData } from '../../common/utils/index.mjs'
 import { get, set } from '../../common/utils/object.mjs'
 import ComponentData from '../component-data.js'
@@ -22,7 +23,8 @@ const DEFAULT_CONFIG = () => ({
         label: { default: 'New Field' },
         hideLabel: { default: false },
         helpText: { default: '' },
-        labelAfter: { default: false },
+        // where the label sits; replaces labelAfter, which the editor converts on load (#243)
+        labelPosition: { default: 'top', options: LABEL_POSITIONS.map(value => ({ value })) },
         disableHtmlLabel: { default: false },
         tooltip: { default: '' },
       },

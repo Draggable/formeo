@@ -1,6 +1,7 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { indexOfNode } from '../../common/helpers.mjs'
+import { normalizeLabelConfig } from '../../common/label-position.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
@@ -21,6 +22,7 @@ export default class Field extends Component {
   constructor(fieldData = Object.create(null), components) {
     super('field', fieldData, components)
 
+    this.normalizeLabelConfig()
     this.controlId = this.get('config.controlId') || this.get('meta.id')
     this.applyControlAttrConfig()
 
@@ -66,6 +68,18 @@ export default class Field extends Component {
    * panels.attrs config. Reads both the registered control definition and the field's own
    * saved config so forms saved before a control changed still pick up its rules.
    */
+  /**
+   * Converts legacy config.labelAfter, and an unknown config.labelPosition, to the labelPosition it resolves to (#243).
+   * Replaces the config object instead of calling set(), so loading a form fires no update events and the data it was
+   * given (a saved form, a control definition) is never mutated.
+   */
+  normalizeLabelConfig() {
+    const config = normalizeLabelConfig(this.data)
+    if (config !== this.data.config) {
+      this.data.config = config
+    }
+  }
+
   applyControlAttrConfig() {
     const controlConfig = getControlConfig(this.components.controls?.get(this.controlId))
     const attrConfig = controlAttrPanelConfig(controlConfig, this.get('config'))

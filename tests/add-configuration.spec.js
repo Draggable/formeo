@@ -82,7 +82,7 @@ test.describe('Add Configuration to Field', () => {
     expect(configItemsAfter).toBeGreaterThan(configItemsBefore)
   })
 
-  test('should add labelAfter configuration to field', async ({ page }) => {
+  test('should add labelPosition configuration to field', async ({ page }) => {
     // Add an email field (different field type to verify it works across controls)
     await page.getByRole('button', { name: 'Email' }).click()
     await page.waitForTimeout(300)
@@ -105,8 +105,8 @@ test.describe('Add Configuration to Field', () => {
     const dialog = page.locator('.formeo-dialog.config-item-dialog')
     await expect(dialog).toBeVisible()
 
-    // Select labelAfter option
-    await dialog.locator('select.config-key-select').selectOption('labelAfter')
+    // Select labelPosition option
+    await dialog.locator('select.config-key-select').selectOption('labelPosition')
 
     // Click submit
     await dialog.locator('button[type="submit"]').click()
@@ -114,10 +114,10 @@ test.describe('Add Configuration to Field', () => {
     // Wait for dialog to close
     await expect(dialog).not.toBeVisible()
 
-    // Verify labelAfter config item exists in the panel
+    // Verify the labelPosition config item exists in the panel, with its default
     await page.waitForTimeout(200)
-    const labelAfterItem = page.locator('.config-panel').getByText('Label After')
-    await expect(labelAfterItem).toBeVisible()
+    const labelPositionItem = page.locator('.config-panel select.config-labelPosition')
+    await expect(labelPositionItem).toHaveValue('top')
   })
 
   test('should filter out already existing config options', async ({ page }) => {
@@ -153,8 +153,8 @@ test.describe('Add Configuration to Field', () => {
     expect(optionValues).not.toContain('label')
     expect(optionValues).not.toContain('hideLabel')
 
-    // But labelAfter, tooltip, disableHtmlLabel should still be available
-    expect(optionValues).toContain('labelAfter')
+    // But labelPosition, tooltip, disableHtmlLabel should still be available
+    expect(optionValues).toContain('labelPosition')
     expect(optionValues).toContain('tooltip')
     expect(optionValues).toContain('disableHtmlLabel')
 
@@ -233,11 +233,11 @@ test.describe('Add Configuration to Field', () => {
     await expect(dialog).not.toBeVisible()
     await page.waitForTimeout(200)
 
-    // Add second config item (labelAfter)
+    // Add second config item (labelPosition)
     await editPanel.locator('.add-config').click()
     dialog = page.locator('.formeo-dialog.config-item-dialog')
     await expect(dialog).toBeVisible()
-    await dialog.locator('select.config-key-select').selectOption('labelAfter')
+    await dialog.locator('select.config-key-select').selectOption('labelPosition')
     await dialog.locator('button[type="submit"]').click()
     await expect(dialog).not.toBeVisible()
     await page.waitForTimeout(200)

@@ -55,7 +55,7 @@ describe('control configOptions', () => {
     assert.deepEqual(panelKeys(other), ['config.label'])
     assert.deepEqual(
       [...configOptionsOf(other.config).keys()],
-      ['label', 'hideLabel', 'helpText', 'labelAfter', 'disableHtmlLabel', 'tooltip']
+      ['label', 'hideLabel', 'helpText', 'labelPosition', 'disableHtmlLabel', 'tooltip']
     )
   })
 

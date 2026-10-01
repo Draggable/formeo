@@ -326,7 +326,7 @@ describe('Config panel "Add config"', () => {
   it('offers the declared keys not set yet, with their labels', () => {
     const panel = textField(editorWith()).editPanels.get('config')
     const addable = panel.addableConfigOptions()
-    assert.deepEqual([...addable.keys()], ['hideLabel', 'helpText', 'labelAfter', 'disableHtmlLabel', 'tooltip'])
+    assert.deepEqual([...addable.keys()], ['hideLabel', 'helpText', 'labelPosition', 'disableHtmlLabel', 'tooltip'])
     assert.equal(addable.get('tooltip').label, labelHelper('config.tooltip'))
   })
 
@@ -338,10 +338,10 @@ describe('Config panel "Add config"', () => {
   it('adds a key with its declared default, once', () => {
     const field = textField(editorWith())
     const panel = field.editPanels.get('config')
-    panel.addConfigItem('labelAfter')
-    panel.addConfigItem('labelAfter')
-    assert.equal(field.get('config.labelAfter'), false)
-    const items = panel.editPanelItems.filter(({ itemKey }) => itemKey === 'config.labelAfter')
+    panel.addConfigItem('labelPosition')
+    panel.addConfigItem('labelPosition')
+    assert.equal(field.get('config.labelPosition'), 'top')
+    const items = panel.editPanelItems.filter(({ itemKey }) => itemKey === 'config.labelPosition')
     assert.equal(items.length, 1)
     assert.ok(panel.props.contains(items[0].dom))
   })
@@ -365,7 +365,7 @@ describe('Config panel "Add config"', () => {
     const field = textField(editorWith(), {
       hideLabel: false,
       helpText: '',
-      labelAfter: false,
+      labelPosition: 'top',
       disableHtmlLabel: false,
       tooltip: '',
     })
