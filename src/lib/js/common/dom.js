@@ -13,6 +13,7 @@ import {
 } from '../constants.js'
 import animate from './animation.js'
 import h, { forEach } from './helpers.mjs'
+import { isLabelAfter, resolveLabelPosition } from './label-position.mjs'
 import { loaded } from './loaders.js'
 import { componentType, merge, uuid } from './utils/index.mjs'
 import { extractTextFromHtml, groupInputName, slugify, truncateByWord } from './utils/string.mjs'
@@ -278,9 +279,6 @@ class DOM {
           if (_this.labelAfter(elem)) {
             wrapContent.reverse()
           }
-          // if has label config, must be a field.
-          // @todo change this logic so dom.create is project agnostic
-          // wrap.className.push('formeo-field')
           wrap.children.push(wrapContent)
         }
       }
@@ -763,15 +761,12 @@ class DOM {
   }
 
   /**
-   * Test if label should be display before or after an element
-   * @param  {Object} elem config
-   * @return {Boolean} labelAfter
+   * Whether a field's label comes after its control: bottom and after (#243). See label-position.mjs
+   * @param  {Object} elem field config
+   * @return {Boolean}
    */
   labelAfter(elem) {
-    const type = h.get(elem, 'attrs.type')
-    const labelAfter = h.get(elem, 'config.labelAfter')
-    const isCB = type === 'checkbox' || type === 'radio'
-    return labelAfter === undefined ? isCB : labelAfter
+    return isLabelAfter(resolveLabelPosition(elem))
   }
 
   /**
