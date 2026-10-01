@@ -38,6 +38,21 @@ const SKIPPED_PAGE_READS = {
   isNotVisible: true,
 }
 
+/**
+ * A row's or column's own attributes, ready to render (#112). `id` and `tag` are Formeo's: the element is found by
+ * `#f-<id>` (conditions use it) and is always a div. `class` joins `className`, which the internal class merges into,
+ * instead of being overwritten by it.
+ * @param {Object|null} [attrs]
+ * @return {Object}
+ */
+const layoutAttrs = attrs => {
+  const { id: _id, tag: _tag, class: classAttr, ...rest } = attrs ?? {}
+  if (classAttr) {
+    rest.className = [rest.className, classAttr].flat().filter(Boolean)
+  }
+  return rest
+}
+
 export default class FormeoRenderer {
   constructor(opts = {}, formDataArg) {
     const { renderContainer: container, elements, formData, config, events, pagination } = processOptions(opts)
@@ -424,13 +439,19 @@ export default class FormeoRenderer {
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumn = ({ id, config = {}, ...columnData }) => ({
-    ...columnData,
-    config,
-    id: this.prefixId(id),
-    children: this.processFields(columnData.children),
-    style: `width: ${config.width || '100%'}`,
-  })
+  processColumn = ({ id, config = {}, attrs, ...columnData }) => {
+    const { style, ...columnAttrs } = layoutAttrs(attrs)
+    const width = `width: ${config.width || '100%'}`
+    return {
+      ...columnData,
+      attrs: columnAttrs,
+      config,
+      id: this.prefixId(id),
+      children: this.processFields(columnData.children),
+      // the column's own style first, so its width always wins (#112)
+      style: style ? `${String(style).trim().replace(/;$/, '')}; ${width}` : width,
+    }
+  }
 
   processRows = stageId =>
     this.orderChildren('rows', this.form.stages[stageId].children).reduce((acc, row) => {
@@ -453,7 +474,12 @@ export default class FormeoRenderer {
   processRow = (data, type = 'row') => {
     const { config = {}, id } = data
     const className = [`formeo-${type}-wrap`]
-    const rowData = { ...data, children: this.processColumns(data.id), id: this.prefixId(id) }
+    const rowData = {
+      ...data,
+      attrs: layoutAttrs(data.attrs),
+      children: this.processColumns(data.id),
+      id: this.prefixId(id),
+    }
     this.cacheComponent(rowData)
 
     const configConditions = [
