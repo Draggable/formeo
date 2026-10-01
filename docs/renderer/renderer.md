@@ -1049,6 +1049,22 @@ The renderer supports dynamic input groups that allow users to add/remove field 
 // Each cloned group gets a unique ID and a remove button
 ```
 
+### Row and column attributes
+
+A row's `attrs` and a column's `attrs` render on the `.formeo-row` / `.formeo-column` element, the one with id
+`f-<id>` that conditions show and hide. The fieldset or wrapper around a row gets none of them.
+
+```javascript
+rows: {
+  'row-1': { id: 'row-1', config: {}, children: ['col-1'], attrs: { 'data-section': 'contact', className: 'contact' } },
+},
+// renders <div class="formeo-row contact" data-section="contact" id="f-row-1">
+```
+
+- `className` and `class` are both merged with Formeo's own `formeo-row` / `formeo-column` class.
+- A column's `style` is kept and its width is applied after it, so `config.width` always wins.
+- `id` and `tag` are ignored: Formeo needs the element's id and always renders a `div`.
+
 ### Accessing Components
 
 The renderer caches all rendered components internally:
