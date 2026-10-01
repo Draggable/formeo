@@ -61,6 +61,17 @@ const GROUP_CONSUMED_ATTRS = new Set(['type', 'id', 'name', 'className', 'value'
 export const groupWrapperAttrs = (attrs = {}) =>
   Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)))
 
+/**
+ * Class values (strings, arrays, nested arrays) as one space-separated string
+ * @param {...(String|Array)} values
+ * @return {String}
+ */
+const joinClassNames = (...values) =>
+  values
+    .flat(Infinity)
+    .filter(value => typeof value === 'string' && value.trim())
+    .join(' ')
+
 const stripOn = str => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase())
 const useCaptureEvts = new Set(['focus', 'blur'])
 const defaultActionHandler = event => {
@@ -600,10 +611,6 @@ class DOM {
           className: [`f-${fieldType}`],
         }
 
-        if (attrs.className) {
-          elem.config = { ...elem.config, inputWrap: attrs.className }
-        }
-
         if (elem.config?.inline) {
           inputWrap.className.push(`f-${fieldType}-inline`)
         }
@@ -649,6 +656,11 @@ class DOM {
       }
 
       return optionMarkup[fieldType]?.(option)
+    }
+
+    // a checkbox or radio group's class also lands on its label wrapper, after the wrapper's own classes (f-field)
+    if (attrs.className && ['checkbox', 'radio'].includes(fieldType)) {
+      elem.config = { ...elem.config, inputWrap: joinClassNames(elem.config?.inputWrap, attrs.className) }
     }
 
     const mappedOptions = options.map(optionMap)

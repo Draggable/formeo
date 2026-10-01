@@ -5,6 +5,7 @@ import dom, {
   OTHER_NAME_SUFFIX,
   REQUIRED_GROUP_ATTR,
 } from '../common/dom.js'
+import { labelWrapClassNames, resolveLabelPosition } from '../common/label-position.mjs'
 import { fetchDependencies } from '../common/loaders.js'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -46,6 +47,20 @@ const SKIPPED_PAGE_READS = {
 const classNames = value => {
   const resolved = typeof value === 'function' ? value() : value
   return [resolved].flat(Infinity).filter(name => typeof name === 'string' && name.trim())
+}
+
+/**
+ * A field's config with its label wrapper's classes (#243): any `inputWrap`, then `f-field f-label-<position>`.
+ * dom.create only builds that wrapper when the label renders, so fields without one are unaffected.
+ * @param {Object} field processed field data
+ * @return {Object|undefined} config
+ */
+const fieldWrapConfig = field => {
+  if (!field.config) {
+    return field.config
+  }
+  const inputWrap = [...classNames(field.config.inputWrap), ...labelWrapClassNames(resolveLabelPosition(field))]
+  return { ...field.config, inputWrap: inputWrap.join(' ') }
 }
 
 /**
@@ -599,7 +614,11 @@ export default class FormeoRenderer {
 
       const mergedFieldData = merge({ action }, field)
 
-      return this.cacheComponent({ ...mergedFieldData, id: this.prefixId(id) })
+      return this.cacheComponent({
+        ...mergedFieldData,
+        config: fieldWrapConfig(mergedFieldData),
+        id: this.prefixId(id),
+      })
     })
 
   get processedData() {
