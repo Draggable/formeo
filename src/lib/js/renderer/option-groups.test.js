@@ -339,7 +339,6 @@ describe('checkbox and radio groups', () => {
 
   describe('input group clones', () => {
     test('a cloned radio group gets its own name so it does not share a selection with the original', () => {
-      // clone lookup goes through baseId(), which only recognises editor-style hex ids
       const formData = {
         id: 'clone-form',
         stages: { '0a0a0a0a': { id: '0a0a0a0a', children: ['1b1b1b1b'] } },
@@ -358,7 +357,6 @@ describe('checkbox and radio groups', () => {
     })
 
     test('a cloned select keeps its configured name (selects also carry top-level options)', () => {
-      // clone lookup goes through baseId(), which only recognises editor-style hex ids
       const selectField = (id, attrs = {}) => ({
         id,
         tag: 'select',
@@ -591,7 +589,6 @@ describe('checkbox and radio groups', () => {
     })
 
     test('a repeated input group gets its own Other text box', () => {
-      // clone lookup goes through baseId(), which only recognises editor-style hex ids
       const formData = {
         id: 'clone-form',
         stages: { '0a0a0a0a': { id: '0a0a0a0a', children: ['1b1b1b1b'] } },

@@ -1254,4 +1254,45 @@ describe('FormeoRenderer', () => {
       assert.ok(renderForm(data).elements['hidden-1532560563828'])
     })
   })
+
+  describe('input group clones with any id format (#520)', () => {
+    const inputGroupForm = ({ rowId, columnId, fieldId }) => ({
+      id: 'form-1',
+      stages: { s1: { id: 's1', children: [rowId] } },
+      rows: { [rowId]: { id: rowId, config: { inputGroup: true }, children: [columnId] } },
+      columns: { [columnId]: { id: columnId, config: { width: '100%' }, children: [fieldId] } },
+      fields: {
+        [fieldId]: { id: fieldId, tag: 'input', attrs: { type: 'text', name: 'n' }, config: { label: 'Name' } },
+      },
+    })
+
+    const assertAddsCopy = ids => {
+      new FormeoRenderer({ renderContainer: container }).render(inputGroupForm(ids))
+      assert.doesNotThrow(() => container.querySelector('.add-input-group').click())
+
+      const copy = container.querySelector(`[data-clone-of="f-${ids.rowId}"]`)
+      assert.ok(copy, 'the row was copied')
+      assert.ok(copy.querySelector(`[data-clone-of="f-${ids.columnId}"]`), 'the copy has its column')
+      assert.ok(copy.querySelector(`input[data-clone-of="f-${ids.fieldId}"]`), 'the copy has its field')
+      assert.equal(container.querySelectorAll('input[name="n"]').length, 2)
+      const domIds = [...container.querySelectorAll('[id]')].map(elem => elem.id)
+      assert.equal(new Set(domIds).size, domIds.length, 'no duplicate ids')
+    }
+
+    test('clones a row whose ids are readable, as in the renderer docs', () => {
+      assertAddsCopy({ rowId: 'row-1', columnId: 'col-1', fieldId: 'field-1' })
+    })
+
+    test('clones a row whose readable ids share an 8-character hex segment', () => {
+      assertAddsCopy({ rowId: 'row-deadbeef', columnId: 'col-deadbeef', fieldId: 'field-deadbeef' })
+    })
+
+    test('clones a row whose ids start with the render prefix', () => {
+      assertAddsCopy({ rowId: 'f-row', columnId: 'f-col', fieldId: 'f-field' })
+    })
+
+    test('still clones a row with editor-style hex ids', () => {
+      assertAddsCopy({ rowId: '1b1b1b1b', columnId: '2c2c2c2c', fieldId: '3d3d3d3d' })
+    })
+  })
 })

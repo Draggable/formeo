@@ -185,7 +185,9 @@ export default class FormeoRenderer {
    */
   componentByName(name) {
     return (
-      this.components[baseId(name)] ||
+      // a generated name starts with the rendered id: `f-{id}` or `f-{id}-{label}`
+      this.components[name] ||
+      this.components[this.prefixId(baseId(name))] ||
       Object.values(this.components).find(
         component => component.attrs?.name === name || component.attrs?.name === `${name}[]`
       ) ||
@@ -490,8 +492,13 @@ export default class FormeoRenderer {
       return acc
     }, [])
 
+  /**
+   * Caches a component under its rendered id (`f-{id}`), so input group clones can find it whatever the id looks like
+   * @param {Object} data processed component data
+   * @return {Object} data
+   */
   cacheComponent = data => {
-    this.components[baseId(data.id)] = data
+    this.components[data.id] = data
     return data
   }
 
@@ -516,7 +523,7 @@ export default class FormeoRenderer {
     const configConditions = [
       { condition: config.legend, result: () => ({ tag: config.fieldset ? 'legend' : 'h3', children: config.legend }) },
       { condition: true, result: () => rowData },
-      { condition: config.inputGroup, result: () => this.addButton(id) },
+      { condition: config.inputGroup, result: () => this.addButton(rowData.id) },
     ]
 
     const children = configConditions.reduce((acc, { condition, result }) => {
@@ -551,7 +558,7 @@ export default class FormeoRenderer {
     return {
       ...rest,
       id: RENDER_PREFIX + uuid(id),
-      children: children?.length && children.map(({ id }) => this.cloneComponentData(baseId(id))),
+      children: children?.length && children.map(({ id }) => this.cloneComponentData(id)),
       attrs: updatedAttrs,
     }
   }
@@ -600,7 +607,7 @@ export default class FormeoRenderer {
       stage.children = this.processRows(stage.id)
       stage.className = STAGE_CLASSNAME
 
-      this.components[baseId(stage.id)] = stage
+      this.components[this.prefixId(stage.id)] = stage
       return stage
     })
   }
