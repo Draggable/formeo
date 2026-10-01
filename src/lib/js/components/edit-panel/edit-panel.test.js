@@ -260,6 +260,43 @@ describe('Config panel declarations', () => {
     assert.deepEqual(panelKeys(field), ['config.label', 'config.hint'])
   })
 
+  const densityConfig = {
+    fields: {
+      all: {
+        panels: {
+          config: {
+            options: {
+              density: { default: 'cosy', options: [{ value: 'cosy' }, { value: 'compact' }] },
+            },
+          },
+        },
+      },
+    },
+  }
+
+  it('renders a key declared with options as a select with its value selected', () => {
+    const field = textField(editorWith(densityConfig), { density: 'compact' })
+    const select = field.editPanels.get('config').props.querySelector('select.config-density')
+    assert.ok(select, 'a select, not a text input')
+    assert.deepEqual(
+      [...select.options].map(option => [option.value, option.textContent]),
+      [
+        ['cosy', 'Cosy'],
+        ['compact', 'Compact'],
+      ]
+    )
+    assert.equal(select.value, 'compact')
+  })
+
+  it('writes the chosen option to the field', () => {
+    const field = textField(editorWith(densityConfig), { density: 'cosy' })
+    mock.method(field, 'debouncedUpdatePreview', () => {})
+    const select = field.editPanels.get('config').props.querySelector('select.config-density')
+    select.value = 'compact'
+    select.dispatchEvent(new window.Event('change', { bubbles: true }))
+    assert.equal(field.get('config.density'), 'compact')
+  })
+
   it('a stage has no Config panel without pages', () => {
     const stage = editorWith().stages.get('s-1')
     assert.equal(stage.editPanels.has('config'), false)

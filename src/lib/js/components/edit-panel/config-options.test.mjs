@@ -47,4 +47,41 @@ describe('configOptionsOf', () => {
       warn.mock.restore()
     }
   })
+
+  it('keeps declared options, labelling each one', () => {
+    const declared = configOptionsOf(
+      withOptions({
+        density: {
+          default: 'cosy',
+          options: [{ value: 'cosy' }, { value: 'compact', label: 'Tight' }],
+        },
+      })
+    )
+    assert.deepEqual(declared.get('density'), {
+      label: labelHelper('config.density'),
+      default: 'cosy',
+      options: [
+        { value: 'cosy', label: 'Cosy' },
+        { value: 'compact', label: 'Tight' },
+      ],
+    })
+  })
+
+  it('drops, and warns once about, options it cannot offer', () => {
+    const warn = mock.method(console, 'warn', () => {})
+    try {
+      const config = withOptions({
+        emptyChoice: { default: 'a', options: [] },
+        numberChoice: { default: 'a', options: [{ value: 1 }] },
+        missingDefault: { default: 'z', options: [{ value: 'a' }] },
+        notAList: { default: 'a', options: 'a,b' },
+      })
+      assert.equal(configOptionsOf(config).size, 0)
+      configOptionsOf(config)
+      assert.equal(warn.mock.callCount(), 4, 'one warning per bad key, not per call')
+      assert.match(warn.mock.calls[0].arguments[0], /^formeo: config option "emptyChoice" needs options/)
+    } finally {
+      warn.mock.restore()
+    }
+  })
 })

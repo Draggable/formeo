@@ -324,6 +324,15 @@ export default class EditPanelItem {
       }
     }
 
+    // a Config panel key declared with options is a dropdown (#243)
+    if (this.panelName === 'config') {
+      const choices = configOptionsOf(this.field.config).get(key.replace(/^config\./, ''))?.options
+      if (choices) {
+        effectiveValue = choices.map(choice => ({ ...choice, selected: choice.value === value }))
+        valType = 'array'
+      }
+    }
+
     const dataKey = panelDataKeyMap.get(this.panelName)?.({ itemKey: this.itemKey, key }) || this.itemKey
     const labelKey = dataKey.split('.').filter(Number.isNaN).join('.') || key
     const baseConfig = ITEM_INPUT_TYPE_MAP[valType]({ key, value: effectiveValue })
