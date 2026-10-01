@@ -24,6 +24,26 @@ suite('formData schema', () => {
     t.assert.ok(result.success, JSON.stringify(result.error?.issues))
   })
 
+  test('accepts a field labelPosition and legacy labelAfter, and rejects other positions (#243)', t => {
+    const data = structuredClone(conditionalFields)
+    const [fieldId] = Object.keys(data.fields)
+    const withConfig = config => {
+      data.fields[fieldId].config = { label: 'Name', ...config }
+      return formDataSchema.safeParse(data).success
+    }
+    for (const labelPosition of ['top', 'bottom', 'before', 'after']) {
+      t.assert.ok(withConfig({ labelPosition }), labelPosition)
+    }
+    t.assert.strictEqual(withConfig({ labelPosition: 'left' }), false)
+    t.assert.ok(withConfig({ labelAfter: true }))
+    t.assert.strictEqual(withConfig({ labelAfter: 'yes' }), false)
+  })
+
+  test('the generated JSON schema lists the label positions (#243)', t => {
+    const config = buildFormDataJsonSchema().properties.fields.additionalProperties.properties.config
+    t.assert.deepStrictEqual(config.properties.labelPosition.enum, ['top', 'bottom', 'before', 'after'])
+  })
+
   test('accepts the logical operator between if clauses and rejects unknown ones', t => {
     t.assert.ok(formDataSchema.safeParse(withSecondClause('&&')).success)
     t.assert.ok(formDataSchema.safeParse(withSecondClause('||')).success)

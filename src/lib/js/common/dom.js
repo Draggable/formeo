@@ -13,6 +13,7 @@ import {
 } from '../constants.js'
 import animate from './animation.js'
 import h, { forEach } from './helpers.mjs'
+import { isLabelAfter, resolveLabelPosition } from './label-position.mjs'
 import { loaded } from './loaders.js'
 import { componentType, merge, uuid } from './utils/index.mjs'
 import { extractTextFromHtml, groupInputName, slugify, truncateByWord } from './utils/string.mjs'
@@ -59,6 +60,17 @@ const GROUP_CONSUMED_ATTRS = new Set(['type', 'id', 'name', 'className', 'value'
  */
 export const groupWrapperAttrs = (attrs = {}) =>
   Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)))
+
+/**
+ * Class values (strings, arrays, nested arrays) as one space-separated string
+ * @param {...(String|Array)} values
+ * @return {String}
+ */
+const joinClassNames = (...values) =>
+  values
+    .flat(Infinity)
+    .filter(value => typeof value === 'string' && value.trim())
+    .join(' ')
 
 const stripOn = str => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase())
 const useCaptureEvts = new Set(['focus', 'blur'])
@@ -228,13 +240,19 @@ class DOM {
           wrap.children.push(_this.create(option, isPreview))
         })
         const groupAttrs = elem.attrs || {}
-        if (groupAttrs.className) {
-          wrap.className = groupAttrs.className
-        }
+        // the group (or button container) gets only its own class; config.inputWrap (f-field f-label-*) stays in
+        // wrap.config for the label wrapper, which is only built when the label renders
+        wrap.className = groupAttrs.className || []
         wrap.id = elem.id
         wrap.attrs = groupWrapperAttrs(groupAttrs)
         // config.required only drives the label's required mark; `required` itself lives on the option inputs
         wrap.config = { ...elem.config, required: Boolean(groupAttrs.required) }
+        const groupLabelId = this.groupLabelId(elem, isPreview)
+        if (groupLabelId) {
+          // the user's own role or aria-labelledby wins
+          wrap.attrs = { role: 'group', 'aria-labelledby': groupLabelId, ...wrap.attrs }
+          wrap.config.labelId = groupLabelId
+        }
         // which of the group's inputs are required or enabled depends on what is checked, so re-sync on change
         const groupSyncs = []
         if (!isPreview && groupAttrs.type === 'checkbox' && groupAttrs.required) {
@@ -278,9 +296,6 @@ class DOM {
           if (_this.labelAfter(elem)) {
             wrapContent.reverse()
           }
-          // if has label config, must be a field.
-          // @todo change this logic so dom.create is project agnostic
-          // wrap.className.push('formeo-field')
           wrap.children.push(wrapContent)
         }
       }
@@ -602,10 +617,6 @@ class DOM {
           className: [`f-${fieldType}`],
         }
 
-        if (attrs.className) {
-          elem.config = { ...elem.config, inputWrap: attrs.className }
-        }
-
         if (elem.config?.inline) {
           inputWrap.className.push(`f-${fieldType}-inline`)
         }
@@ -651,6 +662,11 @@ class DOM {
       }
 
       return optionMarkup[fieldType]?.(option)
+    }
+
+    // a checkbox or radio group's class also lands on its label wrapper, after the wrapper's own classes (f-field)
+    if (attrs.className && ['checkbox', 'radio'].includes(fieldType)) {
+      elem.config = { ...elem.config, inputWrap: joinClassNames(elem.config?.inputWrap, attrs.className) }
     }
 
     const mappedOptions = options.map(optionMap)
@@ -763,15 +779,12 @@ class DOM {
   }
 
   /**
-   * Test if label should be display before or after an element
-   * @param  {Object} elem config
-   * @return {Boolean} labelAfter
+   * Whether a field's label comes after its control: bottom and after (#243). See label-position.mjs
+   * @param  {Object} elem field config
+   * @return {Boolean}
    */
   labelAfter(elem) {
-    const type = h.get(elem, 'attrs.type')
-    const labelAfter = h.get(elem, 'config.labelAfter')
-    const isCB = type === 'checkbox' || type === 'radio'
-    return labelAfter === undefined ? isCB : labelAfter
+    return isLabelAfter(resolveLabelPosition(elem))
   }
 
   /**
@@ -823,6 +836,19 @@ class DOM {
   })
 
   /**
+   * The id of a rendered checkbox or radio group's label, or null when no group label renders. A <label for> can't
+   * name a <div>, so the group gets role="group" and aria-labelledby this id instead (#243).
+   * @param  {Object}  elem      group config
+   * @param  {Boolean} isPreview editor preview
+   * @return {String|null}
+   */
+  groupLabelId(elem, isPreview) {
+    const { id, attrs = {}, config = {} } = elem
+    const isOptionGroup = attrs.type === 'checkbox' || attrs.type === 'radio'
+    return !isPreview && isOptionGroup && id && config.label && !config.hideLabel ? `${id}-label` : null
+  }
+
+  /**
    * Generate a label
    * @param  {Object} elem config object
    * @param  {String} fMap map to label's value in formData
@@ -835,14 +861,14 @@ class DOM {
       config: { label: labelText = '', helpText = '', tooltip = null },
     } = elem
     const { id: elemId, attrs } = elem
+    const { labelId } = elem.config
     if (typeof labelText === 'function') {
       labelText = labelText()
     }
     const fieldLabel = {
       tag: 'label',
-      attrs: {
-        for: elemId || attrs?.id,
-      },
+      // a group's label names it through aria-labelledby; a control's label points at it with for
+      attrs: labelId ? { id: labelId } : { for: elemId || attrs?.id },
       className: [],
       children: [
         labelText,

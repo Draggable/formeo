@@ -260,6 +260,43 @@ describe('Config panel declarations', () => {
     assert.deepEqual(panelKeys(field), ['config.label', 'config.hint'])
   })
 
+  const densityConfig = {
+    fields: {
+      all: {
+        panels: {
+          config: {
+            options: {
+              density: { default: 'cosy', options: [{ value: 'cosy' }, { value: 'compact' }] },
+            },
+          },
+        },
+      },
+    },
+  }
+
+  it('renders a key declared with options as a select with its value selected', () => {
+    const field = textField(editorWith(densityConfig), { density: 'compact' })
+    const select = field.editPanels.get('config').props.querySelector('select.config-density')
+    assert.ok(select, 'a select, not a text input')
+    assert.deepEqual(
+      [...select.options].map(option => [option.value, option.textContent]),
+      [
+        ['cosy', 'Cosy'],
+        ['compact', 'Compact'],
+      ]
+    )
+    assert.equal(select.value, 'compact')
+  })
+
+  it('writes the chosen option to the field', () => {
+    const field = textField(editorWith(densityConfig), { density: 'cosy' })
+    mock.method(field, 'debouncedUpdatePreview', () => {})
+    const select = field.editPanels.get('config').props.querySelector('select.config-density')
+    select.value = 'compact'
+    select.dispatchEvent(new window.Event('change', { bubbles: true }))
+    assert.equal(field.get('config.density'), 'compact')
+  })
+
   it('a stage has no Config panel without pages', () => {
     const stage = editorWith().stages.get('s-1')
     assert.equal(stage.editPanels.has('config'), false)
@@ -289,7 +326,7 @@ describe('Config panel "Add config"', () => {
   it('offers the declared keys not set yet, with their labels', () => {
     const panel = textField(editorWith()).editPanels.get('config')
     const addable = panel.addableConfigOptions()
-    assert.deepEqual([...addable.keys()], ['hideLabel', 'helpText', 'labelAfter', 'disableHtmlLabel', 'tooltip'])
+    assert.deepEqual([...addable.keys()], ['hideLabel', 'helpText', 'labelPosition', 'disableHtmlLabel', 'tooltip'])
     assert.equal(addable.get('tooltip').label, labelHelper('config.tooltip'))
   })
 
@@ -301,12 +338,35 @@ describe('Config panel "Add config"', () => {
   it('adds a key with its declared default, once', () => {
     const field = textField(editorWith())
     const panel = field.editPanels.get('config')
-    panel.addConfigItem('labelAfter')
-    panel.addConfigItem('labelAfter')
-    assert.equal(field.get('config.labelAfter'), false)
-    const items = panel.editPanelItems.filter(({ itemKey }) => itemKey === 'config.labelAfter')
+    panel.addConfigItem('labelPosition')
+    panel.addConfigItem('labelPosition')
+    assert.equal(field.get('config.labelPosition'), 'top')
+    const items = panel.editPanelItems.filter(({ itemKey }) => itemKey === 'config.labelPosition')
     assert.equal(items.length, 1)
     assert.ok(panel.props.contains(items[0].dom))
+  })
+
+  it("adds Label Position at the field's current position, so the label doesn't move", () => {
+    const editorComponents = editorWith()
+    const checkbox = new Field(
+      {
+        id: 'f-lone',
+        tag: 'input',
+        attrs: { type: 'checkbox' },
+        config: { label: 'Agree', controlId: 'checkbox' },
+      },
+      editorComponents
+    )
+    const text = textField(editorComponents)
+    for (const [field, expected] of [
+      [checkbox, 'after'],
+      [text, 'top'],
+    ]) {
+      const panel = field.editPanels.get('config')
+      panel.addConfigItem('labelPosition')
+      assert.equal(field.get('config.labelPosition'), expected)
+      assert.equal(panel.props.querySelector('select.config-labelPosition').value, expected)
+    }
   })
 
   it('ignores a key that is not declared', () => {
@@ -324,11 +384,20 @@ describe('Config panel "Add config"', () => {
     assert.deepEqual(panelKeys(stage), ['config.note'])
   })
 
+  it('adds a labelPosition key declared on a non-field component at its declared default', () => {
+    const options = [{ value: 'top' }, { value: 'side' }]
+    const stage = editorWith({
+      stages: { all: { panels: { config: { options: { labelPosition: { default: 'side', options } } } } } },
+    }).stages.get('s-1')
+    stage.editPanels.get('config').addConfigItem('labelPosition')
+    assert.equal(stage.get('config.labelPosition'), 'side')
+  })
+
   it('hides the Add button while nothing is left to add, and shows it again after a remove', () => {
     const field = textField(editorWith(), {
       hideLabel: false,
       helpText: '',
-      labelAfter: false,
+      labelPosition: 'top',
       disableHtmlLabel: false,
       tooltip: '',
     })

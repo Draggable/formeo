@@ -43,6 +43,9 @@ $_structural: (
   --formeo-remove-bg: #{c.$remove-bg};
   --formeo-column-outline-soft: #{sass-color.adjust(c.$column-outline-color, $lightness: 15%)};
 
+  // layout: the label's width when it sits beside its control (labelPosition before / after)
+  --formeo-label-width: 10rem;
+
   @each $name, $values in $_structural {
     --formeo-#{$name}-outline: #{list.nth($values, 1)};
     --formeo-#{$name}-outline-text: #{list.nth($values, 2)};

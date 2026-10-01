@@ -30,6 +30,9 @@ export type AssignmentOperator = '=' | 'equals'
 export type ConditionSourceProperty = 'value' | 'isChecked' | 'isNotChecked' | 'isVisible' | 'isNotVisible' | 'checked'
 export type ConditionTargetProperty = 'value' | 'isChecked' | 'isNotChecked' | 'isVisible' | 'isNotVisible'
 
+/** Where a field's label sits: `top`/`bottom` stack, `before`/`after` sit beside the control (mirrored in RTL). */
+export type LabelPosition = 'top' | 'bottom' | 'before' | 'after'
+
 /** Empty strings are what an unfinished condition row in the editor saves. */
 type Blank = ''
 
@@ -122,6 +125,12 @@ export interface FieldConfigData {
   label?: string
   editorLabel?: string
   hideLabel?: boolean
+  /** Where the label sits relative to the control. Defaults to `after` for a lone checkbox or radio, `top` otherwise. */
+  labelPosition?: LabelPosition
+  /**
+   * @deprecated Use `labelPosition`. Still read by the renderer (`true` is `bottom`, or `after` for a lone checkbox or
+   * radio); the editor converts it to `labelPosition` on load.
+   */
   labelAfter?: boolean
   disableHtmlLabel?: boolean
   editableContent?: boolean
@@ -351,8 +360,16 @@ export interface ComponentEvents {
 export interface ConfigOptionDeclaration {
   /** Shown in the panel and its "Add config" dialog. Defaults to the `config.<key>` translation, then the key in title case. */
   label?: string
-  /** The value a key added from the dialog starts with. Its type picks the input: a checkbox for boolean, text otherwise. */
+  /**
+   * The value a key added from the dialog starts with (`labelPosition` starts at the field's current position instead).
+   * Its type picks the input: a checkbox for boolean, text otherwise. With `options`, the input is a dropdown.
+   */
   default: boolean | string | number
+  /**
+   * Makes the item a dropdown of these choices. Each `value` is a string, and `default` must be one of them. A missing
+   * `label` is the `<key>.<value>` translation, then the value in title case.
+   */
+  options?: Array<{ value: string; label?: string }>
 }
 
 export interface ComponentConfig {

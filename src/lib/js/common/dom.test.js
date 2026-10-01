@@ -115,6 +115,22 @@ describe('DOM Class', async _t => {
     assert.equal(dom.labelAfter(explicitLabelAfter), true)
   })
 
+  await test('create puts the label where config.labelPosition says (#243)', () => {
+    const order = labelPosition => {
+      const wrap = dom.create({
+        tag: 'input',
+        id: 'lp',
+        attrs: { type: 'text' },
+        config: { label: 'Name', labelPosition },
+      })
+      return [...wrap.children].map(child => child.tagName.toLowerCase())
+    }
+    assert.deepEqual(order('top'), ['label', 'input'])
+    assert.deepEqual(order('before'), ['label', 'input'])
+    assert.deepEqual(order('bottom'), ['input', 'label'])
+    assert.deepEqual(order('after'), ['input', 'label'])
+  })
+
   await test('isDOMElement', () => {
     const elem = document.createElement('div')
     assert.equal(dom.isDOMElement(elem), true)

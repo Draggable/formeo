@@ -428,6 +428,35 @@ button[class*=-clone]:hover .svg-icon {
 .formeo .f-field-group button {
   margin-right: 4px;
 }
+.formeo .f-field.f-label-before, .formeo .f-field.f-label-after {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+.formeo .f-field.f-label-before > label,
+.formeo .f-field.f-label-before > .prev-label, .formeo .f-field.f-label-after > label,
+.formeo .f-field.f-label-after > .prev-label {
+  flex: 1 1 10rem;
+}
+.formeo .f-field.f-label-before > :not(label, .prev-label), .formeo .f-field.f-label-after > :not(label, .prev-label) {
+  flex: 999 1 0;
+  min-inline-size: 50%;
+}
+.formeo .f-field.f-label-before > input:is([type=checkbox], [type=radio]),
+.formeo .f-field.f-label-before > .field-preview:has(> input:is([type=checkbox], [type=radio])), .formeo .f-field.f-label-after > input:is([type=checkbox], [type=radio]),
+.formeo .f-field.f-label-after > .field-preview:has(> input:is([type=checkbox], [type=radio])) {
+  flex: 0 0 auto;
+  min-inline-size: auto;
+}
+.formeo .f-field.f-label-top > label,
+.formeo .f-field.f-label-top > .prev-label, .formeo .f-field.f-label-bottom > label,
+.formeo .f-field.f-label-bottom > .prev-label {
+  display: block;
+}
+.formeo .f-field[hidden] {
+  display: none;
+}
 .formeo select {
   font-size: 100%;
   font-family: inherit;
@@ -812,8 +841,7 @@ button[class*=-clone]:hover .svg-icon {
   display: none;
 }
 .formeo.formeo-editor .hovering > .children,
-.formeo.formeo-editor .hovering > .field-preview,
-.formeo.formeo-editor .hovering > .prev-label {
+.formeo.formeo-editor .hovering > .f-field {
   opacity: 0.65;
 }
 .formeo.formeo-editor .hovering .group-actions .f-i-handle {

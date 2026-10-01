@@ -34,6 +34,7 @@ const EXPECTED = [
   'info',
   'remove-bg',
   'column-outline-soft',
+  'label-width',
   ...['stage', 'row', 'column', 'field', 'option'].flatMap(s => [
     `${s}-outline`,
     `${s}-outline-text`,
@@ -138,6 +139,19 @@ suite('formeo CSS custom properties', () => {
     for (const fragment of ['formeo-dark', ':where(.svg-icon)', ':where(.editing-field)']) {
       t.assert.ok(!css.includes(fragment), `${fragment} must be stripped before baseline comparison`)
     }
+  })
+
+  test('side-by-side label positions wrap instead of reordering, and use --formeo-label-width (#243)', t => {
+    const compiled = compileFormeoCss()
+    const sideBySide = compiledRule('.formeo .f-field.f-label-before,')
+    t.assert.match(sideBySide, /display: flex;/)
+    t.assert.match(sideBySide, /flex-wrap: wrap;/)
+    t.assert.match(compiled, /flex: 1 1 var\(--formeo-label-width\);/)
+    t.assert.doesNotMatch(compiled, /\.f-field[^{]*\{[^}]*(?:\border:|flex-direction: \w+-reverse)/)
+  })
+
+  test('a hidden label wrapper stays hidden in every position, so conditions can hide it (#243)', t => {
+    t.assert.strictEqual(compiledRule('.formeo .f-field[hidden] {'), '.formeo .f-field[hidden] {\n  display: none;\n}')
   })
 })
 

@@ -125,7 +125,7 @@ describe('checkbox and radio groups', () => {
         inputsOf('radio-1').map(input => input.required),
         [true, true]
       )
-      assert.ok(container.querySelector('label[for="f-radio-1"] .text-error'), 'group label has the * mark')
+      assert.ok(container.querySelector('#f-radio-1-label .text-error'), 'group label has the * mark')
     })
 
     test('a required radio group blocks submission until an option is chosen', () => {

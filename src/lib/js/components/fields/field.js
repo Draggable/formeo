@@ -1,6 +1,13 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { indexOfNode } from '../../common/helpers.mjs'
+import {
+  FIELD_WRAP_CLASSNAME,
+  isLabelAfter,
+  labelWrapClassNames,
+  normalizeLabelConfig,
+  resolveLabelPosition,
+} from '../../common/label-position.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
@@ -21,6 +28,7 @@ export default class Field extends Component {
   constructor(fieldData = Object.create(null), components) {
     super('field', fieldData, components)
 
+    this.normalizeLabelConfig()
     this.controlId = this.get('config.controlId') || this.get('meta.id')
     this.applyControlAttrConfig()
 
@@ -30,6 +38,9 @@ export default class Field extends Component {
     this.label = dom.create(this.labelConfig)
 
     this.preview = this.fieldPreview()
+
+    this.labelWrap = dom.create({ className: FIELD_WRAP_CLASSNAME })
+    this.syncLabelWrap()
 
     const actionButtons = this.getActionButtons()
     const hasEditButton = this.actionButtons.some(child => child.meta?.id === 'edit')
@@ -43,11 +54,10 @@ export default class Field extends Component {
       },
       id: this.id,
       children: [
-        this.label,
         this.getComponentTag(),
         actionButtons,
+        this.labelWrap, // label and preview, in label-position order (#243)
         hasEditButton && this.editWindow, // fieldEdit window,
-        this.preview,
       ].filter(Boolean),
       panelNav: this.panelNav,
       dataset: {
@@ -71,6 +81,18 @@ export default class Field extends Component {
     const attrConfig = controlAttrPanelConfig(controlConfig, this.get('config'))
     if (attrConfig) {
       this.config = { [this.id]: attrConfig }
+    }
+  }
+
+  /**
+   * Converts legacy config.labelAfter, and an unknown config.labelPosition, to the labelPosition it resolves to (#243).
+   * Replaces the config object instead of calling set(), so loading a form fires no update events and the data it was
+   * given (a saved form, a control definition) is never mutated.
+   */
+  normalizeLabelConfig() {
+    const config = normalizeLabelConfig(this.data)
+    if (config !== this.data.config) {
+      this.data.config = config
     }
   }
 
@@ -140,35 +162,32 @@ export default class Field extends Component {
   }
 
   /**
-   * Update the label dom when label data changes
+   * Puts the label and preview into the field wrapper in label-position order, with the matching classes (#243)
+   */
+  syncLabelWrap() {
+    const position = resolveLabelPosition(this.data)
+    const children = [this.label, this.preview].filter(Boolean)
+    if (isLabelAfter(position)) {
+      children.reverse()
+    }
+    this.labelWrap.className = labelWrapClassNames(position).join(' ')
+    this.labelWrap.replaceChildren(...children)
+  }
+
+  /**
+   * Rebuilds the label from the field's data
    */
   updateLabel() {
-    const newLabel = dom.create(this.labelConfig)
-
-    if (this.label || !newLabel) {
-      this.label.remove()
-    }
-
-    if (newLabel) {
-      if (this.data.config?.labelAfter) {
-        this.dom.append(newLabel)
-      } else {
-        this.dom.prepend(newLabel)
-      }
-    }
-
-    this.label = newLabel
+    this.label = dom.create(this.labelConfig)
+    this.syncLabelWrap()
   }
 
   /**
    * Updates a field's preview
-   * @return {Object} fresh preview
    */
   updatePreview = () => {
+    this.preview = this.fieldPreview()
     this.updateLabel()
-    const newPreview = this.fieldPreview()
-    this.preview.replaceWith(newPreview)
-    this.preview = newPreview
   }
 
   get defaultPreviewActions() {
