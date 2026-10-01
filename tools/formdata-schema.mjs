@@ -112,6 +112,14 @@ export const formDataSchema = z
               .object({
                 label: z.string().optional(),
                 hideLabel: z.boolean().optional(),
+                labelPosition: z
+                  .enum(['top', 'bottom', 'before', 'after'])
+                  .optional()
+                  .describe('Where the label sits: top/bottom stack, before/after sit beside the control'),
+                labelAfter: z
+                  .boolean()
+                  .optional()
+                  .describe('Legacy: replaced by labelPosition, which wins when both are set'),
                 editableContent: z.boolean().optional(),
                 controlId: z.string().optional(),
                 disabledAttrs: z.array(z.string()).optional(),

@@ -23,6 +23,9 @@ export type ComponentType = 'stage' | 'row' | 'column' | 'field'
  * the symbols; the renderer also accepts the words. `&&` binds tighter than `||`.
  */
 export type LogicalOperator = '&&' | '||' | 'and' | 'or'
+
+/** Where a field's label sits: `top`/`bottom` stack, `before`/`after` sit beside the control (mirrored in RTL). */
+export type LabelPosition = 'top' | 'bottom' | 'before' | 'after'
 /** Symbols are what the editor stores; the renderer also accepts the names. */
 export type ComparisonOperator = '==' | '!=' | '⊃' | '!⊃' | 'equals' | 'notEquals' | 'contains' | 'notContains'
 export type AssignmentOperator = '=' | 'equals'
@@ -122,6 +125,12 @@ export interface FieldConfigData {
   label?: string
   editorLabel?: string
   hideLabel?: boolean
+  /** Where the label sits relative to the control. Defaults to `after` for a lone checkbox or radio, `top` otherwise. */
+  labelPosition?: LabelPosition
+  /**
+   * @deprecated Use `labelPosition`. Still read by the renderer (`true` is `bottom`, or `after` for a lone checkbox or
+   * radio); the editor converts it to `labelPosition` on load.
+   */
   labelAfter?: boolean
   disableHtmlLabel?: boolean
   editableContent?: boolean
@@ -353,6 +362,11 @@ export interface ConfigOptionDeclaration {
   label?: string
   /** The value a key added from the dialog starts with. Its type picks the input: a checkbox for boolean, text otherwise. */
   default: boolean | string | number
+  /**
+   * Makes the item a dropdown of these choices. Each `value` is a string, and `default` must be one of them. A missing
+   * `label` is the `<key>.<value>` translation, then the value in title case.
+   */
+  options?: Array<{ value: string; label?: string }>
 }
 
 export interface ComponentConfig {

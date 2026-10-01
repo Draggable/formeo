@@ -17,6 +17,7 @@ import {
   type FormeoOptions,
   FormeoRenderer,
   type FormeoRendererOptions,
+  type LabelPosition,
   type LogicalOperator,
   type RemoveItemsActionEvent,
   type UserData,
@@ -452,3 +453,16 @@ export {
   values,
   withLayoutAttrs,
 }
+
+// #243: label position
+const besideLabel: FieldData = { id: 'x', tag: 'input', config: { label: 'Name', labelPosition: 'before' } }
+const everyPosition: LabelPosition[] = ['top', 'bottom', 'before', 'after']
+// @ts-expect-error labelPosition is 'top', 'bottom', 'before' or 'after'; 'before' puts the label on the left
+const leftLabel: FieldData = { id: 'x', tag: 'input', config: { labelPosition: 'left' } }
+const legacyLabel: FieldData = { id: 'x', tag: 'input', config: { labelAfter: true } }
+const positionDeclaration: ConfigOptionDeclaration = {
+  default: 'top',
+  options: [{ value: 'top' }, { value: 'before', label: 'Left' }],
+}
+// @ts-expect-error an option's value is a string
+const numericChoice: ConfigOptionDeclaration = { default: 1, options: [{ value: 1 }] }
