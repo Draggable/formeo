@@ -349,8 +349,9 @@ export default class EditPanel {
   }
 
   /**
-   * Adds a declared config key, set to its declared default, when it can still be added. labelPosition starts at
-   * the position the label already renders in (after, for a lone checkbox or radio), so adding it doesn't move it.
+   * Adds a declared config key, set to its declared default, when it can still be added. A field's labelPosition
+   * starts at the position its label already renders in (after, for a lone checkbox or radio), so adding it doesn't
+   * move it. Other components have no field label, so their labelPosition keeps its declared default.
    * @param {String} configKey
    */
   addConfigItem = configKey => {
@@ -358,9 +359,10 @@ export default class EditPanel {
     if (!declaration) {
       return
     }
+    const isFieldLabelPosition = configKey === 'labelPosition' && this.component.name === 'field'
     const newConfig = new EditPanelItem({
       key: `config.${configKey}`,
-      data: configKey === 'labelPosition' ? resolveLabelPosition(this.component.data) : declaration.default,
+      data: isFieldLabelPosition ? resolveLabelPosition(this.component.data) : declaration.default,
       field: this.component,
       panel: this,
     })

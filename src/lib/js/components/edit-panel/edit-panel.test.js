@@ -384,6 +384,15 @@ describe('Config panel "Add config"', () => {
     assert.deepEqual(panelKeys(stage), ['config.note'])
   })
 
+  it('adds a labelPosition key declared on a non-field component at its declared default', () => {
+    const options = [{ value: 'top' }, { value: 'side' }]
+    const stage = editorWith({
+      stages: { all: { panels: { config: { options: { labelPosition: { default: 'side', options } } } } } },
+    }).stages.get('s-1')
+    stage.editPanels.get('config').addConfigItem('labelPosition')
+    assert.equal(stage.get('config.labelPosition'), 'side')
+  })
+
   it('hides the Add button while nothing is left to add, and shows it again after a remove', () => {
     const field = textField(editorWith(), {
       hideLabel: false,
