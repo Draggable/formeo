@@ -23,15 +23,15 @@ export type ComponentType = 'stage' | 'row' | 'column' | 'field'
  * the symbols; the renderer also accepts the words. `&&` binds tighter than `||`.
  */
 export type LogicalOperator = '&&' | '||' | 'and' | 'or'
-
-/** Where a field's label sits: `top`/`bottom` stack, `before`/`after` sit beside the control (mirrored in RTL). */
-export type LabelPosition = 'top' | 'bottom' | 'before' | 'after'
 /** Symbols are what the editor stores; the renderer also accepts the names. */
 export type ComparisonOperator = '==' | '!=' | '⊃' | '!⊃' | 'equals' | 'notEquals' | 'contains' | 'notContains'
 export type AssignmentOperator = '=' | 'equals'
 /** `checked` is what pre-v5 editors saved; the renderer reads it like `value`. */
 export type ConditionSourceProperty = 'value' | 'isChecked' | 'isNotChecked' | 'isVisible' | 'isNotVisible' | 'checked'
 export type ConditionTargetProperty = 'value' | 'isChecked' | 'isNotChecked' | 'isVisible' | 'isNotVisible'
+
+/** Where a field's label sits: `top`/`bottom` stack, `before`/`after` sit beside the control (mirrored in RTL). */
+export type LabelPosition = 'top' | 'bottom' | 'before' | 'after'
 
 /** Empty strings are what an unfinished condition row in the editor saves. */
 type Blank = ''
