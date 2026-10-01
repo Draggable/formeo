@@ -94,6 +94,10 @@ export interface StageData extends ComponentDataBase {
 
 /** A row's data without its id and children, e.g. a control set's `row`. */
 export interface RowProps extends ComponentProps {
+  /**
+   * Formeo's own class list (`formeo-row`). Put your classes in `attrs.className` (or `attrs.class`); the renderer
+   * merges them. `attrs.id` and `attrs.tag` are reserved and ignored by the renderer.
+   */
   className?: string | string[]
   config?: { fieldset?: boolean; legend?: string; inputGroup?: boolean; [key: string]: unknown }
 }
@@ -105,6 +109,10 @@ export interface RowData extends RowProps {
 
 export interface ColumnData extends ComponentDataBase {
   children: ComponentId[]
+  /**
+   * Formeo's own class list (`formeo-column`). Put your classes in `attrs.className` (or `attrs.class`). A column's
+   * `attrs.style` is kept, with `config.width` applied after it. `attrs.id` and `attrs.tag` are reserved.
+   */
   className?: string | string[]
   config?: { width?: string; [key: string]: unknown }
 }
@@ -357,12 +365,24 @@ export interface ComponentConfig {
       /** Attribute names that can't be removed or changed. Combined with control `lockedAttrs`. */
       locked?: string[]
       hideDisabled?: boolean
+      /** `false` hides the "+ Attribute" button. Attributes already set stay editable unless locked. */
+      add?: boolean
+    }
+    options?: {
+      /** `false` hides the "+ Option" button. */
+      add?: boolean
+    }
+    conditions?: {
+      /** `false` hides the "+ Condition" button. "Clear All" stays. */
+      add?: boolean
     }
     config?: {
       /** `config` keys the Configuration panel and its "Add config" dialog offer, merged per `all`, control id, then id. */
       options?: Record<string, ConfigOptionDeclaration>
       /** `config` keys hidden from the panel and the dialog, at whichever level they were declared. */
       disabled?: string[]
+      /** `false` hides the "+ Configuration" button. */
+      add?: boolean
     }
     [panel: string]: unknown
   }

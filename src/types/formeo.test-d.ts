@@ -333,8 +333,47 @@ const unnarrowedAddChild = (evt: ComponentEventData | { parent: FormeoComponent;
 // @ts-expect-error `other` switches the Other choice on or off; it is a boolean
 const badOther: FieldData = { id: 'x', tag: 'input', config: { other: 'yes' } }
 
+// #112 / #117: row and column attributes, and hiding a panel's add button
+const lockedDown: FormeoEditorOptions = {
+  config: {
+    fields: {
+      all: { panels: { attrs: { add: false }, options: { add: false }, config: { add: false } } },
+      a1b2c3d4: { panels: { attrs: { add: true } } },
+    },
+    rows: {
+      all: {
+        panels: { order: ['settings', 'attrs'], disabled: ['settings'], attrs: { add: false, disabled: ['onclick'] } },
+      },
+    },
+    columns: { all: { actionButtons: { disabled: ['edit'] }, panels: { attrs: { add: false } } } },
+    stages: { all: { panels: { conditions: { add: false } } } },
+  },
+}
+
+const withLayoutAttrs: FormeoFormData = {
+  ...formData,
+  rows: { c5060f33: { ...formData.rows.c5060f33, attrs: { 'data-section': 'contact', className: 'my-row' } } },
+  columns: { '2474fbd2': { ...formData.columns['2474fbd2'], attrs: { 'aria-label': 'Left', style: 'padding: 4px' } } },
+}
+
+const badAdd: FormeoEditorOptions = {
+  config: {
+    fields: {
+      all: {
+        panels: {
+          attrs: {
+            // @ts-expect-error add is a boolean
+            add: 'no',
+          },
+        },
+      },
+    },
+  },
+}
+
 export {
   and,
+  badAdd,
   badConfigOption,
   badFormActions,
   badHook,
@@ -352,6 +391,7 @@ export {
   html,
   jquery,
   json,
+  lockedDown,
   newPage,
   otherChoiceForm,
   queried,
@@ -362,4 +402,5 @@ export {
   unnarrowedAddChild,
   unnarrowedRender,
   values,
+  withLayoutAttrs,
 }
