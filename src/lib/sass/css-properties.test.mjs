@@ -140,6 +140,15 @@ suite('formeo CSS custom properties', () => {
       t.assert.ok(!css.includes(fragment), `${fragment} must be stripped before baseline comparison`)
     }
   })
+
+  test('side-by-side label positions wrap instead of reordering, and use --formeo-label-width (#243)', t => {
+    const compiled = compileFormeoCss()
+    const sideBySide = compiledRule('.formeo .f-field.f-label-before,')
+    t.assert.match(sideBySide, /display: flex;/)
+    t.assert.match(sideBySide, /flex-wrap: wrap;/)
+    t.assert.match(compiled, /flex: 1 1 var\(--formeo-label-width\);/)
+    t.assert.doesNotMatch(compiled, /\.f-field[^{]*\{[^}]*(?:\border:|flex-direction: \w+-reverse)/)
+  })
 })
 
 suite('resolveFormeoProperties purity', () => {
@@ -180,15 +189,6 @@ suite('resolveFormeoProperties purity', () => {
       () => resolveFormeoProperties(root + impure),
       /:where\(\.formeo-dark\) may only declare .*found: background: black/
     )
-  })
-
-  test('side-by-side label positions wrap instead of reordering, and use --formeo-label-width (#243)', t => {
-    const compiled = compileFormeoCss()
-    const sideBySide = compiledRule('.formeo .f-field.f-label-before,')
-    t.assert.match(sideBySide, /display: flex;/)
-    t.assert.match(sideBySide, /flex-wrap: wrap;/)
-    t.assert.match(compiled, /flex: 1 1 var\(--formeo-label-width\);/)
-    t.assert.doesNotMatch(compiled, /\.f-field[^{]*\{[^}]*(?:\border:|flex-direction: \w+-reverse)/)
   })
 })
 
