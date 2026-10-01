@@ -91,10 +91,10 @@ form at submit time, so nothing else needs computing here.
 
 ## Option B: store it in the form
 
-If your backend expects a single flat payload (for example, a plain HTML form POST with no JavaScript handling),
-add a [Hidden field](../controls/README.md) for each allowlisted key you want to capture, and give each one a
-`name` matching the allowlist exactly (the Hidden control has no default `name` — set `attrs.name` on the field,
-either in the editor's Attributes panel or directly in the field's `formData`):
+If your backend reads a single flat form POST, add a [Hidden field](../controls/README.md) for each allowlisted key
+you want to capture, and give each one a `name` matching the allowlist exactly (the Hidden control has no default
+`name` — set `attrs.name` on the field, either in the editor's Attributes panel or directly in the field's
+`formData`):
 
 ```javascript
 fields: {
@@ -108,30 +108,34 @@ fields: {
 }
 ```
 
-After `render()`, check which of those fields the rendered form actually has, and only fill in the ones present.
-This keeps attribution scoped to fields the form author deliberately added. It's also independent of how
-`renderer.userData`'s setter treats a key with no matching field: the setter currently skips it and logs one
-console warning, but don't rely on that warning, and don't rely on it throwing, since it never throws:
+Fill them in `events.onSubmit`, not right after `render()`. Most consent banners are accepted after the page loads,
+so a check at render time would see no consent and leave the fields empty. The submit handler runs before the browser
+builds the POST body, so values set there go out with the native submit.
+
+Only fill fields the rendered form actually has. This keeps attribution scoped to fields the form author deliberately
+added. It's also independent of how `renderer.userData`'s setter treats a key with no matching field: the setter
+currently skips it and logs one console warning, but don't rely on that warning, and don't rely on it throwing, since
+it never throws:
 
 ```javascript
-const container = document.getElementById('formeo-renderer')
-const renderer = new FormeoRenderer({ renderContainer: container, formData })
+const renderer = new FormeoRenderer({
+  renderContainer: '#formeo-renderer',
+  formData,
+  events: {
+    onSubmit: ({ form }) => {
+      if (!hasAttributionConsent()) return
+      const present = key => Boolean(form.elements[key])
+      const attribution = readAttribution()
+      renderer.userData = Object.fromEntries(Object.entries(attribution).filter(([key]) => present(key)))
+    },
+  },
+})
 renderer.render()
-
-// same <form> element as renderer.renderedForm
-const form = container.querySelector('.formeo-render')
-const present = key => Boolean(form?.elements[key])
-
-const attribution = hasAttributionConsent() ? readAttribution() : {}
-const filtered = Object.fromEntries(Object.entries(attribution).filter(([key]) => present(key)))
-
-renderer.userData = filtered
 ```
 
-Filtering with `present()` before assigning means every key in `filtered` is guaranteed to match a field, so the
-assignment fills exactly those hidden fields and nothing else. When the form submits (a native POST, or your own
-`fetch(form.action, { body: new FormData(form) })` in `onSubmit`), the filled hidden fields go out with the rest of
-the fields.
+Filtering with `present()` before assigning means every key is guaranteed to match a field, so the assignment fills
+exactly those hidden fields and nothing else. The filled hidden fields then go out with the rest of the form, whether
+it's a native POST or your own `fetch(form.action, { method: 'POST', body: new FormData(form) })` in the same handler.
 
 ## Retention and deletion
 
