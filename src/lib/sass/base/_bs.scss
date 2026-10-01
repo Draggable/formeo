@@ -36,6 +36,45 @@ hr {
   }
 }
 
+// label position (#243). .f-field wraps a rendered field's label and control, and the editor's label and preview.
+// DOM order is the visual order, so nothing here reorders.
+.f-field {
+  &.f-label-before,
+  &.f-label-after {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var.$half-space mixins.space(1);
+
+    // the label keeps --formeo-label-width and the control takes the rest, until the control would drop below half
+    // the row: then both wrap to full width, so a narrow column or viewport stacks them
+    > label,
+    > .prev-label {
+      flex: 1 1 var(--formeo-label-width);
+    }
+
+    > :not(label, .prev-label) {
+      flex: 999 1 0;
+      min-inline-size: 50%;
+    }
+
+    // a lone checkbox or radio keeps its own size next to its label
+    > input:is([type='checkbox'], [type='radio']),
+    > .field-preview:has(> input:is([type='checkbox'], [type='radio'])) {
+      flex: 0 0 auto;
+      min-inline-size: auto;
+    }
+  }
+
+  &.f-label-top,
+  &.f-label-bottom {
+    > label,
+    > .prev-label {
+      display: block;
+    }
+  }
+}
+
 select {
   @include mixins.input-style;
 
