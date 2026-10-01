@@ -1138,6 +1138,7 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-editor .hovering-column .column-action-btn-wrap {
   display: flex;
+  transform: translateX(12px);
 }
 .formeo.formeo-editor .hovering-column:first-child {
   border-top-left-radius: 0;

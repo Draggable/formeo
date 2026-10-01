@@ -207,6 +207,7 @@ button.column-handle {
 
   .column-action-btn-wrap {
     display: flex;
+    transform: translateX(12px);
   }
 
   &:first-child {
