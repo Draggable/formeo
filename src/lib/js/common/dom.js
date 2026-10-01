@@ -240,9 +240,9 @@ class DOM {
           wrap.children.push(_this.create(option, isPreview))
         })
         const groupAttrs = elem.attrs || {}
-        if (groupAttrs.className) {
-          wrap.className = groupAttrs.className
-        }
+        // the group (or button container) gets only its own class; config.inputWrap (f-field f-label-*) stays in
+        // wrap.config for the label wrapper, which is only built when the label renders
+        wrap.className = groupAttrs.className || []
         wrap.id = elem.id
         wrap.attrs = groupWrapperAttrs(groupAttrs)
         // config.required only drives the label's required mark; `required` itself lives on the option inputs

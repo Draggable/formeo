@@ -214,6 +214,24 @@ test.describe('label position (#243)', () => {
     await expect(checkbox).toBeHidden()
   })
 
+  test('a radio group with a before label is not itself a label-position flex wrapper', async ({ page }) => {
+    const size = {
+      id: 'size',
+      tag: 'input',
+      attrs: { type: 'radio' },
+      config: { label: 'Size', controlId: 'radio', labelPosition: 'before' },
+      options: ['S', 'M', 'L'].map(label => ({ label, value: label.toLowerCase() })),
+    }
+    await mountEditor(page, formWith({ size }))
+    await renderEditorForm(page)
+    const form = page.locator('#e2e-lp-render')
+    const group = form.locator('#f-size')
+    await expect(form.locator('.f-field')).toHaveCount(1)
+    await expect(group).not.toHaveClass(/f-field/)
+    expect(await group.evaluate(el => getComputedStyle(el).display)).toBe('block')
+    expectPlaced('before', await boxesOf(form.locator('#f-size-label'), group))
+  })
+
   test('checkbox and radio groups are named by their label', async ({ page }) => {
     const group = (id, type, label) => ({
       id,

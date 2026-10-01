@@ -173,6 +173,37 @@ describe('label position in the renderer (#243)', () => {
       assert.ok(group.classList.contains('my-group'))
       assert.deepEqual([...group.parentElement.classList], ['f-field', 'f-label-before', 'my-group'])
     })
+
+    test('a group without a className keeps f-field off the group element', () => {
+      render({ colour: groupField('colour', 'checkbox', { labelPosition: 'before' }) })
+      const group = container.querySelector('#f-colour')
+      assert.equal(group.classList.contains('f-field'), false)
+      assert.equal(group.className.includes('f-label-'), false)
+      assert.deepEqual([...group.parentElement.classList], ['f-field', 'f-label-before'])
+      assert.equal(container.querySelector('#f-column-colour').querySelectorAll('.f-field').length, 1)
+    })
+
+    test('a group with a hidden label has no f-field at all', () => {
+      render({ colour: groupField('colour', 'radio', { hideLabel: true, labelPosition: 'before' }) })
+      assert.equal(container.querySelector('#f-column-colour').querySelectorAll('.f-field').length, 0)
+    })
+
+    const buttonField = (id, attrs) => ({
+      id,
+      tag: 'button',
+      attrs,
+      config: { label: 'Button', hideLabel: true },
+      options: [{ label: 'Go', type: 'button', className: '' }],
+    })
+
+    test('a button with an empty or missing attrs.className has no f-field', () => {
+      render({ empty: buttonField('empty', { className: '' }), none: buttonField('none', {}) })
+      for (const id of ['empty', 'none']) {
+        const column = container.querySelector(`#f-column-${id}`)
+        assert.ok(column.querySelector('button'), `${id} renders its button`)
+        assert.equal(column.querySelectorAll('.f-field').length, 0, `${id} has no f-field`)
+      }
+    })
   })
 
   describe('groups', () => {
