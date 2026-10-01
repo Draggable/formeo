@@ -103,7 +103,8 @@ export default class Row extends Component {
       id: `${this.id}-fieldset`,
       attrs: {
         type: 'checkbox',
-        checked: this.get('config.fieldset'),
+        // a loaded `config` may leave this unset, and an undefined `checked` renders as checked (#521)
+        checked: Boolean(this.get('config.fieldset')),
         ariaLabel: i18n.get('row.settings.fieldsetWrap.aria'),
       },
       action: {
@@ -121,7 +122,7 @@ export default class Row extends Component {
       id: `${this.id}-inputGroup`,
       attrs: {
         type: 'checkbox',
-        checked: this.get('config.inputGroup'),
+        checked: Boolean(this.get('config.inputGroup')),
         ariaLabel: i18n.get('row.settings.inputGroup.aria'),
       },
       action: {

@@ -202,3 +202,53 @@ describe('Row edit panels (#112)', () => {
     assert.equal(editorComponents.columns.get('c-1').dom.querySelector('.panel-nav'), columnNav)
   })
 })
+
+describe('Row Settings checkboxes (#521)', () => {
+  afterEach(() => {
+    for (const node of mounted.splice(0)) {
+      node.remove()
+    }
+  })
+
+  // the Settings panel renders on the next frame
+  const checkboxes = async row => {
+    await nextFrames()
+    return {
+      fieldset: row.dom.querySelector('#r-1-fieldset'),
+      inputGroup: row.dom.querySelector('#r-1-inputGroup'),
+    }
+  }
+
+  it('an unset fieldset or input group shows unchecked', async () => {
+    const { fieldset, inputGroup } = await checkboxes(rowOf(editorWith({ row: { config: {} } })))
+    assert.equal(fieldset.checked, false)
+    assert.equal(inputGroup.checked, false)
+  })
+
+  it('a config with only fieldset leaves Input group unchecked', async () => {
+    const { fieldset, inputGroup } = await checkboxes(rowOf(editorWith({ row: { config: { fieldset: true } } })))
+    assert.equal(fieldset.checked, true)
+    assert.equal(inputGroup.checked, false)
+  })
+
+  it('a config with only inputGroup leaves Fieldset unchecked', async () => {
+    const { fieldset, inputGroup } = await checkboxes(rowOf(editorWith({ row: { config: { inputGroup: true } } })))
+    assert.equal(fieldset.checked, false)
+    assert.equal(inputGroup.checked, true)
+  })
+
+  it('the first click on an unset checkbox turns the setting on', async () => {
+    const editorComponents = editorWith({ row: { config: {} } })
+    const row = rowOf(editorComponents)
+    const { fieldset, inputGroup } = await checkboxes(row)
+    fieldset.click()
+    inputGroup.click()
+    assert.equal(row.get('config.fieldset'), true)
+    assert.equal(row.get('config.inputGroup'), true)
+  })
+
+  it('loading an unset config saves it unchanged', () => {
+    const editorComponents = editorWith({ row: { config: {} } })
+    assert.deepEqual(editorComponents.formData.rows['r-1'].config, {})
+  })
+})

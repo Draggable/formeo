@@ -1,11 +1,6 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
 
-/**
- * Helper to get the editor instance from the demo page
- */
-const getEditor = () => window.frameworkLoader?.currentDemo?.editor
-
 test.describe('Editor Initialization', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/')

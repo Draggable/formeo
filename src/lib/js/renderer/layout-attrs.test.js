@@ -167,7 +167,6 @@ describe('row and column attributes in the renderer (#112)', () => {
   })
 
   test('an input-group clone keeps the attributes and gets its own ids', () => {
-    // clone lookup goes through baseId(), which only recognises editor-style hex ids
     render({
       id: 'form-la',
       stages: { '0a0a0a0a': { id: '0a0a0a0a', children: ['1b1b1b1b'] } },
