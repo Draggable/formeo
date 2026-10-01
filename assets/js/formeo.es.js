@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.15.0
+Version: 5.15.1
 Author: Draggable https://draggable.io
 */
 
@@ -6468,7 +6468,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.15.0";
+	version$2 = "5.15.1";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -18730,7 +18730,7 @@ var Row = class extends Component {
 			id: `${this.id}-fieldset`,
 			attrs: {
 				type: "checkbox",
-				checked: this.get("config.fieldset"),
+				checked: Boolean(this.get("config.fieldset")),
 				ariaLabel: s.get("row.settings.fieldsetWrap.aria")
 			},
 			action: { click: ({ target: { checked } }) => {
@@ -18743,7 +18743,7 @@ var Row = class extends Component {
 			id: `${this.id}-inputGroup`,
 			attrs: {
 				type: "checkbox",
-				checked: this.get("config.inputGroup"),
+				checked: Boolean(this.get("config.inputGroup")),
 				ariaLabel: s.get("row.settings.inputGroup.aria")
 			},
 			action: { click: ({ target: { checked } }) => this.set("config.inputGroup", checked) },
@@ -21101,7 +21101,7 @@ var FormeoRenderer$1 = class {
 	* @return {Object|undefined}
 	*/
 	componentByName(name) {
-		return this.components[baseId(name)] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`) || this.otherGroupByName(name);
+		return this.components[name] || this.components[this.prefixId(baseId(name))] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`) || this.otherGroupByName(name);
 	}
 	/**
 	* The checkbox or radio group whose Other choice's text box posts under `name` (`{group key}-other`)
@@ -21312,8 +21312,13 @@ var FormeoRenderer$1 = class {
 		if (row) acc.push(this.processRow(row));
 		return acc;
 	}, []);
+	/**
+	* Caches a component under its rendered id (`f-{id}`), so input group clones can find it whatever the id looks like
+	* @param {Object} data processed component data
+	* @return {Object} data
+	*/
 	cacheComponent = (data) => {
-		this.components[baseId(data.id)] = data;
+		this.components[data.id] = data;
 		return data;
 	};
 	/**
@@ -21346,7 +21351,7 @@ var FormeoRenderer$1 = class {
 			},
 			{
 				condition: config.inputGroup,
-				result: () => this.addButton(id)
+				result: () => this.addButton(rowData.id)
 			}
 		].reduce((acc, { condition, result }) => {
 			if (condition) acc.push(result());
@@ -21370,7 +21375,7 @@ var FormeoRenderer$1 = class {
 		return {
 			...rest,
 			id: "f-" + uuid(id),
-			children: children?.length && children.map(({ id }) => this.cloneComponentData(baseId(id))),
+			children: children?.length && children.map(({ id }) => this.cloneComponentData(id)),
 			attrs: updatedAttrs
 		};
 	};
@@ -21406,7 +21411,7 @@ var FormeoRenderer$1 = class {
 		return Object.values(this.form.stages).map((stage) => {
 			stage.children = this.processRows(stage.id);
 			stage.className = STAGE_CLASSNAME;
-			this.components[baseId(stage.id)] = stage;
+			this.components[this.prefixId(stage.id)] = stage;
 			return stage;
 		});
 	}
