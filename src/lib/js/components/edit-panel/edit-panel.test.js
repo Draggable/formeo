@@ -346,6 +346,29 @@ describe('Config panel "Add config"', () => {
     assert.ok(panel.props.contains(items[0].dom))
   })
 
+  it("adds Label Position at the field's current position, so the label doesn't move", () => {
+    const editorComponents = editorWith()
+    const checkbox = new Field(
+      {
+        id: 'f-lone',
+        tag: 'input',
+        attrs: { type: 'checkbox' },
+        config: { label: 'Agree', controlId: 'checkbox' },
+      },
+      editorComponents
+    )
+    const text = textField(editorComponents)
+    for (const [field, expected] of [
+      [checkbox, 'after'],
+      [text, 'top'],
+    ]) {
+      const panel = field.editPanels.get('config')
+      panel.addConfigItem('labelPosition')
+      assert.equal(field.get('config.labelPosition'), expected)
+      assert.equal(panel.props.querySelector('select.config-labelPosition').value, expected)
+    }
+  })
+
   it('ignores a key that is not declared', () => {
     const field = textField(editorWith())
     field.editPanels.get('config').addConfigItem('bogus')

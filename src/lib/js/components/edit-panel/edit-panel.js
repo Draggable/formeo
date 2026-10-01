@@ -2,6 +2,7 @@ import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
+import { resolveLabelPosition } from '../../common/label-position.mjs'
 import { slugify, slugifyAddress, toTitleCase } from '../../common/utils/string.mjs'
 import { PANEL_CLASSNAME } from '../../constants.js'
 import Dialog from '../dialog.js'
@@ -348,7 +349,8 @@ export default class EditPanel {
   }
 
   /**
-   * Adds a declared config key, set to its declared default, when it can still be added
+   * Adds a declared config key, set to its declared default, when it can still be added. labelPosition starts at
+   * the position the label already renders in (after, for a lone checkbox or radio), so adding it doesn't move it.
    * @param {String} configKey
    */
   addConfigItem = configKey => {
@@ -358,7 +360,7 @@ export default class EditPanel {
     }
     const newConfig = new EditPanelItem({
       key: `config.${configKey}`,
-      data: declaration.default,
+      data: configKey === 'labelPosition' ? resolveLabelPosition(this.component.data) : declaration.default,
       field: this.component,
       panel: this,
     })
