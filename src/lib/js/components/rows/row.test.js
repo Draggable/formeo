@@ -160,4 +160,45 @@ describe('Row edit panels (#112)', () => {
     const row = rowOf(editorWith({ config: { rows: { all: { panels: { attrs: { add: false } } } } } }))
     assert.equal(row.dom.querySelector('.row-edit .add-attrs'), null)
   })
+
+  it("a row with its edit button disabled leaves its column's edit button alone", async () => {
+    const config = {
+      rows: { all: { actionButtons: { disabled: ['edit'] }, panels: { disabled: ['settings', 'attrs'] } } },
+    }
+    const row = rowOf(editorWith({ config }))
+    await nextFrames()
+    assert.equal(row.dom.querySelector('.row-actions .edit-toggle'), null)
+    assert.ok(row.dom.querySelector('.column-actions .edit-toggle'))
+  })
+
+  it('a row with every action button and every panel disabled renders without throwing', async () => {
+    const config = {
+      rows: {
+        all: {
+          actionButtons: { disabled: ['move', 'edit', 'clone', 'remove'] },
+          panels: { disabled: ['settings', 'attrs'] },
+        },
+      },
+    }
+    const row = rowOf(editorWith({ config }))
+    await nextFrames()
+    assert.ok(row.dom)
+  })
+
+  it("re-running updateEditPanels leaves the row's columns' panel navs alone", async () => {
+    const editorComponents = editorWith()
+    const row = rowOf(editorComponents)
+    const columnNav = editorComponents.columns.get('c-1').dom.querySelector('.panel-nav')
+    row.updateEditPanels()
+    assert.equal(editorComponents.columns.get('c-1').dom.querySelector('.panel-nav'), columnNav)
+    assert.equal(row.dom.querySelectorAll(':scope > .row-edit > .panel-nav').length, 1)
+  })
+
+  it("a row without panels is not given a descendant's nav on re-run", async () => {
+    const config = { rows: { all: { panels: { disabled: ['settings', 'attrs'] } } } }
+    const editorComponents = editorWith({ config })
+    const columnNav = editorComponents.columns.get('c-1').dom.querySelector('.panel-nav')
+    rowOf(editorComponents).updateEditPanels()
+    assert.equal(editorComponents.columns.get('c-1').dom.querySelector('.panel-nav'), columnNav)
+  })
 })

@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert'
-import { before, describe, it } from 'node:test'
+import { afterEach, before, describe, it } from 'node:test'
 import i18n from '@draggable/i18n'
 import { Actions } from '../../common/actions.js'
 import { Events } from '../../common/events.js'
@@ -13,11 +13,14 @@ const formWithColumn = (column = {}) => ({
   fields: {},
 })
 
-const editorWith = ({ config = {}, column } = {}) => {
+const mounted = []
+const nextFrames = () => new Promise(resolve => setTimeout(resolve, 50))
+
+const editorWith = ({ config = {}, column, form } = {}) => {
   const events = new Events().init({})
   const editorComponents = new Components({ events, actions: new Actions(events).init({}) })
   editorComponents.config = config
-  editorComponents.load(formWithColumn(column))
+  editorComponents.load(form ?? formWithColumn(column))
   return editorComponents
 }
 
@@ -70,5 +73,35 @@ describe('Column edit panel (#112)', () => {
   it('a column keeps its width', () => {
     const column = columnOf(editorWith({ column: { config: { width: '40%' } } }))
     assert.equal(column.dom.style.width, '40%')
+  })
+
+  describe('with its edit button disabled', () => {
+    afterEach(() => {
+      for (const node of mounted.splice(0)) {
+        node.remove()
+      }
+    })
+
+    it("leaves its field's edit button alone", async () => {
+      const form = formWithColumn({ children: ['f-1'] })
+      form.fields['f-1'] = {
+        id: 'f-1',
+        tag: 'input',
+        attrs: { type: 'text' },
+        config: { label: 'Name', controlId: 'text-input' },
+        meta: { id: 'text-input' },
+      }
+      const config = {
+        columns: { all: { actionButtons: { disabled: ['edit'] }, panels: { disabled: ['attrs'] } } },
+      }
+      const editorComponents = editorWith({ config, form })
+      const stageDom = editorComponents.stages.get('s-1').dom
+      document.body.appendChild(stageDom)
+      mounted.push(stageDom)
+      await nextFrames()
+      const column = columnOf(editorComponents)
+      assert.equal(column.dom.querySelector('.column-actions .edit-toggle'), null)
+      assert.ok(column.dom.querySelector('.field-actions .edit-toggle'))
+    })
   })
 })

@@ -1117,12 +1117,16 @@ export default class Component extends Data {
     editWindow.action = {
       onRender: () => {
         if (editPanelLength === 0) {
-          // If this element has no edit panels, remove the edit toggle
-          const editToggle = this.dom.querySelector('.edit-toggle')
-          const fieldActions = this.dom.querySelector(`.${this.name}-actions`)
-          const actionButtons = fieldActions.getElementsByTagName('button')
-          fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
-          dom.remove(editToggle)
+          // If this element has no edit panels, remove its own edit toggle (not a nested component's)
+          const actions = this.dom.querySelector(`:scope > .${this.name}-actions`)
+          const actionButtons = actions?.getElementsByTagName('button') ?? []
+          if (actionButtons.length) {
+            actions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
+          }
+          const editToggle = actions?.querySelector('.edit-toggle')
+          if (editToggle) {
+            dom.remove(editToggle)
+          }
         } else {
           this.resizePanelWrap()
         }
@@ -1201,9 +1205,12 @@ export default class Component extends Data {
 
     this.panels = new Panels(panelsData)
 
-    if (this.dom) {
-      this.dom.querySelector('.panel-nav').replaceWith(this.panels.panelNav)
-      this.dom.querySelector('.panels').replaceWith(this.panels.panelsWrap)
+    // only this component's own edit window: a nested component's nav is not ours to replace
+    const editWindow = this.dom?.querySelector(`:scope > .${this.name}-edit`)
+    const ownNav = editWindow?.querySelector(':scope > .panel-nav')
+    if (ownNav) {
+      ownNav.replaceWith(this.panels.panelNav)
+      editWindow.querySelector(':scope > .panels').replaceWith(this.panels.panelsWrap)
     }
   }
 }
