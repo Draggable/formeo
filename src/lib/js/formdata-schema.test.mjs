@@ -14,6 +14,16 @@ suite('formData schema', () => {
     t.assert.ok(result.success, JSON.stringify(result.error?.issues))
   })
 
+  test('accepts attrs on rows and columns (#112)', t => {
+    const data = structuredClone(conditionalFields)
+    const [rowId] = Object.keys(data.rows)
+    const [columnId] = Object.keys(data.columns)
+    data.rows[rowId].attrs = { 'data-section': 'contact', className: 'my-row' }
+    data.columns[columnId].attrs = { 'aria-label': 'Left', style: 'padding: 4px' }
+    const result = formDataSchema.safeParse(data)
+    t.assert.ok(result.success, JSON.stringify(result.error?.issues))
+  })
+
   test('accepts the logical operator between if clauses and rejects unknown ones', t => {
     t.assert.ok(formDataSchema.safeParse(withSecondClause('&&')).success)
     t.assert.ok(formDataSchema.safeParse(withSecondClause('||')).success)

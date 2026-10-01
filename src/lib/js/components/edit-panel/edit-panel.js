@@ -2,7 +2,7 @@ import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
-import { slugify, toTitleCase } from '../../common/utils/string.mjs'
+import { slugify, slugifyAddress, toTitleCase } from '../../common/utils/string.mjs'
 import { PANEL_CLASSNAME } from '../../constants.js'
 import Dialog from '../dialog.js'
 import { configOptionsOf } from './config-options.mjs'
@@ -219,11 +219,12 @@ export default class EditPanel {
     }
 
     if (type === 'config') {
-      // kept so it can hide once every declared key is set
+      // kept so it can hide once every declared key is set, or when panels.config.add is false
       this.addConfigButton = dom.create(addBtn)
       this.syncAddConfigButton()
       editPanelButtons.push(this.addConfigButton)
-    } else {
+    } else if (this.component.isAddEnabled(type)) {
+      // panels.<panel>.add: false leaves the button out (#117)
       editPanelButtons.push(addBtn)
     }
 
@@ -261,9 +262,10 @@ export default class EditPanel {
     this.component.set(`attrs.${attr}`, val)
     addAttributeActions[safeAttr]?.(val, this.component)
 
-    // classList, not a selector: a namespaced name like `xlink:href` isn't a valid class selector
-    const rowClass = `${this.component.name}-attrs-${safeAttr}`
-    const existingAttr = Array.from(this.props.children).find(row => row.classList.contains(rowClass))
+    // EditPanelItem names every item `field-<key>`, whatever the component (a row's too, #112). classList, not a
+    // selector: a namespaced name like `xlink:href` isn't a valid class selector
+    const itemClass = `field-${slugifyAddress(itemKey)}`
+    const existingAttr = Array.from(this.props.children).find(item => item.classList.contains(itemClass))
     const newAttr = new EditPanelItem({
       key: itemKey,
       data: { [safeAttr]: val },
@@ -337,11 +339,11 @@ export default class EditPanel {
   }
 
   /**
-   * The "Add config" button shows only while there is something left to add
+   * The "Add config" button shows only while there is something left to add and panels.config.add isn't false
    */
   syncAddConfigButton() {
     if (this.addConfigButton) {
-      this.addConfigButton.hidden = !this.addableConfigOptions().size
+      this.addConfigButton.hidden = !this.component.isAddEnabled('config') || !this.addableConfigOptions().size
     }
   }
 

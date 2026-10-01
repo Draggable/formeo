@@ -386,3 +386,81 @@ describe('Config panel review fixes', () => {
     }
   })
 })
+
+describe('panels.<panel>.add hides the add button (#117)', () => {
+  before(() => {
+    i18n.current ??= {}
+  })
+
+  const addButton = (component, panel) => component.dom.querySelector(`.${panel}-panel .add-${panel}`)
+  const selectFor = editorComponents =>
+    new Field(
+      {
+        id: 'f-sel',
+        tag: 'select',
+        attrs: { type: 'select' },
+        config: { label: 'Choices', controlId: 'select' },
+        options: [{ label: 'One', value: 'one', selected: false }],
+      },
+      editorComponents
+    )
+
+  it('shows the button by default', () => {
+    assert.ok(addButton(textField(editorWith()), 'attrs'))
+  })
+
+  it('fields.all attrs add: false hides "+ Attribute"', () => {
+    const field = textField(editorWith({ fields: { all: { panels: { attrs: { add: false } } } } }))
+    assert.equal(addButton(field, 'attrs'), null)
+  })
+
+  it('a control id scope hides it for that control only', () => {
+    const editorComponents = editorWith({ fields: { 'text-input': { panels: { attrs: { add: false } } } } })
+    assert.equal(addButton(textField(editorComponents), 'attrs'), null)
+    assert.ok(addButton(selectFor(editorComponents), 'attrs'))
+  })
+
+  it('a component id scope can bring it back', () => {
+    const field = textField(
+      editorWith({
+        fields: { all: { panels: { attrs: { add: false } } }, 'f-decl': { panels: { attrs: { add: true } } } },
+      })
+    )
+    assert.ok(addButton(field, 'attrs'))
+  })
+
+  it('options add: false hides "+ Option"', () => {
+    const field = selectFor(editorWith({ fields: { all: { panels: { options: { add: false } } } } }))
+    assert.equal(addButton(field, 'options'), null)
+    assert.ok(addButton(field, 'attrs'))
+  })
+
+  it('stage conditions add: false hides "+ Condition" and keeps Clear All', () => {
+    const stage = editorWith({ stages: { all: { panels: { conditions: { add: false } } } } }).stages.get('s-1')
+    assert.equal(addButton(stage, 'conditions'), null)
+    assert.ok(stage.dom.querySelector('.conditions-panel .clear-all-conditions'))
+  })
+
+  it('config add: false keeps the Add config button hidden while keys are left to add', () => {
+    const field = textField(editorWith({ fields: { all: { panels: { config: { add: false } } } } }))
+    const panel = field.editPanels.get('config')
+    assert.ok(panel.addableConfigOptions().size > 0)
+    assert.equal(panel.addConfigButton.hidden, true)
+  })
+
+  it('existing attributes stay editable and removable', () => {
+    const field = new Field(
+      {
+        id: 'f-x',
+        tag: 'input',
+        attrs: { type: 'text', 'data-x': '1' },
+        config: { label: 'Name', controlId: 'text-input' },
+      },
+      editorWith({ fields: { all: { panels: { attrs: { add: false } } } } })
+    )
+    const item = field.editPanels.get('attrs').editPanelItems.find(({ itemKey }) => itemKey === 'attrs.data-x')
+    assert.ok(item.dom.querySelector('.prop-remove'))
+    item.removeItem()
+    assert.equal(field.get('attrs.data-x'), undefined)
+  })
+})

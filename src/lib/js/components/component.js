@@ -1090,6 +1090,13 @@ export default class Component extends Data {
   }
 
   /**
+   * Whether a panel shows its add button: `panels.<panel>.add: false` hides it (#117)
+   * @param {String} panelName e.g. 'attrs', 'options', 'conditions', 'config'
+   * @return {Boolean}
+   */
+  isAddEnabled = panelName => this.config?.panels?.[panelName]?.add !== false
+
+  /**
    * Generate the markup for field edit mode
    * @return {Object} fieldEdit element config
    */
@@ -1110,12 +1117,16 @@ export default class Component extends Data {
     editWindow.action = {
       onRender: () => {
         if (editPanelLength === 0) {
-          // If this element has no edit panels, remove the edit toggle
-          const editToggle = this.dom.querySelector('.edit-toggle')
-          const fieldActions = this.dom.querySelector(`.${this.name}-actions`)
-          const actionButtons = fieldActions.getElementsByTagName('button')
-          fieldActions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
-          dom.remove(editToggle)
+          // If this element has no edit panels, remove its own edit toggle (not a nested component's)
+          const actions = this.dom.querySelector(`:scope > .${this.name}-actions`)
+          const actionButtons = actions?.getElementsByTagName('button') ?? []
+          if (actionButtons.length) {
+            actions.style.maxWidth = `${actionButtons.length * actionButtons[0].clientWidth}px`
+          }
+          const editToggle = actions?.querySelector('.edit-toggle')
+          if (editToggle) {
+            dom.remove(editToggle)
+          }
         } else {
           this.resizePanelWrap()
         }
@@ -1125,33 +1136,65 @@ export default class Component extends Data {
     return dom.create(editWindow)
   }
 
+  /**
+   * Panels a component builds itself instead of from its data, keyed by the name `panels.order` uses for them,
+   * e.g. a row's Settings (#112). Only names in `panels.order` are shown.
+   * @return {Object<String, {panelConfig: Object}>}
+   */
+  get customPanels() {
+    return {}
+  }
+
+  /**
+   * What a panel is built from while its data key is unset, e.g. `{ attrs: {} }` so a row shows an empty Attributes
+   * panel (#112). Fields and stages have none: a control without attrs gets no Attributes panel.
+   * @return {Object}
+   */
+  get defaultPanelData() {
+    return {}
+  }
+
   updateEditPanels = () => {
     if (!this.config) {
       return null
     }
     const editable = new Set(['object', 'array'])
     const hasConfigOptions = configOptionsOf(this.config).size > 0
+    const { customPanels, defaultPanelData } = this
     // declared config keys get a Config panel even before the component has any config (a new stage)
     const panelOrder = unique([
       ...this.config.panels.order,
       ...Object.keys(this.data),
       ...(hasConfigOptions ? ['config'] : []),
     ])
-    const noPanels = new Set(['children', 'meta', 'action', 'events', ...this.config.panels.disabled])
+    // a row's or column's `className` is its internal class list, never a panel
+    const noPanels = new Set(['children', 'meta', 'action', 'events', 'className', ...this.config.panels.disabled])
     const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {
+      if (customPanels[panelName]) {
+        this.editPanels.set(panelName, customPanels[panelName])
+        continue
+      }
       // a Config panel without declared keys would only offer keys that mean nothing for this component
       if (panelName === 'config' && !hasConfigOptions) {
         this.editPanels.delete(panelName)
         continue
       }
-      const panelData = panelName === 'config' ? this.get(panelName) || {} : this.get(panelName)
+      const panelData =
+        panelName === 'config' ? this.get(panelName) || {} : (this.get(panelName) ?? defaultPanelData[panelName])
       const propType = dom.childType(panelData)
       if (editable.has(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
         this.editPanels.set(editPanel.name, editPanel)
       }
+    }
+
+    this.panels?.destroy()
+    if (!this.editPanels.size) {
+      // nothing to edit: Panels needs at least one panel, and editWindow drops the edit button
+      this.panels = null
+      return
     }
 
     const panelsData = {
@@ -1160,12 +1203,14 @@ export default class Component extends Data {
       displayType: 'auto',
     }
 
-    this.panels?.destroy()
     this.panels = new Panels(panelsData)
 
-    if (this.dom) {
-      this.dom.querySelector('.panel-nav').replaceWith(this.panels.panelNav)
-      this.dom.querySelector('.panels').replaceWith(this.panels.panelsWrap)
+    // only this component's own edit window: a nested component's nav is not ours to replace
+    const editWindow = this.dom?.querySelector(`:scope > .${this.name}-edit`)
+    const ownNav = editWindow?.querySelector(':scope > .panel-nav')
+    if (ownNav) {
+      ownNav.replaceWith(this.panels.panelNav)
+      editWindow.querySelector(':scope > .panels').replaceWith(this.panels.panelsWrap)
     }
   }
 }

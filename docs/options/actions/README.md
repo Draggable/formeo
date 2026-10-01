@@ -16,6 +16,9 @@
 
 With Actions you can modify or completely replace some editor functions. By default, adding an attribute opens a small dialog in the editor. Define `add.attr` to use your own UI or extra validation.
 
+`add.attr` replaces the dialog; it doesn't hide the **+ Attribute** button. To stop users adding attributes, set
+`panels.attrs.add: false` instead (see [Hide the add buttons](../config/README.md#hide-the-add-buttons)).
+
 ## Full Example
 
 ```javascript

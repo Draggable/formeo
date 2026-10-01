@@ -23,9 +23,6 @@ const DOM_CONFIGS = {
     },
     content: [dom.icon('triangle-down'), dom.icon('triangle-up')],
   }),
-  editWindow: () => ({
-    className: 'column-edit group-config',
-  }),
 }
 
 /**
@@ -40,6 +37,13 @@ export default class Column extends Component {
   constructor(columnData, components) {
     super('column', { ...DEFAULT_DATA(), ...columnData }, components)
 
+    const actionButtons = this.getActionButtons()
+    // its Attributes panel (#112), built before the DOM that holds it. Without an edit button nothing opens it, so
+    // skip the panels and their ResizeObserver (actionButtons.disabled: ['edit'])
+    if (this.actionButtons.some(button => button.meta?.id === 'edit')) {
+      this.updateEditPanels()
+    }
+
     const childWrap = this.createChildWrap()
 
     this.dom = dom.create({
@@ -51,8 +55,8 @@ export default class Column extends Component {
       id: this.id,
       content: [
         this.getComponentTag(),
-        this.getActionButtons(),
-        DOM_CONFIGS.editWindow(),
+        actionButtons,
+        this.editWindow,
         DOM_CONFIGS.resizeHandle(new ResizeColumn(this.components)),
         childWrap,
       ],
@@ -87,6 +91,14 @@ export default class Column extends Component {
   }
 
   /**
+   * A column shows an empty Attributes panel before it has any attributes (#112)
+   * @return {Object}
+   */
+  get defaultPanelData() {
+    return { attrs: {} }
+  }
+
+  /**
    * Process column configuration data
    * @param  {Object} column
    */
@@ -100,7 +112,7 @@ export default class Column extends Component {
   // loops through children and refresh their edit panels
   refreshFieldPanels = () => {
     for (const field of this.children) {
-      field.panels.nav.refresh()
+      field.panels?.nav.refresh()
     }
   }
 

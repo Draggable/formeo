@@ -164,3 +164,62 @@ new FormeoEditor({
 ```
 
 A locked attribute can't be removed, re-added with **+ Attribute**, or changed; locked checkboxes and selects are disabled. If one was removed before you locked it, remove the `locked` config entry, add it back with **+ Attribute** (name `required`, value `true`), then restore the lock.
+
+### Row and column attributes
+
+Rows and columns have an **Attributes** panel, like fields. Open a row with its edit button: the **Settings** tab
+holds the input group, fieldset and column layout controls, and the **Attributes** tab adds attributes with
+**+ Attribute**. Columns have an edit button that opens their Attributes panel.
+
+Attributes are saved in `rows.<id>.attrs` and `columns.<id>.attrs` and rendered on the `.formeo-row` /
+`.formeo-column` element (see [Row and column attributes](../../renderer/renderer.md#row-and-column-attributes)).
+They are not applied in the editor, so a class like `d-none` can't hide a row while you build.
+
+- Put classes in `className`. Formeo keeps its own `formeo-row` / `formeo-column` class separately and merges the two
+  when rendering.
+- `id` and `tag` are reserved on rows and columns, and `data-clone-of` on rows. The dialog refuses them. You can
+  reserve more names with `panels.attrs.disabled`, but you can't free these.
+
+```javascript
+new FormeoEditor({
+  editorContainer: '#formeo-editor',
+  config: {
+    rows: {
+      all: {
+        panels: {
+          attrs: { disabled: ['onclick'] }, // reserve another name
+          // disabled: ['settings'], // hide the row Settings tab
+        },
+      },
+    },
+    columns: {
+      all: { actionButtons: { disabled: ['edit'] } }, // no column edit button, as before
+    },
+  },
+})
+```
+
+### Hide the add buttons
+
+`panels.<panel>.add: false` hides that panel's add button: `attrs` (**+ Attribute**), `options` (**+ Option**),
+`conditions` (**+ Condition**) and `config` (**+ Configuration**). It works in every scope, so a control id or
+component id can set it back to `true`.
+
+```javascript
+new FormeoEditor({
+  editorContainer: '#formeo-editor',
+  config: {
+    fields: {
+      all: { panels: { attrs: { add: false } } }, // no + Attribute on any field
+      select: { panels: { options: { add: false } } }, // no + Option on selects
+      'a33bcc32-c54c-46ed-9609-7cdb5b3dc511': { panels: { attrs: { add: true } } }, // except this field
+    },
+    rows: { all: { panels: { attrs: { add: false } } } },
+    columns: { all: { panels: { attrs: { add: false } } } },
+    stages: { all: { panels: { conditions: { add: false } } } }, // conditions live on the stage
+  },
+})
+```
+
+Attributes, options and conditions that are already there stay editable and removable. Use `locked` to stop that,
+and `disabled` to hide them. The setting only changes the editor UI: your own code can still add attributes.

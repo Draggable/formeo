@@ -198,6 +198,18 @@ describe('clicking a control set (#227)', () => {
     assert.equal(second[0].get('config.label'), 'Street')
   })
 
+  it("a set's row attrs land on the new row (#112)", async () => {
+    const taggedSet = {
+      ...addressSet(),
+      meta: { group: 'common', id: 'tagged-set', icon: 'rows' },
+      controlSet: { ...addressSet().controlSet, row: { attrs: { 'data-section': 'address' } } },
+    }
+    const { controls, stage } = await setup({}, { elements: [taggedSet] })
+    controlElement(controls, 'tagged-set').querySelector('button').click()
+    await tick()
+    assert.deepEqual(stage.children[2].get('attrs'), { 'data-section': 'address' })
+  })
+
   it('controls.addElement adds a set without asking onBeforeAdd', async () => {
     const onBeforeAdd = mock.fn()
     const { controls, stage } = await setup({ onBeforeAdd })
