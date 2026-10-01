@@ -371,9 +371,57 @@ const badAdd: FormeoEditorOptions = {
   },
 }
 
+const badAddOptions: FormeoEditorOptions = {
+  config: {
+    fields: {
+      all: {
+        panels: {
+          options: {
+            // @ts-expect-error add is a boolean
+            add: 'no',
+          },
+        },
+      },
+    },
+  },
+}
+
+const badAddConditions: FormeoEditorOptions = {
+  config: {
+    fields: {
+      all: {
+        panels: {
+          conditions: {
+            // @ts-expect-error add is a boolean
+            add: 'no',
+          },
+        },
+      },
+    },
+  },
+}
+
+const badAddConfig: FormeoEditorOptions = {
+  config: {
+    fields: {
+      all: {
+        panels: {
+          config: {
+            // @ts-expect-error add is a boolean
+            add: 'no',
+          },
+        },
+      },
+    },
+  },
+}
+
 export {
   and,
   badAdd,
+  badAddConditions,
+  badAddConfig,
+  badAddOptions,
   badConfigOption,
   badFormActions,
   badHook,
