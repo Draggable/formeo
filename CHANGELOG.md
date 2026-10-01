@@ -1,3 +1,26 @@
+# [5.15.0](https://github.com/Draggable/formeo/compare/v5.14.0...v5.15.0) (2026-10-01)
+
+
+### Bug Fixes
+
+* **editor:** scope edit-window lookups to the component's own actions ([2d895ab](https://github.com/Draggable/formeo/commit/2d895ab65937329c3a2b2dfa3b83341413525e60)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+* **renderer:** keep custom row and column classes, and make config.width always win ([44fee7e](https://github.com/Draggable/formeo/commit/44fee7eafc52e4b933449c98562d1e6bacfdc227)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+* **renderer:** render row and column attributes without clobbering ([c2ffefc](https://github.com/Draggable/formeo/commit/c2ffefce8b8fa5db3c7120cbf4354de8cabbf482)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+
+
+### Features
+
+* **editor:** add an Attributes panel to rows ([e39ba74](https://github.com/Draggable/formeo/commit/e39ba74b85e76adcfd59e186243287481f48770f)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+* **editor:** add an edit button and Attributes panel to columns ([17ccbc2](https://github.com/Draggable/formeo/commit/17ccbc20ac63ede61ecca001b2e149e896584799)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+* **editor:** hide a panel's add button with panels.<panel>.add: false ([e0ab638](https://github.com/Draggable/formeo/commit/e0ab638f07a087a3a7fa364fc4243b3066dc7072)), closes [#117](https://github.com/Draggable/formeo/issues/117)
+* **editor:** let components add custom and default edit panels ([09897eb](https://github.com/Draggable/formeo/commit/09897ebe5fe180564e99dbf6abc61b0bdc1007a2)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+* **types:** type panels add switches and row/column attrs notes ([c882b7c](https://github.com/Draggable/formeo/commit/c882b7ccfb8a8cc2bcbe6f0b393ada82f87ee4ca)), closes [#112](https://github.com/Draggable/formeo/issues/112) [#117](https://github.com/Draggable/formeo/issues/117)
+
+
+### Performance Improvements
+
+* **editor:** skip column edit panels when the edit button is disabled ([21713b8](https://github.com/Draggable/formeo/commit/21713b834444e0ad781b1a4a19c20a33a050bd41)), closes [#112](https://github.com/Draggable/formeo/issues/112)
+
 # [5.14.0](https://github.com/Draggable/formeo/compare/v5.13.2...v5.14.0) (2026-09-30)
 
 
