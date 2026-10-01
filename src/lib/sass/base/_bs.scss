@@ -73,6 +73,11 @@ hr {
       display: block;
     }
   }
+
+  // a condition hides a field by setting `hidden` on this wrapper, which the flex display above would override
+  &[hidden] {
+    display: none;
+  }
 }
 
 select {

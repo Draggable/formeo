@@ -182,6 +182,38 @@ test.describe('label position (#243)', () => {
     }
   })
 
+  test('a condition hides a before field and a lone checkbox', async ({ page }) => {
+    const hide = target => ({
+      if: [
+        { source: 'fields.trigger', sourceProperty: 'value', comparison: 'equals', target: 'hide', targetProperty: '' },
+      ],
+      then: [{ target: `fields.${target}`, targetProperty: 'isNotVisible', assignment: '', value: '' }],
+    })
+    const formData = formWith({
+      trigger: { id: 'trigger', tag: 'input', attrs: { type: 'text' }, config: { label: 'Trigger' } },
+      ...textField({ labelPosition: 'before' }),
+      agree: { id: 'agree', tag: 'input', attrs: { type: 'checkbox' }, config: { label: 'I agree' } },
+    })
+    formData.stages['stage-lp'].conditions = [hide('field-lp'), hide('agree')]
+    await page.goto('/')
+    await page.evaluate(formData => {
+      const container = Object.assign(document.createElement('div'), { id: 'e2e-lp-render' })
+      document.body.appendChild(container)
+      new window.FormeoRenderer({ renderContainer: container }).render(formData)
+    }, formData)
+    const form = page.locator('#e2e-lp-render')
+    const before = form.locator('.f-field:has(> #f-field-lp)')
+    const checkbox = form.locator('.f-field:has(> #f-agree)')
+    await expect(before).toHaveClass('f-field f-label-before')
+    await expect(checkbox).toHaveClass('f-field f-label-after')
+    await expect(before).toBeVisible()
+    await expect(checkbox).toBeVisible()
+
+    await form.locator('#f-trigger').fill('hide')
+    await expect(before).toBeHidden()
+    await expect(checkbox).toBeHidden()
+  })
+
   test('checkbox and radio groups are named by their label', async ({ page }) => {
     const group = (id, type, label) => ({
       id,

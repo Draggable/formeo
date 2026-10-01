@@ -454,6 +454,9 @@ button[class*=-clone]:hover .svg-icon {
 .formeo .f-field.f-label-bottom > .prev-label {
   display: block;
 }
+.formeo .f-field[hidden] {
+  display: none;
+}
 .formeo select {
   font-size: 100%;
   font-family: inherit;

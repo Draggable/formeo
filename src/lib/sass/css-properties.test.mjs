@@ -149,6 +149,10 @@ suite('formeo CSS custom properties', () => {
     t.assert.match(compiled, /flex: 1 1 var\(--formeo-label-width\);/)
     t.assert.doesNotMatch(compiled, /\.f-field[^{]*\{[^}]*(?:\border:|flex-direction: \w+-reverse)/)
   })
+
+  test('a hidden label wrapper stays hidden in every position, so conditions can hide it (#243)', t => {
+    t.assert.strictEqual(compiledRule('.formeo .f-field[hidden] {'), '.formeo .f-field[hidden] {\n  display: none;\n}')
+  })
 })
 
 suite('resolveFormeoProperties purity', () => {
