@@ -1090,6 +1090,13 @@ export default class Component extends Data {
   }
 
   /**
+   * Whether a panel shows its add button: `panels.<panel>.add: false` hides it (#117)
+   * @param {String} panelName e.g. 'attrs', 'options', 'conditions', 'config'
+   * @return {Boolean}
+   */
+  isAddEnabled = panelName => this.config?.panels?.[panelName]?.add !== false
+
+  /**
    * Generate the markup for field edit mode
    * @return {Object} fieldEdit element config
    */

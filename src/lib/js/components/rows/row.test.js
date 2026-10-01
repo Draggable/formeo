@@ -155,4 +155,9 @@ describe('Row edit panels (#112)', () => {
     copy.set('attrs.data-section', 'billing')
     assert.equal(rowOf(editorComponents).get('attrs.data-section'), 'contact')
   })
+
+  it('rows.all attrs add: false hides "+ Attribute" on rows (#117)', () => {
+    const row = rowOf(editorWith({ config: { rows: { all: { panels: { attrs: { add: false } } } } } }))
+    assert.equal(row.dom.querySelector('.row-edit .add-attrs'), null)
+  })
 })

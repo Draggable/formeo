@@ -219,11 +219,12 @@ export default class EditPanel {
     }
 
     if (type === 'config') {
-      // kept so it can hide once every declared key is set
+      // kept so it can hide once every declared key is set, or when panels.config.add is false
       this.addConfigButton = dom.create(addBtn)
       this.syncAddConfigButton()
       editPanelButtons.push(this.addConfigButton)
-    } else {
+    } else if (this.component.isAddEnabled(type)) {
+      // panels.<panel>.add: false leaves the button out (#117)
       editPanelButtons.push(addBtn)
     }
 
@@ -338,11 +339,11 @@ export default class EditPanel {
   }
 
   /**
-   * The "Add config" button shows only while there is something left to add
+   * The "Add config" button shows only while there is something left to add and panels.config.add isn't false
    */
   syncAddConfigButton() {
     if (this.addConfigButton) {
-      this.addConfigButton.hidden = !this.addableConfigOptions().size
+      this.addConfigButton.hidden = !this.component.isAddEnabled('config') || !this.addableConfigOptions().size
     }
   }
 
