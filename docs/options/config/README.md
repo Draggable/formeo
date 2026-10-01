@@ -72,8 +72,9 @@ A component's Configuration panel shows the `config` keys declared for it in `pa
 none left. Keys that aren't declared, such as `controlId`, never show.
 
 - `fields.all` declares `label`, `hideLabel`, `helpText`, `labelPosition`, `disableHtmlLabel` and `tooltip`.
-  `labelPosition` is a dropdown (see [Label position](../../renderer/renderer.md#label-position)). It replaces
-  `labelAfter`, which the editor converts on load.
+  `labelPosition` is a dropdown (see [Label position](../../renderer/renderer.md#label-position)). Added from the
+  dialog, it starts at the position the label already has rather than its declared default, so the label doesn't
+  move. It replaces `labelAfter`, which the editor converts on load.
 - A control can declare more for its own fields with `configOptions` (see [elements](../controls/README.md#configoptions)).
 - The checkbox and radio group controls declare `other` and `otherLabel`, which add an
   [Other choice](../../renderer/renderer.md#other-choice) to the group.

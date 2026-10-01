@@ -1086,8 +1086,10 @@ rows: {
 | `after`  | label beside, trailing | control, label |
 
 `before` and `after` follow the text direction, so in a right-to-left form `before` is on the right. The label and
-control are always in the DOM in the order you see them, so screen readers read them in that order. In the editor it's
-the Label Position dropdown in a field's Configuration panel.
+control are always in the DOM in the order you see them, so screen readers read them in that order. In the editor, add
+Label position to a field from its Configuration panel's "Add config" dialog. It starts at the position the label
+already has, and is then a dropdown in that panel. A field whose data already has `labelPosition` shows the dropdown
+straight away.
 
 Without `labelPosition`, a lone checkbox or radio is `after` and everything else is `top`. A checkbox or radio group's
 `labelPosition` moves the group's label. Each option's label always follows its own input.
@@ -1102,8 +1104,8 @@ Every rendered field with a visible label is wrapped like this:
 ```
 
 `before` and `after` sit side by side while the control has at least half the row. In a narrower column or viewport
-they stack, with the label above (`before`) or below (`after`). The label's width beside the control is
-`--formeo-label-width`, `10rem` by default:
+they stack, with the label above (`before`) or below (`after`). (A lone checkbox or radio keeps its own size, so it
+never stacks.) The label's width beside the control is `--formeo-label-width`, `10rem` by default:
 
 ```css
 .my-form {
