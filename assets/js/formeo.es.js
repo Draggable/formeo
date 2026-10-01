@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.15.1
+Version: 5.16.0
 Author: Draggable https://draggable.io
 */
 
@@ -6468,7 +6468,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.15.1";
+	version$2 = "5.16.0";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -9657,6 +9657,48 @@ var init_helpers$2 = __esmMin((() => {
 	};
 }));
 //#endregion
+//#region src/lib/js/common/label-position.mjs
+var LABEL_POSITIONS, FIELD_WRAP_CLASSNAME, warnedValues, isLoneCheckable, resolveLabelPosition, isLabelAfter, labelWrapClassNames, normalizeLabelConfig;
+var init_label_position = __esmMin((() => {
+	LABEL_POSITIONS = [
+		"top",
+		"bottom",
+		"before",
+		"after"
+	];
+	FIELD_WRAP_CLASSNAME = "f-field";
+	warnedValues = /* @__PURE__ */ new Set();
+	isLoneCheckable = ({ attrs, options } = {}) => ["checkbox", "radio"].includes(attrs?.type) && !options;
+	resolveLabelPosition = (field = {}) => {
+		const { labelPosition, labelAfter } = field.config || {};
+		if (LABEL_POSITIONS.includes(labelPosition)) return labelPosition;
+		if (labelPosition !== void 0 && !warnedValues.has(String(labelPosition))) {
+			warnedValues.add(String(labelPosition));
+			console.warn(`formeo: unknown labelPosition "${labelPosition}"; use one of ${LABEL_POSITIONS.join(", ")}`);
+		}
+		const lone = isLoneCheckable(field);
+		if (typeof labelAfter === "boolean") {
+			if (lone) return labelAfter ? "after" : "before";
+			return labelAfter ? "bottom" : "top";
+		}
+		return lone ? "after" : "top";
+	};
+	isLabelAfter = (position) => position === "bottom" || position === "after";
+	labelWrapClassNames = (position) => [FIELD_WRAP_CLASSNAME, `f-label-${position}`];
+	normalizeLabelConfig = (field = {}) => {
+		const { config } = field;
+		if (!config) return config;
+		const hasLegacy = "labelAfter" in config;
+		const hasUnknown = config.labelPosition !== void 0 && !LABEL_POSITIONS.includes(config.labelPosition);
+		if (!hasLegacy && !hasUnknown) return config;
+		const { labelAfter: _labelAfter, ...rest } = config;
+		return {
+			...rest,
+			labelPosition: resolveLabelPosition(field)
+		};
+	};
+}));
+//#endregion
 //#region src/lib/js/common/loaders.js
 var loaded, AJAX_TIMEOUT_MS, ajax, onLoadStylesheet, onLoadJavascript, insertScript, insertStyle, insertScripts, insertStyles, insertIcons, fetchIcons, LOADER_MAP, fetchDependencies, fetchFormeoStyle;
 var init_loaders = __esmMin((() => {
@@ -9816,11 +9858,12 @@ var init_string = __esmMin((() => {
 	};
 	keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
 	groupInputName = (name, fieldType, optionCount) => fieldType === "checkbox" && optionCount > 1 && name && !name.endsWith("[]") ? `${name}[]` : name;
-})), iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OTHER_GROUP_ATTR, OTHER_VALUE, OTHER_NAME_SUFFIX, OTHER_TEXT_CLASSNAME, hasOtherChoice, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
+})), iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OTHER_GROUP_ATTR, OTHER_VALUE, OTHER_NAME_SUFFIX, OTHER_TEXT_CLASSNAME, hasOtherChoice, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, joinClassNames, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
 var init_dom = __esmMin((() => {
 	init_constants();
 	init_animation();
 	init_helpers$2();
+	init_label_position();
 	init_loaders();
 	init_utils();
 	init_string();
@@ -9854,6 +9897,7 @@ var init_dom = __esmMin((() => {
 		...OPTION_INPUT_ATTRS
 	]);
 	groupWrapperAttrs = (attrs = {}) => Object.fromEntries(Object.entries(attrs).filter(([key]) => !GROUP_CONSUMED_ATTRS.has(key)));
+	joinClassNames = (...values) => values.flat(Infinity).filter((value) => typeof value === "string" && value.trim()).join(" ");
 	stripOn = (str) => str.replace(/^on([A-Z])/, (_, l) => l.toLowerCase());
 	useCaptureEvts = new Set(["focus", "blur"]);
 	defaultActionHandler = (event) => {
@@ -9978,13 +10022,22 @@ var init_dom = __esmMin((() => {
 						wrap.children.push(_this.create(option, isPreview));
 					});
 					const groupAttrs = elem.attrs || {};
-					if (groupAttrs.className) wrap.className = groupAttrs.className;
+					wrap.className = groupAttrs.className || [];
 					wrap.id = elem.id;
 					wrap.attrs = groupWrapperAttrs(groupAttrs);
 					wrap.config = {
 						...elem.config,
 						required: Boolean(groupAttrs.required)
 					};
+					const groupLabelId = this.groupLabelId(elem, isPreview);
+					if (groupLabelId) {
+						wrap.attrs = {
+							role: "group",
+							"aria-labelledby": groupLabelId,
+							...wrap.attrs
+						};
+						wrap.config.labelId = groupLabelId;
+					}
 					const groupSyncs = [];
 					if (!isPreview && groupAttrs.type === "checkbox" && groupAttrs.required) {
 						wrap.attrs[`data-${REQUIRED_GROUP_ATTR}`] = "true";
@@ -10228,10 +10281,6 @@ var init_dom = __esmMin((() => {
 						children: [input, optionLabel],
 						className: [`f-${fieldType}`]
 					};
-					if (attrs.className) elem.config = {
-						...elem.config,
-						inputWrap: attrs.className
-					};
 					if (elem.config?.inline) inputWrap.className.push(`f-${fieldType}-inline`);
 					if (option.selected) input.attrs.checked = true;
 					if (isPreview) optionLabel.attrs.contenteditable = true;
@@ -10269,6 +10318,10 @@ var init_dom = __esmMin((() => {
 					checkbox: defaultInput,
 					radio: defaultInput
 				}[fieldType]?.(option);
+			};
+			if (attrs.className && ["checkbox", "radio"].includes(fieldType)) elem.config = {
+				...elem.config,
+				inputWrap: joinClassNames(elem.config?.inputWrap, attrs.className)
 			};
 			const mappedOptions = options.map(optionMap);
 			if (withOther) mappedOptions.push(this.otherChoice({
@@ -10381,14 +10434,12 @@ var init_dom = __esmMin((() => {
 			return escapeElement.textContent;
 		}
 		/**
-		* Test if label should be display before or after an element
-		* @param  {Object} elem config
-		* @return {Boolean} labelAfter
+		* Whether a field's label comes after its control: bottom and after (#243). See label-position.mjs
+		* @param  {Object} elem field config
+		* @return {Boolean}
 		*/
 		labelAfter(elem) {
-			const type = helpers.get(elem, "attrs.type");
-			const labelAfter = helpers.get(elem, "config.labelAfter");
-			return labelAfter === void 0 ? type === "checkbox" || type === "radio" : labelAfter;
+			return isLabelAfter(resolveLabelPosition(elem));
 		}
 		/**
 		* A required checkbox group needs at least one checked box, not every box.
@@ -10430,6 +10481,18 @@ var init_dom = __esmMin((() => {
 			children: helpText
 		});
 		/**
+		* The id of a rendered checkbox or radio group's label, or null when no group label renders. A <label for> can't
+		* name a <div>, so the group gets role="group" and aria-labelledby this id instead (#243).
+		* @param  {Object}  elem      group config
+		* @param  {Boolean} isPreview editor preview
+		* @return {String|null}
+		*/
+		groupLabelId(elem, isPreview) {
+			const { id, attrs = {}, config = {} } = elem;
+			const isOptionGroup = attrs.type === "checkbox" || attrs.type === "radio";
+			return !isPreview && isOptionGroup && id && config.label && !config.hideLabel ? `${id}-label` : null;
+		}
+		/**
 		* Generate a label
 		* @param  {Object} elem config object
 		* @param  {String} fMap map to label's value in formData
@@ -10439,10 +10502,11 @@ var init_dom = __esmMin((() => {
 			const required = helpers.get(elem, "attrs.required") || helpers.get(elem, "config.required");
 			let { config: { label: labelText = "", helpText = "", tooltip = null } } = elem;
 			const { id: elemId, attrs } = elem;
+			const { labelId } = elem.config;
 			if (typeof labelText === "function") labelText = labelText();
 			const fieldLabel = {
 				tag: "label",
-				attrs: { for: elemId || attrs?.id },
+				attrs: labelId ? { id: labelId } : { for: elemId || attrs?.id },
 				className: [],
 				children: [
 					labelText,
@@ -15031,8 +15095,10 @@ var init_data = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/components/edit-panel/config-options.mjs
-var EDITABLE_DEFAULT_TYPES, warnedKeys, configOptionsOf;
+var EDITABLE_DEFAULT_TYPES, warnedKeys, warnOnce, declaredChoices, configOptionsOf;
 var init_config_options = __esmMin((() => {
+	init_i18n_es_min();
+	init_string();
 	init_helpers();
 	EDITABLE_DEFAULT_TYPES = new Set([
 		"boolean",
@@ -15040,22 +15106,41 @@ var init_config_options = __esmMin((() => {
 		"number"
 	]);
 	warnedKeys = /* @__PURE__ */ new Set();
+	warnOnce = (key, problem) => {
+		if (!warnedKeys.has(key)) {
+			warnedKeys.add(key);
+			console.warn(`formeo: config option "${key}" ${problem}; it is ignored`);
+		}
+	};
+	declaredChoices = (key, { options, default: defaultValue }) => {
+		if (!(Array.isArray(options) && options.length > 0 && options.every((option) => typeof option?.value === "string") && options.some((option) => option.value === defaultValue))) return null;
+		return options.map(({ value, label }) => ({
+			value,
+			label: label || s.get(`${key}.${value}`) || toTitleCase(value)
+		}));
+	};
 	configOptionsOf = (componentConfig) => {
 		const { options = {}, disabled = [] } = componentConfig?.panels?.config || {};
 		const declared = /* @__PURE__ */ new Map();
 		for (const [key, declaration] of Object.entries(options)) {
 			if (disabled.includes(key)) continue;
 			if (!EDITABLE_DEFAULT_TYPES.has(typeof declaration?.default)) {
-				if (!warnedKeys.has(key)) {
-					warnedKeys.add(key);
-					console.warn(`formeo: config option "${key}" needs a boolean, string or number default; it is ignored`);
-				}
+				warnOnce(key, "needs a boolean, string or number default");
 				continue;
 			}
-			declared.set(key, {
+			const entry = {
 				label: declaration.label || labelHelper(`config.${key}`),
 				default: declaration.default
-			});
+			};
+			if (declaration.options !== void 0) {
+				const choices = declaredChoices(key, declaration);
+				if (!choices) {
+					warnOnce(key, "needs options with string values that include its default");
+					continue;
+				}
+				entry.options = choices;
+			}
+			declared.set(key, entry);
 		}
 		return declared;
 	};
@@ -15678,6 +15763,16 @@ var init_edit_panel_item = __esmMin((() => {
 					valType = "array";
 				}
 			}
+			if (this.panelName === "config") {
+				const choices = configOptionsOf(this.field.config).get(key.replace(/^config\./, ""))?.options;
+				if (choices) {
+					effectiveValue = choices.map((choice) => ({
+						...choice,
+						selected: choice.value === value
+					}));
+					valType = "array";
+				}
+			}
 			const dataKey = panelDataKeyMap.get(this.panelName)?.({
 				itemKey: this.itemKey,
 				key
@@ -15728,6 +15823,7 @@ var init_edit_panel = __esmMin((() => {
 	init_sortable_esm();
 	init_dom();
 	init_helpers$2();
+	init_label_position();
 	init_string();
 	init_constants();
 	init_dialog();
@@ -15976,15 +16072,18 @@ var init_edit_panel = __esmMin((() => {
 			if (this.addConfigButton) this.addConfigButton.hidden = !this.component.isAddEnabled("config") || !this.addableConfigOptions().size;
 		}
 		/**
-		* Adds a declared config key, set to its declared default, when it can still be added
+		* Adds a declared config key, set to its declared default, when it can still be added. A field's labelPosition
+		* starts at the position its label already renders in (after, for a lone checkbox or radio), so adding it doesn't
+		* move it. Other components have no field label, so their labelPosition keeps its declared default.
 		* @param {String} configKey
 		*/
 		addConfigItem = (configKey) => {
 			const declaration = this.addableConfigOptions().get(configKey);
 			if (!declaration) return;
+			const isFieldLabelPosition = configKey === "labelPosition" && this.component.name === "field";
 			const newConfig = new EditPanelItem({
 				key: `config.${configKey}`,
-				data: declaration.default,
+				data: isFieldLabelPosition ? resolveLabelPosition(this.component.data) : declaration.default,
 				field: this.component,
 				panel: this
 			});
@@ -16980,6 +17079,7 @@ var init_field = __esmMin((() => {
 	init_i18n_es_min();
 	init_dom();
 	init_helpers$2();
+	init_label_position();
 	init_utils();
 	init_constants();
 	init_component();
@@ -16999,12 +17099,15 @@ var init_field = __esmMin((() => {
 		*/
 		constructor(fieldData = Object.create(null), components) {
 			super("field", fieldData, components);
+			this.normalizeLabelConfig();
 			this.controlId = this.get("config.controlId") || this.get("meta.id");
 			this.applyControlAttrConfig();
 			this.debouncedUpdateEditPanels = debounce(this.updateEditPanels);
 			this.debouncedUpdatePreview = debounce(this.updatePreview);
 			this.label = dom.create(this.labelConfig);
 			this.preview = this.fieldPreview();
+			this.labelWrap = dom.create({ className: FIELD_WRAP_CLASSNAME });
+			this.syncLabelWrap();
 			const actionButtons = this.getActionButtons();
 			const hasEditButton = this.actionButtons.some((child) => child.meta?.id === "edit");
 			this.updateEditPanels();
@@ -17013,11 +17116,10 @@ var init_field = __esmMin((() => {
 				attrs: { className: FIELD_CLASSNAME },
 				id: this.id,
 				children: [
-					this.label,
 					this.getComponentTag(),
 					actionButtons,
-					hasEditButton && this.editWindow,
-					this.preview
+					this.labelWrap,
+					hasEditButton && this.editWindow
 				].filter(Boolean),
 				panelNav: this.panelNav,
 				dataset: { hoverTag: s.get("field") }
@@ -17033,6 +17135,15 @@ var init_field = __esmMin((() => {
 		applyControlAttrConfig() {
 			const attrConfig = controlAttrPanelConfig(getControlConfig(this.components.controls?.get(this.controlId)), this.get("config"));
 			if (attrConfig) this.config = { [this.id]: attrConfig };
+		}
+		/**
+		* Converts legacy config.labelAfter, and an unknown config.labelPosition, to the labelPosition it resolves to (#243).
+		* Replaces the config object instead of calling set(), so loading a form fires no update events and the data it was
+		* given (a saved form, a control definition) is never mutated.
+		*/
+		normalizeLabelConfig() {
+			const config = normalizeLabelConfig(this.data);
+			if (config !== this.data.config) this.data.config = config;
 		}
 		get labelConfig() {
 			if (!!this.get("config.hideLabel")) return null;
@@ -17078,24 +17189,28 @@ var init_field = __esmMin((() => {
 			return this.setData(path, value);
 		}
 		/**
-		* Update the label dom when label data changes
+		* Puts the label and preview into the field wrapper in label-position order, with the matching classes (#243)
+		*/
+		syncLabelWrap() {
+			const position = resolveLabelPosition(this.data);
+			const children = [this.label, this.preview].filter(Boolean);
+			if (isLabelAfter(position)) children.reverse();
+			this.labelWrap.className = labelWrapClassNames(position).join(" ");
+			this.labelWrap.replaceChildren(...children);
+		}
+		/**
+		* Rebuilds the label from the field's data
 		*/
 		updateLabel() {
-			const newLabel = dom.create(this.labelConfig);
-			if (this.label || !newLabel) this.label.remove();
-			if (newLabel) if (this.data.config?.labelAfter) this.dom.append(newLabel);
-			else this.dom.prepend(newLabel);
-			this.label = newLabel;
+			this.label = dom.create(this.labelConfig);
+			this.syncLabelWrap();
 		}
 		/**
 		* Updates a field's preview
-		* @return {Object} fresh preview
 		*/
 		updatePreview = () => {
+			this.preview = this.fieldPreview();
 			this.updateLabel();
-			const newPreview = this.fieldPreview();
-			this.preview.replaceWith(newPreview);
-			this.preview = newPreview;
 		};
 		get defaultPreviewActions() {
 			return {
@@ -18553,6 +18668,7 @@ var Columns = class extends ComponentData {
 var columns = new Columns();
 //#endregion
 //#region src/lib/js/components/fields/index.js
+init_label_position();
 init_utils();
 init_object();
 init_field();
@@ -18582,7 +18698,10 @@ var DEFAULT_CONFIG$2 = () => ({
 			label: { default: "New Field" },
 			hideLabel: { default: false },
 			helpText: { default: "" },
-			labelAfter: { default: false },
+			labelPosition: {
+				default: "top",
+				options: LABEL_POSITIONS.map((value) => ({ value }))
+			},
 			disableHtmlLabel: { default: false },
 			tooltip: { default: "" }
 		} }
@@ -20958,6 +21077,7 @@ var paginate = (form, { type, progress, submit, heading, labels }, stages, onCha
 //#endregion
 //#region src/lib/js/renderer/index.js
 init_dom();
+init_label_position();
 init_loaders();
 init_utils();
 init_string();
@@ -20983,6 +21103,20 @@ var SKIPPED_PAGE_READS = {
 */
 var classNames = (value) => {
 	return [typeof value === "function" ? value() : value].flat(Infinity).filter((name) => typeof name === "string" && name.trim());
+};
+/**
+* A field's config with its label wrapper's classes (#243): any `inputWrap`, then `f-field f-label-<position>`.
+* dom.create only builds that wrapper when the label renders, so fields without one are unaffected.
+* @param {Object} field processed field data
+* @return {Object|undefined} config
+*/
+var fieldWrapConfig = (field) => {
+	if (!field.config) return field.config;
+	const inputWrap = [...classNames(field.config.inputWrap), ...labelWrapClassNames(resolveLabelPosition(field))];
+	return {
+		...field.config,
+		inputWrap: inputWrap.join(" ")
+	};
 };
 /**
 * A row's or column's own attributes, ready to render (#112). `id` and `tag` are Formeo's: the element is found by
@@ -21404,6 +21538,7 @@ var FormeoRenderer$1 = class {
 		const mergedFieldData = merge({ action }, field);
 		return this.cacheComponent({
 			...mergedFieldData,
+			config: fieldWrapConfig(mergedFieldData),
 			id: this.prefixId(id)
 		});
 	});
