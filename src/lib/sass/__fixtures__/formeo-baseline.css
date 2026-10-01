@@ -812,8 +812,7 @@ button[class*=-clone]:hover .svg-icon {
   display: none;
 }
 .formeo.formeo-editor .hovering > .children,
-.formeo.formeo-editor .hovering > .field-preview,
-.formeo.formeo-editor .hovering > .prev-label {
+.formeo.formeo-editor .hovering > .f-field {
   opacity: 0.65;
 }
 .formeo.formeo-editor .hovering .group-actions .f-i-handle {

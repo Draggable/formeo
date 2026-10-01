@@ -1,7 +1,13 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
 import { indexOfNode } from '../../common/helpers.mjs'
-import { normalizeLabelConfig } from '../../common/label-position.mjs'
+import {
+  FIELD_WRAP_CLASSNAME,
+  isLabelAfter,
+  labelWrapClassNames,
+  normalizeLabelConfig,
+  resolveLabelPosition,
+} from '../../common/label-position.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
@@ -33,6 +39,9 @@ export default class Field extends Component {
 
     this.preview = this.fieldPreview()
 
+    this.labelWrap = dom.create({ className: FIELD_WRAP_CLASSNAME })
+    this.syncLabelWrap()
+
     const actionButtons = this.getActionButtons()
     const hasEditButton = this.actionButtons.some(child => child.meta?.id === 'edit')
 
@@ -45,11 +54,10 @@ export default class Field extends Component {
       },
       id: this.id,
       children: [
-        this.label,
         this.getComponentTag(),
         actionButtons,
+        this.labelWrap, // label and preview, in label-position order (#243)
         hasEditButton && this.editWindow, // fieldEdit window,
-        this.preview,
       ].filter(Boolean),
       panelNav: this.panelNav,
       dataset: {
@@ -154,35 +162,32 @@ export default class Field extends Component {
   }
 
   /**
-   * Update the label dom when label data changes
+   * Puts the label and preview into the field wrapper in label-position order, with the matching classes (#243)
+   */
+  syncLabelWrap() {
+    const position = resolveLabelPosition(this.data)
+    const children = [this.label, this.preview].filter(Boolean)
+    if (isLabelAfter(position)) {
+      children.reverse()
+    }
+    this.labelWrap.className = labelWrapClassNames(position).join(' ')
+    this.labelWrap.replaceChildren(...children)
+  }
+
+  /**
+   * Rebuilds the label from the field's data
    */
   updateLabel() {
-    const newLabel = dom.create(this.labelConfig)
-
-    if (this.label || !newLabel) {
-      this.label.remove()
-    }
-
-    if (newLabel) {
-      if (this.data.config?.labelAfter) {
-        this.dom.append(newLabel)
-      } else {
-        this.dom.prepend(newLabel)
-      }
-    }
-
-    this.label = newLabel
+    this.label = dom.create(this.labelConfig)
+    this.syncLabelWrap()
   }
 
   /**
    * Updates a field's preview
-   * @return {Object} fresh preview
    */
   updatePreview = () => {
+    this.preview = this.fieldPreview()
     this.updateLabel()
-    const newPreview = this.fieldPreview()
-    this.preview.replaceWith(newPreview)
-    this.preview = newPreview
   }
 
   get defaultPreviewActions() {

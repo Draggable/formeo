@@ -87,3 +87,49 @@ describe('Field label position data (#243)', () => {
     assert.equal(select.value, 'bottom')
   })
 })
+
+describe('Field preview wrapper (#243)', () => {
+  const wrapOf = field => field.dom.querySelector(':scope > .f-field')
+  const partsOf = field => [...wrapOf(field).children].map(child => child.className)
+
+  it('wraps the label and preview in f-field f-label-<position>, in position order', () => {
+    const top = textField(editor())
+    assert.equal(wrapOf(top).className, 'f-field f-label-top')
+    assert.deepEqual(partsOf(top), ['prev-label', 'field-preview'])
+
+    const after = textField(editor(), { labelPosition: 'after' })
+    assert.equal(wrapOf(after).className, 'f-field f-label-after')
+    assert.deepEqual(partsOf(after), ['field-preview', 'prev-label'])
+  })
+
+  it('renders legacy labelAfter after the preview on first render', () => {
+    const field = textField(editor(), { labelAfter: true })
+    assert.deepEqual(partsOf(field), ['field-preview', 'prev-label'])
+  })
+
+  it('puts the edit window after the wrapper', () => {
+    const field = textField(editor())
+    const children = [...field.dom.children]
+    assert.ok(children.indexOf(wrapOf(field)) < children.indexOf(field.dom.querySelector('.field-edit')))
+  })
+
+  it('moves the label and swaps the class when labelPosition changes', () => {
+    const field = textField(editor())
+    field.set('config.labelPosition', 'before')
+    field.updatePreview()
+    assert.equal(wrapOf(field).className, 'f-field f-label-before')
+    field.set('config.labelPosition', 'bottom')
+    field.updatePreview()
+    assert.deepEqual(partsOf(field), ['field-preview', 'prev-label'])
+  })
+
+  it('keeps the wrapper with only the preview while the label is hidden, and brings the label back', () => {
+    const field = textField(editor(), { labelPosition: 'after' })
+    field.set('config.hideLabel', true)
+    assert.doesNotThrow(() => field.updatePreview())
+    assert.deepEqual(partsOf(field), ['field-preview'])
+    field.set('config.hideLabel', false)
+    field.updatePreview()
+    assert.deepEqual(partsOf(field), ['field-preview', 'prev-label'])
+  })
+})
