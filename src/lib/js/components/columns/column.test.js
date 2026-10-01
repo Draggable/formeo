@@ -43,6 +43,13 @@ describe('Column edit panel (#112)', () => {
     assert.equal(column.dom.querySelector('.column-actions .edit-toggle'), null)
   })
 
+  it('without an edit button the column builds no panels', () => {
+    const column = columnOf(editorWith({ config: { columns: { all: { actionButtons: { disabled: ['edit'] } } } } }))
+    assert.equal(column.editPanels.size, 0)
+    assert.equal(column.panels, undefined)
+    assert.equal(column.dom.querySelector('.column-edit .attrs-panel'), null)
+  })
+
   it('the edit button opens the column edit window', () => {
     const column = columnOf(editorWith())
     column.toggleEdit(true)

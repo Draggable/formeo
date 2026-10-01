@@ -37,8 +37,12 @@ export default class Column extends Component {
   constructor(columnData, components) {
     super('column', { ...DEFAULT_DATA(), ...columnData }, components)
 
-    // its Attributes panel (#112), built before the DOM that holds it
-    this.updateEditPanels()
+    const actionButtons = this.getActionButtons()
+    // its Attributes panel (#112), built before the DOM that holds it. Without an edit button nothing opens it, so
+    // skip the panels and their ResizeObserver (actionButtons.disabled: ['edit'])
+    if (this.actionButtons.some(button => button.meta?.id === 'edit')) {
+      this.updateEditPanels()
+    }
 
     const childWrap = this.createChildWrap()
 
@@ -51,7 +55,7 @@ export default class Column extends Component {
       id: this.id,
       content: [
         this.getComponentTag(),
-        this.getActionButtons(),
+        actionButtons,
         this.editWindow,
         DOM_CONFIGS.resizeHandle(new ResizeColumn(this.components)),
         childWrap,
