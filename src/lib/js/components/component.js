@@ -1125,33 +1125,65 @@ export default class Component extends Data {
     return dom.create(editWindow)
   }
 
+  /**
+   * Panels a component builds itself instead of from its data, keyed by the name `panels.order` uses for them,
+   * e.g. a row's Settings (#112). Only names in `panels.order` are shown.
+   * @return {Object<String, {panelConfig: Object}>}
+   */
+  get customPanels() {
+    return {}
+  }
+
+  /**
+   * What a panel is built from while its data key is unset, e.g. `{ attrs: {} }` so a row shows an empty Attributes
+   * panel (#112). Fields and stages have none: a control without attrs gets no Attributes panel.
+   * @return {Object}
+   */
+  get defaultPanelData() {
+    return {}
+  }
+
   updateEditPanels = () => {
     if (!this.config) {
       return null
     }
     const editable = new Set(['object', 'array'])
     const hasConfigOptions = configOptionsOf(this.config).size > 0
+    const { customPanels, defaultPanelData } = this
     // declared config keys get a Config panel even before the component has any config (a new stage)
     const panelOrder = unique([
       ...this.config.panels.order,
       ...Object.keys(this.data),
       ...(hasConfigOptions ? ['config'] : []),
     ])
-    const noPanels = new Set(['children', 'meta', 'action', 'events', ...this.config.panels.disabled])
+    // a row's or column's `className` is its internal class list, never a panel
+    const noPanels = new Set(['children', 'meta', 'action', 'events', 'className', ...this.config.panels.disabled])
     const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {
+      if (customPanels[panelName]) {
+        this.editPanels.set(panelName, customPanels[panelName])
+        continue
+      }
       // a Config panel without declared keys would only offer keys that mean nothing for this component
       if (panelName === 'config' && !hasConfigOptions) {
         this.editPanels.delete(panelName)
         continue
       }
-      const panelData = panelName === 'config' ? this.get(panelName) || {} : this.get(panelName)
+      const panelData =
+        panelName === 'config' ? this.get(panelName) || {} : (this.get(panelName) ?? defaultPanelData[panelName])
       const propType = dom.childType(panelData)
       if (editable.has(propType)) {
         const editPanel = new EditPanel(panelData, panelName, this)
         this.editPanels.set(editPanel.name, editPanel)
       }
+    }
+
+    this.panels?.destroy()
+    if (!this.editPanels.size) {
+      // nothing to edit: Panels needs at least one panel, and editWindow drops the edit button
+      this.panels = null
+      return
     }
 
     const panelsData = {
@@ -1160,7 +1192,6 @@ export default class Component extends Data {
       displayType: 'auto',
     }
 
-    this.panels?.destroy()
     this.panels = new Panels(panelsData)
 
     if (this.dom) {
