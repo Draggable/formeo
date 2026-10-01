@@ -2,7 +2,7 @@ import i18n from '@draggable/i18n'
 import Sortable from 'sortablejs'
 import dom from '../../common/dom.js'
 import { capitalize, safeAttrName } from '../../common/helpers.mjs'
-import { slugify, toTitleCase } from '../../common/utils/string.mjs'
+import { slugify, slugifyAddress, toTitleCase } from '../../common/utils/string.mjs'
 import { PANEL_CLASSNAME } from '../../constants.js'
 import Dialog from '../dialog.js'
 import { configOptionsOf } from './config-options.mjs'
@@ -261,9 +261,10 @@ export default class EditPanel {
     this.component.set(`attrs.${attr}`, val)
     addAttributeActions[safeAttr]?.(val, this.component)
 
-    // classList, not a selector: a namespaced name like `xlink:href` isn't a valid class selector
-    const rowClass = `${this.component.name}-attrs-${safeAttr}`
-    const existingAttr = Array.from(this.props.children).find(row => row.classList.contains(rowClass))
+    // EditPanelItem names every item `field-<key>`, whatever the component (a row's too, #112). classList, not a
+    // selector: a namespaced name like `xlink:href` isn't a valid class selector
+    const itemClass = `field-${slugifyAddress(itemKey)}`
+    const existingAttr = Array.from(this.props.children).find(item => item.classList.contains(itemClass))
     const newAttr = new EditPanelItem({
       key: itemKey,
       data: { [safeAttr]: val },

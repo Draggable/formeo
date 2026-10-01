@@ -9,6 +9,7 @@ import {
   COLUMN_PRESET_CLASSNAME,
   COLUMN_TEMPLATES,
   CUSTOM_COLUMN_OPTION_CLASSNAME,
+  PANEL_CLASSNAME,
   ROW_CLASSNAME,
 } from '../../constants.js'
 import Component from '../component.js'
@@ -36,6 +37,9 @@ export default class Row extends Component {
    */
   constructor(rowData, components) {
     super('row', { ...DEFAULT_DATA(), ...rowData }, components)
+
+    // Settings and Attributes panels (#112), built before the DOM that holds them
+    this.updateEditPanels()
 
     const children = this.createChildWrap()
 
@@ -72,10 +76,28 @@ export default class Row extends Component {
   }
 
   /**
-   * Edit window for Row
-   * @return {Object} edit window dom config for Row
+   * A row's Settings panel sits beside its Attributes panel (#112). Built once, so the column layout select it
+   * holds (`columnPresetControl`) exists even when `panels.disabled` hides the panel.
+   * @return {Object<String, {panelConfig: Object}>}
    */
-  get editWindow() {
+  get customPanels() {
+    this.settingsPanel ??= { panelConfig: this.settingsPanelConfig() }
+    return { settings: this.settingsPanel }
+  }
+
+  /**
+   * A row shows an empty Attributes panel before it has any attributes (#112)
+   * @return {Object}
+   */
+  get defaultPanelData() {
+    return { attrs: {} }
+  }
+
+  /**
+   * Settings panel for Row: input group, fieldset and legend, and column widths
+   * @return {Object} panel config for Panels
+   */
+  settingsPanelConfig() {
     const fieldsetInput = {
       tag: 'input',
       id: `${this.id}-fieldset`,
@@ -162,18 +184,16 @@ export default class Row extends Component {
     const columnSettingsPreset = dom.formGroup([columnSettingsPresetLabel, columnSettingsPresetSelect], 'row')
     const editWindowContents = [inputGroupInput, 'hr', fieldSetControls, 'hr', columnSettingsPreset]
 
-    const editWindow = dom.create({
-      className: `${this.name}-edit group-config`,
+    return {
+      config: { label: i18n.get('settings') || 'Settings' },
+      attrs: { className: `${PANEL_CLASSNAME} settings-panel` },
       action: {
-        onRender: editWindow => {
-          // Edit window contents are dependent on columns which have not rendered at the time of row creation
-          const elements = editWindowContents.map(elem => dom.create(elem))
-          editWindow.append(...elements)
+        // the contents depend on columns, which have not rendered when the row is created
+        onRender: panel => {
+          panel.append(...editWindowContents.map(elem => dom.create(elem)))
         },
       },
-    })
-
-    return editWindow
+    }
   }
 
   onAdd(evt) {

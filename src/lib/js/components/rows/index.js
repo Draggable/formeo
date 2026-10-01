@@ -6,6 +6,18 @@ const DEFAULT_CONFIG = {
     buttons: ['move', 'edit', 'clone', 'remove'],
     disabled: [],
   },
+  panels: {
+    disabled: [],
+    // Settings is the row's own panel (Row#customPanels); Attributes edits rows.<id>.attrs (#112)
+    order: ['settings', 'attrs'],
+    attrs: {
+      // id: conditions and the renderer find a row by #f-<id>; tag: would swap the element;
+      // data-clone-of: written by the renderer's input-group clones
+      disabled: ['id', 'tag', 'data-clone-of'],
+      hideDisabled: true,
+      locked: [],
+    },
+  },
 }
 
 export class Rows extends ComponentData {
