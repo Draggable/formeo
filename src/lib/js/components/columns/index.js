@@ -3,8 +3,19 @@ import Column from './column.js'
 
 const DEFAULT_CONFIG = {
   actionButtons: {
-    buttons: ['clone', 'move', 'remove'],
+    buttons: ['clone', 'move', 'edit', 'remove'],
     disabled: [],
+  },
+  panels: {
+    disabled: [],
+    // Attributes edits columns.<id>.attrs (#112)
+    order: ['attrs'],
+    attrs: {
+      // id: conditions and the renderer find a column by #f-<id>; tag: would swap the element
+      disabled: ['id', 'tag'],
+      hideDisabled: true,
+      locked: [],
+    },
   },
 }
 
