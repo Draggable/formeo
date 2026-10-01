@@ -1,3 +1,10 @@
+# [5.16.0](https://github.com/Draggable/formeo/compare/v5.15.1...v5.16.0) (2026-10-01)
+
+
+### Features
+
+* label position (top, bottom, before, after) for fields ([#525](https://github.com/Draggable/formeo/issues/525)) ([30606cd](https://github.com/Draggable/formeo/commit/30606cdcf6fa591e6267f8296746600b36eeb51b)), closes [#243](https://github.com/Draggable/formeo/issues/243)
+
 ## [5.15.1](https://github.com/Draggable/formeo/compare/v5.15.0...v5.15.1) (2026-10-01)
 
 
