@@ -174,4 +174,58 @@ describe('label position in the renderer (#243)', () => {
       assert.deepEqual([...group.parentElement.classList], ['f-field', 'f-label-before', 'my-group'])
     })
   })
+
+  describe('groups', () => {
+    test("a group's label names it: role=group and aria-labelledby, label with an id and no for", () => {
+      render({ colour: groupField('colour', 'radio') })
+      const group = container.querySelector('#f-colour')
+      const label = container.querySelector('#f-colour-label')
+      assert.equal(group.getAttribute('role'), 'group')
+      assert.equal(group.getAttribute('aria-labelledby'), 'f-colour-label')
+      assert.equal(label.tagName, 'LABEL')
+      assert.equal(label.hasAttribute('for'), false)
+      assert.equal(label.textContent, 'Colour')
+    })
+
+    test('a role or aria-labelledby set in attrs wins', () => {
+      render({ colour: groupField('colour', 'checkbox', {}, { role: 'radiogroup', 'aria-labelledby': 'mine' }) })
+      const group = container.querySelector('#f-colour')
+      assert.equal(group.getAttribute('role'), 'radiogroup')
+      assert.equal(group.getAttribute('aria-labelledby'), 'mine')
+    })
+
+    test('a group with a hidden label gets no role or label id', () => {
+      render({ colour: groupField('colour', 'checkbox', { hideLabel: true }) })
+      const group = container.querySelector('#f-colour')
+      assert.equal(group.hasAttribute('role'), false)
+      assert.equal(container.querySelector('#f-colour-label'), null)
+    })
+
+    test('labelPosition moves the group label; option labels stay after their inputs', () => {
+      render({ colour: groupField('colour', 'checkbox', { labelPosition: 'after' }) })
+      const wrapper = wrapperOf('colour')
+      assert.deepEqual(tagsIn(wrapper), ['div', 'label'])
+      assert.ok(wrapper.classList.contains('f-label-after'))
+      for (const option of container.querySelectorAll('#f-colour .f-checkbox')) {
+        assert.deepEqual(tagsIn(option), ['input', 'label'])
+      }
+    })
+
+    test('the Other choice keeps its own label and text box name', () => {
+      render({ colour: groupField('colour', 'radio', { other: true, labelPosition: 'before' }) })
+      const text = container.querySelector('#f-colour-other-value')
+      assert.equal(text.getAttribute('aria-labelledby'), 'f-colour-other-label')
+      assert.equal(container.querySelector('#f-colour-other-label').getAttribute('for'), 'f-colour-other')
+    })
+
+    test('an input group clone gets its own group label id', () => {
+      render({ colour: groupField('colour', 'radio') }, { inputGroup: true })
+      container.querySelector('.add-input-group').click()
+      const groups = [...container.querySelectorAll('[role="group"]')]
+      assert.equal(groups.length, 2)
+      const [original, clone] = groups.map(group => group.getAttribute('aria-labelledby'))
+      assert.notEqual(original, clone)
+      assert.ok(container.querySelector(`#${clone}`), "the clone's label id exists")
+    })
+  })
 })

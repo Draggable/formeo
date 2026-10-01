@@ -247,6 +247,12 @@ class DOM {
         wrap.attrs = groupWrapperAttrs(groupAttrs)
         // config.required only drives the label's required mark; `required` itself lives on the option inputs
         wrap.config = { ...elem.config, required: Boolean(groupAttrs.required) }
+        const groupLabelId = this.groupLabelId(elem, isPreview)
+        if (groupLabelId) {
+          // the user's own role or aria-labelledby wins
+          wrap.attrs = { role: 'group', 'aria-labelledby': groupLabelId, ...wrap.attrs }
+          wrap.config.labelId = groupLabelId
+        }
         // which of the group's inputs are required or enabled depends on what is checked, so re-sync on change
         const groupSyncs = []
         if (!isPreview && groupAttrs.type === 'checkbox' && groupAttrs.required) {
@@ -830,6 +836,19 @@ class DOM {
   })
 
   /**
+   * The id of a rendered checkbox or radio group's label, or null when no group label renders. A <label for> can't
+   * name a <div>, so the group gets role="group" and aria-labelledby this id instead (#243).
+   * @param  {Object}  elem      group config
+   * @param  {Boolean} isPreview editor preview
+   * @return {String|null}
+   */
+  groupLabelId(elem, isPreview) {
+    const { id, attrs = {}, config = {} } = elem
+    const isOptionGroup = attrs.type === 'checkbox' || attrs.type === 'radio'
+    return !isPreview && isOptionGroup && id && config.label && !config.hideLabel ? `${id}-label` : null
+  }
+
+  /**
    * Generate a label
    * @param  {Object} elem config object
    * @param  {String} fMap map to label's value in formData
@@ -842,14 +861,14 @@ class DOM {
       config: { label: labelText = '', helpText = '', tooltip = null },
     } = elem
     const { id: elemId, attrs } = elem
+    const { labelId } = elem.config
     if (typeof labelText === 'function') {
       labelText = labelText()
     }
     const fieldLabel = {
       tag: 'label',
-      attrs: {
-        for: elemId || attrs?.id,
-      },
+      // a group's label names it through aria-labelledby; a control's label points at it with for
+      attrs: labelId ? { id: labelId } : { for: elemId || attrs?.id },
       className: [],
       children: [
         labelText,
