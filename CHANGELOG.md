@@ -1,3 +1,11 @@
+## [5.15.1](https://github.com/Draggable/formeo/compare/v5.15.0...v5.15.1) (2026-10-01)
+
+
+### Bug Fixes
+
+* **editor:** show unset row Fieldset and Input group settings as unchecked ([3ff1536](https://github.com/Draggable/formeo/commit/3ff1536816bee5ddbedc80ef583e54ae6e4cb2af)), closes [#521](https://github.com/Draggable/formeo/issues/521)
+* **renderer:** clone input groups whatever the component ids look like ([93bbe50](https://github.com/Draggable/formeo/commit/93bbe50ed1b9a42b4346af9de5063991722c496a)), closes [#520](https://github.com/Draggable/formeo/issues/520)
+
 # [5.15.0](https://github.com/Draggable/formeo/compare/v5.14.0...v5.15.0) (2026-10-01)
 
 
