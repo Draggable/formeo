@@ -177,7 +177,7 @@ Formeo can be integrated with popular frontend frameworks:
 
 ## Theming
 
-Every color formeo uses is a `--formeo-*` CSS custom property, declared on `:root` with zero specificity. Override them on `:root` or `<body>`: formeo appends its dialogs to `document.body`, so a rule scoped to the editor's container misses them. A narrower selector works too if it also covers `.formeo-dialog` and, when you move the controls panel with `controls.container`, `.formeo-controls`. For example, to map your own dark theme:
+Every color formeo uses is a `--formeo-*` CSS custom property, and so is the width of a label that sits beside its control, all declared on `:root` with zero specificity. Override them on `:root` or `<body>`: formeo appends its dialogs to `document.body`, so a rule scoped to the editor's container misses them. A narrower selector works too if it also covers `.formeo-dialog` and, when you move the controls panel with `controls.container`, `.formeo-controls`. For example, to map your own dark theme:
 
 ```css
 :root {
@@ -203,6 +203,7 @@ The full list, with defaults, is in [`_properties.scss`](https://github.com/Drag
 - **Borders and focus:** `border`, `border-strong`, `focus`
 - **Accents:** `primary`, `success`, `warning` and `danger` (each with a `-dark` variant), `danger-subtle`, `info`, `remove-bg`
 - **Component outlines:** `{stage,row,column,field,option}-outline`, `-outline-text`, `-highlight` and `-highlight-text`, plus `column-outline-soft`
+- **Layout:** `label-width` (the label's width when `labelPosition` is `before` or `after`, `10rem`)
 
 **Visual changes from 5.1.3:** icons that hard-coded `#444` (header, paragraph and the triangles) now use `--formeo-icon`, which defaults to `#000`. The column resize-handle triangles now use the column outline color (`--formeo-column-outline-soft`, or the darker `--formeo-column-outline` on hover) instead of `#444`.
 

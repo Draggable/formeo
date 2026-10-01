@@ -1074,6 +1074,59 @@ rows: {
   `config.width` is added after it, so `config.width` always wins.
 - `id` and `tag` are ignored: Formeo needs the element's id and always renders a `div`.
 
+### Label position
+
+`config.labelPosition` sets where a field's label sits:
+
+| Value    | Layout                 | Order          |
+| -------- | ---------------------- | -------------- |
+| `top`    | label above            | label, control |
+| `bottom` | label below            | control, label |
+| `before` | label beside, leading  | label, control |
+| `after`  | label beside, trailing | control, label |
+
+`before` and `after` follow the text direction, so in a right-to-left form `before` is on the right. The label and
+control are always in the DOM in the order you see them, so screen readers read them in that order. In the editor it's
+the Label Position dropdown in a field's Configuration panel.
+
+Without `labelPosition`, a lone checkbox or radio is `after` and everything else is `top`. A checkbox or radio group's
+`labelPosition` moves the group's label. Each option's label always follows its own input.
+
+Every rendered field with a visible label is wrapped like this:
+
+```html
+<div class="f-field f-label-before">
+  <label for="f-name">Name</label>
+  <input id="f-name" name="name" type="text">
+</div>
+```
+
+`before` and `after` sit side by side while the control has at least half the row. In a narrower column or viewport
+they stack, with the label above (`before`) or below (`after`). The label's width beside the control is
+`--formeo-label-width`, `10rem` by default:
+
+```css
+.my-form {
+  --formeo-label-width: 14rem;
+}
+```
+
+A checkbox or radio group is named by its label: the group is `role="group"` with `aria-labelledby` pointing at the
+label, whose id is `f-<id>-label`.
+
+Fields without a visible label (`hideLabel`, hidden inputs, headers, paragraphs, dividers and buttons) have no wrapper,
+and `labelPosition` doesn't apply to them.
+
+**`labelAfter`:** older forms and control definitions may use `config.labelAfter`. The renderer still reads it: `true`
+is `bottom` (`after` for a lone checkbox or radio) and `false` is `top` (`before`). `labelPosition` wins when both are
+set. The editor converts `labelAfter` to `labelPosition` when it loads a field, so the form saves with
+`labelPosition`.
+
+**Replacing a `:has()` workaround:** if you used a rule like
+`.formeo-render div:has(> label + input) { display: flex; }` to put labels beside inputs, set `labelPosition: 'before'`
+on those fields (or target `.f-field.f-label-before`) and delete the rule. The built-in layout also stacks on narrow
+screens.
+
 ### Accessing Components
 
 The renderer caches all rendered components internally:

@@ -101,7 +101,7 @@ An element with a `controlSet` key adds a group of fields at once; see
 ### configOptions
 
 `configOptions` declares `config` keys the element's fields offer in their Configuration panel, on top of the keys every
-field has. Each one is `{ default, label }`, as described in
+field has. Each one is `{ default, label, options }`, as described in
 [Configuration panel keys](../config/README.md#configuration-panel-keys). `configOptions` itself is never saved in
 form data. A field only gets one of these keys when the element's `config` sets it or a user adds it from the dialog.
 The editor's `config` option can still relabel or disable them.
@@ -114,6 +114,17 @@ The editor's `config` option can still relabel or disable them.
   meta: { group: 'common', id: 'rating', icon: 'star' },
   configOptions: { stars: { default: 5, label: 'Stars' } },
 }
+```
+
+A lone checkbox or radio control can start its label after the box in the panel's dropdown:
+
+```javascript
+configOptions: {
+  labelPosition: {
+    default: 'after',
+    options: [{ value: 'top' }, { value: 'bottom' }, { value: 'before' }, { value: 'after' }],
+  },
+},
 ```
 
 ## elementOrder

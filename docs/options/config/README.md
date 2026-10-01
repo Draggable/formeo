@@ -71,18 +71,23 @@ A component's Configuration panel shows the `config` keys declared for it in `pa
 "Add config" dialog offers the declared keys the component doesn't have yet, and its Add button hides when there are
 none left. Keys that aren't declared, such as `controlId`, never show.
 
-- `fields.all` declares `label`, `hideLabel`, `helpText`, `labelAfter`, `disableHtmlLabel` and `tooltip`.
+- `fields.all` declares `label`, `hideLabel`, `helpText`, `labelPosition`, `disableHtmlLabel` and `tooltip`.
+  `labelPosition` is a dropdown (see [Label position](../../renderer/renderer.md#label-position)). It replaces
+  `labelAfter`, which the editor converts on load.
 - A control can declare more for its own fields with `configOptions` (see [elements](../controls/README.md#configoptions)).
 - The checkbox and radio group controls declare `other` and `otherLabel`, which add an
   [Other choice](../../renderer/renderer.md#other-choice) to the group.
 - Stages declare `title` when the editor's [`pages`](../../editor/pages.md) option is on and nothing otherwise, so a
   stage without pages has no Configuration panel.
 
-A declaration is `{ default, label }`:
+A declaration is `{ default, label, options }`:
 
 - `default` is the value a key added from the dialog starts with. It must be a boolean (edited with a checkbox), a
   string or a number (edited with a text input). Other defaults are ignored with a console warning.
 - `label` is optional. It defaults to the `config.<key>` translation, then to the key in title case.
+- `options` is optional and makes the item a dropdown: `[{ value, label }]`, where each `value` is a string and
+  `default` is one of them. A missing `label` is the `<key>.<value>` translation, then the value in title case.
+  Options that don't meet these rules make the declaration ignored, with a console warning.
 
 Declarations merge in this order, later ones winning: `all`, the control's own `configOptions`, the field type, then the
 component id. A key listed in `disabled` at any of those levels is hidden from the panel and the dialog. It stays in

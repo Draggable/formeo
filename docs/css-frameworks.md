@@ -35,6 +35,9 @@ group and a select, trimmed to the structural elements and their classes:
 - **Column:** same as rows — editor-built columns carry `className: ['formeo-column']`; hand-written data may not.
   Either way its width comes from an inline `style="width: ...%"` (from the column's `config.width`, `100%` if
   unset).
+- **Field:** a field with a visible label is wrapped in a div with `f-field` and its label position,
+  `f-label-top|bottom|before|after` (see [Label position](renderer/renderer.md#label-position)). A field without a
+  visible label has no wrapper.
 - **Checkbox/radio options:** each option is wrapped in a div with a fixed `f-checkbox` or `f-radio` class.
 - **Required mark:** the `*` next to a label is a `<span class="text-error">`.
 - **Tooltip:** `<span class="f-tooltip" data-tooltip="...">`.
