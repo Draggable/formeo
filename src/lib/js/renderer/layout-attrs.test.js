@@ -94,6 +94,30 @@ describe('row and column attributes in the renderer (#112)', () => {
     assert.ok(classList.contains('formeo-row'))
   })
 
+  test('a string className is kept beside a string Formeo class', () => {
+    render(
+      formWith({
+        row: { className: 'formeo-row', attrs: { className: 'my-row' } },
+        column: { className: 'formeo-column', attrs: { className: 'my-col' } },
+      })
+    )
+    const row = container.querySelector('#f-row-1')
+    assert.deepEqual([...row.classList], ['formeo-row', 'my-row'])
+    const column = container.querySelector('#f-col-1')
+    assert.deepEqual([...column.classList], ['formeo-column', 'my-col'])
+  })
+
+  test('function class values are called, not rendered as source text', () => {
+    render(formWith({ row: { attrs: { class: () => 'from-fn', className: () => ['named-fn'] } } }))
+    const row = container.querySelector('#f-row-1')
+    assert.deepEqual([...row.classList], ['formeo-row', 'named-fn', 'from-fn'])
+  })
+
+  test('a row without any class renders no class attribute', () => {
+    render(formWith({ row: { className: undefined, attrs: { 'data-x': '1' } } }))
+    assert.equal(container.querySelector('#f-row-1').hasAttribute('class'), false)
+  })
+
   test('id and tag are ignored', () => {
     render(formWith({ row: { attrs: { id: 'hijack', tag: 'section' } }, column: { attrs: { id: 'x', tag: 'aside' } } }))
     assert.equal(container.querySelector('#hijack'), null)
@@ -111,7 +135,22 @@ describe('row and column attributes in the renderer (#112)', () => {
 
   test('a column without a style keeps its width', () => {
     render(formWith())
-    assert.equal(container.querySelector('#f-col-1').style.width, '50%')
+    assert.equal(container.querySelector('#f-col-1').style.cssText, 'width: 50%;')
+  })
+
+  test('an !important width in the column style does not beat config.width', () => {
+    render(formWith({ column: { attrs: { style: 'WIDTH: 10px !important; min-width: 5px' } } }))
+    const column = container.querySelector('#f-col-1')
+    assert.equal(column.style.width, '50%')
+    assert.equal(column.style.getPropertyPriority('width'), '')
+    assert.equal(column.style.minWidth, '5px')
+  })
+
+  test("a semicolon inside a column style's url() is kept", () => {
+    render(formWith({ column: { attrs: { style: 'background-image: url("data:image/png;base64,AAAA")' } } }))
+    const { style } = container.querySelector('#f-col-1')
+    assert.equal(style.backgroundImage, 'url("data:image/png;base64,AAAA")')
+    assert.equal(style.width, '50%')
   })
 
   test('attrs: null renders like no attributes', () => {

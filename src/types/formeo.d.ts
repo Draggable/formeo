@@ -111,7 +111,8 @@ export interface ColumnData extends ComponentDataBase {
   children: ComponentId[]
   /**
    * Formeo's own class list (`formeo-column`). Put your classes in `attrs.className` (or `attrs.class`). A column's
-   * `attrs.style` is kept, with `config.width` applied after it. `attrs.id` and `attrs.tag` are reserved.
+   * `attrs.style` is kept minus any `width`, which always comes from `config.width`. `attrs.id` and `attrs.tag` are
+   * reserved.
    */
   className?: string | string[]
   config?: { width?: string; [key: string]: unknown }

@@ -39,18 +39,48 @@ const SKIPPED_PAGE_READS = {
 }
 
 /**
+ * Class names from a class value: a function is called first, then strings and arrays are flattened
+ * @param {String|Array|Function} [value]
+ * @return {String[]}
+ */
+const classNames = value => {
+  const resolved = typeof value === 'function' ? value() : value
+  return [resolved].flat(Infinity).filter(name => typeof name === 'string' && name.trim())
+}
+
+/**
  * A row's or column's own attributes, ready to render (#112). `id` and `tag` are Formeo's: the element is found by
- * `#f-<id>` (conditions use it) and is always a div. `class` joins `className`, which the internal class merges into,
- * instead of being overwritten by it.
+ * `#f-<id>` (conditions use it) and is always a div. Formeo's own class list (the component's top-level `className`),
+ * `attrs.className` and `attrs.class` become one array on `attrs.className`, so the caller drops the top-level
+ * `className`: dom.create would overwrite a string `attrs.className` with a string top-level one.
  * @param {Object|null} [attrs]
+ * @param {String|String[]} [ownClassName] the component's top-level `className`
  * @return {Object}
  */
-const layoutAttrs = attrs => {
-  const { id: _id, tag: _tag, class: classAttr, ...rest } = attrs ?? {}
-  if (classAttr) {
-    rest.className = [rest.className, classAttr].flat().filter(Boolean)
+const layoutAttrs = (attrs, ownClassName) => {
+  const { id: _id, tag: _tag, class: classAttr, className, ...rest } = attrs ?? {}
+  const classes = [...new Set([...classNames(ownClassName), ...classNames(className), ...classNames(classAttr)])]
+  if (classes.length) {
+    rest.className = classes
   }
   return rest
+}
+
+// a declaration list split on `;`, except inside parentheses, e.g. url("data:image/png;base64,...")
+const STYLE_DECLARATION_SEPARATOR = /;(?![^(]*\))/
+const WIDTH_DECLARATION = /^width\s*:/i
+
+/**
+ * A column's own style plus its width. Width declarations in the style are dropped, so `config.width` wins even
+ * over `width: 10px !important`.
+ * @param {String} [style]
+ * @param {String} width e.g. '50%'
+ * @return {String}
+ */
+const columnStyle = (style, width) => {
+  const declarations = typeof style === 'string' ? style.split(STYLE_DECLARATION_SEPARATOR) : []
+  const kept = declarations.map(declaration => declaration.trim()).filter(d => d && !WIDTH_DECLARATION.test(d))
+  return [...kept, `width: ${width}`].join('; ')
 }
 
 export default class FormeoRenderer {
@@ -439,17 +469,16 @@ export default class FormeoRenderer {
    * @param  {Object} columnData
    * @return {Object} processed column data
    */
-  processColumn = ({ id, config = {}, attrs, ...columnData }) => {
-    const { style, ...columnAttrs } = layoutAttrs(attrs)
-    const width = `width: ${config.width || '100%'}`
+  processColumn = ({ id, config = {}, attrs, className, ...columnData }) => {
+    const { style, ...columnAttrs } = layoutAttrs(attrs, className)
     return {
       ...columnData,
       attrs: columnAttrs,
       config,
       id: this.prefixId(id),
       children: this.processFields(columnData.children),
-      // the column's own style first, so its width always wins (#112)
-      style: style ? `${String(style).trim().replace(/;$/, '')}; ${width}` : width,
+      // the column's own style, minus any width, so config.width always wins (#112)
+      style: columnStyle(typeof style === 'function' ? style() : style, config.width || '100%'),
     }
   }
 
@@ -473,10 +502,12 @@ export default class FormeoRenderer {
    */
   processRow = (data, type = 'row') => {
     const { config = {}, id } = data
+    // Formeo's own class list joins attrs.className (see layoutAttrs)
+    const { className: ownClassName, ...rowProps } = data
     const className = [`formeo-${type}-wrap`]
     const rowData = {
-      ...data,
-      attrs: layoutAttrs(data.attrs),
+      ...rowProps,
+      attrs: layoutAttrs(data.attrs, ownClassName),
       children: this.processColumns(data.id),
       id: this.prefixId(id),
     }
