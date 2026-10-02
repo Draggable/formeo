@@ -72,6 +72,33 @@ describe('Table panel (#349)', () => {
     assert.deepEqual([...configOptionsOf(field.config).keys()], ['label'])
   })
 
+  it('keeps the full Config panel for a custom control with the table id but no table data (#349 workaround)', () => {
+    const data = {
+      id: 'f-old',
+      tag: 'table',
+      content: ['<tr><td>x</td></tr>'],
+      config: { label: 'Table', controlId: 'table' },
+    }
+    const keys = [...configOptionsOf(new Field(data, editor()).config).keys()]
+    for (const key of ['label', 'hideLabel', 'helpText', 'labelPosition', 'tooltip', 'disableHtmlLabel']) {
+      assert.ok(keys.includes(key), key)
+    }
+  })
+
+  it('restricts the Config panel by table data, whatever the control id', () => {
+    const data = tableData(defaultTable(), 'f-mine')
+    data.config.controlId = 'my-table'
+    assert.deepEqual([...configOptionsOf(new Field(data, editor()).config).keys()], ['label'])
+  })
+
+  it('shows no label on the stage for a table saved with hideLabel false', () => {
+    const data = tableData()
+    data.config.hideLabel = false
+    const field = new Field(data, editor())
+    assert.ok(!field.label)
+    assert.equal(field.dom.querySelector('.prev-label'), null)
+  })
+
   it('sits inside the field edit window once the panels render', async () => {
     const field = tableField()
     document.body.replaceChildren(field.dom)

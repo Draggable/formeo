@@ -36,17 +36,10 @@ const DEFAULT_CONFIG = () => ({
   },
 })
 
-// a table's caption is its visible name (#349), so the label-only config keys don't apply to it
-const TABLE_CONFIG = () => ({
-  panels: {
-    config: { disabled: ['hideLabel', 'labelPosition', 'helpText', 'tooltip', 'disableHtmlLabel'] },
-  },
-})
-
 export class Fields extends ComponentData {
   constructor(fieldData) {
     super('fields', fieldData)
-    this.config = { all: DEFAULT_CONFIG(), table: TABLE_CONFIG() }
+    this.config = { all: DEFAULT_CONFIG() }
   }
   Component(data) {
     return new Field(data, this.components)

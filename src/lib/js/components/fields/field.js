@@ -18,6 +18,8 @@ import { TablePanel } from './table-panel.js'
 const checkableTypes = new Set(['checkbox', 'radio'])
 const isSelectableType = new Set(['radio', 'checkbox', 'select-one', 'select-multiple'])
 
+const TABLE_DISABLED_CONFIG_KEYS = ['hideLabel', 'labelPosition', 'helpText', 'tooltip', 'disableHtmlLabel']
+
 /**
  * Element/Field class.
  */
@@ -33,6 +35,7 @@ export default class Field extends Component {
     this.normalizeLabelConfig()
     this.controlId = this.get('config.controlId') || this.get('meta.id')
     this.applyControlAttrConfig()
+    this.applyTableConfig()
 
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
     this.debouncedUpdatePreview = debounce(this.updatePreview)
@@ -86,6 +89,16 @@ export default class Field extends Component {
     }
   }
 
+  /**
+   * A table's caption is its visible name (#349), so the label-only Config keys don't apply to it. Keyed off the
+   * field's table data, not its control id. The config setter deep-merges, so this adds to the attr config above.
+   */
+  applyTableConfig() {
+    if (this.isTable) {
+      this.config = { [this.id]: { panels: { config: { disabled: TABLE_DISABLED_CONFIG_KEYS } } } }
+    }
+  }
+
   get isTable() {
     return isTableField({ table: this.get('table') })
   }
@@ -115,7 +128,8 @@ export default class Field extends Component {
   }
 
   get labelConfig() {
-    const hideLabel = !!this.get('config.hideLabel')
+    // a table is named by its caption, never a label (#349)
+    const hideLabel = this.isTable || !!this.get('config.hideLabel')
 
     if (hideLabel) {
       return null
