@@ -130,6 +130,7 @@ describe('table fields in the renderer (#349)', () => {
   test('renders only the table, with no <label>, even when hideLabel is false', () => {
     render({ t1: tableField('t1', hours(), { config: { label: 'Hours', hideLabel: false, controlId: 'table' } }) })
     const column = container.querySelector('#f-column-t1')
+    assert.ok(column.querySelector('table.f-table'))
     assert.equal(column.querySelector('label'), null)
   })
 
