@@ -66,6 +66,7 @@ export class TablePanel {
       const target = this.element.querySelector(selector)
       if (target && !target.disabled) {
         target.focus()
+        if (target.type === 'text') target.select()
         return
       }
     }

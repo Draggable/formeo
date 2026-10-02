@@ -127,7 +127,11 @@ describe('Table panel (#349)', () => {
       table.rows.map(row => row.cells.length),
       [4, 4]
     )
-    assert.equal(document.activeElement, panel.querySelector('[data-header-column="3"]'))
+    const input = panel.querySelector('[data-header-column="3"]')
+    assert.equal(document.activeElement, input)
+    assert.equal(input.value, 'Column 4')
+    assert.equal(input.selectionStart, 0)
+    assert.equal(input.selectionEnd, input.value.length)
   })
 
   it('+ Column without a header row focuses the new column in the first row', () => {
