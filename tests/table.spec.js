@@ -142,8 +142,6 @@ test.describe('Table element (#349)', () => {
     await panel.getByRole('button', { name: '+ Column' }).focus()
     await page.keyboard.press('Space')
     await expect(panel.getByRole('textbox', { name: 'Column 3 header' })).toBeFocused()
-    // the new column arrives labelled "Column 3" with the caret at the start: replace it
-    await page.keyboard.press('ControlOrMeta+a')
     await page.keyboard.type('Notes')
 
     await panel.getByRole('button', { name: 'Remove row 3' }).focus()
