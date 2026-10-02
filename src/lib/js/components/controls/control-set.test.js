@@ -122,4 +122,29 @@ describe('expandControlSet (#227)', () => {
     assert.deepEqual(columns.row, { config: { legend: 'A' } })
     assert.equal(expandControlSet(setOf([{ control: 'text-input' }], { layout: 'grid' }), lookup).layout, 'stacked')
   })
+
+  it('a table member keeps its own columns and rows over the control default (#349)', () => {
+    const tableControl = {
+      tag: 'table',
+      config: { label: 'Table', hideLabel: true },
+      table: {
+        caption: '',
+        headerRow: true,
+        rowHeaders: false,
+        columns: [{ label: 'Column 1' }, { label: 'Column 2' }, { label: 'Column 3' }],
+        rows: [{ cells: ['', '', ''] }, { cells: ['', '', ''] }],
+      },
+    }
+    const member = {
+      control: 'table',
+      table: { caption: 'Hours', columns: [{ label: 'Day' }, { label: 'Open' }], rows: [{ cells: ['Mon', '9–5'] }] },
+    }
+    const lookupTable = id => (id === 'table' ? structuredClone(tableControl) : undefined)
+    const {
+      fields: [field],
+    } = expandControlSet(setOf([member]), lookupTable)
+    assert.equal(field.table.caption, 'Hours')
+    assert.deepEqual(field.table.columns, [{ label: 'Day' }, { label: 'Open' }])
+    assert.deepEqual(field.table.rows, [{ cells: ['Mon', '9–5'] }])
+  })
 })
