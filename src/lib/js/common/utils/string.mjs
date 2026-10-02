@@ -37,6 +37,16 @@ export const toCamelCase = str => {
 }
 
 /**
+ * Replaces `{name}` tokens with `vars[name]` and leaves unknown tokens as they are. Uses a replacer function, so `$&`
+ * or `$$` in a value stays literal.
+ * @param {String} text e.g. 'Row {row}, column {column}'
+ * @param {Object} [vars] e.g. { row: 2, column: 3 }
+ * @return {String}
+ */
+export const fillTokens = (text, vars = {}) =>
+  text.replace(/\{(\w+)\}/g, (token, name) => (Object.hasOwn(vars, name) ? String(vars[name]) : token))
+
+/**
  * Converts a string into a URL-friendly "slug" by normalizing,
  * removing accents, converting to lowercase, trimming, and
  * replacing spaces and invalid characters with a specified separator.

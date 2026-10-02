@@ -139,3 +139,66 @@ export function setTableOption(table, key, value) {
   }
   return { ...current, [key]: key === 'caption' ? text(value) : Boolean(value) }
 }
+
+const plainText = value =>
+  text(value)
+    .replace(/<[^>]*>/g, '')
+    .trim()
+
+/**
+ * The dom.create config for a table field (#349): a scroll wrapper around the <table>. The field's id, attrs, action
+ * and dataset go on the <table>, so conditions, custom classes and `elements` actions reach it. Every cell is set as
+ * textContent, never parsed as HTML.
+ * @param {Object} field { id, attrs, config, action, dataset, table }
+ * @param {Object} [opts]
+ * @param {Boolean} [opts.isPreview] the editor stage preview: no region role and no tab stop
+ * @param {String} [opts.fallbackLabel] the region's name when there is no caption and no label
+ * @return {Object} dom.create config
+ */
+export function tableDomConfig(field, { isPreview = false, fallbackLabel = 'Table' } = {}) {
+  const { id, attrs = {}, config = {}, action, dataset } = field
+  const { caption, headerRow, rowHeaders, columns, rows } = normalizeTable(field.table)
+  const { className, ...tableAttrs } = attrs
+  const captionId = caption && id ? `${id}-caption` : undefined
+  const headerCell = (textContent, scope) => ({ tag: 'th', attrs: { scope }, textContent })
+
+  const children = []
+  if (caption) {
+    children.push({ tag: 'caption', attrs: captionId ? { id: captionId } : {}, textContent: caption })
+  }
+  if (headerRow && columns.length) {
+    children.push({
+      tag: 'thead',
+      children: [{ tag: 'tr', children: columns.map(({ label }) => headerCell(label, 'col')) }],
+    })
+  }
+  children.push({
+    tag: 'tbody',
+    children: rows.map(({ cells }) => ({
+      tag: 'tr',
+      children: cells.map((cell, index) =>
+        rowHeaders && index === 0 ? headerCell(cell, 'row') : { tag: 'td', textContent: cell }
+      ),
+    })),
+  })
+
+  const tableConfig = {
+    tag: 'table',
+    attrs: { ...tableAttrs, className: ['f-table', ...[className].flat().filter(Boolean)] },
+    children,
+  }
+  if (id) {
+    tableConfig.id = id
+  }
+  if (action) {
+    tableConfig.action = action
+  }
+  if (dataset) {
+    tableConfig.dataset = dataset
+  }
+
+  const name = captionId ? { 'aria-labelledby': captionId } : { 'aria-label': plainText(config.label) || fallbackLabel }
+  // tabindex is a string: dom.processAttrValue turns a falsy 0 into ''
+  const region = isPreview ? {} : { role: 'region', tabindex: '0', ...name }
+  return { tag: 'div', attrs: { className: 'f-table-wrap', ...region }, children: [tableConfig] }
+}

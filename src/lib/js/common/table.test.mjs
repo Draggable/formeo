@@ -12,6 +12,7 @@ import {
   setColumnLabel,
   setTableOption,
   TABLE_DEFAULTS,
+  tableDomConfig,
 } from './table.mjs'
 
 const twoByTwo = () => ({
@@ -155,5 +156,90 @@ describe('table data (#349)', () => {
       assert.deepEqual(off.columns, [{ label: 'Day' }, { label: 'Open' }])
       assert.deepEqual(setTableOption(off, 'headerRow', true).columns, [{ label: 'Day' }, { label: 'Open' }])
     })
+  })
+})
+
+describe('tableDomConfig (#349)', () => {
+  const field = (table, extra = {}) => ({
+    id: 'f-t1',
+    attrs: { className: 'table table-bordered', 'data-kind': 'hours' },
+    config: { label: 'Opening <b>hours</b>' },
+    table,
+    ...extra,
+  })
+  const tableOf = config => config.children[0]
+  const partsOf = config => tableOf(config).children
+  const tagsOf = list => list.map(({ tag }) => tag)
+
+  it('wraps the table in a focusable region named by its caption', () => {
+    const config = tableDomConfig(field(twoByTwo()))
+    assert.equal(config.tag, 'div')
+    assert.deepEqual(config.attrs, {
+      className: 'f-table-wrap',
+      role: 'region',
+      tabindex: '0',
+      'aria-labelledby': 'f-t1-caption',
+    })
+    const [caption] = partsOf(config)
+    assert.deepEqual(caption, { tag: 'caption', attrs: { id: 'f-t1-caption' }, textContent: 'Hours' })
+  })
+
+  it('puts the field id, attrs, action and dataset on the <table>, with the f-table class first', () => {
+    const action = { onRender: () => {} }
+    const table = tableOf(tableDomConfig(field(twoByTwo(), { action, dataset: { foo: 'bar' } })))
+    assert.equal(table.tag, 'table')
+    assert.equal(table.id, 'f-t1')
+    assert.deepEqual(table.attrs, { className: ['f-table', 'table table-bordered'], 'data-kind': 'hours' })
+    assert.equal(table.action, action)
+    assert.deepEqual(table.dataset, { foo: 'bar' })
+  })
+
+  it('renders the header row as th scope=col and body cells as td text', () => {
+    const [, thead, tbody] = partsOf(tableDomConfig(field(twoByTwo())))
+    assert.deepEqual(thead, {
+      tag: 'thead',
+      children: [
+        {
+          tag: 'tr',
+          children: [
+            { tag: 'th', attrs: { scope: 'col' }, textContent: 'Day' },
+            { tag: 'th', attrs: { scope: 'col' }, textContent: 'Open' },
+          ],
+        },
+      ],
+    })
+    assert.deepEqual(tbody.children[0], {
+      tag: 'tr',
+      children: [
+        { tag: 'td', textContent: 'Mon' },
+        { tag: 'td', textContent: '9–5' },
+      ],
+    })
+  })
+
+  it('leaves out <thead> without a header row, and makes each first cell a th scope=row with row headers', () => {
+    const parts = partsOf(tableDomConfig(field({ ...twoByTwo(), headerRow: false, rowHeaders: true })))
+    assert.deepEqual(tagsOf(parts), ['caption', 'tbody'])
+    assert.deepEqual(parts[1].children[1].children[0], { tag: 'th', attrs: { scope: 'row' }, textContent: 'Tue' })
+  })
+
+  it('without a caption, names the region by the plain-text label, then the fallback', () => {
+    const noCaption = { ...twoByTwo(), caption: '' }
+    const named = tableDomConfig(field(noCaption))
+    assert.equal(named.attrs['aria-label'], 'Opening hours')
+    assert.equal('aria-labelledby' in named.attrs, false)
+    assert.deepEqual(tagsOf(partsOf(named)), ['thead', 'tbody'])
+    const unnamed = tableDomConfig(field(noCaption, { config: {} }), { fallbackLabel: 'Tabelle' })
+    assert.equal(unnamed.attrs['aria-label'], 'Tabelle')
+  })
+
+  it('gives the editor preview no region role and no tab stop', () => {
+    const config = tableDomConfig(field(twoByTwo()), { isPreview: true })
+    assert.deepEqual(config.attrs, { className: 'f-table-wrap' })
+  })
+
+  it('renders an empty tbody for a table without rows, and no thead without columns', () => {
+    const parts = partsOf(tableDomConfig(field({ caption: '' })))
+    assert.deepEqual(parts, [{ tag: 'tbody', children: [] }])
   })
 })

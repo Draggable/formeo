@@ -2,6 +2,7 @@ import { suite, test } from 'node:test'
 
 import {
   extractTextFromHtml,
+  fillTokens,
   groupInputName,
   isHtmlString,
   slugify,
@@ -71,6 +72,17 @@ suite('string', () => {
     test('should lowercase first character', ({ assert }) => {
       const result = toCamelCase('Hello-World')
       assert.strictEqual(result, 'helloWorld')
+    })
+  })
+
+  suite('fillTokens', () => {
+    test('replaces {name} tokens and leaves unknown ones', ({ assert }) => {
+      assert.strictEqual(fillTokens('Row {row}, column {column}', { row: 2, column: 3 }), 'Row 2, column 3')
+      assert.strictEqual(fillTokens('Page {n} of {total}', { n: 1 }), 'Page 1 of {total}')
+    })
+
+    test('keeps $& and $$ in a value literal', ({ assert }) => {
+      assert.strictEqual(fillTokens('Remove "{title}"', { title: 'A $& B $$' }), 'Remove "A $& B $$"')
     })
   })
 
