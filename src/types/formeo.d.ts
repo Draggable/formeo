@@ -276,6 +276,8 @@ export interface FieldControlDefinition extends ControlDefinitionBase {
   options?: FieldOption[]
   content?: unknown
   children?: unknown
+  /** Starting data for a table control (#349). Any field with an object `table` renders and edits as a table. */
+  table?: TableData
   /** e.g. `onRender`, run on the field's preview; functions are not saved in formData. */
   action?: Record<string, AnyFunction>
   /** `config` keys this control's fields offer in their Configuration panel, on top of every field's. Not saved in formData. */

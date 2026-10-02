@@ -289,6 +289,21 @@ const badHook: FormeoEditorOptions = {
   },
 }
 
+const tableControl: FieldControlDefinition = {
+  tag: 'table',
+  config: { label: 'Prices', hideLabel: true },
+  meta: { group: 'html', id: 'prices-table' },
+  table: { caption: 'Prices', columns: [{ label: 'Item' }, { label: 'Cost' }], rows: [{ cells: ['Tea', '3'] }] },
+}
+
+const badTableControl: FieldControlDefinition = {
+  tag: 'table',
+  config: { label: 'Bad' },
+  meta: { group: 'html', id: 'bad-table' },
+  // @ts-expect-error a column's label is a string
+  table: { columns: [{ label: 1 }], rows: [] },
+}
+
 const badConfigOption: FieldControlDefinition = {
   tag: 'input',
   config: { label: 'Bad' },
@@ -432,6 +447,7 @@ export {
   badPagination,
   badPanelDefault,
   badStage,
+  badTableControl,
   bare,
   besideLabel,
   cellNotText,
@@ -454,6 +470,7 @@ export {
   queried,
   ratingControl,
   stars,
+  tableControl,
   tableData,
   tableField,
   typo,
