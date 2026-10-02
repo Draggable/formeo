@@ -156,7 +156,9 @@ const plainText = value =>
  * @return {Object} dom.create config
  */
 export function tableDomConfig(field, { isPreview = false, fallbackLabel = 'Table' } = {}) {
-  const { id, attrs = {}, config = {}, action, dataset } = field
+  const { id, action, dataset } = field
+  const attrs = field.attrs ?? {}
+  const config = field.config ?? {}
   const { caption, headerRow, rowHeaders, columns, rows } = normalizeTable(field.table)
   const { className, ...tableAttrs } = attrs
   const captionId = caption && id ? `${id}-caption` : undefined

@@ -171,6 +171,17 @@ describe('tableDomConfig (#349)', () => {
   const partsOf = config => tableOf(config).children
   const tagsOf = list => list.map(({ tag }) => tag)
 
+  it('tolerates null attrs and config', () => {
+    const config = tableDomConfig({
+      id: 'f-n',
+      attrs: null,
+      config: null,
+      table: { columns: [{ label: 'A' }], rows: [] },
+    })
+    assert.deepEqual(tableOf(config).attrs.className, ['f-table'])
+    assert.equal(config.attrs['aria-label'], 'Table')
+  })
+
   it('wraps the table in a focusable region named by its caption', () => {
     const config = tableDomConfig(field(twoByTwo()))
     assert.equal(config.tag, 'div')
