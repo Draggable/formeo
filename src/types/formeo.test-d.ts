@@ -20,6 +20,7 @@ import {
   type LabelPosition,
   type LogicalOperator,
   type RemoveItemsActionEvent,
+  type TableData,
   type UserData,
 } from 'formeo'
 
@@ -433,6 +434,7 @@ export {
   badStage,
   bare,
   besideLabel,
+  cellNotText,
   clearAll,
   componentEvents,
   describeReorder,
@@ -452,7 +454,10 @@ export {
   queried,
   ratingControl,
   stars,
+  tableData,
+  tableField,
   typo,
+  unlabelledColumn,
   unnarrowed,
   unnarrowedAddChild,
   unnarrowedRender,
@@ -472,3 +477,17 @@ const positionDeclaration: ConfigOptionDeclaration = {
 }
 // @ts-expect-error an option's value is a string
 const numericChoice: ConfigOptionDeclaration = { default: 1, options: [{ value: 1 }] }
+
+// #349: table element
+const tableData: TableData = {
+  caption: 'Opening hours',
+  headerRow: true,
+  rowHeaders: false,
+  columns: [{ label: 'Day' }, { label: 'Hours' }],
+  rows: [{ cells: ['Mon', '9–5'] }],
+}
+const tableField: FieldData = { id: 'x', tag: 'table', config: { label: 'Table', hideLabel: true }, table: tableData }
+// @ts-expect-error cells are strings
+const cellNotText: TableData = { columns: [{ label: 'A' }], rows: [{ cells: [1] }] }
+// @ts-expect-error every column has a label
+const unlabelledColumn: TableData = { columns: [{ value: 'a' }], rows: [] }
