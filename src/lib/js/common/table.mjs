@@ -160,12 +160,15 @@ export function tableDomConfig(field, { isPreview = false, fallbackLabel = 'Tabl
   const attrs = field.attrs ?? {}
   const config = field.config ?? {}
   const { caption, headerRow, rowHeaders, columns, rows } = normalizeTable(field.table)
-  const { className, ...tableAttrs } = attrs
-  const captionId = caption && id ? `${id}-caption` : undefined
+  // dom.create reads attrs.tag as a tag override, which would swap the <table> for another element
+  const { className, tag: _tagOverride, ...tableAttrs } = attrs
+  // a caption of only spaces names nothing, so it doesn't replace the label as the region's name
+  const hasCaption = caption.trim() !== ''
+  const captionId = hasCaption && id ? `${id}-caption` : undefined
   const headerCell = (textContent, scope) => ({ tag: 'th', attrs: { scope }, textContent })
 
   const children = []
-  if (caption) {
+  if (hasCaption) {
     children.push({ tag: 'caption', attrs: captionId ? { id: captionId } : {}, textContent: caption })
   }
   if (headerRow && columns.length) {

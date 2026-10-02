@@ -182,6 +182,19 @@ describe('tableDomConfig (#349)', () => {
     assert.equal(config.attrs['aria-label'], 'Table')
   })
 
+  it('keeps the <table> tag when attrs carry a tag override', () => {
+    const table = tableOf(tableDomConfig(field(twoByTwo(), { attrs: { tag: 'div', 'data-kind': 'hours' } })))
+    assert.equal(table.tag, 'table')
+    assert.deepEqual(table.attrs, { className: ['f-table'], 'data-kind': 'hours' })
+  })
+
+  it('treats a whitespace-only caption as no caption, so the region falls back to the label', () => {
+    const config = tableDomConfig(field({ ...twoByTwo(), caption: '   ' }))
+    assert.equal(config.attrs['aria-label'], 'Opening hours')
+    assert.equal('aria-labelledby' in config.attrs, false)
+    assert.deepEqual(tagsOf(partsOf(config)), ['thead', 'tbody'])
+  })
+
   it('wraps the table in a focusable region named by its caption', () => {
     const config = tableDomConfig(field(twoByTwo()))
     assert.equal(config.tag, 'div')
