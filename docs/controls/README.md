@@ -24,6 +24,7 @@ const inputElement = {
 }
 ```
 
+Built-in HTML controls: Header, Paragraph, [Table](table.md), Divider and TinyMCE.
 ## [Control Options](https://github.com/Draggable/formeo/tree/main/docs/options/controls)
 
 See [Custom controls](custom-controls.md) for a full editor + renderer example, or
