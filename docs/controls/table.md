@@ -12,12 +12,13 @@ Drag **Table** onto the stage, or click it, then open the field's edit panel. Th
 - **Header row**: shows the column labels as the table's header (`<th scope="col">`). Turning it off keeps the
   labels, so you can turn it back on.
 - **Row headers**: makes each row's first cell a row header (`<th scope="row">`).
-- One text box per header label and per cell.
+- One text box per cell, and one per header label while **Header row** is on.
 - **+ Row** and **+ Column** add a row or column at the end. Each row and column has a remove button. The last row and
   the last column can't be removed.
 
 Everything in the panel works from the keyboard. After you add or remove a row or column, focus moves to the new
-input or the next remove button. Cells are plain text: anything that looks like HTML is shown as typed.
+input or the next remove button, or to the add button when only one row or column is left. Cells are plain text:
+anything that looks like HTML is shown as typed.
 
 ## Data
 
@@ -70,7 +71,8 @@ The table uses `--formeo-border` for cell borders and `--formeo-surface-muted` f
 ## Conditions
 
 A condition can show or hide a table: target the table field with **is visible** / **is not visible**, and the whole
-scroll region hides. A table has no value, so it can't be a condition's source, and rows and cells can't be targeted.
+scroll region hides. A table has no value, so as a source there is nothing to compare (the same as a paragraph or
+header), and rows and cells can't be targeted.
 
 ## Migrating from a custom table control
 
@@ -84,7 +86,9 @@ Before the built-in control, a table needed a custom control. Both workarounds k
   [#260](https://github.com/Draggable/formeo/issues/260)). The editor and renderer leave it alone, and the action you
   pass through the renderer's `elements` still runs.
 
-The built-in behaviour keys off the field's `table` data, not the control id: any field whose `table` is an object renders and edits as a built-in table, so a custom control that already used a `table` object key for something else should rename it.
+The built-in behaviour keys off the field's `table` data, not the control id: any field whose `table` is an object
+renders and edits as a built-in table, so a custom control that already used a `table` object key for something else
+should rename it.
 
 To switch to the built-in control, remove your custom control from `controls.elements` (or give it a different
 `meta.id`), then add a Table and copy your cells into it. Formeo doesn't convert old fields automatically: their
