@@ -15,6 +15,8 @@ import animate from './animation.js'
 import h, { forEach } from './helpers.mjs'
 import { isLabelAfter, resolveLabelPosition } from './label-position.mjs'
 import { loaded } from './loaders.js'
+import { isTableField, tableDomConfig } from './table.mjs'
+import { tableText } from './table-text.mjs'
 import { componentType, merge, uuid } from './utils/index.mjs'
 import { extractTextFromHtml, groupInputName, slugify, truncateByWord } from './utils/string.mjs'
 
@@ -174,6 +176,12 @@ class DOM {
     }
     if (this.isDOMElement(elemArg)) {
       return elemArg
+    }
+
+    // a table field (#349): its `table` data becomes the scroll wrapper, the <table> and its cells
+    if (isTableField(elemArg)) {
+      const fallbackLabel = tableText('controls.html.table')
+      return this.create(tableDomConfig(elemArg, { isPreview, fallbackLabel }), isPreview)
     }
 
     const _this = this
