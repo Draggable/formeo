@@ -12,6 +12,7 @@ import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
 import { controlAttrPanelConfig, getControlConfig } from './control-attr-config.mjs'
+import { TablePanel } from './table-panel.js'
 
 const checkableTypes = new Set(['checkbox', 'radio'])
 const isSelectableType = new Set(['radio', 'checkbox', 'select-one', 'select-multiple'])
@@ -82,6 +83,18 @@ export default class Field extends Component {
     if (attrConfig) {
       this.config = { [this.id]: attrConfig }
     }
+  }
+
+  /**
+   * A table field's Table panel (#349). Built once, so its grid and focus survive a rebuild of the edit panels.
+   * @return {Object<String, {panelConfig: Object}>}
+   */
+  get customPanels() {
+    if (!this.get('table')) {
+      return {}
+    }
+    this.tablePanel ??= new TablePanel(this)
+    return { table: this.tablePanel }
   }
 
   /**

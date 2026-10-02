@@ -16,7 +16,8 @@ const DEFAULT_CONFIG = () => ({
       hideDisabled: true,
       locked: [],
     },
-    order: ['attrs', 'options', 'conditions'],
+    // a table field's Table panel opens first (#349); fields without table data skip the name
+    order: ['table', 'attrs', 'options', 'conditions'],
     // the keys every field's Config panel offers; a control adds its own with `configOptions`
     config: {
       options: {
@@ -35,10 +36,17 @@ const DEFAULT_CONFIG = () => ({
   },
 })
 
+// a table's caption is its visible name (#349), so the label-only config keys don't apply to it
+const TABLE_CONFIG = () => ({
+  panels: {
+    config: { disabled: ['hideLabel', 'labelPosition', 'helpText', 'tooltip', 'disableHtmlLabel'] },
+  },
+})
+
 export class Fields extends ComponentData {
   constructor(fieldData) {
     super('fields', fieldData)
-    this.config = { all: DEFAULT_CONFIG() }
+    this.config = { all: DEFAULT_CONFIG(), table: TABLE_CONFIG() }
   }
   Component(data) {
     return new Field(data, this.components)
