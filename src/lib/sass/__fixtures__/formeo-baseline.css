@@ -702,6 +702,34 @@ button[class*=-clone]:hover .svg-icon {
   width: 16px;
   height: 16px;
 }
+.formeo .f-table-wrap {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  contain: inline-size;
+}
+.formeo .f-table-wrap:focus-visible {
+  outline: 2px solid rgb(102, 175, 233);
+  outline-offset: 2px;
+}
+.formeo .f-table {
+  border-collapse: collapse;
+  inline-size: 100%;
+}
+.formeo .f-table caption {
+  padding-block-end: 4px;
+  font-weight: 600;
+  text-align: start;
+}
+.formeo .f-table th,
+.formeo .f-table td {
+  padding: 4px 8px;
+  border: 1px solid #cccccc;
+  text-align: start;
+  vertical-align: top;
+}
+.formeo .f-table th {
+  background-color: rgb(229.5, 229.5, 229.5);
+}
 .formeo.formeo-editor {
   display: flex;
   flex-direction: row;
@@ -1692,6 +1720,53 @@ button[class*=-clone]:hover .svg-icon {
 .formeo.formeo-editor .prop-inputs label {
   padding-right: 1em;
   margin-bottom: 0;
+}
+.formeo.formeo-editor .f-table-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+}
+.formeo.formeo-editor .f-table-panel .f-table-panel-caption,
+.formeo.formeo-editor .f-table-panel .f-table-panel-option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.formeo.formeo-editor .f-table-panel .f-table-panel-options,
+.formeo.formeo-editor .f-table-panel .f-table-panel-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.formeo.formeo-editor .f-table-panel .f-table-editor-wrap {
+  overflow-x: auto;
+}
+.formeo.formeo-editor .f-table-panel .f-table-editor {
+  border-collapse: collapse;
+}
+.formeo.formeo-editor .f-table-panel .f-table-editor td {
+  padding: 4px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.formeo.formeo-editor .f-table-panel .f-table-editor input[type=text] {
+  inline-size: 8rem;
+}
+.formeo.formeo-editor .f-table-panel .f-table-remove {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #666666;
+  vertical-align: middle;
+}
+.formeo.formeo-editor .f-table-panel .f-table-remove:hover:not(:disabled) {
+  color: rgb(217, 83, 79);
+}
+.formeo.formeo-editor .f-table-panel .f-table-remove:disabled {
+  opacity: 0.4;
 }
 .formeo.formeo-editor .formeo-stage {
   width: 73%;

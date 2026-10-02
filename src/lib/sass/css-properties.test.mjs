@@ -194,6 +194,29 @@ suite('resolveFormeoProperties purity', () => {
       /:where\(\.formeo-dark\) may only declare .*found: background: black/
     )
   })
+  test('the table element scrolls inside its wrapper and uses theme tokens (#349)', t => {
+    const wrap = compiledRule('.formeo .f-table-wrap {')
+    t.assert.match(wrap, /overflow-x: auto;/)
+    // without it a wide table's min-content width stretches its flex column past the form
+    t.assert.match(wrap, /contain: inline-size;/)
+    t.assert.match(compiledRule('.formeo .f-table-wrap:focus-visible {'), /outline: 2px solid var\(--formeo-focus\);/)
+    const cells = compiledRule('.formeo .f-table th,')
+    t.assert.match(cells, /border: 1px solid var\(--formeo-border\);/)
+    t.assert.match(cells, /text-align: start;/)
+    t.assert.match(compiledRule('.formeo .f-table th {'), /background-color: var\(--formeo-surface-muted\);/)
+  })
+
+  test('table rules use logical inline properties, so they mirror in right-to-left forms (#349)', t => {
+    const physical =
+      /(?:^|[\s;{])((?:margin|padding|border)-(?:left|right)[a-z-]*|left|right)\s*:|text-align:\s*(?:left|right)/
+    const rules = [...compileFormeoCss().matchAll(/([^{}]*)\{([^{}]*)\}/g)].filter(([, selector]) =>
+      /\.f-table/.test(selector)
+    )
+    t.assert.ok(rules.length > 0, 'expected the table rules to compile')
+    for (const [, selector, body] of rules) {
+      t.assert.doesNotMatch(body, physical, `${selector.trim()} uses a physical left/right property`)
+    }
+  })
 })
 
 /** The single compiled rule starting with `start`, trimmed. */

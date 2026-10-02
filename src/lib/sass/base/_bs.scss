@@ -253,3 +253,40 @@ label, .prev-label {
     }
   }
 }
+
+// table element (#349): the rendered table and the editor preview. A wide table scrolls inside its wrapper.
+.f-table-wrap {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  // columns are flex items with min-width: auto; without this the table's min-content width would widen its column
+  // past the form instead of scrolling
+  contain: inline-size;
+
+  &:focus-visible {
+    outline: 2px solid t.$focus;
+    outline-offset: 2px;
+  }
+}
+
+.f-table {
+  border-collapse: collapse;
+  inline-size: 100%;
+
+  caption {
+    padding-block-end: var.$half-space;
+    font-weight: 600;
+    text-align: start;
+  }
+
+  th,
+  td {
+    padding: var.$half-space var.$base-space;
+    border: 1px solid t.$border;
+    text-align: start;
+    vertical-align: top;
+  }
+
+  th {
+    background-color: t.$surface-muted;
+  }
+}
