@@ -2,7 +2,6 @@ import assert from 'node:assert/strict'
 import { describe, it } from 'node:test'
 import { defaultTable } from '../../../common/table.mjs'
 import { Components } from '../../index.js'
-import Control from '../control.js'
 import { Controls } from '../index.js'
 import htmlControls from './index.js'
 import ParagraphControl from './paragraph.js'
@@ -34,7 +33,7 @@ describe('Table control (#349)', () => {
     assert.equal(second.data.table.rows[0].cells[0], '')
   })
 
-  it('is replaced by a user control with meta.id table, as the #349 workaround registered', () => {
+  it('is replaced by a user control with meta.id table, as the #349 workaround registered', async () => {
     const userTable = {
       tag: 'table',
       config: { label: 'Table', hideLabel: true },
@@ -42,9 +41,9 @@ describe('Table control (#349)', () => {
       content: [{ tag: 'tr', children: [{ tag: 'td', children: 'Cell' }] }],
     }
     const controls = new Controls(new Components())
-    // registerControls adds the built-in controls first and the user's `elements` after them
-    controls.add(new TableControl())
-    controls.add(new Control(userTable))
+    // applyOptions is avoided: TinyMCE's script dependency never loads under jsdom. registerControls is the path it
+    // delegates to, given the built-in controls first and the user's `elements` after them.
+    await Promise.all(controls.registerControls([TableControl, userTable]))
     const registered = controls.get('table')
     assert.equal(registered.table, undefined)
     assert.deepEqual(registered.content, userTable.content)
