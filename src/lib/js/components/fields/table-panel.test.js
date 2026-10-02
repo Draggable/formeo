@@ -53,6 +53,14 @@ describe('Table panel (#349)', () => {
     assert.equal(field.tablePanel, undefined)
   })
 
+  it('table data that is not an object gets no Table panel', () => {
+    for (const table of [[], 'yes']) {
+      const field = tableField(table)
+      assert.equal(field.editPanels.has('table'), false)
+      assert.equal(field.tablePanel, undefined)
+    }
+  })
+
   it('panels.disabled table hides it', () => {
     const field = tableField(defaultTable(), editor({ fields: { all: { panels: { disabled: ['table'] } } } }))
     assert.equal(field.editPanels.has('table'), false)
@@ -159,6 +167,7 @@ describe('Table panel (#349)', () => {
     removeRow.click()
     removeColumn.click()
     assert.deepEqual(field.get('table').rows, [{ cells: ['1'] }])
+    assert.deepEqual(field.get('table').columns, [{ label: 'A' }])
   })
 
   it('turning the header row off keeps the labels and a remove button per column, and keeps focus on the toggle', () => {

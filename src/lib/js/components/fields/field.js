@@ -8,6 +8,7 @@ import {
   normalizeLabelConfig,
   resolveLabelPosition,
 } from '../../common/label-position.mjs'
+import { isTableField } from '../../common/table.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
@@ -85,12 +86,21 @@ export default class Field extends Component {
     }
   }
 
+  get isTable() {
+    return isTableField({ table: this.get('table') })
+  }
+
+  /** A `table` that isn't an object data is no table, so it gets no generic edit panel either (#349) */
+  get reservedPanels() {
+    return this.isTable ? [] : ['table']
+  }
+
   /**
    * A table field's Table panel (#349). Built once, so its grid and focus survive a rebuild of the edit panels.
    * @return {Object<String, {panelConfig: Object}>}
    */
   get customPanels() {
-    if (!this.get('table')) {
+    if (!this.isTable) {
       return {}
     }
     this.tablePanel ??= new TablePanel(this)
