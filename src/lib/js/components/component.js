@@ -1154,14 +1154,6 @@ export default class Component extends Data {
     return {}
   }
 
-  /**
-   * Data keys that are never generic edit panels, even though the data holds them.
-   * @return {String[]}
-   */
-  get reservedPanels() {
-    return []
-  }
-
   updateEditPanels = () => {
     if (!this.config) {
       return null
@@ -1176,15 +1168,7 @@ export default class Component extends Data {
       ...(hasConfigOptions ? ['config'] : []),
     ])
     // a row's or column's `className` is its internal class list, never a panel
-    const noPanels = new Set([
-      'children',
-      'meta',
-      'action',
-      'events',
-      'className',
-      ...this.config.panels.disabled,
-      ...this.reservedPanels,
-    ])
+    const noPanels = new Set(['children', 'meta', 'action', 'events', 'className', ...this.config.panels.disabled])
     const allowedPanels = panelOrder.filter(panelName => !noPanels.has(panelName))
 
     for (const panelName of allowedPanels) {

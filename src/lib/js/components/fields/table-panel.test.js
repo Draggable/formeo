@@ -6,6 +6,7 @@ import { defaultTable } from '../../common/table.mjs'
 import { configOptionsOf } from '../edit-panel/config-options.mjs'
 import { Components } from '../index.js'
 import Field from './field.js'
+import { TablePanel } from './table-panel.js'
 
 const editor = (config = {}) => {
   const events = new Events().init({})
@@ -56,8 +57,8 @@ describe('Table panel (#349)', () => {
   it('table data that is not an object gets no Table panel', () => {
     for (const table of [[], 'yes']) {
       const field = tableField(table)
-      assert.equal(field.editPanels.has('table'), false)
       assert.equal(field.tablePanel, undefined)
+      assert.equal(field.editPanels.get('table') instanceof TablePanel, false)
     }
   })
 

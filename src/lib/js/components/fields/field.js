@@ -90,11 +90,6 @@ export default class Field extends Component {
     return isTableField({ table: this.get('table') })
   }
 
-  /** A `table` that isn't an object data is no table, so it gets no generic edit panel either (#349) */
-  get reservedPanels() {
-    return this.isTable ? [] : ['table']
-  }
-
   /**
    * A table field's Table panel (#349). Built once, so its grid and focus survive a rebuild of the edit panels.
    * @return {Object<String, {panelConfig: Object}>}
