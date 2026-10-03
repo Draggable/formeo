@@ -1,3 +1,10 @@
+# [5.17.0](https://github.com/Draggable/formeo/compare/v5.16.0...v5.17.0) (2026-10-03)
+
+
+### Features
+
+* built-in table control (display table, [#349](https://github.com/Draggable/formeo/issues/349) phase 1) ([#526](https://github.com/Draggable/formeo/issues/526)) ([157c564](https://github.com/Draggable/formeo/commit/157c56456c81c7179fef42418d42e94b78c3fb5b)), closes [#260](https://github.com/Draggable/formeo/issues/260)
+
 # [5.16.0](https://github.com/Draggable/formeo/compare/v5.15.1...v5.16.0) (2026-10-01)
 
 
