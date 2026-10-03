@@ -8,13 +8,17 @@ import {
   normalizeLabelConfig,
   resolveLabelPosition,
 } from '../../common/label-position.mjs'
+import { isTableField } from '../../common/table.mjs'
 import { clone, debounce } from '../../common/utils/index.mjs'
 import { FIELD_CLASSNAME } from '../../constants.js'
 import Component from '../component.js'
 import { controlAttrPanelConfig, getControlConfig } from './control-attr-config.mjs'
+import { TablePanel } from './table-panel.js'
 
 const checkableTypes = new Set(['checkbox', 'radio'])
 const isSelectableType = new Set(['radio', 'checkbox', 'select-one', 'select-multiple'])
+
+const TABLE_DISABLED_CONFIG_KEYS = ['hideLabel', 'labelPosition', 'helpText', 'tooltip', 'disableHtmlLabel']
 
 /**
  * Element/Field class.
@@ -31,6 +35,7 @@ export default class Field extends Component {
     this.normalizeLabelConfig()
     this.controlId = this.get('config.controlId') || this.get('meta.id')
     this.applyControlAttrConfig()
+    this.applyTableConfig()
 
     this.debouncedUpdateEditPanels = debounce(this.updateEditPanels)
     this.debouncedUpdatePreview = debounce(this.updatePreview)
@@ -85,6 +90,32 @@ export default class Field extends Component {
   }
 
   /**
+   * A table's caption is its visible name (#349), so the label-only Config keys don't apply to it. Keyed off the
+   * field's table data, not its control id. The config setter deep-merges, so this adds to the attr config above.
+   */
+  applyTableConfig() {
+    if (this.isTable) {
+      this.config = { [this.id]: { panels: { config: { disabled: TABLE_DISABLED_CONFIG_KEYS } } } }
+    }
+  }
+
+  get isTable() {
+    return isTableField({ table: this.get('table') })
+  }
+
+  /**
+   * A table field's Table panel (#349). Built once, so its grid and focus survive a rebuild of the edit panels.
+   * @return {Object<String, {panelConfig: Object}>}
+   */
+  get customPanels() {
+    if (!this.isTable) {
+      return {}
+    }
+    this.tablePanel ??= new TablePanel(this)
+    return { table: this.tablePanel }
+  }
+
+  /**
    * Converts legacy config.labelAfter, and an unknown config.labelPosition, to the labelPosition it resolves to (#243).
    * Replaces the config object instead of calling set(), so loading a form fires no update events and the data it was
    * given (a saved form, a control definition) is never mutated.
@@ -97,7 +128,8 @@ export default class Field extends Component {
   }
 
   get labelConfig() {
-    const hideLabel = !!this.get('config.hideLabel')
+    // a table is named by its caption, never a label (#349)
+    const hideLabel = this.isTable || !!this.get('config.hideLabel')
 
     if (hideLabel) {
       return null

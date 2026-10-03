@@ -64,3 +64,5 @@ const paragraph = {
     'This content can be edited in the editor'
 }
 ```
+
+Built-in HTML controls: Header, Paragraph, [Table](table.md), Divider and WYSIWYG (TinyMCE).

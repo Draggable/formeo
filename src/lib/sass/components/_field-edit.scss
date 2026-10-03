@@ -517,3 +517,61 @@
 
 
 }
+
+// the Table panel (#349): caption, header options, a grid of cell inputs and add buttons
+.f-table-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var.$base-space;
+  padding: var.$base-space;
+
+  .f-table-panel-caption,
+  .f-table-panel-option {
+    display: flex;
+    align-items: center;
+    gap: var.$half-space;
+  }
+
+  .f-table-panel-options,
+  .f-table-panel-add {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var.$base-space;
+  }
+
+  .f-table-editor-wrap {
+    overflow-x: auto;
+  }
+
+  .f-table-editor {
+    border-collapse: collapse;
+
+    td {
+      padding: var.$half-space;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    input[type='text'] {
+      inline-size: 8rem;
+    }
+  }
+
+  .f-table-remove {
+    inline-size: 1.5rem;
+    block-size: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: t.$text-muted;
+    vertical-align: middle;
+
+    &:hover:not(:disabled) {
+      color: t.$danger;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
+  }
+}

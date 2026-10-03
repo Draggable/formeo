@@ -389,6 +389,11 @@ renderer.userData = {
 renderer.userData = { firstName: 'John' }
 ```
 
+#### Tables
+
+A [Table](../controls/table.md) field has no inputs, so it adds nothing to `userData`. It renders as a `<table>`
+inside a focusable `.f-table-wrap` region, which a condition on the field hides as a whole.
+
 #### Checkbox and Radio Groups
 
 A checkbox or radio group is one field with `options`. It renders as a wrapper element (`id="f-<fieldId>"`, the element conditions target) that holds one `<input>` per option.

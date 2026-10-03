@@ -16,4 +16,17 @@ suite('icons', () => {
     const offenders = styles.filter(style => /(fill|stroke)\s*:\s*#/.test(style))
     t.assert.deepStrictEqual(offenders, [])
   })
+
+  test('the sprite has a symbol for every icon file', t => {
+    const sprite = readFileSync(new URL('formeo-sprite.svg', dir), 'utf8')
+    const missing = svgFiles
+      .filter(f => f.startsWith('icon-'))
+      .map(f => f.replace(/^icon-(.*)\.svg$/, 'f-i-$1'))
+      .filter(id => !sprite.includes(`id="${id}"`))
+    t.assert.deepStrictEqual(missing, [])
+  })
+
+  test('has a table icon (#349)', t => {
+    t.assert.ok(svgFiles.includes('icon-table.svg'))
+  })
 })

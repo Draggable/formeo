@@ -123,6 +123,9 @@ option keeps the fixed `f-checkbox`/`f-radio` wrap regardless of `className` (`p
 `src/lib/js/common/dom.js`). If your framework needs a per-option class (Bootstrap's `form-check`, for example),
 target `.f-checkbox`/`.f-radio` directly in your own CSS rather than relying on `className`.
 
+**Tables** take `className` on the `<table>` itself, next to `f-table`, so `className: 'table table-striped'` gives a
+[Table](controls/table.md) Bootstrap's table styles.
+
 ## Framework dependencies only some controls need
 
 If only one control needs a framework's CSS/JS (a date picker, a rich text editor), don't load it for the whole

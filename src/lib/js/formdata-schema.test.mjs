@@ -103,4 +103,35 @@ suite('formData schema', () => {
     legacy.columns.f0002d5c.children.push(uuid)
     t.assert.ok(formDataSchema.safeParse(legacy).success)
   })
+
+  test('accepts a table field and rejects malformed cells and columns (#349)', t => {
+    const data = structuredClone(conditionalFields)
+    const [fieldId] = Object.keys(data.fields)
+    const withTable = table => {
+      data.fields[fieldId] = { id: fieldId, tag: 'table', config: { label: 'Table', hideLabel: true }, table }
+      return formDataSchema.safeParse(data).success
+    }
+    const table = {
+      caption: 'Hours',
+      headerRow: true,
+      rowHeaders: false,
+      columns: [{ label: 'Day' }, { label: 'Open' }],
+      rows: [{ cells: ['Mon', '9–5'] }],
+    }
+    t.assert.ok(withTable(table))
+    t.assert.ok(
+      withTable({ columns: [{ label: 'A', value: 'a' }], rows: [{ cells: ['x'], value: 'r' }] }),
+      'extra keys'
+    )
+    t.assert.strictEqual(withTable({ ...table, rows: [{ cells: [1, 2] }] }), false)
+    t.assert.strictEqual(withTable({ ...table, columns: [{ value: 'a' }] }), false)
+    t.assert.strictEqual(withTable({ ...table, headerRow: 'yes' }), false)
+  })
+
+  test('the generated JSON schema describes a field table (#349)', t => {
+    const field = buildFormDataJsonSchema().properties.fields.additionalProperties
+    const table = field.properties.table
+    t.assert.deepStrictEqual(table.required, ['columns', 'rows'])
+    t.assert.strictEqual(table.properties.rows.items.properties.cells.items.type, 'string')
+  })
 })

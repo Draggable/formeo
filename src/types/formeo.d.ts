@@ -149,6 +149,30 @@ export interface FieldConfigData {
   [key: string]: unknown
 }
 
+/** A table field's column (#349). Later phases may add keys. */
+export interface TableColumn {
+  label: string
+  [key: string]: unknown
+}
+
+/** A table field's row: one plain-text cell per column. */
+export interface TableRow {
+  cells: string[]
+  [key: string]: unknown
+}
+
+/** A table field's data (`field.table`, #349). Cells render as text, never HTML. */
+export interface TableData {
+  caption?: string
+  /** `columns[].label` render as `<thead>` header cells. Default `true`. */
+  headerRow?: boolean
+  /** Each row's first cell renders as a row header. Default `false`. */
+  rowHeaders?: boolean
+  columns: TableColumn[]
+  rows: TableRow[]
+  [key: string]: unknown
+}
+
 /** A field's data without its id. */
 export interface FieldProps extends ComponentProps {
   tag?: string
@@ -157,6 +181,8 @@ export interface FieldProps extends ComponentProps {
   content?: unknown
   action?: Record<string, unknown>
   options?: FieldOption[]
+  /** Table element data (#349); present only on table fields. */
+  table?: TableData
 }
 
 export interface FieldData extends FieldProps {
@@ -250,6 +276,8 @@ export interface FieldControlDefinition extends ControlDefinitionBase {
   options?: FieldOption[]
   content?: unknown
   children?: unknown
+  /** Starting data for a table control (#349). Any field with an object `table` renders and edits as a table. */
+  table?: TableData
   /** e.g. `onRender`, run on the field's preview; functions are not saved in formData. */
   action?: Record<string, AnyFunction>
   /** `config` keys this control's fields offer in their Configuration panel, on top of every field's. Not saved in formData. */
