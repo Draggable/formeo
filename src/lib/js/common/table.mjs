@@ -1,5 +1,6 @@
 /**
- * A table field's data (#349): `{ caption, headerRow, rowHeaders, columns: [{ label }], rows: [{ cells: [] }] }`.
+ * A table field's data (#349): `{ caption, headerRow, rowHeaders, columns: [{ label, value?, input? }],
+ * rows: [{ cells: [], value?, required? }] }`. A column with an `input` makes the table a matrix (phase 2).
  * Pure: no DOM and no i18n. The editor's Table panel edits it with the functions below, which normalise their input
  * and return a new table without changing it.
  */
@@ -15,6 +16,16 @@ const DEFAULT_ROW_COUNT = 2
  * @return {String}
  */
 export const defaultColumnLabel = number => `Column ${number}`
+
+/**
+ * English label for a new row; the editor passes a translated one
+ * @param {Number} number 1-based row number
+ * @return {String}
+ */
+export const defaultRowLabel = number => `Row ${number}`
+
+/** The input types a column can render in its cells (#349 phase 2) */
+export const CELL_INPUTS = Object.freeze(['radio', 'checkbox', 'text'])
 
 const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const text = value => (value === null || value === undefined ? '' : String(value))
@@ -137,7 +148,227 @@ export function setTableOption(table, key, value) {
   if (!TABLE_OPTION_KEYS.includes(key)) {
     return current
   }
-  return { ...current, [key]: key === 'caption' ? text(value) : Boolean(value) }
+  const next = { ...current, [key]: key === 'caption' ? text(value) : Boolean(value) }
+  // with row headers on, column 0 holds the row labels, so it can't hold inputs
+  if (key === 'rowHeaders' && next.rowHeaders && next.columns.length && cellInput(next.columns[0])) {
+    const { input: _input, ...first } = next.columns[0]
+    next.columns = [first, ...next.columns.slice(1)]
+  }
+  return next
+}
+
+/**
+ * The input a column renders in its cells, or null for a static column
+ * @param {Object} column
+ * @return {String|null} 'radio', 'checkbox' or 'text'
+ */
+export const cellInput = column => (isPlainObject(column) && CELL_INPUTS.includes(column.input) ? column.input : null)
+
+/**
+ * Indexes of the columns that render inputs. With row headers on, column 0 is the row labels and never an input.
+ * @param {Object} table
+ * @return {Number[]}
+ */
+export function inputColumns(table) {
+  const { columns, rowHeaders } = normalizeTable(table)
+  return columns.reduce((acc, column, index) => {
+    if (cellInput(column) && !(rowHeaders && index === 0)) {
+      acc.push(index)
+    }
+    return acc
+  }, [])
+}
+
+/**
+ * Whether the table is a matrix: at least one column renders inputs
+ * @param {Object} table
+ * @return {Boolean}
+ */
+export const hasInputs = table => inputColumns(table).length > 0
+
+// a key goes inside `name[...]`, so brackets would end it early
+const sanitizeKey = value => text(value).trim().replace(/[[\]]/g, '-')
+
+/**
+ * @param {Object} column
+ * @param {Number} index
+ * @return {String} the column's name key: its value, trimmed and without brackets, else `column-<n>`
+ */
+export const columnKey = (column, index) => sanitizeKey(column?.value) || `column-${index + 1}`
+
+/**
+ * @param {Object} row
+ * @param {Number} index
+ * @return {String} the row's name key: its value, trimmed and without brackets, else `row-<n>`
+ */
+export const rowKey = (row, index) => sanitizeKey(row?.value) || `row-${index + 1}`
+
+/**
+ * Unique keys for a list. Usable explicit keys are kept (first occurrence wins); a blank or duplicate one becomes
+ * `<prefix>-<position>`, else the smallest free `<prefix>-<n>`.
+ * @param {Array<String|null>} values null for an entry that needs no key
+ * @param {String} prefix
+ * @return {Array<String|null>}
+ */
+const assignKeys = (values, prefix) => {
+  const used = new Set()
+  const kept = values.map(value => {
+    if (value === null) {
+      return null
+    }
+    const key = sanitizeKey(value)
+    if (!key || used.has(key)) {
+      return undefined
+    }
+    used.add(key)
+    return key
+  })
+  return kept.map((key, index) => {
+    if (key !== undefined) {
+      return key
+    }
+    let candidate = `${prefix}-${index + 1}`
+    for (let n = 1; used.has(candidate); n++) {
+      candidate = `${prefix}-${n}`
+    }
+    used.add(candidate)
+    return candidate
+  })
+}
+
+/**
+ * A matrix with a unique, non-blank key in every row's and every input column's `value`, so each row is its own
+ * radio group and every cell its own name. A table without inputs comes back normalised and nothing more.
+ * @param {Object} table
+ * @return {Object} table
+ */
+export function withKeys(table) {
+  const current = normalizeTable(table)
+  const inputs = new Set(inputColumns(current))
+  if (!inputs.size) {
+    return current
+  }
+  const columnKeys = assignKeys(
+    current.columns.map((column, index) => (inputs.has(index) ? text(column.value) : null)),
+    'column'
+  )
+  const rowKeys = assignKeys(
+    current.rows.map(row => text(row.value)),
+    'row'
+  )
+  return {
+    ...current,
+    columns: current.columns.map((column, index) =>
+      inputs.has(index) ? { ...column, value: columnKeys[index] } : column
+    ),
+    rows: current.rows.map((row, index) => ({ ...row, value: rowKeys[index] })),
+  }
+}
+
+const updateAt = (list, index, update) => list.map((item, i) => (i === index ? update(item) : item))
+
+/**
+ * @param {Object} table
+ * @param {Number} index column index
+ * @param {String|null} input 'radio', 'checkbox' or 'text'; anything else makes the column static
+ * @return {Object} table
+ */
+export function setColumnInput(table, index, input) {
+  const current = normalizeTable(table)
+  if (!inRange(current.columns, index) || (current.rowHeaders && index === 0)) {
+    return current
+  }
+  const columns = updateAt(current.columns, index, ({ input: _input, ...column }) =>
+    CELL_INPUTS.includes(input) ? { ...column, input } : column
+  )
+  return { ...current, columns }
+}
+
+export function setColumnValue(table, index, value) {
+  const current = normalizeTable(table)
+  if (!inRange(current.columns, index)) {
+    return current
+  }
+  return { ...current, columns: updateAt(current.columns, index, column => ({ ...column, value: text(value) })) }
+}
+
+export function setRowValue(table, index, value) {
+  const current = normalizeTable(table)
+  if (!inRange(current.rows, index)) {
+    return current
+  }
+  return { ...current, rows: updateAt(current.rows, index, row => ({ ...row, value: text(value) })) }
+}
+
+export function setRowRequired(table, index, required) {
+  const current = normalizeTable(table)
+  if (!inRange(current.rows, index)) {
+    return current
+  }
+  const rows = updateAt(current.rows, index, ({ required: _required, ...row }) =>
+    required ? { ...row, required: true } : row
+  )
+  return { ...current, rows }
+}
+
+/**
+ * The Matrix control's data: a row-label column, 3 radio columns and 2 rows, all keyed
+ * @param {Function} [columnLabel] number => label
+ * @param {Function} [rowLabel] number => label
+ * @return {Object} table
+ */
+export function defaultMatrix(columnLabel = defaultColumnLabel, rowLabel = defaultRowLabel) {
+  const choices = Array.from({ length: DEFAULT_COLUMN_COUNT }, (_, index) => ({
+    label: columnLabel(index + 1),
+    value: `column-${index + 1}`,
+    input: 'radio',
+  }))
+  const rows = Array.from({ length: DEFAULT_ROW_COUNT }, (_, index) => ({
+    value: `row-${index + 1}`,
+    cells: [rowLabel(index + 1)],
+  }))
+  return normalizeTable({ ...TABLE_DEFAULTS, rowHeaders: true, columns: [{ label: '' }, ...choices], rows })
+}
+
+/**
+ * A matrix input's name: `base[row]` for a row's radio group, `base[row][column]` for a checkbox or text cell
+ * @param {String} base
+ * @param {String} row row key
+ * @param {String} [column] column key
+ * @return {String}
+ */
+export const matrixName = (base, row, column) =>
+  column === undefined ? `${base}[${row}]` : `${base}[${row}][${column}]`
+
+const MATRIX_KEY_TAIL = /^\[([^[\]]+)\](?:\[([^[\]]+)\])?$/
+
+/**
+ * Reads a userData key back into its row and column keys. The base is known, so a base holding brackets is fine.
+ * @param {String} key e.g. 'f-x[speed][good]'
+ * @param {String} base e.g. 'f-x'
+ * @return {{row: String, column: String|null}|null}
+ */
+export function parseMatrixKey(key, base) {
+  if (typeof key !== 'string' || !base || !key.startsWith(`${base}[`)) {
+    return null
+  }
+  const match = MATRIX_KEY_TAIL.exec(key.slice(base.length))
+  return match ? { row: match[1], column: match[2] ?? null } : null
+}
+
+const TABLE_ADDRESS = /^fields\.([^.[\]]+)\.table\.rows\[(\d+)\](?:\.cells\[(\d+)\])?$/
+
+/**
+ * Reads a condition address for a table row or cell
+ * @param {String} address e.g. 'fields.abc.table.rows[1].cells[2]'
+ * @return {{fieldId: String, row: Number, cell: Number|null}|null}
+ */
+export function parseTableAddress(address) {
+  const match = TABLE_ADDRESS.exec(typeof address === 'string' ? address : '')
+  if (!match) {
+    return null
+  }
+  return { fieldId: match[1], row: Number(match[2]), cell: match[3] === undefined ? null : Number(match[3]) }
 }
 
 const plainText = value =>
