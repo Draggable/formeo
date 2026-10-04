@@ -136,7 +136,7 @@ export class Condition {
   }
 
   processUiState() {
-    toggleFieldVisibility(this.fields)
+    toggleFieldVisibility(this.fields, this.components)
     this.dom.classList.remove('display-none')
   }
 
@@ -157,7 +157,7 @@ export class Condition {
       src: target,
     }
 
-    toggleFieldVisibility(this.fields)
+    toggleFieldVisibility(this.fields, this.components)
     this.updateDataDebounced(evtData)
   }
 }

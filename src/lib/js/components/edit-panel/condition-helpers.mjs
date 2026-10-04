@@ -1,5 +1,6 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
+import { cellInput, normalizeTable, parseTableAddress } from '../../common/table.mjs'
 import { isInternalAddress } from '../../common/utils/index.mjs'
 import { objectFromStringArray } from '../../common/utils/object.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
@@ -33,6 +34,40 @@ export const adoptStageTargetProperty = fields => {
   const targetProperty = fields.get('targetProperty')
   if (targetProperty && stageAddressRegex.test(target?.value ?? '') && !VISIBILITY_VALUES.has(targetProperty.value)) {
     targetProperty.value = 'isNotVisible'
+  }
+}
+
+/**
+ * The properties a matrix row or cell offers in a condition (#349 phase 2), first choice first
+ * @param {String} address
+ * @param {String} side 'source' (an if-clause) or 'target' (a then-action)
+ * @param {Components} [components] to look up a cell's input type
+ * @return {String[]|null} null for any other address
+ */
+export const tablePropertyOptions = (address, side, components) => {
+  const parsed = parseTableAddress(address)
+  if (!parsed) {
+    return null
+  }
+  if (parsed.cell === null) {
+    return side === 'source' ? ['value', 'isChecked', 'isNotChecked'] : ['isNotVisible', 'isVisible']
+  }
+  const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.('table'))
+  const own = cellInput(table.columns[parsed.cell]) === 'text' ? ['value'] : ['isChecked', 'isNotChecked']
+  return side === 'source' ? own : [...own, 'isNotVisible', 'isVisible']
+}
+
+/**
+ * Hides every property not in `allowed`; a hidden selection becomes the first allowed one
+ * @param {HTMLSelectElement} propertyField
+ * @param {String[]} allowed
+ */
+const toggleAllowedPropertyOptions = (propertyField, allowed) => {
+  for (const option of propertyField.querySelectorAll('option')) {
+    option.classList.toggle(hiddenOptionClassname, !allowed.includes(option.value))
+  }
+  if (!allowed.includes(propertyField.value)) {
+    propertyField.value = allowed[0]
   }
 }
 
@@ -117,13 +152,17 @@ const isVisible = elem => {
 }
 
 const fieldVisibilityMap = {
-  sourceProperty: fields => {
+  sourceProperty: (fields, components) => {
     const source = fields.get('source')
     const sourceProperty = fields.get('sourceProperty')
     const sourceHasValue = !!source.value
-    const sourceIsCheckable = !!source.value.match(optionsAddressRegex)
+    const tableOptions = tablePropertyOptions(source.value, 'source', components)
 
-    toggleCheckablePropertyOptions(sourceIsCheckable, sourceProperty)
+    if (tableOptions) {
+      toggleAllowedPropertyOptions(sourceProperty, tableOptions)
+    } else {
+      toggleCheckablePropertyOptions(!!source.value.match(optionsAddressRegex), sourceProperty)
+    }
 
     return !sourceHasValue
   },
@@ -142,12 +181,16 @@ const fieldVisibilityMap = {
 
     return !targetHasValue || targetProperty.value.startsWith('is')
   },
-  targetProperty: fields => {
+  targetProperty: (fields, components) => {
     const target = fields.get('target')
     const targetProperty = fields.get('targetProperty')
+    // an if-clause's target is what the source is compared with; only a then-action acts on a row or cell
+    const tableOptions = fields.has('source') ? null : tablePropertyOptions(target.value, 'target', components)
 
     if (stageAddressRegex.test(target.value)) {
       toggleStagePropertyOptions(targetProperty)
+    } else if (tableOptions) {
+      toggleAllowedPropertyOptions(targetProperty, tableOptions)
     } else {
       toggleCheckablePropertyOptions(!!target.value.match(optionsAddressRegex), targetProperty)
     }
@@ -189,9 +232,9 @@ const fieldVisibilityMap = {
   },
 }
 
-export const toggleFieldVisibility = fields => {
+export const toggleFieldVisibility = (fields, components) => {
   for (const [fieldName, field] of fields) {
-    const shouldHide = !!fieldVisibilityMap[fieldName]?.(fields) || false
+    const shouldHide = !!fieldVisibilityMap[fieldName]?.(fields, components) || false
 
     field.classList.toggle(hiddenPropertyClassname, shouldHide)
   }

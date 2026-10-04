@@ -1,6 +1,7 @@
 import i18n from '@draggable/i18n'
 import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
+import { parseTableAddress } from '../../common/table.mjs'
 import { isAddress, noop } from '../../common/utils/index.mjs'
 import { splitAddress } from '../../common/utils/string.mjs'
 import { ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW } from '../../constants.js'
@@ -12,6 +13,7 @@ import {
   HIGHLIGHT_CLASSNAME,
   LIST_CLASSNAME,
   LIST_ITEM_CLASSNAME,
+  tableAddressLabel,
 } from './helpers.mjs'
 
 /**
@@ -216,6 +218,10 @@ export default class Autocomplete {
     if (!isAddress(this.value)) {
       return this.value
     }
+    const tableLabel = tableAddressLabel(this.value, this.components)
+    if (tableLabel) {
+      return tableLabel
+    }
     const component = this.value && this.components.getAddress(this.value)
     return (component && getComponentLabel(component, `${this.key}`, this.components)) || this.value
   }
@@ -361,6 +367,17 @@ export default class Autocomplete {
     const {
       dataset: { value },
     } = option
+
+    // a matrix row or cell (#349 phase 2) highlights its <tr> or cell in the stage preview
+    const tableAddress = parseTableAddress(value)
+    if (tableAddress) {
+      const field = this.components.getAddress(`fields.${tableAddress.fieldId}`)
+      field?.dom?.classList.add(HIGHLIGHT_CLASSNAME)
+      const row = field?.preview?.querySelectorAll('tbody tr')[tableAddress.row]
+      const target = tableAddress.cell === null ? row : row?.children[tableAddress.cell]
+      target?.classList.add(HIGHLIGHT_CLASSNAME)
+      return
+    }
 
     if (isAddress(value)) {
       const { componentAddress, isOptionAddress, optionIndex } = splitAddress(value).reduce(

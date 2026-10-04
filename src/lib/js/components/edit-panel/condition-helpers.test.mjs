@@ -1,6 +1,9 @@
 import { strict as assert } from 'node:assert'
 import { describe, it } from 'node:test'
-import { adoptStageTargetProperty, toggleFieldVisibility } from './condition-helpers.mjs'
+import { Actions } from '../../common/actions.js'
+import { Events } from '../../common/events.js'
+import { Components } from '../index.js'
+import { adoptStageTargetProperty, tablePropertyOptions, toggleFieldVisibility } from './condition-helpers.mjs'
 
 /**
  * The inputs of one then-row, as Condition#fields holds them
@@ -64,5 +67,70 @@ describe('condition fields for a page target (#122)', () => {
     const field = thenFields('fields.f-1', 'value')
     adoptStageTargetProperty(field)
     assert.equal(field.get('targetProperty').value, 'value')
+  })
+})
+
+describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
+  const components = (() => {
+    const events = new Events().init({})
+    const editor = new Components({ events, actions: new Actions(events).init({}) })
+    editor.load({
+      id: 'form-m',
+      stages: { 's-1': { id: 's-1', config: {}, children: ['r-1'] } },
+      rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['m1'] } },
+      fields: {
+        m1: {
+          id: 'm1',
+          tag: 'table',
+          attrs: {},
+          config: { label: 'Survey', hideLabel: true },
+          table: {
+            rowHeaders: true,
+            columns: [
+              { label: '' },
+              { label: 'Good', value: 'good', input: 'radio' },
+              { label: 'Note', value: 'note', input: 'text' },
+            ],
+            rows: [{ value: 'speed', cells: ['Speed', '', ''] }],
+          },
+        },
+      },
+    })
+    return editor
+  })()
+
+  it('offers per row and per cell type, for sources and for targets', () => {
+    const row = 'fields.m1.table.rows[0]'
+    assert.deepEqual(tablePropertyOptions(row, 'source', components), ['value', 'isChecked', 'isNotChecked'])
+    assert.deepEqual(tablePropertyOptions(row, 'target', components), ['isNotVisible', 'isVisible'])
+    assert.deepEqual(tablePropertyOptions(`${row}.cells[1]`, 'source', components), ['isChecked', 'isNotChecked'])
+    assert.deepEqual(tablePropertyOptions(`${row}.cells[1]`, 'target', components), [
+      'isChecked',
+      'isNotChecked',
+      'isNotVisible',
+      'isVisible',
+    ])
+    assert.deepEqual(tablePropertyOptions(`${row}.cells[2]`, 'source', components), ['value'])
+    assert.deepEqual(tablePropertyOptions(`${row}.cells[2]`, 'target', components), [
+      'value',
+      'isNotVisible',
+      'isVisible',
+    ])
+    assert.equal(tablePropertyOptions('fields.m1', 'source', components), null)
+  })
+
+  it('a then-row targeting a matrix row offers only visibility and picks isNotVisible', () => {
+    const fields = thenFields('fields.m1.table.rows[0]', 'value')
+    toggleFieldVisibility(fields, components)
+    assert.deepEqual(offered(fields), ['isVisible', 'isNotVisible'])
+    assert.equal(fields.get('targetProperty').value, 'isNotVisible')
+  })
+
+  it('a then-row targeting a text cell offers value and visibility', () => {
+    const fields = thenFields('fields.m1.table.rows[0].cells[2]', 'value')
+    toggleFieldVisibility(fields, components)
+    assert.deepEqual(offered(fields), ['value', 'isVisible', 'isNotVisible'])
+    assert.equal(fields.get('targetProperty').value, 'value')
   })
 })
