@@ -217,4 +217,156 @@ describe('matrix answers (#349 phase 2)', () => {
     assert.equal(clones.length, 4)
     assert.ok(clones.every(name => /^f-[^[]+\[speed\]$|^f-[^[]+\[price\]$/.test(name)))
   })
+
+  describe('row and cell conditions', () => {
+    const textField = (id, conditions = []) => ({
+      [id]: { id, tag: 'input', attrs: { type: 'text', name: id }, config: { label: id }, conditions },
+    })
+    const when = (source, sourceProperty, target = '') => ({
+      source,
+      sourceProperty,
+      comparison: target ? 'equals' : '',
+      target,
+      targetProperty: '',
+    })
+    const act = (target, targetProperty, value = '') => ({
+      target,
+      targetProperty,
+      assignment: value ? 'equals' : '',
+      value,
+    })
+    const hiddenField = id => $(`#f-${id}`).parentElement.hasAttribute('hidden')
+    const formWith = (...conditions) =>
+      pagesOf({ ...matrixField('m1'), ...textField('n1', conditions), ...textField('n2') })
+
+    test("a row reads as its checked radio's value", () => {
+      render(
+        formWith({ if: [when('fields.m1.table.rows[0]', 'value', 'good')], then: [act('fields.n2', 'isNotVisible')] })
+      )
+      assert.equal(hiddenField('n2'), false)
+      check('#f-m1-0-1')
+      assert.equal(hiddenField('n2'), false)
+      check('#f-m1-0-2')
+      assert.equal(hiddenField('n2'), true)
+    })
+
+    test('a row is checked when any of its inputs is', () => {
+      render(formWith({ if: [when('fields.m1.table.rows[1]', 'isChecked')], then: [act('fields.n2', 'isNotVisible')] }))
+      check('#f-m1-1-4')
+      assert.equal(hiddenField('n2'), true)
+    })
+
+    test('a text cell reads as its text, a checkbox cell as checked', () => {
+      render(
+        formWith(
+          {
+            if: [when('fields.m1.table.rows[0].cells[3]', 'value', 'slow')],
+            then: [act('fields.n1', 'value', 'text')],
+          },
+          { if: [when('fields.m1.table.rows[1].cells[4]', 'isChecked')], then: [act('fields.n2', 'isNotVisible')] }
+        )
+      )
+      type('#f-m1-0-3', 'slow')
+      assert.equal($('#f-n1').value, 'text')
+      check('#f-m1-1-4')
+      assert.equal(hiddenField('n2'), true)
+    })
+
+    test('hiding a row hides the <tr> and lifts its required inputs; showing it restores them', () => {
+      render(
+        formWith(
+          { if: [when('fields.n1', 'value', 'skip')], then: [act('fields.m1.table.rows[0]', 'isNotVisible')] },
+          { if: [when('fields.n1', 'value', 'show')], then: [act('fields.m1.table.rows[0]', 'isVisible')] }
+        )
+      )
+      const row = $('#f-m1 tbody tr')
+      type('#f-n1', 'skip')
+      assert.equal(row.hidden, true)
+      assert.equal($('#f-m1').parentElement.hidden, false)
+      assert.ok([...row.querySelectorAll('input')].every(input => !input.required))
+      assert.equal($('form').checkValidity(), true)
+      type('#f-n1', 'show')
+      assert.equal(row.hidden, false)
+      assert.deepEqual(
+        [...row.querySelectorAll('input')].map(input => input.required),
+        [true, true, true, true]
+      )
+    })
+
+    test('a hidden required checkbox row stays unrequired when its box changes', () => {
+      render(
+        formWith({ if: [when('fields.n1', 'value', 'skip')], then: [act('fields.m1.table.rows[0]', 'isNotVisible')] })
+      )
+      type('#f-n1', 'skip')
+      check('#f-m1-0-4')
+      $('#f-m1-0-4').checked = false
+      $('#f-m1-0-4').dispatchEvent(new window.Event('change', { bubbles: true }))
+      assert.equal($('#f-m1-0-4').required, false)
+    })
+
+    test('a cell target hides only its input, sets text, and checks a box', () => {
+      render(
+        formWith({
+          if: [when('fields.n1', 'value', 'go')],
+          then: [
+            act('fields.m1.table.rows[0].cells[3]', 'isNotVisible'),
+            act('fields.m1.table.rows[1].cells[3]', 'value', 'auto'),
+            act('fields.m1.table.rows[0].cells[4]', 'isChecked'),
+          ],
+        })
+      )
+      type('#f-n1', 'go')
+      const comment = $('#f-m1-0-3')
+      assert.equal(comment.parentElement.hidden, true)
+      assert.equal(comment.closest('td').hidden, false)
+      assert.equal($('#f-m1-1-3').value, 'auto')
+      assert.equal($('#f-m1-0-4').checked, true)
+      assert.equal($('#f-m1-0-4').required, false)
+    })
+
+    test('a row target only supports visibility: value and isChecked are skipped', () => {
+      render(
+        formWith({
+          if: [when('fields.n1', 'value', 'go')],
+          then: [act('fields.m1.table.rows[0]', 'value', 'x'), act('fields.m1.table.rows[0]', 'isChecked')],
+        })
+      )
+      assert.doesNotThrow(() => type('#f-n1', 'go'))
+      const row = $('#f-m1 tbody tr')
+      assert.equal($('#f-m1-0-3').value, '')
+      assert.ok([...row.querySelectorAll('input[type="radio"], input[type="checkbox"]')].every(input => !input.checked))
+      assert.equal(row.hidden, false)
+    })
+
+    test('addresses that name no input row or cell never match, never act and never throw', () => {
+      const display = {
+        t1: {
+          id: 't1',
+          tag: 'table',
+          config: { label: 'T' },
+          table: { columns: [{ label: 'A' }], rows: [{ cells: ['x'] }] },
+        },
+      }
+      const bad = [
+        'fields.m1.table.rows[9]',
+        'fields.m1.table.rows[0].cells[0]',
+        'fields.m1.table.rows[0].cells[9]',
+        'fields.m1.table.rows.0',
+        'fields.t1.table.rows[0]',
+      ]
+      const data = pagesOf({
+        ...matrixField('m1'),
+        ...display,
+        ...textField('n1', [
+          { if: [when('fields.n1', 'value', 'go')], then: bad.map(target => act(target, 'isNotVisible')) },
+          ...bad.map(source => ({ if: [when(source, 'isChecked')], then: [act('fields.n2', 'isNotVisible')] })),
+        ]),
+        ...textField('n2'),
+      })
+      assert.doesNotThrow(() => render(data))
+      assert.doesNotThrow(() => type('#f-n1', 'go'))
+      assert.equal(container.querySelectorAll('[hidden]').length, 0)
+      assert.equal(hiddenField('n2'), false)
+    })
+  })
 })

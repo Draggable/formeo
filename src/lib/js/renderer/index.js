@@ -7,7 +7,14 @@ import dom, {
 } from '../common/dom.js'
 import { labelWrapClassNames, resolveLabelPosition } from '../common/label-position.mjs'
 import { fetchDependencies } from '../common/loaders.js'
-import { hasInputs, isTableField, normalizeTable, parseMatrixKey, withKeys } from '../common/table.mjs'
+import {
+  hasInputs,
+  isTableField,
+  normalizeTable,
+  parseMatrixKey,
+  parseTableAddress,
+  withKeys,
+} from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
@@ -22,6 +29,8 @@ import {
   processOptions,
   propertyMap,
   RENDER_PREFIX,
+  tableRowPropertyMap,
+  tableRowTargetMap,
   targetPropertyMap,
 } from './helpers.js'
 import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
@@ -822,7 +831,7 @@ export default class FormeoRenderer {
     if (!isAddress(target)) {
       return
     }
-    const { component, option } = this.getComponent(target)
+    const { component, option, kind } = this.getComponent(target) ?? {}
 
     // a stage can only be skipped or brought back; the generic show/hide would hide its parent, the <form>
     if (splitAddress(target)[0] === 'stages') {
@@ -833,6 +842,14 @@ export default class FormeoRenderer {
     }
 
     const elem = option || component
+    // a target that resolves to nothing, e.g. a removed matrix row, is left alone
+    if (!elem) {
+      return
+    }
+    if (kind === 'tableRow') {
+      tableRowTargetMap[targetProperty]?.(elem)
+      return
+    }
 
     targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
   }
@@ -846,7 +863,7 @@ export default class FormeoRenderer {
    * @return {*}
    */
   getComponentProperty = (address, propertyName, ownStages = []) => {
-    const { component, option } = this.getComponent(address) || {}
+    const { component, option, kind } = this.getComponent(address) || {}
 
     const elem = option || component
 
@@ -860,7 +877,8 @@ export default class FormeoRenderer {
     }
 
     // a mapped property must win even when it legitimately resolves to false or an empty value
-    return propertyMap[propertyName] ? propertyMap[propertyName](elem) : elem[propertyName]
+    const properties = kind === 'tableRow' ? tableRowPropertyMap : propertyMap
+    return properties[propertyName] ? properties[propertyName](elem) : elem[propertyName]
   }
 
   getComponent = address => {
@@ -891,6 +909,11 @@ export default class FormeoRenderer {
 
     result.component = component
 
+    // a matrix row or cell (#349 phase 2); any other key after the id is an option index
+    if (optionsKey === 'table') {
+      return this.tableComponent(component, address)
+    }
+
     if (optionsKey) {
       const options = component.querySelectorAll('input')
       const option = options[optionIndex]
@@ -901,6 +924,31 @@ export default class FormeoRenderer {
     }
 
     return result
+  }
+
+  /**
+   * Resolves `fields.<id>.table.rows[r]` to the row's <tr> and `….cells[c]` to that cell's input. An address that
+   * doesn't name an input row or cell of a rendered matrix resolves to nothing, so its condition never matches or
+   * acts, rather than reaching some other input.
+   * @param {HTMLElement} table the field's <table>
+   * @param {String} address
+   * @return {{component: HTMLElement|null, option?: HTMLElement, options?: Iterable<HTMLElement>, kind?: String}}
+   */
+  tableComponent = (table, address) => {
+    const parsed = parseTableAddress(address)
+    const isMatrix = table.tagName === 'TABLE' && Boolean(table.closest('.f-table-matrix'))
+    const row = parsed && isMatrix ? table.tBodies[0]?.rows[parsed.row] : null
+    if (!row) {
+      return { component: null }
+    }
+    if (parsed.cell === null) {
+      return { component: table, option: row, options: row.querySelectorAll('input'), kind: 'tableRow' }
+    }
+    const input = row.cells[parsed.cell]?.querySelector('input')
+    if (!input) {
+      return { component: null }
+    }
+    return { component: table, option: input, options: [input], kind: 'tableCell' }
   }
 
   getComponents = address => {

@@ -158,6 +158,19 @@ export const propertyMap = {
   },
 }
 
+/**
+ * A matrix row as a condition source (#349 phase 2): its value is its checked radio's, and it is checked when any of
+ * its checkboxes or radios is
+ */
+export const tableRowPropertyMap = {
+  value: row => row.querySelector('input[type="radio"]:checked')?.value ?? '',
+  checked: row => tableRowPropertyMap.value(row),
+  isChecked: row => [...row.querySelectorAll('input')].some(input => input.checked),
+  isNotChecked: row => !tableRowPropertyMap.isChecked(row),
+  isVisible: row => isVisible(row),
+  isNotVisible: row => !isVisible(row),
+}
+
 export const createRemoveButton = () =>
   dom.btnTemplate({
     className: 'remove-input-group',
@@ -249,6 +262,18 @@ export const targetPropertyMap = {
   isVisible: elem => {
     elem.parentElement.removeAttribute('hidden')
     restoreRequired(elem)
+  },
+}
+
+/** Showing or hiding a matrix row acts on the <tr> itself; the generic rule would hide its whole <tbody> */
+export const tableRowTargetMap = {
+  isNotVisible: row => {
+    row.setAttribute('hidden', '')
+    suspendRequired(row)
+  },
+  isVisible: row => {
+    row.removeAttribute('hidden')
+    restoreRequired(row)
   },
 }
 
