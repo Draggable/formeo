@@ -149,4 +149,24 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
     assert.deepEqual(visible, ['isVisible', 'isNotVisible'])
     assert.equal(select.value, 'isVisible')
   })
+
+  it('an if-row whose source is a matrix row keeps the value property; a radio cell takes isChecked', () => {
+    const sourceFields = (address, property) => {
+      const select = document.createElement('select')
+      for (const value of ['value', 'isChecked', 'isNotChecked', 'isVisible', 'isNotVisible']) {
+        select.add(Object.assign(document.createElement('option'), { value, textContent: value }))
+      }
+      select.value = property
+      return new Map([
+        ['source', Object.assign(document.createElement('input'), { value: address })],
+        ['sourceProperty', select],
+      ])
+    }
+    const row = sourceFields('fields.m1.table.rows[0]', 'value')
+    toggleFieldVisibility(row, components)
+    assert.equal(row.get('sourceProperty').value, 'value')
+    const radio = sourceFields('fields.m1.table.rows[0].cells[1]', 'value')
+    toggleFieldVisibility(radio, components)
+    assert.equal(radio.get('sourceProperty').value, 'isChecked')
+  })
 })
