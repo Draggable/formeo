@@ -1,6 +1,6 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { cellInput, hasInputs, normalizeTable, parseTableAddress } from '../../common/table.mjs'
+import { cellInput, hasInputs, inputColumns, normalizeTable, parseTableAddress } from '../../common/table.mjs'
 import { isInternalAddress } from '../../common/utils/index.mjs'
 import { objectFromStringArray } from '../../common/utils/object.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
@@ -49,10 +49,15 @@ export const tablePropertyOptions = (address, side, components) => {
   if (!parsed) {
     return null
   }
-  if (parsed.cell === null) {
-    return side === 'source' ? ['value', 'isChecked', 'isNotChecked'] : ['isNotVisible', 'isVisible']
-  }
   const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.('table'))
+  if (parsed.cell === null) {
+    if (side !== 'source') {
+      return ['isNotVisible', 'isVisible']
+    }
+    // a row's value is its checked radio's column key, so a table without a radio column has none
+    const hasRadio = inputColumns(table).some(c => cellInput(table.columns[c]) === 'radio')
+    return hasRadio ? ['value', 'isChecked', 'isNotChecked'] : ['isChecked', 'isNotChecked']
+  }
   const own = cellInput(table.columns[parsed.cell]) === 'text' ? ['value'] : ['isChecked', 'isNotChecked']
   return side === 'source' ? own : [...own, 'isNotVisible', 'isVisible']
 }

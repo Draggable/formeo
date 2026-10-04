@@ -83,7 +83,7 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
       id: 'form-m',
       stages: { 's-1': { id: 's-1', config: {}, children: ['r-1'] } },
       rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
-      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['m1'] } },
+      columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: ['m1', 'm2'] } },
       fields: {
         m1: {
           id: 'm1',
@@ -98,6 +98,19 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
               { label: 'Note', value: 'note', input: 'text' },
             ],
             rows: [{ value: 'speed', cells: ['Speed', '', ''] }],
+          },
+        },
+        m2: {
+          id: 'm2',
+          tag: 'table',
+          attrs: {},
+          config: { label: 'Checks', hideLabel: true },
+          table: {
+            columns: [
+              { label: 'Tick', value: 'tick', input: 'checkbox' },
+              { label: 'Note', value: 'note', input: 'text' },
+            ],
+            rows: [{ value: 'a', cells: ['', ''] }],
           },
         },
       },
@@ -123,6 +136,27 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
       'isVisible',
     ])
     assert.equal(tablePropertyOptions('fields.m1', 'source', components), null)
+  })
+
+  it('a row source offers value only when its table has a radio column', () => {
+    assert.deepEqual(tablePropertyOptions('fields.m2.table.rows[0]', 'source', components), [
+      'isChecked',
+      'isNotChecked',
+    ])
+    assert.deepEqual(tablePropertyOptions('fields.m2.table.rows[0]', 'target', components), [
+      'isNotVisible',
+      'isVisible',
+    ])
+    const select = document.createElement('select')
+    for (const value of ['value', 'isChecked', 'isNotChecked', 'isVisible', 'isNotVisible']) {
+      select.add(Object.assign(document.createElement('option'), { value, textContent: value }))
+    }
+    const fields = new Map([
+      ['source', Object.assign(document.createElement('input'), { value: 'fields.m2.table.rows[0]' })],
+      ['sourceProperty', select],
+    ])
+    adoptPickedProperty(fields, 'source', components)
+    assert.equal(select.value, 'isChecked')
   })
 
   it('a then-row targeting a matrix row offers only visibility and picks isNotVisible', () => {
