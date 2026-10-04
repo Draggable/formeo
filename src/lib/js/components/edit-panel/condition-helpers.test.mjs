@@ -133,4 +133,20 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
     assert.deepEqual(offered(fields), ['value', 'isVisible', 'isNotVisible'])
     assert.equal(fields.get('targetProperty').value, 'value')
   })
+
+  it('an if-row whose source is the whole matrix offers only visibility', () => {
+    const select = document.createElement('select')
+    for (const value of ['value', 'isChecked', 'isNotChecked', 'isVisible', 'isNotVisible']) {
+      select.add(Object.assign(document.createElement('option'), { value, textContent: value }))
+    }
+    select.value = 'value'
+    const fields = new Map([
+      ['source', Object.assign(document.createElement('input'), { value: 'fields.m1' })],
+      ['sourceProperty', select],
+    ])
+    toggleFieldVisibility(fields, components)
+    const visible = [...select.options].filter(o => !o.classList.contains('hidden-option')).map(o => o.value)
+    assert.deepEqual(visible, ['isVisible', 'isNotVisible'])
+    assert.equal(select.value, 'isVisible')
+  })
 })

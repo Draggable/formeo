@@ -1,6 +1,6 @@
 import i18n from '@draggable/i18n'
 import dom from '../../common/dom.js'
-import { cellInput, normalizeTable, parseTableAddress } from '../../common/table.mjs'
+import { cellInput, hasInputs, normalizeTable, parseTableAddress } from '../../common/table.mjs'
 import { isInternalAddress } from '../../common/utils/index.mjs'
 import { objectFromStringArray } from '../../common/utils/object.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
@@ -55,6 +55,20 @@ export const tablePropertyOptions = (address, side, components) => {
   const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.('table'))
   const own = cellInput(table.columns[parsed.cell]) === 'text' ? ['value'] : ['isChecked', 'isNotChecked']
   return side === 'source' ? own : [...own, 'isNotVisible', 'isVisible']
+}
+
+/**
+ * A whole matrix as a condition source supports visibility only (#349 phase 2)
+ * @param {String} address
+ * @param {Components} [components]
+ * @return {Boolean}
+ */
+const isMatrixAddress = (address, components) => {
+  if (!/^fields\.[^.]+$/.test(address)) {
+    return false
+  }
+  const field = components?.getAddress?.(address)
+  return !!field?.isTable && hasInputs(field.get('table'))
 }
 
 /**
@@ -156,7 +170,9 @@ const fieldVisibilityMap = {
     const source = fields.get('source')
     const sourceProperty = fields.get('sourceProperty')
     const sourceHasValue = !!source.value
-    const tableOptions = tablePropertyOptions(source.value, 'source', components)
+    const tableOptions = isMatrixAddress(source.value, components)
+      ? ['isVisible', 'isNotVisible']
+      : tablePropertyOptions(source.value, 'source', components)
 
     if (tableOptions) {
       toggleAllowedPropertyOptions(sourceProperty, tableOptions)
