@@ -88,4 +88,21 @@ describe('condition picker: matrix rows and cells (#349 phase 2)', () => {
     autocomplete.highlightComponent({ dataset: { value: 'fields.m1.table.rows[0]' } })
     assert.equal(field.preview.querySelector('tbody tr').classList.contains(HIGHLIGHT_CLASSNAME), true)
   })
+
+  it('clears every highlight: the field and its row or cell alike', () => {
+    const components = editorWith(tableFieldData('m1', matrix()))
+    const autocomplete = new Autocomplete({ key: 'if.condition.source', value: '', components })
+    const field = components.getAddress('fields.m1')
+    document.body.append(field.dom)
+    try {
+      for (const value of ['fields.m1.table.rows[1].cells[3]', 'fields.m1.table.rows[0]']) {
+        autocomplete.highlightComponent({ dataset: { value } })
+        assert.equal(document.getElementsByClassName(HIGHLIGHT_CLASSNAME).length, 2)
+        autocomplete.removeHighlight()
+        assert.equal(document.getElementsByClassName(HIGHLIGHT_CLASSNAME).length, 0)
+      }
+    } finally {
+      field.dom.remove()
+    }
+  })
 })

@@ -351,10 +351,11 @@ export default class Autocomplete {
   }
 
   /**
-   * removes the highlight from
+   * removes the highlight from every highlighted component, row and cell
    */
   removeHighlight() {
-    const highlightedComponents = document.getElementsByClassName(HIGHLIGHT_CLASSNAME)
+    // a static copy: removing the class from a live collection would skip every other element
+    const highlightedComponents = [...document.getElementsByClassName(HIGHLIGHT_CLASSNAME)]
     for (const component of highlightedComponents) {
       component.classList.remove(HIGHLIGHT_CLASSNAME)
     }
