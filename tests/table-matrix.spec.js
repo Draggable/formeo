@@ -99,32 +99,38 @@ test.describe('Matrix (#349 phase 2)', () => {
     expect(errors).toEqual([])
   })
 
-  test('builds a matrix from the controls panel with the keyboard', async ({ page }) => {
+  // The field's edit toggle only shows on hover, so opening the panel is the one pointer step
+  test('builds a matrix from the controls panel; panel edits work from the keyboard', async ({ page }) => {
     const editor = await mountEditor(page)
     const control = editor.getByRole('button', { name: 'Matrix', exact: true })
     await control.focus()
-    await control.click()
+    await page.keyboard.press('Enter')
     const field = editor.locator('.formeo-field').last()
     const panel = await openTablePanel(field)
 
+    // a closed select picks an option by its first letter, as a keyboard user would
     const fourth = panel.getByRole('combobox', { name: 'Column 4 input' })
     await fourth.focus()
-    await fourth.selectOption('checkbox')
+    await page.keyboard.press('c')
+    await expect(fourth).toHaveValue('checkbox')
     await expect(panel.getByRole('combobox', { name: 'Column 4 input' })).toBeFocused()
 
     await panel.getByRole('button', { name: '+ Column' }).focus()
     await page.keyboard.press('Enter')
     await expect(panel.getByRole('textbox', { name: 'Column 5 header' })).toBeFocused()
     await page.keyboard.type('Comment')
-    await panel.getByRole('combobox', { name: 'Column 5 input' }).selectOption('text')
+    await panel.getByRole('combobox', { name: 'Column 5 input' }).focus()
+    await page.keyboard.press('t')
+    await expect(panel.getByRole('combobox', { name: 'Column 5 input' })).toHaveValue('text')
 
     await panel.getByRole('button', { name: '+ Row' }).focus()
     await page.keyboard.press('Enter')
     await expect(panel.getByRole('textbox', { name: 'Row 3, column 1' })).toBeFocused()
     await page.keyboard.type('Price')
 
-    const rowValue = panel.getByRole('textbox', { name: 'Row 3 value' })
-    await rowValue.fill('price')
+    await panel.getByRole('textbox', { name: 'Row 3 value' }).focus()
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.type('price')
     await page.keyboard.press('Tab')
     await panel.getByRole('checkbox', { name: 'Row 1 required' }).focus()
     await page.keyboard.press('Space')
