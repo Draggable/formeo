@@ -13,6 +13,7 @@ import {
   normalizeTable,
   parseMatrixKey,
   parseTableAddress,
+  plainText,
   withKeys,
 } from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
@@ -243,11 +244,7 @@ export default class FormeoRenderer {
       if (r === -1 || (parsed.column !== null && c === -1)) {
         continue
       }
-      const tableName =
-        table.caption.trim() ||
-        String(component.config?.label ?? '')
-          .replace(/<[^>]*>/g, '')
-          .trim()
+      const tableName = table.caption.trim() || plainText(component.config?.label)
       const row = (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
       if (c === -1) {
         return { component, label: tableText('table.entryRow', { table: tableName, row }) }

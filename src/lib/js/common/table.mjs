@@ -384,7 +384,12 @@ export function parseTableAddress(address) {
   return { fieldId: match[1], row: Number(match[2]), cell: match[3] === undefined ? null : Number(match[3]) }
 }
 
-const plainText = value =>
+/**
+ * A label as plain text: tags stripped, trimmed
+ * @param {*} value
+ * @return {String}
+ */
+export const plainText = value =>
   text(value)
     .replace(/<[^>]*>/g, '')
     .trim()

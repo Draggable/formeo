@@ -145,6 +145,16 @@ describe('matrix answers (#349 phase 2)', () => {
     assert.deepEqual(labels, ['Survey: Row 1, Comment', 'Survey: Row 2, Comment'])
   })
 
+  test('an unmatched matrix-looking key keeps an empty userFormData label', () => {
+    const renderer = render(pagesOf(matrixField('m1')))
+    $('form').append(Object.assign(window.document.createElement('input'), { name: 'f-m1[nope]', value: 'x' }))
+    assert.equal(renderer.matrixEntryByName('f-m1[nope]'), undefined)
+    assert.deepEqual(
+      renderer.userFormData.find(({ key }) => key === 'f-m1[nope]'),
+      { key: 'f-m1[nope]', value: 'x', label: '' }
+    )
+  })
+
   test('a required row blocks submit until its radio group, text cell and checkbox cells are answered', () => {
     render(pagesOf(matrixField('m1')))
     const form = $('form')
