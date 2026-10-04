@@ -391,8 +391,12 @@ renderer.userData = { firstName: 'John' }
 
 #### Tables
 
-A [Table](../controls/table.md) field has no inputs, so it adds nothing to `userData`. It renders as a `<table>`
-inside a focusable `.f-table-wrap` region, which a condition on the field hides as a whole.
+A [Table](../controls/table.md) field without inputs adds nothing to `userData`. It renders as a `<table>` inside a
+focusable `.f-table-wrap` region, which a condition on the field hides as a whole.
+
+A matrix (a table with input columns) adds one key per radio row, `base[row]`, and one per checkbox or text cell,
+`base[row][column]`, where `base` is the field's `name` or `f-<id>`. Setting `userData` with the same keys fills it
+back in. See [Values and names](../controls/table.md#values-and-names).
 
 #### Checkbox and Radio Groups
 
@@ -786,8 +790,11 @@ The editor saves the symbol forms (`==`, `&&`); the word forms are accepted too.
 | `targetProperty` | Effect on `target` (an address) |
 |------------------|-----------------------------------|
 | `isVisible` / `isNotVisible` | Shows or hides the target (a field or a whole row). Required inputs inside a hidden target stop being required until it is shown again. |
-| `isChecked` / `isNotChecked` | Checks or unchecks the target. Point at one option: `fields.<id>.options[<index>]`. |
+| `isChecked` / `isNotChecked` | Checks or unchecks the target. Point at one option, `fields.<id>.options[<index>]`, or a matrix cell, `fields.<id>.table.rows[<r>].cells[<c>]`. |
 | `value` | Sets the target's value to `value` when `assignment` is `=`. An `input` event fires, so conditions that read the target run too. |
+
+A matrix's rows and cells have their own addresses, `fields.<id>.table.rows[<r>]` and
+`fields.<id>.table.rows[<r>].cells[<c>]`. See [Conditions on rows and cells](../controls/table.md#conditions-on-rows-and-cells).
 
 ### When conditions run
 

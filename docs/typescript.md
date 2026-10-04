@@ -18,7 +18,8 @@ silently skipped because they'd be reported inside a `.d.ts` file; set `skipLibC
   and the renderer's `page` and `pageCount`. See [Editor](editor/README.md) and [Renderer](renderer/renderer.md).
 - Every editor option ([Options](options/README.md)), including `config`, `controls`, `i18n`, `events` and `actions`.
 - Every renderer option, including `pagination` and `events`.
-- The form definition, `FormeoFormData`, with its conditions and table fields (`TableData`). It matches `dist/formData_schema.json`.
+- The form definition, `FormeoFormData`, with its conditions and table fields (`TableData`, and `TableCellInput` for
+  matrix columns). It matches `dist/formData_schema.json`.
 - Formeo's DOM events on `document`, so `evt.detail` is typed in `document.addEventListener('formeoBeforeSave', …)`.
 
 ## Before hooks narrow on `componentType`

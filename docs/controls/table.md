@@ -1,8 +1,9 @@
 # Table
 
-The **Table** control (HTML group) adds a static table: a caption, an optional header row and rows of plain-text
-cells. It's for showing information, such as opening hours or a price list. It has no inputs, so it adds nothing to
-`userData`.
+The **Table** control (HTML group) adds a table: a caption, an optional header row and rows of plain-text cells. It's
+for showing information, such as opening hours or a price list. Give a column an input type and the table becomes a
+**matrix**, a grid of radio, checkbox or text inputs (see [Input columns (matrix)](#input-columns-matrix)). The
+**Matrix** control (form group) starts as one.
 
 ## Building a table in the editor
 
@@ -71,8 +72,122 @@ The table uses `--formeo-border` for cell borders and `--formeo-surface-muted` f
 ## Conditions
 
 A condition can show or hide a table: target the table field with **is visible** / **is not visible**, and the whole
-scroll region hides. A table has no value, so as a source there is nothing to compare (the same as a paragraph or
-header), and rows and cells can't be targeted.
+scroll region hides. A table without inputs has no value, so as a source there is nothing to compare (the same as a paragraph or header).
+A matrix's rows and cells can be sources and targets; see [Conditions on rows and cells](#conditions-on-rows-and-cells).
+
+## Input columns (matrix)
+
+Each column's header in the Table panel has a type: **Static text** (the default), **Text field**, **Radio** or
+**Checkbox**. A column with an input type shows that input in every row, and the table becomes a matrix. The
+**Matrix** control starts as a matrix with a row-label column and three radio columns.
+
+- **Radio** columns in a row are one group: pick one per row, as in a rating scale.
+- Each **Checkbox** cell is its own yes/no answer.
+- Each **Text field** cell is its own text answer.
+- Static columns keep showing their cell text, so a column of row labels, or a fixed price, sits next to the inputs.
+
+Once a table has an input column, its header row always shows, because the column labels name the choices. With
+**Row headers** on, the first column holds the row labels and can't take an input.
+
+### Values and names
+
+Every input column and every row has a **value**, its key in the submitted data. The panel fills them in
+(`column-1`, `row-1`, …) and you can change them. Spaces are fine. Square brackets become `-`, and a blank or
+duplicate value is replaced with the next free `row-<n>` / `column-<n>` when you leave the box.
+
+Inputs are named after the field's `name` attribute, or `f-<field id>` when it has none:
+
+| Input | `name` | Submitted value |
+|-------|--------|-----------------|
+| Radio | `base[row]` | the column's value |
+| Checkbox | `base[row][column]` | the column's value, when checked |
+| Text field | `base[row][column]` | the text |
+
+So a rating matrix named `visit` gives `userData` like this:
+
+```js
+{
+  'visit[speed]': 'good',
+  'visit[speed][comment]': 'Quick',
+  'visit[price][wrap]': 'wrap',
+}
+```
+
+`userData` is flat: one key per name, as for every other field. Setting `renderer.userData` with the same keys fills
+the matrix back in. `userFormData` labels each entry `{caption}: {row}` or `{caption}: {row}, {column}`.
+
+A server that parses bracketed names into nested objects (PHP, Rails, `qs`) sees `visit[speed]` as a string. If the
+same row also has checkbox or text cells, `visit[speed][comment]` then asks for `visit[speed]` to be an object. Keep
+radio choices and other inputs in separate rows, or separate matrices, if your server parses names that way.
+
+### Data
+
+```json
+{
+  "id": "a1b2c3d4",
+  "tag": "table",
+  "attrs": { "className": "", "name": "visit" },
+  "config": { "label": "Matrix", "hideLabel": true, "controlId": "matrix" },
+  "table": {
+    "caption": "How was your visit?",
+    "headerRow": true,
+    "rowHeaders": true,
+    "columns": [
+      { "label": "" },
+      { "label": "Poor", "value": "poor", "input": "radio" },
+      { "label": "Good", "value": "good", "input": "radio" },
+      { "label": "Comment", "value": "comment", "input": "text" }
+    ],
+    "rows": [
+      { "value": "speed", "required": true, "cells": ["Speed", "", "", ""] },
+      { "value": "price", "cells": ["Price", "", "", ""] }
+    ]
+  }
+}
+```
+
+`input` is `radio`, `checkbox` or `text`. Any other value, or none, makes a static column. Cells under an input column
+are kept but not shown.
+
+### Required rows
+
+Each row has a **Required** checkbox in the panel. A required row needs:
+
+- a choice in its radio group
+- at least one checked box among its checkbox cells
+- text in every text cell
+
+Validation is the browser's own, so multi-page forms stop on a page with an unanswered required row. A row or cell hidden by a
+condition never blocks submit, and a hidden checkbox cell doesn't count towards its row's "at least one box".
+
+### Conditions on rows and cells
+
+In a condition, pick a row or a cell under the matrix field in the source or target list. The addresses are:
+
+- row: `fields.<id>.table.rows[<index>]`
+- cell: `fields.<id>.table.rows[<index>].cells[<column index>]`
+
+| Address | As a source | As a target |
+|---------|-------------|-------------|
+| Row | `value` (its checked radio's value), `isChecked` / `isNotChecked` (any input in the row) | `isVisible` / `isNotVisible` (the whole row) |
+| Radio or checkbox cell | `isChecked` / `isNotChecked` | `isChecked` / `isNotChecked`, `isVisible` / `isNotVisible` |
+| Text cell | `value` | `value`, `isVisible` / `isNotVisible` |
+
+Indexes count from 0 and include static columns, so with **Row headers** on, the first input column is `cells[1]`.
+Like `options[<index>]`, an address points at a position: removing a row or column doesn't update conditions that
+use it. A condition pointing at a row or cell that no longer exists does nothing. Reading `value` or `isChecked` from
+the whole matrix field isn't supported; use a row or a cell. As a source, the whole field offers only
+**is visible** / **is not visible**.
+
+### Accessibility and narrow screens
+
+- Each input is named by its row header and its column header, so a screen reader reads "Speed, Good, radio button".
+  Without row headers, the name is "Row 1, Good".
+- The matrix is a group named by its caption (or the field's label).
+- A required row's header shows `*`, and its inputs carry `required`.
+- When the matrix's container is narrower than about 30rem, each row stacks into a card: the row label, then one line
+  per input with its column label. The table keeps its table, row and cell roles while stacked, so screen readers
+  still announce it as a table.
 
 ## Migrating from a custom table control
 
@@ -96,5 +211,5 @@ markup and render actions can't be mapped to cells reliably.
 
 ## Coming later
 
-Tables with inputs in their cells, such as rating grids, and rows that the person filling in the form can add, are
-planned as follow-up features of [#349](https://github.com/Draggable/formeo/issues/349).
+Rows that the person filling in the form can add or remove are planned as a follow-up feature of
+[#349](https://github.com/Draggable/formeo/issues/349).
