@@ -197,8 +197,9 @@ suite('resolveFormeoProperties purity', () => {
   test('the table element scrolls inside its wrapper and uses theme tokens (#349)', t => {
     const wrap = compiledRule('.formeo .f-table-wrap {')
     t.assert.match(wrap, /overflow-x: auto;/)
-    // without it a wide table's min-content width stretches its flex column past the form
-    t.assert.match(wrap, /contain: inline-size;/)
+    // inline-size containment keeps the table's min-content width from stretching its flex column past the form,
+    // and the container lets a matrix stack when narrow (#349)
+    t.assert.match(wrap, /container-type: inline-size;/)
     t.assert.match(compiledRule('.formeo .f-table-wrap:focus-visible {'), /outline: 2px solid var\(--formeo-focus\);/)
     const cells = compiledRule('.formeo .f-table th,')
     t.assert.match(cells, /border: 1px solid var\(--formeo-border\);/)
@@ -216,6 +217,15 @@ suite('resolveFormeoProperties purity', () => {
     for (const [, selector, body] of rules) {
       t.assert.doesNotMatch(body, physical, `${selector.trim()} uses a physical left/right property`)
     }
+  })
+
+  test('matrices stack in narrow containers and keep [hidden] hidden (#349 phase 2)', t => {
+    const css = compileFormeoCss()
+    t.assert.match(css, /\.f-table-wrap\s*\{[^}]*container-type:\s*inline-size/)
+    t.assert.doesNotMatch(css, /\.f-table-wrap\s*\{[^}]*contain:\s*inline-size/)
+    t.assert.match(css, /@container\s*\(max-width:\s*30rem\)/)
+    t.assert.match(css, /\.f-table-matrix \[hidden\]\s*\{\s*display:\s*none/)
+    t.assert.match(css, /\.f-table-matrix \.f-table-cell-label\s*\{[^}]*clip-path/)
   })
 })
 

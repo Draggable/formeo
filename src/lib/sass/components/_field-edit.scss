@@ -574,4 +574,40 @@
       opacity: 0.4;
     }
   }
+
+  .f-table-panel-hint {
+    flex-basis: 100%;
+    color: t.$text-muted;
+    font-size: 0.875em;
+  }
+
+  .f-table-editor {
+    .f-table-input-type {
+      display: block;
+      margin-block-start: var.$half-space;
+    }
+
+    input[data-column-value],
+    input[data-row-value] {
+      inline-size: 6rem;
+    }
+
+    .f-table-editor-input {
+      color: t.$text-muted;
+      text-align: center;
+    }
+
+    .f-table-row-required {
+      display: inline-flex;
+      align-items: center;
+      gap: var.$half-space;
+      margin-inline: var.$half-space;
+    }
+  }
+}
+
+// a matrix row or cell the condition picker points at (#349 phase 2)
+.field-preview .f-table-matrix .highlight-component {
+  outline: 2px solid t.$focus;
+  outline-offset: -2px;
 }
