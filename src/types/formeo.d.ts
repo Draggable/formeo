@@ -152,7 +152,7 @@ export interface FieldConfigData {
   [key: string]: unknown
 }
 
-/** The input a matrix column renders in each row (#349 phase 2). */
+/** The input a matrix column renders in each row. */
 export type TableCellInput = 'radio' | 'checkbox' | 'text'
 
 /** A table field's column (#349). */

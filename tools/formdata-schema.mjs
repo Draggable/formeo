@@ -41,7 +41,7 @@ export const conditionsSchema = z.array(
   z.looseObject({ if: z.array(conditionIfSchema).optional(), then: z.array(conditionThenSchema).optional() })
 )
 
-// a table field's structure (#349). Loose objects, so later phases can add keys such as columns[].value
+// a table field's structure. Loose objects, so keys added later (and unknown keys) still validate
 const tableSchema = z
   .looseObject({
     caption: z.string().optional(),
@@ -50,7 +50,7 @@ const tableSchema = z
     columns: z.array(
       z.looseObject({
         label: z.string(),
-        value: z.string().optional().describe('the name key of an input column (#349 phase 2)'),
+        value: z.string().optional().describe('the name key of an input column'),
         input: z
           .enum(['radio', 'checkbox', 'text'])
           .optional()
@@ -60,7 +60,7 @@ const tableSchema = z
     rows: z.array(
       z.looseObject({
         cells: z.array(z.string()),
-        value: z.string().optional().describe('the name key of the row (#349 phase 2)'),
+        value: z.string().optional().describe('the name key of the row'),
         required: z.boolean().optional().describe("the row's inputs must be answered"),
       })
     ),
