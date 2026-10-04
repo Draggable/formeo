@@ -3,7 +3,12 @@ import { describe, it } from 'node:test'
 import { Actions } from '../../common/actions.js'
 import { Events } from '../../common/events.js'
 import { Components } from '../index.js'
-import { adoptStageTargetProperty, tablePropertyOptions, toggleFieldVisibility } from './condition-helpers.mjs'
+import {
+  adoptPickedProperty,
+  adoptStageTargetProperty,
+  tablePropertyOptions,
+  toggleFieldVisibility,
+} from './condition-helpers.mjs'
 
 /**
  * The inputs of one then-row, as Condition#fields holds them
@@ -124,6 +129,9 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
     const fields = thenFields('fields.m1.table.rows[0]', 'value')
     toggleFieldVisibility(fields, components)
     assert.deepEqual(offered(fields), ['isVisible', 'isNotVisible'])
+    // shown as stored until the author picks the row
+    assert.equal(fields.get('targetProperty').value, 'value')
+    adoptPickedProperty(fields, 'target', components)
     assert.equal(fields.get('targetProperty').value, 'isNotVisible')
   })
 
@@ -147,6 +155,7 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
     toggleFieldVisibility(fields, components)
     const visible = [...select.options].filter(o => !o.classList.contains('hidden-option')).map(o => o.value)
     assert.deepEqual(visible, ['isVisible', 'isNotVisible'])
+    adoptPickedProperty(fields, 'source', components)
     assert.equal(select.value, 'isVisible')
   })
 
@@ -163,10 +172,10 @@ describe('condition fields for a matrix row or cell (#349 phase 2)', () => {
       ])
     }
     const row = sourceFields('fields.m1.table.rows[0]', 'value')
-    toggleFieldVisibility(row, components)
+    adoptPickedProperty(row, 'source', components)
     assert.equal(row.get('sourceProperty').value, 'value')
     const radio = sourceFields('fields.m1.table.rows[0].cells[1]', 'value')
-    toggleFieldVisibility(radio, components)
+    adoptPickedProperty(radio, 'source', components)
     assert.equal(radio.get('sourceProperty').value, 'isChecked')
   })
 })

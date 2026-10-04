@@ -72,7 +72,8 @@ const isMatrixAddress = (address, components) => {
 }
 
 /**
- * Hides every property not in `allowed`; a hidden selection becomes the first allowed one
+ * Hides every property not in `allowed`. The selected value is left alone, as for a page target: loading a
+ * condition never rewrites it; picking a new source or target adopts an allowed one (adoptPickedProperty).
  * @param {HTMLSelectElement} propertyField
  * @param {String[]} allowed
  */
@@ -80,8 +81,52 @@ const toggleAllowedPropertyOptions = (propertyField, allowed) => {
   for (const option of propertyField.querySelectorAll('option')) {
     option.classList.toggle(hiddenOptionClassname, !allowed.includes(option.value))
   }
-  if (!allowed.includes(propertyField.value)) {
-    propertyField.value = allowed[0]
+}
+
+/**
+ * The properties a picked source or then-target offers, first choice first
+ * @param {String} address the picked source or target
+ * @param {String} side 'source' or 'target'
+ * @param {HTMLSelectElement} propertyField its property select
+ * @param {Components} [components]
+ * @return {String[]}
+ */
+const offeredProperties = (address, side, propertyField, components) => {
+  const tableOptions =
+    side === 'source' && isMatrixAddress(address, components)
+      ? [...VISIBLE_OPTIONS]
+      : tablePropertyOptions(address, side, components)
+  if (tableOptions) {
+    return tableOptions
+  }
+  const isCheckable = optionsAddressRegex.test(address)
+  return [...propertyField.options]
+    .map(({ value }) => value)
+    .filter(value => isCheckedOption({ value }) === isCheckable)
+}
+
+/**
+ * When the author picks a new source or then-target, a property it can't take becomes the first one it offers
+ * (e.g. a radio cell or option source reads isChecked, a matrix row target isNotVisible), so the saved condition
+ * matches what the row shows. Other parts of the row are kept as they are, as for a page target.
+ * @param {Map<String, HTMLElement>} fields a condition row's inputs
+ * @param {String} key the changed input, 'source' or 'target'
+ * @param {Components} [components]
+ */
+export const adoptPickedProperty = (fields, key, components) => {
+  const side = key === 'source' ? 'source' : 'target'
+  const address = fields.get(key)?.value ?? ''
+  const propertyField = fields.get(`${side}Property`)
+  if (!propertyField || !address) {
+    return
+  }
+  if (side === 'target' && stageAddressRegex.test(address)) {
+    adoptStageTargetProperty(fields)
+    return
+  }
+  const offered = offeredProperties(address, side, propertyField, components)
+  if (offered.length && !offered.includes(propertyField.value)) {
+    propertyField.value = offered[0]
   }
 }
 
@@ -258,31 +303,15 @@ export const toggleFieldVisibility = (fields, components) => {
 
 const isCheckedValue = 'isChecked'
 const isCheckedOption = option => option.value.endsWith('Checked')
+/**
+ * Offers only isChecked/isNotChecked for an option (`options[n]`), and every other property otherwise. The selected
+ * value is left alone: loading never rewrites it, and picking adopts one (adoptPickedProperty).
+ * @param {Boolean} isCheckable
+ * @param {HTMLSelectElement} propertyField
+ */
 const toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
-  // don't change if already a checked option
-  if (isCheckable && isCheckedOption(propertyField)) {
-    return null
-  }
-
-  const options = Array.from(propertyField.querySelectorAll('option'))
-
-  const hiddenOptionValues = []
-
-  for (const option of options) {
-    const optionIsChecked = isCheckedOption(option)
-    const shouldHide = isCheckable ? !optionIsChecked : optionIsChecked
-
-    if (shouldHide) {
-      hiddenOptionValues.push(option.value)
-    }
-
-    option.classList.toggle(hiddenOptionClassname, shouldHide)
-  }
-
-  if (hiddenOptionValues.includes(propertyField.value)) {
-    propertyField.value = isCheckable
-      ? isCheckedValue
-      : options.find(opt => !isCheckedOption(opt))?.value || propertyField.value
+  for (const option of propertyField.querySelectorAll('option')) {
+    option.classList.toggle(hiddenOptionClassname, isCheckedOption(option) !== isCheckable)
   }
 }
 

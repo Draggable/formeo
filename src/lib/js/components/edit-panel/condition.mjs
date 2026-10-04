@@ -3,7 +3,7 @@ import animate from '../../common/animation.js'
 import dom from '../../common/dom.js'
 import { debounce } from '../../common/utils/index.mjs'
 import { ANIMATION_SPEED_FAST, CONDITION_INPUT_ORDER } from '../../constants.js'
-import { adoptStageTargetProperty, segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
+import { adoptPickedProperty, segmentTypes, toggleFieldVisibility } from './condition-helpers.mjs'
 
 function orderConditionValues(conditionValues, fieldOrder = CONDITION_INPUT_ORDER) {
   return fieldOrder.reduce((acc, fieldName) => {
@@ -146,8 +146,10 @@ export class Condition {
   })
 
   onChangeCondition = ({ key, target }) => {
-    if (key === 'target' && this.conditionType === 'then') {
-      adoptStageTargetProperty(this.fields)
+    // a newly picked source or then-target adopts a property it can take before the row is read, so the saved
+    // condition is the one the row shows; an if-clause's target is a comparison value with no property choice
+    if (key === 'source' || (key === 'target' && this.conditionType === 'then')) {
+      adoptPickedProperty(this.fields, key, this.components)
     }
 
     const evtData = {
