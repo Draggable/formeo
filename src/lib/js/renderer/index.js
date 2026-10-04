@@ -7,6 +7,8 @@ import dom, {
 } from '../common/dom.js'
 import { labelWrapClassNames, resolveLabelPosition } from '../common/label-position.mjs'
 import { fetchDependencies } from '../common/loaders.js'
+import { hasInputs, isTableField, normalizeTable, parseMatrixKey, withKeys } from '../common/table.mjs'
+import { tableText } from '../common/table-text.mjs'
 import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { STAGE_CLASSNAME } from '../constants.js'
@@ -179,13 +181,14 @@ export default class FormeoRenderer {
     const userFormData = []
     for (const [key, value] of Object.entries(this.userData)) {
       const otherGroup = this.otherGroupByName(key)
+      const matrixEntry = otherGroup ? undefined : this.matrixEntryByName(key)
       const fieldData = {
         key,
         value,
-        // an Other choice's text reads as "{group label} ({Other label})"
+        // an Other choice's text reads as "{group label} ({Other label})", a matrix answer as "{table}: {row}"
         label: otherGroup
           ? `${otherGroup.config?.label || ''} (${otherGroup.config.otherLabel || DEFAULT_OTHER_LABEL})`
-          : this.componentByName(key)?.config?.label || '',
+          : (matrixEntry?.label ?? (this.componentByName(key)?.config?.label || '')),
       }
       userFormData.push(fieldData)
     }
@@ -208,6 +211,41 @@ export default class FormeoRenderer {
       ) ||
       this.otherGroupByName(name)
     )
+  }
+
+  /**
+   * The matrix answer behind a submitted name (#349 phase 2), labelled "{table}: {row}" or "{table}: {row}, {column}"
+   * @param {String} name e.g. 'f-1a2b3c4d[speed][comment]'
+   * @return {{component: Object, label: String}|undefined}
+   */
+  matrixEntryByName(name) {
+    for (const component of Object.values(this.components)) {
+      if (!isTableField(component) || !hasInputs(component.table)) {
+        continue
+      }
+      const base = String(component.attrs?.name ?? '').trim() || component.id
+      const parsed = parseMatrixKey(name, base)
+      if (!parsed) {
+        continue
+      }
+      const table = withKeys(normalizeTable(component.table))
+      const r = table.rows.findIndex(row => row.value === parsed.row)
+      const c = parsed.column === null ? -1 : table.columns.findIndex(column => column.value === parsed.column)
+      if (r === -1 || (parsed.column !== null && c === -1)) {
+        continue
+      }
+      const tableName =
+        table.caption.trim() ||
+        String(component.config?.label ?? '')
+          .replace(/<[^>]*>/g, '')
+          .trim()
+      const row = (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
+      if (c === -1) {
+        return { component, label: tableText('table.entryRow', { table: tableName, row }) }
+      }
+      const column = table.columns[c].label || tableText('table.newColumn', { column: c + 1 })
+      return { component, label: tableText('table.entryCell', { table: tableName, row, column }) }
+    }
   }
 
   /**
