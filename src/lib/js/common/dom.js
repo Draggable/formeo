@@ -804,7 +804,8 @@ class DOM {
   /**
    * A required checkbox group needs at least one checked box, not every box.
    * Every box stays `required` while none is checked; once one is checked none is.
-   * Boxes inside a container a condition hid are never required; an inactive page is not such a container.
+   * Boxes inside a container a condition hid are never required, whether the group or only the box is hidden; an
+   * inactive page is not such a container.
    * @param {Element} groupElem wrapper holding the group's checkboxes
    */
   syncCheckboxGroupRequired(groupElem) {
@@ -812,7 +813,7 @@ class DOM {
     const isHidden = Boolean(groupElem.closest(HIDDEN_BY_CONDITION_SELECTOR))
     const noneChecked = !boxes.some(box => box.checked)
     for (const box of boxes) {
-      box.required = !isHidden && noneChecked
+      box.required = !isHidden && noneChecked && !box.closest(HIDDEN_BY_CONDITION_SELECTOR)
     }
   }
 

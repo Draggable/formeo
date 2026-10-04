@@ -324,6 +324,56 @@ describe('matrix answers (#349 phase 2)', () => {
       assert.equal($('#f-m1-0-4').required, false)
     })
 
+    test('a hidden checkbox cell never blocks its required row', () => {
+      render(
+        formWith({
+          if: [when('fields.n1', 'value', 'go')],
+          then: [act('fields.m1.table.rows[0].cells[4]', 'isNotVisible')],
+        })
+      )
+      type('#f-n1', 'go')
+      check('#f-m1-0-1')
+      type('#f-m1-0-3', 'ok')
+      assert.equal($('#f-m1-0-4').required, false)
+      assert.equal(firstInvalid(), undefined)
+    })
+
+    test('showing a checkbox cell again re-syncs its required row', () => {
+      const table = mixed()
+      table.columns.push({ label: 'Gift', value: 'gift', input: 'checkbox' })
+      for (const row of table.rows) row.cells.push('')
+      render(
+        pagesOf({
+          ...matrixField('m1', table),
+          ...textField('n1', [
+            {
+              if: [when('fields.n1', 'value', 'hide')],
+              then: [act('fields.m1.table.rows[0].cells[4]', 'isNotVisible')],
+            },
+            { if: [when('fields.n1', 'value', 'show')], then: [act('fields.m1.table.rows[0].cells[4]', 'isVisible')] },
+          ]),
+        })
+      )
+      type('#f-n1', 'hide')
+      check('#f-m1-0-5')
+      type('#f-n1', 'show')
+      assert.equal($('#f-m1-0-4').required, false)
+      assert.equal($('#f-m1-0-5').required, false)
+    })
+
+    test('a checkbox cell hidden then shown with nothing checked ends required again', () => {
+      render(
+        formWith(
+          { if: [when('fields.n1', 'value', 'hide')], then: [act('fields.m1.table.rows[0].cells[4]', 'isNotVisible')] },
+          { if: [when('fields.n1', 'value', 'show')], then: [act('fields.m1.table.rows[0].cells[4]', 'isVisible')] }
+        )
+      )
+      type('#f-n1', 'hide')
+      assert.equal($('#f-m1-0-4').required, false)
+      type('#f-n1', 'show')
+      assert.equal($('#f-m1-0-4').required, true)
+    })
+
     test('a row target only supports visibility: value and isChecked are skipped', () => {
       render(
         formWith({

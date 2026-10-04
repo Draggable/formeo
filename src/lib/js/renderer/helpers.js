@@ -258,10 +258,12 @@ export const targetPropertyMap = {
   isNotVisible: elem => {
     elem.parentElement.setAttribute('hidden', true)
     suspendRequired(elem)
+    syncGroupOf(elem)
   },
   isVisible: elem => {
     elem.parentElement.removeAttribute('hidden')
     restoreRequired(elem)
+    syncGroupOf(elem)
   },
 }
 
