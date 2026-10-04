@@ -227,6 +227,10 @@ export default class Field extends Component {
       change: evt => {
         const { target } = evt
         const { type } = target
+        // a table's preview is a picture of the form (#349): its inputs never edit options or attrs.value
+        if (target.closest?.('.f-table')) {
+          return
+        }
 
         if (isSelectableType.has(type)) {
           const selectedOptions = this.preview.querySelectorAll(':checked')
@@ -256,6 +260,9 @@ export default class Field extends Component {
         }
       },
       input: ({ target }) => {
+        if (target.closest?.('.f-table')) {
+          return
+        }
         if (['input', 'meter', 'progress', 'button'].includes(target.tagName.toLowerCase())) {
           super.set('attrs.value', target.value)
           return this.debouncedUpdateEditPanels()

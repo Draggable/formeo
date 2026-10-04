@@ -159,4 +159,24 @@ describe('duplicate field name hint (#331)', () => {
 
     assert.equal(visibleHint(editor.fields.get('a')), null)
   })
+
+  it('warns about a cloned matrix that keeps its name (#349 phase 2)', async () => {
+    const matrix = {
+      id: 'm',
+      tag: 'table',
+      attrs: { className: '', name: 'visit' },
+      config: { label: 'Matrix', hideLabel: true },
+      table: {
+        rowHeaders: true,
+        columns: [{ label: '' }, { label: 'A', value: 'a', input: 'radio' }],
+        rows: [{ value: 'r', cells: ['R', ''] }],
+      },
+    }
+    const editor = editorWith('matrix-clone', [matrix])
+    await flush()
+    const copy = editor.fields.get('m').clone()
+    await flush()
+    assert.ok(visibleHint(editor.fields.get('m')), 'original shows the hint')
+    assert.ok(visibleHint(copy), 'clone shows the hint')
+  })
 })
