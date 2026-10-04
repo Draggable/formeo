@@ -5,6 +5,7 @@ import FileControl from './input.file.js'
 import HiddenControl from './input.hidden.js'
 import NumberControl from './input.number.js'
 import TextControl from './input.text.js'
+import MatrixControl from './matrix.js'
 import RadioGroupControl from './radio-group.js'
 import SelectControl from './select.js'
 import TextAreaControl from './textarea.js'
@@ -20,4 +21,5 @@ export default [
   SelectControl,
   CheckboxGroupControl,
   RadioGroupControl,
+  MatrixControl,
 ]
