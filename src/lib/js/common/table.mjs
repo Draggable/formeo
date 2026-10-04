@@ -5,6 +5,8 @@
  * and return a new table without changing it.
  */
 
+import { fillTokens } from './utils/string.mjs'
+
 export const TABLE_DEFAULTS = Object.freeze({ caption: '', headerRow: true, rowHeaders: false })
 const TABLE_OPTION_KEYS = Object.freeze(Object.keys(TABLE_DEFAULTS))
 const DEFAULT_COLUMN_COUNT = 3
@@ -26,6 +28,17 @@ export const defaultRowLabel = number => `Row ${number}`
 
 /** The input types a column can render in its cells (#349 phase 2) */
 export const CELL_INPUTS = Object.freeze(['radio', 'checkbox', 'text'])
+
+/** English for the strings tableDomConfig needs when no translator is passed; table-text.mjs has the same text */
+export const MATRIX_TEXT = Object.freeze({
+  'table.cellInput': '{row}, {column}',
+  'table.newColumn': 'Column {column}',
+  'table.newRow': 'Row {row}',
+})
+const englishText = (key, vars = {}) => fillTokens(MATRIX_TEXT[key] ?? key, vars)
+
+/** A required checkbox row reuses the checkbox group's attribute, so form reset and conditions re-sync it */
+export const REQUIRED_ROW_ATTR = 'data-formeo-required-group'
 
 const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const text = value => (value === null || value === undefined ? '' : String(value))
@@ -384,13 +397,21 @@ const plainText = value =>
  * @param {Object} [opts]
  * @param {Boolean} [opts.isPreview] the editor stage preview: no region role and no tab stop
  * @param {String} [opts.fallbackLabel] the region's name when there is no caption and no label
+ * @param {Function} [opts.translate] (key, vars) => text, for the matrix's fallback names; English by default
+ * @param {Function} [opts.requiredMark] () => dom config of a required row's mark
+ * @param {Function} [opts.onRequiredRowChange] (tr) => void, re-syncs a required checkbox row on change
  * @return {Object} dom.create config
  */
-export function tableDomConfig(field, { isPreview = false, fallbackLabel = 'Table' } = {}) {
+export function tableDomConfig(field, options = {}) {
+  const table = normalizeTable(field.table)
+  if (hasInputs(table)) {
+    return matrixDomConfig(field, withKeys(table), options)
+  }
+  const { isPreview = false, fallbackLabel = 'Table' } = options
   const { id, action, dataset } = field
   const attrs = field.attrs ?? {}
   const config = field.config ?? {}
-  const { caption, headerRow, rowHeaders, columns, rows } = normalizeTable(field.table)
+  const { caption, headerRow, rowHeaders, columns, rows } = table
   // dom.create reads attrs.tag as a tag override, which would swap the <table> for another element
   const { className, tag: _tagOverride, ...tableAttrs } = attrs
   // a caption of only spaces names nothing, so it doesn't replace the label as the region's name
@@ -437,4 +458,151 @@ export function tableDomConfig(field, { isPreview = false, fallbackLabel = 'Tabl
   // tabindex is a string: dom.processAttrValue turns a falsy 0 into ''
   const region = isPreview ? {} : { role: 'region', tabindex: '0', ...name }
   return { tag: 'div', attrs: { className: 'f-table-wrap', ...region }, children: [tableConfig] }
+}
+
+/**
+ * A matrix (#349 phase 2): every input column renders a radio, checkbox or text input per row. Radios share their
+ * row's name (`base[row]`), every other input has its own (`base[row][column]`). Each input is named by its row and
+ * column headers. Explicit table roles keep the semantics when narrow screens stack the rows.
+ * @param {Object} field
+ * @param {Object} table normalised, with keys
+ * @param {Object} options see tableDomConfig
+ * @return {Object} dom.create config
+ */
+function matrixDomConfig(field, table, options) {
+  const {
+    isPreview = false,
+    fallbackLabel = 'Table',
+    translate = englishText,
+    requiredMark,
+    onRequiredRowChange,
+  } = options
+  const { id, action, dataset } = field
+  const attrs = field.attrs ?? {}
+  const config = field.config ?? {}
+  // attrs.name is the base of every input name, never an attribute of the <table>
+  const { className, tag: _tagOverride, name, required: _required, ...tableAttrs } = attrs
+  const base = (!isPreview && text(name).trim()) || text(id)
+  const { caption, rowHeaders, columns, rows } = table
+  const inputs = new Set(inputColumns(table))
+  const hasCaption = caption.trim() !== ''
+  const captionId = hasCaption && id ? `${id}-caption` : undefined
+  const idOf = suffix => (id ? { id: `${id}-${suffix}` } : {})
+  const columnLabel = c => columns[c].label || translate('table.newColumn', { column: c + 1 })
+  const rowHeaderText = r => (rowHeaders ? rows[r].cells[0] : '')
+  // a required row's mark follows its row header, else its first static cell
+  const markColumn = columns.findIndex((_, c) => !inputs.has(c))
+
+  // aria-labelledby only when both headers have text; otherwise it would name too little
+  const inputName = (r, c) => {
+    if (id && rowHeaderText(r).trim() && columns[c].label.trim()) {
+      return { 'aria-labelledby': `${id}-r${r} ${id}-c${c}` }
+    }
+    const row = rowHeaderText(r).trim() || translate('table.newRow', { row: r + 1 })
+    return { 'aria-label': translate('table.cellInput', { row, column: columnLabel(c) }) }
+  }
+
+  const inputCell = (row, r, c) => {
+    const type = cellInput(columns[c])
+    const inputAttrs = {
+      ...idOf(`${r}-${c}`),
+      type,
+      name: type === 'radio' ? matrixName(base, row.value) : matrixName(base, row.value, columns[c].value),
+      ...(type === 'text' ? {} : { value: columns[c].value }),
+      ...inputName(r, c),
+      required: row.required === true,
+    }
+    const cellLabel = {
+      tag: 'span',
+      attrs: { className: 'f-table-cell-label', 'aria-hidden': 'true' },
+      textContent: columnLabel(c),
+    }
+    return {
+      tag: 'td',
+      attrs: { role: 'cell' },
+      children: [
+        {
+          tag: 'label',
+          attrs: { className: 'f-table-cell' },
+          children: [cellLabel, { tag: 'input', attrs: inputAttrs }],
+        },
+      ],
+    }
+  }
+
+  const staticCell = (row, r, c) => {
+    const content =
+      row.required === true && c === markColumn && requiredMark
+        ? { children: [{ tag: 'span', textContent: row.cells[c] }, requiredMark()] }
+        : { textContent: row.cells[c] }
+    if (rowHeaders && c === 0) {
+      return { tag: 'th', attrs: { role: 'rowheader', scope: 'row', ...idOf(`r${r}`) }, ...content }
+    }
+    return { tag: 'td', attrs: { role: 'cell' }, ...content }
+  }
+
+  const bodyRows = rows.map((row, r) => {
+    const requiredGroup = row.required === true && [...inputs].some(c => cellInput(columns[c]) === 'checkbox')
+    const tr = {
+      tag: 'tr',
+      attrs: { role: 'row', ...(requiredGroup ? { [REQUIRED_ROW_ATTR]: 'true' } : {}) },
+      dataset: { rowKey: row.value },
+      children: columns.map((_, c) => (inputs.has(c) ? inputCell(row, r, c) : staticCell(row, r, c))),
+    }
+    if (requiredGroup && !isPreview && onRequiredRowChange) {
+      tr.action = { change: ({ currentTarget }) => onRequiredRowChange(currentTarget) }
+    }
+    return tr
+  })
+
+  const children = []
+  if (hasCaption) {
+    children.push({ tag: 'caption', attrs: captionId ? { id: captionId } : {}, textContent: caption })
+  }
+  // input columns are named by their labels, so the header row always renders
+  children.push({
+    tag: 'thead',
+    attrs: { role: 'rowgroup' },
+    children: [
+      {
+        tag: 'tr',
+        attrs: { role: 'row' },
+        children: columns.map((column, c) => ({
+          tag: 'th',
+          attrs: { role: 'columnheader', scope: 'col', ...idOf(`c${c}`) },
+          textContent: column.label,
+        })),
+      },
+    ],
+  })
+  children.push({ tag: 'tbody', attrs: { role: 'rowgroup' }, children: bodyRows })
+
+  const tableConfig = {
+    tag: 'table',
+    attrs: {
+      ...tableAttrs,
+      className: ['f-table', ...[className].flat().filter(Boolean)],
+      role: 'table',
+      ...(captionId ? { 'aria-labelledby': captionId } : {}),
+      // the stage preview is a picture of the form: no focus, no clicks, so no preview action sees a change
+      ...(isPreview ? { inert: true } : {}),
+    },
+    children,
+  }
+  if (id) {
+    tableConfig.id = id
+  }
+  if (action) {
+    tableConfig.action = action
+  }
+  if (dataset) {
+    tableConfig.dataset = dataset
+  }
+
+  const groupName = captionId
+    ? { 'aria-labelledby': captionId }
+    : { 'aria-label': plainText(config.label) || fallbackLabel }
+  // inputs are focusable and scroll themselves into view, so the wrapper needs no tab stop
+  const wrapAttrs = { className: 'f-table-wrap f-table-matrix', ...(isPreview ? {} : { role: 'group', ...groupName }) }
+  return { tag: 'div', attrs: wrapAttrs, children: [tableConfig] }
 }

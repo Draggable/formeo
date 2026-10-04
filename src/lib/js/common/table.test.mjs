@@ -11,6 +11,7 @@ import {
   hasInputs,
   inputColumns,
   isTableField,
+  MATRIX_TEXT,
   matrixName,
   normalizeTable,
   parseMatrixKey,
@@ -465,5 +466,27 @@ describe('matrix data (#349 phase 2)', () => {
     assert.equal(parseTableAddress('fields.abc.table.rows.1'), null)
     assert.equal(parseTableAddress('fields.abc'), null)
     assert.equal(parseTableAddress(undefined), null)
+  })
+})
+
+describe('tableDomConfig: matrix (#349 phase 2)', () => {
+  // rating() has a caption, so the <table>'s children are [caption, thead, tbody]
+  const firstInput = config => {
+    const tbody = config.children[0].children[2]
+    // row 1 > the Poor cell (td) > label.f-table-cell > [span, input]
+    return tbody.children[0].children[1].children[0].children[1]
+  }
+
+  it('uses the translate option for its fallback names', () => {
+    const translate = (key, vars) => `${key}|${Object.values(vars).join('|')}`
+    const input = firstInput(tableDomConfig({ id: 'f-m', table: { ...rating(), rowHeaders: false } }, { translate }))
+    assert.equal(input.tag, 'input')
+    assert.equal(input.attrs['aria-label'], 'table.cellInput|table.newRow|1|Poor')
+  })
+
+  it('falls back to its own English strings', () => {
+    assert.deepEqual(Object.keys(MATRIX_TEXT).sort(), ['table.cellInput', 'table.newColumn', 'table.newRow'])
+    const input = firstInput(tableDomConfig({ id: 'f-m', table: { ...rating(), rowHeaders: false } }))
+    assert.equal(input.attrs['aria-label'], 'Row 1, Poor')
   })
 })

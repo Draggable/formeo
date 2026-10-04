@@ -178,10 +178,16 @@ class DOM {
       return elemArg
     }
 
-    // a table field (#349): its `table` data becomes the scroll wrapper, the <table> and its cells
+    // a table field (#349): its `table` data becomes the wrapper, the <table> and its cells, or a matrix of inputs
     if (isTableField(elemArg)) {
-      const fallbackLabel = tableText('controls.html.table')
-      return this.create(tableDomConfig(elemArg, { isPreview, fallbackLabel }), isPreview)
+      const tableConfig = tableDomConfig(elemArg, {
+        isPreview,
+        fallbackLabel: tableText('controls.html.table'),
+        translate: tableText,
+        requiredMark: this.matrixRequiredMark,
+        onRequiredRowChange: row => this.syncCheckboxGroupRequired(row),
+      })
+      return this.create(tableConfig, isPreview)
     }
 
     const _this = this
@@ -827,6 +833,9 @@ class DOM {
     className: 'text-error',
     children: '*',
   })
+
+  // a matrix input announces `required` itself, so its row's mark is only for sighted users
+  matrixRequiredMark = () => ({ ...this.requiredMark(), attrs: { 'aria-hidden': 'true' } })
 
   tooltip = tooltip => ({
     tag: 'span',

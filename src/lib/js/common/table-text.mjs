@@ -3,21 +3,37 @@ import { fillTokens } from './utils/string.mjs'
 
 /**
  * English fallbacks for the table element's strings (#349), for locales that don't have them yet.
- * @draggable/formeo-languages ships these keys from the release after Draggable/formeo#349.
+ * @draggable/formeo-languages ships these keys from the releases after Draggable/formeo#349 phases 1 and 2.
  */
 export const TABLE_TEXT = Object.freeze({
+  'controls.form.matrix': 'Matrix',
   'controls.html.table': 'Table',
   'panel.label.table': 'Table',
   'table.addColumn': '+ Column',
   'table.addRow': '+ Row',
   'table.caption': 'Caption',
   'table.cell': 'Row {row}, column {column}',
+  'table.cellInput': '{row}, {column}',
+  'table.columnInput': 'Column {column} input',
   'table.columnLabel': 'Column {column} header',
+  'table.columnValue': 'Column {column} value',
+  'table.entryCell': '{table}: {row}, {column}',
+  'table.entryRow': '{table}: {row}',
   'table.headerRow': 'Header row',
+  'table.headerRowLocked': 'Input columns need a header row',
+  'table.input.checkbox': 'Checkbox',
+  'table.input.radio': 'Radio',
+  'table.input.static': 'Static text',
+  'table.input.text': 'Text field',
   'table.newColumn': 'Column {column}',
+  'table.newRow': 'Row {row}',
   'table.removeColumn': 'Remove column {column}',
   'table.removeRow': 'Remove row {row}',
+  'table.required': 'Required',
   'table.rowHeaders': 'Row headers',
+  'table.rowRequired': 'Row {row} required',
+  'table.rowValue': 'Row {row} value',
+  'table.value': 'Value',
 })
 
 /**
