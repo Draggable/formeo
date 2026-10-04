@@ -733,6 +733,9 @@ button[class*=-clone]:hover .svg-icon {
 .formeo .f-table-matrix [hidden] {
   display: none;
 }
+.formeo .f-table-matrix .f-table-cell[hidden] {
+  display: none;
+}
 .formeo .f-table-matrix td:has(> .f-table-cell input[type=radio]),
 .formeo .f-table-matrix td:has(> .f-table-cell input[type=checkbox]) {
   text-align: center;

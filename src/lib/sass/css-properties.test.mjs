@@ -225,6 +225,7 @@ suite('resolveFormeoProperties purity', () => {
     t.assert.doesNotMatch(css, /\.f-table-wrap\s*\{[^}]*contain:\s*inline-size/)
     t.assert.match(css, /@container\s*\(max-width:\s*30rem\)/)
     t.assert.match(css, /\.f-table-matrix \[hidden\]\s*\{\s*display:\s*none/)
+    t.assert.match(css, /\.f-table-matrix \.f-table-cell\[hidden\]\s*\{\s*display:\s*none/)
     t.assert.match(css, /\.f-table-matrix \.f-table-cell-label\s*\{[^}]*clip-path/)
   })
 })

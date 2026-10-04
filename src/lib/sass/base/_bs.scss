@@ -298,6 +298,11 @@ label, .prev-label {
     display: none;
   }
 
+  // a condition-hidden cell needs higher specificity than .f-table-cell's display rules
+  .f-table-cell[hidden] {
+    display: none;
+  }
+
   td:has(> .f-table-cell input[type='radio']),
   td:has(> .f-table-cell input[type='checkbox']) {
     text-align: center;
