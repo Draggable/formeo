@@ -447,11 +447,21 @@ describe('Table panel: input columns (#349 phase 2)', () => {
     const field = tableField(matrixTable())
     const radio = field.preview.querySelector('input[type="radio"]')
     const text = field.preview.querySelector('input[type="text"]')
-    assert.doesNotThrow(() => {
+    // jsdom reports a throwing listener to window instead of rethrowing it from dispatchEvent
+    const errors = []
+    const onError = evt => {
+      evt.preventDefault()
+      errors.push(evt.error ?? evt.message)
+    }
+    window.addEventListener('error', onError)
+    try {
       radio.checked = true
       radio.dispatchEvent(new window.Event('change', { bubbles: true }))
       typeInto(text, 'typed')
-    })
+    } finally {
+      window.removeEventListener('error', onError)
+    }
+    assert.deepEqual(errors, [])
     assert.equal(field.get('options'), undefined)
     assert.equal(field.get('attrs.value'), undefined)
   })
