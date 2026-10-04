@@ -47,10 +47,27 @@ const tableSchema = z
     caption: z.string().optional(),
     headerRow: z.boolean().optional().describe('columns[].label render as <thead> th scope="col"'),
     rowHeaders: z.boolean().optional().describe('each row\'s first cell renders as th scope="row"'),
-    columns: z.array(z.looseObject({ label: z.string() })),
-    rows: z.array(z.looseObject({ cells: z.array(z.string()) })),
+    columns: z.array(
+      z.looseObject({
+        label: z.string(),
+        value: z.string().optional().describe('the name key of an input column (#349 phase 2)'),
+        input: z
+          .enum(['radio', 'checkbox', 'text'])
+          .optional()
+          .describe('the input each cell of this column renders; absent for a static column'),
+      })
+    ),
+    rows: z.array(
+      z.looseObject({
+        cells: z.array(z.string()),
+        value: z.string().optional().describe('the name key of the row (#349 phase 2)'),
+        required: z.boolean().optional().describe("the row's inputs must be answered"),
+      })
+    ),
   })
-  .describe('Table element data: a caption, header options, columns and rows of plain-text cells')
+  .describe(
+    'Table element data: a caption, header options, columns and rows of plain-text cells; columns with an input make a matrix'
+  )
 
 const className = z.union([z.string(), z.array(z.string())]).optional()
 
