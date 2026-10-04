@@ -228,6 +228,16 @@ suite('resolveFormeoProperties purity', () => {
     t.assert.match(css, /\.f-table-matrix \.f-table-cell\[hidden\]\s*\{\s*display:\s*none/)
     t.assert.match(css, /\.f-table-matrix \.f-table-cell-label\s*\{[^}]*clip-path/)
   })
+
+  test('matrix rows and cells open in the condition picker on hover (#349 phase 2)', t => {
+    const css = compileFormeoCss()
+    for (const list of ['table-rows-list', 'table-cells-list']) {
+      const reveal = new RegExp(`li:has\\(> \\.${list}\\):hover > \\.${list}[^{]*\\{[^}]*display:\\s*block`)
+      t.assert.match(css, reveal, `${list} reveals on hover of its item`)
+      const position = new RegExp(`\\.f-autocomplete-list\\.${list}[^{]*\\{[^}]*left:\\s*100%`)
+      t.assert.match(css, position, `${list} sits beside its item`)
+    }
+  })
 })
 
 /** The single compiled rule starting with `start`, trimmed. */

@@ -122,7 +122,7 @@ button[class*=-clone]:hover .svg-icon {
   background-color: rgb(181.7890995261, 244.7109004739, 235.6881516588);
   color: #111827;
 }
-.f-autocomplete-list li:has(.options-list):hover .options-list {
+.f-autocomplete-list li:has(.options-list):hover .options-list, .f-autocomplete-list li:has(> .table-rows-list):hover > .table-rows-list, .f-autocomplete-list li:has(> .table-cells-list):hover > .table-cells-list {
   display: block;
 }
 .f-autocomplete-list .component-type {
@@ -130,13 +130,13 @@ button[class*=-clone]:hover .svg-icon {
   font-style: italic;
   font-size: 0.75em;
 }
-.f-autocomplete-list.options-list {
+.f-autocomplete-list.options-list, .f-autocomplete-list.table-rows-list, .f-autocomplete-list.table-cells-list {
   left: 100%;
   top: 0;
   width: 75%;
   min-height: 100%;
 }
-.f-autocomplete-list.options-list li {
+.f-autocomplete-list.options-list li, .f-autocomplete-list.table-rows-list li, .f-autocomplete-list.table-cells-list li {
   display: block;
 }
 

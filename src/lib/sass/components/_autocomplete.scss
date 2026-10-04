@@ -103,7 +103,11 @@
       }
     }
 
-    &:has(.options-list):hover .options-list {
+    &:has(.options-list):hover .options-list,
+    // matrix rows open from their field item, a row's cells from the row (direct children only, so
+    // hovering the field never opens every row's cells at once)
+    &:has(> .table-rows-list):hover > .table-rows-list,
+    &:has(> .table-cells-list):hover > .table-cells-list {
       display: block;
     }
   }
@@ -114,7 +118,9 @@
     font-size: 0.75em;
   }
 
-  &.options-list {
+  &.options-list,
+  &.table-rows-list,
+  &.table-cells-list {
     left: 100%;
     top: 0;
     width: 75%;
