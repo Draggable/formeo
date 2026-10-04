@@ -35,8 +35,8 @@ const CELL_GLYPHS = { radio: '○', checkbox: '☐', text: '▭' }
 /**
  * A table field's Table edit panel (#349): the caption, the header options, a grid of cell inputs and add/remove
  * buttons. Columns can hold radio, checkbox or text inputs (phase 2): each gets a type select, and an input table gets
- * value inputs and per-row Required checkboxes. Typing saves without rebuilding the grid, so focus stays put. Adding or removing a row or column rebuilds
- * the grid and moves focus to the matching control.
+ * value inputs and per-row Required checkboxes. Typing saves without rebuilding the grid, so focus stays put. Adding
+ * or removing a row or column rebuilds the grid and moves focus to the matching control.
  */
 export class TablePanel {
   /**

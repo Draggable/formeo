@@ -72,8 +72,9 @@ The table uses `--formeo-border` for cell borders and `--formeo-surface-muted` f
 ## Conditions
 
 A condition can show or hide a table: target the table field with **is visible** / **is not visible**, and the whole
-scroll region hides. A table without inputs has no value, so as a source there is nothing to compare (the same as a paragraph or header).
-A matrix's rows and cells can be sources and targets; see [Conditions on rows and cells](#conditions-on-rows-and-cells).
+scroll region hides. A table without inputs has no value, so as a source there is nothing to compare (the same as a
+paragraph or header). A matrix's rows and cells can be sources and targets; see
+[Conditions on rows and cells](#conditions-on-rows-and-cells).
 
 ## Input columns (matrix)
 
@@ -157,8 +158,9 @@ Each row has a **Required** checkbox in the panel. A required row needs:
 - at least one checked box among its checkbox cells
 - text in every text cell
 
-Validation is the browser's own, so multi-page forms stop on a page with an unanswered required row. A row or cell hidden by a
-condition never blocks submit, and a hidden checkbox cell doesn't count towards its row's "at least one box".
+Validation is the browser's own, so multi-page forms stop on a page with an unanswered required row. A row or cell
+hidden by a condition never blocks submit, and a hidden checkbox cell doesn't count towards its row's "at least one
+box".
 
 ### Conditions on rows and cells
 
@@ -169,9 +171,11 @@ In a condition, pick a row or a cell under the matrix field in the source or tar
 
 | Address | As a source | As a target |
 |---------|-------------|-------------|
-| Row | `value` (its checked radio's value), `isChecked` / `isNotChecked` (any input in the row) | `isVisible` / `isNotVisible` (the whole row) |
+| Row | `value` (see below), `isChecked` / `isNotChecked` (any input in it) | `isVisible` / `isNotVisible` |
 | Radio or checkbox cell | `isChecked` / `isNotChecked` | `isChecked` / `isNotChecked`, `isVisible` / `isNotVisible` |
 | Text cell | `value` | `value`, `isVisible` / `isNotVisible` |
+
+A row's `value` is its checked radio's value, so a row offers it only when the matrix has a radio column.
 
 Indexes count from 0 and include static columns, so with **Row headers** on, the first input column is `cells[1]`.
 Like `options[<index>]`, an address points at a position: removing a row or column doesn't update conditions that
@@ -184,7 +188,8 @@ the whole matrix field isn't supported; use a row or a cell. As a source, the wh
 - Each input is named by its row header and its column header, so a screen reader reads "Speed, Good, radio button".
   Without row headers, the name is "Row 1, Good".
 - The matrix is a group named by its caption (or the field's label).
-- A required row's header shows `*`, and its inputs carry `required`.
+- A required row's inputs carry `required`. Its `*` mark follows the row header, or without row headers the row's
+  first static cell. A row with no static cell shows no mark.
 - When the matrix's container is narrower than about 30rem, each row stacks into a card: the row label, then one line
   per input with its column label. The table keeps its table, row and cell roles while stacked, so screen readers
   still announce it as a table.
