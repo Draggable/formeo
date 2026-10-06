@@ -300,9 +300,9 @@ export default class Autocomplete {
         go(this.getNextOption(activeOption))
         return false
       case 'ArrowRight':
-        return go(this.firstNestedOption(activeOption))
+        return this.isListOpen() && go(this.firstNestedOption(activeOption))
       case 'ArrowLeft':
-        return go(parentItem(activeOption, this.list))
+        return this.isListOpen() && go(parentItem(activeOption, this.list))
       case 'Enter':
         if (activeOption) {
           this.selectOption(activeOption)
@@ -320,6 +320,14 @@ export default class Autocomplete {
       default:
         return false
     }
+  }
+
+  /**
+   * hideList takes the list out of the stage, and its stale active item must not capture Left and Right
+   * @return {Boolean} false once the list has been hidden
+   */
+  isListOpen() {
+    return this.stage?.contains(this.list) !== false
   }
 
   /**

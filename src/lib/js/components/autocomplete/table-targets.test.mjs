@@ -183,4 +183,46 @@ describe('condition picker: repeating tables, filtering and keyboard (#349 phase
     assert.equal(autocomplete.handleKey('ArrowLeft'), false)
     assert.equal(list.querySelector('.active-option'), plain)
   })
+
+  it('Left and Right leave the caret alone once the list is hidden', () => {
+    const { autocomplete, list, item } = pickerFor(matrix())
+    autocomplete.stage = document.createElement('div')
+    autocomplete.stage.append(list)
+    autocomplete.selectOption(item('fields.m1'))
+    autocomplete.hideList()
+    assert.equal(autocomplete.handleKey('ArrowRight'), false)
+    assert.equal(list.querySelector('.active-option'), item('fields.m1'))
+    autocomplete.selectOption(item('fields.m1.table.rows[0]'))
+    assert.equal(autocomplete.handleKey('ArrowLeft'), false)
+    assert.equal(list.querySelector('.active-option'), item('fields.m1.table.rows[0]'))
+  })
+
+  it('field options follow the same filter rule', () => {
+    const group = {
+      g1: {
+        id: 'g1',
+        tag: 'input',
+        attrs: { type: 'checkbox' },
+        config: { label: 'Colours', controlId: 'checkbox' },
+        options: [
+          { label: 'Red', value: 'red' },
+          { label: 'Blue', value: 'blue' },
+        ],
+      },
+    }
+    const components = editorWith(group)
+    const autocomplete = new Autocomplete({ key: 'if.condition.source', value: '', components })
+    autocomplete.updateOptions()
+    const { list } = autocomplete
+    const item = value => list.querySelector(`li[data-value="${value}"]`)
+    const shown = elem => elem.style.display !== 'none'
+    assert.ok(item('fields.g1.options[0]'), 'the group lists its options')
+    filterListItems(list, 'colours')
+    assert.equal(shown(item('fields.g1.options[0]')), true)
+    assert.equal(shown(item('fields.g1.options[1]')), true)
+    filterListItems(list, 'blue')
+    assert.equal(shown(item('fields.g1')), true)
+    assert.equal(shown(item('fields.g1.options[1]')), true)
+    assert.equal(shown(item('fields.g1.options[0]')), false)
+  })
 })
