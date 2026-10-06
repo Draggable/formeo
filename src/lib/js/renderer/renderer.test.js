@@ -1369,4 +1369,117 @@ describe('FormeoRenderer', () => {
       assertAddsCopy({ rowId: '1b1b1b1b', columnId: '2c2c2c2c', fieldId: '3d3d3d3d' })
     })
   })
+
+  describe('rendering again from the stored formData', () => {
+    // an input group, a repeating table and a plain field, with a stage condition hiding the note
+    const mixedForm = () => ({
+      id: 'again-form',
+      stages: {
+        's-1': {
+          id: 's-1',
+          config: {},
+          children: ['r-group', 'r-table', 'r-note'],
+          conditions: [
+            {
+              if: [{ source: 'fields.f-email', sourceProperty: 'value', comparison: 'equals', target: 'hide' }],
+              then: [{ target: 'fields.f-note', targetProperty: 'isNotVisible', assignment: '', value: '' }],
+            },
+          ],
+        },
+      },
+      rows: {
+        'r-group': { id: 'r-group', config: { inputGroup: true, legend: 'Contacts' }, children: ['c-group'] },
+        'r-table': { id: 'r-table', config: {}, children: ['c-table'] },
+        'r-note': { id: 'r-note', config: {}, children: ['c-note'] },
+      },
+      columns: {
+        'c-group': { id: 'c-group', config: { width: '100%' }, children: ['f-email'] },
+        'c-table': { id: 'c-table', config: { width: '100%' }, children: ['f-order'] },
+        'c-note': { id: 'c-note', config: { width: '100%' }, children: ['f-note'] },
+      },
+      fields: {
+        'f-email': { id: 'f-email', tag: 'input', attrs: { type: 'text', name: 'email' }, config: { label: 'Email' } },
+        'f-order': {
+          id: 'f-order',
+          tag: 'table',
+          attrs: { name: 'order' },
+          config: { label: 'Order', hideLabel: true },
+          table: {
+            headerRow: true,
+            repeat: { min: 1, max: 3 },
+            columns: [{ label: 'Qty', value: 'qty', input: 'text' }],
+            rows: [{ cells: [''] }],
+          },
+        },
+        'f-note': { id: 'f-note', tag: 'input', attrs: { type: 'text', name: 'note' }, config: { label: 'Note' } },
+      },
+    })
+    const controlNames = () => [...container.querySelectorAll('input[name]')].map(input => input.name).sort()
+    const isNoteHidden = () => container.querySelector('#f-f-note').parentElement.hasAttribute('hidden')
+
+    test('render() with no arguments renders the same form again, and userData still works', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(mixedForm())
+      const firstNames = controlNames()
+      assert.deepEqual(firstNames, ['email', 'note', 'order[0][qty]'])
+
+      renderer.render()
+      assert.equal(container.querySelectorAll('.formeo-render').length, 1)
+      assert.deepEqual(controlNames(), firstNames)
+      assert.ok(container.querySelector('.add-input-group'), 'the input group keeps its Add button')
+      assert.ok(container.querySelector('.f-table-add-row'), 'the repeating table keeps its Add row button')
+
+      renderer.userData = { email: 'a@b.c', note: 'hi', 'order[0][qty]': '2' }
+      assert.deepEqual(renderer.userData, { email: 'a@b.c', note: 'hi', 'order[0][qty]': '2' })
+    })
+
+    test("the stage's conditions still apply after render() with no arguments", () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(mixedForm())
+      renderer.render()
+      assert.equal(isNoteHidden(), false)
+      renderer.userData = { email: 'hide' }
+      container.querySelector('#f-f-email').dispatchEvent(new window.Event('input', { bubbles: true }))
+      assert.equal(isNoteHidden(), true)
+    })
+
+    test('rendering leaves formData, and the formData onRender gets, as they were before', () => {
+      const rendered = []
+      const renderer = new FormeoRenderer({
+        renderContainer: container,
+        events: { onRender: ({ formData }) => rendered.push(structuredClone(formData)) },
+      })
+      const input = mixedForm()
+      renderer.render(input)
+      // the renderer only fills in what cleanFormData adds; it never writes its render configs back
+      const cleaned = renderer.formData
+      assert.deepEqual(cleaned.stages['s-1'].children, ['r-group', 'r-table', 'r-note'])
+      assert.equal(cleaned.stages['s-1'].className, undefined)
+      assert.deepEqual(rendered[0], cleaned)
+      assert.deepEqual(input, mixedForm(), 'the formData passed in is untouched')
+
+      renderer.render()
+      assert.deepEqual(renderer.formData, cleaned)
+      assert.deepEqual(rendered[1], cleaned)
+      renderer.destroy()
+      assert.ok(renderer.html.includes('name="email"'))
+      assert.deepEqual(renderer.formData, cleaned)
+    })
+
+    test('destroy() then render() or html renders the whole form again', () => {
+      const renderer = new FormeoRenderer({ renderContainer: container })
+      renderer.render(mixedForm())
+      const firstNames = controlNames()
+
+      renderer.destroy()
+      const html = renderer.html
+      for (const name of firstNames) {
+        assert.ok(html.includes(`name="${name}"`), `html has ${name}`)
+      }
+
+      renderer.destroy()
+      renderer.render()
+      assert.deepEqual(controlNames(), firstNames)
+    })
+  })
 })
