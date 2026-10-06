@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.17.0
+Version: 5.18.0
 Author: Draggable https://draggable.io
 */
 
@@ -6468,7 +6468,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.17.0";
+	version$2 = "5.18.0";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -8860,7 +8860,7 @@ var init_utils = __esmMin((() => {
 //#region src/lib/icons/formeo-sprite.svg?raw
 var formeo_sprite_default;
 var init_formeo_sprite = __esmMin((() => {
-	formeo_sprite_default = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><symbol id=\"f-i-autocomplete\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6,5h1v1H6V5z M4,4H3v1h1V4z M6,4H5v1h1V4z M2,5v1h1V5H2z M3,7h1V6H3V7z M5,7h1V6H5V7z M4,5v1h1V5H4z M2,14h1v-1H2V14z M4,14h1v-1H4V14z M6,14h1v-1H6V14z M9,13H8v1h1V13z M16,3.5v4C16,8.3,15.3,9,14.5,9H14v3v3c0,0.6-0.4,1-1,1H1c-0.6,0-1-0.4-1-1V3.5 C0,2.7,0.7,2,1.5,2h3H8V1.5V1H7H6V0.5V0h2.5H11v0.5V1h-1H9v0.5V2h3h2.5C15.3,2,16,2.7,16,3.5z M13,12H7H1v3h12V12z M3,11v-1H2v1H3z M5,11v-1H4v1H5z M15,3.5C15,3.2,14.8,3,14.5,3H9v2.5V8H8.5H8V7.5V7H7V6h1V5.5V5H7V4h1V3.5V3H1.5C1.2,3,1,3.2,1,3.5v4 C1,7.8,1.2,8,1.5,8H8v1H6v0.5V10h2.5H11V9.5V9H9V8h5.5C14.8,8,15,7.8,15,7.5V3.5z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-bin\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M4 10v20c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-20h-22zM10 28h-2v-14h2v14zM14 28h-2v-14h2v14zM18 28h-2v-14h2v14zM22 28h-2v-14h2v14zM26.5 4h-6.5v-2.5c0-.825-.675-1.5-1.5-1.5h-7c-.825 0-1.5.675-1.5 1.5v2.5h-6.5c-.825 0-1.5.675-1.5 1.5v2.5h26v-2.5c0-.825-.675-1.5-1.5-1.5zM18 4h-6v-1.975h6v1.975z\"/></symbol><symbol id=\"f-i-button\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"acprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"acprefix__rect4140\" d=\"M 0.4765625,4 A 0.47706934,0.47706934 0 0 0 0,4.4765625 L 0,11.523438 A 0.47706934,0.47706934 0 0 0 0.4765625,12 L 15.523438,12 A 0.47706934,0.47706934 0 0 0 16,11.523438 L 16,4.4765625 A 0.47706934,0.47706934 0 0 0 15.523438,4 L 0.4765625,4 Z m 0.4765625,0.953125 14.09375,0 0,6.09375 -14.09375,0 0,-6.09375 z\"/><g id=\"acprefix__layer1\"><g id=\"acprefix__text4203\"><g id=\"acprefix__g4212\" transform=\"translate(0.10112835,0.1001358)\"><path id=\"acprefix__path4208\" d=\"m 6.0690374,6.4093857 q -0.5371093,0 -0.8544922,0.4003906 -0.3149414,0.4003906 -0.3149414,1.0913086 0,0.6884766 0.3149414,1.0888672 0.3173829,0.4003906 0.8544922,0.4003906 0.5371094,0 0.8496094,-0.4003906 0.3149414,-0.4003906 0.3149414,-1.0888672 0,-0.690918 -0.3149414,-1.0913086 -0.3125,-0.4003906 -0.8496094,-0.4003906 z m 0,-0.4003906 q 0.7666016,0 1.225586,0.5151367 0.4589843,0.5126953 0.4589843,1.3769531 0,0.8618164 -0.4589843,1.3769531 -0.4589844,0.5126953 -1.225586,0.5126953 -0.7690429,0 -1.2304687,-0.5126953 -0.4589844,-0.5126953 -0.4589844,-1.3769531 0,-0.8642578 0.4589844,-1.3769531 0.4614258,-0.5151367 1.2304687,-0.5151367 z\"/><path id=\"acprefix__path4210\" d=\"m 8.5250921,6.074913 0.4931641,0 0,1.5405274 1.6357418,-1.5405274 0.634766,0 -1.809082,1.6992188 1.938477,1.9458008 -0.649415,0 -1.7504878,-1.7553711 0,1.7553711 -0.4931641,0 0,-3.6450196 z\"/></g></g></g></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-calendar\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.048 16.961c-0.178 0.257-0.395 0.901-0.652 1.059-0.257 0.157-0.547 0.267-0.869 0.328-0.323 0.062-0.657 0.089-1.002 0.079v1.527h2.467v6.046h1.991v-9.996h-1.584c-0.056 0.381-0.173 0.7-0.351 0.957zM23 8h2c0.553 0 1-0.448 1-1v-6c0-0.552-0.447-1-1-1h-2c-0.553 0-1 0.448-1 1v6c0 0.552 0.447 1 1 1zM7 8h2c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1h-2c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1zM30 4h-2v5c0 0.552-0.447 1-1 1h-6c-0.553 0-1-0.448-1-1v-5h-8v5c0 0.552-0.448 1-1 1h-6c-0.552 0-1-0.448-1-1v-5h-2c-1.104 0-2 0.896-2 2v24c0 1.104 0.896 2 2 2h28c1.104 0 2-0.896 2-2v-24c0-1.104-0.896-2-2-2zM30 29c0 0.553-0.447 1-1 1h-26c-0.552 0-1-0.447-1-1v-16c0-0.552 0.448-1 1-1h26c0.553 0 1 0.448 1 1v16zM15.985 17.982h4.968c-0.936 1.152-1.689 2.325-2.265 3.705-0.575 1.381-0.638 2.818-0.749 4.312h2.131c0.009-0.666-0.195-1.385-0.051-2.156 0.146-0.771 0.352-1.532 0.617-2.285 0.267-0.752 0.598-1.461 0.996-2.127 0.396-0.667 0.853-1.229 1.367-1.686v-1.742h-7.015v1.979z\"/></symbol><symbol id=\"f-i-checkbox\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M13.5,5v8c0,0.8-0.7,1.5-1.5,1.5H3c-0.8,0-1.5-0.7-1.5-1.5V4c0-0.8,0.7-1.5,1.5-1.5h9c0.7,0,1.3,0.5,1.5,1.2l2.4-1.4L13.5,5 z M12.5,6.2L7.7,12L2.8,5.5l4.9,1.6l4.8-2.9V4c0-0.3-0.2-0.5-0.5-0.5H3C2.7,3.5,2.5,3.7,2.5,4v9c0,0.3,0.2,0.5,0.5,0.5h9 c0.3,0,0.5-0.2,0.5-0.5V6.2z\"/></symbol><symbol id=\"f-i-checkbox-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M6,5v1h9V5H6z M15,14v-1H6v1H15z M6,10h9V9H6V10z M4,12l-2.5,1.5L0,13l1.5,2L4,12z M4,8 L1.5,9.5L0,9l1.5,2L4,8z M4,4L1.5,5.5L0,5l1.5,2L4,4z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-columns\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"agprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"agprefix__rect4860-3-5\" d=\"M 16,0.5 A 0.50004997,0.50004997 0 0 0 15.5,0 l -5,0 -5,0 -5,0 A 0.50004997,0.50004997 0 0 0 0,0.5 l 0,15 A 0.50004997,0.50004997 0 0 0 0.5,16 l 5,0 5,0 5,0 A 0.50004997,0.50004997 0 0 0 16,15.5 l 0,-15 z M 15,1 15,15 11,15 11,1 15,1 Z M 10,1 10,15 6,15 6,1 10,1 Z M 5,1 5,15 1,15 1,1 5,1 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-copy\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20 8v-8h-14l-6 6v18h12v8h20v-24h-12zM6 2.828v3.172h-3.172l3.172-3.172zM2 22v-14h6v-6h10v6l-6 6v8h-10zM18 10.828v3.172h-3.172l3.172-3.172zM30 30h-16v-14h6v-6h10v20z\"/></symbol><symbol id=\"f-i-divider\" viewBox=\"0 0 15 15\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aiprefix__metadata10\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><rect y=\"7\" x=\"0\" height=\"1\" width=\"15\" id=\"aiprefix__rect4182\"/></symbol><symbol viewBox=\"0 0 28 32\" id=\"f-i-edit\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M22 2l-4 4 6 6 4-4-6-6zM0 24l0.021 6.018 5.979-0.018 16-16-6-6-16 16zM6 28h-4v-4h2v2h2v2z\"/></symbol><symbol viewBox=\"0 0 24 24\" id=\"f-i-email\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12,2 C17.4292399,2 21.8479317,6.32667079 21.9961582,11.7200952 L22,12 L22,13 C22,15.1729208 20.477434,17 18.5,17 C17.3269391,17 16.3139529,16.3570244 15.6839382,15.3803024 C14.770593,16.3757823 13.4581934,17 12,17 C9.23857625,17 7,14.7614237 7,12 C7,9.23857625 9.23857625,7 12,7 C14.6887547,7 16.8818181,9.12230671 16.9953805,11.7831104 L17,12 L17,13 C17,14.1407877 17.7160103,15 18.5,15 C19.2447902,15 19.928229,14.2245609 19.9947109,13.1689341 L20,13 L20,12 C20,7.581722 16.418278,4 12,4 C7.581722,4 4,7.581722 4,12 C4,16.418278 7.581722,20 12,20 C13.1630948,20 14.2892822,19.7522618 15.3225159,19.2798331 C15.8247876,19.0501777 16.4181317,19.271177 16.647787,19.7734487 C16.8774423,20.2757205 16.656443,20.8690646 16.1541713,21.0987199 C14.861218,21.689901 13.4515463,22 12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 Z M12,9 C10.3431458,9 9,10.3431458 9,12 C9,13.6568542 10.3431458,15 12,15 C13.6568542,15 15,13.6568542 15,12 C15,10.3431458 13.6568542,9 12,9 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-floppy-disk\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M28 0h-28v32h32v-28l-4-4zM16 4h4v8h-4v-8zM28 28h-24v-24h2v10h18v-10h2.343l1.657 1.657v22.343z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aqprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"translate(0,-2)\" id=\"aqprefix__g4220\"><rect id=\"aqprefix__rect4191\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g><g transform=\"translate(0,2)\" id=\"aqprefix__g4220-6\"><rect id=\"aqprefix__rect4191-40\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2-3\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4-9\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-column\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 7h2v2H2zM7 7h2v2H7zM12 7h2v2h-2zM2 12h2v2H2zM7 12h2v2H7zM12 12h2v2h-2z\" transform=\"rotate(90 9.25 9.25)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-field\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.5-6.5h2v2h-2zm-5 0h2v2h-2zm5-5h2v2h-2zm-5 0h2v2h-2z\" transform=\"rotate(90)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-row\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 9.5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Zm10-5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-stage\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 4.5h2v2H2zM7 4.5h2v2H7zM12 4.5h2v2h-2zM2 9.5h2v2H2zM7 9.5h2v2H7zM12 9.5h2v2h-2zM2-.5h2v2H2zM7-.5h2v2H7zM12-.5h2v2h-2z\" transform=\"translate(0 2.5)\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-hash\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"arprefix__icomoon-ignore\"/><path d=\"M448 192v-64h-80.064l16-128h-64l-16 128h-127.968l16-128h-64l-16 128h-111.968v64h103.968l-15.968 128h-88v64h80l-16 128h64l16-128h127.968l-16 128h64.032l16-128h112v-64h-104l15.936-128h88.064zM279.968 320h-127.968l15.968-128h127.968l-15.968 128z\"/></symbol><symbol viewBox=\"0 0 28 28\" id=\"f-i-header\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M26.281 26q-0.688 0-2.070-0.055t-2.086-0.055q-0.688 0-2.063 0.055t-2.063 0.055q-0.375 0-0.578-0.32t-0.203-0.711q0-0.484 0.266-0.719t0.609-0.266 0.797-0.109 0.703-0.234q0.516-0.328 0.516-2.188l-0.016-6.109q0-0.328-0.016-0.484-0.203-0.063-0.781-0.063h-10.547q-0.594 0-0.797 0.063-0.016 0.156-0.016 0.484l-0.016 5.797q0 2.219 0.578 2.562 0.25 0.156 0.75 0.203t0.891 0.055 0.703 0.234 0.313 0.711q0 0.406-0.195 0.75t-0.57 0.344q-0.734 0-2.18-0.055t-2.164-0.055q-0.672 0-2 0.055t-1.984 0.055q-0.359 0-0.555-0.328t-0.195-0.703q0-0.469 0.242-0.703t0.562-0.273 0.742-0.117 0.656-0.234q0.516-0.359 0.516-2.234l-0.016-0.891v-12.703q0-0.047 0.008-0.406t0-0.57-0.023-0.602-0.055-0.656-0.102-0.57-0.172-0.492-0.25-0.281q-0.234-0.156-0.703-0.187t-0.828-0.031-0.641-0.219-0.281-0.703q0-0.406 0.187-0.75t0.562-0.344q0.719 0 2.164 0.055t2.164 0.055q0.656 0 1.977-0.055t1.977-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.266 0.68t-0.602 0.227-0.773 0.063-0.672 0.203q-0.547 0.328-0.547 2.5l0.016 5q0 0.328 0.016 0.5 0.203 0.047 0.609 0.047h10.922q0.391 0 0.594-0.047 0.016-0.172 0.016-0.5l0.016-5q0-2.172-0.547-2.5-0.281-0.172-0.914-0.195t-1.031-0.203-0.398-0.773q0-0.406 0.195-0.75t0.586-0.344q0.688 0 2.063 0.055t2.063 0.055q0.672 0 2.016-0.055t2.016-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.273 0.688t-0.625 0.227-0.805 0.047-0.688 0.195q-0.547 0.359-0.547 2.516l0.016 14.734q0 1.859 0.531 2.188 0.25 0.156 0.719 0.211t0.836 0.070 0.648 0.242 0.281 0.695q0 0.406-0.187 0.75t-0.562 0.344z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-hidden\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12h1v-1H0Zm15-7h1V4h-1zm-1 7h1v-1h-1zm-2 0h1v-1h-1zm-2 0h1v-1h-1Zm-2 0h1v-1H8Zm-2 0h1v-1H6Zm-2 0h1v-1H4Zm-2 0h1v-1H2Zm13-1h1v-1h-1ZM0 10h1V9H0Zm15-1h1V8h-1ZM0 8h1V7H0Zm15-1h1V6h-1ZM0 6h1V5H0Zm13-1h1V4h-1zm-2 0h1V4h-1ZM9 5h1V4H9ZM7 5h1V4H7ZM5 5h1V4H5ZM3 5h1V4H3ZM1 5h1V4H1Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 32 32\" id=\"f-i-info-circle\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m17.962 24.725 1.806.096v2.531h-7.534v-2.406l1.045-.094c.568-.063.916-.254.916-1.014v-8.801c0-.699-.188-.92-.791-.92l-1.106-.062v-2.626h5.666zM15.747 4.648c1.394 0 2.405 1.047 2.405 2.374 0 1.331-1.014 2.313-2.438 2.313-1.454 0-2.404-.982-2.404-2.313 0-1.327.95-2.374 2.437-2.374M16 32C7.178 32 0 24.822 0 16S7.178 0 16 0c8.82 0 16 7.178 16 16s-7.18 16-16 16m0-29C8.832 3 3 8.832 3 16s5.832 13 13 13 13-5.832 13-13S23.168 3 16 3\"/></symbol><symbol viewBox=\"0 0 384 512\" id=\"f-i-menu\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"avprefix__icomoon-ignore\"/><path d=\"M0 96v64h384v-64h-384zM0 288h384v-64h-384v64zM0 416h384v-64h-384v64z\"/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-minus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12L18 12\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M287.744 94.736v129.008h128v-64l96.256 96.256-96.256 96.24v-65.488h-128v129.008h64.496l-96.24 96.24-96.256-96.24h64v-129.008h-128v64.992l-95.744-95.744 95.744-95.744v63.488h128v-129.008h-62.496l94.752-94.736 94.752 94.736h-63.008z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move-vertical\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m 287.744,94.736 0,321.024 64.496,0 L 256,512 l -96.256,-96.24 64,0 0,-321.024 -62.496,0 L 256,0 350.752,94.736 Z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-page-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M96 32h224l96 96v96h-48v-64h-80v-80h-192v384h192v48h-240v-480zM352 288l128 96-128 96v-64h-128v-64h128v-64z\"/></symbol><symbol viewBox=\"0 0 20 28\" id=\"f-i-paragraph\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.969 2.953v1.141q0 0.453-0.289 0.953t-0.664 0.5q-0.781 0-0.844 0.016-0.406 0.094-0.5 0.484-0.047 0.172-0.047 1v18q0 0.391-0.281 0.672t-0.672 0.281h-1.687q-0.391 0-0.672-0.281t-0.281-0.672v-19.031h-2.234v19.031q0 0.391-0.273 0.672t-0.68 0.281h-1.687q-0.406 0-0.68-0.281t-0.273-0.672v-7.75q-2.297-0.187-3.828-0.922-1.969-0.906-3-2.797-1-1.828-1-4.047 0-2.594 1.375-4.469 1.375-1.844 3.266-2.484 1.734-0.578 6.516-0.578h7.484q0.391 0 0.672 0.281t0.281 0.672z\"/></symbol><symbol id=\"f-i-phone-receiver\" viewBox=\"0 0 578.106 578.106\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><g><g><path d=\"M577.83,456.128c1.225,9.385-1.635,17.545-8.568,24.48l-81.396,80.781 c-3.672,4.08-8.465,7.551-14.381,10.404c-5.916,2.857-11.729,4.693-17.439,5.508c-0.408,0-1.635,0.105-3.676,0.309 c-2.037,0.203-4.689,0.307-7.953,0.307c-7.754,0-20.301-1.326-37.641-3.979s-38.555-9.182-63.645-19.584 c-25.096-10.404-53.553-26.012-85.376-46.818c-31.823-20.805-65.688-49.367-101.592-85.68 c-28.56-28.152-52.224-55.08-70.992-80.783c-18.768-25.705-33.864-49.471-45.288-71.299 c-11.425-21.828-19.993-41.616-25.705-59.364S4.59,177.362,2.55,164.51s-2.856-22.95-2.448-30.294 c0.408-7.344,0.612-11.424,0.612-12.24c0.816-5.712,2.652-11.526,5.508-17.442s6.324-10.71,10.404-14.382L98.022,8.756 c5.712-5.712,12.24-8.568,19.584-8.568c5.304,0,9.996,1.53,14.076,4.59s7.548,6.834,10.404,11.322l65.484,124.236 c3.672,6.528,4.692,13.668,3.06,21.42c-1.632,7.752-5.1,14.28-10.404,19.584l-29.988,29.988c-0.816,0.816-1.53,2.142-2.142,3.978 s-0.918,3.366-0.918,4.59c1.632,8.568,5.304,18.36,11.016,29.376c4.896,9.792,12.444,21.726,22.644,35.802 s24.684,30.293,43.452,48.653c18.36,18.77,34.68,33.354,48.96,43.76c14.277,10.4,26.215,18.053,35.803,22.949 c9.588,4.896,16.932,7.854,22.031,8.871l7.648,1.531c0.816,0,2.145-0.307,3.979-0.918c1.836-0.613,3.162-1.326,3.979-2.143 l34.883-35.496c7.348-6.527,15.912-9.791,25.705-9.791c6.938,0,12.443,1.223,16.523,3.672h0.611l118.115,69.768 C571.098,441.238,576.197,447.968,577.83,456.128z\"/></g></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-plus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12H18M12 6V18\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"f-i-radio-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M5,6h10V5H5V6z M15,9H5v1h10V9z M15,14v-1H5v1H15z M1.5,7C0.7,7,0,6.3,0,5.5S0.7,4,1.5,4 S3,4.7,3,5.5S2.3,7,1.5,7z M1.5,5C1.2,5,1,5.2,1,5.5S1.2,6,1.5,6S2,5.8,2,5.5S1.8,5,1.5,5z M1.5,11.1C0.7,11.1,0,10.4,0,9.6 s0.7-1.5,1.5-1.5S3,8.7,3,9.6S2.3,11.1,1.5,11.1z M1.5,9.1C1.2,9.1,1,9.3,1,9.6s0.2,0.5,0.5,0.5S2,9.8,2,9.6S1.8,9.1,1.5,9.1z M1.5,15C0.7,15,0,14.3,0,13.5S0.7,12,1.5,12S3,12.7,3,13.5S2.3,15,1.5,15z M1.5,13C1.2,13,1,13.2,1,13.5S1.2,14,1.5,14 S2,13.8,2,13.5S1.8,13,1.5,13z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-remove\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M193.694-139.2h87.322v510.916h-87.322zM-18.103 159.92V72.597h510.915v87.322z\" transform=\"rotate(45 77.994 208.636)\"/></symbol><symbol id=\"f-i-rich-text\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M15,1H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14c0.6,0,1-0.4,1-1V2C16,1.4,15.6,1,15,1z M1,3.1h0.8v0.3H1V3.1z M1,3.6h0.8 v0.3H1V3.6z M15,14H1V5.1h14V14z M15,4.9H1V4.6h14V4.9z M15,4.4H1V4.1h0.8v0.2h1.5V4.1h1.3v0.2H6V4.1h1.3v0.2h1.5V4.1H10v0.2h1.5 V4.1h1.3v0.2h1.5V4.1H15V4.4z M4.5,3.6v0.3H3.3V3.6H4.5z M3.3,3.4V3.1h1.3v0.3H3.3z M7.3,3.6v0.3H6V3.6H7.3z M6,3.4V3.1h1.3v0.3H6z M10,3.6v0.3H8.8V3.6H10z M8.8,3.4V3.1H10v0.3H8.8z M12.8,3.6v0.3h-1.3V3.6H12.8z M11.5,3.4V3.1h1.3v0.3H11.5z M15,3.9h-0.8V3.6H15 V3.9z M15,3.4h-0.8V3.1H15V3.4z M15,2.9h-0.8V2.8h-1.5v0.2h-1.3V2.8H10v0.2H8.8V2.8H7.3v0.2H6V2.8H4.5v0.2H3.3V2.8H1.8v0.2H1V2.6h14 V2.9z M15,2.4H1V2.1h14V2.4z M3,12v-1h10v1H3z M13,10H3V9h10V10z M11,8H3V7h8V8z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-rows\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"bgprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"matrix(0,1,-1,0,3.0984025,11.835155)\" id=\"bgprefix__g7209\"><path id=\"bgprefix__rect4860-3-5\" d=\"m 4.1640625,-12.402344 a 0.50004997,0.50004997 0 0 0 -0.5,-0.5 l -5,0 -5,0 -5.0000005,0 a 0.50004997,0.50004997 0 0 0 -0.5,0.5 l 0,15.0000002 a 0.50004997,0.50004997 0 0 0 0.5,0.5 l 4.9648442,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 4.9648437,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 5,0 a 0.50004997,0.50004997 0 0 0 0.5,-0.5 l 0,-15.0000002 z m -1,0.5 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4.0000005,0 0,-14.0000002 4.0000005,0 z\"/></g></symbol><symbol id=\"f-i-select\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bhprefix__XMLID_1_\" d=\"M0,0v14h0c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1h0V5h4V0H0z M1,1h10v3H1V1z M1,7h10v3H1V7z M1,14v-3h10v3H1z M15,4h-3V1h3V4z M2,2h1v1H2V2z M2,12h1v1H2V12z M4,12h1v1H4V12z M6,12h1v1H6V12z M9,12v1H8v-1H9z M2,8h1v1H2V8z M4,8h1v1H4V8z M6,8 h1v1H6V8z M13.5,3.1l-1-1.1h1.9L13.5,3.1z M2,6V5h1v1H2L2,6z M4,6V5h1v1H4L4,6z\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-settings\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"biprefix__icomoon-ignore\"/><path d=\"M223.969 175c-44.703 0-80.969 36.266-80.969 81 0 44.688 36.266 81.031 80.969 81.031 44.719 0 80.719-36.344 80.719-81.031-0-44.734-36-81-80.719-81zM386.313 302.531l-14.594 35.156 29.469 57.875-36.094 36.094-59.218-27.969-35.156 14.438-17.844 54.625-2.281 7.25h-51.016l-22.078-61.656-35.156-14.5-57.952 29.344-36.078-36.063 27.938-59.25-14.484-35.125-61.767-20.156v-50.984l61.703-22.109 14.485-35.094-25.953-51.234-3.422-6.719 36.031-36.031 59.297 27.922 35.109-14.516 17.828-54.594 2.297-7.234h51l22.094 61.734 35.063 14.516 58.031-29.406 36.063 36.031-27.938 59.203 14.438 35.172 61.875 20.125v50.969l-61.688 22.187z\"/></symbol><symbol viewBox=\"0 0 16 16\" id=\"f-i-table\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0h16v4H0zM0 4h1v12H0zM15 4h1v12h-1zM1 15h14v1H1zM5 4h1v11H5zM10 4h1v11h-1zM1 9h14v1H1z\"/></symbol><symbol id=\"f-i-text-input\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bjprefix__XMLID_10_\" d=\"M15,4H4.5V3H6V2H4.5h-1H2v1h1.5v1H1C0.4,4,0,4.5,0,5v6c0,0.6,0.4,1,1,1h2.5v1H2v1h4v-1H4.5v-1H15 c0.6,0,1-0.4,1-1V5C16,4.5,15.6,4,15,4z M1,11V5h2.5v6H1z M15,11H4.5V5H15V11z\"/></symbol><symbol id=\"f-i-textarea\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bkprefix__XMLID_1_\" d=\"M3,11v-1h8v1H3L3,11z M3,7h10V6H3V7L3,7z M3,8v1h10V8H3L3,8z M13,4H3v1h10V4L13,4z M16,14V2c0-0.6-0.4-1-1-1 H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14C15.6,15,16,14.6,16,14z M15,2v12H1V2H15z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-down\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12l11.992 11.992 11.992-11.992h-23.984z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-left\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 15.996l11.992 11.992v-23.984l-11.992 11.992z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-right\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0.002 4.008l11.992 11.992-11.992 11.992v-23.984z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-up\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M11.992 8l-11.992 11.992h23.984l-11.992-11.992z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-upload\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"bpprefix__icomoon-ignore\"/><path d=\"M240 352h-240v128h480v-128h-240zM448 416h-64v-32h64v32zM112 160l128-128 128 128h-80v160h-96v-160z\"/></symbol></svg>";
+	formeo_sprite_default = "<?xml version=\"1.0\" encoding=\"utf-8\"?><!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><symbol id=\"f-i-autocomplete\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6,5h1v1H6V5z M4,4H3v1h1V4z M6,4H5v1h1V4z M2,5v1h1V5H2z M3,7h1V6H3V7z M5,7h1V6H5V7z M4,5v1h1V5H4z M2,14h1v-1H2V14z M4,14h1v-1H4V14z M6,14h1v-1H6V14z M9,13H8v1h1V13z M16,3.5v4C16,8.3,15.3,9,14.5,9H14v3v3c0,0.6-0.4,1-1,1H1c-0.6,0-1-0.4-1-1V3.5 C0,2.7,0.7,2,1.5,2h3H8V1.5V1H7H6V0.5V0h2.5H11v0.5V1h-1H9v0.5V2h3h2.5C15.3,2,16,2.7,16,3.5z M13,12H7H1v3h12V12z M3,11v-1H2v1H3z M5,11v-1H4v1H5z M15,3.5C15,3.2,14.8,3,14.5,3H9v2.5V8H8.5H8V7.5V7H7V6h1V5.5V5H7V4h1V3.5V3H1.5C1.2,3,1,3.2,1,3.5v4 C1,7.8,1.2,8,1.5,8H8v1H6v0.5V10h2.5H11V9.5V9H9V8h5.5C14.8,8,15,7.8,15,7.5V3.5z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-bin\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M4 10v20c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-20h-22zM10 28h-2v-14h2v14zM14 28h-2v-14h2v14zM18 28h-2v-14h2v14zM22 28h-2v-14h2v14zM26.5 4h-6.5v-2.5c0-.825-.675-1.5-1.5-1.5h-7c-.825 0-1.5.675-1.5 1.5v2.5h-6.5c-.825 0-1.5.675-1.5 1.5v2.5h26v-2.5c0-.825-.675-1.5-1.5-1.5zM18 4h-6v-1.975h6v1.975z\"/></symbol><symbol id=\"f-i-button\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"acprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"acprefix__rect4140\" d=\"M 0.4765625,4 A 0.47706934,0.47706934 0 0 0 0,4.4765625 L 0,11.523438 A 0.47706934,0.47706934 0 0 0 0.4765625,12 L 15.523438,12 A 0.47706934,0.47706934 0 0 0 16,11.523438 L 16,4.4765625 A 0.47706934,0.47706934 0 0 0 15.523438,4 L 0.4765625,4 Z m 0.4765625,0.953125 14.09375,0 0,6.09375 -14.09375,0 0,-6.09375 z\"/><g id=\"acprefix__layer1\"><g id=\"acprefix__text4203\"><g id=\"acprefix__g4212\" transform=\"translate(0.10112835,0.1001358)\"><path id=\"acprefix__path4208\" d=\"m 6.0690374,6.4093857 q -0.5371093,0 -0.8544922,0.4003906 -0.3149414,0.4003906 -0.3149414,1.0913086 0,0.6884766 0.3149414,1.0888672 0.3173829,0.4003906 0.8544922,0.4003906 0.5371094,0 0.8496094,-0.4003906 0.3149414,-0.4003906 0.3149414,-1.0888672 0,-0.690918 -0.3149414,-1.0913086 -0.3125,-0.4003906 -0.8496094,-0.4003906 z m 0,-0.4003906 q 0.7666016,0 1.225586,0.5151367 0.4589843,0.5126953 0.4589843,1.3769531 0,0.8618164 -0.4589843,1.3769531 -0.4589844,0.5126953 -1.225586,0.5126953 -0.7690429,0 -1.2304687,-0.5126953 -0.4589844,-0.5126953 -0.4589844,-1.3769531 0,-0.8642578 0.4589844,-1.3769531 0.4614258,-0.5151367 1.2304687,-0.5151367 z\"/><path id=\"acprefix__path4210\" d=\"m 8.5250921,6.074913 0.4931641,0 0,1.5405274 1.6357418,-1.5405274 0.634766,0 -1.809082,1.6992188 1.938477,1.9458008 -0.649415,0 -1.7504878,-1.7553711 0,1.7553711 -0.4931641,0 0,-3.6450196 z\"/></g></g></g></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-calendar\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12.048 16.961c-0.178 0.257-0.395 0.901-0.652 1.059-0.257 0.157-0.547 0.267-0.869 0.328-0.323 0.062-0.657 0.089-1.002 0.079v1.527h2.467v6.046h1.991v-9.996h-1.584c-0.056 0.381-0.173 0.7-0.351 0.957zM23 8h2c0.553 0 1-0.448 1-1v-6c0-0.552-0.447-1-1-1h-2c-0.553 0-1 0.448-1 1v6c0 0.552 0.447 1 1 1zM7 8h2c0.552 0 1-0.448 1-1v-6c0-0.552-0.448-1-1-1h-2c-0.552 0-1 0.448-1 1v6c0 0.552 0.448 1 1 1zM30 4h-2v5c0 0.552-0.447 1-1 1h-6c-0.553 0-1-0.448-1-1v-5h-8v5c0 0.552-0.448 1-1 1h-6c-0.552 0-1-0.448-1-1v-5h-2c-1.104 0-2 0.896-2 2v24c0 1.104 0.896 2 2 2h28c1.104 0 2-0.896 2-2v-24c0-1.104-0.896-2-2-2zM30 29c0 0.553-0.447 1-1 1h-26c-0.552 0-1-0.447-1-1v-16c0-0.552 0.448-1 1-1h26c0.553 0 1 0.448 1 1v16zM15.985 17.982h4.968c-0.936 1.152-1.689 2.325-2.265 3.705-0.575 1.381-0.638 2.818-0.749 4.312h2.131c0.009-0.666-0.195-1.385-0.051-2.156 0.146-0.771 0.352-1.532 0.617-2.285 0.267-0.752 0.598-1.461 0.996-2.127 0.396-0.667 0.853-1.229 1.367-1.686v-1.742h-7.015v1.979z\"/></symbol><symbol id=\"f-i-checkbox\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M13.5,5v8c0,0.8-0.7,1.5-1.5,1.5H3c-0.8,0-1.5-0.7-1.5-1.5V4c0-0.8,0.7-1.5,1.5-1.5h9c0.7,0,1.3,0.5,1.5,1.2l2.4-1.4L13.5,5 z M12.5,6.2L7.7,12L2.8,5.5l4.9,1.6l4.8-2.9V4c0-0.3-0.2-0.5-0.5-0.5H3C2.7,3.5,2.5,3.7,2.5,4v9c0,0.3,0.2,0.5,0.5,0.5h9 c0.3,0,0.5-0.2,0.5-0.5V6.2z\"/></symbol><symbol id=\"f-i-checkbox-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M6,5v1h9V5H6z M15,14v-1H6v1H15z M6,10h9V9H6V10z M4,12l-2.5,1.5L0,13l1.5,2L4,12z M4,8 L1.5,9.5L0,9l1.5,2L4,8z M4,4L1.5,5.5L0,5l1.5,2L4,4z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-columns\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"agprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><path id=\"agprefix__rect4860-3-5\" d=\"M 16,0.5 A 0.50004997,0.50004997 0 0 0 15.5,0 l -5,0 -5,0 -5,0 A 0.50004997,0.50004997 0 0 0 0,0.5 l 0,15 A 0.50004997,0.50004997 0 0 0 0.5,16 l 5,0 5,0 5,0 A 0.50004997,0.50004997 0 0 0 16,15.5 l 0,-15 z M 15,1 15,15 11,15 11,1 15,1 Z M 10,1 10,15 6,15 6,1 10,1 Z M 5,1 5,15 1,15 1,1 5,1 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-copy\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M20 8v-8h-14l-6 6v18h12v8h20v-24h-12zM6 2.828v3.172h-3.172l3.172-3.172zM2 22v-14h6v-6h10v6l-6 6v8h-10zM18 10.828v3.172h-3.172l3.172-3.172zM30 30h-16v-14h6v-6h10v20z\"/></symbol><symbol id=\"f-i-divider\" viewBox=\"0 0 15 15\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aiprefix__metadata10\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><rect y=\"7\" x=\"0\" height=\"1\" width=\"15\" id=\"aiprefix__rect4182\"/></symbol><symbol viewBox=\"0 0 28 32\" id=\"f-i-edit\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M22 2l-4 4 6 6 4-4-6-6zM0 24l0.021 6.018 5.979-0.018 16-16-6-6-16 16zM6 28h-4v-4h2v2h2v2z\"/></symbol><symbol viewBox=\"0 0 24 24\" id=\"f-i-email\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12,2 C17.4292399,2 21.8479317,6.32667079 21.9961582,11.7200952 L22,12 L22,13 C22,15.1729208 20.477434,17 18.5,17 C17.3269391,17 16.3139529,16.3570244 15.6839382,15.3803024 C14.770593,16.3757823 13.4581934,17 12,17 C9.23857625,17 7,14.7614237 7,12 C7,9.23857625 9.23857625,7 12,7 C14.6887547,7 16.8818181,9.12230671 16.9953805,11.7831104 L17,12 L17,13 C17,14.1407877 17.7160103,15 18.5,15 C19.2447902,15 19.928229,14.2245609 19.9947109,13.1689341 L20,13 L20,12 C20,7.581722 16.418278,4 12,4 C7.581722,4 4,7.581722 4,12 C4,16.418278 7.581722,20 12,20 C13.1630948,20 14.2892822,19.7522618 15.3225159,19.2798331 C15.8247876,19.0501777 16.4181317,19.271177 16.647787,19.7734487 C16.8774423,20.2757205 16.656443,20.8690646 16.1541713,21.0987199 C14.861218,21.689901 13.4515463,22 12,22 C6.4771525,22 2,17.5228475 2,12 C2,6.4771525 6.4771525,2 12,2 Z M12,9 C10.3431458,9 9,10.3431458 9,12 C9,13.6568542 10.3431458,15 12,15 C13.6568542,15 15,13.6568542 15,12 C15,10.3431458 13.6568542,9 12,9 Z\"/></symbol><symbol viewBox=\"0 0 32 32\" id=\"f-i-floppy-disk\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M28 0h-28v32h32v-28l-4-4zM16 4h4v8h-4v-8zM28 28h-24v-24h2v10h18v-10h2.343l1.657 1.657v22.343z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"aqprefix__metadata8\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"translate(0,-2)\" id=\"aqprefix__g4220\"><rect id=\"aqprefix__rect4191\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g><g transform=\"translate(0,2)\" id=\"aqprefix__g4220-6\"><rect id=\"aqprefix__rect4191-40\" width=\"2\" height=\"2\" x=\"2\" y=\"7\"/><rect id=\"aqprefix__rect4191-2-3\" width=\"2\" height=\"2\" x=\"7\" y=\"7\"/><rect id=\"aqprefix__rect4191-4-9\" width=\"2\" height=\"2\" x=\"12\" y=\"7\"/></g></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-column\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 7h2v2H2zM7 7h2v2H7zM12 7h2v2h-2zM2 12h2v2H2zM7 12h2v2H7zM12 12h2v2h-2z\" transform=\"rotate(90 9.25 9.25)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-field\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M9.5-6.5h2v2h-2zm-5 0h2v2h-2zm5-5h2v2h-2zm-5 0h2v2h-2z\" transform=\"rotate(90)\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-row\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M12 9.5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Zm10-5h2v2h-2zm-5 0h2v2H7Zm-5 0h2v2H2Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-handle-stage\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M2 4.5h2v2H2zM7 4.5h2v2H7zM12 4.5h2v2h-2zM2 9.5h2v2H2zM7 9.5h2v2H7zM12 9.5h2v2h-2zM2-.5h2v2H2zM7-.5h2v2H7zM12-.5h2v2h-2z\" transform=\"translate(0 2.5)\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-hash\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"arprefix__icomoon-ignore\"/><path d=\"M448 192v-64h-80.064l16-128h-64l-16 128h-127.968l16-128h-64l-16 128h-111.968v64h103.968l-15.968 128h-88v64h80l-16 128h64l16-128h127.968l-16 128h64.032l16-128h112v-64h-104l15.936-128h88.064zM279.968 320h-127.968l15.968-128h127.968l-15.968 128z\"/></symbol><symbol viewBox=\"0 0 28 28\" id=\"f-i-header\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M26.281 26q-0.688 0-2.070-0.055t-2.086-0.055q-0.688 0-2.063 0.055t-2.063 0.055q-0.375 0-0.578-0.32t-0.203-0.711q0-0.484 0.266-0.719t0.609-0.266 0.797-0.109 0.703-0.234q0.516-0.328 0.516-2.188l-0.016-6.109q0-0.328-0.016-0.484-0.203-0.063-0.781-0.063h-10.547q-0.594 0-0.797 0.063-0.016 0.156-0.016 0.484l-0.016 5.797q0 2.219 0.578 2.562 0.25 0.156 0.75 0.203t0.891 0.055 0.703 0.234 0.313 0.711q0 0.406-0.195 0.75t-0.57 0.344q-0.734 0-2.18-0.055t-2.164-0.055q-0.672 0-2 0.055t-1.984 0.055q-0.359 0-0.555-0.328t-0.195-0.703q0-0.469 0.242-0.703t0.562-0.273 0.742-0.117 0.656-0.234q0.516-0.359 0.516-2.234l-0.016-0.891v-12.703q0-0.047 0.008-0.406t0-0.57-0.023-0.602-0.055-0.656-0.102-0.57-0.172-0.492-0.25-0.281q-0.234-0.156-0.703-0.187t-0.828-0.031-0.641-0.219-0.281-0.703q0-0.406 0.187-0.75t0.562-0.344q0.719 0 2.164 0.055t2.164 0.055q0.656 0 1.977-0.055t1.977-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.266 0.68t-0.602 0.227-0.773 0.063-0.672 0.203q-0.547 0.328-0.547 2.5l0.016 5q0 0.328 0.016 0.5 0.203 0.047 0.609 0.047h10.922q0.391 0 0.594-0.047 0.016-0.172 0.016-0.5l0.016-5q0-2.172-0.547-2.5-0.281-0.172-0.914-0.195t-1.031-0.203-0.398-0.773q0-0.406 0.195-0.75t0.586-0.344q0.688 0 2.063 0.055t2.063 0.055q0.672 0 2.016-0.055t2.016-0.055q0.391 0 0.586 0.344t0.195 0.75q0 0.469-0.273 0.688t-0.625 0.227-0.805 0.047-0.688 0.195q-0.547 0.359-0.547 2.516l0.016 14.734q0 1.859 0.531 2.188 0.25 0.156 0.719 0.211t0.836 0.070 0.648 0.242 0.281 0.695q0 0.406-0.187 0.75t-0.562 0.344z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-hidden\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12h1v-1H0Zm15-7h1V4h-1zm-1 7h1v-1h-1zm-2 0h1v-1h-1zm-2 0h1v-1h-1Zm-2 0h1v-1H8Zm-2 0h1v-1H6Zm-2 0h1v-1H4Zm-2 0h1v-1H2Zm13-1h1v-1h-1ZM0 10h1V9H0Zm15-1h1V8h-1ZM0 8h1V7H0Zm15-1h1V6h-1ZM0 6h1V5H0Zm13-1h1V4h-1zm-2 0h1V4h-1ZM9 5h1V4H9ZM7 5h1V4H7ZM5 5h1V4H5ZM3 5h1V4H3ZM1 5h1V4H1Z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 32 32\" id=\"f-i-info-circle\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m17.962 24.725 1.806.096v2.531h-7.534v-2.406l1.045-.094c.568-.063.916-.254.916-1.014v-8.801c0-.699-.188-.92-.791-.92l-1.106-.062v-2.626h5.666zM15.747 4.648c1.394 0 2.405 1.047 2.405 2.374 0 1.331-1.014 2.313-2.438 2.313-1.454 0-2.404-.982-2.404-2.313 0-1.327.95-2.374 2.437-2.374M16 32C7.178 32 0 24.822 0 16S7.178 0 16 0c8.82 0 16 7.178 16 16s-7.18 16-16 16m0-29C8.832 3 3 8.832 3 16s5.832 13 13 13 13-5.832 13-13S23.168 3 16 3\"/></symbol><symbol viewBox=\"0 0 16 16\" id=\"f-i-matrix\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0h16v1H0zM0 15h16v1H0zM0 1h1v14H0zM15 1h1v14h-1zM5 1h1v14H5zM1 7.5h14v1H1z\"/><circle cx=\"8.5\" cy=\"4.25\" r=\"1.5\"/><circle cx=\"12.25\" cy=\"4.25\" r=\"1.5\"/><circle cx=\"8.5\" cy=\"11.75\" r=\"1.5\"/><circle cx=\"12.25\" cy=\"11.75\" r=\"1.5\"/></symbol><symbol viewBox=\"0 0 384 512\" id=\"f-i-menu\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"avprefix__icomoon-ignore\"/><path d=\"M0 96v64h384v-64h-384zM0 288h384v-64h-384v64zM0 416h384v-64h-384v64z\"/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-minus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12L18 12\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M287.744 94.736v129.008h128v-64l96.256 96.256-96.256 96.24v-65.488h-128v129.008h64.496l-96.24 96.24-96.256-96.24h64v-129.008h-128v64.992l-95.744-95.744 95.744-95.744v63.488h128v-129.008h-62.496l94.752-94.736 94.752 94.736h-63.008z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-move-vertical\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"m 287.744,94.736 0,321.024 64.496,0 L 256,512 l -96.256,-96.24 64,0 0,-321.024 -62.496,0 L 256,0 350.752,94.736 Z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-page-move\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M96 32h224l96 96v96h-48v-64h-80v-80h-192v384h192v48h-240v-480zM352 288l128 96-128 96v-64h-128v-64h128v-64z\"/></symbol><symbol viewBox=\"0 0 20 28\" id=\"f-i-paragraph\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M19.969 2.953v1.141q0 0.453-0.289 0.953t-0.664 0.5q-0.781 0-0.844 0.016-0.406 0.094-0.5 0.484-0.047 0.172-0.047 1v18q0 0.391-0.281 0.672t-0.672 0.281h-1.687q-0.391 0-0.672-0.281t-0.281-0.672v-19.031h-2.234v19.031q0 0.391-0.273 0.672t-0.68 0.281h-1.687q-0.406 0-0.68-0.281t-0.273-0.672v-7.75q-2.297-0.187-3.828-0.922-1.969-0.906-3-2.797-1-1.828-1-4.047 0-2.594 1.375-4.469 1.375-1.844 3.266-2.484 1.734-0.578 6.516-0.578h7.484q0.391 0 0.672 0.281t0.281 0.672z\"/></symbol><symbol id=\"f-i-phone-receiver\" viewBox=\"0 0 578.106 578.106\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><g><g><path d=\"M577.83,456.128c1.225,9.385-1.635,17.545-8.568,24.48l-81.396,80.781 c-3.672,4.08-8.465,7.551-14.381,10.404c-5.916,2.857-11.729,4.693-17.439,5.508c-0.408,0-1.635,0.105-3.676,0.309 c-2.037,0.203-4.689,0.307-7.953,0.307c-7.754,0-20.301-1.326-37.641-3.979s-38.555-9.182-63.645-19.584 c-25.096-10.404-53.553-26.012-85.376-46.818c-31.823-20.805-65.688-49.367-101.592-85.68 c-28.56-28.152-52.224-55.08-70.992-80.783c-18.768-25.705-33.864-49.471-45.288-71.299 c-11.425-21.828-19.993-41.616-25.705-59.364S4.59,177.362,2.55,164.51s-2.856-22.95-2.448-30.294 c0.408-7.344,0.612-11.424,0.612-12.24c0.816-5.712,2.652-11.526,5.508-17.442s6.324-10.71,10.404-14.382L98.022,8.756 c5.712-5.712,12.24-8.568,19.584-8.568c5.304,0,9.996,1.53,14.076,4.59s7.548,6.834,10.404,11.322l65.484,124.236 c3.672,6.528,4.692,13.668,3.06,21.42c-1.632,7.752-5.1,14.28-10.404,19.584l-29.988,29.988c-0.816,0.816-1.53,2.142-2.142,3.978 s-0.918,3.366-0.918,4.59c1.632,8.568,5.304,18.36,11.016,29.376c4.896,9.792,12.444,21.726,22.644,35.802 s24.684,30.293,43.452,48.653c18.36,18.77,34.68,33.354,48.96,43.76c14.277,10.4,26.215,18.053,35.803,22.949 c9.588,4.896,16.932,7.854,22.031,8.871l7.648,1.531c0.816,0,2.145-0.307,3.979-0.918c1.836-0.613,3.162-1.326,3.979-2.143 l34.883-35.496c7.348-6.527,15.912-9.791,25.705-9.791c6.938,0,12.443,1.223,16.523,3.672h0.611l118.115,69.768 C571.098,441.238,576.197,447.968,577.83,456.128z\"/></g></g><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/><g/></symbol><symbol viewBox=\"0 0 24 24\" fill=\"none\" id=\"f-i-plus\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M6 12H18M12 6V18\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></symbol><symbol id=\"f-i-radio-group\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0,1h16V0H0V1z M0,3h16V2H0V3z M5,6h10V5H5V6z M15,9H5v1h10V9z M15,14v-1H5v1H15z M1.5,7C0.7,7,0,6.3,0,5.5S0.7,4,1.5,4 S3,4.7,3,5.5S2.3,7,1.5,7z M1.5,5C1.2,5,1,5.2,1,5.5S1.2,6,1.5,6S2,5.8,2,5.5S1.8,5,1.5,5z M1.5,11.1C0.7,11.1,0,10.4,0,9.6 s0.7-1.5,1.5-1.5S3,8.7,3,9.6S2.3,11.1,1.5,11.1z M1.5,9.1C1.2,9.1,1,9.3,1,9.6s0.2,0.5,0.5,0.5S2,9.8,2,9.6S1.8,9.1,1.5,9.1z M1.5,15C0.7,15,0,14.3,0,13.5S0.7,12,1.5,12S3,12.7,3,13.5S2.3,15,1.5,15z M1.5,13C1.2,13,1,13.2,1,13.5S1.2,14,1.5,14 S2,13.8,2,13.5S1.8,13,1.5,13z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-remove\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M193.694-139.2h87.322v510.916h-87.322zM-18.103 159.92V72.597h510.915v87.322z\" transform=\"rotate(45 77.994 208.636)\"/></symbol><symbol id=\"f-i-rich-text\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M15,1H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14c0.6,0,1-0.4,1-1V2C16,1.4,15.6,1,15,1z M1,3.1h0.8v0.3H1V3.1z M1,3.6h0.8 v0.3H1V3.6z M15,14H1V5.1h14V14z M15,4.9H1V4.6h14V4.9z M15,4.4H1V4.1h0.8v0.2h1.5V4.1h1.3v0.2H6V4.1h1.3v0.2h1.5V4.1H10v0.2h1.5 V4.1h1.3v0.2h1.5V4.1H15V4.4z M4.5,3.6v0.3H3.3V3.6H4.5z M3.3,3.4V3.1h1.3v0.3H3.3z M7.3,3.6v0.3H6V3.6H7.3z M6,3.4V3.1h1.3v0.3H6z M10,3.6v0.3H8.8V3.6H10z M8.8,3.4V3.1H10v0.3H8.8z M12.8,3.6v0.3h-1.3V3.6H12.8z M11.5,3.4V3.1h1.3v0.3H11.5z M15,3.9h-0.8V3.6H15 V3.9z M15,3.4h-0.8V3.1H15V3.4z M15,2.9h-0.8V2.8h-1.5v0.2h-1.3V2.8H10v0.2H8.8V2.8H7.3v0.2H6V2.8H4.5v0.2H3.3V2.8H1.8v0.2H1V2.6h14 V2.9z M15,2.4H1V2.1h14V2.4z M3,12v-1h10v1H3z M13,10H3V9h10V10z M11,8H3V7h8V8z\"/></symbol><symbol xml:space=\"preserve\" viewBox=\"0 0 16 16\" id=\"f-i-rows\" xmlns=\"http://www.w3.org/2000/svg\"><metadata id=\"bgprefix__metadata4318\"><rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"><cc:Work rdf:about=\"\" xmlns:cc=\"http://creativecommons.org/ns#\"><dc:format xmlns:dc=\"http://purl.org/dc/elements/1.1/\">image/svg+xml</dc:format><dc:type rdf:resource=\"http://purl.org/dc/dcmitype/StillImage\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/><dc:title xmlns:dc=\"http://purl.org/dc/elements/1.1/\"/></cc:Work></rdf:RDF></metadata><g transform=\"matrix(0,1,-1,0,3.0984025,11.835155)\" id=\"bgprefix__g7209\"><path id=\"bgprefix__rect4860-3-5\" d=\"m 4.1640625,-12.402344 a 0.50004997,0.50004997 0 0 0 -0.5,-0.5 l -5,0 -5,0 -5.0000005,0 a 0.50004997,0.50004997 0 0 0 -0.5,0.5 l 0,15.0000002 a 0.50004997,0.50004997 0 0 0 0.5,0.5 l 4.9648442,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 4.9648437,0 a 0.50004997,0.50004997 0 0 0 0.035156,0 l 5,0 a 0.50004997,0.50004997 0 0 0 0.5,-0.5 l 0,-15.0000002 z m -1,0.5 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4,0 0,-14.0000002 4,0 z m -5,0 0,14.0000002 -4.0000005,0 0,-14.0000002 4.0000005,0 z\"/></g></symbol><symbol id=\"f-i-select\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bhprefix__XMLID_1_\" d=\"M0,0v14h0c0,0.6,0.4,1,1,1h10c0.6,0,1-0.4,1-1h0V5h4V0H0z M1,1h10v3H1V1z M1,7h10v3H1V7z M1,14v-3h10v3H1z M15,4h-3V1h3V4z M2,2h1v1H2V2z M2,12h1v1H2V12z M4,12h1v1H4V12z M6,12h1v1H6V12z M9,12v1H8v-1H9z M2,8h1v1H2V8z M4,8h1v1H4V8z M6,8 h1v1H6V8z M13.5,3.1l-1-1.1h1.9L13.5,3.1z M2,6V5h1v1H2L2,6z M4,6V5h1v1H4L4,6z\"/></symbol><symbol viewBox=\"0 0 448 512\" id=\"f-i-settings\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"biprefix__icomoon-ignore\"/><path d=\"M223.969 175c-44.703 0-80.969 36.266-80.969 81 0 44.688 36.266 81.031 80.969 81.031 44.719 0 80.719-36.344 80.719-81.031-0-44.734-36-81-80.719-81zM386.313 302.531l-14.594 35.156 29.469 57.875-36.094 36.094-59.218-27.969-35.156 14.438-17.844 54.625-2.281 7.25h-51.016l-22.078-61.656-35.156-14.5-57.952 29.344-36.078-36.063 27.938-59.25-14.484-35.125-61.767-20.156v-50.984l61.703-22.109 14.485-35.094-25.953-51.234-3.422-6.719 36.031-36.031 59.297 27.922 35.109-14.516 17.828-54.594 2.297-7.234h51l22.094 61.734 35.063 14.516 58.031-29.406 36.063 36.031-27.938 59.203 14.438 35.172 61.875 20.125v50.969l-61.688 22.187z\"/></symbol><symbol viewBox=\"0 0 16 16\" id=\"f-i-table\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 0h16v4H0zM0 4h1v12H0zM15 4h1v12h-1zM1 15h14v1H1zM5 4h1v11H5zM10 4h1v11h-1zM1 9h14v1H1z\"/></symbol><symbol id=\"f-i-text-input\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bjprefix__XMLID_10_\" d=\"M15,4H4.5V3H6V2H4.5h-1H2v1h1.5v1H1C0.4,4,0,4.5,0,5v6c0,0.6,0.4,1,1,1h2.5v1H2v1h4v-1H4.5v-1H15 c0.6,0,1-0.4,1-1V5C16,4.5,15.6,4,15,4z M1,11V5h2.5v6H1z M15,11H4.5V5H15V11z\"/></symbol><symbol id=\"f-i-textarea\" viewBox=\"0 0 16 16\" xml:space=\"preserve\" xmlns=\"http://www.w3.org/2000/svg\"><path id=\"bkprefix__XMLID_1_\" d=\"M3,11v-1h8v1H3L3,11z M3,7h10V6H3V7L3,7z M3,8v1h10V8H3L3,8z M13,4H3v1h10V4L13,4z M16,14V2c0-0.6-0.4-1-1-1 H1C0.4,1,0,1.4,0,2v12c0,0.6,0.4,1,1,1h14C15.6,15,16,14.6,16,14z M15,2v12H1V2H15z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-down\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 12l11.992 11.992 11.992-11.992h-23.984z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-left\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0 15.996l11.992 11.992v-23.984l-11.992 11.992z\"/></symbol><symbol viewBox=\"0 0 12 32\" id=\"f-i-triangle-right\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M0.002 4.008l11.992 11.992-11.992 11.992v-23.984z\"/></symbol><symbol viewBox=\"0 0 24 32\" id=\"f-i-triangle-up\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M11.992 8l-11.992 11.992h23.984l-11.992-11.992z\"/></symbol><symbol viewBox=\"0 0 512 512\" id=\"f-i-upload\" xmlns=\"http://www.w3.org/2000/svg\"><g id=\"bpprefix__icomoon-ignore\"/><path d=\"M240 352h-240v128h480v-128h-240zM448 416h-64v-32h64v32zM112 160l128-128 128 128h-80v160h-96v-160z\"/></symbol></svg>";
 })), name, version$1, PACKAGE_NAME, formeoSpriteId, FALLBACK_SVG_SPRITE_URL, CSS_URL, FALLBACK_CSS_URL, PANEL_CLASSNAME, CONTROL_GROUP_CLASSNAME, STAGE_CLASSNAME, ROW_CLASSNAME, COLUMN_CLASSNAME, FIELD_CLASSNAME, HIDDEN_BY_CONDITION_SELECTOR, CUSTOM_COLUMN_OPTION_CLASSNAME, COLUMN_PRESET_CLASSNAME, COLUMN_RESIZE_CLASSNAME, CHILD_CLASSNAME_MAP, INTERNAL_COMPONENT_TYPES, INTERNAL_COMPONENT_INDEX_TYPES, INTERNAL_COMPONENT_INDEX_REGEX, COMPONENT_TYPES, COMPONENT_INDEX_TYPES, COMPONENT_INDEX_TYPE_MAP, COMPONENT_TYPE_MAP, COMPONENT_TYPE_CONFIGS, COMPONENT_TYPE_CLASSNAMES, COMPONENT_TYPE_CLASSNAMES_LOOKUP, COMPONENT_TYPE_CLASSNAMES_ARRAY, COMPONENT_TYPE_CLASSNAMES_REGEXP, childTypeMapVals, childTypeIndexMapVals, parentTypeMap, CHILD_TYPE_MAP, CHILD_TYPE_INDEX_MAP, PARENT_TYPE_MAP, columnTemplates, COLUMN_TEMPLATES, SESSION_FORMDATA_KEY, SESSION_LOCALE_KEY, ANIMATION_SPEED_FAST, ANIMATION_SPEED_SLOW, EVENT_FORMEO_SAVED, EVENT_FORMEO_UPDATED, EVENT_FORMEO_CHANGED, EVENT_FORMEO_UPDATED_STAGE, EVENT_FORMEO_UPDATED_ROW, EVENT_FORMEO_UPDATED_COLUMN, EVENT_FORMEO_UPDATED_FIELD, EVENT_FORMEO_CLEARED, EVENT_FORMEO_ON_RENDER, EVENT_FORMEO_CONDITION_UPDATED, EVENT_FORMEO_ADDED_ROW, EVENT_FORMEO_ADDED_COLUMN, EVENT_FORMEO_ADDED_FIELD, EVENT_FORMEO_REMOVED_ROW, EVENT_FORMEO_REMOVED_COLUMN, EVENT_FORMEO_REMOVED_FIELD, EVENT_FORMEO_ADDED_STAGE, EVENT_FORMEO_REMOVED_STAGE, EVENT_FORMEO_PAGE_CHANGED, EVENT_FORMEO_BEFORE_ADD, EVENT_FORMEO_BEFORE_REMOVE, EVENT_FORMEO_BEFORE_CLONE, EVENT_FORMEO_BEFORE_SAVE, EVENT_FORMEO_EDIT_OPENED, EVENT_FORMEO_EDIT_CLOSED, COMPARISON_OPERATORS, LOGICAL_OPERATORS, ASSIGNMENT_OPERATORS, CONDITION_INPUT_ORDER, CHECKABLE_OPTIONS, VISIBLE_OPTIONS, PROPERTY_OPTIONS, OPERATORS, conditionTypeThen, CONDITION_TEMPLATE, UUID_REGEXP, bsColRegExp, iconPrefix, DEFAULT_FORMDATA, CHECKED_TYPES, REVERSED_CHECKED_TYPES;
 var init_constants = __esmMin((() => {
 	init_package();
@@ -9805,6 +9805,62 @@ var init_loaders = __esmMin((() => {
 	};
 }));
 //#endregion
+//#region src/lib/js/common/utils/string.mjs
+/**
+* Converts a given string to title case.
+*
+* @param {string} str - The string to be converted.
+* @returns {string} - The converted string in title case. If the input is not a string or contains spaces, it returns the original input.
+*/
+function toTitleCase(str) {
+	if (typeof str !== "string") return str;
+	if (str.trim().match(regexSpace)) return str;
+	return str.replace(toTitleCaseRegex, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).replace(/[A-Z]/g, (word) => ` ${word}`));
+}
+function trimKeyPrefix(key) {
+	return key.replaceAll(keyPrefixRegex, "");
+}
+var toTitleCaseLowers, toTitleCaseRegex, regexSpace, fillTokens, slugify, splitAddress, slugifyAddress, extractTextFromHtml, truncateByWord, keyPrefixRegex, groupInputName;
+var init_string = __esmMin((() => {
+	toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => String.raw`\s${lower}\s`);
+	toTitleCaseRegex = new RegExp(String.raw`(?!${toTitleCaseLowers.join("|")})\w\S*`, "g");
+	regexSpace = /\s+/g;
+	fillTokens = (text, vars = {}) => text.replace(/\{(\w+)\}/g, (token, name) => Object.hasOwn(vars, name) ? String(vars[name]) : token);
+	slugify = (str, separator = "-") => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, separator);
+	splitAddress = (str) => {
+		if (Array.isArray(str)) return str;
+		const regex = /[.[\]]/g;
+		const matches = [];
+		let lastIndex = 0;
+		let match = regex.exec(str);
+		while (match !== null) {
+			matches.push(str.slice(lastIndex, match.index));
+			lastIndex = match.index + match[0].length;
+			match = regex.exec(str);
+		}
+		if (lastIndex < str.length) matches.push(str.slice(lastIndex));
+		return matches.filter(Boolean);
+	};
+	slugifyAddress = (str, separator = "-") => {
+		return splitAddress(str).join(separator);
+	};
+	extractTextFromHtml = (htmlString) => {
+		const tempDiv = document.createElement("div");
+		tempDiv.innerHTML = htmlString;
+		return tempDiv.textContent || tempDiv.innerText || "";
+	};
+	truncateByWord = (str, maxLength, tail = "…") => {
+		if (str.length <= maxLength) return str;
+		const truncated = str.slice(0, maxLength);
+		const spaceIndex = truncated.lastIndexOf(" ");
+		let truncatedWord = `${spaceIndex > 0 ? truncated.slice(0, spaceIndex) : truncated}`;
+		if (tail) truncatedWord += tail;
+		return truncatedWord;
+	};
+	keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
+	groupInputName = (name, fieldType, optionCount) => fieldType === "checkbox" && optionCount > 1 && name && !name.endsWith("[]") ? `${name}[]` : name;
+}));
+//#endregion
 //#region src/lib/js/common/table.mjs
 /**
 * A complete, rectangular copy of a table: missing keys get their defaults, every cell is a string and every row has
@@ -9908,9 +9964,153 @@ function setColumnLabel(table, columnIndex, value) {
 function setTableOption(table, key, value) {
 	const current = normalizeTable(table);
 	if (!TABLE_OPTION_KEYS.includes(key)) return current;
-	return {
+	const next = {
 		...current,
 		[key]: key === "caption" ? text(value) : Boolean(value)
+	};
+	if (key === "rowHeaders" && next.rowHeaders && next.columns.length && cellInput(next.columns[0])) {
+		const { input: _input, ...first } = next.columns[0];
+		next.columns = [first, ...next.columns.slice(1)];
+	}
+	return next;
+}
+/**
+* Indexes of the columns that render inputs. With row headers on, column 0 is the row labels and never an input.
+* @param {Object} table
+* @return {Number[]}
+*/
+function inputColumns(table) {
+	const { columns, rowHeaders } = normalizeTable(table);
+	return columns.reduce((acc, column, index) => {
+		if (cellInput(column) && !(rowHeaders && index === 0)) acc.push(index);
+		return acc;
+	}, []);
+}
+/**
+* A matrix with a unique, non-blank key in every row's and every input column's `value`, so each row is its own
+* radio group and every cell its own name. A table without inputs comes back normalised and nothing more.
+* @param {Object} table
+* @return {Object} table
+*/
+function withKeys(table) {
+	const current = normalizeTable(table);
+	const inputs = new Set(inputColumns(current));
+	if (!inputs.size) return current;
+	const columnKeys = assignKeys(current.columns.map((column, index) => inputs.has(index) ? text(column.value) : null), "column");
+	const rowKeys = assignKeys(current.rows.map((row) => text(row.value)), "row");
+	return {
+		...current,
+		columns: current.columns.map((column, index) => inputs.has(index) ? {
+			...column,
+			value: columnKeys[index]
+		} : column),
+		rows: current.rows.map((row, index) => ({
+			...row,
+			value: rowKeys[index]
+		}))
+	};
+}
+/**
+* @param {Object} table
+* @param {Number} index column index
+* @param {String|null} input 'radio', 'checkbox' or 'text'; anything else makes the column static
+* @return {Object} table
+*/
+function setColumnInput(table, index, input) {
+	const current = normalizeTable(table);
+	if (!inRange(current.columns, index) || current.rowHeaders && index === 0) return current;
+	const columns = updateAt(current.columns, index, ({ input: _input, ...column }) => CELL_INPUTS.includes(input) ? {
+		...column,
+		input
+	} : column);
+	return {
+		...current,
+		columns
+	};
+}
+function setColumnValue(table, index, value) {
+	const current = normalizeTable(table);
+	if (!inRange(current.columns, index)) return current;
+	return {
+		...current,
+		columns: updateAt(current.columns, index, (column) => ({
+			...column,
+			value: text(value)
+		}))
+	};
+}
+function setRowValue(table, index, value) {
+	const current = normalizeTable(table);
+	if (!inRange(current.rows, index)) return current;
+	return {
+		...current,
+		rows: updateAt(current.rows, index, (row) => ({
+			...row,
+			value: text(value)
+		}))
+	};
+}
+function setRowRequired(table, index, required) {
+	const current = normalizeTable(table);
+	if (!inRange(current.rows, index)) return current;
+	const rows = updateAt(current.rows, index, ({ required: _required, ...row }) => required ? {
+		...row,
+		required: true
+	} : row);
+	return {
+		...current,
+		rows
+	};
+}
+/**
+* The Matrix control's data: a row-label column, 3 radio columns and 2 rows, all keyed
+* @param {Function} [columnLabel] number => label
+* @param {Function} [rowLabel] number => label
+* @return {Object} table
+*/
+function defaultMatrix(columnLabel = defaultColumnLabel, rowLabel = defaultRowLabel) {
+	const choices = Array.from({ length: DEFAULT_COLUMN_COUNT }, (_, index) => ({
+		label: columnLabel(index + 1),
+		value: `column-${index + 1}`,
+		input: "radio"
+	}));
+	const rows = Array.from({ length: DEFAULT_ROW_COUNT }, (_, index) => ({
+		value: `row-${index + 1}`,
+		cells: [rowLabel(index + 1)]
+	}));
+	return normalizeTable({
+		...TABLE_DEFAULTS,
+		rowHeaders: true,
+		columns: [{ label: "" }, ...choices],
+		rows
+	});
+}
+/**
+* Reads a userData key back into its row and column keys. The base is known, so a base holding brackets is fine.
+* @param {String} key e.g. 'f-x[speed][good]'
+* @param {String} base e.g. 'f-x'
+* @return {{row: String, column: String|null}|null}
+*/
+function parseMatrixKey(key, base) {
+	if (typeof key !== "string" || !base || !key.startsWith(`${base}[`)) return null;
+	const match = MATRIX_KEY_TAIL.exec(key.slice(base.length));
+	return match ? {
+		row: match[1],
+		column: match[2] ?? null
+	} : null;
+}
+/**
+* Reads a condition address for a table row or cell
+* @param {String} address e.g. 'fields.abc.table.rows[1].cells[2]'
+* @return {{fieldId: String, row: Number, cell: Number|null}|null}
+*/
+function parseTableAddress(address) {
+	const match = TABLE_ADDRESS.exec(typeof address === "string" ? address : "");
+	if (!match) return null;
+	return {
+		fieldId: match[1],
+		row: Number(match[2]),
+		cell: match[3] === void 0 ? null : Number(match[3])
 	};
 }
 /**
@@ -9921,13 +10121,19 @@ function setTableOption(table, key, value) {
 * @param {Object} [opts]
 * @param {Boolean} [opts.isPreview] the editor stage preview: no region role and no tab stop
 * @param {String} [opts.fallbackLabel] the region's name when there is no caption and no label
+* @param {Function} [opts.translate] (key, vars) => text, for the matrix's fallback names; English by default
+* @param {Function} [opts.requiredMark] () => dom config of a required row's mark
+* @param {Function} [opts.onRequiredRowChange] (tr) => void, re-syncs a required checkbox row on change
 * @return {Object} dom.create config
 */
-function tableDomConfig(field, { isPreview = false, fallbackLabel = "Table" } = {}) {
+function tableDomConfig(field, options = {}) {
+	const table = normalizeTable(field.table);
+	if (hasInputs(table)) return matrixDomConfig(field, withKeys(table), options);
+	const { isPreview = false, fallbackLabel = "Table" } = options;
 	const { id, action, dataset } = field;
 	const attrs = field.attrs ?? {};
 	const config = field.config ?? {};
-	const { caption, headerRow, rowHeaders, columns, rows } = normalizeTable(field.table);
+	const { caption, headerRow, rowHeaders, columns, rows } = table;
 	const { className, tag: _tagOverride, ...tableAttrs } = attrs;
 	const hasCaption = caption.trim() !== "";
 	const captionId = hasCaption && id ? `${id}-caption` : void 0;
@@ -9984,8 +10190,159 @@ function tableDomConfig(field, { isPreview = false, fallbackLabel = "Table" } = 
 		children: [tableConfig]
 	};
 }
-var TABLE_DEFAULTS, TABLE_OPTION_KEYS, DEFAULT_COLUMN_COUNT, DEFAULT_ROW_COUNT, defaultColumnLabel, isPlainObject, text, inRange, isTableField, normalizeColumn, cellsOf, normalizeRow, plainText;
+/**
+* A matrix (#349 phase 2): every input column renders a radio, checkbox or text input per row. Radios share their
+* row's name (`base[row]`), every other input has its own (`base[row][column]`). Each input is named by its row and
+* column headers. Explicit table roles keep the semantics when narrow screens stack the rows.
+* @param {Object} field
+* @param {Object} table normalised, with keys
+* @param {Object} options see tableDomConfig
+* @return {Object} dom.create config
+*/
+function matrixDomConfig(field, table, options) {
+	const { isPreview = false, fallbackLabel = "Table", translate = englishText, requiredMark, onRequiredRowChange } = options;
+	const { id, action, dataset } = field;
+	const attrs = field.attrs ?? {};
+	const config = field.config ?? {};
+	const { className, tag: _tagOverride, name, required: _required, ...tableAttrs } = attrs;
+	const base = !isPreview && text(name).trim() || text(id);
+	const { caption, rowHeaders, columns, rows } = table;
+	const inputs = new Set(inputColumns(table));
+	const hasCaption = caption.trim() !== "";
+	const captionId = hasCaption && id ? `${id}-caption` : void 0;
+	const idOf = (suffix) => id ? { id: `${id}-${suffix}` } : {};
+	const columnLabel = (c) => columns[c].label || translate("table.newColumn", { column: c + 1 });
+	const rowHeaderText = (r) => rowHeaders ? rows[r].cells[0] : "";
+	const markColumn = columns.findIndex((_, c) => !inputs.has(c));
+	const inputName = (r, c) => {
+		if (id && rowHeaderText(r).trim() && columns[c].label.trim()) return { "aria-labelledby": `${id}-r${r} ${id}-c${c}` };
+		return { "aria-label": translate("table.cellInput", {
+			row: rowHeaderText(r).trim() || translate("table.newRow", { row: r + 1 }),
+			column: columnLabel(c)
+		}) };
+	};
+	const inputCell = (row, r, c) => {
+		const type = cellInput(columns[c]);
+		const inputAttrs = {
+			...idOf(`${r}-${c}`),
+			type,
+			name: type === "radio" ? matrixName(base, row.value) : matrixName(base, row.value, columns[c].value),
+			...type === "text" ? {} : { value: columns[c].value },
+			...inputName(r, c),
+			required: row.required === true
+		};
+		return {
+			tag: "td",
+			attrs: { role: "cell" },
+			children: [{
+				tag: "label",
+				attrs: { className: "f-table-cell" },
+				children: [{
+					tag: "span",
+					attrs: {
+						className: "f-table-cell-label",
+						"aria-hidden": "true"
+					},
+					textContent: columnLabel(c)
+				}, {
+					tag: "input",
+					attrs: inputAttrs
+				}]
+			}]
+		};
+	};
+	const staticCell = (row, r, c) => {
+		const content = row.required === true && c === markColumn && requiredMark ? { children: [{
+			tag: "span",
+			textContent: row.cells[c]
+		}, requiredMark()] } : { textContent: row.cells[c] };
+		if (rowHeaders && c === 0) return {
+			tag: "th",
+			attrs: {
+				role: "rowheader",
+				scope: "row",
+				...idOf(`r${r}`)
+			},
+			...content
+		};
+		return {
+			tag: "td",
+			attrs: { role: "cell" },
+			...content
+		};
+	};
+	const bodyRows = rows.map((row, r) => {
+		const requiredGroup = row.required === true && [...inputs].some((c) => cellInput(columns[c]) === "checkbox");
+		const tr = {
+			tag: "tr",
+			attrs: {
+				role: "row",
+				...requiredGroup ? { [REQUIRED_ROW_ATTR]: "true" } : {}
+			},
+			dataset: { rowKey: row.value },
+			children: columns.map((_, c) => inputs.has(c) ? inputCell(row, r, c) : staticCell(row, r, c))
+		};
+		if (requiredGroup && !isPreview && onRequiredRowChange) tr.action = { change: ({ currentTarget }) => onRequiredRowChange(currentTarget) };
+		return tr;
+	});
+	const children = [];
+	if (hasCaption) children.push({
+		tag: "caption",
+		attrs: captionId ? { id: captionId } : {},
+		textContent: caption
+	});
+	children.push({
+		tag: "thead",
+		attrs: { role: "rowgroup" },
+		children: [{
+			tag: "tr",
+			attrs: { role: "row" },
+			children: columns.map((column, c) => ({
+				tag: "th",
+				attrs: {
+					role: "columnheader",
+					scope: "col",
+					...idOf(`c${c}`)
+				},
+				textContent: column.label
+			}))
+		}]
+	});
+	children.push({
+		tag: "tbody",
+		attrs: { role: "rowgroup" },
+		children: bodyRows
+	});
+	const tableConfig = {
+		tag: "table",
+		attrs: {
+			...tableAttrs,
+			className: ["f-table", ...[className].flat().filter(Boolean)],
+			role: "table",
+			...captionId ? { "aria-labelledby": captionId } : {},
+			...isPreview ? { inert: true } : {}
+		},
+		children
+	};
+	if (id) tableConfig.id = id;
+	if (action) tableConfig.action = action;
+	if (dataset) tableConfig.dataset = dataset;
+	const groupName = captionId ? { "aria-labelledby": captionId } : { "aria-label": plainText(config.label) || fallbackLabel };
+	return {
+		tag: "div",
+		attrs: {
+			className: "f-table-wrap f-table-matrix",
+			...isPreview ? {} : {
+				role: "group",
+				...groupName
+			}
+		},
+		children: [tableConfig]
+	};
+}
+var TABLE_DEFAULTS, TABLE_OPTION_KEYS, DEFAULT_COLUMN_COUNT, DEFAULT_ROW_COUNT, defaultColumnLabel, defaultRowLabel, CELL_INPUTS, MATRIX_TEXT, englishText, REQUIRED_ROW_ATTR, isPlainObject, text, inRange, isTableField, normalizeColumn, cellsOf, normalizeRow, cellInput, hasInputs, sanitizeKey, assignKeys, updateAt, matrixName, MATRIX_KEY_TAIL, TABLE_ADDRESS, plainText;
 var init_table$1 = __esmMin((() => {
+	init_string();
 	TABLE_DEFAULTS = Object.freeze({
 		caption: "",
 		headerRow: true,
@@ -9995,6 +10352,19 @@ var init_table$1 = __esmMin((() => {
 	DEFAULT_COLUMN_COUNT = 3;
 	DEFAULT_ROW_COUNT = 2;
 	defaultColumnLabel = (number) => `Column ${number}`;
+	defaultRowLabel = (number) => `Row ${number}`;
+	CELL_INPUTS = Object.freeze([
+		"radio",
+		"checkbox",
+		"text"
+	]);
+	MATRIX_TEXT = Object.freeze({
+		"table.cellInput": "{row}, {column}",
+		"table.newColumn": "Column {column}",
+		"table.newRow": "Row {row}"
+	});
+	englishText = (key, vars = {}) => fillTokens(MATRIX_TEXT[key] ?? key, vars);
+	REQUIRED_ROW_ATTR = "data-formeo-required-group";
 	isPlainObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 	text = (value) => value === null || value === void 0 ? "" : String(value);
 	inRange = (list, index) => Number.isInteger(index) && index >= 0 && index < list.length;
@@ -10014,63 +10384,30 @@ var init_table$1 = __esmMin((() => {
 			cells: Array.from({ length: width }, (_, index) => text(cells[index]))
 		};
 	};
+	cellInput = (column) => isPlainObject(column) && CELL_INPUTS.includes(column.input) ? column.input : null;
+	hasInputs = (table) => inputColumns(table).length > 0;
+	sanitizeKey = (value) => text(value).trim().replace(/[[\]]/g, "-");
+	assignKeys = (values, prefix) => {
+		const used = /* @__PURE__ */ new Set();
+		return values.map((value) => {
+			if (value === null) return null;
+			const key = sanitizeKey(value);
+			if (!key || used.has(key)) return;
+			used.add(key);
+			return key;
+		}).map((key, index) => {
+			if (key !== void 0) return key;
+			let candidate = `${prefix}-${index + 1}`;
+			for (let n = 1; used.has(candidate); n++) candidate = `${prefix}-${n}`;
+			used.add(candidate);
+			return candidate;
+		});
+	};
+	updateAt = (list, index, update) => list.map((item, i) => i === index ? update(item) : item);
+	matrixName = (base, row, column) => column === void 0 ? `${base}[${row}]` : `${base}[${row}][${column}]`;
+	MATRIX_KEY_TAIL = /^\[([^[\]]+)\](?:\[([^[\]]+)\])?$/;
+	TABLE_ADDRESS = /^fields\.([^.[\]]+)\.table\.rows\[(\d+)\](?:\.cells\[(\d+)\])?$/;
 	plainText = (value) => text(value).replace(/<[^>]*>/g, "").trim();
-}));
-//#endregion
-//#region src/lib/js/common/utils/string.mjs
-/**
-* Converts a given string to title case.
-*
-* @param {string} str - The string to be converted.
-* @returns {string} - The converted string in title case. If the input is not a string or contains spaces, it returns the original input.
-*/
-function toTitleCase(str) {
-	if (typeof str !== "string") return str;
-	if (str.trim().match(regexSpace)) return str;
-	return str.replace(toTitleCaseRegex, (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).replace(/[A-Z]/g, (word) => ` ${word}`));
-}
-function trimKeyPrefix(key) {
-	return key.replaceAll(keyPrefixRegex, "");
-}
-var toTitleCaseLowers, toTitleCaseRegex, regexSpace, fillTokens, slugify, splitAddress, slugifyAddress, extractTextFromHtml, truncateByWord, keyPrefixRegex, groupInputName;
-var init_string = __esmMin((() => {
-	toTitleCaseLowers = "a an and as at but by for for from in into near nor of on onto or the to with".split(" ").map((lower) => String.raw`\s${lower}\s`);
-	toTitleCaseRegex = new RegExp(String.raw`(?!${toTitleCaseLowers.join("|")})\w\S*`, "g");
-	regexSpace = /\s+/g;
-	fillTokens = (text, vars = {}) => text.replace(/\{(\w+)\}/g, (token, name) => Object.hasOwn(vars, name) ? String(vars[name]) : token);
-	slugify = (str, separator = "-") => str.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim().replace(/[^a-z0-9 -]/g, "").replace(/\s+/g, separator);
-	splitAddress = (str) => {
-		if (Array.isArray(str)) return str;
-		const regex = /[.[\]]/g;
-		const matches = [];
-		let lastIndex = 0;
-		let match = regex.exec(str);
-		while (match !== null) {
-			matches.push(str.slice(lastIndex, match.index));
-			lastIndex = match.index + match[0].length;
-			match = regex.exec(str);
-		}
-		if (lastIndex < str.length) matches.push(str.slice(lastIndex));
-		return matches.filter(Boolean);
-	};
-	slugifyAddress = (str, separator = "-") => {
-		return splitAddress(str).join(separator);
-	};
-	extractTextFromHtml = (htmlString) => {
-		const tempDiv = document.createElement("div");
-		tempDiv.innerHTML = htmlString;
-		return tempDiv.textContent || tempDiv.innerText || "";
-	};
-	truncateByWord = (str, maxLength, tail = "…") => {
-		if (str.length <= maxLength) return str;
-		const truncated = str.slice(0, maxLength);
-		const spaceIndex = truncated.lastIndexOf(" ");
-		let truncatedWord = `${spaceIndex > 0 ? truncated.slice(0, spaceIndex) : truncated}`;
-		if (tail) truncatedWord += tail;
-		return truncatedWord;
-	};
-	keyPrefixRegex = /^attrs\.|^meta\.|^options\.|^config\./g;
-	groupInputName = (name, fieldType, optionCount) => fieldType === "checkbox" && optionCount > 1 && name && !name.endsWith("[]") ? `${name}[]` : name;
 }));
 //#endregion
 //#region src/lib/js/common/table-text.mjs
@@ -10078,18 +10415,34 @@ var TABLE_TEXT, tableText;
 var init_table_text = __esmMin((() => {
 	init_string();
 	TABLE_TEXT = Object.freeze({
+		"controls.form.matrix": "Matrix",
 		"controls.html.table": "Table",
 		"panel.label.table": "Table",
 		"table.addColumn": "+ Column",
 		"table.addRow": "+ Row",
 		"table.caption": "Caption",
 		"table.cell": "Row {row}, column {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Column {column} input",
 		"table.columnLabel": "Column {column} header",
+		"table.columnValue": "Column {column} value",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
 		"table.headerRow": "Header row",
+		"table.headerRowLocked": "Input columns need a header row",
+		"table.input.checkbox": "Checkbox",
+		"table.input.radio": "Radio",
+		"table.input.static": "Static text",
+		"table.input.text": "Text field",
 		"table.newColumn": "Column {column}",
+		"table.newRow": "Row {row}",
 		"table.removeColumn": "Remove column {column}",
 		"table.removeRow": "Remove row {row}",
-		"table.rowHeaders": "Row headers"
+		"table.required": "Required",
+		"table.rowHeaders": "Row headers",
+		"table.rowRequired": "Row {row} required",
+		"table.rowValue": "Row {row} value",
+		"table.value": "Value"
 	});
 	tableText = (key, vars = {}) => fillTokens(s.get(key) || TABLE_TEXT[key] || key, vars);
 })), iconFontTemplates, inputTags, REQUIRED_GROUP_ATTR, OTHER_GROUP_ATTR, OTHER_VALUE, OTHER_NAME_SUFFIX, OTHER_TEXT_CLASSNAME, hasOtherChoice, OPTION_INPUT_ATTRS, GROUP_CONSUMED_ATTRS, groupWrapperAttrs, joinClassNames, stripOn, useCaptureEvts, defaultActionHandler, getName, DOM, dom;
@@ -10204,11 +10557,14 @@ var init_dom = __esmMin((() => {
 			if (!elemArg) return;
 			if (this.isDOMElement(elemArg)) return elemArg;
 			if (isTableField(elemArg)) {
-				const fallbackLabel = tableText("controls.html.table");
-				return this.create(tableDomConfig(elemArg, {
+				const tableConfig = tableDomConfig(elemArg, {
 					isPreview,
-					fallbackLabel
-				}), isPreview);
+					fallbackLabel: tableText("controls.html.table"),
+					translate: tableText,
+					requiredMark: this.matrixRequiredMark,
+					onRequiredRowChange: (row) => this.syncCheckboxGroupRequired(row)
+				});
+				return this.create(tableConfig, isPreview);
 			}
 			const _this = this;
 			const processed = ["children", "content"];
@@ -10688,14 +11044,16 @@ var init_dom = __esmMin((() => {
 		/**
 		* A required checkbox group needs at least one checked box, not every box.
 		* Every box stays `required` while none is checked; once one is checked none is.
-		* Boxes inside a container a condition hid are never required; an inactive page is not such a container.
+		* Boxes inside a container a condition hid are never required and don't count as the checked one, whether the group
+		* or only the box is hidden; an inactive page is not such a container.
 		* @param {Element} groupElem wrapper holding the group's checkboxes
 		*/
 		syncCheckboxGroupRequired(groupElem) {
 			const boxes = Array.from(groupElem.querySelectorAll("input[type=\"checkbox\"]"));
 			const isHidden = Boolean(groupElem.closest(HIDDEN_BY_CONDITION_SELECTOR));
-			const noneChecked = !boxes.some((box) => box.checked);
-			for (const box of boxes) box.required = !isHidden && noneChecked;
+			const shown = boxes.filter((box) => !box.closest(HIDDEN_BY_CONDITION_SELECTOR));
+			const noneChecked = !shown.some((box) => box.checked);
+			for (const box of boxes) box.required = !isHidden && noneChecked && shown.includes(box);
 		}
 		/**
 		* An Other choice's text box is enabled only while its choice is checked and enabled, so an unchosen Other
@@ -10712,6 +11070,10 @@ var init_dom = __esmMin((() => {
 			tag: "span",
 			className: "text-error",
 			children: "*"
+		});
+		matrixRequiredMark = () => ({
+			...this.requiredMark(),
+			attrs: { "aria-hidden": "true" }
 		});
 		tooltip = (tooltip) => ({
 			tag: "span",
@@ -10988,9 +11350,11 @@ var init_page_text = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/components/autocomplete/helpers.mjs
-var BASE_NAME, DISPLAY_FIELD_CLASSNAME, LIST_CLASSNAME, HIGHLIGHT_CLASSNAME, LIST_ITEM_CLASSNAME, labelCount, fieldLabelPaths, rowLabelPaths, componentLabelPaths, resolveFieldLabel, resolveComponentLabel, labelResolverMap, THEN_TARGET_KEYS, pagesOn, getComponentLabel, makeOptionData, realTarget, makeListItem, makeComponentOptionsList, componentOptions;
+var BASE_NAME, DISPLAY_FIELD_CLASSNAME, LIST_CLASSNAME, HIGHLIGHT_CLASSNAME, LIST_ITEM_CLASSNAME, labelCount, fieldLabelPaths, rowLabelPaths, componentLabelPaths, resolveFieldLabel, resolveComponentLabel, labelResolverMap, THEN_TARGET_KEYS, pagesOn, getComponentLabel, makeOptionData, realTarget, makeListItem, makeComponentOptionsList, tableRowLabel, tableColumnLabel, makeTableRowsList, tableAddressLabel, componentOptions;
 var init_helpers$1 = __esmMin((() => {
 	init_dom();
+	init_table$1();
+	init_table_text();
 	init_string();
 	init_page_text();
 	BASE_NAME = "f-autocomplete";
@@ -11092,6 +11456,58 @@ var init_helpers$1 = __esmMin((() => {
 			children: items
 		});
 	};
+	tableRowLabel = (table, r) => table.rowHeaders && table.rows[r].cells[0].trim() || tableText("table.newRow", { row: r + 1 });
+	tableColumnLabel = (table, c) => table.columns[c].label.trim() || tableText("table.newColumn", { column: c + 1 });
+	makeTableRowsList = (component, autocomplete) => {
+		const table = normalizeTable(component.get("table"));
+		const columns = inputColumns(table);
+		const items = table.rows.map((_, r) => {
+			const rowAddress = `${component.address}.table.rows[${r}]`;
+			const rowLabel = tableRowLabel(table, r);
+			const cells = columns.map((c) => {
+				const columnLabel = tableColumnLabel(table, c);
+				return makeListItem({
+					value: `${rowAddress}.cells[${c}]`,
+					textLabel: `${rowLabel} \u203a ${columnLabel}`,
+					htmlLabel: {
+						tag: "span",
+						textContent: columnLabel
+					},
+					componentType: "table-cell",
+					depth: 2
+				}, autocomplete);
+			});
+			const cellList = dom.create({
+				tag: "ul",
+				attrs: { className: [LIST_CLASSNAME, "table-cells-list"] },
+				children: cells
+			});
+			return makeListItem({
+				value: rowAddress,
+				textLabel: rowLabel,
+				htmlLabel: [{
+					tag: "span",
+					textContent: rowLabel
+				}, cellList],
+				componentType: "table-row",
+				depth: 1
+			}, autocomplete);
+		});
+		return dom.create({
+			tag: "ul",
+			attrs: { className: [LIST_CLASSNAME, "table-rows-list"] },
+			children: items
+		});
+	};
+	tableAddressLabel = (address, components) => {
+		const parsed = parseTableAddress(address);
+		if (!parsed) return null;
+		const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.("table"));
+		if (!table.rows[parsed.row]) return null;
+		const rowLabel = tableRowLabel(table, parsed.row);
+		if (parsed.cell === null) return rowLabel;
+		return table.columns[parsed.cell] ? `${rowLabel} \u203a ${tableColumnLabel(table, parsed.cell)}` : null;
+	};
 	componentOptions = (autocomplete) => {
 		const selectedId = autocomplete.value;
 		const labels = [];
@@ -11125,6 +11541,7 @@ var init_helpers$1 = __esmMin((() => {
 					const componentOptionsList = makeComponentOptionsList(component, autocomplete);
 					htmlLabel.push(componentOptionsList);
 				}
+				if (component.isTable && hasInputs(component.get("table"))) htmlLabel.push(makeTableRowsList(component, autocomplete));
 				const optionData = makeOptionData({
 					value,
 					textLabel,
@@ -11145,6 +11562,7 @@ var init_autocomplete = __esmMin((() => {
 	init_i18n_es_min();
 	init_animation();
 	init_dom();
+	init_table$1();
 	init_utils();
 	init_string();
 	init_constants();
@@ -11297,6 +11715,8 @@ var init_autocomplete = __esmMin((() => {
 		}
 		get label() {
 			if (!isAddress(this.value)) return this.value;
+			const tableLabel = tableAddressLabel(this.value, this.components);
+			if (tableLabel) return tableLabel;
 			const component = this.value && this.components.getAddress(this.value);
 			return component && getComponentLabel(component, `${this.key}`, this.components) || this.value;
 		}
@@ -11399,10 +11819,10 @@ var init_autocomplete = __esmMin((() => {
 			}
 		}
 		/**
-		* removes the highlight from
+		* removes the highlight from every highlighted component, row and cell
 		*/
 		removeHighlight() {
-			const highlightedComponents = document.getElementsByClassName(HIGHLIGHT_CLASSNAME);
+			const highlightedComponents = [...document.getElementsByClassName(HIGHLIGHT_CLASSNAME)];
 			for (const component of highlightedComponents) component.classList.remove(HIGHLIGHT_CLASSNAME);
 		}
 		/**
@@ -11410,6 +11830,14 @@ var init_autocomplete = __esmMin((() => {
 		*/
 		highlightComponent(option) {
 			const { dataset: { value } } = option;
+			const tableAddress = parseTableAddress(value);
+			if (tableAddress) {
+				const field = this.components.getAddress(`fields.${tableAddress.fieldId}`);
+				field?.dom?.classList.add(HIGHLIGHT_CLASSNAME);
+				const row = field?.preview?.querySelectorAll("tbody tr")[tableAddress.row];
+				(tableAddress.cell === null ? row : row?.children[tableAddress.cell])?.classList.add(HIGHLIGHT_CLASSNAME);
+				return;
+			}
 			if (isAddress(value)) {
 				const { componentAddress, isOptionAddress, optionIndex } = splitAddress(value).reduce((acc, cur) => {
 					if (cur === "options") {
@@ -15419,10 +15847,11 @@ function createConditionSelect({ key, value, onChange, conditionType }) {
 	propertyFieldConfig.action = { change: onChange };
 	return propertyFieldConfig;
 }
-var hiddenPropertyClassname, hiddenOptionClassname, optionsAddressRegex, stageAddressRegex, VISIBILITY_VALUES, toggleStagePropertyOptions, adoptStageTargetProperty, optionDataMap, segmentTypes, isVisible$1, fieldVisibilityMap, toggleFieldVisibility, isCheckedValue, isCheckedOption, toggleCheckablePropertyOptions;
+var hiddenPropertyClassname, hiddenOptionClassname, optionsAddressRegex, stageAddressRegex, VISIBILITY_VALUES, toggleStagePropertyOptions, adoptStageTargetProperty, tablePropertyOptions, isMatrixAddress, toggleAllowedPropertyOptions, offeredProperties, adoptPickedProperty, optionDataMap, segmentTypes, isVisible$1, fieldVisibilityMap, toggleFieldVisibility, isCheckedValue, isCheckedOption, toggleCheckablePropertyOptions;
 var init_condition_helpers = __esmMin((() => {
 	init_i18n_es_min();
 	init_dom();
+	init_table$1();
 	init_utils();
 	init_object();
 	init_string();
@@ -15440,6 +15869,51 @@ var init_condition_helpers = __esmMin((() => {
 		const target = fields.get("target");
 		const targetProperty = fields.get("targetProperty");
 		if (targetProperty && stageAddressRegex.test(target?.value ?? "") && !VISIBILITY_VALUES.has(targetProperty.value)) targetProperty.value = "isNotVisible";
+	};
+	tablePropertyOptions = (address, side, components) => {
+		const parsed = parseTableAddress(address);
+		if (!parsed) return null;
+		const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.("table"));
+		if (parsed.cell === null) {
+			if (side !== "source") return ["isNotVisible", "isVisible"];
+			return inputColumns(table).some((c) => cellInput(table.columns[c]) === "radio") ? [
+				"value",
+				"isChecked",
+				"isNotChecked"
+			] : ["isChecked", "isNotChecked"];
+		}
+		const own = cellInput(table.columns[parsed.cell]) === "text" ? ["value"] : ["isChecked", "isNotChecked"];
+		return side === "source" ? own : [
+			...own,
+			"isNotVisible",
+			"isVisible"
+		];
+	};
+	isMatrixAddress = (address, components) => {
+		if (!/^fields\.[^.]+$/.test(address)) return false;
+		const field = components?.getAddress?.(address);
+		return !!field?.isTable && hasInputs(field.get("table"));
+	};
+	toggleAllowedPropertyOptions = (propertyField, allowed) => {
+		for (const option of propertyField.querySelectorAll("option")) option.classList.toggle(hiddenOptionClassname, !allowed.includes(option.value));
+	};
+	offeredProperties = (address, side, propertyField, components) => {
+		const tableOptions = side === "source" && isMatrixAddress(address, components) ? [...VISIBLE_OPTIONS] : tablePropertyOptions(address, side, components);
+		if (tableOptions) return tableOptions;
+		const isCheckable = optionsAddressRegex.test(address);
+		return [...propertyField.options].map(({ value }) => value).filter((value) => isCheckedOption({ value }) === isCheckable);
+	};
+	adoptPickedProperty = (fields, key, components) => {
+		const side = key === "source" ? "source" : "target";
+		const address = fields.get(key)?.value ?? "";
+		const propertyField = fields.get(`${side}Property`);
+		if (!propertyField || !address) return;
+		if (side === "target" && stageAddressRegex.test(address)) {
+			adoptStageTargetProperty(fields);
+			return;
+		}
+		const offered = offeredProperties(address, side, propertyField, components);
+		if (offered.length && !offered.includes(propertyField.value)) propertyField.value = offered[0];
 	};
 	optionDataMap = {
 		"if-sourceProperty": objectFromStringArray(PROPERTY_OPTIONS, CHECKABLE_OPTIONS, VISIBLE_OPTIONS),
@@ -15480,11 +15954,13 @@ var init_condition_helpers = __esmMin((() => {
 		return !elem?.classList.contains(hiddenPropertyClassname);
 	};
 	fieldVisibilityMap = {
-		sourceProperty: (fields) => {
+		sourceProperty: (fields, components) => {
 			const source = fields.get("source");
 			const sourceProperty = fields.get("sourceProperty");
 			const sourceHasValue = !!source.value;
-			toggleCheckablePropertyOptions(!!source.value.match(optionsAddressRegex), sourceProperty);
+			const tableOptions = isMatrixAddress(source.value, components) ? ["isVisible", "isNotVisible"] : tablePropertyOptions(source.value, "source", components);
+			if (tableOptions) toggleAllowedPropertyOptions(sourceProperty, tableOptions);
+			else toggleCheckablePropertyOptions(!!source.value.match(optionsAddressRegex), sourceProperty);
 			return !sourceHasValue;
 		},
 		comparison: (fields) => {
@@ -15499,10 +15975,12 @@ var init_condition_helpers = __esmMin((() => {
 			const targetProperty = fields.get("targetProperty");
 			return !!!target.value || targetProperty.value.startsWith("is");
 		},
-		targetProperty: (fields) => {
+		targetProperty: (fields, components) => {
 			const target = fields.get("target");
 			const targetProperty = fields.get("targetProperty");
+			const tableOptions = fields.has("source") ? null : tablePropertyOptions(target.value, "target", components);
 			if (stageAddressRegex.test(target.value)) toggleStagePropertyOptions(targetProperty);
+			else if (tableOptions) toggleAllowedPropertyOptions(targetProperty, tableOptions);
 			else toggleCheckablePropertyOptions(!!target.value.match(optionsAddressRegex), targetProperty);
 			return !isInternalAddress(target.value);
 		},
@@ -15523,25 +16001,16 @@ var init_condition_helpers = __esmMin((() => {
 			return targetProperty.value.startsWith("is");
 		}
 	};
-	toggleFieldVisibility = (fields) => {
+	toggleFieldVisibility = (fields, components) => {
 		for (const [fieldName, field] of fields) {
-			const shouldHide = !!fieldVisibilityMap[fieldName]?.(fields) || false;
+			const shouldHide = !!fieldVisibilityMap[fieldName]?.(fields, components) || false;
 			field.classList.toggle(hiddenPropertyClassname, shouldHide);
 		}
 	};
 	isCheckedValue = "isChecked";
 	isCheckedOption = (option) => option.value.endsWith("Checked");
 	toggleCheckablePropertyOptions = (isCheckable, propertyField) => {
-		if (isCheckable && isCheckedOption(propertyField)) return null;
-		const options = Array.from(propertyField.querySelectorAll("option"));
-		const hiddenOptionValues = [];
-		for (const option of options) {
-			const optionIsChecked = isCheckedOption(option);
-			const shouldHide = isCheckable ? !optionIsChecked : optionIsChecked;
-			if (shouldHide) hiddenOptionValues.push(option.value);
-			option.classList.toggle(hiddenOptionClassname, shouldHide);
-		}
-		if (hiddenOptionValues.includes(propertyField.value)) propertyField.value = isCheckable ? isCheckedValue : options.find((opt) => !isCheckedOption(opt))?.value || propertyField.value;
+		for (const option of propertyField.querySelectorAll("option")) option.classList.toggle(hiddenOptionClassname, isCheckedOption(option) !== isCheckable);
 	};
 }));
 //#endregion
@@ -15670,7 +16139,7 @@ var init_condition = __esmMin((() => {
 			}, {});
 		}
 		processUiState() {
-			toggleFieldVisibility(this.fields);
+			toggleFieldVisibility(this.fields, this.components);
 			this.dom.classList.remove("display-none");
 		}
 		updateDataDebounced = debounce((evtData) => {
@@ -15678,14 +16147,14 @@ var init_condition = __esmMin((() => {
 			this.components.setAddress(evtData.dataPath, evtData.value);
 		});
 		onChangeCondition = ({ key, target }) => {
-			if (key === "target" && this.conditionType === "then") adoptStageTargetProperty(this.fields);
+			if (key === "source" || key === "target" && this.conditionType === "then") adoptPickedProperty(this.fields, key, this.components);
 			const evtData = {
 				changedProperty: key,
 				dataPath: this.address,
 				value: this.value,
 				src: target
 			};
-			toggleFieldVisibility(this.fields);
+			toggleFieldVisibility(this.fields, this.components);
 			this.updateDataDebounced(evtData);
 		};
 	};
@@ -17317,13 +17786,24 @@ var init_control_attr_config = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/components/fields/table-panel.js
-var TABLE_PANEL_CLASSNAME, TablePanel;
+var TABLE_PANEL_CLASSNAME, INPUT_CHOICES, CELL_GLYPHS, TablePanel;
 var init_table_panel = __esmMin((() => {
 	init_dom();
 	init_table$1();
 	init_table_text();
 	init_constants();
 	TABLE_PANEL_CLASSNAME = "table-panel";
+	INPUT_CHOICES = [
+		["", "table.input.static"],
+		["text", "table.input.text"],
+		["radio", "table.input.radio"],
+		["checkbox", "table.input.checkbox"]
+	];
+	CELL_GLYPHS = {
+		radio: "○",
+		checkbox: "☐",
+		text: "▭"
+	};
 	TablePanel = class {
 		/**
 		* @param {Field} field a field with `table` data
@@ -17399,46 +17879,62 @@ var init_table_panel = __esmMin((() => {
 			};
 		}
 		optionFields(table) {
-			const toggle = (key) => ({
-				tag: "label",
-				className: "f-table-panel-option",
-				children: [{
-					tag: "input",
-					attrs: {
-						type: "checkbox",
-						checked: table[key]
-					},
-					dataset: { tableOption: key },
-					action: { change: ({ target }) => this.toggleOption(key, target.checked) }
-				}, {
-					tag: "span",
-					textContent: tableText(`table.${key}`)
-				}]
-			});
+			const locked = hasInputs(table);
+			const hintId = `${this.field.id}-header-row-hint`;
+			const toggle = (key) => {
+				const isLocked = key === "headerRow" && locked;
+				return {
+					tag: "label",
+					className: "f-table-panel-option",
+					children: [{
+						tag: "input",
+						attrs: {
+							type: "checkbox",
+							checked: table[key] || isLocked,
+							disabled: isLocked,
+							...isLocked ? { "aria-describedby": hintId } : {}
+						},
+						dataset: { tableOption: key },
+						action: { change: ({ target }) => this.toggleOption(key, target.checked) }
+					}, {
+						tag: "span",
+						textContent: tableText(`table.${key}`)
+					}]
+				};
+			};
+			const hint = locked && {
+				tag: "span",
+				attrs: {
+					id: hintId,
+					className: "f-table-panel-hint"
+				},
+				textContent: tableText("table.headerRowLocked")
+			};
 			return {
 				className: "f-table-panel-options",
-				children: [toggle("headerRow"), toggle("rowHeaders")]
+				children: [
+					toggle("headerRow"),
+					toggle("rowHeaders"),
+					hint
+				].filter(Boolean)
 			};
 		}
 		toggleOption(key, checked) {
-			const table = setTableOption(this.table, key, checked);
-			if (key === "headerRow") {
-				this.restructure(table, `[data-table-option="${key}"]`);
-				return;
-			}
-			this.field.set("table", table);
-			this.field.updatePreview();
+			this.restructure(withKeys(setTableOption(this.table, key, checked)), `[data-table-option="${key}"]`);
 		}
-		textInput({ value, label, dataset, onInput }) {
+		textInput({ value, label, dataset, onInput, onCommit, placeholder }) {
+			const action = { input: ({ target }) => onInput(target.value) };
+			if (onCommit) action.change = onCommit;
 			return {
 				tag: "input",
 				attrs: {
 					type: "text",
 					value,
-					"aria-label": label
+					"aria-label": label,
+					...placeholder ? { placeholder } : {}
 				},
 				dataset,
-				action: { input: ({ target }) => onInput(target.value) }
+				action
 			};
 		}
 		removeButton(kind, index, isLast) {
@@ -17460,21 +17956,108 @@ var init_table_panel = __esmMin((() => {
 				} }
 			};
 		}
-		grid({ headerRow, columns, rows }) {
+		typeSelect(column, c) {
+			const current = cellInput(column) ?? "";
+			return {
+				tag: "select",
+				attrs: {
+					className: "f-table-input-type",
+					"aria-label": tableText("table.columnInput", { column: c + 1 })
+				},
+				dataset: { columnInput: String(c) },
+				children: INPUT_CHOICES.map(([value, key]) => ({
+					tag: "option",
+					attrs: {
+						value,
+						selected: value === current
+					},
+					textContent: tableText(key)
+				})),
+				action: { change: ({ target }) => this.changeColumnInput(c, target.value) }
+			};
+		}
+		valueInput(kind, index, value) {
+			const vars = { [kind]: index + 1 };
+			const setter = kind === "row" ? setRowValue : setColumnValue;
+			return this.textInput({
+				value: value ?? "",
+				label: tableText(kind === "row" ? "table.rowValue" : "table.columnValue", vars),
+				placeholder: tableText("table.value"),
+				dataset: kind === "row" ? { rowValue: String(index) } : { columnValue: String(index) },
+				onInput: (text) => this.save(setter(this.table, index, text)),
+				onCommit: () => this.commitKeys()
+			});
+		}
+		requiredToggle(row, r) {
+			return {
+				tag: "label",
+				className: "f-table-row-required",
+				children: [{
+					tag: "input",
+					attrs: {
+						type: "checkbox",
+						checked: row.required === true,
+						"aria-label": tableText("table.rowRequired", { row: r + 1 })
+					},
+					dataset: { rowRequired: String(r) },
+					action: { change: ({ target }) => {
+						this.field.set("table", setRowRequired(this.table, r, target.checked));
+						this.field.updatePreview();
+					} }
+				}, {
+					tag: "span",
+					attrs: { "aria-hidden": "true" },
+					textContent: tableText("table.required")
+				}]
+			};
+		}
+		/** Gives blank or duplicate keys their resolved value, and shows it in place without rebuilding the grid */
+		commitKeys() {
+			const table = withKeys(this.table);
+			this.field.set("table", table);
+			this.field.updatePreview();
+			for (const input of this.element.querySelectorAll("[data-row-value]")) input.value = table.rows[Number(input.dataset.rowValue)]?.value ?? "";
+			for (const input of this.element.querySelectorAll("[data-column-value]")) input.value = table.columns[Number(input.dataset.columnValue)]?.value ?? "";
+		}
+		changeColumnInput(c, input) {
+			let table = setColumnInput(this.table, c, input || null);
+			if (cellInput(table.columns[c]) && !table.columns[c].label.trim()) table = setColumnLabel(table, c, tableText("table.newColumn", { column: c + 1 }));
+			this.restructure(withKeys(table), `[data-column-input="${c}"]`);
+		}
+		grid(table) {
+			const { headerRow, rowHeaders, columns, rows } = table;
+			const matrix = hasInputs(table);
+			const inputs = new Set(inputColumns(table));
+			const showHeader = headerRow || matrix;
 			const lastColumn = columns.length <= 1;
 			const lastRow = rows.length <= 1;
 			const headLine = columns.map((column, c) => ({
 				tag: "td",
-				children: [headerRow && this.textInput({
-					value: column.label,
-					label: tableText("table.columnLabel", { column: c + 1 }),
-					dataset: { headerColumn: String(c) },
-					onInput: (value) => this.save(setColumnLabel(this.table, c, value))
-				}), this.removeButton("column", c, lastColumn)].filter(Boolean)
+				children: [
+					showHeader && this.textInput({
+						value: column.label,
+						label: tableText("table.columnLabel", { column: c + 1 }),
+						dataset: { headerColumn: String(c) },
+						onInput: (value) => this.save(setColumnLabel(this.table, c, value))
+					}),
+					!(rowHeaders && c === 0) && this.typeSelect(column, c),
+					inputs.has(c) && this.valueInput("column", c, column.value),
+					this.removeButton("column", c, lastColumn)
+				].filter(Boolean)
 			}));
-			const bodyLines = rows.map((row, r) => ({
-				tag: "tr",
-				children: [...row.cells.map((cell, c) => ({
+			const bodyCell = (cell, r, c) => {
+				const type = inputs.has(c) && cellInput(columns[c]);
+				if (type) return {
+					tag: "td",
+					className: "f-table-editor-input",
+					children: [{
+						tag: "span",
+						attrs: { "aria-hidden": "true" },
+						dataset: { cellGlyph: type },
+						textContent: CELL_GLYPHS[type]
+					}]
+				};
+				return {
 					tag: "td",
 					children: [this.textInput({
 						value: cell,
@@ -17488,9 +18071,18 @@ var init_table_panel = __esmMin((() => {
 						},
 						onInput: (value) => this.save(setCell(this.table, r, c, value))
 					})]
-				})), {
+				};
+			};
+			const bodyLines = rows.map((row, r) => ({
+				tag: "tr",
+				children: [...row.cells.map((cell, c) => bodyCell(cell, r, c)), {
 					tag: "td",
-					children: [this.removeButton("row", r, lastRow)]
+					className: "f-table-editor-row-controls",
+					children: [
+						matrix && this.valueInput("row", r, row.value),
+						matrix && this.requiredToggle(row, r),
+						this.removeButton("row", r, lastRow)
+					].filter(Boolean)
 				}]
 			}));
 			return {
@@ -17531,22 +18123,23 @@ var init_table_panel = __esmMin((() => {
 			};
 		}
 		addRowAtEnd() {
-			const table = addRow(this.table);
-			this.restructure(table, `[data-row="${table.rows.length - 1}"][data-column="0"]`, "[data-table-add=\"row\"]");
+			const table = withKeys(addRow(this.table));
+			const r = table.rows.length - 1;
+			this.restructure(table, `[data-row="${r}"]`, `[data-row-value="${r}"]`, "[data-table-add=\"row\"]");
 		}
 		addColumnAtEnd() {
 			const current = this.table;
-			const table = addColumn(current, tableText("table.newColumn", { column: current.columns.length + 1 }));
+			const table = withKeys(addColumn(current, tableText("table.newColumn", { column: current.columns.length + 1 })));
 			const c = table.columns.length - 1;
 			this.restructure(table, `[data-header-column="${c}"]`, `[data-row="0"][data-column="${c}"]`, "[data-table-add=\"column\"]");
 		}
 		removeRowAt(index) {
-			const table = removeRow(this.table, index);
+			const table = withKeys(removeRow(this.table, index));
 			const next = Math.min(index, table.rows.length - 1);
 			this.restructure(table, `[data-remove-row="${next}"]`, "[data-table-add=\"row\"]");
 		}
 		removeColumnAt(index) {
-			const table = removeColumn(this.table, index);
+			const table = withKeys(removeColumn(this.table, index));
 			const next = Math.min(index, table.columns.length - 1);
 			this.restructure(table, `[data-remove-column="${next}"]`, "[data-table-add=\"column\"]");
 		}
@@ -17727,6 +18320,7 @@ var init_field = __esmMin((() => {
 				change: (evt) => {
 					const { target } = evt;
 					const { type } = target;
+					if (target.closest?.(".f-table")) return;
 					if (isSelectableType.has(type)) {
 						const selectedOptions = this.preview.querySelectorAll(":checked");
 						const optionsData = this.get("options");
@@ -17748,6 +18342,7 @@ var init_field = __esmMin((() => {
 					if (evt.target.contentEditable === "true") evt.preventDefault();
 				},
 				input: ({ target }) => {
+					if (target.closest?.(".f-table")) return;
 					if ([
 						"input",
 						"meter",
@@ -18093,6 +18688,35 @@ var init_input_text = __esmMin((() => {
 	};
 }));
 //#endregion
+//#region src/lib/js/components/controls/form/matrix.js
+var MatrixControl;
+var init_matrix = __esmMin((() => {
+	init_table$1();
+	init_table_text();
+	init_control();
+	MatrixControl = class extends Control {
+		constructor() {
+			super({
+				tag: "table",
+				attrs: {
+					className: "",
+					name: ""
+				},
+				config: {
+					label: tableText("controls.form.matrix"),
+					hideLabel: true
+				},
+				meta: {
+					group: "common",
+					icon: "matrix",
+					id: "matrix"
+				},
+				table: defaultMatrix((column) => tableText("table.newColumn", { column }), (row) => tableText("table.newRow", { row }))
+			});
+		}
+	};
+}));
+//#endregion
 //#region src/lib/js/components/controls/form/radio-group.js
 var RadioGroupControl;
 var init_radio_group = __esmMin((() => {
@@ -18193,6 +18817,7 @@ var init_form = __esmMin((() => {
 	init_input_hidden();
 	init_input_number();
 	init_input_text();
+	init_matrix();
 	init_radio_group();
 	init_select();
 	init_textarea();
@@ -18206,7 +18831,8 @@ var init_form = __esmMin((() => {
 		FileControl,
 		SelectControl,
 		CheckboxGroupControl,
-		RadioGroupControl
+		RadioGroupControl,
+		MatrixControl
 	];
 }));
 //#endregion
@@ -21110,6 +21736,18 @@ var propertyMap = {
 		return !isVisible(elem);
 	}
 };
+/**
+* A matrix row as a condition source (#349 phase 2): its value is its checked radio's, and it is checked when any of
+* its checkboxes or radios is
+*/
+var tableRowPropertyMap = {
+	value: (row) => row.querySelector("input[type=\"radio\"]:checked")?.value ?? "",
+	checked: (row) => tableRowPropertyMap.value(row),
+	isChecked: (row) => [...row.querySelectorAll("input")].some((input) => input.checked),
+	isNotChecked: (row) => !tableRowPropertyMap.isChecked(row),
+	isVisible: (row) => isVisible(row),
+	isNotVisible: (row) => !isVisible(row)
+};
 var createRemoveButton = () => dom.btnTemplate({
 	className: "remove-input-group",
 	children: dom.icon("remove"),
@@ -21173,10 +21811,23 @@ var targetPropertyMap = {
 	isNotVisible: (elem) => {
 		elem.parentElement.setAttribute("hidden", true);
 		suspendRequired(elem);
+		syncGroupOf(elem);
 	},
 	isVisible: (elem) => {
 		elem.parentElement.removeAttribute("hidden");
 		restoreRequired(elem);
+		syncGroupOf(elem);
+	}
+};
+/** Showing or hiding a matrix row acts on the <tr> itself; the generic rule would hide its whole <tbody> */
+var tableRowTargetMap = {
+	isNotVisible: (row) => {
+		row.setAttribute("hidden", "");
+		suspendRequired(row);
+	},
+	isVisible: (row) => {
+		row.removeAttribute("hidden");
+		restoreRequired(row);
 	}
 };
 var FORM_CONTROL_SELECTOR = "input, select, textarea";
@@ -21618,6 +22269,8 @@ var paginate = (form, { type, progress, submit, heading, labels }, stages, onCha
 init_dom();
 init_label_position();
 init_loaders();
+init_table$1();
+init_table_text();
 init_utils();
 init_string();
 init_constants();
@@ -21759,10 +22412,11 @@ var FormeoRenderer$1 = class {
 		const userFormData = [];
 		for (const [key, value] of Object.entries(this.userData)) {
 			const otherGroup = this.otherGroupByName(key);
+			const matrixEntry = otherGroup ? void 0 : this.matrixEntryByName(key);
 			const fieldData = {
 				key,
 				value,
-				label: otherGroup ? `${otherGroup.config?.label || ""} (${otherGroup.config.otherLabel || "Other"})` : this.componentByName(key)?.config?.label || ""
+				label: otherGroup ? `${otherGroup.config?.label || ""} (${otherGroup.config.otherLabel || "Other"})` : matrixEntry?.label ?? (this.componentByName(key)?.config?.label || "")
 			};
 			userFormData.push(fieldData);
 		}
@@ -21775,6 +22429,39 @@ var FormeoRenderer$1 = class {
 	*/
 	componentByName(name) {
 		return this.components[name] || this.components[this.prefixId(baseId(name))] || Object.values(this.components).find((component) => component.attrs?.name === name || component.attrs?.name === `${name}[]`) || this.otherGroupByName(name);
+	}
+	/**
+	* The matrix answer behind a submitted name (#349 phase 2), labelled "{table}: {row}" or "{table}: {row}, {column}"
+	* @param {String} name e.g. 'f-1a2b3c4d[speed][comment]'
+	* @return {{component: Object, label: String}|undefined}
+	*/
+	matrixEntryByName(name) {
+		for (const component of Object.values(this.components)) {
+			if (!isTableField(component) || !hasInputs(component.table)) continue;
+			const parsed = parseMatrixKey(name, String(component.attrs?.name ?? "").trim() || component.id);
+			if (!parsed) continue;
+			const table = withKeys(normalizeTable(component.table));
+			const r = table.rows.findIndex((row) => row.value === parsed.row);
+			const c = parsed.column === null ? -1 : inputColumns(table).find((i) => table.columns[i].value === parsed.column) ?? -1;
+			if (r === -1 || parsed.column !== null && c === -1) continue;
+			const tableName = table.caption.trim() || plainText(component.config?.label);
+			const row = table.rowHeaders && table.rows[r].cells[0].trim() || tableText("table.newRow", { row: r + 1 });
+			if (c === -1) return {
+				component,
+				label: tableText("table.entryRow", {
+					table: tableName,
+					row
+				})
+			};
+			return {
+				component,
+				label: tableText("table.entryCell", {
+					table: tableName,
+					row,
+					column: table.columns[c].label || tableText("table.newColumn", { column: c + 1 })
+				})
+			};
+		}
 	}
 	/**
 	* The checkbox or radio group whose Other choice's text box posts under `name` (`{group key}-other`)
@@ -22043,7 +22730,7 @@ var FormeoRenderer$1 = class {
 			...attrs,
 			"data-clone-of": id
 		};
-		if (rest.options && ["checkbox", "radio"].includes(attrs.type)) delete updatedAttrs.name;
+		if (rest.options && ["checkbox", "radio"].includes(attrs.type) || isTableField(rest)) delete updatedAttrs.name;
 		else if (rest.tag === "input") updatedAttrs.name = getName(this.components[componentId]);
 		return {
 			...rest,
@@ -22189,12 +22876,17 @@ var FormeoRenderer$1 = class {
 	};
 	execResult = ({ target, targetProperty, assignment, value }) => {
 		if (!isAddress(target)) return;
-		const { component, option } = this.getComponent(target);
+		const { component, option, kind } = this.getComponent(target) ?? {};
 		if (splitAddress(target)[0] === "stages") {
 			if (component && Object.hasOwn(STAGE_SKIP_PROPERTIES, targetProperty)) this.setStageSkipped(component, STAGE_SKIP_PROPERTIES[targetProperty]);
 			return;
 		}
 		const elem = option || component;
+		if (!elem) return;
+		if (kind === "tableRow") {
+			tableRowTargetMap[targetProperty]?.(elem);
+			return;
+		}
 		targetPropertyMap[targetProperty]?.(elem, {
 			targetProperty,
 			assignment,
@@ -22210,12 +22902,13 @@ var FormeoRenderer$1 = class {
 	* @return {*}
 	*/
 	getComponentProperty = (address, propertyName, ownStages = []) => {
-		const { component, option } = this.getComponent(address) || {};
+		const { component, option, kind } = this.getComponent(address) || {};
 		const elem = option || component;
 		if (!elem) return;
 		const skippedPage = elem.closest?.(`[${SKIPPED_ATTR}]`);
 		if (skippedPage && !ownStages.includes(skippedPage) && Object.hasOwn(SKIPPED_PAGE_READS, propertyName)) return SKIPPED_PAGE_READS[propertyName];
-		return propertyMap[propertyName] ? propertyMap[propertyName](elem) : elem[propertyName];
+		const properties = kind === "tableRow" ? tableRowPropertyMap : propertyMap;
+		return properties[propertyName] ? properties[propertyName](elem) : elem[propertyName];
 	};
 	getComponent = (address) => {
 		const result = { component: null };
@@ -22231,6 +22924,7 @@ var FormeoRenderer$1 = class {
 		} catch {}
 		if (!component) return result;
 		result.component = component;
+		if (optionsKey === "table") return this.tableComponent(component, address);
 		if (optionsKey) {
 			const options = component.querySelectorAll("input");
 			const option = options[optionIndex];
@@ -22239,6 +22933,34 @@ var FormeoRenderer$1 = class {
 			return result;
 		}
 		return result;
+	};
+	/**
+	* Resolves `fields.<id>.table.rows[r]` to the row's <tr> and `….cells[c]` to that cell's input. An address that
+	* doesn't name an input row or cell of a rendered matrix resolves to nothing, so its condition never matches or
+	* acts, rather than reaching some other input.
+	* @param {HTMLElement} table the field's <table>
+	* @param {String} address
+	* @return {{component: HTMLElement|null, option?: HTMLElement, options?: Iterable<HTMLElement>, kind?: String}}
+	*/
+	tableComponent = (table, address) => {
+		const parsed = parseTableAddress(address);
+		const isMatrix = table.tagName === "TABLE" && Boolean(table.closest(".f-table-matrix"));
+		const row = parsed && isMatrix ? table.tBodies[0]?.rows[parsed.row] : null;
+		if (!row) return { component: null };
+		if (parsed.cell === null) return {
+			component: table,
+			option: row,
+			options: row.querySelectorAll("input"),
+			kind: "tableRow"
+		};
+		const input = row.cells[parsed.cell]?.querySelector("input");
+		if (!input) return { component: null };
+		return {
+			component: table,
+			option: input,
+			options: [input],
+			kind: "tableCell"
+		};
 	};
 	getComponents = (address) => {
 		const components = [];
