@@ -24,10 +24,24 @@ describe('i18n fallbacks (#331)', () => {
   })
 })
 
+/**
+ * Keys formeo uses before @draggable/formeo-languages ships them (#349 phase 3, Draggable/formeo-languages
+ * feat/table-repeat-keys). The bump that ships them must empty this set: the second test below fails until it does.
+ */
+const PENDING = new Set(['table.repeatRow'])
+
 describe('i18n fallbacks (#349)', () => {
-  it('@draggable/formeo-languages ships every TABLE_TEXT key, matching the English fallback', () => {
+  it('@draggable/formeo-languages ships every TABLE_TEXT key that is not pending, matching the English fallback', () => {
     for (const [key, text] of Object.entries(TABLE_TEXT)) {
-      assert.equal(enUS[key], text, key)
+      if (!PENDING.has(key)) {
+        assert.equal(enUS[key], text, key)
+      }
+    }
+  })
+
+  it('no pending key has shipped yet; remove a key from PENDING when a bump ships it', () => {
+    for (const key of PENDING) {
+      assert.equal(enUS[key], undefined, key)
     }
   })
 })

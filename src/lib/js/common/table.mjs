@@ -1,6 +1,8 @@
 /**
  * A table field's data (#349): `{ caption, headerRow, rowHeaders, columns: [{ label, value?, input? }],
- * rows: [{ cells: [], value?, required? }] }`. A column with an `input` makes the table a matrix (phase 2).
+ * rows: [{ cells: [], value?, required? }], repeat?: { min?, max? } }`. A column with an `input` makes the table a
+ * matrix (phase 2). A plain-object `repeat` on a matrix lets the person filling in the form add and remove rows
+ * copied from rows[0] (phase 3).
  * Pure: no DOM and no i18n. The editor's Table panel edits it with the functions below, which normalise their input
  * and return a new table without changing it.
  */
@@ -31,9 +33,13 @@ export const CELL_INPUTS = Object.freeze(['radio', 'checkbox', 'text'])
 
 /** English for the strings tableDomConfig needs when no translator is passed; table-text.mjs has the same text */
 export const MATRIX_TEXT = Object.freeze({
+  remove: 'Remove',
+  'table.addRow': '+ Row',
   'table.cellInput': '{row}, {column}',
   'table.newColumn': 'Column {column}',
   'table.newRow': 'Row {row}',
+  'table.removeRow': 'Remove row {row}',
+  'table.repeatRow': '{label} {row}',
 })
 const englishText = (key, vars = {}) => fillTokens(MATRIX_TEXT[key] ?? key, vars)
 
@@ -250,8 +256,9 @@ const assignKeys = (values, prefix) => {
 }
 
 /**
- * A matrix with a unique, non-blank key in every row's and every input column's `value`, so each row is its own
- * radio group and every cell its own name. A table without inputs comes back normalised and nothing more.
+ * A matrix with a unique, non-blank key in every input column's `value`, and in every row's unless the table repeats
+ * (rows are then keyed by position when rendered), so each row is its own radio group and every cell its own name.
+ * A table without inputs comes back normalised and nothing more.
  * @param {Object} table
  * @return {Object} table
  */
@@ -265,16 +272,20 @@ export function withKeys(table) {
     current.columns.map((column, index) => (inputs.has(index) ? text(column.value) : null)),
     'column'
   )
-  const rowKeys = assignKeys(
-    current.rows.map(row => text(row.value)),
-    'row'
-  )
+  // a repeating table's rows are keyed by position when rendered, so its template carries no key
+  const repeating = isPlainObject(current.repeat)
+  const rowKeys = repeating
+    ? null
+    : assignKeys(
+        current.rows.map(row => text(row.value)),
+        'row'
+      )
   return {
     ...current,
     columns: current.columns.map((column, index) =>
       inputs.has(index) ? { ...column, value: columnKeys[index] } : column
     ),
-    rows: current.rows.map((row, index) => ({ ...row, value: rowKeys[index] })),
+    rows: repeating ? current.rows : current.rows.map((row, index) => ({ ...row, value: rowKeys[index] })),
   }
 }
 
@@ -382,6 +393,65 @@ export function parseTableAddress(address) {
     return null
   }
   return { fieldId: match[1], row: Number(match[2]), cell: match[3] === undefined ? null : Number(match[3]) }
+}
+
+/** A repeating table's limits when `repeat` leaves them out (#349 phase 3) */
+export const REPEAT_DEFAULTS = Object.freeze({ min: 1, max: null })
+
+const isCount = (value, floor) => Number.isInteger(value) && value >= floor
+
+/**
+ * A repeating table's row limits: `min` is a non-negative integer (default 1); `max` is an integer of at least 1 and
+ * never below `min`, or null for no limit
+ * @param {Object} table
+ * @return {{min: Number, max: Number|null}}
+ */
+export function repeatOf(table) {
+  const repeat = isPlainObject(table?.repeat) ? table.repeat : {}
+  const min = isCount(repeat.min, 0) ? repeat.min : REPEAT_DEFAULTS.min
+  const max = isCount(repeat.max, 1) ? Math.max(repeat.max, min) : REPEAT_DEFAULTS.max
+  return { min, max }
+}
+
+/**
+ * Whether the person filling in the form adds and removes the table's rows: `repeat` is an object and some column
+ * renders an input. A display table ignores `repeat`.
+ * @param {Object} table
+ * @return {Boolean}
+ */
+export const isRepeating = table => isPlainObject(table?.repeat) && hasInputs(table)
+
+/**
+ * @param {Object} table
+ * @param {Object|null} repeat `{ min, max }` turns repeating on with those limits, normalised; anything else turns it off
+ * @return {Object} table
+ */
+export function setRepeat(table, repeat) {
+  const { repeat: _repeat, ...current } = normalizeTable(table)
+  return isPlainObject(repeat) ? { ...current, repeat: repeatOf({ repeat }) } : current
+}
+
+/**
+ * The row every rendered row of a repeating table copies: rows[0], or a blank row when there is none
+ * @param {Object} table
+ * @return {Object} row
+ */
+export function templateRow(table) {
+  const current = normalizeTable(table)
+  return current.rows[0] ?? { cells: current.columns.map(() => '') }
+}
+
+/**
+ * A repeating table's name for row r: the template's row header numbered ("Item 2"), else "Row 2"
+ * @param {Object} table
+ * @param {Number} r 0-based row index
+ * @param {Function} [translate] (key, vars) => text
+ * @return {String}
+ */
+export function repeatRowName(table, r, translate = englishText) {
+  const current = normalizeTable(table)
+  const label = current.rowHeaders ? templateRow(current).cells[0]?.trim() : ''
+  return label ? translate('table.repeatRow', { label, row: r + 1 }) : translate('table.newRow', { row: r + 1 })
 }
 
 /**

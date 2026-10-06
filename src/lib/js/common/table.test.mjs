@@ -10,24 +10,30 @@ import {
   defaultTable,
   hasInputs,
   inputColumns,
+  isRepeating,
   isTableField,
   MATRIX_TEXT,
   matrixName,
   normalizeTable,
   parseMatrixKey,
   parseTableAddress,
+  REPEAT_DEFAULTS,
   removeColumn,
   removeRow,
+  repeatOf,
+  repeatRowName,
   rowKey,
   setCell,
   setColumnInput,
   setColumnLabel,
   setColumnValue,
+  setRepeat,
   setRowRequired,
   setRowValue,
   setTableOption,
   TABLE_DEFAULTS,
   tableDomConfig,
+  templateRow,
   withKeys,
 } from './table.mjs'
 
@@ -485,8 +491,104 @@ describe('tableDomConfig: matrix (#349 phase 2)', () => {
   })
 
   it('falls back to its own English strings', () => {
-    assert.deepEqual(Object.keys(MATRIX_TEXT).sort(), ['table.cellInput', 'table.newColumn', 'table.newRow'])
+    assert.deepEqual(Object.keys(MATRIX_TEXT).sort(), [
+      'remove',
+      'table.addRow',
+      'table.cellInput',
+      'table.newColumn',
+      'table.newRow',
+      'table.removeRow',
+      'table.repeatRow',
+    ])
     const input = firstInput(tableDomConfig({ id: 'f-m', table: { ...rating(), rowHeaders: false } }))
     assert.equal(input.attrs['aria-label'], 'Row 1, Poor')
+  })
+})
+
+const order = () => ({
+  caption: 'Order',
+  headerRow: true,
+  rowHeaders: true,
+  repeat: { min: 1, max: 10 },
+  columns: [
+    { label: 'Item', value: 'item' },
+    { label: 'Qty', value: 'qty', input: 'text' },
+    { label: 'Gift wrap', value: 'wrap', input: 'checkbox' },
+  ],
+  rows: [
+    { cells: ['Item', '', ''], required: true },
+    { cells: ['kept', '', ''], value: 'kept' },
+  ],
+})
+
+describe('repeating rows (#349 phase 3)', () => {
+  it('repeatOf normalises the limits', () => {
+    assert.deepEqual(REPEAT_DEFAULTS, { min: 1, max: null })
+    assert.deepEqual(repeatOf(order()), { min: 1, max: 10 })
+    assert.deepEqual(repeatOf({ repeat: {} }), { min: 1, max: null })
+    assert.deepEqual(repeatOf({ repeat: { min: 0 } }), { min: 0, max: null })
+    assert.deepEqual(repeatOf({ repeat: { min: 3, max: 2 } }), { min: 3, max: 3 })
+    assert.deepEqual(repeatOf({ repeat: { min: -1, max: 0 } }), { min: 1, max: null })
+    assert.deepEqual(repeatOf({ repeat: { min: 1.5, max: '4' } }), { min: 1, max: null })
+    assert.deepEqual(repeatOf({ repeat: { max: null } }), { min: 1, max: null })
+    assert.deepEqual(repeatOf({}), { min: 1, max: null })
+    assert.deepEqual(repeatOf(undefined), { min: 1, max: null })
+  })
+
+  it('isRepeating needs a plain-object repeat and an input column', () => {
+    assert.equal(isRepeating(order()), true)
+    assert.equal(isRepeating({ ...order(), repeat: true }), false)
+    assert.equal(isRepeating({ ...order(), repeat: [] }), false)
+    const { repeat: _repeat, ...matrix } = order()
+    assert.equal(isRepeating(matrix), false)
+    const display = { ...order(), columns: order().columns.map(({ label }) => ({ label })) }
+    assert.equal(isRepeating(display), false)
+  })
+
+  it('setRepeat stores normalised limits, removes the key for null, and never mutates', () => {
+    const table = order()
+    const before = structuredClone(table)
+    assert.deepEqual(setRepeat(table, { min: 2 }).repeat, { min: 2, max: null })
+    assert.deepEqual(setRepeat(table, { min: 4, max: 2 }).repeat, { min: 4, max: 4 })
+    assert.equal('repeat' in setRepeat(table, null), false)
+    assert.equal('repeat' in setRepeat(table, false), false)
+    assert.deepEqual(setRepeat(table, null).rows, normalizeTable(table).rows, 'authored rows are kept')
+    assert.deepEqual(table, before)
+  })
+
+  it('templateRow is rows[0], or a blank row of the table width', () => {
+    assert.deepEqual(templateRow(order()), { cells: ['Item', '', ''], required: true })
+    assert.deepEqual(templateRow({ ...order(), rows: [] }), { cells: ['', '', ''] })
+  })
+
+  it('repeatRowName numbers the template label under row headers, else falls back to Row n', () => {
+    assert.equal(repeatRowName(order(), 0), 'Item 1')
+    assert.equal(repeatRowName(order(), 2), 'Item 3')
+    const blank = { ...order(), rows: [{ cells: ['  ', '', ''] }] }
+    assert.equal(repeatRowName(blank, 1), 'Row 2')
+    assert.equal(repeatRowName({ ...order(), rowHeaders: false }, 0), 'Row 1')
+    const translate = (key, vars) => `${key}:${JSON.stringify(vars)}`
+    assert.equal(repeatRowName(order(), 1, translate), 'table.repeatRow:{"label":"Item","row":2}')
+  })
+
+  it('MATRIX_TEXT has the English the repeat markup needs', () => {
+    assert.equal(MATRIX_TEXT.remove, 'Remove')
+    assert.equal(MATRIX_TEXT['table.addRow'], '+ Row')
+    assert.equal(MATRIX_TEXT['table.removeRow'], 'Remove row {row}')
+    assert.equal(MATRIX_TEXT['table.repeatRow'], '{label} {row}')
+  })
+
+  it('withKeys keys only the columns of a repeating table, leaving the template unkeyed', () => {
+    const table = withKeys({ ...order(), columns: [{ label: 'Item' }, { label: 'Qty', input: 'text' }] })
+    assert.deepEqual(
+      table.columns.map(column => column.value),
+      [undefined, 'column-2']
+    )
+    assert.equal('value' in table.rows[0], false)
+    assert.equal(table.rows[1].value, 'kept')
+  })
+
+  it('normalizeTable keeps repeat as written', () => {
+    assert.deepEqual(normalizeTable({ ...order(), repeat: { min: 'x', extra: 1 } }).repeat, { min: 'x', extra: 1 })
   })
 })
