@@ -1,3 +1,10 @@
+# [5.19.0](https://github.com/Draggable/formeo/compare/v5.18.0...v5.19.0) (2026-10-06)
+
+
+### Features
+
+* repeating table rows ([#349](https://github.com/Draggable/formeo/issues/349) phase 3) ([#531](https://github.com/Draggable/formeo/issues/531)) ([0c2e3b8](https://github.com/Draggable/formeo/commit/0c2e3b88a930dbe4695bcbe77a00488d45ac5408))
+
 # [5.18.0](https://github.com/Draggable/formeo/compare/v5.17.0...v5.18.0) (2026-10-06)
 
 
