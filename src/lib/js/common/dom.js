@@ -180,14 +180,7 @@ class DOM {
 
     // a table field (#349): its `table` data becomes the wrapper, the <table> and its cells, or a matrix of inputs
     if (isTableField(elemArg)) {
-      const tableConfig = tableDomConfig(elemArg, {
-        isPreview,
-        fallbackLabel: tableText('controls.html.table'),
-        translate: tableText,
-        requiredMark: this.matrixRequiredMark,
-        onRequiredRowChange: row => this.syncCheckboxGroupRequired(row),
-      })
-      return this.create(tableConfig, isPreview)
+      return this.create(tableDomConfig(elemArg, this.tableOptions(isPreview)), isPreview)
     }
 
     const _this = this
@@ -838,6 +831,21 @@ class DOM {
 
   // a matrix input announces `required` itself, so its row's mark is only for sighted users
   matrixRequiredMark = () => ({ ...this.requiredMark(), attrs: { 'aria-hidden': 'true' } })
+
+  /**
+   * What tableDomConfig and matrixRowConfig take (#349): the translator, the required mark, the checkbox-row sync and
+   * the remove icon. The renderer builds a repeating table's added rows with the same options.
+   * @param {Boolean} isPreview
+   * @return {Object}
+   */
+  tableOptions = isPreview => ({
+    isPreview,
+    fallbackLabel: tableText('controls.html.table'),
+    translate: tableText,
+    requiredMark: this.matrixRequiredMark,
+    onRequiredRowChange: row => this.syncCheckboxGroupRequired(row),
+    removeIcon: () => this.icon('remove'),
+  })
 
   tooltip = tooltip => ({
     tag: 'span',

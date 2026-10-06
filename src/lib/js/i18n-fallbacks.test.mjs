@@ -28,7 +28,17 @@ describe('i18n fallbacks (#331)', () => {
  * Keys formeo uses before @draggable/formeo-languages ships them (#349 phase 3, Draggable/formeo-languages
  * feat/table-repeat-keys). The bump that ships them must empty this set: the second test below fails until it does.
  */
-const PENDING = new Set(['table.repeatRow'])
+const PENDING = new Set([
+  'table.repeat',
+  'table.repeatLocked',
+  'table.repeatMax',
+  'table.repeatMin',
+  'table.repeatNoMax',
+  'table.repeatRequired',
+  'table.repeatRow',
+  'table.rowAdded',
+  'table.rowRemoved',
+])
 
 describe('i18n fallbacks (#349)', () => {
   it('@draggable/formeo-languages ships every TABLE_TEXT key that is not pending, matching the English fallback', () => {
