@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, test } from 'node:test'
 import { JSDOM } from 'jsdom'
+import { restoreRequired, suspendRequired } from './helpers.js'
 import FormeoRenderer from './index.js'
 import { cloneNumber, groupNamesOf } from './input-groups.js'
 
@@ -397,6 +398,65 @@ describe('input groups (#349 phase 3)', () => {
     assert.equal(clones().length, 500)
     assert.ok(warn.mock.calls.some(({ arguments: [message] }) => message.includes('pick-99999')))
     assert.ok(ms < 2000, `took ${ms}ms`)
+  })
+
+  describe('copies the setter adds take on the state around them', () => {
+    const twoPages = () => ({
+      id: 'f',
+      stages: {
+        's-1': { id: 's-1', config: {}, children: ['r-0'] },
+        's-2': { id: 's-2', config: {}, children: ['r-1'] },
+      },
+      rows: {
+        'r-0': { id: 'r-0', config: {}, children: ['c-0'] },
+        'r-1': { id: 'r-1', config: { inputGroup: true }, children: ['c-1'] },
+      },
+      columns: { 'c-0': { id: 'c-0', children: ['x'] }, 'c-1': { id: 'c-1', children: ['e'] } },
+      fields: {
+        ...text('x', { name: 'x' }),
+        e: { id: 'e', tag: 'input', attrs: { type: 'text', name: 'email', required: true }, config: { label: 'E' } },
+      },
+    })
+    const emails = () => $$('input[name="email"]')
+
+    test('on a skipped page they are disabled, do not post or block validity, and come back enabled', () => {
+      const renderer = render(twoPages())
+      const stage = $$('.formeo-stage')[1]
+      renderer.setStageSkipped(stage, true)
+      renderer.userData = { email: ['a', ''] }
+      assert.deepEqual(
+        emails().map(input => input.disabled),
+        [true, true]
+      )
+      assert.equal('email' in renderer.userData, false)
+      assert.equal($('form').checkValidity(), true)
+      renderer.setStageSkipped(stage, false)
+      assert.deepEqual(
+        emails().map(input => input.disabled),
+        [false, false]
+      )
+      assert.equal(emails()[1].required, true)
+    })
+
+    test('in a condition-hidden group they are not required until it is shown', () => {
+      const renderer = render(twoPages())
+      const wrap = $('.f-input-group-wrap')
+      // what a condition does to its target
+      suspendRequired(wrap)
+      wrap.hidden = true
+      renderer.userData = { email: ['a', ''] }
+      assert.deepEqual(
+        emails().map(input => input.required),
+        [false, false]
+      )
+      assert.equal($('form').checkValidity(), true)
+      wrap.hidden = false
+      restoreRequired(wrap)
+      assert.deepEqual(
+        emails().map(input => input.required),
+        [true, true]
+      )
+    })
   })
 
   describe('a repeating table inside a clone renders but does not repeat (spec: not supported)', () => {

@@ -4,7 +4,7 @@ import { hasInputs, isTableField, SR_ONLY_CLASSNAME } from '../common/table.mjs'
 import { clone, uuid } from '../common/utils/index.mjs'
 import { RENDER_PREFIX } from './helpers.js'
 import { focusFirst } from './pagination.js'
-import { announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
+import { adoptInto, announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
 
 /**
  * Input groups (a row with `config.inputGroup`): the person filling in the form adds copies of the row and removes
@@ -161,6 +161,7 @@ export function addGroup(renderer, wrap, rowId, { interactive = true } = {}) {
   copy.appendChild(dom.create(removeButtonConfig(renderer, n + 1)))
   wrap.insertBefore(copy, addButtonOf(wrap))
   CLONE_COUNTS.set(wrap, n)
+  adoptInto(copy)
   if (interactive) {
     focusFirst(copy)
     announce(statusOf(wrap), inputGroupText('inputGroup.added', { n: n + 1 }))

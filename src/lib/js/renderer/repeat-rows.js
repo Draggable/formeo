@@ -12,11 +12,9 @@ import {
 } from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
 import { looksLikeArrayIndex } from '../common/utils/index.mjs'
-import { HIDDEN_BY_CONDITION_SELECTOR } from '../constants.js'
-import { SKIP_DISABLED_ATTR, SKIPPABLE_CONTROLS, suspendRequired } from './helpers.js'
 import { CLONE_ATTR } from './input-groups.js'
 import { focusFirst, SKIPPED_ATTR } from './pagination.js'
-import { announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
+import { adoptInto, announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
 
 /**
  * A repeating table's rows at run time (#349 phase 3). Every row is built by matrixRowConfig from the field data the
@@ -78,25 +76,6 @@ export function syncLimits(wrap) {
 }
 
 /**
- * A row built after render takes on the state around it: not required inside a condition-hidden table, disabled on a
- * skipped page (marked, so bringing the page back re-enables it)
- * @param {HTMLTableRowElement} tr
- */
-export function adoptRow(tr) {
-  if (tr.closest(HIDDEN_BY_CONDITION_SELECTOR)) {
-    suspendRequired(tr)
-  }
-  if (tr.closest(`[${SKIPPED_ATTR}]`)) {
-    for (const control of tr.querySelectorAll(SKIPPABLE_CONTROLS)) {
-      if (!control.disabled) {
-        control.disabled = true
-        control.setAttribute(SKIP_DISABLED_ATTR, '')
-      }
-    }
-  }
-}
-
-/**
  * Appends a row, unless the table is at its max
  * @param {HTMLElement} wrap
  * @param {FormeoRenderer} renderer
@@ -115,7 +94,7 @@ export function addRow(wrap, renderer, { interactive = true, sync = true } = {})
   }
   const tr = buildRow(field, r)
   body.append(tr)
-  adoptRow(tr)
+  adoptInto(tr)
   if (sync) {
     syncLimits(wrap)
   }
@@ -166,7 +145,7 @@ export function removeRow(tr, renderer) {
     const fresh = buildRow(field, later.sectionRowIndex)
     carryValues(later, fresh)
     later.replaceWith(fresh)
-    adoptRow(fresh)
+    adoptInto(fresh)
     if (fresh.hasAttribute(REQUIRED_ROW_ATTR)) {
       dom.syncCheckboxGroupRequired(fresh)
     }

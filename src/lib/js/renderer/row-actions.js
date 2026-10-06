@@ -1,3 +1,7 @@
+import { HIDDEN_BY_CONDITION_SELECTOR } from '../constants.js'
+import { SKIP_DISABLED_ATTR, SKIPPABLE_CONTROLS, suspendRequired } from './helpers.js'
+import { SKIPPED_ATTR } from './pagination.js'
+
 /**
  * What adding and removing rows share (#349 phase 3): a repeating table's rows and input groups' copies alike
  */
@@ -49,4 +53,23 @@ export function focusAfterRemove(buttons, index, fallback) {
 export function dispatchRowsChange(target, action, index) {
   const { CustomEvent } = target.ownerDocument.defaultView
   target.dispatchEvent(new CustomEvent(ROWS_CHANGE_EVENT, { bubbles: true, detail: { action, index } }))
+}
+
+/**
+ * A row or group built after render takes on the state around it: not required inside a condition-hidden container,
+ * disabled on a skipped page (marked, so bringing the page back re-enables it). Call it once the node is in place.
+ * @param {HTMLElement} node
+ */
+export function adoptInto(node) {
+  if (node.closest(HIDDEN_BY_CONDITION_SELECTOR)) {
+    suspendRequired(node)
+  }
+  if (node.closest(`[${SKIPPED_ATTR}]`)) {
+    for (const control of node.querySelectorAll(SKIPPABLE_CONTROLS)) {
+      if (!control.disabled) {
+        control.disabled = true
+        control.setAttribute(SKIP_DISABLED_ATTR, '')
+      }
+    }
+  }
 }
