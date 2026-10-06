@@ -295,7 +295,7 @@ export default class FormeoRenderer {
     // and input groups the copies their answers name
     growGroupsForAnswers(this, form, data ?? {})
     for (const key of keys) {
-      const fields = controlsNamed(form, key) ?? controlsNamed(form, `${key}[]`)
+      const fields = controlsNamed(form, key) ?? controlsNamed(form, `${key}[]`) ?? controlWithId(form, key)
       if (!fields) {
         unmatched.push(key)
         continue
@@ -1015,7 +1015,25 @@ const controlsNamed = (form, name) => {
   if (!named.length) {
     return null
   }
-  return isDomNode(found) || named.length === found.length ? found : named
+  if (isDomNode(found) || named.length === found.length) {
+    return found
+  }
+  // one name match among id matches is that control, not a one-item collection (a multiple select takes an array)
+  return named.length === 1 ? named[0] : named
+}
+
+/**
+ * The text-like control or select whose id is `id`, so an answer saved under the stable `f-<fieldId>` still fills an
+ * unnamed field whose name came from its label. Tried after every name lookup, and never a checkbox or radio: an
+ * option input's id (`f-<fieldId>-<n>`) is what an input group copy's grouped name looks like.
+ * @param {HTMLFormElement} form
+ * @param {String} id
+ * @return {Element|null}
+ */
+const controlWithId = (form, id) => {
+  const found = form.elements.namedItem(id)
+  const isTextOrSelect = isDomNode(found) && found.id === id && ['input', 'select', 'textarea'].includes(tagName(found))
+  return isTextOrSelect && !isCheckable(found) ? found : null
 }
 
 const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)
