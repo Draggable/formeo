@@ -973,7 +973,8 @@ export interface FormeoRendererEvents {
   onRender?: (event: { form: HTMLFormElement; renderer: FormeoRenderer; formData: FormeoFormData }) => void
   /**
    * Every `input` event in the form, and every `formeo:rowschange` (a `CustomEvent<RowsChangeDetail>`) when a repeating
-   * table row or an input group copy is added or removed.
+   * table row or an input group copy is added or removed. For `formeo:rowschange`, `target` is the table's or group's
+   * wrapper, which has no `name`: check `event.type` before reading `target.name`.
    */
   onChange?: (event: { event: Event; target: EventTarget | null; form: HTMLFormElement; userData: UserData }) => void
   /** The form's native `submit` event; formeo does not call `preventDefault()`. */

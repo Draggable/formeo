@@ -260,7 +260,8 @@ adds rows quietly: no focus move, announcement or `formeo:rowschange`.
 ### Using it
 
 - **+ Row** adds a row and moves focus to its first input. Each row's remove button ("Remove row 2") removes it, and
-  focus moves to the next row's remove button, else the previous row's, else **+ Row**. A screen reader hears "Item 3 added" or "Item 2 removed".
+  focus moves to the next row's remove button, else the previous row's, else **+ Row**. A screen reader hears "Item 3
+  added" or "Item 2 removed".
 - Adding or removing a row fires a bubbling `formeo:rowschange` event (`detail: { action: 'add' | 'remove', index }`)
   on the table's wrapper, and the renderer's `onChange` receives it, so autosave sees the change.
 - **Conditions** can show or hide the whole table. Rows and cells of a repeating table can't be condition sources or

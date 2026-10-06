@@ -293,7 +293,7 @@ Fires on every `input` event within the rendered form, including one fired by a 
 
 For a multi-option checkbox group, `target.name` ends in `[]` but the matching `userData` key does not. Look it up with `userData[target.name.replace(/\[\]$/, '')]`.
 
-`onChange` also receives a `formeo:rowschange` event (`event.detail`: `{ action: 'add' | 'remove', index }`) when a repeating table row or an input group copy is added or removed.
+`onChange` also receives a `formeo:rowschange` event (`event.detail`: `{ action: 'add' | 'remove', index }`) when a repeating table row or an input group copy is added or removed. Its `target` is the table's or group's wrapper, which has no `name`, so check `event.type === 'formeo:rowschange'` before reading `target.name`.
 
 ### `onSubmit({ event, form, userData })`
 
@@ -1071,8 +1071,9 @@ and each copy gets a remove button ("Remove group 2").
 
 **Names.** A copy's text inputs, textareas and single selects keep the original's name, so `userData` holds an array:
 `{ phone: ['555-1234', '555-9876'] }`. Radio and checkbox groups, multiple selects and matrices can't share a name, so
-copy n uses `<name>-<n>`, where `<name>` is the configured name without a trailing `[]` (`contact-1`, `contact-2`, or the field's `f-<id>` when it has no name). Removing a copy
-renumbers the later ones. `userData` shows checkbox groups without the `[]` suffix, so a copy's key reads `likes-2`.
+copy n uses `<name>-<n>`, where `<name>` is the configured name without a trailing `[]` (`contact-1`, `contact-2`, or
+the field's `f-<id>` when it has no name). Removing a copy renumbers the later ones. `userData` shows checkbox groups
+without the `[]` suffix, so a copy's key reads `likes-2`.
 
 **Restoring answers.** Setting `renderer.userData` creates the copies a saved answer needs (an array's extra values, or
 the highest `-<n>`), then fills them. Input groups have no maximum, so the setter creates at most 500 copies. Keys past
@@ -1081,8 +1082,8 @@ example `phone (values 502-600)`). It never removes copies. A copy created this 
 hidden-by-condition or skipped-page state, like one added by click.
 
 **Accessibility and events.** Focus moves to a new copy's first control, or after a remove to the next group's remove
-button, else the previous one's, else the Add button, and a status region announces the change. Adding or removing a copy fires `formeo:rowschange` on the
-group's wrapper, and `onChange` receives it.
+button, else the previous one's, else the Add button, and a status region announces the change. Adding or removing a
+copy fires `formeo:rowschange` on the group's wrapper, and `onChange` receives it.
 
 **Limits.**
 
