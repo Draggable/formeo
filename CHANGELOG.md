@@ -1,3 +1,10 @@
+## [5.19.1](https://github.com/Draggable/formeo/compare/v5.19.0...v5.19.1) (2026-10-06)
+
+
+### Bug Fixes
+
+* **renderer:** render again from the stored formData without emptying the form ([#532](https://github.com/Draggable/formeo/issues/532)) ([0417933](https://github.com/Draggable/formeo/commit/0417933d8e4d91f859f87c8f343bb1059c3d43f9))
+
 # [5.19.0](https://github.com/Draggable/formeo/compare/v5.18.0...v5.19.0) (2026-10-06)
 
 
