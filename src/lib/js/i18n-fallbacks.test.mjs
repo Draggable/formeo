@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert'
 import { describe, it } from 'node:test'
 import { enUS } from '@draggable/formeo-languages'
+import { TABLE_TEXT } from './common/table-text.mjs'
 
 /**
  * Keys used as `i18n.get(key, vars) || '<English fallback>'` across the editor, until
@@ -18,6 +19,14 @@ const FALLBACKS = {
 describe('i18n fallbacks (#331)', () => {
   it('@draggable/formeo-languages ships reorderOption, attributeNameRequired, selectConfigKey and duplicateFieldName, matching the English fallback', () => {
     for (const [key, text] of Object.entries(FALLBACKS)) {
+      assert.equal(enUS[key], text, key)
+    }
+  })
+})
+
+describe('i18n fallbacks (#349)', () => {
+  it('@draggable/formeo-languages ships every TABLE_TEXT key, matching the English fallback', () => {
+    for (const [key, text] of Object.entries(TABLE_TEXT)) {
       assert.equal(enUS[key], text, key)
     }
   })

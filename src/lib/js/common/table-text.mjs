@@ -3,7 +3,7 @@ import { fillTokens } from './utils/string.mjs'
 
 /**
  * English fallbacks for the table element's strings (#349), for locales that don't have them yet.
- * @draggable/formeo-languages ships these keys from the releases after Draggable/formeo#349 phases 1 and 2.
+ * @draggable/formeo-languages ships these keys from 3.10.2 (pinned in i18n-fallbacks.test.mjs).
  */
 export const TABLE_TEXT = Object.freeze({
   'controls.form.matrix': 'Matrix',
