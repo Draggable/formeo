@@ -9,6 +9,7 @@ import { labelWrapClassNames, resolveLabelPosition } from '../common/label-posit
 import { fetchDependencies } from '../common/loaders.js'
 import {
   hasInputs,
+  inputColumns,
   isTableField,
   normalizeTable,
   parseMatrixKey,
@@ -240,7 +241,9 @@ export default class FormeoRenderer {
       }
       const table = withKeys(normalizeTable(component.table))
       const r = table.rows.findIndex(row => row.value === parsed.row)
-      const c = parsed.column === null ? -1 : table.columns.findIndex(column => column.value === parsed.column)
+      // only input columns post answers; a column switched back to static keeps a value an input column may reuse
+      const c =
+        parsed.column === null ? -1 : (inputColumns(table).find(i => table.columns[i].value === parsed.column) ?? -1)
       if (r === -1 || (parsed.column !== null && c === -1)) {
         continue
       }
@@ -607,8 +610,9 @@ export default class FormeoRenderer {
     const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
     const updatedAttrs = { ...attrs, 'data-clone-of': id }
 
-    if (rest.options && ['checkbox', 'radio'].includes(attrs.type)) {
-      // option groups: drop the name so the clone falls back to its own id; a shared radio name would link the groups
+    if ((rest.options && ['checkbox', 'radio'].includes(attrs.type)) || isTableField(rest)) {
+      // option groups and matrices: drop the name so the clone falls back to its own id; a shared radio name would
+      // link the groups
       delete updatedAttrs.name
     } else if (rest.tag === 'input') {
       updatedAttrs.name = getName(this.components[componentId])

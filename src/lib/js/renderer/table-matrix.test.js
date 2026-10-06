@@ -145,6 +145,15 @@ describe('matrix answers (#349 phase 2)', () => {
     assert.deepEqual(labels, ['Survey: Row 1, Comment', 'Survey: Row 2, Comment'])
   })
 
+  test('userFormData labels a cell by its input column, not a static column that kept the same value', () => {
+    const table = mixed()
+    // a column switched back to static keeps its old value, which a later input column may reuse
+    table.columns.splice(1, 0, { label: 'Old', value: 'comment' })
+    for (const row of table.rows) row.cells.splice(1, 0, '')
+    const renderer = render(pagesOf(matrixField('m1', table)))
+    assert.equal(renderer.userFormData.find(({ key }) => key === 'f-m1[speed][comment]').label, 'Visit: Speed, Comment')
+  })
+
   test('an unmatched matrix-looking key keeps an empty userFormData label', () => {
     const renderer = render(pagesOf(matrixField('m1')))
     $('form').append(Object.assign(window.document.createElement('input'), { name: 'f-m1[nope]', value: 'x' }))
@@ -226,6 +235,17 @@ describe('matrix answers (#349 phase 2)', () => {
     const clones = radios.filter(name => !name.startsWith('f-m1['))
     assert.equal(clones.length, 4)
     assert.ok(clones.every(name => /^f-[^[]+\[speed\]$|^f-[^[]+\[price\]$/.test(name)))
+  })
+
+  test('a named matrix in an input group row clones under its own id, so its radios form their own groups', () => {
+    const data = pagesOf(matrixField('m1', mixed(), { attrs: { className: '', name: 'visit' } }))
+    data.rows['r-1'].config = { inputGroup: true }
+    render(data)
+    $('.add-input-group').click()
+    const names = [...container.querySelectorAll('input')].map(input => input.name)
+    const clones = names.filter(name => !name.startsWith('visit['))
+    assert.equal(clones.length, names.length / 2)
+    assert.ok(clones.every(name => /^f-[^[]+\[/.test(name)))
   })
 
   describe('row and cell conditions', () => {
@@ -369,6 +389,28 @@ describe('matrix answers (#349 phase 2)', () => {
       type('#f-n1', 'show')
       assert.equal($('#f-m1-0-4').required, false)
       assert.equal($('#f-m1-0-5').required, false)
+    })
+
+    test('a checked checkbox cell that a condition hides no longer answers its required row', () => {
+      const table = mixed()
+      table.columns.push({ label: 'Gift', value: 'gift', input: 'checkbox' })
+      for (const row of table.rows) row.cells.push('')
+      render(
+        pagesOf({
+          ...matrixField('m1', table),
+          ...textField('n1', [
+            {
+              if: [when('fields.n1', 'value', 'hide')],
+              then: [act('fields.m1.table.rows[0].cells[4]', 'isNotVisible')],
+            },
+          ]),
+        })
+      )
+      check('#f-m1-0-4')
+      assert.equal($('#f-m1-0-5').required, false)
+      type('#f-n1', 'hide')
+      assert.equal($('#f-m1-0-4').required, false)
+      assert.equal($('#f-m1-0-5').required, true)
     })
 
     test('a checkbox cell hidden then shown with nothing checked ends required again', () => {
