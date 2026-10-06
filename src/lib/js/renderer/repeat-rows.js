@@ -93,9 +93,10 @@ export function adoptRow(tr) {
  * @param {FormeoRenderer} renderer
  * @param {Object} [opts]
  * @param {Boolean} [opts.interactive] focus, announce and fire formeo:rowschange; false for the userData setter
+ * @param {Boolean} [opts.sync] re-sync the buttons' limits; setRowCount turns it off and syncs once after its loop
  * @return {HTMLTableRowElement|null} the new row
  */
-export function addRow(wrap, renderer, { interactive = true } = {}) {
+export function addRow(wrap, renderer, { interactive = true, sync = true } = {}) {
   const field = fieldOf(wrap, renderer)
   const body = bodyOf(wrap)
   const { max } = limitsOf(wrap)
@@ -106,7 +107,9 @@ export function addRow(wrap, renderer, { interactive = true } = {}) {
   const tr = buildRow(field, r)
   body.append(tr)
   adoptRow(tr)
-  syncLimits(wrap)
+  if (sync) {
+    syncLimits(wrap)
+  }
   if (interactive) {
     focusFirst(tr)
     announce(
@@ -199,10 +202,12 @@ export function setRowCount(wrap, count, renderer) {
   const { max } = limitsOf(wrap)
   const target = Math.min(count, max ?? SETTER_ROW_LIMIT)
   while (rowCount(wrap) < target) {
-    if (!addRow(wrap, renderer, { interactive: false })) {
+    if (!addRow(wrap, renderer, { interactive: false, sync: false })) {
       break
     }
   }
+  // once, not per row: syncLimits walks the whole table
+  syncLimits(wrap)
   return rowCount(wrap)
 }
 

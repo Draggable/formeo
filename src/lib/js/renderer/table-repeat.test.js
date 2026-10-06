@@ -294,6 +294,18 @@ describe('repeating rows (#349 phase 3)', () => {
     assert.notEqual(window.document.activeElement, rows()[1].querySelector('input'), 'the setter never moves focus')
   })
 
+  test('the setter grows quietly: no rowschange event, no onChange, no announcement', () => {
+    const changes = []
+    const events = []
+    const renderer = render(pagesOf(repeatField('t1')), { events: { onChange: detail => changes.push(detail) } })
+    $('form').addEventListener('formeo:rowschange', event => events.push(event))
+    renderer.userData = { 'order[2][qty]': 'x' }
+    assert.equal(rows().length, 3)
+    assert.equal(events.length, 0)
+    assert.equal(changes.length, 0)
+    assert.equal(status().textContent, '')
+  })
+
   test('the setter never shrinks the table and stops at max', t => {
     const warn = t.mock.method(console, 'warn', () => {})
     const renderer = render(pagesOf(repeatField('t1', order({ min: 2, max: 3 }))))
