@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.18.0
+Version: 5.19.0
 Author: Draggable https://draggable.io
 */
 
@@ -100,6 +100,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Of",
 		"condition.type.then": "Toe",
 		"condition.value.placeholder": "waarde",
+		"config.labelPosition": "Etiketposisie",
 		"config.other": "Ander opsie",
 		"config.otherLabel": "Ander opsie-etiket",
 		confirmClearAll: "Is jy seker jy wil alle velde verwyder?",
@@ -116,6 +117,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Versteek Input",
 		"controls.form.input.number": "aantal",
 		"controls.form.input.text": "Teksinvoer",
+		"controls.form.matrix": "Matriks",
 		"controls.form.radio-group": "Radio Group",
 		"controls.form.select": "Kies",
 		"controls.form.textarea": "textarea",
@@ -125,6 +127,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "deler",
 		"controls.html.header": "kop",
 		"controls.html.paragraph": "paragraaf",
+		"controls.html.table": "Tabel",
 		"controls.layout.column": "kolom",
 		"controls.layout.row": "ry",
 		copy: "Kopieer na Klembord",
@@ -163,6 +166,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Etiket",
 		labelCount: "{label} {count}",
 		labelEmpty: "Veldetiket kan nie leeg wees nie",
+		"labelPosition.after": "Na",
+		"labelPosition.before": "Voor",
+		"labelPosition.bottom": "Onderkant",
+		"labelPosition.top": "Bo",
 		"lang.af": "Afrikaans",
 		"lang.ar": "Arabies",
 		"lang.cs": "Tsjeggies",
@@ -228,6 +235,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "opset",
 		"panel.label.meta": "meta",
 		"panel.label.options": "opsies",
+		"panel.label.table": "Tabel",
 		"panelEditButtons.attrs": "+ Attribuut",
 		"panelEditButtons.conditions": "+ Toestand",
 		"panelEditButtons.config": "+ Konfigurasie",
@@ -282,6 +290,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "waarskuwing",
 		subtype: "tipe",
 		success: "sukses",
+		"table.addColumn": "+ Kolom",
+		"table.addRow": "+ Ry",
+		"table.caption": "Onderskrif",
+		"table.cell": "Ry {row}, kolom {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Kolom {column} invoer",
+		"table.columnLabel": "Kolom {column} opskrif",
+		"table.columnValue": "Kolom {column} waarde",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Koptekstry",
+		"table.headerRowLocked": "Invoerkolomme benodig 'n opskrifry",
+		"table.input.checkbox": "Merkblokkie",
+		"table.input.radio": "Radio",
+		"table.input.static": "Statiese teks",
+		"table.input.text": "Teksveld",
+		"table.newColumn": "Kolom {column}",
+		"table.newRow": "Ry {row}",
+		"table.removeColumn": "Verwyder kolom {column}",
+		"table.removeRow": "Verwyder ry {row}",
+		"table.required": "Vereis",
+		"table.rowHeaders": "Ry-opskrifte",
+		"table.rowRequired": "Ry {row} word vereis",
+		"table.rowValue": "Ry {row} waarde",
+		"table.value": "Waarde",
 		text: "Teksveld",
 		then: "dan",
 		"then.condition.target.placeholder": "teiken",
@@ -353,6 +386,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "أو",
 		"condition.type.then": "ثم",
 		"condition.value.placeholder": "قيمة",
+		"config.labelPosition": "موضع الملصق",
 		"config.other": "خيار آخر",
 		"config.otherLabel": "خيار آخر",
 		confirmClearAll: "هل أنت متأكد أنك تريد إزالة كافة الحقول؟",
@@ -369,6 +403,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "المدخلات المخفية",
 		"controls.form.input.number": "رقم",
 		"controls.form.input.text": "إدخال النص",
+		"controls.form.matrix": "المصفوفة",
 		"controls.form.radio-group": "مجموعة الراديو",
 		"controls.form.select": "يختار",
 		"controls.form.textarea": "منطقة النص",
@@ -378,6 +413,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "فاصل",
 		"controls.html.header": "رأس الصفحة",
 		"controls.html.paragraph": "فقرة",
+		"controls.html.table": "جدول",
 		"controls.layout.column": "عمود",
 		"controls.layout.row": "صف",
 		copy: "نسخ إلى الحافظة",
@@ -416,6 +452,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "التسمية",
 		labelCount: "{label} {count}",
 		labelEmpty: "التسمية لا يمكن أن يكون فارغا",
+		"labelPosition.after": "بعد",
+		"labelPosition.before": "قبل",
+		"labelPosition.bottom": "أسفل",
+		"labelPosition.top": "أعلى",
 		"lang.af": "الأفريقي",
 		"lang.ar": "عربي",
 		"lang.cs": "التشيكية",
@@ -481,6 +521,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "إعدادات",
 		"panel.label.meta": "ميتا",
 		"panel.label.options": "خيارات",
+		"panel.label.table": "جدول",
 		"panelEditButtons.attrs": "+ السمة",
 		"panelEditButtons.conditions": "+ الحالة",
 		"panelEditButtons.config": "+ التكوين",
@@ -535,6 +576,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "إعلام",
 		subtype: "نوع",
 		success: "نجاح",
+		"table.addColumn": "+ عمود",
+		"table.addRow": "+ صف",
+		"table.caption": "التسمية التوضيحية",
+		"table.cell": "الصف {row}، العمود {column}",
+		"table.cellInput": "{row}، {column}",
+		"table.columnInput": "إدخال العمود {column}",
+		"table.columnLabel": "رأس العمود {column}",
+		"table.columnValue": "قيمة العمود {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "صف العناوين",
+		"table.headerRowLocked": "تحتاج أعمدة الإدخال إلى صف رأس",
+		"table.input.checkbox": "مربع اختيار",
+		"table.input.radio": "راديو",
+		"table.input.static": "نص ثابت",
+		"table.input.text": "حقل نصي",
+		"table.newColumn": "العمود {column}",
+		"table.newRow": "الصف {row}",
+		"table.removeColumn": "إزالة العمود {column}",
+		"table.removeRow": "إزالة الصف {row}",
+		"table.required": "مطلوب",
+		"table.rowHeaders": "عناوين الصفوف",
+		"table.rowRequired": "الصف {row} مطلوب",
+		"table.rowValue": "قيمة الصف {row}",
+		"table.value": "قيمة",
 		text: "الميدان النص",
 		then: "ثم",
 		"then.condition.target.placeholder": "هدف",
@@ -606,6 +672,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Nebo",
 		"condition.type.then": "Pak",
 		"condition.value.placeholder": "hodnota",
+		"config.labelPosition": "Pozice štítku",
 		"config.other": "Jiná možnost",
 		"config.otherLabel": "Popisek jiné možnosti",
 		confirmClearAll: "Opravdu chcete odstranit všechna pole?",
@@ -622,6 +689,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Skrytý vstup",
 		"controls.form.input.number": "Číslo",
 		"controls.form.input.text": "Textový vstup",
+		"controls.form.matrix": "Matice",
 		"controls.form.radio-group": "Rozhlasová skupina",
 		"controls.form.select": "Vybrat",
 		"controls.form.textarea": "TextArea",
@@ -631,6 +699,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Dělič",
 		"controls.html.header": "Záhlaví",
 		"controls.html.paragraph": "Odstavec",
+		"controls.html.table": "Tabulka",
 		"controls.layout.column": "Sloupec",
 		"controls.layout.row": "Řádek",
 		copy: "Kopírovat do schránky",
@@ -669,6 +738,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Označení",
 		labelCount: "{label} {count}",
 		labelEmpty: "Štítek pole nemůže být prázdný",
+		"labelPosition.after": "Po",
+		"labelPosition.before": "Před",
+		"labelPosition.bottom": "Dole",
+		"labelPosition.top": "Nahoře",
 		"lang.af": "Afričan",
 		"lang.ar": "arabština",
 		"lang.cs": "čeština",
@@ -734,6 +807,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Konfigurace",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Možnosti",
+		"panel.label.table": "Tabulka",
 		"panelEditButtons.attrs": "+ Atribut",
 		"panelEditButtons.conditions": "+ Stav",
 		"panelEditButtons.config": "+ Konfigurace",
@@ -788,6 +862,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Varování",
 		subtype: "Typ",
 		success: "Úspěch",
+		"table.addColumn": "+ Sloupec",
+		"table.addRow": "+ Řádek",
+		"table.caption": "Titulek",
+		"table.cell": "Řádek {row}, sloupec {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Vstupní sloupec {column}",
+		"table.columnLabel": "Záhlaví sloupce {column}",
+		"table.columnValue": "Hodnota ve sloupci {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Řádek záhlaví",
+		"table.headerRowLocked": "Vstupní sloupce potřebují řádek záhlaví",
+		"table.input.checkbox": "Zaškrtávací políčko",
+		"table.input.radio": "Přepínač",
+		"table.input.static": "Statický text",
+		"table.input.text": "Textové pole",
+		"table.newColumn": "Sloupec {column}",
+		"table.newRow": "Řádek {row}",
+		"table.removeColumn": "Odebrat sloupec {column}",
+		"table.removeRow": "Odebrat řádek {row}",
+		"table.required": "Povinné",
+		"table.rowHeaders": "Záhlaví řádků",
+		"table.rowRequired": "Řádek {row} je povinný",
+		"table.rowValue": "Hodnota řádku {row}",
+		"table.value": "Hodnota",
 		text: "Textové pole",
 		then: "Pak",
 		"then.condition.target.placeholder": "cíl",
@@ -859,6 +958,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Oder",
 		"condition.type.then": "Dann",
 		"condition.value.placeholder": "Wert",
+		"config.labelPosition": "Position des Etiketts",
 		"config.other": "Andere Option",
 		"config.otherLabel": "Bezeichnung für andere Optionen",
 		confirmClearAll: "Möchten Sie wirklich alle Felder entfernen?",
@@ -875,6 +975,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Versteckte Eingabe",
 		"controls.form.input.number": "Nummer",
 		"controls.form.input.text": "Text Eingabe",
+		"controls.form.matrix": "Matrix",
 		"controls.form.radio-group": "Radio-Gruppe",
 		"controls.form.select": "Wählen",
 		"controls.form.textarea": "TextArea",
@@ -884,6 +985,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Teiler",
 		"controls.html.header": "Header",
 		"controls.html.paragraph": "Absatz",
+		"controls.html.table": "Tabelle",
 		"controls.layout.column": "Säule",
 		"controls.layout.row": "Reihe",
 		copy: "In die Zwischenablage kopieren",
@@ -922,6 +1024,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Etikette",
 		labelCount: "{label} {count}",
 		labelEmpty: "Feldbezeichnung darf nicht leer sein",
+		"labelPosition.after": "Danach",
+		"labelPosition.before": "Davor",
+		"labelPosition.bottom": "Unten",
+		"labelPosition.top": "Oben",
 		"lang.af": "afrikanisch",
 		"lang.ar": "Arabisch",
 		"lang.cs": "tschechisch",
@@ -987,6 +1093,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Aufbau",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Optionen",
+		"panel.label.table": "Tabelle",
 		"panelEditButtons.attrs": "+ Attribut",
 		"panelEditButtons.conditions": "+ Bedingung",
 		"panelEditButtons.config": "+ Konfiguration",
@@ -1041,6 +1148,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Warnung",
 		subtype: "Art",
 		success: "Erfolg",
+		"table.addColumn": "+ Spalte",
+		"table.addRow": "+ Zeile",
+		"table.caption": "Tabellenbeschriftung",
+		"table.cell": "Zeile {row}, Spalte {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Eingabe für Spalte {column}",
+		"table.columnLabel": "Spaltenüberschrift {column}",
+		"table.columnValue": "Wert der Spalte {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Kopfzeile",
+		"table.headerRowLocked": "Eingabespalten benötigen eine Kopfzeile",
+		"table.input.checkbox": "Kontrollkästchen",
+		"table.input.radio": "Optionsfeld",
+		"table.input.static": "Statischer Text",
+		"table.input.text": "Textfeld",
+		"table.newColumn": "Spalte {column}",
+		"table.newRow": "Zeile {row}",
+		"table.removeColumn": "Spalte {column} entfernen",
+		"table.removeRow": "Zeile {row} entfernen",
+		"table.required": "Erforderlich",
+		"table.rowHeaders": "Zeilenüberschriften",
+		"table.rowRequired": "Zeile {row} erforderlich",
+		"table.rowValue": "Wert der Zeile {row}",
+		"table.value": "Wert",
 		text: "Textfeld",
 		then: "Dann",
 		"then.condition.target.placeholder": "Ziel",
@@ -1109,6 +1241,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Or",
 		"condition.type.then": "Then",
 		"condition.value.placeholder": "value",
+		"config.labelPosition": "Label position",
 		"config.other": "Other option",
 		"config.otherLabel": "Other option label",
 		confirmClearAll: "Are you sure you want to remove all fields?",
@@ -1125,6 +1258,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Hidden Input",
 		"controls.form.input.number": "Number",
 		"controls.form.input.text": "Text Input",
+		"controls.form.matrix": "Matrix",
 		"controls.form.radio-group": "Radio Group",
 		"controls.form.select": "Select",
 		"controls.form.textarea": "TextArea",
@@ -1134,6 +1268,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Divider",
 		"controls.html.header": "Header",
 		"controls.html.paragraph": "Paragraph",
+		"controls.html.table": "Table",
 		"controls.layout.column": "Column",
 		"controls.layout.row": "Row",
 		copy: "Copy To Clipboard",
@@ -1172,6 +1307,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Label",
 		labelCount: "{label} {count}",
 		labelEmpty: "Field Label cannot be empty",
+		"labelPosition.after": "After",
+		"labelPosition.before": "Before",
+		"labelPosition.bottom": "Bottom",
+		"labelPosition.top": "Top",
 		"lang.af": "Afrikaans",
 		"lang.ar": "Arabic",
 		"lang.cs": "Czech",
@@ -1235,6 +1374,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configuration",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Options",
+		"panel.label.table": "Table",
 		"panelEditButtons.attrs": "+ Attribute",
 		"panelEditButtons.conditions": "+ Condition",
 		"panelEditButtons.options": "+ Option",
@@ -1290,6 +1430,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Warning",
 		subtype: "Type",
 		success: "Success",
+		"table.addColumn": "+ Column",
+		"table.addRow": "+ Row",
+		"table.caption": "Caption",
+		"table.cell": "Row {row}, column {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Column {column} input",
+		"table.columnLabel": "Column {column} header",
+		"table.columnValue": "Column {column} value",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Header row",
+		"table.headerRowLocked": "Input columns need a header row",
+		"table.input.checkbox": "Checkbox",
+		"table.input.radio": "Radio",
+		"table.input.static": "Static text",
+		"table.input.text": "Text field",
+		"table.newColumn": "Column {column}",
+		"table.newRow": "Row {row}",
+		"table.removeColumn": "Remove column {column}",
+		"table.removeRow": "Remove row {row}",
+		"table.required": "Required",
+		"table.rowHeaders": "Row headers",
+		"table.rowRequired": "Row {row} required",
+		"table.rowValue": "Row {row} value",
+		"table.value": "Value",
 		text: "Text Field",
 		then: "Then",
 		"then.condition.target.placeholder": "target",
@@ -1361,6 +1526,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "O",
 		"condition.type.then": "Entonces",
 		"condition.value.placeholder": "valor",
+		"config.labelPosition": "Posición de la etiqueta",
 		"config.other": "Otra opción",
 		"config.otherLabel": "Etiqueta de otra opción",
 		confirmClearAll: "¿Estás seguro de que quieres eliminar todos los campos?",
@@ -1377,6 +1543,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Entrada oculta",
 		"controls.form.input.number": "Número",
 		"controls.form.input.text": "Entrada de texto",
+		"controls.form.matrix": "Matriz",
 		"controls.form.radio-group": "Grupo de radio",
 		"controls.form.select": "Seleccionar",
 		"controls.form.textarea": "TextArea",
@@ -1386,6 +1553,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Divisor",
 		"controls.html.header": "Encabezamiento",
 		"controls.html.paragraph": "Párrafo",
+		"controls.html.table": "Tabla",
 		"controls.layout.column": "Columna",
 		"controls.layout.row": "Fila",
 		copy: "Copiar al portapapeles",
@@ -1424,6 +1592,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Etiqueta",
 		labelCount: "{label} {count}",
 		labelEmpty: "La etiqueta de campo no puede estar vacía",
+		"labelPosition.after": "Después",
+		"labelPosition.before": "Antes",
+		"labelPosition.bottom": "Abajo",
+		"labelPosition.top": "Arriba",
 		"lang.af": "africano",
 		"lang.ar": "árabe",
 		"lang.cs": "checo",
@@ -1489,6 +1661,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configuración",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Opciones",
+		"panel.label.table": "Tabla",
 		"panelEditButtons.attrs": "+ Atributo",
 		"panelEditButtons.conditions": "+ Condición",
 		"panelEditButtons.config": "+ Configuración",
@@ -1543,6 +1716,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Advertencia",
 		subtype: "Tipo",
 		success: "Éxito",
+		"table.addColumn": "+ Columna",
+		"table.addRow": "+ Fila",
+		"table.caption": "Título de la tabla",
+		"table.cell": "Fila {row}, columna {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Columna {column} entrada",
+		"table.columnLabel": "Encabezado de columna {column}",
+		"table.columnValue": "Valor de la columna {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Fila de encabezado",
+		"table.headerRowLocked": "Las columnas de entrada necesitan una fila de encabezado.",
+		"table.input.checkbox": "Casilla de verificación",
+		"table.input.radio": "Botón de opción",
+		"table.input.static": "Texto estático",
+		"table.input.text": "Campo de texto",
+		"table.newColumn": "Columna {column}",
+		"table.newRow": "Fila {row}",
+		"table.removeColumn": "Eliminar columna {column}",
+		"table.removeRow": "Eliminar fila {row}",
+		"table.required": "Requerido",
+		"table.rowHeaders": "Encabezados de fila",
+		"table.rowRequired": "Fila {row} requerida",
+		"table.rowValue": "Valor de la fila {row}",
+		"table.value": "Valor",
 		text: "Campo de texto",
 		then: "Entonces",
 		"then.condition.target.placeholder": "objetivo",
@@ -1614,6 +1812,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "یا",
 		"condition.type.then": "سپس",
 		"condition.value.placeholder": "مقدار",
+		"config.labelPosition": "موقعیت برچسب",
 		"config.other": "گزینه دیگر",
 		"config.otherLabel": "برچسب گزینه دیگر",
 		confirmClearAll: "آیا مطمئن هستید که می خواهید همه فیلدها را حذف کنید؟",
@@ -1630,6 +1829,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "فیلد پنهان",
 		"controls.form.input.number": "عدد",
 		"controls.form.input.text": "ورودی متن",
+		"controls.form.matrix": "ماتریس",
 		"controls.form.radio-group": "گروه رادیوها",
 		"controls.form.select": "انتخاب",
 		"controls.form.textarea": "باکس متن",
@@ -1639,6 +1839,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "تقسیم کننده",
 		"controls.html.header": "سرتیتر",
 		"controls.html.paragraph": "پاراگراف",
+		"controls.html.table": "جدول",
 		"controls.layout.column": "ستون",
 		"controls.layout.row": "ردیف",
 		copy: "کپی در کلیپ بورد",
@@ -1677,6 +1878,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "برچسب",
 		labelCount: "{label} {count}",
 		labelEmpty: "برچسب فیلد نمی تواند خالی باشد",
+		"labelPosition.after": "بعد از",
+		"labelPosition.before": "قبل از",
+		"labelPosition.bottom": "پایین",
+		"labelPosition.top": "بالا",
 		"lang.af": "آفریقایی",
 		"lang.ar": "عربی",
 		"lang.cs": "چک",
@@ -1742,6 +1947,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "پیکربندی",
 		"panel.label.meta": "متا",
 		"panel.label.options": "گزینه ها",
+		"panel.label.table": "جدول",
 		"panelEditButtons.attrs": "+ ویژگی",
 		"panelEditButtons.conditions": "+ شرط",
 		"panelEditButtons.config": "+ پیکربندی",
@@ -1796,6 +2002,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "هشدار",
 		subtype: "نوع",
 		success: "موفقیت",
+		"table.addColumn": "+ ستون",
+		"table.addRow": "+ ردیف",
+		"table.caption": "عنوان",
+		"table.cell": "ردیف {row}، ستون {column}",
+		"table.cellInput": "{row}، {column}",
+		"table.columnInput": "ورودی ستون {column}",
+		"table.columnLabel": "سرستون {column}",
+		"table.columnValue": "مقدار ستون {column}",
+		"table.entryCell": "{table}: {row}، {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "ردیف سربرگ",
+		"table.headerRowLocked": "ستون‌های ورودی به یک ردیف هدر نیاز دارند.",
+		"table.input.checkbox": "کادر انتخاب",
+		"table.input.radio": "رادیو",
+		"table.input.static": "متن ثابت",
+		"table.input.text": "فیلد متنی",
+		"table.newColumn": "ستون {column}",
+		"table.newRow": "ردیف {row}",
+		"table.removeColumn": "حذف ستون {column}",
+		"table.removeRow": "حذف ردیف {row}",
+		"table.required": "مورد نیاز",
+		"table.rowHeaders": "سربرگ ردیف‌ها",
+		"table.rowRequired": "ردیف {row} مورد نیاز",
+		"table.rowValue": "مقدار ردیف {row}",
+		"table.value": "مقدار",
 		text: "فیلد متن",
 		then: "سپس",
 		"then.condition.target.placeholder": "هدف",
@@ -1867,6 +2098,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Tai",
 		"condition.type.then": "Sitten",
 		"condition.value.placeholder": "arvo",
+		"config.labelPosition": "Tunnisteen sijainti",
 		"config.other": "Muu vaihtoehto",
 		"config.otherLabel": "Muun vaihtoehdon otsikko",
 		confirmClearAll: "Haluatko varmasti poistaa kaikki kentät?",
@@ -1883,6 +2115,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Piilotettu syöttö",
 		"controls.form.input.number": "Määrä",
 		"controls.form.input.text": "Tekstinsyöttö",
+		"controls.form.matrix": "Matriisi",
 		"controls.form.radio-group": "Radioryhmä",
 		"controls.form.select": "Valitse",
 		"controls.form.textarea": "Tekstialue",
@@ -1892,6 +2125,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Jakaja",
 		"controls.html.header": "Otsikko",
 		"controls.html.paragraph": "Kohta",
+		"controls.html.table": "Taulukko",
 		"controls.layout.column": "Sarake",
 		"controls.layout.row": "Rivi",
 		copy: "Kopioi leikepöydälle",
@@ -1930,6 +2164,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Label",
 		labelCount: "{label} {count}",
 		labelEmpty: "Kentän tunniste ei voi olla tyhjä",
+		"labelPosition.after": "Jälkeen",
+		"labelPosition.before": "Ennen",
+		"labelPosition.bottom": "Alhaalla",
+		"labelPosition.top": "Ylhäällä",
 		"lang.af": "afrikkalainen",
 		"lang.ar": "arabia",
 		"lang.cs": "Tšekki",
@@ -1995,6 +2233,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Kokoonpano",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Vaihtoehdot",
+		"panel.label.table": "Taulukko",
 		"panelEditButtons.attrs": "+ Attribuutti",
 		"panelEditButtons.conditions": "+ Kunto",
 		"panelEditButtons.config": "+ Kokoonpano",
@@ -2049,6 +2288,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Varoitus",
 		subtype: "Tyyppi",
 		success: "Menestys",
+		"table.addColumn": "+ Sarake",
+		"table.addRow": "+ Rivi",
+		"table.caption": "Kuvateksti",
+		"table.cell": "Rivi {row}, sarake {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Sarakkeen {column} syöte",
+		"table.columnLabel": "Sarakkeen {column} otsikko",
+		"table.columnValue": "Sarakkeen {column} arvo",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Otsikkorivi",
+		"table.headerRowLocked": "Syöttösarakkeissa on oltava otsikkorivi",
+		"table.input.checkbox": "Valintaruutu",
+		"table.input.radio": "Radio",
+		"table.input.static": "Staattinen teksti",
+		"table.input.text": "Tekstikenttä",
+		"table.newColumn": "Sarake {column}",
+		"table.newRow": "Rivi {row}",
+		"table.removeColumn": "Poista sarake {column}",
+		"table.removeRow": "Poista rivi {row}",
+		"table.required": "Pakollinen",
+		"table.rowHeaders": "Riviotsikot",
+		"table.rowRequired": "Rivi {row} vaaditaan",
+		"table.rowValue": "Rivin {row} arvo",
+		"table.value": "Arvo",
 		text: "Tekstikenttä",
 		then: "Sitten",
 		"then.condition.target.placeholder": "tavoite",
@@ -2120,6 +2384,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Ou",
 		"condition.type.then": "Alors",
 		"condition.value.placeholder": "valeur condition",
+		"config.labelPosition": "Position de l'étiquette",
 		"config.other": "Autre option",
 		"config.otherLabel": "Autre étiquette d'option",
 		confirmClearAll: "Êtes-vous certain de vouloir supprimer tous les champs?",
@@ -2136,6 +2401,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Champ caché",
 		"controls.form.input.number": "Numéro",
 		"controls.form.input.text": "Champ de texte",
+		"controls.form.matrix": "Matrice",
 		"controls.form.radio-group": "Groupe de boutons radio",
 		"controls.form.select": "Sélection",
 		"controls.form.textarea": "Zone de texte",
@@ -2145,6 +2411,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Séparateur",
 		"controls.html.header": "Entête",
 		"controls.html.paragraph": "Paragraphe",
+		"controls.html.table": "Tableau",
 		"controls.layout.column": "Colonne",
 		"controls.layout.row": "Rang",
 		copy: "Copier au presse-papier",
@@ -2183,6 +2450,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Étiquette",
 		labelCount: "{label} {count}",
 		labelEmpty: "L'Étiquette du champ ne peut être vide",
+		"labelPosition.after": "Après",
+		"labelPosition.before": "Avant",
+		"labelPosition.bottom": "Bas",
+		"labelPosition.top": "Haut",
 		"lang.af": "africain",
 		"lang.ar": "arabe",
 		"lang.cs": "tchèque",
@@ -2248,6 +2519,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configuration",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Options",
+		"panel.label.table": "Tableau",
 		"panelEditButtons.attrs": "+ Attribut",
 		"panelEditButtons.conditions": "+ Condition",
 		"panelEditButtons.config": "+ Configuration",
@@ -2302,6 +2574,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Avertissement",
 		subtype: "Type",
 		success: "Succès",
+		"table.addColumn": "+ Colonne",
+		"table.addRow": "+ Ligne",
+		"table.caption": "Légende",
+		"table.cell": "Ligne {row}, colonne {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Colonne {column} entrée",
+		"table.columnLabel": "En-tête de colonne {column}",
+		"table.columnValue": "Valeur de la colonne {column}",
+		"table.entryCell": "{table} : {row}, {column}",
+		"table.entryRow": "{table} : {row}",
+		"table.headerRow": "Ligne d'en-tête",
+		"table.headerRowLocked": "Les colonnes de saisie nécessitent une ligne d'en-tête.",
+		"table.input.checkbox": "Case à cocher",
+		"table.input.radio": "Bouton radio",
+		"table.input.static": "Texte statique",
+		"table.input.text": "Champ de texte",
+		"table.newColumn": "Colonne {column}",
+		"table.newRow": "Ligne {row}",
+		"table.removeColumn": "Supprimer la colonne {column}",
+		"table.removeRow": "Supprimer la ligne {row}",
+		"table.required": "Requis",
+		"table.rowHeaders": "En-têtes de lignes",
+		"table.rowRequired": "Ligne {row} requise",
+		"table.rowValue": "Valeur de la ligne {row}",
+		"table.value": "Valeur",
 		text: "Champ de texte",
 		then: "Ensuite",
 		"then.condition.target.placeholder": "alors destination",
@@ -2373,6 +2670,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "אוֹ",
 		"condition.type.then": "אָז",
 		"condition.value.placeholder": "עֵרֶך",
+		"config.labelPosition": "מיקום התווית",
 		"config.other": "אפשרות אחרת",
 		"config.otherLabel": "תווית אפשרות אחרת",
 		confirmClearAll: "האם אתה בטוח שברצונך להסיר את כל השדות?",
@@ -2389,6 +2687,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "קלט מוסתר",
 		"controls.form.input.number": "מִספָּר",
 		"controls.form.input.text": "קלט טקסט",
+		"controls.form.matrix": "מַטרִיצָה",
 		"controls.form.radio-group": "קבוצת רדיו",
 		"controls.form.select": "לִבחוֹר",
 		"controls.form.textarea": "TextArea",
@@ -2398,6 +2697,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "מְחַלֵק",
 		"controls.html.header": "כּוֹתֶרֶת",
 		"controls.html.paragraph": "סָעִיף",
+		"controls.html.table": "טבלה",
 		"controls.layout.column": "עַמוּדָה",
 		"controls.layout.row": "שׁוּרָה",
 		copy: "העתק ללוח",
@@ -2436,6 +2736,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "מַדבֵּקָה",
 		labelCount: "{label} {count}",
 		labelEmpty: "תווית שדה לא יכולה להיות ריקה",
+		"labelPosition.after": "לְאַחַר",
+		"labelPosition.before": "לִפנֵי",
+		"labelPosition.bottom": "למטה",
+		"labelPosition.top": "למעלה",
 		"lang.af": "אַפְרִיקַנִי",
 		"lang.ar": "עֲרָבִית",
 		"lang.cs": "צ'כית",
@@ -2501,6 +2805,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "תְצוּרָה",
 		"panel.label.meta": "מטא",
 		"panel.label.options": "אפשרויות",
+		"panel.label.table": "טבלה",
 		"panelEditButtons.attrs": "+ תכונה",
 		"panelEditButtons.conditions": "+ מצב",
 		"panelEditButtons.config": "+ תצורה",
@@ -2555,6 +2860,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "אַזהָרָה",
 		subtype: "סוּג",
 		success: "הַצלָחָה",
+		"table.addColumn": "+ עמודה",
+		"table.addRow": "+ שורה",
+		"table.caption": "כּוֹתֶרֶת",
+		"table.cell": "שורה {row}, עמודה {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "קלט עמודה {column}",
+		"table.columnLabel": "כותרת עמודה {column}",
+		"table.columnValue": "ערך עמודה {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "שורת כותרת",
+		"table.headerRowLocked": "עמודות קלט דורשות שורת כותרת",
+		"table.input.checkbox": "תיבת סימון",
+		"table.input.radio": "רָדִיוֹ",
+		"table.input.static": "טקסט סטטי",
+		"table.input.text": "שדה טקסט",
+		"table.newColumn": "עמודה {column}",
+		"table.newRow": "שורה {row}",
+		"table.removeColumn": "הסר עמודה {column}",
+		"table.removeRow": "הסר שורה {row}",
+		"table.required": "דָרוּשׁ",
+		"table.rowHeaders": "כותרות שורות",
+		"table.rowRequired": "שורה {row} נדרשת",
+		"table.rowValue": "ערך שורה {row}",
+		"table.value": "עֵרֶך",
 		text: "שדה טקסט",
 		then: "אָז",
 		"then.condition.target.placeholder": "יַעַד",
@@ -2626,6 +2956,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "या",
 		"condition.type.then": "तब",
 		"condition.value.placeholder": "कीमत",
+		"config.labelPosition": "लेबल की स्थिति",
 		"config.other": "दूसरा विकल्प",
 		"config.otherLabel": "अन्य विकल्प लेबल",
 		confirmClearAll: "क्या आप वाकई सभी फ़ील्ड हटाना चाहते हैं?",
@@ -2642,6 +2973,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "छिपा हुआ इनपुट",
 		"controls.form.input.number": "संख्या",
 		"controls.form.input.text": "पाठ इनपुट",
+		"controls.form.matrix": "मैट्रिक्स",
 		"controls.form.radio-group": "रेडियो समूह",
 		"controls.form.select": "चुनना",
 		"controls.form.textarea": "पाठ क्षेत्र",
@@ -2651,6 +2983,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "डिवाइडर",
 		"controls.html.header": "हैडर",
 		"controls.html.paragraph": "अनुच्छेद",
+		"controls.html.table": "तालिका",
 		"controls.layout.column": "स्तंभ",
 		"controls.layout.row": "पंक्ति",
 		copy: "क्लिपबोर्ड पर कॉपी करें",
@@ -2689,6 +3022,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "लेबल",
 		labelCount: "{label} {count}",
 		labelEmpty: "फ़ील्ड लेबल रिक्त नहीं हो सकता",
+		"labelPosition.after": "बाद",
+		"labelPosition.before": "पहले",
+		"labelPosition.bottom": "तल",
+		"labelPosition.top": "शीर्ष",
 		"lang.af": "अफ़्रीकी",
 		"lang.ar": "अरबी",
 		"lang.cs": "चेक",
@@ -2754,6 +3091,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "विन्यास",
 		"panel.label.meta": "मेटा",
 		"panel.label.options": "विकल्प",
+		"panel.label.table": "तालिका",
 		"panelEditButtons.attrs": "+ विशेषता",
 		"panelEditButtons.conditions": "+ शर्त",
 		"panelEditButtons.config": "+ कॉन्फ़िगरेशन",
@@ -2808,6 +3146,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "चेतावनी",
 		subtype: "प्रकार",
 		success: "सफलता",
+		"table.addColumn": "+ स्तंभ",
+		"table.addRow": "+ पंक्ति",
+		"table.caption": "कैप्शन",
+		"table.cell": "पंक्ति {row}, स्तंभ {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "कॉलम {column} इनपुट",
+		"table.columnLabel": "कॉलम {column} हेडर",
+		"table.columnValue": "कॉलम {column} मान",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "शीर्ष पंक्ति",
+		"table.headerRowLocked": "इनपुट कॉलम के लिए एक हेडर पंक्ति आवश्यक है",
+		"table.input.checkbox": "चेक बॉक्स",
+		"table.input.radio": "रेडियो",
+		"table.input.static": "स्थिर पाठ",
+		"table.input.text": "टेक्स्ट फ़ील्ड",
+		"table.newColumn": "कॉलम {column}",
+		"table.newRow": "पंक्ति {row}",
+		"table.removeColumn": "कॉलम {column} हटाएँ",
+		"table.removeRow": "पंक्ति {row} हटाएँ",
+		"table.required": "आवश्यक",
+		"table.rowHeaders": "पंक्ति शीर्षक",
+		"table.rowRequired": "पंक्ति {row} आवश्यक है",
+		"table.rowValue": "पंक्ति {row} मान",
+		"table.value": "मान",
 		text: "पाठ्य से भरा",
 		then: "तब",
 		"then.condition.target.placeholder": "लक्ष्य",
@@ -2879,6 +3242,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Vagy",
 		"condition.type.then": "Majd",
 		"condition.value.placeholder": "érték",
+		"config.labelPosition": "Címke pozíciója",
 		"config.other": "Másik lehetőség",
 		"config.otherLabel": "Egyéb opciócímke",
 		confirmClearAll: "Biztosan eltávolít minden mezőt?",
@@ -2895,6 +3259,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Rejtett bemenet",
 		"controls.form.input.number": "Szám",
 		"controls.form.input.text": "Szövegbevitel",
+		"controls.form.matrix": "Mátrix",
 		"controls.form.radio-group": "Radio Group",
 		"controls.form.select": "választ",
 		"controls.form.textarea": "a szövegszerkesztő",
@@ -2904,6 +3269,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Osztó",
 		"controls.html.header": "Fejléc",
 		"controls.html.paragraph": "Bekezdés",
+		"controls.html.table": "Táblázat",
 		"controls.layout.column": "Oszlop",
 		"controls.layout.row": "Sor",
 		copy: "Másolja a vágólapra",
@@ -2942,6 +3308,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Címke",
 		labelCount: "{label} {count}",
 		labelEmpty: "A mezőcímke nem lehet üres",
+		"labelPosition.after": "Után",
+		"labelPosition.before": "Előtt",
+		"labelPosition.bottom": "Alsó",
+		"labelPosition.top": "Felső",
 		"lang.af": "afrikai",
 		"lang.ar": "arab",
 		"lang.cs": "cseh",
@@ -3007,6 +3377,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configuration",
 		"panel.label.meta": "meta",
 		"panel.label.options": "Opciók",
+		"panel.label.table": "Táblázat",
 		"panelEditButtons.attrs": "+ Attribútum",
 		"panelEditButtons.conditions": "+ Állapot",
 		"panelEditButtons.config": "+ Konfiguráció",
@@ -3061,6 +3432,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Figyelem",
 		subtype: "típus",
 		success: "Siker",
+		"table.addColumn": "+ Oszlop",
+		"table.addRow": "+ Sor",
+		"table.caption": "Felirat",
+		"table.cell": "Sor {row}, oszlop {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Oszlop {column} bemenet",
+		"table.columnLabel": "Oszlop {column} fejléc",
+		"table.columnValue": "Oszlop {column} értéke",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Fejlécsor",
+		"table.headerRowLocked": "A bemeneti oszlopokhoz fejlécsor szükséges",
+		"table.input.checkbox": "Jelölőnégyzet",
+		"table.input.radio": "Rádió",
+		"table.input.static": "Statikus szöveg",
+		"table.input.text": "Szövegmező",
+		"table.newColumn": "Oszlop {column}",
+		"table.newRow": "Sor {row}",
+		"table.removeColumn": "Oszlop {column} eltávolítása",
+		"table.removeRow": "Sor {row} eltávolítása",
+		"table.required": "Kötelező",
+		"table.rowHeaders": "Sorfejlécek",
+		"table.rowRequired": "{row} sor kötelező",
+		"table.rowValue": "Sor {row} értéke",
+		"table.value": "Érték",
 		text: "Szövegmező",
 		then: "Azután",
 		"then.condition.target.placeholder": "cél",
@@ -3132,6 +3528,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "O",
 		"condition.type.then": "Poi",
 		"condition.value.placeholder": "valore",
+		"config.labelPosition": "Posizione dell'etichetta",
 		"config.other": "Altra opzione",
 		"config.otherLabel": "Etichetta alternativa",
 		confirmClearAll: "Sei sicuro di voler rimuovere tutti i campi?",
@@ -3148,6 +3545,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Ingresso nascosto",
 		"controls.form.input.number": "Numero",
 		"controls.form.input.text": "L'immissione di testo",
+		"controls.form.matrix": "Matrice",
 		"controls.form.radio-group": "Gruppo Radio",
 		"controls.form.select": "Selezionare",
 		"controls.form.textarea": "TextArea",
@@ -3157,6 +3555,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Divisore",
 		"controls.html.header": "Intestazione",
 		"controls.html.paragraph": "Paragrafo",
+		"controls.html.table": "Tabella",
 		"controls.layout.column": "Colonna",
 		"controls.layout.row": "Riga",
 		copy: "Copia negli appunti",
@@ -3195,6 +3594,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Etichetta",
 		labelCount: "{label} {count}",
 		labelEmpty: "Field Label non può essere vuoto",
+		"labelPosition.after": "Dopo",
+		"labelPosition.before": "Prima",
+		"labelPosition.bottom": "In basso",
+		"labelPosition.top": "In alto",
 		"lang.af": "africano",
 		"lang.ar": "arabo",
 		"lang.cs": "ceco",
@@ -3260,6 +3663,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configurazione",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Opzioni",
+		"panel.label.table": "Tabella",
 		"panelEditButtons.attrs": "+ Attributo",
 		"panelEditButtons.conditions": "+ Condizione",
 		"panelEditButtons.config": "+ Configurazione",
@@ -3314,6 +3718,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "avvertimento",
 		subtype: "genere",
 		success: "Successo",
+		"table.addColumn": "+ Colonna",
+		"table.addRow": "+ Riga",
+		"table.caption": "Didascalia",
+		"table.cell": "Riga {row}, colonna {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Input della colonna {column}",
+		"table.columnLabel": "Intestazione della colonna {column}",
+		"table.columnValue": "Valore della colonna {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Riga di intestazione",
+		"table.headerRowLocked": "Le colonne di input necessitano di una riga di intestazione",
+		"table.input.checkbox": "Casella di controllo",
+		"table.input.radio": "Radio",
+		"table.input.static": "testo statico",
+		"table.input.text": "Campo di testo",
+		"table.newColumn": "Colonna {column}",
+		"table.newRow": "Riga {row}",
+		"table.removeColumn": "Rimuovi la colonna {column}",
+		"table.removeRow": "Rimuovi la riga {row}",
+		"table.required": "Necessario",
+		"table.rowHeaders": "Intestazioni di riga",
+		"table.rowRequired": "Riga {row} richiesta",
+		"table.rowValue": "Valore della riga {row}",
+		"table.value": "Valore",
 		text: "Campo di testo",
 		then: "Poi",
 		"then.condition.target.placeholder": "bersaglio",
@@ -3385,6 +3814,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "または",
 		"condition.type.then": "それから",
 		"condition.value.placeholder": "値",
+		"config.labelPosition": "ラベルの位置",
 		"config.other": "その他の選択肢",
 		"config.otherLabel": "その他のオプションラベル",
 		confirmClearAll: "すべてのフィールドを削除してもよろしいですか？",
@@ -3401,6 +3831,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "隠された入力",
 		"controls.form.input.number": "数",
 		"controls.form.input.text": "テキスト入力",
+		"controls.form.matrix": "マトリックス",
 		"controls.form.radio-group": "ラジオ・グループ",
 		"controls.form.select": "選択",
 		"controls.form.textarea": "TextArea",
@@ -3410,6 +3841,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "ディバイダー",
 		"controls.html.header": "ヘッダ",
 		"controls.html.paragraph": "段落",
+		"controls.html.table": "テーブル",
 		"controls.layout.column": "カラム",
 		"controls.layout.row": "行",
 		copy: "クリップボードにコピー",
@@ -3448,6 +3880,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "ラベル",
 		labelCount: "{label} {count}",
 		labelEmpty: "フィールドラベルを空にすることはできません",
+		"labelPosition.after": "後",
+		"labelPosition.before": "前に",
+		"labelPosition.bottom": "下",
+		"labelPosition.top": "上",
 		"lang.af": "アフリカ人",
 		"lang.ar": "アラビア語",
 		"lang.cs": "チェコ語",
@@ -3513,6 +3949,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "構成",
 		"panel.label.meta": "メタ",
 		"panel.label.options": "オプション",
+		"panel.label.table": "テーブル",
 		"panelEditButtons.attrs": "+属性",
 		"panelEditButtons.conditions": "+条件",
 		"panelEditButtons.config": "+ 構成",
@@ -3567,6 +4004,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "警告",
 		subtype: "タイプ",
 		success: "成功",
+		"table.addColumn": "+ 列",
+		"table.addRow": "+ 行",
+		"table.caption": "キャプション",
+		"table.cell": "行{row}、列{column}",
+		"table.cellInput": "{row}、{column}",
+		"table.columnInput": "列{column}入力",
+		"table.columnLabel": "列{column}ヘッダー",
+		"table.columnValue": "列{column}値",
+		"table.entryCell": "{table}: {row}、{column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "ヘッダー行",
+		"table.headerRowLocked": "入力列にはヘッダー行が必要です",
+		"table.input.checkbox": "チェックボックス",
+		"table.input.radio": "ラジオボタン",
+		"table.input.static": "静的テキスト",
+		"table.input.text": "テキストフィールド",
+		"table.newColumn": "列{column}",
+		"table.newRow": "行{row}",
+		"table.removeColumn": "列{column}を削除します",
+		"table.removeRow": "行{row}を削除します",
+		"table.required": "必須",
+		"table.rowHeaders": "行ヘッダー",
+		"table.rowRequired": "行{row}必須",
+		"table.rowValue": "行{row}値",
+		"table.value": "値",
 		text: "テキストフィールド",
 		then: "その後、",
 		"then.condition.target.placeholder": "ターゲット",
@@ -3638,6 +4100,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Eller",
 		"condition.type.then": "Da",
 		"condition.value.placeholder": "verdi",
+		"config.labelPosition": "Etikettposisjon",
 		"config.other": "Andre alternativer",
 		"config.otherLabel": "Etikett for andre alternativer",
 		confirmClearAll: "Er du sikker på at du vil fjerne alle feltene?",
@@ -3654,6 +4117,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Skjult inngang",
 		"controls.form.input.number": "Nummer",
 		"controls.form.input.text": "Tekstinngang",
+		"controls.form.matrix": "Matrise",
 		"controls.form.radio-group": "Radio gruppe",
 		"controls.form.select": "Å velge",
 		"controls.form.textarea": "Tekstfelt",
@@ -3663,6 +4127,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Deler",
 		"controls.html.header": "Overskrift",
 		"controls.html.paragraph": "Avsnitt",
+		"controls.html.table": "Tabell",
 		"controls.layout.column": "Kolonne",
 		"controls.layout.row": "Rad",
 		copy: "Kopiere til utklippstavle",
@@ -3701,6 +4166,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Merkelapp",
 		labelCount: "{label} {count}",
 		labelEmpty: "Feltetikett kan ikke være tomt",
+		"labelPosition.after": "Etter",
+		"labelPosition.before": "Før",
+		"labelPosition.bottom": "Bunn",
+		"labelPosition.top": "Topp",
 		"lang.af": "afrikansk",
 		"lang.ar": "arabisk",
 		"lang.cs": "tsjekkisk",
@@ -3766,6 +4235,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "konfigurasjon",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "alternativer",
+		"panel.label.table": "Tabell",
 		"panelEditButtons.attrs": "+ Attributt",
 		"panelEditButtons.conditions": "+ Tilstand",
 		"panelEditButtons.config": "+ Konfigurasjon",
@@ -3820,6 +4290,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Advarsel",
 		subtype: "Type",
 		success: "Suksess",
+		"table.addColumn": "+ Kolonne",
+		"table.addRow": "+ Rad",
+		"table.caption": "Tabelltittel",
+		"table.cell": "Rad {row}, kolonne {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Kolonne {column} inndata",
+		"table.columnLabel": "Kolonneoverskrift {column}",
+		"table.columnValue": "Kolonneverdi {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Overskriftsrad",
+		"table.headerRowLocked": "Inndatakolonner trenger en overskriftsrad",
+		"table.input.checkbox": "Avkrysningsboks",
+		"table.input.radio": "Radio",
+		"table.input.static": "Statisk tekst",
+		"table.input.text": "Tekstfelt",
+		"table.newColumn": "Kolonne {column}",
+		"table.newRow": "Rad {row}",
+		"table.removeColumn": "Fjern kolonne {column}",
+		"table.removeRow": "Fjern rad {row}",
+		"table.required": "Obligatorisk",
+		"table.rowHeaders": "Radoverskrifter",
+		"table.rowRequired": "Rad {row} kreves",
+		"table.rowValue": "Rad {row} verdi",
+		"table.value": "Verdi",
 		text: "Tekstfelt",
 		then: "Deretter",
 		"then.condition.target.placeholder": "mål",
@@ -3891,6 +4386,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Lub",
 		"condition.type.then": "Następnie",
 		"condition.value.placeholder": "wartość",
+		"config.labelPosition": "Pozycja etykiety",
 		"config.other": "Inna opcja",
 		"config.otherLabel": "Inna etykieta opcji",
 		confirmClearAll: "Czy na pewno chcesz usunąć wszystkie pola?",
@@ -3907,6 +4403,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Ukryte wejście",
 		"controls.form.input.number": "Numer",
 		"controls.form.input.text": "Wprowadzanie tekstu",
+		"controls.form.matrix": "Macierz",
 		"controls.form.radio-group": "Radio Group",
 		"controls.form.select": "Wybierz",
 		"controls.form.textarea": "TextArea",
@@ -3916,6 +4413,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Rozdzielacz",
 		"controls.html.header": "nagłówek",
 		"controls.html.paragraph": "Ustęp",
+		"controls.html.table": "Tabela",
 		"controls.layout.column": "Kolumna",
 		"controls.layout.row": "Rząd",
 		copy: "Skopiuj do schowka",
@@ -3954,6 +4452,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Etykieta",
 		labelCount: "{label} {count}",
 		labelEmpty: "Etykieta pola nie może być pusta",
+		"labelPosition.after": "Po",
+		"labelPosition.before": "Przed",
+		"labelPosition.bottom": "Dół",
+		"labelPosition.top": "Góra",
 		"lang.af": "afrykanin",
 		"lang.ar": "arabski",
 		"lang.cs": "czeski",
@@ -4019,6 +4521,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Konfiguracja",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Opcje",
+		"panel.label.table": "Tabela",
 		"panelEditButtons.attrs": "+ Atrybut",
 		"panelEditButtons.conditions": "+ Stan",
 		"panelEditButtons.config": "+ Konfiguracja",
@@ -4073,6 +4576,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Ostrzeżenie",
 		subtype: "Rodzaj",
 		success: "Powodzenie",
+		"table.addColumn": "+ Kolumna",
+		"table.addRow": "+ Wiersz",
+		"table.caption": "Podpis",
+		"table.cell": "Wiersz {row}, kolumna {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Kolumna {column} wejście",
+		"table.columnLabel": "Nagłówek kolumny {column}",
+		"table.columnValue": "Wartość kolumny {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Wiersz nagłówka",
+		"table.headerRowLocked": "Kolumny wejściowe wymagają wiersza nagłówka",
+		"table.input.checkbox": "Pole wyboru",
+		"table.input.radio": "Radio",
+		"table.input.static": "Tekst statyczny",
+		"table.input.text": "Pole tekstowe",
+		"table.newColumn": "Kolumna {column}",
+		"table.newRow": "Wiersz {row}",
+		"table.removeColumn": "Usuń kolumnę {column}",
+		"table.removeRow": "Usuń wiersz {row}",
+		"table.required": "Wymagany",
+		"table.rowHeaders": "Nagłówki wierszy",
+		"table.rowRequired": "Wymagany wiersz {row}",
+		"table.rowValue": "Wartość wiersza {row}",
+		"table.value": "Wartość",
 		text: "Pole tekstowe",
 		then: "Następnie",
 		"then.condition.target.placeholder": "cel",
@@ -4144,6 +4672,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Ou",
 		"condition.type.then": "Então",
 		"condition.value.placeholder": "valor",
+		"config.labelPosition": "Posição da etiqueta",
 		"config.other": "Outra opção",
 		"config.otherLabel": "Outra opção de rótulo",
 		confirmClearAll: "Tem certeza de que deseja remover todos os campos?",
@@ -4160,6 +4689,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Entrada Oculta",
 		"controls.form.input.number": "Número",
 		"controls.form.input.text": "Entrada de texto",
+		"controls.form.matrix": "Matriz",
 		"controls.form.radio-group": "Grupo de Rádio",
 		"controls.form.select": "Selecione",
 		"controls.form.textarea": "Área de texto",
@@ -4169,6 +4699,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Divisor",
 		"controls.html.header": "Cabeçalho",
 		"controls.html.paragraph": "Parágrafo",
+		"controls.html.table": "Tabela",
 		"controls.layout.column": "Coluna",
 		"controls.layout.row": "Linha",
 		copy: "Copiar para a área de transferência",
@@ -4207,6 +4738,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Rótulo",
 		labelCount: "{label} {count}",
 		labelEmpty: "O rótulo do campo não pode estar vazio",
+		"labelPosition.after": "Depois",
+		"labelPosition.before": "Antes",
+		"labelPosition.bottom": "Fundo",
+		"labelPosition.top": "Topo",
 		"lang.af": "africano",
 		"lang.ar": "árabe",
 		"lang.cs": "Checo",
@@ -4272,6 +4807,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configuração",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Opções",
+		"panel.label.table": "Tabela",
 		"panelEditButtons.attrs": "+ Atributo",
 		"panelEditButtons.conditions": "+ Condição",
 		"panelEditButtons.config": "+ Configuração",
@@ -4326,6 +4862,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Aviso",
 		subtype: "Tipo",
 		success: "Sucesso",
+		"table.addColumn": "+ Coluna",
+		"table.addRow": "+ Linha",
+		"table.caption": "Legenda",
+		"table.cell": "Linha {row}, coluna {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Entrada da coluna {column}",
+		"table.columnLabel": "Cabeçalho da coluna {column}",
+		"table.columnValue": "Valor da coluna {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Linha de cabeçalho",
+		"table.headerRowLocked": "As colunas de entrada precisam de uma linha de cabeçalho.",
+		"table.input.checkbox": "Caixa de seleção",
+		"table.input.radio": "Rádio",
+		"table.input.static": "Texto estático",
+		"table.input.text": "Campo de texto",
+		"table.newColumn": "Coluna {column}",
+		"table.newRow": "Linha {row}",
+		"table.removeColumn": "Remover coluna {column}",
+		"table.removeRow": "Remover linha {row}",
+		"table.required": "Obrigatório",
+		"table.rowHeaders": "Cabeçalhos de linha",
+		"table.rowRequired": "Linha {row} obrigatória",
+		"table.rowValue": "Valor da linha {row}",
+		"table.value": "Valor",
 		text: "Campo de texto",
 		then: "Então",
 		"then.condition.target.placeholder": "alvo",
@@ -4397,6 +4958,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Ou",
 		"condition.type.then": "Então",
 		"condition.value.placeholder": "valor",
+		"config.labelPosition": "Posição da etiqueta",
 		"config.other": "Outra opção",
 		"config.otherLabel": "Outra opção de rótulo",
 		confirmClearAll: "Tem certeza de que deseja remover todos os campos?",
@@ -4413,6 +4975,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Entrada Oculta",
 		"controls.form.input.number": "Número",
 		"controls.form.input.text": "Entrada de texto",
+		"controls.form.matrix": "Matriz",
 		"controls.form.radio-group": "Grupo de Rádio",
 		"controls.form.select": "Selecione",
 		"controls.form.textarea": "Área de texto",
@@ -4422,6 +4985,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "Divisor",
 		"controls.html.header": "Cabeçalho",
 		"controls.html.paragraph": "Parágrafo",
+		"controls.html.table": "Tabela",
 		"controls.layout.column": "Coluna",
 		"controls.layout.row": "Linha",
 		copy: "Copiar para a área de transferência",
@@ -4460,6 +5024,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Rótulo",
 		labelCount: "{label} {count}",
 		labelEmpty: "O rótulo do campo não pode estar vazio",
+		"labelPosition.after": "Depois",
+		"labelPosition.before": "Antes",
+		"labelPosition.bottom": "Fundo",
+		"labelPosition.top": "Topo",
 		"lang.af": "africano",
 		"lang.ar": "árabe",
 		"lang.cs": "Checo",
@@ -4525,6 +5093,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Configuração",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Opções",
+		"panel.label.table": "Tabela",
 		"panelEditButtons.attrs": "+ Atributo",
 		"panelEditButtons.conditions": "+ Condição",
 		"panelEditButtons.config": "+ Configuração",
@@ -4579,6 +5148,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Aviso",
 		subtype: "Tipo",
 		success: "Sucesso",
+		"table.addColumn": "+ Coluna",
+		"table.addRow": "+ Linha",
+		"table.caption": "Legenda",
+		"table.cell": "Linha {row}, coluna {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Entrada da coluna {column}",
+		"table.columnLabel": "Cabeçalho da coluna {column}",
+		"table.columnValue": "Valor da coluna {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Linha de cabeçalho",
+		"table.headerRowLocked": "As colunas de entrada necessitam de uma linha de cabeçalho.",
+		"table.input.checkbox": "Caixa de seleção",
+		"table.input.radio": "Rádio",
+		"table.input.static": "Texto estático",
+		"table.input.text": "Campo de texto",
+		"table.newColumn": "Coluna {column}",
+		"table.newRow": "Linha {row}",
+		"table.removeColumn": "Remover coluna {column}",
+		"table.removeRow": "Remover linha {row}",
+		"table.required": "Obrigatório",
+		"table.rowHeaders": "Cabeçalhos de linha",
+		"table.rowRequired": "Linha {row} obrigatória",
+		"table.rowValue": "Valor da linha {row}",
+		"table.value": "Valor",
 		text: "Campo de texto",
 		then: "Então",
 		"then.condition.target.placeholder": "alvo",
@@ -4650,6 +5244,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Sau",
 		"condition.type.then": "Apoi",
 		"condition.value.placeholder": "valoare",
+		"config.labelPosition": "Poziția etichetei",
 		"config.other": "Altă opțiune",
 		"config.otherLabel": "Alte etichete de opțiuni",
 		confirmClearAll: "Sigur doriți să eliminați toate câmpurile?",
@@ -4666,6 +5261,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Intrare ascunsă",
 		"controls.form.input.number": "Număr",
 		"controls.form.input.text": "Introducerea textului",
+		"controls.form.matrix": "Matrice",
 		"controls.form.radio-group": "Radio Group",
 		"controls.form.select": "Selectați",
 		"controls.form.textarea": "TextArea",
@@ -4675,6 +5271,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "compas",
 		"controls.html.header": "Antet",
 		"controls.html.paragraph": "Paragraf",
+		"controls.html.table": "Tabel",
 		"controls.layout.column": "Coloană",
 		"controls.layout.row": "Rând",
 		copy: "Copiați în clipboard",
@@ -4713,6 +5310,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Eticheta",
 		labelCount: "{label} {count}",
 		labelEmpty: "Eticheta de câmp nu poate fi goală",
+		"labelPosition.after": "După",
+		"labelPosition.before": "Înainte",
+		"labelPosition.bottom": "Jos",
+		"labelPosition.top": "Sus",
 		"lang.af": "african",
 		"lang.ar": "arabic",
 		"lang.cs": "ceh",
@@ -4778,6 +5379,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "configurație",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Opțiuni",
+		"panel.label.table": "Tabel",
 		"panelEditButtons.attrs": "+ Atribut",
 		"panelEditButtons.conditions": "+ Condiție",
 		"panelEditButtons.config": "+ Configurare",
@@ -4832,6 +5434,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Avertizare",
 		subtype: "Tip",
 		success: "Succes",
+		"table.addColumn": "+ Coloană",
+		"table.addRow": "+ Rând",
+		"table.caption": "Legendă",
+		"table.cell": "Rând {row}, coloană {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Intrare coloană {column}",
+		"table.columnLabel": "Antetul coloanei {column}",
+		"table.columnValue": "Valoarea coloanei {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Rând de antet",
+		"table.headerRowLocked": "Coloanele de intrare necesită un rând de antet",
+		"table.input.checkbox": "Casetă de selectare",
+		"table.input.radio": "Radio",
+		"table.input.static": "Text static",
+		"table.input.text": "Câmp de text",
+		"table.newColumn": "Coloană {column}",
+		"table.newRow": "Rând {row}",
+		"table.removeColumn": "Eliminați coloana {column}",
+		"table.removeRow": "Eliminați rândul {row}",
+		"table.required": "Necesar",
+		"table.rowHeaders": "Anteturi de rând",
+		"table.rowRequired": "Rândul {row} este obligatoriu",
+		"table.rowValue": "Valoarea rândului {row}",
+		"table.value": "Valoare",
 		text: "Câmp de text",
 		then: "Atunci",
 		"then.condition.target.placeholder": "ţintă",
@@ -4903,6 +5530,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Или",
 		"condition.type.then": "Затем",
 		"condition.value.placeholder": "значение",
+		"config.labelPosition": "Позиция метки",
 		"config.other": "Другой вариант",
 		"config.otherLabel": "Метка другого варианта",
 		confirmClearAll: "Вы действительно хотите удалить все поля?",
@@ -4919,6 +5547,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Скрытый ввод",
 		"controls.form.input.number": "Число",
 		"controls.form.input.text": "Ввод текста",
+		"controls.form.matrix": "Матрица",
 		"controls.form.radio-group": "Радиогруппа",
 		"controls.form.select": "Выбрать",
 		"controls.form.textarea": "TextArea",
@@ -4928,6 +5557,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "делитель",
 		"controls.html.header": "заголовок",
 		"controls.html.paragraph": "Параграф",
+		"controls.html.table": "Таблица",
 		"controls.layout.column": "колонка",
 		"controls.layout.row": "Строка",
 		copy: "Скопировать в буфер обмена",
@@ -4966,6 +5596,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "этикетка",
 		labelCount: "{label} {count}",
 		labelEmpty: "Полевая метка не может быть пуста",
+		"labelPosition.after": "После",
+		"labelPosition.before": "Перед",
+		"labelPosition.bottom": "Снизу",
+		"labelPosition.top": "Сверху",
 		"lang.af": "Африканский",
 		"lang.ar": "арабский",
 		"lang.cs": "чешский",
@@ -5031,6 +5665,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "конфигурация",
 		"panel.label.meta": "Мета",
 		"panel.label.options": "Опции",
+		"panel.label.table": "Таблица",
 		"panelEditButtons.attrs": "+ Атрибут",
 		"panelEditButtons.conditions": "+ Условие",
 		"panelEditButtons.config": "+ Конфигурация",
@@ -5085,6 +5720,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Предупреждение",
 		subtype: "Тип",
 		success: "успех",
+		"table.addColumn": "+ Столбец",
+		"table.addRow": "+ Строка",
+		"table.caption": "Подпись",
+		"table.cell": "Строка {row}, столбец {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Входные данные столбца {column}",
+		"table.columnLabel": "Заголовок столбца {column}",
+		"table.columnValue": "Значение столбца {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Строка заголовка",
+		"table.headerRowLocked": "Входные столбцы должны содержать строку заголовка.",
+		"table.input.checkbox": "Флажок",
+		"table.input.radio": "Радио",
+		"table.input.static": "Статический текст",
+		"table.input.text": "Текстовое поле",
+		"table.newColumn": "Столбец {column}",
+		"table.newRow": "Строка {row}",
+		"table.removeColumn": "Удалить столбец {column}",
+		"table.removeRow": "Удалить строку {row}",
+		"table.required": "Обязательно",
+		"table.rowHeaders": "Заголовки строк",
+		"table.rowRequired": "Строка {row} обязательна",
+		"table.rowValue": "Значение строки {row}",
+		"table.value": "Значение",
 		text: "Текстовое поле",
 		then: "затем",
 		"then.condition.target.placeholder": "цель",
@@ -5156,6 +5816,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "หรือ",
 		"condition.type.then": "แล้ว",
 		"condition.value.placeholder": "ค่า",
+		"config.labelPosition": "ตำแหน่งป้ายกำกับ",
 		"config.other": "ตัวเลือกอื่น",
 		"config.otherLabel": "ป้ายกำกับตัวเลือกอื่นๆ",
 		confirmClearAll: "คุณแน่ใจว่าต้องการลบข้อมูลทั้งหมดหรือไม่?",
@@ -5172,6 +5833,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "อินพุตที่ซ่อนอยู่",
 		"controls.form.input.number": "ตัวเลข",
 		"controls.form.input.text": "การป้อนข้อความ",
+		"controls.form.matrix": "เมทริกซ์",
 		"controls.form.radio-group": "กลุ่มวิทยุ",
 		"controls.form.select": "เลือก",
 		"controls.form.textarea": "พื้นที่ข้อความ",
@@ -5181,6 +5843,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "ตัวคั่น",
 		"controls.html.header": "ส่วนหัว",
 		"controls.html.paragraph": "ย่อหน้า",
+		"controls.html.table": "ตาราง",
 		"controls.layout.column": "คอลัมน์",
 		"controls.layout.row": "แถว",
 		copy: "คัดลอกไปยังคลิปบอร์ด",
@@ -5219,6 +5882,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "ฉลาก",
 		labelCount: "{label} {count}",
 		labelEmpty: "ป้ายชื่อฟิลด์ไม่สามารถว่างเปล่าได้",
+		"labelPosition.after": "หลังจาก",
+		"labelPosition.before": "ก่อน",
+		"labelPosition.bottom": "ด้านล่าง",
+		"labelPosition.top": "ด้านบน",
 		"lang.af": "แอฟริกัน",
 		"lang.ar": "ภาษาอาหรับ",
 		"lang.cs": "เช็ก",
@@ -5284,6 +5951,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "การกำหนดค่า",
 		"panel.label.meta": "เมต้า",
 		"panel.label.options": "ตัวเลือก",
+		"panel.label.table": "ตาราง",
 		"panelEditButtons.attrs": "+ คุณสมบัติ",
 		"panelEditButtons.conditions": "+ สภาพ",
 		"panelEditButtons.config": "+ การกำหนดค่า",
@@ -5338,6 +6006,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "คำเตือน",
 		subtype: "พิมพ์",
 		success: "ความสำเร็จ",
+		"table.addColumn": "+ คอลัมน์",
+		"table.addRow": "+ แถว",
+		"table.caption": "คำบรรยายภาพ",
+		"table.cell": "แถว {row}, คอลัมน์ {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "คอลัมน์ {column} อินพุต",
+		"table.columnLabel": "ส่วนหัวคอลัมน์ {column}",
+		"table.columnValue": "ค่าคอลัมน์ {column}",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "แถวหัวเรื่อง",
+		"table.headerRowLocked": "คอลัมน์ป้อนข้อมูลจำเป็นต้องมีแถวส่วนหัว",
+		"table.input.checkbox": "ช่องทำเครื่องหมาย",
+		"table.input.radio": "วิทยุ",
+		"table.input.static": "ข้อความคงที่",
+		"table.input.text": "ช่องข้อความ",
+		"table.newColumn": "คอลัมน์ {column}",
+		"table.newRow": "แถว {row}",
+		"table.removeColumn": "ลบคอลัมน์ {column}",
+		"table.removeRow": "ลบแถว {row}",
+		"table.required": "ที่จำเป็น",
+		"table.rowHeaders": "ส่วนหัวของแถว",
+		"table.rowRequired": "แถว {row} จำเป็นต้องกรอก",
+		"table.rowValue": "ค่าแถว {row}",
+		"table.value": "ค่า",
 		text: "ช่องข้อความ",
 		then: "แล้ว",
 		"then.condition.target.placeholder": "เป้า",
@@ -5409,6 +6102,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "Veya",
 		"condition.type.then": "Daha sonra",
 		"condition.value.placeholder": "değer",
+		"config.labelPosition": "Etiket konumu",
 		"config.other": "Diğer seçenek",
 		"config.otherLabel": "Diğer seçenek etiketi",
 		confirmClearAll: "Tüm alanları kaldırmak istediğinizden emin misiniz?",
@@ -5425,6 +6119,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "Gizli Giriş",
 		"controls.form.input.number": "Numara",
 		"controls.form.input.text": "Metin Girişi",
+		"controls.form.matrix": "Matris",
 		"controls.form.radio-group": "Radyo Grubu",
 		"controls.form.select": "seçmek",
 		"controls.form.textarea": "TextArea",
@@ -5434,6 +6129,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "bölen",
 		"controls.html.header": "Başlık",
 		"controls.html.paragraph": "Paragraf",
+		"controls.html.table": "Tablo",
 		"controls.layout.column": "sütun",
 		"controls.layout.row": "Kürek çekmek",
 		copy: "Panoya kopyala",
@@ -5472,6 +6168,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "Etiket",
 		labelCount: "{label} {count}",
 		labelEmpty: "Saha Etiketi boş olamaz",
+		"labelPosition.after": "Sonrasında",
+		"labelPosition.before": "Önce",
+		"labelPosition.bottom": "Alt",
+		"labelPosition.top": "Üst",
 		"lang.af": "Afrika",
 		"lang.ar": "Arapça",
 		"lang.cs": "Çek",
@@ -5537,6 +6237,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "Yapılandırma",
 		"panel.label.meta": "Meta",
 		"panel.label.options": "Seçenekler",
+		"panel.label.table": "Tablo",
 		"panelEditButtons.attrs": "+ Özellik",
 		"panelEditButtons.conditions": "+ Durum",
 		"panelEditButtons.config": "+ Yapılandırma",
@@ -5591,6 +6292,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "Uyarı",
 		subtype: "tip",
 		success: "başarı",
+		"table.addColumn": "+ Sütun",
+		"table.addRow": "+ Satır",
+		"table.caption": "Tablo başlığı",
+		"table.cell": "Satır {row}, sütun {column}",
+		"table.cellInput": "{row}, {column}",
+		"table.columnInput": "Sütun {column} girişi",
+		"table.columnLabel": "Sütun {column} başlığı",
+		"table.columnValue": "Sütun {column} değeri",
+		"table.entryCell": "{table}: {row}, {column}",
+		"table.entryRow": "{table}: {row}",
+		"table.headerRow": "Başlık satırı",
+		"table.headerRowLocked": "Giriş sütunlarının bir başlık satırına ihtiyacı vardır.",
+		"table.input.checkbox": "Onay kutusu",
+		"table.input.radio": "Radyo",
+		"table.input.static": "Statik metin",
+		"table.input.text": "Metin alanı",
+		"table.newColumn": "Sütun {column}",
+		"table.newRow": "Satır {row}",
+		"table.removeColumn": "Sütunu kaldır {column}",
+		"table.removeRow": "{row} satırını kaldır",
+		"table.required": "Gerekli",
+		"table.rowHeaders": "Satır başlıkları",
+		"table.rowRequired": "{row} satırı gerekli",
+		"table.rowValue": "Satır {row} değeri",
+		"table.value": "Değer",
 		text: "Metin alanı",
 		then: "Sonra",
 		"then.condition.target.placeholder": "hedef",
@@ -5662,6 +6388,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "或者",
 		"condition.type.then": "然后",
 		"condition.value.placeholder": "值",
+		"config.labelPosition": "标签位置",
 		"config.other": "其他选项",
 		"config.otherLabel": "其他选项标签",
 		confirmClearAll: "您确定要删除所有字段吗？",
@@ -5678,6 +6405,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "隐藏的输入",
 		"controls.form.input.number": "数",
 		"controls.form.input.text": "文字输入",
+		"controls.form.matrix": "矩阵",
 		"controls.form.radio-group": "广播组",
 		"controls.form.select": "选择",
 		"controls.form.textarea": "文本区",
@@ -5687,6 +6415,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "分频器",
 		"controls.html.header": "头",
 		"controls.html.paragraph": "段",
+		"controls.html.table": "表格",
 		"controls.layout.column": "柱",
 		"controls.layout.row": "行",
 		copy: "复制到剪贴板",
@@ -5725,6 +6454,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "标签",
 		labelCount: "{label} {count}",
 		labelEmpty: "字段标签不能为空",
+		"labelPosition.after": "后",
+		"labelPosition.before": "前",
+		"labelPosition.bottom": "底部",
+		"labelPosition.top": "顶部",
 		"lang.af": "非洲人",
 		"lang.ar": "阿拉伯",
 		"lang.cs": "捷克语",
@@ -5790,6 +6523,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "组态",
 		"panel.label.meta": "元",
 		"panel.label.options": "选项",
+		"panel.label.table": "表格",
 		"panelEditButtons.attrs": "+属性",
 		"panelEditButtons.conditions": "+条件",
 		"panelEditButtons.config": "+ 配置",
@@ -5844,6 +6578,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "警告",
 		subtype: "类型",
 		success: "成功",
+		"table.addColumn": "+ 列",
+		"table.addRow": "+ 行",
+		"table.caption": "标题",
+		"table.cell": "行{row}，列{column}",
+		"table.cellInput": "{row}，{column}",
+		"table.columnInput": "列{column}输入",
+		"table.columnLabel": "列{column}",
+		"table.columnValue": "列{column}值",
+		"table.entryCell": "{table}：{row}，{column}",
+		"table.entryRow": "{table}：{row}",
+		"table.headerRow": "标题行",
+		"table.headerRowLocked": "输入列需要标题行",
+		"table.input.checkbox": "复选框",
+		"table.input.radio": "单选按钮",
+		"table.input.static": "静态文本",
+		"table.input.text": "文本字段",
+		"table.newColumn": "列{column}",
+		"table.newRow": "行{row}",
+		"table.removeColumn": "删除列{column}",
+		"table.removeRow": "删除行{row}",
+		"table.required": "必需的",
+		"table.rowHeaders": "行标题",
+		"table.rowRequired": "行{row}必填",
+		"table.rowValue": "行{row}值",
+		"table.value": "值",
 		text: "文本域",
 		then: "然后",
 		"then.condition.target.placeholder": "目标",
@@ -5915,6 +6674,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"condition.type.or": "或者",
 		"condition.type.then": "然後",
 		"condition.value.placeholder": "價值",
+		"config.labelPosition": "標籤位置",
 		"config.other": "其他選項",
 		"config.otherLabel": "其他選項標籤",
 		confirmClearAll: "您確定要刪除所有欄位嗎？",
@@ -5931,6 +6691,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.form.input.hidden": "隱藏輸入",
 		"controls.form.input.number": "數位",
 		"controls.form.input.text": "文字輸入",
+		"controls.form.matrix": "矩陣",
 		"controls.form.radio-group": "無線電集團",
 		"controls.form.select": "選擇",
 		"controls.form.textarea": "文字區",
@@ -5940,6 +6701,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"controls.html.divider": "分音器",
 		"controls.html.header": "標頭",
 		"controls.html.paragraph": "段落",
+		"controls.html.table": "表格",
 		"controls.layout.column": "柱子",
 		"controls.layout.row": "排",
 		copy: "複製到剪貼簿",
@@ -5978,6 +6740,10 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		label: "標籤",
 		labelCount: "{label} {count}",
 		labelEmpty: "字段標籤不能為空",
+		"labelPosition.after": "後",
+		"labelPosition.before": "前",
+		"labelPosition.bottom": "底部",
+		"labelPosition.top": "頂部",
 		"lang.af": "非洲人",
 		"lang.ar": "阿拉伯",
 		"lang.cs": "捷克語",
@@ -6043,6 +6809,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"panel.label.config": "配置",
 		"panel.label.meta": "元",
 		"panel.label.options": "選項",
+		"panel.label.table": "表格",
 		"panelEditButtons.attrs": "+ 屬性",
 		"panelEditButtons.conditions": "+ 條件",
 		"panelEditButtons.config": "+ 配置",
@@ -6097,6 +6864,31 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 		"styles.btn.warning": "警告",
 		subtype: "類型",
 		success: "成功",
+		"table.addColumn": "+ 列",
+		"table.addRow": "+ 行",
+		"table.caption": "標題",
+		"table.cell": "行{row}，列{column}",
+		"table.cellInput": "{row}，{column}",
+		"table.columnInput": "列{column}輸入",
+		"table.columnLabel": "列{column}",
+		"table.columnValue": "列{column}值",
+		"table.entryCell": "{table}：{row}，{column}",
+		"table.entryRow": "{table}：{row}",
+		"table.headerRow": "標題行",
+		"table.headerRowLocked": "輸入列需要標題行",
+		"table.input.checkbox": "複選框",
+		"table.input.radio": "單選按鈕",
+		"table.input.static": "靜態文字",
+		"table.input.text": "文字欄位",
+		"table.newColumn": "列{column}",
+		"table.newRow": "行{row}",
+		"table.removeColumn": "刪除欄位{column}",
+		"table.removeRow": "刪除行{row}",
+		"table.required": "必需的",
+		"table.rowHeaders": "行標題",
+		"table.rowRequired": "行{row}必填",
+		"table.rowValue": "行{row}值",
+		"table.value": "值",
 		text: "文字欄位",
 		then: "然後",
 		"then.condition.target.placeholder": "目標",
@@ -6115,7 +6907,7 @@ e$1["de-DE"];
 //#region node_modules/@draggable/formeo-languages/dist/formeo-languages.es.js
 /**
 @draggable/formeo-languages - https://github.com/Draggable/formeo-languages#readme
-Version: 3.8.0
+Version: 3.10.2
 Author: Kevin Chappell <kevin.b.chappell@gmail.com> (https://kevin-chappell.com)
 */
 var s$1 = e$1["en-US"];
@@ -6468,7 +7260,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.18.0";
+	version$2 = "5.19.0";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -6589,7 +7381,7 @@ var init_package = __esmMin((() => {
 		"zod": "^4.4.3"
 	};
 	dependencies = {
-		"@draggable/formeo-languages": "^3.9.0",
+		"@draggable/formeo-languages": "^3.10.2",
 		"@draggable/i18n": "^1.0.7",
 		"@draggable/tooltip": "^1.2.2",
 		"lodash": "^4.17.21",
@@ -9895,7 +10687,7 @@ function defaultTable(columnLabel = defaultColumnLabel) {
 		rows
 	});
 }
-function addRow(table) {
+function addRow$1(table) {
 	const current = normalizeTable(table);
 	return {
 		...current,
@@ -9914,7 +10706,7 @@ function addColumn(table, label) {
 		}))
 	};
 }
-function removeRow(table, index) {
+function removeRow$1(table, index) {
 	const current = normalizeTable(table);
 	if (current.rows.length <= 1 || !inRange(current.rows, index)) return current;
 	return {
@@ -9987,8 +10779,9 @@ function inputColumns(table) {
 	}, []);
 }
 /**
-* A matrix with a unique, non-blank key in every row's and every input column's `value`, so each row is its own
-* radio group and every cell its own name. A table without inputs comes back normalised and nothing more.
+* A matrix with a unique, non-blank key in every input column's `value`, and in every row's unless the table repeats
+* (rows are then keyed by position when rendered), so each row is its own radio group and every cell its own name.
+* A table without inputs comes back normalised and nothing more.
 * @param {Object} table
 * @return {Object} table
 */
@@ -9997,14 +10790,15 @@ function withKeys(table) {
 	const inputs = new Set(inputColumns(current));
 	if (!inputs.size) return current;
 	const columnKeys = assignKeys(current.columns.map((column, index) => inputs.has(index) ? text(column.value) : null), "column");
-	const rowKeys = assignKeys(current.rows.map((row) => text(row.value)), "row");
+	const repeating = isPlainObject(current.repeat);
+	const rowKeys = repeating ? null : assignKeys(current.rows.map((row) => text(row.value)), "row");
 	return {
 		...current,
 		columns: current.columns.map((column, index) => inputs.has(index) ? {
 			...column,
 			value: columnKeys[index]
 		} : column),
-		rows: current.rows.map((row, index) => ({
+		rows: repeating ? current.rows : current.rows.map((row, index) => ({
 			...row,
 			value: rowKeys[index]
 		}))
@@ -10114,6 +10908,56 @@ function parseTableAddress(address) {
 	};
 }
 /**
+* A repeating table's row limits: `min` is a non-negative integer (default 1, at most REPEAT_MIN_LIMIT); `max` is an
+* integer of at least 1 and never below `min`, or null for no limit
+* @param {Object} table
+* @return {{min: Number, max: Number|null}}
+*/
+function repeatOf(table) {
+	const repeat = isPlainObject(table?.repeat) ? table.repeat : {};
+	const min = isCount(repeat.min, 0) ? Math.min(repeat.min, 500) : REPEAT_DEFAULTS.min;
+	return {
+		min,
+		max: isCount(repeat.max, 1) ? Math.max(repeat.max, min) : REPEAT_DEFAULTS.max
+	};
+}
+/**
+* @param {Object} table
+* @param {Object|null} repeat `{ min, max }` turns repeating on with those limits, normalised; anything else turns it off
+* @return {Object} table
+*/
+function setRepeat(table, repeat) {
+	const { repeat: _repeat, ...current } = normalizeTable(table);
+	return isPlainObject(repeat) ? {
+		...current,
+		repeat: repeatOf({ repeat })
+	} : current;
+}
+/**
+* The row every rendered row of a repeating table copies: rows[0], or a blank row when there is none
+* @param {Object} table
+* @return {Object} row
+*/
+function templateRow(table) {
+	const current = normalizeTable(table);
+	return current.rows[0] ?? { cells: current.columns.map(() => "") };
+}
+/**
+* A repeating table's name for row r: the template's row header numbered ("Item 2"), else "Row 2"
+* @param {Object} table
+* @param {Number} r 0-based row index
+* @param {Function} [translate] (key, vars) => text
+* @return {String}
+*/
+function repeatRowName(table, r, translate = englishText) {
+	const current = normalizeTable(table);
+	const label = current.rowHeaders ? templateRow(current).cells[0]?.trim() : "";
+	return label ? translate("table.repeatRow", {
+		label,
+		row: r + 1
+	}) : translate("table.newRow", { row: r + 1 });
+}
+/**
 * The dom.create config for a table field (#349): a scroll wrapper around the <table>. The field's id, attrs, action
 * and dataset go on the <table>, so conditions, custom classes and `elements` actions reach it. Every cell is set as
 * textContent, never parsed as HTML.
@@ -10124,6 +10968,7 @@ function parseTableAddress(address) {
 * @param {Function} [opts.translate] (key, vars) => text, for the matrix's fallback names; English by default
 * @param {Function} [opts.requiredMark] () => dom config of a required row's mark
 * @param {Function} [opts.onRequiredRowChange] (tr) => void, re-syncs a required checkbox row on change
+* @param {Function} [opts.removeIcon] () => markup of a repeating row's remove icon
 * @return {Object} dom.create config
 */
 function tableDomConfig(field, options = {}) {
@@ -10191,99 +11036,210 @@ function tableDomConfig(field, options = {}) {
 	};
 }
 /**
+* What every row of one matrix shares, worked out once
+* @param {Object} field
+* @param {Object} table normalised, with keys
+* @param {Object} options see tableDomConfig
+* @return {Object}
+*/
+function matrixContext(field, table, options) {
+	const { isPreview = false, translate = englishText, requiredMark, onRequiredRowChange, removeIcon } = options;
+	const { id } = field;
+	const attrs = field.attrs ?? {};
+	const base = !isPreview && text(attrs.name).trim() || text(id);
+	const inputs = new Set(inputColumns(table));
+	const repeating = isRepeating(table);
+	return {
+		id,
+		base,
+		table,
+		inputs,
+		isPreview,
+		translate,
+		requiredMark,
+		onRequiredRowChange,
+		removeIcon,
+		repeating,
+		limits: repeating ? repeatOf(table) : null,
+		template: repeating ? templateRow(table) : null,
+		markColumn: table.columns.findIndex((_, c) => !inputs.has(c)),
+		idOf: (suffix) => id ? { id: `${id}-${suffix}` } : {},
+		columnLabel: (c) => table.columns[c].label || translate("table.newColumn", { column: c + 1 })
+	};
+}
+/**
+* Row r's data: the table's own row, or in a repeating table the template, keyed by its position and with a numbered
+* row header
+* @param {Object} ctx matrixContext
+* @param {Number} r
+* @return {Object} row
+*/
+function rowAt(ctx, r) {
+	const { table, template, repeating, translate } = ctx;
+	if (!repeating) return table.rows[r];
+	const cells = table.rowHeaders ? [repeatRowName(table, r, translate), ...template.cells.slice(1)] : template.cells;
+	return {
+		...template,
+		value: String(r),
+		cells
+	};
+}
+function inputName(ctx, row, r, c) {
+	const { id, table, translate, columnLabel } = ctx;
+	const header = table.rowHeaders ? row.cells[0] : "";
+	if (id && header.trim() && table.columns[c].label.trim()) return { "aria-labelledby": `${id}-r${r} ${id}-c${c}` };
+	return { "aria-label": translate("table.cellInput", {
+		row: header.trim() || translate("table.newRow", { row: r + 1 }),
+		column: columnLabel(c)
+	}) };
+}
+function inputCell(ctx, row, r, c) {
+	const { base, table, idOf, columnLabel } = ctx;
+	const column = table.columns[c];
+	const type = cellInput(column);
+	const inputAttrs = {
+		...idOf(`${r}-${c}`),
+		type,
+		name: type === "radio" ? matrixName(base, row.value) : matrixName(base, row.value, column.value),
+		...type === "text" ? {} : { value: column.value },
+		...inputName(ctx, row, r, c),
+		required: row.required === true
+	};
+	return {
+		tag: "td",
+		attrs: { role: "cell" },
+		children: [{
+			tag: "label",
+			attrs: { className: "f-table-cell" },
+			children: [{
+				tag: "span",
+				attrs: {
+					className: "f-table-cell-label",
+					"aria-hidden": "true"
+				},
+				textContent: columnLabel(c)
+			}, {
+				tag: "input",
+				attrs: inputAttrs
+			}]
+		}]
+	};
+}
+function staticCell(ctx, row, r, c) {
+	const { table, markColumn, requiredMark, idOf } = ctx;
+	const content = row.required === true && c === markColumn && requiredMark ? { children: [{
+		tag: "span",
+		textContent: row.cells[c]
+	}, requiredMark()] } : { textContent: row.cells[c] };
+	if (table.rowHeaders && c === 0) return {
+		tag: "th",
+		attrs: {
+			role: "rowheader",
+			scope: "row",
+			...idOf(`r${r}`)
+		},
+		...content
+	};
+	return {
+		tag: "td",
+		attrs: { role: "cell" },
+		...content
+	};
+}
+function removeCell(ctx, r, rowCount) {
+	const { translate, removeIcon, limits } = ctx;
+	const icon = removeIcon ? { content: removeIcon() } : { textContent: "×" };
+	return {
+		tag: "td",
+		attrs: {
+			role: "cell",
+			className: "f-table-row-actions"
+		},
+		children: [{
+			tag: "button",
+			attrs: {
+				type: "button",
+				className: REMOVE_ROW_CLASSNAME,
+				"aria-label": translate("table.removeRow", { row: r + 1 }),
+				disabled: rowCount <= limits.min
+			},
+			...icon
+		}]
+	};
+}
+function rowConfig(ctx, r, rowCount) {
+	const { table, inputs, isPreview, onRequiredRowChange, repeating } = ctx;
+	const row = rowAt(ctx, r);
+	const requiredGroup = row.required === true && [...inputs].some((c) => cellInput(table.columns[c]) === "checkbox");
+	const children = table.columns.map((_, c) => inputs.has(c) ? inputCell(ctx, row, r, c) : staticCell(ctx, row, r, c));
+	if (repeating) children.push(removeCell(ctx, r, rowCount));
+	const tr = {
+		tag: "tr",
+		attrs: {
+			role: "row",
+			...requiredGroup ? { [REQUIRED_ROW_ATTR]: "true" } : {}
+		},
+		dataset: { rowKey: row.value },
+		children
+	};
+	if (requiredGroup && !isPreview && onRequiredRowChange) tr.action = { change: ({ currentTarget }) => onRequiredRowChange(currentTarget) };
+	return tr;
+}
+/**
+* One body row of a matrix (#349 phase 3): the same <tr> tableDomConfig renders at index r. A repeating table builds
+* its added and renumbered rows with it.
+* @param {Object} field { id, attrs, table }
+* @param {Number} r 0-based row index
+* @param {Object} [options] tableDomConfig's options, plus `rowCount` (default r + 1) for the remove button's state
+* @return {Object} dom.create config of a <tr>
+*/
+function matrixRowConfig(field, r, options = {}) {
+	return rowConfig(matrixContext(field, withKeys(normalizeTable(field.table)), options), r, options.rowCount ?? r + 1);
+}
+/**
 * A matrix (#349 phase 2): every input column renders a radio, checkbox or text input per row. Radios share their
 * row's name (`base[row]`), every other input has its own (`base[row][column]`). Each input is named by its row and
-* column headers. Explicit table roles keep the semantics when narrow screens stack the rows.
+* column headers. Explicit table roles keep the semantics when narrow screens stack the rows. A repeating table
+* (phase 3) renders `min` rows copied from its template, a remove button per row, an Add button and a status region.
 * @param {Object} field
 * @param {Object} table normalised, with keys
 * @param {Object} options see tableDomConfig
 * @return {Object} dom.create config
 */
 function matrixDomConfig(field, table, options) {
-	const { isPreview = false, fallbackLabel = "Table", translate = englishText, requiredMark, onRequiredRowChange } = options;
+	const ctx = matrixContext(field, table, options);
+	const { fallbackLabel = "Table" } = options;
+	const { isPreview, translate, repeating, limits, idOf } = ctx;
 	const { id, action, dataset } = field;
 	const attrs = field.attrs ?? {};
 	const config = field.config ?? {};
-	const { className, tag: _tagOverride, name, required: _required, ...tableAttrs } = attrs;
-	const base = !isPreview && text(name).trim() || text(id);
-	const { caption, rowHeaders, columns, rows } = table;
-	const inputs = new Set(inputColumns(table));
+	const { className, tag: _tagOverride, name: _name, required: _required, ...tableAttrs } = attrs;
+	const { caption, columns, rows } = table;
 	const hasCaption = caption.trim() !== "";
 	const captionId = hasCaption && id ? `${id}-caption` : void 0;
-	const idOf = (suffix) => id ? { id: `${id}-${suffix}` } : {};
-	const columnLabel = (c) => columns[c].label || translate("table.newColumn", { column: c + 1 });
-	const rowHeaderText = (r) => rowHeaders ? rows[r].cells[0] : "";
-	const markColumn = columns.findIndex((_, c) => !inputs.has(c));
-	const inputName = (r, c) => {
-		if (id && rowHeaderText(r).trim() && columns[c].label.trim()) return { "aria-labelledby": `${id}-r${r} ${id}-c${c}` };
-		return { "aria-label": translate("table.cellInput", {
-			row: rowHeaderText(r).trim() || translate("table.newRow", { row: r + 1 }),
-			column: columnLabel(c)
-		}) };
-	};
-	const inputCell = (row, r, c) => {
-		const type = cellInput(columns[c]);
-		const inputAttrs = {
-			...idOf(`${r}-${c}`),
-			type,
-			name: type === "radio" ? matrixName(base, row.value) : matrixName(base, row.value, columns[c].value),
-			...type === "text" ? {} : { value: columns[c].value },
-			...inputName(r, c),
-			required: row.required === true
-		};
-		return {
-			tag: "td",
-			attrs: { role: "cell" },
-			children: [{
-				tag: "label",
-				attrs: { className: "f-table-cell" },
-				children: [{
-					tag: "span",
-					attrs: {
-						className: "f-table-cell-label",
-						"aria-hidden": "true"
-					},
-					textContent: columnLabel(c)
-				}, {
-					tag: "input",
-					attrs: inputAttrs
-				}]
-			}]
-		};
-	};
-	const staticCell = (row, r, c) => {
-		const content = row.required === true && c === markColumn && requiredMark ? { children: [{
+	let rowCount = rows.length;
+	if (repeating) rowCount = isPreview ? Math.max(limits.min, 1) : limits.min;
+	const bodyRows = Array.from({ length: rowCount }, (_, r) => rowConfig(ctx, r, rowCount));
+	const headerCells = columns.map((column, c) => ({
+		tag: "th",
+		attrs: {
+			role: "columnheader",
+			scope: "col",
+			...idOf(`c${c}`)
+		},
+		textContent: column.label
+	}));
+	if (repeating) headerCells.push({
+		tag: "th",
+		attrs: {
+			role: "columnheader",
+			scope: "col"
+		},
+		children: [{
 			tag: "span",
-			textContent: row.cells[c]
-		}, requiredMark()] } : { textContent: row.cells[c] };
-		if (rowHeaders && c === 0) return {
-			tag: "th",
-			attrs: {
-				role: "rowheader",
-				scope: "row",
-				...idOf(`r${r}`)
-			},
-			...content
-		};
-		return {
-			tag: "td",
-			attrs: { role: "cell" },
-			...content
-		};
-	};
-	const bodyRows = rows.map((row, r) => {
-		const requiredGroup = row.required === true && [...inputs].some((c) => cellInput(columns[c]) === "checkbox");
-		const tr = {
-			tag: "tr",
-			attrs: {
-				role: "row",
-				...requiredGroup ? { [REQUIRED_ROW_ATTR]: "true" } : {}
-			},
-			dataset: { rowKey: row.value },
-			children: columns.map((_, c) => inputs.has(c) ? inputCell(row, r, c) : staticCell(row, r, c))
-		};
-		if (requiredGroup && !isPreview && onRequiredRowChange) tr.action = { change: ({ currentTarget }) => onRequiredRowChange(currentTarget) };
-		return tr;
+			attrs: { className: SR_ONLY_CLASSNAME },
+			textContent: translate("remove")
+		}]
 	});
 	const children = [];
 	if (hasCaption) children.push({
@@ -10297,15 +11253,7 @@ function matrixDomConfig(field, table, options) {
 		children: [{
 			tag: "tr",
 			attrs: { role: "row" },
-			children: columns.map((column, c) => ({
-				tag: "th",
-				attrs: {
-					role: "columnheader",
-					scope: "col",
-					...idOf(`c${c}`)
-				},
-				textContent: column.label
-			}))
+			children: headerCells
 		}]
 	});
 	children.push({
@@ -10328,19 +11276,44 @@ function matrixDomConfig(field, table, options) {
 	if (action) tableConfig.action = action;
 	if (dataset) tableConfig.dataset = dataset;
 	const groupName = captionId ? { "aria-labelledby": captionId } : { "aria-label": plainText(config.label) || fallbackLabel };
+	const wrapAttrs = {
+		className: repeating ? `f-table-wrap f-table-matrix ${REPEAT_CLASSNAME}` : "f-table-wrap f-table-matrix",
+		...repeating ? {
+			"data-repeat-min": String(limits.min),
+			...limits.max === null ? {} : { "data-repeat-max": String(limits.max) }
+		} : {},
+		...isPreview ? {} : {
+			role: "group",
+			...groupName
+		}
+	};
+	const wrapChildren = [tableConfig];
+	if (repeating) {
+		wrapChildren.push({
+			tag: "button",
+			attrs: {
+				type: "button",
+				className: ADD_ROW_CLASSNAME,
+				disabled: limits.max !== null && rowCount >= limits.max,
+				...isPreview ? { inert: true } : {}
+			},
+			textContent: translate("table.addRow")
+		});
+		if (!isPreview) wrapChildren.push({
+			tag: "span",
+			attrs: {
+				className: `${ROW_STATUS_CLASSNAME} ${SR_ONLY_CLASSNAME}`,
+				role: "status"
+			}
+		});
+	}
 	return {
 		tag: "div",
-		attrs: {
-			className: "f-table-wrap f-table-matrix",
-			...isPreview ? {} : {
-				role: "group",
-				...groupName
-			}
-		},
-		children: [tableConfig]
+		attrs: wrapAttrs,
+		children: wrapChildren
 	};
 }
-var TABLE_DEFAULTS, TABLE_OPTION_KEYS, DEFAULT_COLUMN_COUNT, DEFAULT_ROW_COUNT, defaultColumnLabel, defaultRowLabel, CELL_INPUTS, MATRIX_TEXT, englishText, REQUIRED_ROW_ATTR, isPlainObject, text, inRange, isTableField, normalizeColumn, cellsOf, normalizeRow, cellInput, hasInputs, sanitizeKey, assignKeys, updateAt, matrixName, MATRIX_KEY_TAIL, TABLE_ADDRESS, plainText;
+var TABLE_DEFAULTS, TABLE_OPTION_KEYS, DEFAULT_COLUMN_COUNT, DEFAULT_ROW_COUNT, defaultColumnLabel, defaultRowLabel, CELL_INPUTS, MATRIX_TEXT, englishText, REQUIRED_ROW_ATTR, REPEAT_CLASSNAME, ADD_ROW_CLASSNAME, REMOVE_ROW_CLASSNAME, ROW_STATUS_CLASSNAME, SR_ONLY_CLASSNAME, isPlainObject, text, inRange, isTableField, normalizeColumn, cellsOf, normalizeRow, cellInput, hasInputs, sanitizeKey, assignKeys, updateAt, matrixName, MATRIX_KEY_TAIL, TABLE_ADDRESS, REPEAT_DEFAULTS, isCount, isRepeating, plainText;
 var init_table$1 = __esmMin((() => {
 	init_string();
 	TABLE_DEFAULTS = Object.freeze({
@@ -10359,12 +11332,21 @@ var init_table$1 = __esmMin((() => {
 		"text"
 	]);
 	MATRIX_TEXT = Object.freeze({
+		remove: "Remove",
+		"table.addRow": "+ Row",
 		"table.cellInput": "{row}, {column}",
 		"table.newColumn": "Column {column}",
-		"table.newRow": "Row {row}"
+		"table.newRow": "Row {row}",
+		"table.removeRow": "Remove row {row}",
+		"table.repeatRow": "{label} {row}"
 	});
 	englishText = (key, vars = {}) => fillTokens(MATRIX_TEXT[key] ?? key, vars);
 	REQUIRED_ROW_ATTR = "data-formeo-required-group";
+	REPEAT_CLASSNAME = "f-table-repeat";
+	ADD_ROW_CLASSNAME = "f-table-add-row";
+	REMOVE_ROW_CLASSNAME = "f-table-remove-row";
+	ROW_STATUS_CLASSNAME = "f-table-status";
+	SR_ONLY_CLASSNAME = "f-table-sr";
 	isPlainObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 	text = (value) => value === null || value === void 0 ? "" : String(value);
 	inRange = (list, index) => Number.isInteger(index) && index >= 0 && index < list.length;
@@ -10407,6 +11389,12 @@ var init_table$1 = __esmMin((() => {
 	matrixName = (base, row, column) => column === void 0 ? `${base}[${row}]` : `${base}[${row}][${column}]`;
 	MATRIX_KEY_TAIL = /^\[([^[\]]+)\](?:\[([^[\]]+)\])?$/;
 	TABLE_ADDRESS = /^fields\.([^.[\]]+)\.table\.rows\[(\d+)\](?:\.cells\[(\d+)\])?$/;
+	REPEAT_DEFAULTS = Object.freeze({
+		min: 1,
+		max: null
+	});
+	isCount = (value, floor) => Number.isInteger(value) && value >= floor;
+	isRepeating = (table) => isPlainObject(table?.repeat) && hasInputs(table);
 	plainText = (value) => text(value).replace(/<[^>]*>/g, "").trim();
 }));
 //#endregion
@@ -10418,6 +11406,7 @@ var init_table_text = __esmMin((() => {
 		"controls.form.matrix": "Matrix",
 		"controls.html.table": "Table",
 		"panel.label.table": "Table",
+		remove: "Remove",
 		"table.addColumn": "+ Column",
 		"table.addRow": "+ Row",
 		"table.caption": "Caption",
@@ -10438,8 +11427,17 @@ var init_table_text = __esmMin((() => {
 		"table.newRow": "Row {row}",
 		"table.removeColumn": "Remove column {column}",
 		"table.removeRow": "Remove row {row}",
+		"table.repeat": "Repeating rows",
+		"table.repeatLocked": "Repeating rows need an input column",
+		"table.repeatMax": "Maximum rows",
+		"table.repeatMin": "Minimum rows",
+		"table.repeatNoMax": "No limit",
+		"table.repeatRequired": "Every row required",
+		"table.repeatRow": "{label} {row}",
 		"table.required": "Required",
+		"table.rowAdded": "{row} added",
 		"table.rowHeaders": "Row headers",
+		"table.rowRemoved": "{row} removed",
 		"table.rowRequired": "Row {row} required",
 		"table.rowValue": "Row {row} value",
 		"table.value": "Value"
@@ -10556,16 +11554,7 @@ var init_dom = __esmMin((() => {
 		create = (elemArg, isPreview = false) => {
 			if (!elemArg) return;
 			if (this.isDOMElement(elemArg)) return elemArg;
-			if (isTableField(elemArg)) {
-				const tableConfig = tableDomConfig(elemArg, {
-					isPreview,
-					fallbackLabel: tableText("controls.html.table"),
-					translate: tableText,
-					requiredMark: this.matrixRequiredMark,
-					onRequiredRowChange: (row) => this.syncCheckboxGroupRequired(row)
-				});
-				return this.create(tableConfig, isPreview);
-			}
+			if (isTableField(elemArg)) return this.create(tableDomConfig(elemArg, this.tableOptions(isPreview)), isPreview);
 			const _this = this;
 			const processed = ["children", "content"];
 			const { className, options, dataset, ...elem } = this.processElemArg(elemArg);
@@ -11075,6 +12064,20 @@ var init_dom = __esmMin((() => {
 			...this.requiredMark(),
 			attrs: { "aria-hidden": "true" }
 		});
+		/**
+		* What tableDomConfig and matrixRowConfig take (#349): the translator, the required mark, the checkbox-row sync and
+		* the remove icon. The renderer builds a repeating table's added rows with the same options.
+		* @param {Boolean} isPreview
+		* @return {Object}
+		*/
+		tableOptions = (isPreview) => ({
+			isPreview,
+			fallbackLabel: tableText("controls.html.table"),
+			translate: tableText,
+			requiredMark: this.matrixRequiredMark,
+			onRequiredRowChange: (row) => this.syncCheckboxGroupRequired(row),
+			removeIcon: () => this.icon("remove")
+		});
 		tooltip = (tooltip) => ({
 			tag: "span",
 			className: "f-tooltip",
@@ -11350,7 +12353,7 @@ var init_page_text = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/components/autocomplete/helpers.mjs
-var BASE_NAME, DISPLAY_FIELD_CLASSNAME, LIST_CLASSNAME, HIGHLIGHT_CLASSNAME, LIST_ITEM_CLASSNAME, labelCount, fieldLabelPaths, rowLabelPaths, componentLabelPaths, resolveFieldLabel, resolveComponentLabel, labelResolverMap, THEN_TARGET_KEYS, pagesOn, getComponentLabel, makeOptionData, realTarget, makeListItem, makeComponentOptionsList, tableRowLabel, tableColumnLabel, makeTableRowsList, tableAddressLabel, componentOptions;
+var BASE_NAME, DISPLAY_FIELD_CLASSNAME, LIST_CLASSNAME, HIGHLIGHT_CLASSNAME, LIST_ITEM_CLASSNAME, labelCount, fieldLabelPaths, rowLabelPaths, componentLabelPaths, resolveFieldLabel, resolveComponentLabel, labelResolverMap, THEN_TARGET_KEYS, pagesOn, getComponentLabel, makeOptionData, realTarget, makeListItem, makeComponentOptionsList, tableRowLabel, tableColumnLabel, makeTableRowsList, tableAddressLabel, componentOptions, parentItem, filterListItems;
 var init_helpers$1 = __esmMin((() => {
 	init_dom();
 	init_table$1();
@@ -11503,7 +12506,7 @@ var init_helpers$1 = __esmMin((() => {
 		const parsed = parseTableAddress(address);
 		if (!parsed) return null;
 		const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.("table"));
-		if (!table.rows[parsed.row]) return null;
+		if (isRepeating(table) || !table.rows[parsed.row]) return null;
 		const rowLabel = tableRowLabel(table, parsed.row);
 		if (parsed.cell === null) return rowLabel;
 		return table.columns[parsed.cell] ? `${rowLabel} \u203a ${tableColumnLabel(table, parsed.cell)}` : null;
@@ -11541,7 +12544,7 @@ var init_helpers$1 = __esmMin((() => {
 					const componentOptionsList = makeComponentOptionsList(component, autocomplete);
 					htmlLabel.push(componentOptionsList);
 				}
-				if (component.isTable && hasInputs(component.get("table"))) htmlLabel.push(makeTableRowsList(component, autocomplete));
+				if (component.isTable && hasInputs(component.get("table")) && !isRepeating(component.get("table"))) htmlLabel.push(makeTableRowsList(component, autocomplete));
 				const optionData = makeOptionData({
 					value,
 					textLabel,
@@ -11553,6 +12556,23 @@ var init_helpers$1 = __esmMin((() => {
 			}
 			return acc;
 		}, []);
+	};
+	parentItem = (item, list) => {
+		const parent = item?.parentElement?.closest("li");
+		return parent && list.contains(parent) ? parent : null;
+	};
+	filterListItems = (list, term) => {
+		const needle = term.toLowerCase();
+		const items = [...list.querySelectorAll("li")];
+		const label = (item) => (item.dataset.label ?? item.textContent).toLowerCase();
+		const matches = new Set(items.filter((item) => label(item).includes(needle)));
+		const shown = items.filter((item) => {
+			for (let current = item; current; current = parentItem(current, list)) if (matches.has(current)) return true;
+			return [...item.querySelectorAll("li")].some((descendant) => matches.has(descendant));
+		});
+		const visible = new Set(shown);
+		for (const item of items) item.style.display = visible.has(item) ? "block" : "none";
+		return shown;
 	};
 }));
 //#endregion
@@ -11613,32 +12633,7 @@ var init_autocomplete = __esmMin((() => {
 		*/
 		build() {
 			const keyboardNav = (e) => {
-				const list = this.list;
-				const activeOption = this.getActiveOption();
-				let direction = new Map([
-					[38, () => {
-						const previous = this.getPreviousOption(activeOption);
-						if (previous) this.selectOption(previous);
-					}],
-					[40, () => {
-						const next = this.getNextOption(activeOption);
-						if (next) this.selectOption(next);
-					}],
-					[13, () => {
-						if (activeOption) {
-							this.selectOption(activeOption);
-							this.setValue(activeOption);
-							if (list.style.display === "none") this.showList(activeOption);
-							else this.hideList();
-						}
-						e.preventDefault();
-					}],
-					[27, () => {
-						this.hideList();
-					}]
-				]).get(e.keyCode);
-				if (!direction) direction = () => false;
-				return direction();
+				if (this.handleKey(e.key)) e.preventDefault();
 			};
 			const autoCompleteInputActions = {
 				focus: ({ target }) => {
@@ -11656,7 +12651,7 @@ var init_autocomplete = __esmMin((() => {
 				},
 				input: (evt) => {
 					const { value } = evt.target;
-					const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll("li"), value);
+					const filteredOptions = filterListItems(this.list, value);
 					if (value.length === 0) this.clearValue();
 					if (filteredOptions.length === 0) this.hideList();
 					else {
@@ -11799,6 +12794,56 @@ var init_autocomplete = __esmMin((() => {
 				next = next ? next.nextSibling : null;
 			while (next != null && next.style.display === "none");
 			return next;
+		}
+		/**
+		* Moves through the list from the keyboard: Up and Down among the active item's siblings, Right into its nested list
+		* (rows, cells or options), Left back to the item it sits under, Enter to choose, Escape to close. Left and Right
+		* move the caret as usual when there's nowhere to go.
+		* @param {String} key KeyboardEvent.key
+		* @return {Boolean} true when the key's default action should be prevented
+		*/
+		handleKey(key) {
+			const activeOption = this.getActiveOption();
+			const go = (option) => {
+				if (option) this.selectOption(option);
+				return Boolean(option);
+			};
+			switch (key) {
+				case "ArrowUp":
+					go(this.getPreviousOption(activeOption));
+					return false;
+				case "ArrowDown":
+					go(this.getNextOption(activeOption));
+					return false;
+				case "ArrowRight": return this.isListOpen() && go(this.firstNestedOption(activeOption));
+				case "ArrowLeft": return this.isListOpen() && go(parentItem(activeOption, this.list));
+				case "Enter":
+					if (activeOption) {
+						this.selectOption(activeOption);
+						this.setValue(activeOption);
+						if (this.list.style.display === "none") this.showList(activeOption);
+						else this.hideList();
+					}
+					return true;
+				case "Escape":
+					this.hideList();
+					return false;
+				default: return false;
+			}
+		}
+		/**
+		* hideList takes the list out of the stage, and its stale active item must not capture Left and Right
+		* @return {Boolean} false once the list has been hidden
+		*/
+		isListOpen() {
+			return this.stage?.contains(this.list) !== false;
+		}
+		/**
+		* @param {HTMLLIElement|null} option
+		* @return {HTMLLIElement|null} the first shown item of its nested list
+		*/
+		firstNestedOption(option) {
+			return [...(option?.querySelector(":scope > ul"))?.children ?? []].find((item) => item.style.display !== "none") ?? null;
 		}
 		/**
 		* Selects option in autocomplete list. Removes class 'active-option' from all options
@@ -17786,7 +18831,7 @@ var init_control_attr_config = __esmMin((() => {
 }));
 //#endregion
 //#region src/lib/js/components/fields/table-panel.js
-var TABLE_PANEL_CLASSNAME, INPUT_CHOICES, CELL_GLYPHS, TablePanel;
+var TABLE_PANEL_CLASSNAME, INPUT_CHOICES, CELL_GLYPHS, withTemplateRow, TablePanel;
 var init_table_panel = __esmMin((() => {
 	init_dom();
 	init_table$1();
@@ -17804,6 +18849,10 @@ var init_table_panel = __esmMin((() => {
 		checkbox: "☐",
 		text: "▭"
 	};
+	withTemplateRow = (table) => isRepeating(table) && !table.rows.length ? {
+		...table,
+		rows: [templateRow(table)]
+	} : table;
 	TablePanel = class {
 		/**
 		* @param {Field} field a field with `table` data
@@ -17813,8 +18862,9 @@ var init_table_panel = __esmMin((() => {
 			this.element = dom.create({ className: "f-table-panel" });
 			this.render();
 		}
+		/** The table every edit starts from */
 		get table() {
-			return normalizeTable(this.field.get("table"));
+			return withTemplateRow(normalizeTable(this.field.get("table")));
 		}
 		/**
 		* What Panels builds the tab from. The panel element is kept on this instance, so it survives a panel rebuild.
@@ -17855,9 +18905,10 @@ var init_table_panel = __esmMin((() => {
 			const parts = [
 				this.captionField(table),
 				this.optionFields(table),
+				this.repeatLimits(table),
 				this.grid(table),
-				this.addButtons()
-			];
+				this.addButtons(table)
+			].filter(Boolean);
 			this.element.replaceChildren(...parts.map((part) => dom.create(part, true)));
 		}
 		captionField({ caption }) {
@@ -17879,10 +18930,22 @@ var init_table_panel = __esmMin((() => {
 			};
 		}
 		optionFields(table) {
-			const locked = hasInputs(table);
-			const hintId = `${this.field.id}-header-row-hint`;
+			const matrix = hasInputs(table);
+			const repeatOn = isPlainObject(table.repeat);
+			const lock = {
+				headerRow: matrix && {
+					checked: true,
+					hint: "table.headerRowLocked"
+				},
+				repeat: !matrix && {
+					checked: repeatOn,
+					hint: "table.repeatLocked"
+				}
+			};
+			const hintId = (key) => `${this.field.id}-${key === "headerRow" ? "header-row" : "repeat"}-hint`;
 			const toggle = (key) => {
-				const isLocked = key === "headerRow" && locked;
+				const locked = lock[key];
+				const checked = key === "repeat" ? repeatOn : table[key];
 				return {
 					tag: "label",
 					className: "f-table-panel-option",
@@ -17890,34 +18953,89 @@ var init_table_panel = __esmMin((() => {
 						tag: "input",
 						attrs: {
 							type: "checkbox",
-							checked: table[key] || isLocked,
-							disabled: isLocked,
-							...isLocked ? { "aria-describedby": hintId } : {}
+							checked: locked ? locked.checked : checked,
+							disabled: Boolean(locked),
+							...locked ? { "aria-describedby": hintId(key) } : {}
 						},
 						dataset: { tableOption: key },
-						action: { change: ({ target }) => this.toggleOption(key, target.checked) }
+						action: { change: ({ target }) => key === "repeat" ? this.toggleRepeat(target.checked) : this.toggleOption(key, target.checked) }
 					}, {
 						tag: "span",
 						textContent: tableText(`table.${key}`)
 					}]
 				};
 			};
-			const hint = locked && {
+			const hints = ["headerRow", "repeat"].filter((key) => lock[key]).map((key) => ({
 				tag: "span",
 				attrs: {
-					id: hintId,
+					id: hintId(key),
 					className: "f-table-panel-hint"
 				},
-				textContent: tableText("table.headerRowLocked")
-			};
+				textContent: tableText(lock[key].hint)
+			}));
 			return {
 				className: "f-table-panel-options",
 				children: [
 					toggle("headerRow"),
 					toggle("rowHeaders"),
-					hint
-				].filter(Boolean)
+					toggle("repeat"),
+					...hints
+				]
 			};
+		}
+		toggleRepeat(checked) {
+			const table = withTemplateRow(setRepeat(this.table, checked ? { min: 1 } : null));
+			this.restructure(withKeys(table), "[data-table-option=\"repeat\"]");
+		}
+		/** Minimum and Maximum rows, shown while the table repeats */
+		repeatLimits(table) {
+			if (!isRepeating(table)) return null;
+			const { min, max } = repeatOf(table);
+			const limit = (which, value, attrs) => ({
+				tag: "label",
+				className: "f-table-panel-limit",
+				children: [{
+					tag: "span",
+					textContent: tableText(which === "min" ? "table.repeatMin" : "table.repeatMax")
+				}, {
+					tag: "input",
+					attrs: {
+						type: "number",
+						step: "1",
+						value: value === null ? "" : String(value),
+						...attrs
+					},
+					dataset: { repeatLimit: which },
+					action: { change: () => this.commitLimits() }
+				}]
+			});
+			return {
+				className: "f-table-panel-limits",
+				children: [limit("min", min, {
+					min: "0",
+					max: String(500)
+				}), limit("max", max, {
+					min: "1",
+					placeholder: tableText("table.repeatNoMax")
+				})]
+			};
+		}
+		/** Saves the limits as typed, normalised, and shows the result in place without rebuilding */
+		commitLimits() {
+			const input = (which) => this.element.querySelector(`[data-repeat-limit="${which}"]`);
+			const read = (which) => {
+				const value = input(which).value.trim();
+				return value === "" ? void 0 : Number(value);
+			};
+			const table = setRepeat(this.table, {
+				min: read("min"),
+				max: read("max")
+			});
+			this.field.set("table", table);
+			this.field.updatePreview();
+			const { min, max } = repeatOf(table);
+			input("min").value = String(min);
+			input("max").value = max === null ? "" : String(max);
 		}
 		toggleOption(key, checked) {
 			this.restructure(withKeys(setTableOption(this.table, key, checked)), `[data-table-option="${key}"]`);
@@ -17988,7 +19106,7 @@ var init_table_panel = __esmMin((() => {
 				onCommit: () => this.commitKeys()
 			});
 		}
-		requiredToggle(row, r) {
+		requiredToggle(row, r, repeating) {
 			return {
 				tag: "label",
 				className: "f-table-row-required",
@@ -17997,7 +19115,7 @@ var init_table_panel = __esmMin((() => {
 					attrs: {
 						type: "checkbox",
 						checked: row.required === true,
-						"aria-label": tableText("table.rowRequired", { row: r + 1 })
+						"aria-label": repeating ? tableText("table.repeatRequired") : tableText("table.rowRequired", { row: r + 1 })
 					},
 					dataset: { rowRequired: String(r) },
 					action: { change: ({ target }) => {
@@ -18031,6 +19149,8 @@ var init_table_panel = __esmMin((() => {
 			const showHeader = headerRow || matrix;
 			const lastColumn = columns.length <= 1;
 			const lastRow = rows.length <= 1;
+			const repeating = isRepeating(table);
+			const shownRows = repeating ? [templateRow(table)] : rows;
 			const headLine = columns.map((column, c) => ({
 				tag: "td",
 				children: [
@@ -18073,15 +19193,15 @@ var init_table_panel = __esmMin((() => {
 					})]
 				};
 			};
-			const bodyLines = rows.map((row, r) => ({
+			const bodyLines = shownRows.map((row, r) => ({
 				tag: "tr",
 				children: [...row.cells.map((cell, c) => bodyCell(cell, r, c)), {
 					tag: "td",
 					className: "f-table-editor-row-controls",
 					children: [
-						matrix && this.valueInput("row", r, row.value),
-						matrix && this.requiredToggle(row, r),
-						this.removeButton("row", r, lastRow)
+						matrix && !repeating && this.valueInput("row", r, row.value),
+						matrix && this.requiredToggle(row, r, repeating),
+						!repeating && this.removeButton("row", r, lastRow)
 					].filter(Boolean)
 				}]
 			}));
@@ -18106,7 +19226,7 @@ var init_table_panel = __esmMin((() => {
 				}]
 			};
 		}
-		addButtons() {
+		addButtons(table) {
 			const button = (kind, key) => ({
 				tag: "button",
 				attrs: {
@@ -18119,11 +19239,11 @@ var init_table_panel = __esmMin((() => {
 			});
 			return {
 				className: "f-table-panel-add",
-				children: [button("row", "table.addRow"), button("column", "table.addColumn")]
+				children: [!isRepeating(table) && button("row", "table.addRow"), button("column", "table.addColumn")].filter(Boolean)
 			};
 		}
 		addRowAtEnd() {
-			const table = withKeys(addRow(this.table));
+			const table = withKeys(addRow$1(this.table));
 			const r = table.rows.length - 1;
 			this.restructure(table, `[data-row="${r}"]`, `[data-row-value="${r}"]`, "[data-table-add=\"row\"]");
 		}
@@ -18134,7 +19254,7 @@ var init_table_panel = __esmMin((() => {
 			this.restructure(table, `[data-header-column="${c}"]`, `[data-row="0"][data-column="${c}"]`, "[data-table-add=\"column\"]");
 		}
 		removeRowAt(index) {
-			const table = withKeys(removeRow(this.table, index));
+			const table = withKeys(removeRow$1(this.table, index));
 			const next = Math.min(index, table.rows.length - 1);
 			this.restructure(table, `[data-remove-row="${next}"]`, "[data-table-add=\"row\"]");
 		}
@@ -21618,6 +22738,8 @@ var import_isEqual = /* @__PURE__ */ __toESM(require_isEqual(), 1);
 init_dom();
 init_utils();
 init_constants();
+var SKIP_DISABLED_ATTR = "data-formeo-skip-disabled";
+var SKIPPABLE_CONTROLS = "input, select, textarea, button";
 var containerLookup = (container) => dom.resolveContainer(container);
 var processOptions = ({ editorContainer, renderContainer, formData, ...opts } = {}) => {
 	const processedOptions = {
@@ -21748,15 +22870,6 @@ var tableRowPropertyMap = {
 	isVisible: (row) => isVisible(row),
 	isNotVisible: (row) => !isVisible(row)
 };
-var createRemoveButton = () => dom.btnTemplate({
-	className: "remove-input-group",
-	children: dom.icon("remove"),
-	action: {
-		mouseover: ({ target }) => target.parentElement.classList.add("will-remove"),
-		mouseleave: ({ target }) => target.parentElement.classList.remove("will-remove"),
-		click: ({ target }) => target.parentElement.remove()
-	}
-});
 var equals = (source, target) => Array.isArray(source) ? source.some((value) => (0, import_isEqual.default)(value, target)) : (0, import_isEqual.default)(source, target);
 var contains = (source, target) => {
 	if (source == null) return false;
@@ -21877,6 +22990,27 @@ var groupIfConditions = (ifConditions = []) => ifConditions.reduce((groups, clau
 	else groups.push([clause]);
 	return groups;
 }, []);
+//#endregion
+//#region src/lib/js/common/input-group-text.mjs
+init_i18n_es_min();
+init_string();
+/**
+* English fallbacks for input groups' strings (#349 phase 3), for locales that don't have them yet.
+* @draggable/formeo-languages ships them from the release after Draggable/formeo-languages feat/table-repeat-keys.
+*/
+var INPUT_GROUP_TEXT = Object.freeze({
+	"inputGroup.add": "Add +",
+	"inputGroup.added": "Group {n} added",
+	"inputGroup.remove": "Remove group {n}",
+	"inputGroup.removed": "Group {n} removed"
+});
+/**
+* An input group string in the current locale, or its English fallback, with `{tokens}` filled from `vars`
+* @param {String} key e.g. 'inputGroup.remove'
+* @param {Object} [vars] e.g. { n: 2 }
+* @return {String}
+*/
+var inputGroupText = (key, vars = {}) => fillTokens(s.get(key) || INPUT_GROUP_TEXT[key] || key, vars);
 //#endregion
 //#region src/lib/js/renderer/pagination.js
 init_constants();
@@ -22265,6 +23399,482 @@ var paginate = (form, { type, progress, submit, heading, labels }, stages, onCha
 	};
 };
 //#endregion
+//#region src/lib/js/renderer/row-actions.js
+init_constants();
+/**
+* What adding and removing rows share (#349 phase 3): a repeating table's rows and input groups' copies alike
+*/
+/** Fired on the table or input-group wrapper after a row or group is added or removed; the renderer's onChange hears it */
+var ROWS_CHANGE_EVENT = "formeo:rowschange";
+/**
+* Says `message` through a live region. Cleared first and set on the next frame, so the same message twice is
+* announced twice.
+* @param {HTMLElement|null} region an element with role="status"
+* @param {String} message
+*/
+function announce(region, message) {
+	if (!region) return;
+	region.textContent = "";
+	const view = region.ownerDocument.defaultView;
+	const set = () => {
+		region.textContent = message;
+	};
+	if (view?.requestAnimationFrame) view.requestAnimationFrame(set);
+	else setTimeout(set, 0);
+}
+/**
+* After a remove, focus the remove button now at the removed index, else the previous one, else `fallback`
+* @param {Array<HTMLButtonElement|null>} buttons the remove buttons left, in order
+* @param {Number} index the removed row's index among them
+* @param {HTMLElement|null} fallback usually the Add button
+*/
+function focusAfterRemove(buttons, index, fallback) {
+	[
+		buttons[index],
+		buttons[index - 1],
+		fallback
+	].find((elem) => elem && !elem.disabled)?.focus();
+}
+/**
+* @param {HTMLElement} target the table or input-group wrapper
+* @param {'add'|'remove'} action
+* @param {Number} index the row's or group's index
+*/
+function dispatchRowsChange(target, action, index) {
+	const { CustomEvent } = target.ownerDocument.defaultView;
+	target.dispatchEvent(new CustomEvent(ROWS_CHANGE_EVENT, {
+		bubbles: true,
+		detail: {
+			action,
+			index
+		}
+	}));
+}
+/**
+* A row or group built after render takes on the state around it: not required inside a condition-hidden container,
+* disabled on a skipped page (marked, so bringing the page back re-enables it). Call it once the node is in place.
+* @param {HTMLElement} node
+*/
+function adoptInto(node) {
+	if (node.closest(HIDDEN_BY_CONDITION_SELECTOR)) suspendRequired(node);
+	if (node.closest(`[data-skipped]`)) {
+		for (const control of node.querySelectorAll(SKIPPABLE_CONTROLS)) if (!control.disabled) {
+			control.disabled = true;
+			control.setAttribute(SKIP_DISABLED_ATTR, "");
+		}
+	}
+}
+//#endregion
+//#region src/lib/js/renderer/input-groups.js
+init_dom();
+init_table$1();
+init_utils();
+/**
+* Input groups (a row with `config.inputGroup`): the person filling in the form adds copies of the row and removes
+* them. A copy's single-value controls keep the original's name, so they post arrays. Its grouped controls (radio and
+* checkbox groups, multiple selects, matrices) get `<name>-<n>`, n being the copy's 1-based position, renumbered when
+* an earlier copy is removed (#349 phase 3).
+*/
+var INPUT_GROUP_WRAP_CLASSNAME = `f-input-group-wrap`;
+/** Marks every element of a copy with the rendered id of the element it copies */
+var CLONE_ATTR = "data-clone-of";
+var ADD_CLASSNAME = "add-input-group";
+var REMOVE_CLASSNAME = "remove-input-group";
+var STATUS_CLASSNAME = "f-input-group-status";
+var CLONE_RECORDS = /* @__PURE__ */ new WeakMap();
+var CLONE_COUNTS = /* @__PURE__ */ new WeakMap();
+var ADD_BUTTONS = /* @__PURE__ */ new WeakMap();
+/**
+* How a copy names a control: 'group' gets `<name>-<n>`, 'single' keeps the original's name, null has no name
+* @param {Object} source processed component data
+* @return {'group'|'single'|null}
+*/
+var cloneNameKind = (source) => {
+	if (isTableField(source)) return hasInputs(source.table) ? "group" : null;
+	const { tag, attrs = {}, options } = source;
+	if (options && ["checkbox", "radio"].includes(attrs.type)) return "group";
+	if (tag === "select") return attrs.multiple ? "group" : "single";
+	return tag === "input" || tag === "textarea" ? "single" : null;
+};
+var groupBaseName = (source) => String(source.attrs?.name ?? "").trim().replace(/\[\]$/, "") || source.id;
+/**
+* A copy of a cached component and its children for input group copy n. Every copied component is cached under its
+* new id, so userFormData can label its answers.
+* @param {FormeoRenderer} renderer
+* @param {String} componentId rendered id, e.g. 'f-abc'
+* @param {Number} [n] the copy's 1-based position
+* @param {Array<{id: String, base: String|null}>} [entries] collects what was cached, for renumbering
+* @return {Object} dom.create config
+*/
+function cloneComponentData(renderer, componentId, n = 1, entries = []) {
+	const source = renderer.components[componentId];
+	const { children, id, attrs = {}, ...rest } = source;
+	const cloneAttrs = {
+		...attrs,
+		[CLONE_ATTR]: id
+	};
+	const kind = cloneNameKind(source);
+	let base = null;
+	if (kind === "group") {
+		base = groupBaseName(source);
+		cloneAttrs.name = `${base}-${n}`;
+	} else if (kind === "single") cloneAttrs.name = getName(source);
+	const cloneId = "f-" + uuid(id);
+	const data = {
+		...rest,
+		id: cloneId,
+		attrs: cloneAttrs,
+		children: Array.isArray(children) ? children.map((child) => child?.id && renderer.components[child.id] ? cloneComponentData(renderer, child.id, n, entries) : clone$1(child)) : children
+	};
+	renderer.components[cloneId] = data;
+	entries.push({
+		id: cloneId,
+		base
+	});
+	return data;
+}
+/**
+* @param {HTMLElement} wrap the input group's wrapper
+* @return {HTMLElement[]} its copies, in order
+*/
+var clonesOf = (wrap) => [...wrap.children].filter((child) => child.hasAttribute(CLONE_ATTR));
+var addButtonOf = (wrap) => {
+	if (!ADD_BUTTONS.has(wrap)) ADD_BUTTONS.set(wrap, wrap.querySelector(`:scope > .${ADD_CLASSNAME}`));
+	return ADD_BUTTONS.get(wrap);
+};
+var statusOf = (wrap) => wrap.querySelector(`:scope > .${STATUS_CLASSNAME}`);
+var removeButtonOf = (copy) => copy.querySelector(`:scope > .${REMOVE_CLASSNAME}`);
+var labelRemoveButton = (button, groupNumber) => {
+	const label = inputGroupText("inputGroup.remove", { n: groupNumber });
+	button.setAttribute("aria-label", label);
+	button.title = label;
+};
+var removeButtonConfig = (renderer, groupNumber) => {
+	const label = inputGroupText("inputGroup.remove", { n: groupNumber });
+	return {
+		tag: "button",
+		attrs: {
+			type: "button",
+			className: REMOVE_CLASSNAME,
+			"aria-label": label,
+			title: label
+		},
+		content: dom.icon("remove"),
+		action: {
+			mouseover: ({ currentTarget }) => currentTarget.parentElement.classList.add("will-remove"),
+			mouseleave: ({ currentTarget }) => currentTarget.parentElement.classList.remove("will-remove"),
+			click: ({ currentTarget }) => removeGroup(renderer, currentTarget.parentElement)
+		}
+	};
+};
+/**
+* The Add button and status region that follow an input group's row
+* @param {FormeoRenderer} renderer
+* @param {String} rowId the original row's rendered id
+* @return {Array<Object>} dom.create configs
+*/
+var inputGroupControls = (renderer, rowId) => [{
+	tag: "button",
+	attrs: {
+		className: `${ADD_CLASSNAME} btn pull-right`,
+		type: "button"
+	},
+	textContent: inputGroupText("inputGroup.add"),
+	action: { click: ({ currentTarget }) => addGroup(renderer, currentTarget.parentElement, rowId) }
+}, {
+	tag: "span",
+	attrs: {
+		className: `${STATUS_CLASSNAME} ${SR_ONLY_CLASSNAME}`,
+		role: "status"
+	}
+}];
+/**
+* Adds a copy of the group's row before its Add button
+* @param {FormeoRenderer} renderer
+* @param {HTMLElement} wrap
+* @param {String} rowId the original row's rendered id
+* @param {Object} [opts]
+* @param {Boolean} [opts.interactive] focus, announce and fire formeo:rowschange; false for the userData setter
+* @return {HTMLElement} the copy
+*/
+function addGroup(renderer, wrap, rowId, { interactive = true } = {}) {
+	const n = (CLONE_COUNTS.get(wrap) ?? 0) + 1;
+	const entries = [];
+	const copy = dom.create(cloneComponentData(renderer, rowId, n, entries));
+	CLONE_RECORDS.set(copy, entries);
+	for (const button of copy.querySelectorAll(`.${ADD_ROW_CLASSNAME}, .${REMOVE_ROW_CLASSNAME}`)) {
+		button.hidden = true;
+		button.disabled = true;
+	}
+	copy.appendChild(dom.create(removeButtonConfig(renderer, n + 1)));
+	wrap.insertBefore(copy, addButtonOf(wrap));
+	CLONE_COUNTS.set(wrap, n);
+	adoptInto(copy);
+	if (interactive) {
+		focusFirst(copy);
+		announce(statusOf(wrap), inputGroupText("inputGroup.added", { n: n + 1 }));
+		dispatchRowsChange(wrap, "add", n);
+	}
+	return copy;
+}
+var suffixTail = (name, prefix) => {
+	if (!name.startsWith(prefix)) return null;
+	const tail = name.slice(prefix.length);
+	return tail === "" || tail.startsWith("[") || tail === "-other" ? tail : null;
+};
+var renumberClone = (renderer, copy, from, to) => {
+	for (const { id, base } of CLONE_RECORDS.get(copy) ?? []) {
+		if (!base) continue;
+		const oldName = `${base}-${from}`;
+		const newName = `${base}-${to}`;
+		const component = renderer.components[id];
+		if (component?.attrs) component.attrs.name = newName;
+		for (const elem of copy.querySelectorAll("[name]")) {
+			const tail = suffixTail(elem.getAttribute("name"), oldName);
+			if (tail !== null) elem.setAttribute("name", newName + tail);
+		}
+	}
+	const button = removeButtonOf(copy);
+	if (button) labelRemoveButton(button, to + 1);
+};
+/**
+* Removes a copy and renumbers the later ones, so their `-<n>` names stay contiguous
+* @param {FormeoRenderer} renderer
+* @param {HTMLElement} copy
+*/
+function removeGroup(renderer, copy) {
+	const wrap = copy.parentElement;
+	const copies = clonesOf(wrap);
+	const index = copies.indexOf(copy);
+	if (index === -1) return;
+	for (const { id } of CLONE_RECORDS.get(copy) ?? []) delete renderer.components[id];
+	copy.remove();
+	CLONE_COUNTS.set(wrap, copies.length - 1);
+	for (let i = index + 1; i < copies.length; i++) renumberClone(renderer, copies[i], i + 1, i);
+	focusAfterRemove(clonesOf(wrap).map(removeButtonOf), index, addButtonOf(wrap));
+	announce(statusOf(wrap), inputGroupText("inputGroup.removed", { n: index + 2 }));
+	dispatchRowsChange(wrap, "remove", index + 1);
+}
+/**
+* The names an input group's original row posts under: single-value controls' names (shared by copies) and grouped
+* controls' bases (extended by copies)
+* @param {FormeoRenderer} renderer
+* @param {String} rowId the original row's rendered id
+* @return {{singles: Set<String>, bases: Set<String>}}
+*/
+function groupNamesOf(renderer, rowId) {
+	const singles = /* @__PURE__ */ new Set();
+	const bases = /* @__PURE__ */ new Set();
+	const visit = (id) => {
+		const source = renderer.components[id];
+		if (!source) return;
+		const kind = cloneNameKind(source);
+		if (kind === "group") bases.add(groupBaseName(source));
+		else if (kind === "single") singles.add(getName(source));
+		for (const child of Array.isArray(source.children) ? source.children : []) if (child?.id) visit(child.id);
+	};
+	visit(rowId);
+	return {
+		singles,
+		bases
+	};
+}
+/**
+* @param {String} key a userData key
+* @param {String} base a grouped control's base name
+* @return {Number} n when the key is `<base>-<n>`, `<base>-<n>[...]` or `<base>-<n>-other`; else 0
+*/
+function cloneNumber(key, base) {
+	if (!key.startsWith(`${base}-`)) return 0;
+	const match = /^([1-9]\d*)(?:$|\[|-other$)/.exec(key.slice(base.length + 1));
+	return match ? Number(match[1]) : 0;
+}
+/**
+* Before the userData setter fills the form, gives every input group the copies its saved answers need: one per extra
+* value of a shared single-value name, and up to the highest `<base>-<n>`. Copies are added quietly and never removed;
+* input groups have no max, so growth stops at SETTER_ROW_LIMIT.
+* @param {FormeoRenderer} renderer
+* @param {HTMLFormElement} form
+* @param {Object} data userData
+*/
+function growGroupsForAnswers(renderer, form, data) {
+	for (const wrap of form.querySelectorAll(`.${INPUT_GROUP_WRAP_CLASSNAME}`)) {
+		const original = [...wrap.children].find((child) => !child.hasAttribute("data-clone-of") && renderer.components[child.id]);
+		if (!original) continue;
+		const { singles, bases } = groupNamesOf(renderer, original.id);
+		let needed = 0;
+		for (const [key, value] of Object.entries(data)) {
+			if (singles.has(key) && Array.isArray(value)) needed = Math.max(needed, value.length - 1);
+			for (const base of bases) needed = Math.max(needed, cloneNumber(key, base));
+		}
+		needed = Math.min(needed, 500);
+		for (let have = clonesOf(wrap).length; have < needed; have++) addGroup(renderer, wrap, original.id, { interactive: false });
+	}
+}
+//#endregion
+//#region src/lib/js/renderer/repeat-rows.js
+init_dom();
+init_table$1();
+init_table_text();
+init_utils();
+/**
+* A repeating table's rows at run time (#349 phase 3). Every row is built by matrixRowConfig from the field data the
+* renderer cached, so added and renumbered rows match the first render. The limits ride on the wrapper's data
+* attributes, so they re-sync from the DOM alone.
+*/
+var tableOf = (wrap) => wrap.querySelector(":scope > table");
+var bodyOf = (wrap) => tableOf(wrap)?.tBodies[0];
+/**
+* The cached field behind a repeating table. A table inside an input-group copy has none: it renders, but neither
+* clicks nor the userData setter add or remove its rows.
+* @param {HTMLElement} wrap
+* @param {FormeoRenderer} renderer
+* @return {Object|undefined}
+*/
+var fieldOf = (wrap, renderer) => wrap.closest(`[data-clone-of]`) ? void 0 : renderer.components[tableOf(wrap)?.id];
+var limitsOf = (wrap) => ({
+	min: Number(wrap.dataset.repeatMin ?? 0),
+	max: wrap.dataset.repeatMax ? Number(wrap.dataset.repeatMax) : null
+});
+/**
+* @param {ParentNode} root a form, stage or document
+* @return {HTMLElement[]} the rendered repeating tables' wrappers, leaving out those in input-group copies, which
+* don't repeat and keep their buttons hidden and disabled
+*/
+var repeatingTables = (root) => [...root.querySelectorAll(`.${REPEAT_CLASSNAME}`)].filter((wrap) => !wrap.closest(`[${CLONE_ATTR}]`));
+/**
+* @param {HTMLElement} wrap
+* @return {Number}
+*/
+var rowCount = (wrap) => bodyOf(wrap)?.rows.length ?? 0;
+/** "Item 2", or "Row 2" without row headers */
+var rowName = (field, r) => repeatRowName(normalizeTable(field.table), r, tableText);
+var buildRow = (field, r) => dom.create(matrixRowConfig(field, r, dom.tableOptions(false)));
+/**
+* Disables remove at min rows or fewer and Add at max rows or more. On a skipped page the buttons stay as the skip
+* left them; bringing the page back re-syncs.
+* @param {HTMLElement} wrap
+*/
+function syncLimits(wrap) {
+	if (wrap.closest(`[data-skipped]`)) return;
+	const { min, max } = limitsOf(wrap);
+	const count = rowCount(wrap);
+	for (const button of wrap.querySelectorAll(`.${REMOVE_ROW_CLASSNAME}`)) button.disabled = count <= min;
+	const add = wrap.querySelector(`:scope > .${ADD_ROW_CLASSNAME}`);
+	if (add) add.disabled = max !== null && count >= max;
+}
+/**
+* Appends a row, unless the table is at its max
+* @param {HTMLElement} wrap
+* @param {FormeoRenderer} renderer
+* @param {Object} [opts]
+* @param {Boolean} [opts.interactive] focus, announce and fire formeo:rowschange; false for the userData setter
+* @param {Boolean} [opts.sync] re-sync the buttons' limits; setRowCount turns it off and syncs once after its loop
+* @return {HTMLTableRowElement|null} the new row
+*/
+function addRow(wrap, renderer, { interactive = true, sync = true } = {}) {
+	const field = fieldOf(wrap, renderer);
+	const body = bodyOf(wrap);
+	const { max } = limitsOf(wrap);
+	const r = rowCount(wrap);
+	if (!field || !body || max !== null && r >= max) return null;
+	const tr = buildRow(field, r);
+	body.append(tr);
+	adoptInto(tr);
+	if (sync) syncLimits(wrap);
+	if (interactive) {
+		focusFirst(tr);
+		announce(wrap.querySelector(`:scope > .${ROW_STATUS_CLASSNAME}`), tableText("table.rowAdded", { row: rowName(field, r) }));
+		dispatchRowsChange(wrap, "add", r);
+	}
+	return tr;
+}
+var carryValues = (from, to) => {
+	[...from.cells].forEach((cell, c) => {
+		const source = cell.querySelector("input");
+		const target = to.cells[c]?.querySelector("input");
+		if (!source || !target) return;
+		if (["checkbox", "radio"].includes(source.type)) target.checked = source.checked;
+		else target.value = source.value;
+	});
+};
+/**
+* Removes a row, unless the table is at its min, and renumbers every later row so keys stay contiguous
+* @param {HTMLTableRowElement} tr
+* @param {FormeoRenderer} renderer
+*/
+function removeRow(tr, renderer) {
+	const wrap = tr.closest(`.${REPEAT_CLASSNAME}`);
+	const field = wrap && fieldOf(wrap, renderer);
+	const body = wrap && bodyOf(wrap);
+	const index = body ? [...body.rows].indexOf(tr) : -1;
+	if (!field || index === -1 || rowCount(wrap) <= limitsOf(wrap).min) return;
+	const name = rowName(field, index);
+	tr.remove();
+	for (const later of [...body.rows].slice(index)) {
+		const fresh = buildRow(field, later.sectionRowIndex);
+		carryValues(later, fresh);
+		later.replaceWith(fresh);
+		adoptInto(fresh);
+		if (fresh.hasAttribute("data-formeo-required-group")) dom.syncCheckboxGroupRequired(fresh);
+	}
+	syncLimits(wrap);
+	focusAfterRemove([...wrap.querySelectorAll(`.${REMOVE_ROW_CLASSNAME}`)], index, wrap.querySelector(`:scope > .${ADD_ROW_CLASSNAME}`));
+	announce(wrap.querySelector(`:scope > .${ROW_STATUS_CLASSNAME}`), tableText("table.rowRemoved", { row: name }));
+	dispatchRowsChange(wrap, "remove", index);
+}
+/**
+* One delegated listener for every repeating table in a rendered form
+* @param {HTMLFormElement} form
+* @param {FormeoRenderer} renderer
+*/
+function bindRepeatRows(form, renderer) {
+	form.addEventListener("click", (event) => {
+		const button = (event.target.nodeType === 3 ? event.target.parentElement : event.target)?.closest?.(`.${ADD_ROW_CLASSNAME}, .${REMOVE_ROW_CLASSNAME}`);
+		const wrap = button?.closest(`.${REPEAT_CLASSNAME}`);
+		if (!wrap || button.disabled || !form.contains(wrap)) return;
+		if (button.classList.contains("f-table-add-row")) addRow(wrap, renderer);
+		else removeRow(button.closest("tr"), renderer);
+	});
+}
+/**
+* Grows a repeating table to `count` rows and never shrinks it. The ceiling is the table's max; SETTER_ROW_LIMIT only
+* applies when there is no max. Rows are added quietly: no focus, no announcement, no event.
+* @param {HTMLElement} wrap
+* @param {Number} count
+* @param {FormeoRenderer} renderer
+* @return {Number} the row count after growing
+*/
+function setRowCount(wrap, count, renderer) {
+	const { max } = limitsOf(wrap);
+	const target = Math.min(count, max ?? 500);
+	while (rowCount(wrap) < target) if (!addRow(wrap, renderer, {
+		interactive: false,
+		sync: false
+	})) break;
+	syncLimits(wrap);
+	return rowCount(wrap);
+}
+/**
+* Before the userData setter fills the form, gives every repeating table the rows its saved answers name
+* @param {HTMLFormElement} form
+* @param {String[]} keys userData keys
+* @param {FormeoRenderer} renderer
+*/
+function growForAnswers(form, keys, renderer) {
+	for (const wrap of repeatingTables(form)) {
+		const field = fieldOf(wrap, renderer);
+		if (!field) continue;
+		const base = String(field.attrs?.name ?? "").trim() || field.id;
+		let highest = -1;
+		for (const key of keys) {
+			const parsed = parseMatrixKey(key, base);
+			if (parsed && looksLikeArrayIndex(parsed.row)) highest = Math.max(highest, Number(parsed.row));
+		}
+		if (highest >= 0) setRowCount(wrap, highest + 1, renderer);
+	}
+}
+//#endregion
 //#region src/lib/js/renderer/index.js
 init_dom();
 init_label_position();
@@ -22274,8 +23884,6 @@ init_table_text();
 init_utils();
 init_string();
 init_constants();
-var SKIP_DISABLED_ATTR = "data-formeo-skip-disabled";
-var SKIPPABLE_CONTROLS = "input, select, textarea, button";
 var STAGE_SKIP_PROPERTIES = {
 	isNotVisible: true,
 	isVisible: false
@@ -22441,11 +24049,13 @@ var FormeoRenderer$1 = class {
 			const parsed = parseMatrixKey(name, String(component.attrs?.name ?? "").trim() || component.id);
 			if (!parsed) continue;
 			const table = withKeys(normalizeTable(component.table));
-			const r = table.rows.findIndex((row) => row.value === parsed.row);
+			const repeating = isRepeating(table);
+			let r = table.rows.findIndex((row) => row.value === parsed.row);
+			if (repeating) r = looksLikeArrayIndex(parsed.row) ? Number(parsed.row) : -1;
 			const c = parsed.column === null ? -1 : inputColumns(table).find((i) => table.columns[i].value === parsed.column) ?? -1;
 			if (r === -1 || parsed.column !== null && c === -1) continue;
 			const tableName = table.caption.trim() || plainText(component.config?.label);
-			const row = table.rowHeaders && table.rows[r].cells[0].trim() || tableText("table.newRow", { row: r + 1 });
+			const row = repeating ? repeatRowName(table, r, tableText) : table.rowHeaders && table.rows[r].cells[0].trim() || tableText("table.newRow", { row: r + 1 });
 			if (c === -1) return {
 				component,
 				label: tableText("table.entryRow", {
@@ -22481,8 +24091,10 @@ var FormeoRenderer$1 = class {
 			return;
 		}
 		const unmatched = [];
+		growForAnswers(form, keys, this);
+		growGroupsForAnswers(this, form, data ?? {});
 		for (const key of keys) {
-			const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`);
+			const fields = controlsNamed(form, key) ?? controlsNamed(form, `${key}[]`) ?? controlWithId(form, key);
 			if (!fields) {
 				unmatched.push(key);
 				continue;
@@ -22494,7 +24106,17 @@ var FormeoRenderer$1 = class {
 				const group = checkables[0].closest(`[data-${REQUIRED_GROUP_ATTR}]`);
 				if (group) dom.syncCheckboxGroupRequired(group);
 			} else if (checkables?.[0].type === "radio") for (const field of checkables) field.checked = field.value === data[key];
-			else if (fields.type === "select-multiple") {
+			else if (isNodeCollection(fields)) {
+				const values = [data[key]].flat();
+				Array.from(fields).forEach((field, i) => {
+					if (i < values.length) field.value = values[i];
+				});
+				if (values.length > fields.length) {
+					const first = fields.length + 1;
+					const which = first === values.length ? `value ${first}` : `values ${first}-${values.length}`;
+					unmatched.push(`${key} (${which})`);
+				}
+			} else if (fields.type === "select-multiple") {
 				const values = [data[key]].flat().map(String);
 				for (const option of fields.options) option.selected = values.includes(option.value);
 			} else if (fields.type) fields.value = data[key];
@@ -22536,6 +24158,7 @@ var FormeoRenderer$1 = class {
 		this.form = cleanFormData(formData);
 		this.pager?.destroy();
 		this.pager = null;
+		this.components = Object.create(null);
 		const renderCount = document.getElementsByClassName("formeo-render").length;
 		const config = {
 			...this.config,
@@ -22549,6 +24172,7 @@ var FormeoRenderer$1 = class {
 		for (const stage of this.stageElements()) stage.dataset.stageId = stage.id;
 		this.applyConditions();
 		this.bindFormEvents(this.renderedForm);
+		bindRepeatRows(this.renderedForm, this);
 		this.pager = this.paginateForm(this.renderedForm, startStageId);
 		return this.renderedForm;
 	}
@@ -22591,6 +24215,7 @@ var FormeoRenderer$1 = class {
 				control.removeAttribute(SKIP_DISABLED_ATTR);
 			}
 			for (const group of stage.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) dom.syncOtherInput(group);
+			for (const wrap of repeatingTables(stage)) syncLimits(wrap);
 			this.rerunConditionsReading(stage);
 			this.pager?.refresh();
 			return;
@@ -22632,12 +24257,20 @@ var FormeoRenderer$1 = class {
 	*/
 	bindFormEvents(form) {
 		const { onChange, onSubmit } = this.events;
-		if (onChange) form.addEventListener("input", (event) => onChange({
-			event,
-			target: event.target,
-			form,
-			userData: userDataOf(form)
-		}));
+		if (onChange) {
+			form.addEventListener("input", (event) => onChange({
+				event,
+				target: event.target,
+				form,
+				userData: userDataOf(form)
+			}));
+			form.addEventListener(ROWS_CHANGE_EVENT, (event) => onChange({
+				event,
+				target: event.target,
+				form,
+				userData: userDataOf(form)
+			}));
+		}
 		if (onSubmit) form.addEventListener("submit", (event) => onSubmit({
 			event,
 			form,
@@ -22697,63 +24330,36 @@ var FormeoRenderer$1 = class {
 			id: this.prefixId(id)
 		};
 		this.cacheComponent(rowData);
-		const children = [
-			{
-				condition: config.legend,
-				result: () => ({
-					tag: config.fieldset ? "legend" : "h3",
-					children: config.legend
-				})
-			},
-			{
-				condition: true,
-				result: () => rowData
-			},
-			{
-				condition: config.inputGroup,
-				result: () => this.addButton(rowData.id)
-			}
-		].reduce((acc, { condition, result }) => {
+		const children = [{
+			condition: config.legend,
+			result: () => ({
+				tag: config.fieldset ? "legend" : "h3",
+				children: config.legend
+			})
+		}, {
+			condition: true,
+			result: () => rowData
+		}].reduce((acc, { condition, result }) => {
 			if (condition) acc.push(result());
 			return acc;
 		}, []);
-		if (config.inputGroup) className.push(`f-input-group-wrap`);
+		if (config.inputGroup) {
+			children.push(...inputGroupControls(this, rowData.id));
+			className.push(INPUT_GROUP_WRAP_CLASSNAME);
+		}
 		return {
 			tag: config.fieldset ? "fieldset" : "div",
 			className,
 			children
 		};
 	};
-	cloneComponentData = (componentId) => {
-		const { children = [], id, attrs = {}, ...rest } = this.components[componentId];
-		const updatedAttrs = {
-			...attrs,
-			"data-clone-of": id
-		};
-		if (rest.options && ["checkbox", "radio"].includes(attrs.type) || isTableField(rest)) delete updatedAttrs.name;
-		else if (rest.tag === "input") updatedAttrs.name = getName(this.components[componentId]);
-		return {
-			...rest,
-			id: "f-" + uuid(id),
-			children: children?.length && children.map(({ id }) => this.cloneComponentData(id)),
-			attrs: updatedAttrs
-		};
-	};
-	addButton = (id) => ({
-		tag: "button",
-		attrs: {
-			className: "add-input-group btn pull-right",
-			type: "button"
-		},
-		children: "Add +",
-		action: { click: (e) => {
-			const fInputGroup = e.target.parentElement;
-			const elem = dom.create(this.cloneComponentData(id));
-			fInputGroup.insertBefore(elem, fInputGroup.lastChild);
-			const removeButton = dom.create(createRemoveButton());
-			elem.appendChild(removeButton);
-		} }
-	});
+	/**
+	* A copy of a cached component for input group copy n; see input-groups.js
+	* @param {String} componentId
+	* @param {Number} [n]
+	* @return {Object}
+	*/
+	cloneComponentData = (componentId, n = 1) => cloneComponentData(this, componentId, n);
 	processColumns = (rowId) => {
 		return this.orderChildren("columns", this.form.rows[rowId].children).map((column) => this.cacheComponent(this.processColumn(column)));
 	};
@@ -22944,7 +24550,7 @@ var FormeoRenderer$1 = class {
 	*/
 	tableComponent = (table, address) => {
 		const parsed = parseTableAddress(address);
-		const isMatrix = table.tagName === "TABLE" && Boolean(table.closest(".f-table-matrix"));
+		const isMatrix = table.tagName === "TABLE" && Boolean(table.closest(".f-table-matrix")) && !table.closest(".f-table-repeat");
 		const row = parsed && isMatrix ? table.tBodies[0]?.rows[parsed.row] : null;
 		if (!row) return { component: null };
 		if (parsed.cell === null) return {
@@ -22987,6 +24593,37 @@ var userDataOf = (form) => {
 		else formDataObj[key] = value;
 	}
 	return formDataObj;
+};
+/**
+* The control or controls posting under `name`. `namedItem` also matches ids, and an input group copy's `<id>-<n>` name
+* collides with its option inputs' ids (`<id>-<n>`), so only name matches count.
+* @param {HTMLFormElement} form
+* @param {String} name
+* @return {Element|RadioNodeList|Element[]|null}
+*/
+var controlsNamed = (form, name) => {
+	const found = form.elements.namedItem(name);
+	if (!found) return null;
+	const named = (isDomNode(found) ? [found] : Array.from(found)).filter((elem) => elem.name === name);
+	if (!named.length) return null;
+	if (isDomNode(found) || named.length === found.length) return found;
+	return named.length === 1 ? named[0] : named;
+};
+/**
+* The text-like control or select whose id is `id`, so an answer saved under the stable `f-<fieldId>` still fills an
+* unnamed field whose name came from its label. Tried after every name lookup, and never a checkbox or radio: an
+* option input's id (`f-<fieldId>-<n>`) is what an input group copy's grouped name looks like.
+* @param {HTMLFormElement} form
+* @param {String} id
+* @return {Element|null}
+*/
+var controlWithId = (form, id) => {
+	const found = form.elements.namedItem(id);
+	return isDomNode(found) && found.id === id && [
+		"input",
+		"select",
+		"textarea"
+	].includes(tagName(found)) && !isCheckable(found) ? found : null;
 };
 var isCheckable = (elem) => ["checkbox", "radio"].includes(elem?.type);
 var checkableInputs = (fields) => {
