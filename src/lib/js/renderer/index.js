@@ -677,13 +677,15 @@ export default class FormeoRenderer {
       })
     })
 
+  /**
+   * Each stage's render config. Built as new objects, so this.form keeps its row ids for the next render
+   * @return {Object[]}
+   */
   get processedData() {
     return Object.values(this.form.stages).map(stage => {
-      stage.children = this.processRows(stage.id)
-      stage.className = STAGE_CLASSNAME
-
-      this.components[this.prefixId(stage.id)] = stage
-      return stage
+      const stageData = { ...stage, children: this.processRows(stage.id), className: STAGE_CLASSNAME }
+      this.components[this.prefixId(stage.id)] = stageData
+      return stageData
     })
   }
 
