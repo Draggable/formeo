@@ -8,6 +8,7 @@ import {
   isPlainObject,
   isRepeating,
   normalizeTable,
+  REPEAT_MIN_LIMIT,
   removeColumn,
   removeRow,
   repeatOf,
@@ -211,7 +212,7 @@ export class TablePanel {
     return {
       className: 'f-table-panel-limits',
       children: [
-        limit('min', min, { min: '0' }),
+        limit('min', min, { min: '0', max: String(REPEAT_MIN_LIMIT) }),
         limit('max', max, { min: '1', placeholder: tableText('table.repeatNoMax') }),
       ],
     }

@@ -405,17 +405,20 @@ export function parseTableAddress(address) {
 /** A repeating table's limits when `repeat` leaves them out (#349 phase 3) */
 export const REPEAT_DEFAULTS = Object.freeze({ min: 1, max: null })
 
+/** The most rows a repeating table starts with, so a huge `min` can't stall or break rendering */
+export const REPEAT_MIN_LIMIT = 500
+
 const isCount = (value, floor) => Number.isInteger(value) && value >= floor
 
 /**
- * A repeating table's row limits: `min` is a non-negative integer (default 1); `max` is an integer of at least 1 and
- * never below `min`, or null for no limit
+ * A repeating table's row limits: `min` is a non-negative integer (default 1, at most REPEAT_MIN_LIMIT); `max` is an
+ * integer of at least 1 and never below `min`, or null for no limit
  * @param {Object} table
  * @return {{min: Number, max: Number|null}}
  */
 export function repeatOf(table) {
   const repeat = isPlainObject(table?.repeat) ? table.repeat : {}
-  const min = isCount(repeat.min, 0) ? repeat.min : REPEAT_DEFAULTS.min
+  const min = isCount(repeat.min, 0) ? Math.min(repeat.min, REPEAT_MIN_LIMIT) : REPEAT_DEFAULTS.min
   const max = isCount(repeat.max, 1) ? Math.max(repeat.max, min) : REPEAT_DEFAULTS.max
   return { min, max }
 }

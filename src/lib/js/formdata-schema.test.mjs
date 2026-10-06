@@ -184,6 +184,8 @@ suite('formData schema', () => {
     t.assert.strictEqual(withTable(order({ max: 0 })), false)
     t.assert.strictEqual(withTable(order({ min: 1.5 })), false)
     t.assert.strictEqual(withTable(order(true)), false)
+    t.assert.ok(withTable(order({ min: 500 })), 'min at the limit')
+    t.assert.strictEqual(withTable(order({ min: 501 })), false, 'min past the limit')
   })
 
   test('the generated JSON schema describes repeat (#349 phase 3)', t => {

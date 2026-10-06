@@ -533,6 +533,7 @@ describe('Table panel: repeating rows (#349 phase 3)', () => {
     assert.equal(min.value, '2')
     assert.equal(max.value, '5')
     assert.equal(max.placeholder, 'No limit')
+    assert.equal(min.max, '500', 'the browser caps min at the render limit too')
     assert.equal(min.parentElement.textContent, 'Minimum rows')
     assert.equal(max.parentElement.textContent, 'Maximum rows')
 
@@ -549,6 +550,9 @@ describe('Table panel: repeating rows (#349 phase 3)', () => {
     change(min, '1.5')
     assert.deepEqual(field.get('table').repeat, { min: 1, max: null })
     assert.equal(min.value, '1')
+    change(min, '100000')
+    assert.deepEqual(field.get('table').repeat, { min: 500, max: null })
+    assert.equal(min.value, '500', 'a min past the limit is written back capped')
   })
 
   it('a table that lost its last input column while repeating shows the toggle checked and locked', () => {

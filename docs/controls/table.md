@@ -240,7 +240,7 @@ table: {
 - **Row names.** With row headers on, rows are numbered from the template's first cell: "Item 1", "Item 2". With a blank
   first cell, or without row headers, they're "Row 1", "Row 2".
 - **Limits.** The form starts with `min` rows. A row's remove button is disabled at `min`, and **+ Row** at `max`.
-  `min: 0` starts with no rows.
+  `min: 0` starts with no rows, and `min` is capped at 500.
 
 ### Names and userData
 

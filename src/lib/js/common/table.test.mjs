@@ -18,6 +18,7 @@ import {
   parseMatrixKey,
   parseTableAddress,
   REPEAT_DEFAULTS,
+  REPEAT_MIN_LIMIT,
   removeColumn,
   removeRow,
   repeatOf,
@@ -533,6 +534,16 @@ describe('repeating rows (#349 phase 3)', () => {
     assert.deepEqual(repeatOf({ repeat: { max: null } }), { min: 1, max: null })
     assert.deepEqual(repeatOf({}), { min: 1, max: null })
     assert.deepEqual(repeatOf(undefined), { min: 1, max: null })
+  })
+
+  it('repeatOf caps min at REPEAT_MIN_LIMIT so a huge min cannot stall or break rendering', () => {
+    assert.equal(REPEAT_MIN_LIMIT, 500)
+    assert.deepEqual(repeatOf({ repeat: { min: Number.MAX_SAFE_INTEGER } }), { min: 500, max: null })
+    assert.deepEqual(repeatOf({ repeat: { min: 2 ** 32 } }), { min: 500, max: null })
+    assert.deepEqual(repeatOf({ repeat: { min: 501, max: 800 } }), { min: 500, max: 800 })
+    const config = tableDomConfig({ id: 'big', table: { ...order(), repeat: { min: 2 ** 32 } } })
+    const body = config.children.find(child => child.tag === 'table').children.find(child => child.tag === 'tbody')
+    assert.equal(body.children.length, 500)
   })
 
   it('isRepeating needs a plain-object repeat and an input column', () => {

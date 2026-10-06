@@ -177,7 +177,7 @@ export interface TableRow {
 
 /** A repeating table's limits (#349). Both default: `min` 1, `max` no limit. */
 export interface TableRepeat {
-  /** Rows the form starts with, and the fewest it keeps. A non-negative integer. */
+  /** Rows the form starts with, and the fewest it keeps. A non-negative integer, at most 500. */
   min?: number
   /** The most rows the person filling in the form can add; `null` for no limit. */
   max?: number | null

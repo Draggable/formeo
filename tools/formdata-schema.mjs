@@ -53,8 +53,9 @@ const tableSchema = z
           .number()
           .int()
           .min(0)
+          .max(500)
           .optional()
-          .describe('rows the form starts with, and the fewest it keeps; default 1'),
+          .describe('rows the form starts with, and the fewest it keeps; default 1, at most 500'),
         max: z
           .number()
           .int()
