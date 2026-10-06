@@ -4,7 +4,7 @@ import { hasInputs, isTableField, SR_ONLY_CLASSNAME } from '../common/table.mjs'
 import { clone, uuid } from '../common/utils/index.mjs'
 import { RENDER_PREFIX } from './helpers.js'
 import { focusFirst } from './pagination.js'
-import { announce, dispatchRowsChange, focusAfterRemove } from './row-actions.js'
+import { announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
 
 /**
  * Input groups (a row with `config.inputGroup`): the person filling in the form adds copies of the row and removes
@@ -22,6 +22,9 @@ const STATUS_CLASSNAME = 'f-input-group-status'
 
 // each copy's cached component ids and, for grouped controls, the name its `-<n>` suffix extends
 const CLONE_RECORDS = new WeakMap()
+// how many copies each input group wrapper holds, and its Add button once found
+const CLONE_COUNTS = new WeakMap()
+const ADD_BUTTONS = new WeakMap()
 
 /**
  * How a copy names a control: 'group' gets `<name>-<n>`, 'single' keeps the original's name, null has no name
@@ -93,7 +96,12 @@ export function cloneComponentData(renderer, componentId, n = 1, entries = []) {
  */
 export const clonesOf = wrap => [...wrap.children].filter(child => child.hasAttribute(CLONE_ATTR))
 
-const addButtonOf = wrap => wrap.querySelector(`:scope > .${ADD_CLASSNAME}`)
+const addButtonOf = wrap => {
+  if (!ADD_BUTTONS.has(wrap)) {
+    ADD_BUTTONS.set(wrap, wrap.querySelector(`:scope > .${ADD_CLASSNAME}`))
+  }
+  return ADD_BUTTONS.get(wrap)
+}
 const statusOf = wrap => wrap.querySelector(`:scope > .${STATUS_CLASSNAME}`)
 const removeButtonOf = copy => copy.querySelector(`:scope > .${REMOVE_CLASSNAME}`)
 
@@ -144,13 +152,15 @@ export const inputGroupControls = (renderer, rowId) => [
  * @return {HTMLElement} the copy
  */
 export function addGroup(renderer, wrap, rowId, { interactive = true } = {}) {
-  const n = clonesOf(wrap).length + 1
+  // counted, not looked up: scanning the wrapper's children for every copy would make growing it quadratic
+  const n = (CLONE_COUNTS.get(wrap) ?? 0) + 1
   const entries = []
   const copy = dom.create(cloneComponentData(renderer, rowId, n, entries))
   CLONE_RECORDS.set(copy, entries)
   // the original is group 1, so copy n is group n + 1
   copy.appendChild(dom.create(removeButtonConfig(renderer, n + 1)))
   wrap.insertBefore(copy, addButtonOf(wrap))
+  CLONE_COUNTS.set(wrap, n)
   if (interactive) {
     focusFirst(copy)
     announce(statusOf(wrap), inputGroupText('inputGroup.added', { n: n + 1 }))
@@ -209,6 +219,7 @@ export function removeGroup(renderer, copy) {
     delete renderer.components[id]
   }
   copy.remove()
+  CLONE_COUNTS.set(wrap, copies.length - 1)
   // ascending, so a renamed radio group never shares a name with one still waiting
   for (let i = index + 1; i < copies.length; i++) {
     // copies[i] was copy i + 1 and becomes copy i
@@ -217,4 +228,80 @@ export function removeGroup(renderer, copy) {
   focusAfterRemove(clonesOf(wrap).map(removeButtonOf), index, addButtonOf(wrap))
   announce(statusOf(wrap), inputGroupText('inputGroup.removed', { n: index + 2 }))
   dispatchRowsChange(wrap, 'remove', index + 1)
+}
+
+/**
+ * The names an input group's original row posts under: single-value controls' names (shared by copies) and grouped
+ * controls' bases (extended by copies)
+ * @param {FormeoRenderer} renderer
+ * @param {String} rowId the original row's rendered id
+ * @return {{singles: Set<String>, bases: Set<String>}}
+ */
+export function groupNamesOf(renderer, rowId) {
+  const singles = new Set()
+  const bases = new Set()
+  const visit = id => {
+    const source = renderer.components[id]
+    if (!source) {
+      return
+    }
+    const kind = cloneNameKind(source)
+    if (kind === 'group') {
+      bases.add(groupBaseName(source))
+    } else if (kind === 'single') {
+      singles.add(getName(source))
+    }
+    for (const child of Array.isArray(source.children) ? source.children : []) {
+      if (child?.id) {
+        visit(child.id)
+      }
+    }
+  }
+  visit(rowId)
+  return { singles, bases }
+}
+
+/**
+ * @param {String} key a userData key
+ * @param {String} base a grouped control's base name
+ * @return {Number} n when the key is `<base>-<n>`, `<base>-<n>[...]` or `<base>-<n>-other`; else 0
+ */
+export function cloneNumber(key, base) {
+  if (!key.startsWith(`${base}-`)) {
+    return 0
+  }
+  const match = /^([1-9]\d*)(?:$|\[|-other$)/.exec(key.slice(base.length + 1))
+  return match ? Number(match[1]) : 0
+}
+
+/**
+ * Before the userData setter fills the form, gives every input group the copies its saved answers need: one per extra
+ * value of a shared single-value name, and up to the highest `<base>-<n>`. Copies are added quietly and never removed;
+ * input groups have no max, so growth stops at SETTER_ROW_LIMIT.
+ * @param {FormeoRenderer} renderer
+ * @param {HTMLFormElement} form
+ * @param {Object} data userData
+ */
+export function growGroupsForAnswers(renderer, form, data) {
+  for (const wrap of form.querySelectorAll(`.${INPUT_GROUP_WRAP_CLASSNAME}`)) {
+    // the wrapper holds the original row, its copies, the legend and the Add button
+    const original = [...wrap.children].find(child => !child.hasAttribute(CLONE_ATTR) && renderer.components[child.id])
+    if (!original) {
+      continue
+    }
+    const { singles, bases } = groupNamesOf(renderer, original.id)
+    let needed = 0
+    for (const [key, value] of Object.entries(data)) {
+      if (singles.has(key) && Array.isArray(value)) {
+        needed = Math.max(needed, value.length - 1)
+      }
+      for (const base of bases) {
+        needed = Math.max(needed, cloneNumber(key, base))
+      }
+    }
+    needed = Math.min(needed, SETTER_ROW_LIMIT)
+    for (let have = clonesOf(wrap).length; have < needed; have++) {
+      addGroup(renderer, wrap, original.id, { interactive: false })
+    }
+  }
 }

@@ -34,6 +34,7 @@ import {
 } from './helpers.js'
 import {
   cloneComponentData as cloneInputGroupData,
+  growGroupsForAnswers,
   INPUT_GROUP_WRAP_CLASSNAME,
   inputGroupControls,
 } from './input-groups.js'
@@ -291,8 +292,10 @@ export default class FormeoRenderer {
     const unmatched = []
     // a saved answer can name rows a repeating table hasn't grown yet (#349 phase 3)
     growForAnswers(form, keys, this)
+    // and input groups the copies their answers name
+    growGroupsForAnswers(this, form, data ?? {})
     for (const key of keys) {
-      const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`)
+      const fields = controlsNamed(form, key) ?? controlsNamed(form, `${key}[]`)
       if (!fields) {
         unmatched.push(key)
         continue
@@ -319,6 +322,15 @@ export default class FormeoRenderer {
         for (const field of checkables) {
           field.checked = field.value === data[key]
         }
+      }
+      // same-named text inputs, textareas or selects (input group copies) take an array in DOM order
+      else if (isNodeCollection(fields)) {
+        const values = [data[key]].flat()
+        Array.from(fields).forEach((field, i) => {
+          if (i < values.length) {
+            field.value = values[i]
+          }
+        })
       }
       // A multiple select takes every value in an array
       else if (fields.type === 'select-multiple') {
@@ -985,6 +997,25 @@ const userDataOf = form => {
   }
 
   return formDataObj
+}
+
+/**
+ * The control or controls posting under `name`. `namedItem` also matches ids, and an input group copy's `<id>-<n>` name
+ * collides with its option inputs' ids (`<id>-<n>`), so only name matches count.
+ * @param {HTMLFormElement} form
+ * @param {String} name
+ * @return {Element|RadioNodeList|Element[]|null}
+ */
+const controlsNamed = (form, name) => {
+  const found = form.elements.namedItem(name)
+  if (!found) {
+    return null
+  }
+  const named = (isDomNode(found) ? [found] : Array.from(found)).filter(elem => elem.name === name)
+  if (!named.length) {
+    return null
+  }
+  return isDomNode(found) || named.length === found.length ? found : named
 }
 
 const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)

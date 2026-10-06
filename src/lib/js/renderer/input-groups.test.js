@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, test } from 'node:test'
 import { JSDOM } from 'jsdom'
 import FormeoRenderer from './index.js'
+import { cloneNumber, groupNamesOf } from './input-groups.js'
 
 const GLOBALS = ['document', 'window', 'Element', 'HTMLElement', 'HTMLFormElement', 'Node', 'FormData']
 
@@ -29,6 +30,9 @@ const checkboxes = (id, attrs = {}) => ({
 })
 const multiSelect = id => ({
   [id]: { id, tag: 'select', attrs: { multiple: true, name: id }, config: { label: `Select ${id}` }, options },
+})
+const singleSelect = id => ({
+  [id]: { id, tag: 'select', attrs: { name: id }, config: { label: `Choose ${id}` }, options },
 })
 const textarea = id => ({ [id]: { id, tag: 'textarea', attrs: {}, config: { label: `Area ${id}` } } })
 
@@ -228,6 +232,171 @@ describe('input groups (#349 phase 3)', () => {
     clones()[0].querySelector('input').checked = true
     const entry = renderer.userFormData.find(({ key }) => key === 'pick-1')
     assert.equal(entry.label, 'Radio r1')
+  })
+
+  test('groupNamesOf separates single-value names from grouped bases; cloneNumber reads -n keys', () => {
+    const renderer = render(
+      groupForm({
+        ...text('t1', { name: 'email' }),
+        ...radios('r1', { name: 'pick' }),
+        ...checkboxes('k1', { name: 'likes[]' }),
+        ...multiSelect('m1'),
+        ...textarea('a1'),
+      })
+    )
+    const { singles, bases } = groupNamesOf(renderer, 'f-r-1')
+    assert.ok(singles.has('email'))
+    assert.equal(singles.size, 2, 'the text input and the textarea')
+    assert.deepEqual([...bases].sort(), ['likes', 'm1', 'pick'])
+    assert.equal(cloneNumber('pick-3', 'pick'), 3)
+    assert.equal(cloneNumber('likes-12[]', 'likes'), 12)
+    assert.equal(cloneNumber('visit-2[speed][good]', 'visit'), 2)
+    assert.equal(cloneNumber('pick-2-other', 'pick'), 2)
+    assert.equal(cloneNumber('pick', 'pick'), 0)
+    assert.equal(cloneNumber('pick-0', 'pick'), 0)
+    assert.equal(cloneNumber('pick-2x', 'pick'), 0)
+    assert.equal(cloneNumber('pickle-2', 'pick'), 0)
+  })
+
+  test('the setter fills same-named text inputs in order and leaves the rest', () => {
+    const renderer = render(groupForm(text('t1', { name: 'email' })))
+    add()
+    add()
+    renderer.userData = { email: ['a@x', 'b@x'] }
+    assert.deepEqual(
+      $$('input[name="email"]').map(input => input.value),
+      ['a@x', 'b@x', '']
+    )
+    renderer.userData = { email: 'only@x' }
+    assert.equal($$('input[name="email"]')[0].value, 'only@x')
+    assert.equal($$('input[name="email"]')[1].value, 'b@x')
+  })
+
+  test('the setter creates copies for array answers and for -n names, quietly', async () => {
+    const events = []
+    const changes = []
+    const renderer = render(groupForm({ ...text('t1', { name: 'email' }), ...radios('r1', { name: 'pick' }) }), {
+      events: { onChange: ({ event }) => changes.push(event.type) },
+    })
+    $('form').addEventListener('formeo:rowschange', event => events.push(event))
+    const before = window.document.activeElement
+    renderer.userData = { email: ['a', 'b'], 'pick-3': 'two' }
+    await nextFrames()
+    assert.equal(clones().length, 3)
+    assert.equal(clones()[2].querySelector('input[name="pick-3"][value="two"]').checked, true)
+    assert.deepEqual(
+      $$('input[name="email"]').map(input => input.value),
+      ['a', 'b', '', '']
+    )
+    assert.deepEqual(events, [], 'no formeo:rowschange')
+    assert.equal(changes.includes('formeo:rowschange'), false, 'no onChange for rowschange')
+    assert.equal(changes.length, 0, 'no onChange at all')
+    assert.equal(window.document.activeElement, before, 'focus unchanged')
+    assert.equal(
+      clones().some(c => c.contains(window.document.activeElement)),
+      false
+    )
+    assert.equal($('.f-input-group-status').textContent, '', 'no announcement')
+  })
+
+  const kitchenSink = () => ({
+    ...text('t1', { name: 'email' }),
+    ...text('t2'),
+    ...textarea('a1'),
+    ...radios('r1', { name: 'pick' }),
+    ...checkboxes('k1'),
+    ...multiSelect('m1'),
+    ...checkboxes('k2', { name: 'likes[]' }),
+    ...singleSelect('s1'),
+    m2: {
+      id: 'm2',
+      tag: 'table',
+      attrs: { className: '', name: 'visit' },
+      config: { label: 'Visit' },
+      table: {
+        rowHeaders: true,
+        columns: [{ label: '' }, { label: 'Good', value: 'good', input: 'radio' }],
+        rows: [{ value: 'speed', cells: ['Speed', ''] }],
+      },
+    },
+  })
+
+  // answers every control of every group, differently per group, so a swapped number shows up
+  const answerAll = () => {
+    const groups = [window.document.getElementById('f-r-1'), ...clones()]
+    groups.forEach((group, g) => {
+      for (const input of group.querySelectorAll('input[type="text"], textarea')) {
+        input.value = `${g}-${input.name.slice(-6)}`
+      }
+      for (const sel of group.querySelectorAll('select:not([multiple])')) {
+        sel.selectedIndex = g % 2
+      }
+      for (const sel of group.querySelectorAll('select[multiple]')) {
+        sel.options[g % 2].selected = true
+      }
+      for (const radio of group.querySelectorAll('input[type="radio"]')) {
+        radio.checked = radio.value === 'good' ? g !== 1 : radio.value === (g % 2 ? 'one' : 'two')
+      }
+      for (const box of group.querySelectorAll('input[type="checkbox"]')) {
+        box.checked = box.value === (g % 2 ? 'two' : 'one')
+      }
+    })
+  }
+
+  test('every control kind round-trips through a fresh render', () => {
+    const first = render(groupForm(kitchenSink()))
+    add()
+    add()
+    answerAll()
+    const saved = first.userData
+    assert.ok(Object.keys(saved).some(key => key.startsWith('likes-2')))
+    assert.ok(Object.keys(saved).some(key => key.includes('visit-2[speed]')))
+
+    const fresh = render(groupForm(kitchenSink()))
+    fresh.userData = saved
+    assert.equal(clones().length, 2)
+    assert.deepEqual(fresh.userData, saved)
+  })
+
+  test('a round trip after removing a middle clone keeps the renumbered names', () => {
+    const first = render(groupForm(kitchenSink()))
+    add()
+    add()
+    add()
+    removeOf(clones()[0]).click()
+    assert.equal(clones().length, 2)
+    answerAll()
+    const saved = first.userData
+    const keys = Object.keys(saved)
+    assert.ok(
+      keys.some(key => key.startsWith('likes-2')),
+      'checkbox group renumbered'
+    )
+    assert.ok(
+      keys.some(key => key.includes('visit-2[speed]')),
+      'matrix renumbered'
+    )
+    assert.equal(
+      keys.some(key => key.includes('-3')),
+      false,
+      'no stale number'
+    )
+
+    const fresh = render(groupForm(kitchenSink()))
+    fresh.userData = saved
+    assert.equal(clones().length, 2)
+    assert.deepEqual(fresh.userData, saved)
+  })
+
+  test('a huge -n stops at the setter limit, warns, and stays linear', t => {
+    const warn = t.mock.method(console, 'warn', () => {})
+    const renderer = render(groupForm(radios('r1', { name: 'pick' })))
+    const start = Date.now()
+    renderer.userData = { 'pick-99999': 'one' }
+    const ms = Date.now() - start
+    assert.equal(clones().length, 500)
+    assert.ok(warn.mock.calls.some(({ arguments: [message] }) => message.includes('pick-99999')))
+    assert.ok(ms < 2000, `took ${ms}ms`)
   })
 
   describe('a repeating table inside a clone renders but does not repeat (spec: not supported)', () => {
