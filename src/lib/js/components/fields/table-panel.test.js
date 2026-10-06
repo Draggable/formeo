@@ -474,3 +474,102 @@ describe('Table panel: input columns (#349 phase 2)', () => {
     assert.equal(second.get('table').columns[3].input, 'text')
   })
 })
+
+const orderTable = (repeat = { min: 1, max: null }) => ({
+  ...matrixTable(),
+  repeat,
+  rows: [
+    { cells: ['Item', '', '', ''], required: true },
+    { value: 'kept', cells: ['Kept', '', '', ''] },
+  ],
+})
+
+describe('Table panel: repeating rows (#349 phase 3)', () => {
+  it('locks Repeating rows off without an input column, and says why', () => {
+    const field = tableField()
+    const panel = mountPanel(field)
+    const toggle = panel.querySelector('[data-table-option="repeat"]')
+    assert.equal(toggle.disabled, true)
+    assert.equal(toggle.checked, false)
+    const hint = panel.querySelector(`#${toggle.getAttribute('aria-describedby')}`)
+    assert.equal(hint.textContent, 'Repeating rows need an input column')
+    assert.equal(toggle.parentElement.textContent, 'Repeating rows')
+  })
+
+  it('turning it on stores min 1, shows only the template row, and keeps focus on the toggle', () => {
+    const field = tableField(matrixTable())
+    const panel = mountPanel(field)
+    change(panel.querySelector('[data-table-option="repeat"]'), true)
+    assert.deepEqual(field.get('table').repeat, { min: 1, max: null })
+    assert.equal(panel.querySelectorAll('tbody tr').length, 1)
+    assert.equal(document.activeElement, panel.querySelector('[data-table-option="repeat"]'))
+    assert.equal(panel.querySelector('[data-table-add="row"]'), null)
+    assert.ok(panel.querySelector('[data-table-add="column"]'))
+    assert.equal(panel.querySelectorAll('[data-row-value], [data-remove-row]').length, 0)
+  })
+
+  it('turning it off removes repeat and shows every row again', () => {
+    const field = tableField(orderTable())
+    const panel = mountPanel(field)
+    change(panel.querySelector('[data-table-option="repeat"]'), false)
+    assert.equal('repeat' in field.get('table'), false)
+    assert.equal(panel.querySelectorAll('tbody tr').length, 2)
+    assert.equal(panel.querySelector('[data-repeat-limit]'), null)
+  })
+
+  it('names the template Required checkbox for every row', () => {
+    const panel = mountPanel(tableField(orderTable()))
+    const required = panel.querySelector('[data-row-required="0"]')
+    assert.equal(required.getAttribute('aria-label'), 'Every row required')
+    assert.equal(required.checked, true)
+  })
+
+  it('shows Min and Max inputs, and normalises them on commit without rebuilding', () => {
+    const field = tableField(orderTable({ min: 2, max: 5 }))
+    const panel = mountPanel(field)
+    const min = panel.querySelector('[data-repeat-limit="min"]')
+    const max = panel.querySelector('[data-repeat-limit="max"]')
+    assert.equal(min.type, 'number')
+    assert.equal(min.value, '2')
+    assert.equal(max.value, '5')
+    assert.equal(max.placeholder, 'No limit')
+    assert.equal(min.parentElement.textContent, 'Minimum rows')
+    assert.equal(max.parentElement.textContent, 'Maximum rows')
+
+    min.value = '6'
+    change(min, '6')
+    assert.deepEqual(field.get('table').repeat, { min: 6, max: 6 })
+    assert.equal(max.value, '6', 'written back in place')
+    assert.equal(panel.querySelector('[data-repeat-limit="min"]'), min, 'no rebuild')
+
+    change(max, '')
+    assert.deepEqual(field.get('table').repeat, { min: 6, max: null })
+    change(min, '0')
+    assert.equal(min.value, '0', 'a zero minimum shows as 0, not blank')
+    change(min, '1.5')
+    assert.deepEqual(field.get('table').repeat, { min: 1, max: null })
+    assert.equal(min.value, '1')
+  })
+
+  it('a table that lost its last input column while repeating shows the toggle checked and locked', () => {
+    const table = { ...orderTable(), columns: orderTable().columns.map(({ label }) => ({ label })) }
+    const panel = mountPanel(tableField(table))
+    const toggle = panel.querySelector('[data-table-option="repeat"]')
+    assert.equal(toggle.checked, true)
+    assert.equal(toggle.disabled, true)
+  })
+
+  it('the stage preview shows the template numbered', () => {
+    const field = tableField(orderTable({ min: 2 }))
+    const rows = field.preview.querySelectorAll('tbody tr')
+    assert.equal(rows.length, 2)
+    assert.equal(rows[1].querySelector('th').firstChild.textContent, 'Item 2')
+  })
+
+  it('a phase 2 matrix panel is unchanged apart from the new toggle', () => {
+    const panel = mountPanel(tableField(matrixTable()))
+    assert.equal(panel.querySelector('[data-table-option="repeat"]').checked, false)
+    assert.ok(panel.querySelector('[data-table-add="row"]'))
+    assert.equal(panel.querySelectorAll('[data-row-value]').length, matrixTable().rows.length)
+  })
+})

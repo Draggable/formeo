@@ -5,16 +5,21 @@ import {
   cellInput,
   hasInputs,
   inputColumns,
+  isPlainObject,
+  isRepeating,
   normalizeTable,
   removeColumn,
   removeRow,
+  repeatOf,
   setCell,
   setColumnInput,
   setColumnLabel,
   setColumnValue,
+  setRepeat,
   setRowRequired,
   setRowValue,
   setTableOption,
+  templateRow,
   withKeys,
 } from '../../common/table.mjs'
 import { tableText } from '../../common/table-text.mjs'
@@ -36,7 +41,8 @@ const CELL_GLYPHS = { radio: '○', checkbox: '☐', text: '▭' }
  * A table field's Table edit panel (#349): the caption, the header options, a grid of cell inputs and add/remove
  * buttons. Columns can hold radio, checkbox or text inputs (phase 2): each gets a type select, and an input table gets
  * value inputs and per-row Required checkboxes. Typing saves without rebuilding the grid, so focus stays put. Adding
- * or removing a row or column rebuilds the grid and moves focus to the matching control.
+ * or removing a row or column rebuilds the grid and moves focus to the matching control. A table with input columns
+ * can repeat (phase 3): the panel then shows its template row and its row limits.
  */
 export class TablePanel {
   /**
@@ -93,7 +99,13 @@ export class TablePanel {
 
   render() {
     const table = this.table
-    const parts = [this.captionField(table), this.optionFields(table), this.grid(table), this.addButtons()]
+    const parts = [
+      this.captionField(table),
+      this.optionFields(table),
+      this.repeatLimits(table),
+      this.grid(table),
+      this.addButtons(table),
+    ].filter(Boolean)
     this.element.replaceChildren(...parts.map(part => dom.create(part, true)))
   }
 
@@ -114,11 +126,18 @@ export class TablePanel {
   }
 
   optionFields(table) {
-    // input columns are named by their labels, so an input table always shows its header row
-    const locked = hasInputs(table)
-    const hintId = `${this.field.id}-header-row-hint`
+    const matrix = hasInputs(table)
+    const repeatOn = isPlainObject(table.repeat)
+    // input columns are named by their labels, so an input table always shows its header row; and only an input
+    // table can repeat (a table that lost its inputs keeps showing its stored choice, locked)
+    const lock = {
+      headerRow: matrix && { checked: true, hint: 'table.headerRowLocked' },
+      repeat: !matrix && { checked: repeatOn, hint: 'table.repeatLocked' },
+    }
+    const hintId = key => `${this.field.id}-${key === 'headerRow' ? 'header-row' : 'repeat'}-hint`
     const toggle = key => {
-      const isLocked = key === 'headerRow' && locked
+      const locked = lock[key]
+      const checked = key === 'repeat' ? repeatOn : table[key]
       return {
         tag: 'label',
         className: 'f-table-panel-option',
@@ -127,26 +146,79 @@ export class TablePanel {
             tag: 'input',
             attrs: {
               type: 'checkbox',
-              checked: table[key] || isLocked,
-              disabled: isLocked,
-              ...(isLocked ? { 'aria-describedby': hintId } : {}),
+              checked: locked ? locked.checked : checked,
+              disabled: Boolean(locked),
+              ...(locked ? { 'aria-describedby': hintId(key) } : {}),
             },
             dataset: { tableOption: key },
-            action: { change: ({ target }) => this.toggleOption(key, target.checked) },
+            action: {
+              change: ({ target }) =>
+                key === 'repeat' ? this.toggleRepeat(target.checked) : this.toggleOption(key, target.checked),
+            },
           },
           { tag: 'span', textContent: tableText(`table.${key}`) },
         ],
       }
     }
-    const hint = locked && {
-      tag: 'span',
-      attrs: { id: hintId, className: 'f-table-panel-hint' },
-      textContent: tableText('table.headerRowLocked'),
-    }
+    const hints = ['headerRow', 'repeat']
+      .filter(key => lock[key])
+      .map(key => ({
+        tag: 'span',
+        attrs: { id: hintId(key), className: 'f-table-panel-hint' },
+        textContent: tableText(lock[key].hint),
+      }))
     return {
       className: 'f-table-panel-options',
-      children: [toggle('headerRow'), toggle('rowHeaders'), hint].filter(Boolean),
+      children: [toggle('headerRow'), toggle('rowHeaders'), toggle('repeat'), ...hints],
     }
+  }
+
+  toggleRepeat(checked) {
+    this.restructure(withKeys(setRepeat(this.table, checked ? { min: 1 } : null)), '[data-table-option="repeat"]')
+  }
+
+  /** Minimum and Maximum rows, shown while the table repeats */
+  repeatLimits(table) {
+    if (!isRepeating(table)) {
+      return null
+    }
+    const { min, max } = repeatOf(table)
+    // values are strings: dom.processAttrValue turns a falsy 0 into ''
+    const limit = (which, value, attrs) => ({
+      tag: 'label',
+      className: 'f-table-panel-limit',
+      children: [
+        { tag: 'span', textContent: tableText(which === 'min' ? 'table.repeatMin' : 'table.repeatMax') },
+        {
+          tag: 'input',
+          attrs: { type: 'number', step: '1', value: value === null ? '' : String(value), ...attrs },
+          dataset: { repeatLimit: which },
+          action: { change: () => this.commitLimits() },
+        },
+      ],
+    })
+    return {
+      className: 'f-table-panel-limits',
+      children: [
+        limit('min', min, { min: '0' }),
+        limit('max', max, { min: '1', placeholder: tableText('table.repeatNoMax') }),
+      ],
+    }
+  }
+
+  /** Saves the limits as typed, normalised, and shows the result in place without rebuilding */
+  commitLimits() {
+    const input = which => this.element.querySelector(`[data-repeat-limit="${which}"]`)
+    const read = which => {
+      const value = input(which).value.trim()
+      return value === '' ? undefined : Number(value)
+    }
+    const table = setRepeat(this.table, { min: read('min'), max: read('max') })
+    this.field.set('table', table)
+    this.field.updatePreview()
+    const { min, max } = repeatOf(table)
+    input('min').value = String(min)
+    input('max').value = max === null ? '' : String(max)
   }
 
   toggleOption(key, checked) {
@@ -214,7 +286,7 @@ export class TablePanel {
     })
   }
 
-  requiredToggle(row, r) {
+  requiredToggle(row, r, repeating) {
     return {
       tag: 'label',
       className: 'f-table-row-required',
@@ -224,7 +296,9 @@ export class TablePanel {
           attrs: {
             type: 'checkbox',
             checked: row.required === true,
-            'aria-label': tableText('table.rowRequired', { row: r + 1 }),
+            'aria-label': repeating
+              ? tableText('table.repeatRequired')
+              : tableText('table.rowRequired', { row: r + 1 }),
           },
           dataset: { rowRequired: String(r) },
           action: {
@@ -268,6 +342,8 @@ export class TablePanel {
     const showHeader = headerRow || matrix
     const lastColumn = columns.length <= 1
     const lastRow = rows.length <= 1
+    const repeating = isRepeating(table)
+    const shownRows = repeating ? [templateRow(table)] : rows
     const headLine = columns.map((column, c) => ({
       tag: 'td',
       children: [
@@ -311,7 +387,7 @@ export class TablePanel {
         ],
       }
     }
-    const bodyLines = rows.map((row, r) => ({
+    const bodyLines = shownRows.map((row, r) => ({
       tag: 'tr',
       children: [
         ...row.cells.map((cell, c) => bodyCell(cell, r, c)),
@@ -319,9 +395,9 @@ export class TablePanel {
           tag: 'td',
           className: 'f-table-editor-row-controls',
           children: [
-            matrix && this.valueInput('row', r, row.value),
-            matrix && this.requiredToggle(row, r),
-            this.removeButton('row', r, lastRow),
+            matrix && !repeating && this.valueInput('row', r, row.value),
+            matrix && this.requiredToggle(row, r, repeating),
+            !repeating && this.removeButton('row', r, lastRow),
           ].filter(Boolean),
         },
       ],
@@ -341,7 +417,7 @@ export class TablePanel {
     }
   }
 
-  addButtons() {
+  addButtons(table) {
     const button = (kind, key) => ({
       tag: 'button',
       attrs: { type: 'button', className: 'f-table-add' },
@@ -349,9 +425,12 @@ export class TablePanel {
       textContent: tableText(key),
       action: { click: () => (kind === 'row' ? this.addRowAtEnd() : this.addColumnAtEnd()) },
     })
+    // a repeating table's rows are added by the person filling in the form
     return {
       className: 'f-table-panel-add',
-      children: [button('row', 'table.addRow'), button('column', 'table.addColumn')],
+      children: [!isRepeating(table) && button('row', 'table.addRow'), button('column', 'table.addColumn')].filter(
+        Boolean
+      ),
     }
   }
 

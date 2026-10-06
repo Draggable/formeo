@@ -53,7 +53,7 @@ export const REMOVE_ROW_CLASSNAME = 'f-table-remove-row'
 export const ROW_STATUS_CLASSNAME = 'f-table-status'
 export const SR_ONLY_CLASSNAME = 'f-table-sr'
 
-const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
+export const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const text = value => (value === null || value === undefined ? '' : String(value))
 const inRange = (list, index) => Number.isInteger(index) && index >= 0 && index < list.length
 
