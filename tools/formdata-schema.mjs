@@ -47,6 +47,24 @@ const tableSchema = z
     caption: z.string().optional(),
     headerRow: z.boolean().optional().describe('columns[].label render as <thead> th scope="col"'),
     rowHeaders: z.boolean().optional().describe('each row\'s first cell renders as th scope="row"'),
+    repeat: z
+      .looseObject({
+        min: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .describe('rows the form starts with, and the fewest it keeps; default 1'),
+        max: z
+          .number()
+          .int()
+          .min(1)
+          .nullable()
+          .optional()
+          .describe('the most rows the person filling in the form can add; null or absent for no limit'),
+      })
+      .optional()
+      .describe('the person filling in the form adds and removes rows copied from rows[0]; needs an input column'),
     columns: z.array(
       z.looseObject({
         label: z.string(),
@@ -66,7 +84,7 @@ const tableSchema = z
     ),
   })
   .describe(
-    'Table element data: a caption, header options, columns and rows of plain-text cells; columns with an input make a matrix'
+    'Table element data: a caption, header options, columns and rows of plain-text cells; columns with an input make a matrix, and repeat lets the person filling in the form add rows'
   )
 
 const className = z.union([z.string(), z.array(z.string())]).optional()
