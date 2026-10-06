@@ -566,6 +566,24 @@ describe('Table panel: repeating rows (#349 phase 3)', () => {
     assert.equal(rows[1].querySelector('th').firstChild.textContent, 'Item 2')
   })
 
+  it('a repeating table imported with no rows stores the template row its edits change', () => {
+    const field = tableField({ ...orderTable(), rows: [] })
+    const panel = mountPanel(field)
+    typeInto(panel.querySelector('[data-row="0"][data-column="0"]'), 'Line')
+    assert.deepEqual(field.get('table').rows, [{ cells: ['Line', '', '', ''] }])
+    change(panel.querySelector('[data-row-required="0"]'), true)
+    assert.deepEqual(field.get('table').rows, [{ cells: ['Line', '', '', ''], required: true }])
+  })
+
+  it('turning repeat on for a table with no rows stores the template row', () => {
+    const field = tableField({ ...matrixTable(), rows: [] })
+    const panel = mountPanel(field)
+    change(panel.querySelector('[data-table-option="repeat"]'), true)
+    assert.equal(field.get('table').rows.length, 1)
+    change(panel.querySelector('[data-row-required="0"]'), true)
+    assert.equal(field.get('table').rows[0].required, true)
+  })
+
   it('a phase 2 matrix panel is unchanged apart from the new toggle', () => {
     const panel = mountPanel(tableField(matrixTable()))
     assert.equal(panel.querySelector('[data-table-option="repeat"]').checked, false)

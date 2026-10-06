@@ -38,6 +38,15 @@ const INPUT_CHOICES = [
 const CELL_GLYPHS = { radio: '○', checkbox: '☐', text: '▭' }
 
 /**
+ * A repeating table with no rows (only imported formData has none) with its blank template row stored, so the cell and
+ * Required edits the panel shows on that template have a row to change
+ * @param {Object} table normalised
+ * @return {Object} table
+ */
+const withTemplateRow = table =>
+  isRepeating(table) && !table.rows.length ? { ...table, rows: [templateRow(table)] } : table
+
+/**
  * A table field's Table edit panel (#349): the caption, the header options, a grid of cell inputs and add/remove
  * buttons. Columns can hold radio, checkbox or text inputs (phase 2): each gets a type select, and an input table gets
  * value inputs and per-row Required checkboxes. Typing saves without rebuilding the grid, so focus stays put. Adding
@@ -54,8 +63,9 @@ export class TablePanel {
     this.render()
   }
 
+  /** The table every edit starts from */
   get table() {
-    return normalizeTable(this.field.get('table'))
+    return withTemplateRow(normalizeTable(this.field.get('table')))
   }
 
   /**
@@ -174,7 +184,8 @@ export class TablePanel {
   }
 
   toggleRepeat(checked) {
-    this.restructure(withKeys(setRepeat(this.table, checked ? { min: 1 } : null)), '[data-table-option="repeat"]')
+    const table = withTemplateRow(setRepeat(this.table, checked ? { min: 1 } : null))
+    this.restructure(withKeys(table), '[data-table-option="repeat"]')
   }
 
   /** Minimum and Maximum rows, shown while the table repeats */
