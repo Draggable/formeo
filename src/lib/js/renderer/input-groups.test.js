@@ -207,6 +207,24 @@ describe('input groups (#349 phase 3)', () => {
     assert.equal(labels['f-k1-1'], 'Boxes k1')
   })
 
+  test("rendering again drops the previous render's cached copies", () => {
+    const data = () => groupForm(radios('r1', { name: 'pick' }))
+    const renderer = render(data())
+    const fresh = Object.keys(renderer.components).length
+    add()
+    add()
+    assert.ok(Object.keys(renderer.components).length > fresh, 'copies are cached while rendered')
+    renderer.render(data())
+    assert.equal(Object.keys(renderer.components).length, fresh)
+    add()
+    clones()[0].querySelector('input[name="pick-1"][value="two"]').checked = true
+    const labels = renderer.userFormData.filter(({ key }) => key === 'pick-1')
+    assert.deepEqual(
+      labels.map(({ label }) => label),
+      ['Radio r1']
+    )
+  })
+
   test('userFormData labels a clone matrix answer', () => {
     const table = {
       caption: 'Visit',

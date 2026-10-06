@@ -402,6 +402,8 @@ export default class FormeoRenderer {
     this.form = cleanFormData(formData)
     this.pager?.destroy()
     this.pager = null
+    // rebuilt by processedData below; input-group copies cached by the last render would otherwise linger
+    this.components = Object.create(null)
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
