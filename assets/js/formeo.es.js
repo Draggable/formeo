@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.19.0
+Version: 5.19.1
 Author: Draggable https://draggable.io
 */
 
@@ -7260,7 +7260,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.19.0";
+	version$2 = "5.19.1";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -24374,12 +24374,19 @@ var FormeoRenderer$1 = class {
 			id: this.prefixId(id)
 		});
 	});
+	/**
+	* Each stage's render config. Built as new objects, so this.form keeps its row ids for the next render
+	* @return {Object[]}
+	*/
 	get processedData() {
 		return Object.values(this.form.stages).map((stage) => {
-			stage.children = this.processRows(stage.id);
-			stage.className = STAGE_CLASSNAME;
-			this.components[this.prefixId(stage.id)] = stage;
-			return stage;
+			const stageData = {
+				...stage,
+				children: this.processRows(stage.id),
+				className: STAGE_CLASSNAME
+			};
+			this.components[this.prefixId(stage.id)] = stageData;
+			return stageData;
 		});
 	}
 	/**
