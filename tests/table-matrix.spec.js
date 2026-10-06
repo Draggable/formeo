@@ -1,5 +1,8 @@
 // @ts-check
 import { expect, test } from '@playwright/test'
+import { openTablePanel, tableHelpers } from './helpers/table.js'
+
+const { formWith, mountEditor, renderForm } = tableHelpers('mx')
 
 const visit = () => ({
   caption: 'Visit',
@@ -17,22 +20,6 @@ const visit = () => ({
   ],
 })
 
-/** A one-column form holding the given fields */
-const formWith = (fields = {}, stageConditions) => {
-  const ids = Object.keys(fields)
-  const stage = { id: 'stage-mx', children: ['row-mx'] }
-  if (stageConditions) {
-    stage.conditions = stageConditions
-  }
-  return {
-    id: 'form-mx',
-    stages: { 'stage-mx': stage },
-    rows: { 'row-mx': { id: 'row-mx', config: {}, children: ['col-mx'] } },
-    columns: { 'col-mx': { id: 'col-mx', config: { width: '100%' }, children: ids } },
-    fields,
-  }
-}
-
 const matrixField = (table = visit(), id = 'mx1') => ({
   [id]: {
     id,
@@ -44,47 +31,6 @@ const matrixField = (table = visit(), id = 'mx1') => ({
 })
 
 const textField = id => ({ [id]: { id, tag: 'input', attrs: { type: 'text', name: id }, config: { label: id } } })
-
-const mountEditor = async (page, formData, id = 'e2e-mx', globalName = '__editor') => {
-  if (!(await page.locator('.formeo-editor').first().isVisible())) {
-    await page.goto('/')
-    await expect(page.locator('.formeo-editor').first()).toBeVisible()
-  }
-  await page.evaluate(
-    async ({ formData, id, globalName }) => {
-      const container = document.createElement('div')
-      container.id = id
-      document.body.prepend(container)
-      window[globalName] = new window.FormeoEditor(
-        { editorContainer: container, sessionStorage: false, style: null },
-        formData
-      )
-      await window[globalName].whenReady()
-    },
-    { formData, id, globalName }
-  )
-  return page.locator(`#${id}`)
-}
-
-const renderForm = (page, { formData, from = '__editor', id = 'e2e-mx-render', width = '' }) =>
-  page.evaluate(
-    ({ formData, from, id, width }) => {
-      const container = Object.assign(document.createElement('div'), { id })
-      container.style.width = width
-      document.body.appendChild(container)
-      window.__renderer = new window.FormeoRenderer({ renderContainer: container })
-      window.__renderer.render(formData || window[from].formData)
-    },
-    { formData, from, id, width }
-  )
-
-const openTablePanel = async field => {
-  await field.locator('.field-actions').hover()
-  await field.locator('.field-actions .edit-toggle').click()
-  const panel = field.locator('.table-panel')
-  await expect(panel).toBeVisible()
-  return panel
-}
 
 const matrixOf = (page, id = 'mx1') => page.evaluate(id => window.__editor.formData.fields[id].table, id)
 
