@@ -214,7 +214,59 @@ To switch to the built-in control, remove your custom control from `controls.ele
 `meta.id`), then add a Table and copy your cells into it. Formeo doesn't convert old fields automatically: their
 markup and render actions can't be mapped to cells reliably.
 
-## Coming later
+## Repeating rows
 
-Rows that the person filling in the form can add or remove are planned as a follow-up feature of
-[#349](https://github.com/Draggable/formeo/issues/349).
+A table with at least one input column can let the person filling in the form add and remove rows, for line items,
+household members or references. In the Table panel, tick **Repeating rows**, then set **Minimum rows** and, if you
+want a limit, **Maximum rows**. Without an input column the checkbox is disabled.
+
+```js
+table: {
+  caption: 'Order',
+  rowHeaders: true,
+  repeat: { min: 1, max: 10 }, // max: null (or leave it out) for no limit
+  columns: [
+    { label: 'Item' }, // the row header column
+    { label: 'Qty', value: 'qty', input: 'text' },
+    { label: 'Gift wrap', value: 'wrap', input: 'checkbox' },
+  ],
+  rows: [{ cells: ['Item', '', ''], required: true }], // the template row
+}
+```
+
+- **The template.** `rows[0]` is the template. Every row copies its static text, and its **Required** checkbox
+  ("Every row required") applies to every row. While repeating, the panel shows only the template; other rows stay in
+  the data and come back if you turn repeating off.
+- **Row names.** With row headers on, rows are numbered from the template's first cell: "Item 1", "Item 2". With a blank
+  first cell, or without row headers, they're "Row 1", "Row 2".
+- **Limits.** The form starts with `min` rows. A row's remove button is disabled at `min`, and **+ Row** at `max`.
+  `min: 0` starts with no rows.
+
+### Names and userData
+
+Rows are keyed by position, starting at 0, and stay contiguous: removing a row renumbers the rows after it.
+
+| Input    | Name                 | userData                       |
+| -------- | -------------------- | ------------------------------ |
+| text     | `order[0][qty]`      | `'order[0][qty]': '2'`         |
+| checkbox | `order[1][wrap]`     | `'order[1][wrap]': 'wrap'`     |
+| radio    | `order[0]` (per row) | `'order[0]': '<column value>'` |
+
+PHP and qs parse these names into an array of rows. Setting `renderer.userData` adds the rows a saved answer names
+(up to `max`, or up to 500 rows when there is no `max`; a `max` above 500 is honoured), then fills them. It never
+removes rows. Keys past the limit are reported in the setter's usual warning for keys with no matching field. The setter
+adds rows quietly: no focus move, announcement or `formeo:rowschange`.
+
+### Using it
+
+- **+ Row** adds a row and moves focus to its first input. Each row's remove button ("Remove row 2") removes it, and
+  focus moves to the next remove button, or to **+ Row**. A screen reader hears "Item 3 added" or "Item 2 removed".
+- Adding or removing a row fires a bubbling `formeo:rowschange` event (`detail: { action: 'add' | 'remove', index }`)
+  on the table's wrapper, and the renderer's `onChange` receives it, so autosave sees the change.
+- **Conditions** can show or hide the whole table. Rows and cells of a repeating table can't be condition sources or
+  targets, and the picker doesn't list them. A row added while the table is hidden by a condition, or on a skipped
+  page, isn't required or enabled until the table is shown, like the rows already there.
+- On narrow screens the rows stack into cards like any matrix, each ending with its remove button.
+- **Reset** clears the answers and keeps the rows.
+- A repeating table inside an [input group](../renderer/renderer.md#input-groups) copy shows its buttons but they do
+  nothing, and the `userData` setter doesn't grow it. That combination isn't supported.

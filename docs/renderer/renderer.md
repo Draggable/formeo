@@ -293,6 +293,8 @@ Fires on every `input` event within the rendered form, including one fired by a 
 
 For a multi-option checkbox group, `target.name` ends in `[]` but the matching `userData` key does not. Look it up with `userData[target.name.replace(/\[\]$/, '')]`.
 
+`onChange` also receives a `formeo:rowschange` event (`event.detail`: `{ action: 'add' | 'remove', index }`) when a repeating table row or an input group copy is added or removed.
+
 ### `onSubmit({ event, form, userData })`
 
 Fires on the form's native `submit` event. Formeo does not call `event.preventDefault()` for you — the app decides whether to stop the browser's default submission and how to handle `userData`.
@@ -397,6 +399,9 @@ focusable `.f-table-wrap` region, which a condition on the field hides as a whol
 A matrix (a table with input columns) adds one key per radio row, `base[row]`, and one per checkbox or text cell,
 `base[row][column]`, where `base` is the field's `name` or `f-<id>`. Setting `userData` with the same keys fills it
 back in. See [Values and names](../controls/table.md#values-and-names).
+
+A repeating table's rows are keyed by position: `order[0][qty]`, `order[1][qty]`; see
+[Repeating rows](../controls/table.md#repeating-rows).
 
 #### Checkbox and Radio Groups
 
@@ -1052,20 +1057,39 @@ const renderer = new FormeoRenderer({
 
 ### Input Groups
 
-The renderer supports dynamic input groups that allow users to add/remove field sets:
+A row with `config.inputGroup: true` gets an **Add +** button. The person filling in the form adds copies of the row,
+and each copy gets a remove button ("Remove group 2").
 
 ```javascript
-// In form data, set inputGroup: true in row config
 {
   config: {
     inputGroup: true,
     legend: 'Phone Numbers'
   }
 }
-
-// Users can click "Add +" to duplicate the field group
-// Each cloned group gets a unique ID and a remove button
 ```
+
+**Names.** A copy's text inputs, textareas and single selects keep the original's name, so `userData` holds an array:
+`{ phone: ['555-1234', '555-9876'] }`. Radio and checkbox groups, multiple selects and matrices can't share a name, so
+copy n uses `<name>-<n>` (`contact-1`, `contact-2`, or the field's `f-<id>` when it has no name). Removing a copy
+renumbers the later ones. `userData` shows checkbox groups without the `[]` suffix, so a copy's key reads `likes-2`.
+
+**Restoring answers.** Setting `renderer.userData` creates the copies a saved answer needs (an array's extra values, or
+the highest `-<n>`), then fills them. Input groups have no maximum, so the setter creates at most 500 copies, and keys
+past that are reported in the setter's warning for keys with no matching field. It never removes copies. A copy created
+this way takes on the current hidden-by-condition or skipped-page state, like one added by click.
+
+**Accessibility and events.** Focus moves to a new copy's first control, or after a remove to the next remove button
+or the Add button, and a status region announces the change. Adding or removing a copy fires `formeo:rowschange` on the
+group's wrapper, and `onChange` receives it.
+
+**Limits.**
+
+- Conditions apply to the original row's fields, not to copies.
+- A group whose grouped control is named `x` shouldn't also contain a control named `x-<n>`: copies are named
+  `<name>-<n>`, so the names would collide.
+- A [repeating table](../controls/table.md#repeating-rows) inside a copy renders its buttons but can't add or remove
+  rows, and the `userData` setter doesn't grow it.
 
 ### Row and column attributes
 
