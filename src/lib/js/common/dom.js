@@ -178,10 +178,16 @@ class DOM {
       return elemArg
     }
 
-    // a table field (#349): its `table` data becomes the scroll wrapper, the <table> and its cells
+    // a table field (#349): its `table` data becomes the wrapper, the <table> and its cells, or a matrix of inputs
     if (isTableField(elemArg)) {
-      const fallbackLabel = tableText('controls.html.table')
-      return this.create(tableDomConfig(elemArg, { isPreview, fallbackLabel }), isPreview)
+      const tableConfig = tableDomConfig(elemArg, {
+        isPreview,
+        fallbackLabel: tableText('controls.html.table'),
+        translate: tableText,
+        requiredMark: this.matrixRequiredMark,
+        onRequiredRowChange: row => this.syncCheckboxGroupRequired(row),
+      })
+      return this.create(tableConfig, isPreview)
     }
 
     const _this = this
@@ -798,15 +804,17 @@ class DOM {
   /**
    * A required checkbox group needs at least one checked box, not every box.
    * Every box stays `required` while none is checked; once one is checked none is.
-   * Boxes inside a container a condition hid are never required; an inactive page is not such a container.
+   * Boxes inside a container a condition hid are never required and don't count as the checked one, whether the group
+   * or only the box is hidden; an inactive page is not such a container.
    * @param {Element} groupElem wrapper holding the group's checkboxes
    */
   syncCheckboxGroupRequired(groupElem) {
     const boxes = Array.from(groupElem.querySelectorAll('input[type="checkbox"]'))
     const isHidden = Boolean(groupElem.closest(HIDDEN_BY_CONDITION_SELECTOR))
-    const noneChecked = !boxes.some(box => box.checked)
+    const shown = boxes.filter(box => !box.closest(HIDDEN_BY_CONDITION_SELECTOR))
+    const noneChecked = !shown.some(box => box.checked)
     for (const box of boxes) {
-      box.required = !isHidden && noneChecked
+      box.required = !isHidden && noneChecked && shown.includes(box)
     }
   }
 
@@ -827,6 +835,9 @@ class DOM {
     className: 'text-error',
     children: '*',
   })
+
+  // a matrix input announces `required` itself, so its row's mark is only for sighted users
+  matrixRequiredMark = () => ({ ...this.requiredMark(), attrs: { 'aria-hidden': 'true' } })
 
   tooltip = tooltip => ({
     tag: 'span',

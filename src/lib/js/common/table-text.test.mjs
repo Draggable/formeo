@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, it } from 'node:test'
 import i18n from '@draggable/i18n'
+import { MATRIX_TEXT } from './table.mjs'
 import { TABLE_TEXT, tableText } from './table-text.mjs'
 
 // i18n.get(key) reads i18n.langs[i18n.locale], then any other loaded language
@@ -28,18 +29,46 @@ describe('table strings (#349)', () => {
 
   it('has an English fallback for every key the spec lists', () => {
     assert.deepEqual(Object.keys(TABLE_TEXT).sort(), [
+      'controls.form.matrix',
       'controls.html.table',
       'panel.label.table',
       'table.addColumn',
       'table.addRow',
       'table.caption',
       'table.cell',
+      'table.cellInput',
+      'table.columnInput',
       'table.columnLabel',
+      'table.columnValue',
+      'table.entryCell',
+      'table.entryRow',
       'table.headerRow',
+      'table.headerRowLocked',
+      'table.input.checkbox',
+      'table.input.radio',
+      'table.input.static',
+      'table.input.text',
       'table.newColumn',
+      'table.newRow',
       'table.removeColumn',
       'table.removeRow',
+      'table.required',
       'table.rowHeaders',
+      'table.rowRequired',
+      'table.rowValue',
+      'table.value',
     ])
+  })
+
+  it("matches table.mjs's own English strings, which it uses without a translator", () => {
+    for (const [key, english] of Object.entries(MATRIX_TEXT)) {
+      assert.equal(TABLE_TEXT[key], english, key)
+    }
+  })
+
+  it('fills the matrix patterns without adding spaces', () => {
+    assert.equal(tableText('table.cellInput', { row: 'Speed', column: 'Good' }), 'Speed, Good')
+    assert.equal(tableText('table.entryRow', { table: 'Visit', row: 'Speed' }), 'Visit: Speed')
+    assert.equal(tableText('table.entryCell', { table: 'Visit', row: 'Speed', column: 'Good' }), 'Visit: Speed, Good')
   })
 })

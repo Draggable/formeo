@@ -28,5 +28,6 @@ suite('icons', () => {
 
   test('has a table icon (#349)', t => {
     t.assert.ok(svgFiles.includes('icon-table.svg'))
+    t.assert.ok(svgFiles.includes('icon-matrix.svg'))
   })
 })

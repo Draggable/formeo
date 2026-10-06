@@ -13,7 +13,10 @@
 /** 8-character hex short id (current editor output) or a full uuid (older saved forms). */
 export type ComponentId = string
 
-/** Dot address of a component or one of its properties, e.g. `fields.1c48584a` or `fields.1c48584a.options[0]`. */
+/**
+ * Dot address of a component or one of its properties, e.g. `fields.1c48584a`, `fields.1c48584a.options[0]`, or a
+ * matrix row or cell: `fields.1c48584a.table.rows[0]`, `fields.1c48584a.table.rows[0].cells[1]`.
+ */
 export type ComponentAddress = string
 
 export type ComponentType = 'stage' | 'row' | 'column' | 'field'
@@ -149,15 +152,26 @@ export interface FieldConfigData {
   [key: string]: unknown
 }
 
-/** A table field's column (#349). Later phases may add keys. */
+/** The input a matrix column renders in each row. */
+export type TableCellInput = 'radio' | 'checkbox' | 'text'
+
+/** A table field's column (#349). */
 export interface TableColumn {
   label: string
+  /** The column's name key in a matrix; `column-<n>` when blank. */
+  value?: string
+  /** Makes the column an input column; the table is then a matrix. Absent for a static column. */
+  input?: TableCellInput
   [key: string]: unknown
 }
 
 /** A table field's row: one plain-text cell per column. */
 export interface TableRow {
   cells: string[]
+  /** The row's name key in a matrix; `row-<n>` when blank. */
+  value?: string
+  /** In a matrix, the row's inputs must be answered. */
+  required?: boolean
   [key: string]: unknown
 }
 

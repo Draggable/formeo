@@ -263,3 +263,214 @@ describe('Table panel (#349)', () => {
     assert.equal(b.get('table').caption, '')
   })
 })
+
+const matrixTable = () => ({
+  caption: '',
+  headerRow: true,
+  rowHeaders: true,
+  columns: [
+    { label: '' },
+    { label: 'Poor', value: 'poor', input: 'radio' },
+    { label: 'Good', value: 'good', input: 'radio' },
+    { label: 'Comment', value: 'comment', input: 'text' },
+  ],
+  rows: [
+    { value: 'speed', cells: ['Speed', '', '', ''] },
+    { value: 'price', cells: ['Price', '', '', ''] },
+  ],
+})
+const change = (input, value) => {
+  if (input.type === 'checkbox') {
+    input.checked = value
+  } else {
+    input.value = value
+  }
+  input.dispatchEvent(new window.Event('change', { bubbles: true }))
+}
+
+describe('Table panel: input columns (#349 phase 2)', () => {
+  it('offers a type select per column, except column 0 under row headers', () => {
+    const panel = mountPanel(tableField(matrixTable()))
+    const selects = [...panel.querySelectorAll('[data-column-input]')]
+    assert.deepEqual(
+      selects.map(select => select.dataset.columnInput),
+      ['1', '2', '3']
+    )
+    assert.deepEqual(
+      selects.map(select => select.value),
+      ['radio', 'radio', 'text']
+    )
+    assert.deepEqual(
+      selects.map(select => select.getAttribute('aria-label')),
+      ['Column 2 input', 'Column 3 input', 'Column 4 input']
+    )
+    assert.deepEqual(
+      [...selects[0].options].map(option => [option.value, option.textContent]),
+      [
+        ['', 'Static text'],
+        ['text', 'Text field'],
+        ['radio', 'Radio'],
+        ['checkbox', 'Checkbox'],
+      ]
+    )
+  })
+
+  it('a display table gets a type select per column, and no value or required controls', () => {
+    const panel = mountPanel(tableField())
+    assert.equal(panel.querySelectorAll('[data-column-input]').length, 3)
+    assert.equal(panel.querySelectorAll('[data-column-value], [data-row-value], [data-row-required]').length, 0)
+    assert.equal(panel.querySelector('[data-table-option="headerRow"]').disabled, false)
+  })
+
+  it('choosing a type makes an input column, keys the table and keeps focus on the select', () => {
+    const field = tableField()
+    const panel = mountPanel(field)
+    change(panel.querySelector('[data-column-input="1"]'), 'radio')
+    const table = field.get('table')
+    assert.equal(table.columns[1].input, 'radio')
+    assert.equal(table.columns[1].value, 'column-2')
+    assert.equal('value' in table.columns[0], false)
+    assert.deepEqual(
+      table.rows.map(row => row.value),
+      ['row-1', 'row-2']
+    )
+    assert.equal(document.activeElement, panel.querySelector('[data-column-input="1"]'))
+    assert.equal(panel.querySelector('[data-row="0"][data-column="1"]'), null)
+    const glyph = panel.querySelector('[data-cell-glyph="radio"]')
+    assert.equal(glyph.getAttribute('aria-hidden'), 'true')
+    assert.equal(glyph.closest('td').querySelector('input, select, button, [tabindex]'), null)
+    assert.equal(field.preview.querySelectorAll('input[type="radio"]').length, 2)
+  })
+
+  it('an input column with an empty label gets a default one', () => {
+    const table = defaultTable()
+    table.columns[1].label = ''
+    const field = tableField(table)
+    change(mountPanel(field).querySelector('[data-column-input="1"]'), 'text')
+    assert.equal(field.get('table').columns[1].label, 'Column 2')
+  })
+
+  it('switching every input column back to static leaves a display table', () => {
+    const field = tableField(matrixTable())
+    const panel = mountPanel(field)
+    for (const c of ['1', '2', '3']) {
+      change(panel.querySelector(`[data-column-input="${c}"]`), '')
+    }
+    assert.equal(panel.querySelectorAll('[data-row-value], [data-row-required]').length, 0)
+    assert.equal(field.preview.querySelectorAll('input').length, 0)
+  })
+
+  it('labels the value and required controls by their row or column', () => {
+    const panel = mountPanel(tableField(matrixTable()))
+    assert.deepEqual(labelsOf(panel, '[data-column-value]'), ['Column 2 value', 'Column 3 value', 'Column 4 value'])
+    assert.deepEqual(labelsOf(panel, '[data-row-value]'), ['Row 1 value', 'Row 2 value'])
+    assert.deepEqual(labelsOf(panel, '[data-row-required]'), ['Row 1 required', 'Row 2 required'])
+    assert.equal(panel.querySelector('[data-row-value="0"]').placeholder, 'Value')
+    assert.equal(panel.querySelector('[data-row-required="0"]').closest('label').textContent, 'Required')
+  })
+
+  it('typing a value saves it as typed without rebuilding; committing fixes blanks and duplicates in place', () => {
+    const field = tableField(matrixTable())
+    const panel = mountPanel(field)
+    const value = panel.querySelector('[data-column-value="2"]')
+    typeInto(value, 'poor')
+    assert.equal(field.get('table').columns[2].value, 'poor')
+    assert.equal(panel.querySelector('[data-column-value="2"]'), value)
+    change(value, 'poor')
+    assert.equal(field.get('table').columns[2].value, 'column-3')
+    assert.equal(value.value, 'column-3')
+    assert.equal(panel.querySelector('[data-column-value="2"]'), value)
+    const rowValue = panel.querySelector('[data-row-value="1"]')
+    typeInto(rowValue, ' a[b] ')
+    change(rowValue, ' a[b] ')
+    assert.equal(rowValue.value, 'a-b-')
+  })
+
+  it('the Required checkbox marks the row required and refreshes the preview', () => {
+    const field = tableField(matrixTable())
+    const panel = mountPanel(field)
+    change(panel.querySelector('[data-row-required="1"]'), true)
+    assert.equal(field.get('table').rows[1].required, true)
+    assert.ok([...field.preview.querySelectorAll('tbody tr:nth-child(2) input')].every(input => input.required))
+    change(panel.querySelector('[data-row-required="1"]'), false)
+    assert.equal('required' in field.get('table').rows[1], false)
+  })
+
+  it('locks Header row on while the table has inputs, and says why', () => {
+    const field = tableField({ ...matrixTable(), headerRow: false })
+    const panel = mountPanel(field)
+    const headerRow = panel.querySelector('[data-table-option="headerRow"]')
+    assert.equal(headerRow.checked, true)
+    assert.equal(headerRow.disabled, true)
+    const hint = panel.querySelector(`#${headerRow.getAttribute('aria-describedby')}`)
+    assert.equal(hint.textContent, 'Input columns need a header row')
+    assert.equal(hint.id, 'f-tbl-header-row-hint')
+  })
+
+  it('turning Row headers on clears column 0 input and drops its type select', () => {
+    const table = { ...matrixTable(), rowHeaders: false }
+    table.columns[0] = { label: 'Pick', value: 'pick', input: 'checkbox' }
+    const field = tableField(table)
+    const panel = mountPanel(field)
+    assert.ok(panel.querySelector('[data-column-input="0"]'))
+    panel.querySelector('[data-table-option="rowHeaders"]').click()
+    assert.equal('input' in field.get('table').columns[0], false)
+    assert.equal(panel.querySelector('[data-column-input="0"]'), null)
+    assert.equal(document.activeElement, panel.querySelector('[data-table-option="rowHeaders"]'))
+  })
+
+  it('adding a row to a matrix keys it and focuses its first editable control', () => {
+    const field = tableField(matrixTable())
+    const panel = mountPanel(field)
+    panel.querySelector('[data-table-add="row"]').click()
+    assert.equal(field.get('table').rows[2].value, 'row-3')
+    assert.equal(document.activeElement, panel.querySelector('[data-row="2"][data-column="0"]'))
+  })
+
+  it('adding a row whose only cells are inputs focuses its value input', () => {
+    const table = { ...matrixTable(), rowHeaders: false, columns: matrixTable().columns.slice(1) }
+    table.rows = table.rows.map(row => ({ ...row, cells: row.cells.slice(1) }))
+    const panel = mountPanel(tableField(table))
+    panel.querySelector('[data-table-add="row"]').click()
+    assert.equal(document.activeElement, panel.querySelector('[data-row-value="2"]'))
+  })
+
+  it('a new column in a matrix starts static and unkeyed', () => {
+    const field = tableField(matrixTable())
+    mountPanel(field).querySelector('[data-table-add="column"]').click()
+    const added = field.get('table').columns.at(-1)
+    assert.equal(added.input, undefined)
+    assert.equal(added.value, undefined)
+  })
+
+  it('preview events from inside a table never touch options or attrs.value', () => {
+    const field = tableField(matrixTable())
+    const radio = field.preview.querySelector('input[type="radio"]')
+    const text = field.preview.querySelector('input[type="text"]')
+    // jsdom reports a throwing listener to window instead of rethrowing it from dispatchEvent
+    const errors = []
+    const onError = evt => {
+      evt.preventDefault()
+      errors.push(evt.error ?? evt.message)
+    }
+    window.addEventListener('error', onError)
+    try {
+      radio.checked = true
+      radio.dispatchEvent(new window.Event('change', { bubbles: true }))
+      typeInto(text, 'typed')
+    } finally {
+      window.removeEventListener('error', onError)
+    }
+    assert.deepEqual(errors, [])
+    assert.equal(field.get('options'), undefined)
+    assert.equal(field.get('attrs.value'), undefined)
+  })
+
+  it('two editors edit their own matrices', () => {
+    const first = tableField(matrixTable(), editor())
+    const second = tableField(matrixTable(), editor())
+    change(mountPanel(first).querySelector('[data-column-input="3"]'), 'checkbox')
+    assert.equal(first.get('table').columns[3].input, 'checkbox')
+    assert.equal(second.get('table').columns[3].input, 'text')
+  })
+})

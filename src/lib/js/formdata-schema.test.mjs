@@ -134,4 +134,32 @@ suite('formData schema', () => {
     t.assert.deepStrictEqual(table.required, ['columns', 'rows'])
     t.assert.strictEqual(table.properties.rows.items.properties.cells.items.type, 'string')
   })
+
+  test('accepts matrix columns and rows, and rejects malformed ones (#349 phase 2)', t => {
+    const data = structuredClone(conditionalFields)
+    const [fieldId] = Object.keys(data.fields)
+    const withTable = table => {
+      data.fields[fieldId] = { id: fieldId, tag: 'table', config: { label: 'Matrix', hideLabel: true }, table }
+      return formDataSchema.safeParse(data).success
+    }
+    const matrix = {
+      rowHeaders: true,
+      columns: [{ label: '' }, { label: 'Good', value: 'good', input: 'radio' }, { label: 'C', input: 'text' }],
+      rows: [{ value: 'speed', required: true, cells: ['Speed', '', ''] }],
+    }
+    t.assert.ok(withTable(matrix))
+    t.assert.strictEqual(withTable({ ...matrix, columns: [{ label: 'A', input: 'select' }] }), false)
+    t.assert.strictEqual(withTable({ ...matrix, columns: [{ label: 'A', value: 1 }] }), false)
+    t.assert.strictEqual(withTable({ ...matrix, rows: [{ cells: [], required: 'yes' }] }), false)
+    t.assert.strictEqual(withTable({ ...matrix, rows: [{ cells: [], value: 2 }] }), false)
+  })
+
+  test('the generated JSON schema describes matrix inputs (#349 phase 2)', t => {
+    const field = buildFormDataJsonSchema().properties.fields.additionalProperties
+    const { columns, rows } = field.properties.table.properties
+    t.assert.deepStrictEqual(columns.items.properties.input.enum, ['radio', 'checkbox', 'text'])
+    t.assert.strictEqual(columns.items.properties.value.type, 'string')
+    t.assert.strictEqual(rows.items.properties.required.type, 'boolean')
+    t.assert.strictEqual(rows.items.properties.value.type, 'string')
+  })
 })

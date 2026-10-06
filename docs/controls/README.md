@@ -66,3 +66,6 @@ const paragraph = {
 ```
 
 Built-in HTML controls: Header, Paragraph, [Table](table.md), Divider and WYSIWYG (TinyMCE).
+
+The form group also has a **Matrix**: a grid of radio, checkbox or text inputs, one row per question. It's a Table
+with input columns; see [Input columns (matrix)](table.md#input-columns-matrix).

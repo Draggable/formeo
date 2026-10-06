@@ -258,9 +258,9 @@ label, .prev-label {
 .f-table-wrap {
   max-inline-size: 100%;
   overflow-x: auto;
-  // columns are flex items with min-width: auto; without this the table's min-content width would widen its column
-  // past the form instead of scrolling
-  contain: inline-size;
+  // columns are flex items with min-width: auto; inline-size containment keeps the table's min-content width from
+  // widening its column past the form, and the container lets a matrix stack when it's narrow (#349)
+  container-type: inline-size;
 
   &:focus-visible {
     outline: 2px solid t.$focus;
@@ -288,5 +288,99 @@ label, .prev-label {
 
   th {
     background-color: t.$surface-muted;
+  }
+}
+
+// matrix (#349 phase 2): input columns, centred choice cells, and stacked rows in a narrow container
+.f-table-matrix {
+  // stacking sets display on table parts, which would beat the UA's [hidden] rule
+  [hidden] {
+    display: none;
+  }
+
+  // a condition-hidden cell needs higher specificity than .f-table-cell's display rules
+  .f-table-cell[hidden] {
+    display: none;
+  }
+
+  td:has(> .f-table-cell input[type='radio']),
+  td:has(> .f-table-cell input[type='checkbox']) {
+    text-align: center;
+  }
+
+  .f-table-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: var.$half-space;
+    min-block-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  .f-table-cell input[type='text'] {
+    inline-size: 100%;
+  }
+
+  .f-table-cell-label {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@container (max-width: 30rem) {
+  .f-table-matrix {
+    .f-table,
+    tbody,
+    tr,
+    th,
+    td {
+      display: block;
+    }
+
+    thead {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      margin-block-end: var.$base-space;
+      border: 1px solid t.$border;
+    }
+
+    th,
+    td {
+      border: 0;
+      text-align: start;
+    }
+
+    tbody th {
+      background-color: t.$surface-muted;
+    }
+
+    td:has(> .f-table-cell input[type='radio']),
+    td:has(> .f-table-cell input[type='checkbox']) {
+      text-align: start;
+    }
+
+    .f-table-cell {
+      display: flex;
+    }
+
+    .f-table-cell-label {
+      position: static;
+      inline-size: auto;
+      block-size: auto;
+      overflow: visible;
+      clip-path: none;
+      white-space: normal;
+      order: 1;
+    }
   }
 }

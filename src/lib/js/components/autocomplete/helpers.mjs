@@ -1,4 +1,6 @@
 import dom from '../../common/dom.js'
+import { hasInputs, inputColumns, normalizeTable, parseTableAddress } from '../../common/table.mjs'
+import { tableText } from '../../common/table-text.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import { pageText } from '../stages/page-text.mjs'
 
@@ -139,6 +141,76 @@ const makeComponentOptionsList = (component, autocomplete) => {
   return list
 }
 
+const tableRowLabel = (table, r) =>
+  (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
+const tableColumnLabel = (table, c) => table.columns[c].label.trim() || tableText('table.newColumn', { column: c + 1 })
+
+/**
+ * A matrix's rows, each with its input cells, as nested picker items (#349 phase 2)
+ * @param {Field} component a field whose table has inputs
+ * @param {Autocomplete} autocomplete
+ * @return {HTMLElement} ul
+ */
+const makeTableRowsList = (component, autocomplete) => {
+  const table = normalizeTable(component.get('table'))
+  const columns = inputColumns(table)
+  const items = table.rows.map((_, r) => {
+    const rowAddress = `${component.address}.table.rows[${r}]`
+    const rowLabel = tableRowLabel(table, r)
+    const cells = columns.map(c => {
+      const columnLabel = tableColumnLabel(table, c)
+      return makeListItem(
+        {
+          value: `${rowAddress}.cells[${c}]`,
+          textLabel: `${rowLabel} \u203a ${columnLabel}`,
+          htmlLabel: { tag: 'span', textContent: columnLabel },
+          componentType: 'table-cell',
+          depth: 2,
+        },
+        autocomplete
+      )
+    })
+    const cellList = dom.create({
+      tag: 'ul',
+      attrs: { className: [LIST_CLASSNAME, 'table-cells-list'] },
+      children: cells,
+    })
+    return makeListItem(
+      {
+        value: rowAddress,
+        textLabel: rowLabel,
+        htmlLabel: [{ tag: 'span', textContent: rowLabel }, cellList],
+        componentType: 'table-row',
+        depth: 1,
+      },
+      autocomplete
+    )
+  })
+  return dom.create({ tag: 'ul', attrs: { className: [LIST_CLASSNAME, 'table-rows-list'] }, children: items })
+}
+
+/**
+ * The picker's name for a stored matrix row or cell address: "Speed", or "Speed \u203a Good"
+ * @param {String} address
+ * @param {Components} components
+ * @return {String|null} null for any other address
+ */
+export const tableAddressLabel = (address, components) => {
+  const parsed = parseTableAddress(address)
+  if (!parsed) {
+    return null
+  }
+  const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.('table'))
+  if (!table.rows[parsed.row]) {
+    return null
+  }
+  const rowLabel = tableRowLabel(table, parsed.row)
+  if (parsed.cell === null) {
+    return rowLabel
+  }
+  return table.columns[parsed.cell] ? `${rowLabel} \u203a ${tableColumnLabel(table, parsed.cell)}` : null
+}
+
 /**
  * Generate options for the autolinker component, from the components of the autocomplete's own editor
  * @param {Autocomplete} autocomplete
@@ -178,6 +250,9 @@ export const componentOptions = autocomplete => {
       if (component.isCheckable) {
         const componentOptionsList = makeComponentOptionsList(component, autocomplete)
         htmlLabel.push(componentOptionsList)
+      }
+      if (component.isTable && hasInputs(component.get('table'))) {
+        htmlLabel.push(makeTableRowsList(component, autocomplete))
       }
       const optionData = makeOptionData({ value, textLabel, htmlLabel, componentType, selectedId })
 

@@ -197,8 +197,9 @@ suite('resolveFormeoProperties purity', () => {
   test('the table element scrolls inside its wrapper and uses theme tokens (#349)', t => {
     const wrap = compiledRule('.formeo .f-table-wrap {')
     t.assert.match(wrap, /overflow-x: auto;/)
-    // without it a wide table's min-content width stretches its flex column past the form
-    t.assert.match(wrap, /contain: inline-size;/)
+    // inline-size containment keeps the table's min-content width from stretching its flex column past the form,
+    // and the container lets a matrix stack when narrow (#349)
+    t.assert.match(wrap, /container-type: inline-size;/)
     t.assert.match(compiledRule('.formeo .f-table-wrap:focus-visible {'), /outline: 2px solid var\(--formeo-focus\);/)
     const cells = compiledRule('.formeo .f-table th,')
     t.assert.match(cells, /border: 1px solid var\(--formeo-border\);/)
@@ -215,6 +216,26 @@ suite('resolveFormeoProperties purity', () => {
     t.assert.ok(rules.length > 0, 'expected the table rules to compile')
     for (const [, selector, body] of rules) {
       t.assert.doesNotMatch(body, physical, `${selector.trim()} uses a physical left/right property`)
+    }
+  })
+
+  test('matrices stack in narrow containers and keep [hidden] hidden (#349 phase 2)', t => {
+    const css = compileFormeoCss()
+    t.assert.match(css, /\.f-table-wrap\s*\{[^}]*container-type:\s*inline-size/)
+    t.assert.doesNotMatch(css, /\.f-table-wrap\s*\{[^}]*contain:\s*inline-size/)
+    t.assert.match(css, /@container\s*\(max-width:\s*30rem\)/)
+    t.assert.match(css, /\.f-table-matrix \[hidden\]\s*\{\s*display:\s*none/)
+    t.assert.match(css, /\.f-table-matrix \.f-table-cell\[hidden\]\s*\{\s*display:\s*none/)
+    t.assert.match(css, /\.f-table-matrix \.f-table-cell-label\s*\{[^}]*clip-path/)
+  })
+
+  test('matrix rows and cells open in the condition picker on hover (#349 phase 2)', t => {
+    const css = compileFormeoCss()
+    for (const list of ['table-rows-list', 'table-cells-list']) {
+      const reveal = new RegExp(`li:has\\(> \\.${list}\\):hover > \\.${list}[^{]*\\{[^}]*display:\\s*block`)
+      t.assert.match(css, reveal, `${list} reveals on hover of its item`)
+      const position = new RegExp(`\\.f-autocomplete-list\\.${list}[^{]*\\{[^}]*left:\\s*100%`)
+      t.assert.match(css, position, `${list} sits beside its item`)
     }
   })
 })

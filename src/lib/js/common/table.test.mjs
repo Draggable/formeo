@@ -3,16 +3,32 @@ import { describe, it } from 'node:test'
 import {
   addColumn,
   addRow,
+  CELL_INPUTS,
+  cellInput,
+  columnKey,
+  defaultMatrix,
   defaultTable,
+  hasInputs,
+  inputColumns,
   isTableField,
+  MATRIX_TEXT,
+  matrixName,
   normalizeTable,
+  parseMatrixKey,
+  parseTableAddress,
   removeColumn,
   removeRow,
+  rowKey,
   setCell,
+  setColumnInput,
   setColumnLabel,
+  setColumnValue,
+  setRowRequired,
+  setRowValue,
   setTableOption,
   TABLE_DEFAULTS,
   tableDomConfig,
+  withKeys,
 } from './table.mjs'
 
 const twoByTwo = () => ({
@@ -265,5 +281,212 @@ describe('tableDomConfig (#349)', () => {
   it('renders an empty tbody for a table without rows, and no thead without columns', () => {
     const parts = partsOf(tableDomConfig(field({ caption: '' })))
     assert.deepEqual(parts, [{ tag: 'tbody', children: [] }])
+  })
+})
+
+const rating = () => ({
+  caption: 'Visit',
+  headerRow: true,
+  rowHeaders: true,
+  columns: [
+    { label: '' },
+    { label: 'Poor', value: 'poor', input: 'radio' },
+    { label: 'Good', value: 'good', input: 'radio' },
+    { label: 'Comment', value: 'comment', input: 'text' },
+  ],
+  rows: [
+    { value: 'speed', required: true, cells: ['Speed', '', '', ''] },
+    { value: 'price', cells: ['Price', '', '', ''] },
+  ],
+})
+
+describe('matrix data (#349 phase 2)', () => {
+  it('cellInput accepts only radio, checkbox and text', () => {
+    assert.deepEqual(CELL_INPUTS, ['radio', 'checkbox', 'text'])
+    assert.equal(cellInput({ label: 'A', input: 'radio' }), 'radio')
+    assert.equal(cellInput({ label: 'A', input: 'checkbox' }), 'checkbox')
+    assert.equal(cellInput({ label: 'A', input: 'text' }), 'text')
+    assert.equal(cellInput({ label: 'A', input: 'select' }), null)
+    assert.equal(cellInput({ label: 'A' }), null)
+    assert.equal(cellInput('A'), null)
+    assert.equal(cellInput(null), null)
+  })
+
+  it('normalizeTable keeps input, value and required as written, even an unknown input', () => {
+    const table = normalizeTable({
+      columns: [{ label: 'A', value: 'a', input: 'select' }],
+      rows: [{ value: 'r', required: true, cells: ['x'] }],
+    })
+    assert.deepEqual(table.columns, [{ label: 'A', value: 'a', input: 'select' }])
+    assert.deepEqual(table.rows, [{ value: 'r', required: true, cells: ['x'] }])
+  })
+
+  it('a phase 1 table is unchanged by normalizeTable and withKeys', () => {
+    assert.deepEqual(normalizeTable(twoByTwo()), twoByTwo())
+    assert.deepEqual(withKeys(twoByTwo()), twoByTwo())
+  })
+
+  it('inputColumns skips static columns, unknown inputs and column 0 under row headers', () => {
+    assert.deepEqual(inputColumns(rating()), [1, 2, 3])
+    const firstIsRadio = { ...rating(), columns: [{ label: 'X', input: 'radio' }, ...rating().columns.slice(1)] }
+    assert.deepEqual(inputColumns(firstIsRadio), [1, 2, 3])
+    assert.deepEqual(inputColumns({ ...firstIsRadio, rowHeaders: false }), [0, 1, 2, 3])
+    assert.deepEqual(inputColumns({ columns: [{ label: 'A', input: 'select' }], rows: [] }), [])
+  })
+
+  it('hasInputs is true only when some column renders an input', () => {
+    assert.equal(hasInputs(twoByTwo()), false)
+    assert.equal(hasInputs(rating()), true)
+    assert.equal(hasInputs({ rowHeaders: true, columns: [{ label: 'A', input: 'radio' }], rows: [] }), false)
+    assert.equal(hasInputs(undefined), false)
+  })
+
+  it('columnKey and rowKey trim, replace brackets and fall back to the 1-based position', () => {
+    assert.equal(columnKey({ label: 'A', value: ' a[b] ' }, 0), 'a-b-')
+    assert.equal(columnKey({ label: 'A', value: '   ' }, 1), 'column-2')
+    assert.equal(columnKey({ label: 'A' }, 2), 'column-3')
+    assert.equal(rowKey({ value: 'Ünïcode row', cells: [] }, 0), 'Ünïcode row')
+    assert.equal(rowKey({ cells: [] }, 0), 'row-1')
+    assert.equal(rowKey(undefined, 4), 'row-5')
+  })
+
+  it('withKeys fills blank and duplicate keys of rows and input columns, first occurrence wins', () => {
+    const input = {
+      rowHeaders: true,
+      columns: [
+        { label: '' },
+        { label: 'A', value: '', input: 'radio' },
+        { label: 'B', value: 'x', input: 'radio' },
+        { label: 'C', value: 'x', input: 'radio' },
+        { label: 'D', value: 'a]b', input: 'text' },
+      ],
+      rows: [{ value: 'same', cells: [] }, { value: 'same', cells: [] }, { cells: [] }],
+    }
+    const before = structuredClone(input)
+    const table = withKeys(input)
+    assert.deepEqual(input, before)
+    assert.deepEqual(
+      table.columns.map(column => column.value),
+      [undefined, 'column-2', 'x', 'column-4', 'a-b']
+    )
+    assert.deepEqual(
+      table.rows.map(row => row.value),
+      ['same', 'row-2', 'row-3']
+    )
+  })
+
+  it('withKeys never hands out a key an explicit value already uses', () => {
+    const table = withKeys({
+      columns: [{ label: 'A', input: 'text' }],
+      rows: [{ cells: [] }, { value: 'row-1', cells: [] }],
+    })
+    assert.deepEqual(
+      table.rows.map(row => row.value),
+      ['row-2', 'row-1']
+    )
+  })
+
+  it('setColumnInput sets or clears a column input, and never makes column 0 an input under row headers', () => {
+    const table = rating()
+    const before = structuredClone(table)
+    assert.equal(setColumnInput(table, 3, 'checkbox').columns[3].input, 'checkbox')
+    assert.equal('input' in setColumnInput(table, 3, null).columns[3], false)
+    assert.equal('input' in setColumnInput(table, 3, 'bogus').columns[3], false)
+    assert.equal(setColumnInput(table, 3, null).columns[3].value, 'comment')
+    assert.deepEqual(setColumnInput(table, 0, 'radio').columns[0], { label: '' })
+    assert.equal(setColumnInput({ ...table, rowHeaders: false }, 0, 'radio').columns[0].input, 'radio')
+    assert.deepEqual(setColumnInput(table, 9, 'radio'), normalizeTable(table))
+    assert.deepEqual(table, before)
+  })
+
+  it('setColumnValue and setRowValue store the text as typed', () => {
+    assert.equal(setColumnValue(rating(), 1, ' Bad ').columns[1].value, ' Bad ')
+    assert.equal(setRowValue(rating(), 1, 7).rows[1].value, '7')
+    assert.deepEqual(setRowValue(rating(), 5, 'x'), normalizeTable(rating()))
+  })
+
+  it('setRowRequired sets required, and removes the key when turned off', () => {
+    assert.equal(setRowRequired(rating(), 1, true).rows[1].required, true)
+    assert.equal('required' in setRowRequired(rating(), 0, false).rows[0], false)
+  })
+
+  it('turning row headers on clears column 0 input', () => {
+    const table = {
+      ...rating(),
+      rowHeaders: false,
+      columns: [{ label: 'X', input: 'text' }, ...rating().columns.slice(1)],
+    }
+    assert.deepEqual(setTableOption(table, 'rowHeaders', true).columns[0], { label: 'X' })
+    assert.equal(setTableOption(table, 'rowHeaders', false).columns[0].input, 'text')
+  })
+
+  it('defaultMatrix is a radio grid with a row-label column', () => {
+    assert.deepEqual(defaultMatrix(), {
+      caption: '',
+      headerRow: true,
+      rowHeaders: true,
+      columns: [
+        { label: '' },
+        { label: 'Column 1', value: 'column-1', input: 'radio' },
+        { label: 'Column 2', value: 'column-2', input: 'radio' },
+        { label: 'Column 3', value: 'column-3', input: 'radio' },
+      ],
+      rows: [
+        { value: 'row-1', cells: ['Row 1', '', '', ''] },
+        { value: 'row-2', cells: ['Row 2', '', '', ''] },
+      ],
+    })
+    const translated = defaultMatrix(
+      n => `Spalte ${n}`,
+      n => `Zeile ${n}`
+    )
+    assert.equal(translated.columns[1].label, 'Spalte 1')
+    assert.equal(translated.rows[1].cells[0], 'Zeile 2')
+  })
+
+  it('matrixName nests the row key, then the column key', () => {
+    assert.equal(matrixName('f-x', 'speed'), 'f-x[speed]')
+    assert.equal(matrixName('f-x', 'speed', 'good'), 'f-x[speed][good]')
+  })
+
+  it('parseMatrixKey reads a key back against a known base', () => {
+    assert.deepEqual(parseMatrixKey('f-x[speed]', 'f-x'), { row: 'speed', column: null })
+    assert.deepEqual(parseMatrixKey('f-x[speed][good]', 'f-x'), { row: 'speed', column: 'good' })
+    assert.deepEqual(parseMatrixKey('survey[q1][speed]', 'survey[q1]'), { row: 'speed', column: null })
+    assert.equal(parseMatrixKey('f-xy[speed]', 'f-x'), null)
+    assert.equal(parseMatrixKey('f-x', 'f-x'), null)
+    assert.equal(parseMatrixKey('f-x[a][b][c]', 'f-x'), null)
+    assert.equal(parseMatrixKey('f-x[]', 'f-x'), null)
+  })
+
+  it('parseTableAddress reads row and cell condition addresses only', () => {
+    assert.deepEqual(parseTableAddress('fields.abc.table.rows[1]'), { fieldId: 'abc', row: 1, cell: null })
+    assert.deepEqual(parseTableAddress('fields.abc.table.rows[0].cells[2]'), { fieldId: 'abc', row: 0, cell: 2 })
+    assert.equal(parseTableAddress('fields.abc.options[1]'), null)
+    assert.equal(parseTableAddress('fields.abc.table.rows.1'), null)
+    assert.equal(parseTableAddress('fields.abc'), null)
+    assert.equal(parseTableAddress(undefined), null)
+  })
+})
+
+describe('tableDomConfig: matrix (#349 phase 2)', () => {
+  // rating() has a caption, so the <table>'s children are [caption, thead, tbody]
+  const firstInput = config => {
+    const tbody = config.children[0].children[2]
+    // row 1 > the Poor cell (td) > label.f-table-cell > [span, input]
+    return tbody.children[0].children[1].children[0].children[1]
+  }
+
+  it('uses the translate option for its fallback names', () => {
+    const translate = (key, vars) => `${key}|${Object.values(vars).join('|')}`
+    const input = firstInput(tableDomConfig({ id: 'f-m', table: { ...rating(), rowHeaders: false } }, { translate }))
+    assert.equal(input.tag, 'input')
+    assert.equal(input.attrs['aria-label'], 'table.cellInput|table.newRow|1|Poor')
+  })
+
+  it('falls back to its own English strings', () => {
+    assert.deepEqual(Object.keys(MATRIX_TEXT).sort(), ['table.cellInput', 'table.newColumn', 'table.newRow'])
+    const input = firstInput(tableDomConfig({ id: 'f-m', table: { ...rating(), rowHeaders: false } }))
+    assert.equal(input.attrs['aria-label'], 'Row 1, Poor')
   })
 })

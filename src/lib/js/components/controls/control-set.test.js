@@ -147,4 +147,32 @@ describe('expandControlSet (#227)', () => {
     assert.deepEqual(field.table.columns, [{ label: 'Day' }, { label: 'Open' }])
     assert.deepEqual(field.table.rows, [{ cells: ['Mon', '9–5'] }])
   })
+
+  it('a matrix member keeps its own columns and rows over the control default (#349 phase 2)', () => {
+    const matrixControl = {
+      tag: 'table',
+      config: { label: 'Matrix', hideLabel: true },
+      table: {
+        caption: '',
+        headerRow: true,
+        rowHeaders: true,
+        columns: [{ label: '' }, { label: 'Column 1', value: 'column-1', input: 'radio' }],
+        rows: [{ value: 'row-1', cells: ['Row 1', ''] }],
+      },
+    }
+    const member = {
+      control: 'matrix',
+      table: {
+        columns: [{ label: '' }, { label: 'Yes', value: 'yes', input: 'checkbox' }],
+        rows: [{ value: 'tea', required: true, cells: ['Tea', ''] }],
+      },
+    }
+    const lookupMatrix = id => (id === 'matrix' ? structuredClone(matrixControl) : undefined)
+    const {
+      fields: [field],
+    } = expandControlSet(setOf([member]), lookupMatrix)
+    assert.equal(field.table.rowHeaders, true)
+    assert.deepEqual(field.table.columns, member.table.columns)
+    assert.deepEqual(field.table.rows, member.table.rows)
+  })
 })

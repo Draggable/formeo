@@ -4,6 +4,7 @@ import {
   type BeforeAddDetail,
   type ComponentEventData,
   type ComponentEvents,
+  type Condition,
   type ConfigOptionDeclaration,
   type ControlDefinition,
   type FieldControlDefinition,
@@ -20,6 +21,7 @@ import {
   type LabelPosition,
   type LogicalOperator,
   type RemoveItemsActionEvent,
+  type TableCellInput,
   type TableData,
   type UserData,
 } from 'formeo'
@@ -451,6 +453,7 @@ export {
   bare,
   besideLabel,
   cellNotText,
+  cellType,
   clearAll,
   componentEvents,
   describeReorder,
@@ -463,12 +466,17 @@ export {
   leftLabel,
   legacyLabel,
   lockedDown,
+  matrixCondition,
+  matrixData,
+  matrixField,
   newPage,
   numericChoice,
   otherChoiceForm,
   positionDeclaration,
   queried,
   ratingControl,
+  requiredText,
+  selectColumn,
   stars,
   tableControl,
   tableData,
@@ -508,3 +516,25 @@ const tableField: FieldData = { id: 'x', tag: 'table', config: { label: 'Table',
 const cellNotText: TableData = { columns: [{ label: 'A' }], rows: [{ cells: [1] }] }
 // @ts-expect-error every column has a label
 const unlabelledColumn: TableData = { columns: [{ value: 'a' }], rows: [] }
+
+// #349 phase 2: matrix inputs
+const cellType: TableCellInput = 'checkbox'
+const matrixData: TableData = {
+  rowHeaders: true,
+  columns: [{ label: '' }, { label: 'Good', value: 'good', input: 'radio' }],
+  rows: [{ value: 'speed', required: true, cells: ['Speed', ''] }],
+}
+const matrixField: FieldData = {
+  id: 'm',
+  tag: 'table',
+  config: { label: 'Matrix', hideLabel: true },
+  table: matrixData,
+}
+const matrixCondition: Condition = {
+  if: [{ source: 'fields.m.table.rows[0]', sourceProperty: 'value', comparison: 'equals', target: 'good' }],
+  then: [{ target: 'fields.m.table.rows[0].cells[1]', targetProperty: 'isNotVisible' }],
+}
+// @ts-expect-error a cell input is radio, checkbox or text
+const selectColumn: TableData = { columns: [{ label: 'A', input: 'select' }], rows: [] }
+// @ts-expect-error required is a boolean
+const requiredText: TableData = { columns: [{ label: 'A' }], rows: [{ cells: [''], required: 'yes' }] }
