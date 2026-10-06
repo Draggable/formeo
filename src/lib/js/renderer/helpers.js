@@ -3,6 +3,10 @@ import dom, { OTHER_GROUP_ATTR, REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { cleanFormData } from '../common/utils/index.mjs'
 import { ASSIGNMENT_OPERATORS, COMPARISON_OPERATORS, HIDDEN_BY_CONDITION_SELECTOR, UUID_REGEXP } from '../constants.js'
 
+// marks the controls a page skip disabled, so bringing the page back re-enables only those (#122)
+export const SKIP_DISABLED_ATTR = 'data-formeo-skip-disabled'
+export const SKIPPABLE_CONTROLS = 'input, select, textarea, button'
+
 export const RENDER_PREFIX = 'f-'
 
 export const containerLookup = container => dom.resolveContainer(container)

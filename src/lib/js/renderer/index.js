@@ -31,15 +31,16 @@ import {
   processOptions,
   propertyMap,
   RENDER_PREFIX,
+  SKIP_DISABLED_ATTR,
+  SKIPPABLE_CONTROLS,
   tableRowPropertyMap,
   tableRowTargetMap,
   targetPropertyMap,
 } from './helpers.js'
 import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
+import { bindRepeatRows, repeatingTables, syncLimits } from './repeat-rows.js'
+import { ROWS_CHANGE_EVENT } from './row-actions.js'
 
-// marks the controls a page skip disabled, so bringing the page back re-enables only those (#122)
-const SKIP_DISABLED_ATTR = 'data-formeo-skip-disabled'
-const SKIPPABLE_CONTROLS = 'input, select, textarea, button'
 // a page condition can only skip (true) or bring back (false) a stage
 const STAGE_SKIP_PROPERTIES = { isNotVisible: true, isVisible: false }
 // while its page is skipped, a field reads as unanswered, so answers the user can't see don't drive conditions
@@ -394,6 +395,7 @@ export default class FormeoRenderer {
     this.applyConditions()
     // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
     this.bindFormEvents(this.renderedForm)
+    bindRepeatRows(this.renderedForm, this)
     this.pager = this.paginateForm(this.renderedForm, startStageId)
 
     return this.renderedForm
@@ -448,6 +450,10 @@ export default class FormeoRenderer {
       // a text box re-enabled above may belong to an Other choice unchecked while the page was skipped
       for (const group of stage.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) {
         dom.syncOtherInput(group)
+      }
+      // re-enabling restores every button; the ones at a row limit go back to disabled
+      for (const wrap of repeatingTables(stage)) {
+        syncLimits(wrap)
       }
       this.rerunConditionsReading(stage)
       this.pager?.refresh()
@@ -507,6 +513,10 @@ export default class FormeoRenderer {
     const { onChange, onSubmit } = this.events
     if (onChange) {
       form.addEventListener('input', event =>
+        onChange({ event, target: event.target, form, userData: userDataOf(form) })
+      )
+      // adding or removing a repeating row or an input group changes userData without an input event (#349)
+      form.addEventListener(ROWS_CHANGE_EVENT, event =>
         onChange({ event, target: event.target, form, userData: userDataOf(form) })
       )
     }

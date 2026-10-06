@@ -1,0 +1,186 @@
+import dom from '../common/dom.js'
+import {
+  ADD_ROW_CLASSNAME,
+  matrixRowConfig,
+  normalizeTable,
+  REMOVE_ROW_CLASSNAME,
+  REPEAT_CLASSNAME,
+  REQUIRED_ROW_ATTR,
+  ROW_STATUS_CLASSNAME,
+  repeatRowName,
+} from '../common/table.mjs'
+import { tableText } from '../common/table-text.mjs'
+import { HIDDEN_BY_CONDITION_SELECTOR } from '../constants.js'
+import { SKIP_DISABLED_ATTR, SKIPPABLE_CONTROLS, suspendRequired } from './helpers.js'
+import { focusFirst, SKIPPED_ATTR } from './pagination.js'
+import { announce, dispatchRowsChange, focusAfterRemove } from './row-actions.js'
+
+/**
+ * A repeating table's rows at run time (#349 phase 3). Every row is built by matrixRowConfig from the field data the
+ * renderer cached, so added and renumbered rows match the first render. The limits ride on the wrapper's data
+ * attributes, so they re-sync from the DOM alone.
+ */
+
+const tableOf = wrap => wrap.querySelector(':scope > table')
+const bodyOf = wrap => tableOf(wrap)?.tBodies[0]
+const fieldOf = (wrap, renderer) => renderer.components[tableOf(wrap)?.id]
+const limitsOf = wrap => ({
+  min: Number(wrap.dataset.repeatMin ?? 0),
+  max: wrap.dataset.repeatMax ? Number(wrap.dataset.repeatMax) : null,
+})
+
+/**
+ * @param {ParentNode} root a form, stage or document
+ * @return {HTMLElement[]} the rendered repeating tables' wrappers
+ */
+export const repeatingTables = root => [...root.querySelectorAll(`.${REPEAT_CLASSNAME}`)]
+
+/**
+ * @param {HTMLElement} wrap
+ * @return {Number}
+ */
+export const rowCount = wrap => bodyOf(wrap)?.rows.length ?? 0
+
+/** "Item 2", or "Row 2" without row headers */
+const rowName = (field, r) => repeatRowName(normalizeTable(field.table), r, tableText)
+
+const buildRow = (field, r) => dom.create(matrixRowConfig(field, r, dom.tableOptions(false)))
+
+/**
+ * Disables remove at min rows or fewer and Add at max rows or more. On a skipped page the buttons stay as the skip
+ * left them; bringing the page back re-syncs.
+ * @param {HTMLElement} wrap
+ */
+export function syncLimits(wrap) {
+  if (wrap.closest(`[${SKIPPED_ATTR}]`)) {
+    return
+  }
+  const { min, max } = limitsOf(wrap)
+  const count = rowCount(wrap)
+  for (const button of wrap.querySelectorAll(`.${REMOVE_ROW_CLASSNAME}`)) {
+    button.disabled = count <= min
+  }
+  const add = wrap.querySelector(`:scope > .${ADD_ROW_CLASSNAME}`)
+  if (add) {
+    add.disabled = max !== null && count >= max
+  }
+}
+
+/**
+ * A row built after render takes on the state around it: not required inside a condition-hidden table, disabled on a
+ * skipped page (marked, so bringing the page back re-enables it)
+ * @param {HTMLTableRowElement} tr
+ */
+export function adoptRow(tr) {
+  if (tr.closest(HIDDEN_BY_CONDITION_SELECTOR)) {
+    suspendRequired(tr)
+  }
+  if (tr.closest(`[${SKIPPED_ATTR}]`)) {
+    for (const control of tr.querySelectorAll(SKIPPABLE_CONTROLS)) {
+      if (!control.disabled) {
+        control.disabled = true
+        control.setAttribute(SKIP_DISABLED_ATTR, '')
+      }
+    }
+  }
+}
+
+/**
+ * Appends a row, unless the table is at its max
+ * @param {HTMLElement} wrap
+ * @param {FormeoRenderer} renderer
+ * @param {Object} [opts]
+ * @param {Boolean} [opts.interactive] focus, announce and fire formeo:rowschange; false for the userData setter
+ * @return {HTMLTableRowElement|null} the new row
+ */
+export function addRow(wrap, renderer, { interactive = true } = {}) {
+  const field = fieldOf(wrap, renderer)
+  const body = bodyOf(wrap)
+  const { max } = limitsOf(wrap)
+  const r = rowCount(wrap)
+  if (!field || !body || (max !== null && r >= max)) {
+    return null
+  }
+  const tr = buildRow(field, r)
+  body.append(tr)
+  adoptRow(tr)
+  syncLimits(wrap)
+  if (interactive) {
+    focusFirst(tr)
+    announce(
+      wrap.querySelector(`:scope > .${ROW_STATUS_CLASSNAME}`),
+      tableText('table.rowAdded', { row: rowName(field, r) })
+    )
+    dispatchRowsChange(wrap, 'add', r)
+  }
+  return tr
+}
+
+// moves what the person entered from a row to its rebuilt copy, cell by cell
+const carryValues = (from, to) => {
+  ;[...from.cells].forEach((cell, c) => {
+    const source = cell.querySelector('input')
+    const target = to.cells[c]?.querySelector('input')
+    if (!source || !target) {
+      return
+    }
+    if (['checkbox', 'radio'].includes(source.type)) {
+      target.checked = source.checked
+    } else {
+      target.value = source.value
+    }
+  })
+}
+
+/**
+ * Removes a row, unless the table is at its min, and renumbers every later row so keys stay contiguous
+ * @param {HTMLTableRowElement} tr
+ * @param {FormeoRenderer} renderer
+ */
+export function removeRow(tr, renderer) {
+  const wrap = tr.closest(`.${REPEAT_CLASSNAME}`)
+  const field = wrap && fieldOf(wrap, renderer)
+  const body = wrap && bodyOf(wrap)
+  const index = body ? [...body.rows].indexOf(tr) : -1
+  if (!field || index === -1 || rowCount(wrap) <= limitsOf(wrap).min) {
+    return
+  }
+  const name = rowName(field, index)
+  tr.remove()
+  // in order, so a rebuilt row's radios never share a name with a row still waiting to be renumbered
+  for (const later of [...body.rows].slice(index)) {
+    const fresh = buildRow(field, later.sectionRowIndex)
+    carryValues(later, fresh)
+    later.replaceWith(fresh)
+    adoptRow(fresh)
+    if (fresh.hasAttribute(REQUIRED_ROW_ATTR)) {
+      dom.syncCheckboxGroupRequired(fresh)
+    }
+  }
+  syncLimits(wrap)
+  const buttons = [...wrap.querySelectorAll(`.${REMOVE_ROW_CLASSNAME}`)]
+  focusAfterRemove(buttons, index, wrap.querySelector(`:scope > .${ADD_ROW_CLASSNAME}`))
+  announce(wrap.querySelector(`:scope > .${ROW_STATUS_CLASSNAME}`), tableText('table.rowRemoved', { row: name }))
+  dispatchRowsChange(wrap, 'remove', index)
+}
+
+/**
+ * One delegated listener for every repeating table in a rendered form
+ * @param {HTMLFormElement} form
+ * @param {FormeoRenderer} renderer
+ */
+export function bindRepeatRows(form, renderer) {
+  form.addEventListener('click', event => {
+    const origin = event.target.nodeType === 3 ? event.target.parentElement : event.target
+    const button = origin?.closest?.(`.${ADD_ROW_CLASSNAME}, .${REMOVE_ROW_CLASSNAME}`)
+    const wrap = button?.closest(`.${REPEAT_CLASSNAME}`)
+    if (!wrap || button.disabled || !form.contains(wrap)) {
+      return
+    }
+    if (button.classList.contains(ADD_ROW_CLASSNAME)) {
+      addRow(wrap, renderer)
+    } else {
+      removeRow(button.closest('tr'), renderer)
+    }
+  })
+}
