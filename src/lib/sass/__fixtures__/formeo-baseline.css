@@ -125,6 +125,9 @@ button[class*=-clone]:hover .svg-icon {
 .f-autocomplete-list li:has(.options-list):hover .options-list, .f-autocomplete-list li:has(> .table-rows-list):hover > .table-rows-list, .f-autocomplete-list li:has(> .table-cells-list):hover > .table-cells-list {
   display: block;
 }
+.f-autocomplete-list li.active-option > .options-list, .f-autocomplete-list li.active-option > .table-rows-list, .f-autocomplete-list li.active-option > .table-cells-list, .f-autocomplete-list li:has(.active-option) > .options-list, .f-autocomplete-list li:has(.active-option) > .table-rows-list, .f-autocomplete-list li:has(.active-option) > .table-cells-list {
+  display: block;
+}
 .f-autocomplete-list .component-type {
   color: #666666;
   font-style: italic;
@@ -730,6 +733,15 @@ button[class*=-clone]:hover .svg-icon {
 .formeo .f-table th {
   background-color: rgb(229.5, 229.5, 229.5);
 }
+.formeo .f-table-matrix .f-table-cell-label,
+.formeo .f-table-sr {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
 .formeo .f-table-matrix [hidden] {
   display: none;
 }
@@ -749,14 +761,6 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo .f-table-matrix .f-table-cell input[type=text] {
   inline-size: 100%;
-}
-.formeo .f-table-matrix .f-table-cell-label {
-  position: absolute;
-  inline-size: 1px;
-  block-size: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 @container (max-width: 30rem) {
   .formeo .f-table-matrix .f-table,
@@ -801,6 +805,44 @@ button[class*=-clone]:hover .svg-icon {
     clip-path: none;
     white-space: normal;
     order: 1;
+  }
+}
+.formeo .f-table-repeat .f-table-row-actions {
+  inline-size: 1%;
+  vertical-align: middle;
+  text-align: center;
+}
+.formeo .f-table-repeat .f-table-remove-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.formeo .f-table-repeat .f-table-remove-row:focus-visible {
+  outline: 2px solid rgb(102, 175, 233);
+  outline-offset: 2px;
+}
+.formeo .f-table-repeat .f-table-remove-row[disabled] {
+  color: #666666;
+  cursor: not-allowed;
+}
+.formeo .f-table-repeat .f-table-remove-row svg {
+  inline-size: 1em;
+  block-size: 1em;
+}
+.formeo .f-table-repeat .f-table-add-row {
+  margin-block-start: 4px;
+}
+@container (max-width: 30rem) {
+  .formeo .f-table-repeat .f-table-row-actions {
+    inline-size: auto;
+    text-align: end;
   }
 }
 .formeo.formeo-editor {
@@ -1801,12 +1843,14 @@ button[class*=-clone]:hover .svg-icon {
   padding: 8px;
 }
 .formeo.formeo-editor .f-table-panel .f-table-panel-caption,
-.formeo.formeo-editor .f-table-panel .f-table-panel-option {
+.formeo.formeo-editor .f-table-panel .f-table-panel-option,
+.formeo.formeo-editor .f-table-panel .f-table-panel-limit {
   display: flex;
   align-items: center;
   gap: 4px;
 }
 .formeo.formeo-editor .f-table-panel .f-table-panel-options,
+.formeo.formeo-editor .f-table-panel .f-table-panel-limits,
 .formeo.formeo-editor .f-table-panel .f-table-panel-add {
   display: flex;
   flex-wrap: wrap;
@@ -2296,8 +2340,10 @@ button[class*=-clone]:hover .svg-icon {
   position: absolute;
   right: 0;
   top: 0;
-  width: 24px;
-  height: 24px;
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  inline-size: 24px;
+  block-size: 24px;
   border: 0 none;
   background: transparent;
   outline: 0 none;
@@ -2309,6 +2355,10 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-render .remove-input-group:hover .svg-icon {
   fill: rgb(217, 83, 79);
+}
+.formeo.formeo-render .remove-input-group:focus-visible {
+  outline: 2px solid rgb(102, 175, 233);
+  outline-offset: 2px;
 }
 .formeo.formeo-render .remove-input-group .svg-icon {
   pointer-events: none;

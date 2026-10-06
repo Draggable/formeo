@@ -526,13 +526,15 @@
   padding: var.$base-space;
 
   .f-table-panel-caption,
-  .f-table-panel-option {
+  .f-table-panel-option,
+  .f-table-panel-limit {
     display: flex;
     align-items: center;
     gap: var.$half-space;
   }
 
   .f-table-panel-options,
+  .f-table-panel-limits,
   .f-table-panel-add {
     display: flex;
     flex-wrap: wrap;

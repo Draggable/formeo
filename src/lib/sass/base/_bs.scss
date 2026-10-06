@@ -292,6 +292,17 @@ label, .prev-label {
 }
 
 // matrix (#349 phase 2): input columns, centred choice cells, and stacked rows in a narrow container
+// visually hidden: matrix cell labels (restored when stacked) and the repeating-row helpers (#349 phase 3)
+.f-table-matrix .f-table-cell-label,
+.f-table-sr {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .f-table-matrix {
   // stacking sets display on table parts, which would beat the UA's [hidden] rule
   [hidden] {
@@ -318,15 +329,6 @@ label, .prev-label {
 
   .f-table-cell input[type='text'] {
     inline-size: 100%;
-  }
-
-  .f-table-cell-label {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
   }
 }
 
@@ -382,5 +384,54 @@ label, .prev-label {
       white-space: normal;
       order: 1;
     }
+  }
+}
+
+// repeating rows (#349 phase 3): a remove button per row and an Add button
+.f-table-repeat {
+  .f-table-row-actions {
+    inline-size: 1%;
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  .f-table-remove-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 24px;
+    min-block-size: 24px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid t.$focus;
+      outline-offset: 2px;
+    }
+
+    &[disabled] {
+      color: t.$text-muted;
+      cursor: not-allowed;
+    }
+
+    svg {
+      inline-size: 1em;
+      block-size: 1em;
+    }
+  }
+
+  .f-table-add-row {
+    margin-block-start: var.$half-space;
+  }
+}
+
+// stacked cards: the actions cell is the card's last line, the remove button at the inline end
+@container (max-width: 30rem) {
+  .f-table-repeat .f-table-row-actions {
+    inline-size: auto;
+    text-align: end;
   }
 }

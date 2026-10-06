@@ -90,8 +90,10 @@ fieldset.formeo-row-wrap {
   position: absolute;
   right: 0;
   top: 0;
-  width: mixins.space(3);
-  height: mixins.space(3);
+  min-inline-size: 24px;
+  min-block-size: 24px;
+  inline-size: mixins.space(3);
+  block-size: mixins.space(3);
   border: 0 none;
   background: transparent;
   outline: 0 none;
@@ -103,6 +105,11 @@ fieldset.formeo-row-wrap {
     .svg-icon {
       fill: t.$danger;
     }
+  }
+
+  &:focus-visible {
+    outline: 2px solid t.$focus;
+    outline-offset: 2px;
   }
 
   .svg-icon {

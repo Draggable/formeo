@@ -238,6 +238,26 @@ suite('resolveFormeoProperties purity', () => {
       t.assert.match(css, position, `${list} sits beside its item`)
     }
   })
+
+  test('repeating rows: hidden helpers, target sizes and stacked actions (#349 phase 3)', t => {
+    const css = compileFormeoCss()
+    t.assert.match(css, /\.f-table-sr[^{}]*\{[^}]*clip-path:\s*inset\(50%\)/)
+    t.assert.match(css, /\.f-table-remove-row\s*\{[^}]*min-inline-size:\s*24px[^}]*min-block-size:\s*24px/)
+    t.assert.match(css, /\.f-table-remove-row:focus-visible\s*\{[^}]*outline/)
+    t.assert.match(css, /\.f-table-add-row\s*\{[^}]*margin-block-start/)
+    t.assert.match(css, /@container\s*\(max-width:\s*30rem\)\s*\{[^@]*\.f-table-row-actions\s*\{[^}]*text-align:\s*end/)
+    t.assert.match(css, /\.remove-input-group\s*\{[^}]*min-inline-size:\s*24px/)
+  })
+
+  test("the picker keeps the active item's nested lists open (#349 phase 3)", t => {
+    const css = compileFormeoCss()
+    for (const list of ['options-list', 'table-rows-list', 'table-cells-list']) {
+      const open = new RegExp(`li\\.active-option > \\.${list}[^{]*\\{[^}]*display:\\s*block`)
+      t.assert.match(css, open, `${list} opens under the active item`)
+      const ancestor = new RegExp(`li:has\\(\\.active-option\\) > \\.${list}[^{]*\\{[^}]*display:\\s*block`)
+      t.assert.match(css, ancestor, `${list} stays open around the active item`)
+    }
+  })
 })
 
 /** The single compiled rule starting with `start`, trimmed. */
