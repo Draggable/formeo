@@ -21,8 +21,10 @@ import {
   type LabelPosition,
   type LogicalOperator,
   type RemoveItemsActionEvent,
+  type RowsChangeDetail,
   type TableCellInput,
   type TableData,
+  type TableRepeat,
   type UserData,
 } from 'formeo'
 
@@ -475,14 +477,18 @@ export {
   positionDeclaration,
   queried,
   ratingControl,
+  repeatData,
   requiredText,
+  rowsChange,
   selectColumn,
   stars,
   tableControl,
   tableData,
   tableField,
+  textMin,
   typo,
   unlabelledColumn,
+  unlimited,
   unnarrowed,
   unnarrowedAddChild,
   unnarrowedRender,
@@ -538,3 +544,15 @@ const matrixCondition: Condition = {
 const selectColumn: TableData = { columns: [{ label: 'A', input: 'select' }], rows: [] }
 // @ts-expect-error required is a boolean
 const requiredText: TableData = { columns: [{ label: 'A' }], rows: [{ cells: [''], required: 'yes' }] }
+
+// #349 phase 3: repeating rows
+const repeatData: TableData = {
+  repeat: { min: 1, max: 10 },
+  rowHeaders: true,
+  columns: [{ label: 'Item' }, { label: 'Qty', value: 'qty', input: 'text' }],
+  rows: [{ cells: ['Item', ''], required: true }],
+}
+const unlimited: TableRepeat = { min: 0, max: null }
+// @ts-expect-error min is a number
+const textMin: TableRepeat = { min: '1' }
+const rowsChange = (detail: RowsChangeDetail) => (detail.action === 'add' ? detail.index : -1)

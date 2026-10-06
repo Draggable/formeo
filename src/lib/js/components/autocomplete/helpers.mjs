@@ -1,5 +1,5 @@
 import dom from '../../common/dom.js'
-import { hasInputs, inputColumns, normalizeTable, parseTableAddress } from '../../common/table.mjs'
+import { hasInputs, inputColumns, isRepeating, normalizeTable, parseTableAddress } from '../../common/table.mjs'
 import { tableText } from '../../common/table-text.mjs'
 import { toTitleCase } from '../../common/utils/string.mjs'
 import { pageText } from '../stages/page-text.mjs'
@@ -201,7 +201,7 @@ export const tableAddressLabel = (address, components) => {
     return null
   }
   const table = normalizeTable(components?.getAddress?.(`fields.${parsed.fieldId}`)?.get?.('table'))
-  if (!table.rows[parsed.row]) {
+  if (isRepeating(table) || !table.rows[parsed.row]) {
     return null
   }
   const rowLabel = tableRowLabel(table, parsed.row)
@@ -251,7 +251,7 @@ export const componentOptions = autocomplete => {
         const componentOptionsList = makeComponentOptionsList(component, autocomplete)
         htmlLabel.push(componentOptionsList)
       }
-      if (component.isTable && hasInputs(component.get('table'))) {
+      if (component.isTable && hasInputs(component.get('table')) && !isRepeating(component.get('table'))) {
         htmlLabel.push(makeTableRowsList(component, autocomplete))
       }
       const optionData = makeOptionData({ value, textLabel, htmlLabel, componentType, selectedId })
@@ -263,4 +263,42 @@ export const componentOptions = autocomplete => {
   }, [])
 
   return options
+}
+
+/**
+ * The list item a nested item sits under
+ * @param {HTMLLIElement|null} item
+ * @param {HTMLElement} list the picker's ul
+ * @return {HTMLLIElement|null}
+ */
+export const parentItem = (item, list) => {
+  const parent = item?.parentElement?.closest('li')
+  return parent && list.contains(parent) ? parent : null
+}
+
+/**
+ * Shows the list items whose label contains `term`, with the items they sit under and the items under them, and
+ * hides the rest. Typing a row's name keeps its cells; typing a cell's name keeps its row and field (#349 phase 3).
+ * @param {HTMLElement} list the picker's ul
+ * @param {String} term
+ * @return {HTMLLIElement[]} the items left shown, in document order
+ */
+export const filterListItems = (list, term) => {
+  const needle = term.toLowerCase()
+  const items = [...list.querySelectorAll('li')]
+  const label = item => (item.dataset.label ?? item.textContent).toLowerCase()
+  const matches = new Set(items.filter(item => label(item).includes(needle)))
+  const shown = items.filter(item => {
+    for (let current = item; current; current = parentItem(current, list)) {
+      if (matches.has(current)) {
+        return true
+      }
+    }
+    return [...item.querySelectorAll('li')].some(descendant => matches.has(descendant))
+  })
+  const visible = new Set(shown)
+  for (const item of items) {
+    item.style.display = visible.has(item) ? 'block' : 'none'
+  }
+  return shown
 }

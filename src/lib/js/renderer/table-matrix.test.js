@@ -234,10 +234,10 @@ describe('matrix answers (#349 phase 2)', () => {
     const radios = [...container.querySelectorAll('input[type="radio"]')].map(radio => radio.name)
     const clones = radios.filter(name => !name.startsWith('f-m1['))
     assert.equal(clones.length, 4)
-    assert.ok(clones.every(name => /^f-[^[]+\[speed\]$|^f-[^[]+\[price\]$/.test(name)))
+    assert.ok(clones.every(name => /^f-m1-1\[(speed|price)\]$/.test(name)))
   })
 
-  test('a named matrix in an input group row clones under its own id, so its radios form their own groups', () => {
+  test('a named matrix in an input group row clones under <name>-1, so its radios form their own groups', () => {
     const data = pagesOf(matrixField('m1', mixed(), { attrs: { className: '', name: 'visit' } }))
     data.rows['r-1'].config = { inputGroup: true }
     render(data)
@@ -245,7 +245,7 @@ describe('matrix answers (#349 phase 2)', () => {
     const names = [...container.querySelectorAll('input')].map(input => input.name)
     const clones = names.filter(name => !name.startsWith('visit['))
     assert.equal(clones.length, names.length / 2)
-    assert.ok(clones.every(name => /^f-[^[]+\[/.test(name)))
+    assert.ok(clones.every(name => name.startsWith('visit-1[')))
   })
 
   describe('row and cell conditions', () => {

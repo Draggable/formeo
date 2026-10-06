@@ -1,45 +1,47 @@
-import dom, {
-  DEFAULT_OTHER_LABEL,
-  getName,
-  OTHER_GROUP_ATTR,
-  OTHER_NAME_SUFFIX,
-  REQUIRED_GROUP_ATTR,
-} from '../common/dom.js'
+import dom, { DEFAULT_OTHER_LABEL, OTHER_GROUP_ATTR, OTHER_NAME_SUFFIX, REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { labelWrapClassNames, resolveLabelPosition } from '../common/label-position.mjs'
 import { fetchDependencies } from '../common/loaders.js'
 import {
   hasInputs,
   inputColumns,
+  isRepeating,
   isTableField,
   normalizeTable,
   parseMatrixKey,
   parseTableAddress,
   plainText,
+  repeatRowName,
   withKeys,
 } from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
-import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
+import { cleanFormData, isAddress, looksLikeArrayIndex, merge } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { STAGE_CLASSNAME } from '../constants.js'
 import {
   baseId,
   comparisonMap,
-  createRemoveButton,
   groupIfConditions,
   isCheckableGroup,
   normalizePagination,
   processOptions,
   propertyMap,
   RENDER_PREFIX,
+  SKIP_DISABLED_ATTR,
+  SKIPPABLE_CONTROLS,
   tableRowPropertyMap,
   tableRowTargetMap,
   targetPropertyMap,
 } from './helpers.js'
+import {
+  cloneComponentData as cloneInputGroupData,
+  growGroupsForAnswers,
+  INPUT_GROUP_WRAP_CLASSNAME,
+  inputGroupControls,
+} from './input-groups.js'
 import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
+import { bindRepeatRows, growForAnswers, repeatingTables, syncLimits } from './repeat-rows.js'
+import { ROWS_CHANGE_EVENT } from './row-actions.js'
 
-// marks the controls a page skip disabled, so bringing the page back re-enables only those (#122)
-const SKIP_DISABLED_ATTR = 'data-formeo-skip-disabled'
-const SKIPPABLE_CONTROLS = 'input, select, textarea, button'
 // a page condition can only skip (true) or bring back (false) a stage
 const STAGE_SKIP_PROPERTIES = { isNotVisible: true, isVisible: false }
 // while its page is skipped, a field reads as unanswered, so answers the user can't see don't drive conditions
@@ -240,7 +242,12 @@ export default class FormeoRenderer {
         continue
       }
       const table = withKeys(normalizeTable(component.table))
-      const r = table.rows.findIndex(row => row.value === parsed.row)
+      // a repeating table's rows are keyed by position (#349 phase 3)
+      const repeating = isRepeating(table)
+      let r = table.rows.findIndex(row => row.value === parsed.row)
+      if (repeating) {
+        r = looksLikeArrayIndex(parsed.row) ? Number(parsed.row) : -1
+      }
       // only input columns post answers; a column switched back to static keeps a value an input column may reuse
       const c =
         parsed.column === null ? -1 : (inputColumns(table).find(i => table.columns[i].value === parsed.column) ?? -1)
@@ -248,7 +255,9 @@ export default class FormeoRenderer {
         continue
       }
       const tableName = table.caption.trim() || plainText(component.config?.label)
-      const row = (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
+      const row = repeating
+        ? repeatRowName(table, r, tableText)
+        : (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
       if (c === -1) {
         return { component, label: tableText('table.entryRow', { table: tableName, row }) }
       }
@@ -281,8 +290,12 @@ export default class FormeoRenderer {
       return
     }
     const unmatched = []
+    // a saved answer can name rows a repeating table hasn't grown yet (#349 phase 3)
+    growForAnswers(form, keys, this)
+    // and input groups the copies their answers name
+    growGroupsForAnswers(this, form, data ?? {})
     for (const key of keys) {
-      const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`)
+      const fields = controlsNamed(form, key) ?? controlsNamed(form, `${key}[]`) ?? controlWithId(form, key)
       if (!fields) {
         unmatched.push(key)
         continue
@@ -308,6 +321,21 @@ export default class FormeoRenderer {
       else if (checkables?.[0].type === 'radio') {
         for (const field of checkables) {
           field.checked = field.value === data[key]
+        }
+      }
+      // same-named text inputs, textareas or selects (input group copies) take an array in DOM order
+      else if (isNodeCollection(fields)) {
+        const values = [data[key]].flat()
+        Array.from(fields).forEach((field, i) => {
+          if (i < values.length) {
+            field.value = values[i]
+          }
+        })
+        // values past the input group copies the setter may create have no field to go in
+        if (values.length > fields.length) {
+          const first = fields.length + 1
+          const which = first === values.length ? `value ${first}` : `values ${first}-${values.length}`
+          unmatched.push(`${key} (${which})`)
         }
       }
       // A multiple select takes every value in an array
@@ -374,6 +402,8 @@ export default class FormeoRenderer {
     this.form = cleanFormData(formData)
     this.pager?.destroy()
     this.pager = null
+    // rebuilt by processedData below; input-group copies cached by the last render would otherwise linger
+    this.components = Object.create(null)
 
     const renderCount = document.getElementsByClassName('formeo-render').length
     const config = {
@@ -394,6 +424,7 @@ export default class FormeoRenderer {
     this.applyConditions()
     // bound after the first condition pass so a `value` action applied while rendering doesn't fire onChange
     this.bindFormEvents(this.renderedForm)
+    bindRepeatRows(this.renderedForm, this)
     this.pager = this.paginateForm(this.renderedForm, startStageId)
 
     return this.renderedForm
@@ -448,6 +479,10 @@ export default class FormeoRenderer {
       // a text box re-enabled above may belong to an Other choice unchecked while the page was skipped
       for (const group of stage.querySelectorAll(`[data-${OTHER_GROUP_ATTR}]`)) {
         dom.syncOtherInput(group)
+      }
+      // re-enabling restores every button; the ones at a row limit go back to disabled
+      for (const wrap of repeatingTables(stage)) {
+        syncLimits(wrap)
       }
       this.rerunConditionsReading(stage)
       this.pager?.refresh()
@@ -507,6 +542,10 @@ export default class FormeoRenderer {
     const { onChange, onSubmit } = this.events
     if (onChange) {
       form.addEventListener('input', event =>
+        onChange({ event, target: event.target, form, userData: userDataOf(form) })
+      )
+      // adding or removing a repeating row or an input group changes userData without an input event (#349)
+      form.addEventListener(ROWS_CHANGE_EVENT, event =>
         onChange({ event, target: event.target, form, userData: userDataOf(form) })
       )
     }
@@ -585,7 +624,6 @@ export default class FormeoRenderer {
     const configConditions = [
       { condition: config.legend, result: () => ({ tag: config.fieldset ? 'legend' : 'h3', children: config.legend }) },
       { condition: true, result: () => rowData },
-      { condition: config.inputGroup, result: () => this.addButton(rowData.id) },
     ]
 
     const children = configConditions.reduce((acc, { condition, result }) => {
@@ -596,7 +634,8 @@ export default class FormeoRenderer {
     }, [])
 
     if (config.inputGroup) {
-      className.push(`${RENDER_PREFIX}input-group-wrap`)
+      children.push(...inputGroupControls(this, rowData.id))
+      className.push(INPUT_GROUP_WRAP_CLASSNAME)
     }
 
     return {
@@ -606,44 +645,13 @@ export default class FormeoRenderer {
     }
   }
 
-  cloneComponentData = componentId => {
-    const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
-    const updatedAttrs = { ...attrs, 'data-clone-of': id }
-
-    if ((rest.options && ['checkbox', 'radio'].includes(attrs.type)) || isTableField(rest)) {
-      // option groups and matrices: drop the name so the clone falls back to its own id; a shared radio name would
-      // link the groups
-      delete updatedAttrs.name
-    } else if (rest.tag === 'input') {
-      updatedAttrs.name = getName(this.components[componentId])
-    }
-
-    return {
-      ...rest,
-      id: RENDER_PREFIX + uuid(id),
-      children: children?.length && children.map(({ id }) => this.cloneComponentData(id)),
-      attrs: updatedAttrs,
-    }
-  }
-
-  addButton = id => ({
-    tag: 'button',
-    attrs: {
-      className: 'add-input-group btn pull-right',
-      type: 'button',
-    },
-    children: 'Add +',
-    action: {
-      click: e => {
-        const fInputGroup = e.target.parentElement
-        const elem = dom.create(this.cloneComponentData(id))
-        fInputGroup.insertBefore(elem, fInputGroup.lastChild)
-        const removeButton = dom.create(createRemoveButton())
-
-        elem.appendChild(removeButton)
-      },
-    },
-  })
+  /**
+   * A copy of a cached component for input group copy n; see input-groups.js
+   * @param {String} componentId
+   * @param {Number} [n]
+   * @return {Object}
+   */
+  cloneComponentData = (componentId, n = 1) => cloneInputGroupData(this, componentId, n)
 
   processColumns = rowId => {
     return this.orderChildren('columns', this.form.rows[rowId].children).map(column =>
@@ -937,7 +945,9 @@ export default class FormeoRenderer {
    */
   tableComponent = (table, address) => {
     const parsed = parseTableAddress(address)
-    const isMatrix = table.tagName === 'TABLE' && Boolean(table.closest('.f-table-matrix'))
+    // a repeating table's rows come and go, so its rows and cells aren't condition addresses (#349 phase 3)
+    const isMatrix =
+      table.tagName === 'TABLE' && Boolean(table.closest('.f-table-matrix')) && !table.closest('.f-table-repeat')
     const row = parsed && isMatrix ? table.tBodies[0]?.rows[parsed.row] : null
     if (!row) {
       return { component: null }
@@ -995,6 +1005,43 @@ const userDataOf = form => {
   }
 
   return formDataObj
+}
+
+/**
+ * The control or controls posting under `name`. `namedItem` also matches ids, and an input group copy's `<id>-<n>` name
+ * collides with its option inputs' ids (`<id>-<n>`), so only name matches count.
+ * @param {HTMLFormElement} form
+ * @param {String} name
+ * @return {Element|RadioNodeList|Element[]|null}
+ */
+const controlsNamed = (form, name) => {
+  const found = form.elements.namedItem(name)
+  if (!found) {
+    return null
+  }
+  const named = (isDomNode(found) ? [found] : Array.from(found)).filter(elem => elem.name === name)
+  if (!named.length) {
+    return null
+  }
+  if (isDomNode(found) || named.length === found.length) {
+    return found
+  }
+  // one name match among id matches is that control, not a one-item collection (a multiple select takes an array)
+  return named.length === 1 ? named[0] : named
+}
+
+/**
+ * The text-like control or select whose id is `id`, so an answer saved under the stable `f-<fieldId>` still fills an
+ * unnamed field whose name came from its label. Tried after every name lookup, and never a checkbox or radio: an
+ * option input's id (`f-<fieldId>-<n>`) is what an input group copy's grouped name looks like.
+ * @param {HTMLFormElement} form
+ * @param {String} id
+ * @return {Element|null}
+ */
+const controlWithId = (form, id) => {
+  const found = form.elements.namedItem(id)
+  const isTextOrSelect = isDomNode(found) && found.id === id && ['input', 'select', 'textarea'].includes(tagName(found))
+  return isTextOrSelect && !isCheckable(found) ? found : null
 }
 
 const isCheckable = elem => ['checkbox', 'radio'].includes(elem?.type)

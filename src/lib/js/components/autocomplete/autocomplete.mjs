@@ -9,10 +9,12 @@ import {
   BASE_NAME,
   componentOptions,
   DISPLAY_FIELD_CLASSNAME,
+  filterListItems,
   getComponentLabel,
   HIGHLIGHT_CLASSNAME,
   LIST_CLASSNAME,
   LIST_ITEM_CLASSNAME,
+  parentItem,
   tableAddressLabel,
 } from './helpers.mjs'
 
@@ -79,59 +81,9 @@ export default class Autocomplete {
    */
   build() {
     const keyboardNav = e => {
-      const list = this.list
-      const activeOption = this.getActiveOption()
-      const keyCodeMap = new Map([
-        [
-          38, // up arrow
-          () => {
-            const previous = this.getPreviousOption(activeOption)
-            if (previous) {
-              this.selectOption(previous)
-            }
-          },
-        ],
-
-        [
-          40, // down arrow
-          () => {
-            const next = this.getNextOption(activeOption)
-            if (next) {
-              this.selectOption(next)
-            }
-          },
-        ],
-
-        [
-          13, // enter
-          () => {
-            if (activeOption) {
-              this.selectOption(activeOption)
-              this.setValue(activeOption)
-              if (list.style.display === 'none') {
-                this.showList(activeOption)
-              } else {
-                this.hideList()
-              }
-            }
-            e.preventDefault()
-          },
-        ],
-
-        [
-          27, // escape
-          () => {
-            this.hideList()
-          },
-        ],
-      ])
-
-      let direction = keyCodeMap.get(e.keyCode)
-      if (!direction) {
-        direction = () => false
+      if (this.handleKey(e.key)) {
+        e.preventDefault()
       }
-
-      return direction()
     }
     const autoCompleteInputActions = {
       focus: ({ target }) => {
@@ -152,7 +104,7 @@ export default class Autocomplete {
       },
       input: evt => {
         const { value } = evt.target
-        const filteredOptions = dom.toggleElementsByStr(this.list.querySelectorAll('li'), value)
+        const filteredOptions = filterListItems(this.list, value)
 
         if (value.length === 0) {
           this.clearValue()
@@ -323,6 +275,68 @@ export default class Autocomplete {
       next = next ? next.nextSibling : null
     } while (next != null && next.style.display === 'none')
     return next
+  }
+
+  /**
+   * Moves through the list from the keyboard: Up and Down among the active item's siblings, Right into its nested list
+   * (rows, cells or options), Left back to the item it sits under, Enter to choose, Escape to close. Left and Right
+   * move the caret as usual when there's nowhere to go.
+   * @param {String} key KeyboardEvent.key
+   * @return {Boolean} true when the key's default action should be prevented
+   */
+  handleKey(key) {
+    const activeOption = this.getActiveOption()
+    const go = option => {
+      if (option) {
+        this.selectOption(option)
+      }
+      return Boolean(option)
+    }
+    switch (key) {
+      case 'ArrowUp':
+        go(this.getPreviousOption(activeOption))
+        return false
+      case 'ArrowDown':
+        go(this.getNextOption(activeOption))
+        return false
+      case 'ArrowRight':
+        return this.isListOpen() && go(this.firstNestedOption(activeOption))
+      case 'ArrowLeft':
+        return this.isListOpen() && go(parentItem(activeOption, this.list))
+      case 'Enter':
+        if (activeOption) {
+          this.selectOption(activeOption)
+          this.setValue(activeOption)
+          if (this.list.style.display === 'none') {
+            this.showList(activeOption)
+          } else {
+            this.hideList()
+          }
+        }
+        return true
+      case 'Escape':
+        this.hideList()
+        return false
+      default:
+        return false
+    }
+  }
+
+  /**
+   * hideList takes the list out of the stage, and its stale active item must not capture Left and Right
+   * @return {Boolean} false once the list has been hidden
+   */
+  isListOpen() {
+    return this.stage?.contains(this.list) !== false
+  }
+
+  /**
+   * @param {HTMLLIElement|null} option
+   * @return {HTMLLIElement|null} the first shown item of its nested list
+   */
+  firstNestedOption(option) {
+    const nested = option?.querySelector(':scope > ul')
+    return [...(nested?.children ?? [])].find(item => item.style.display !== 'none') ?? null
   }
 
   /**

@@ -110,6 +110,17 @@
     &:has(> .table-cells-list):hover > .table-cells-list {
       display: block;
     }
+
+    // keyboard users (#349 phase 3): the active item's nested list, and every list holding the active
+    // item, stay open
+    &.active-option > .options-list,
+    &.active-option > .table-rows-list,
+    &.active-option > .table-cells-list,
+    &:has(.active-option) > .options-list,
+    &:has(.active-option) > .table-rows-list,
+    &:has(.active-option) > .table-cells-list {
+      display: block;
+    }
   }
 
   .component-type {

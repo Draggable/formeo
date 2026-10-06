@@ -1128,6 +1128,80 @@ describe('FormeoRenderer', () => {
       const selected = [...document.querySelector('[name="multi"]').selectedOptions].map(option => option.value)
       assert.deepEqual(selected, ['x', 'z'])
     })
+
+    describe('keys that match an id rather than a name', () => {
+      const options = [
+        { label: 'One', value: 'one' },
+        { label: 'Two', value: 'two' },
+      ]
+      const mountedWith = fields => {
+        const renderer = new FormeoRenderer({ renderContainer: document.getElementById('container') })
+        renderer.render({
+          id: 'id-form',
+          stages: { 's-1': { id: 's-1', children: ['r-1'] } },
+          rows: { 'r-1': { id: 'r-1', config: {}, children: ['c-1'] } },
+          columns: { 'c-1': { id: 'c-1', config: { width: '100%' }, children: Object.keys(fields) } },
+          fields,
+        })
+        return renderer
+      }
+      const pick = {
+        id: 'pick',
+        tag: 'input',
+        attrs: { type: 'radio' },
+        config: { label: 'Pick' },
+        options,
+      }
+
+      test('an unnamed text field is filled by its f-<id>, though it posts under a label-derived name', () => {
+        const warn = mock.method(console, 'warn', () => {})
+        try {
+          const renderer = mountedWith({
+            first: { id: 'first', tag: 'input', attrs: { type: 'text' }, config: { label: 'First name' } },
+          })
+          const input = document.getElementById('f-first')
+          assert.notEqual(input.name, 'f-first', 'the name is not the id')
+          renderer.userData = { 'f-first': 'by-id' }
+          assert.equal(input.value, 'by-id')
+          assert.equal(warn.mock.callCount(), 0)
+        } finally {
+          warn.mock.restore()
+        }
+      })
+
+      test("a key that only matches an option input's id never checks it", () => {
+        const warn = mock.method(console, 'warn', () => {})
+        try {
+          const renderer = mountedWith({ pick })
+          // the second option's id is f-pick-1, which is also the name an input group copy would give the group
+          assert.ok(document.getElementById('f-pick-1'))
+          renderer.userData = { 'f-pick-1': 'two' }
+          assert.deepEqual(
+            [...document.querySelectorAll('[name="f-pick"]')].map(radio => radio.checked),
+            [false, false]
+          )
+          assert.equal(warn.mock.calls[0].arguments[0], 'formeo: renderer.userData has no field named: f-pick-1')
+        } finally {
+          warn.mock.restore()
+        }
+      })
+
+      test('a multiple select whose name is also an option id takes every value', () => {
+        const renderer = mountedWith({
+          pick,
+          multi: {
+            id: 'multi',
+            tag: 'select',
+            attrs: { name: 'f-pick-1', multiple: true },
+            config: { label: 'Multi' },
+            options,
+          },
+        })
+        renderer.userData = { 'f-pick-1': ['one', 'two'] }
+        const selected = [...document.querySelector('select[name="f-pick-1"]').selectedOptions].map(opt => opt.value)
+        assert.deepEqual(selected, ['one', 'two'])
+      })
+    })
   })
 
   describe('custom controls (#228)', () => {

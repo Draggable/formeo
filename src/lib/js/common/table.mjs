@@ -1,6 +1,8 @@
 /**
  * A table field's data (#349): `{ caption, headerRow, rowHeaders, columns: [{ label, value?, input? }],
- * rows: [{ cells: [], value?, required? }] }`. A column with an `input` makes the table a matrix (phase 2).
+ * rows: [{ cells: [], value?, required? }], repeat?: { min?, max? } }`. A column with an `input` makes the table a
+ * matrix (phase 2). A plain-object `repeat` on a matrix lets the person filling in the form add and remove rows
+ * copied from rows[0] (phase 3).
  * Pure: no DOM and no i18n. The editor's Table panel edits it with the functions below, which normalise their input
  * and return a new table without changing it.
  */
@@ -31,16 +33,27 @@ export const CELL_INPUTS = Object.freeze(['radio', 'checkbox', 'text'])
 
 /** English for the strings tableDomConfig needs when no translator is passed; table-text.mjs has the same text */
 export const MATRIX_TEXT = Object.freeze({
+  remove: 'Remove',
+  'table.addRow': '+ Row',
   'table.cellInput': '{row}, {column}',
   'table.newColumn': 'Column {column}',
   'table.newRow': 'Row {row}',
+  'table.removeRow': 'Remove row {row}',
+  'table.repeatRow': '{label} {row}',
 })
 const englishText = (key, vars = {}) => fillTokens(MATRIX_TEXT[key] ?? key, vars)
 
 /** A required checkbox row reuses the checkbox group's attribute, so form reset and conditions re-sync it */
 export const REQUIRED_ROW_ATTR = 'data-formeo-required-group'
 
-const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
+/** Class names of a repeating table's parts (#349 phase 3); the renderer finds its buttons by them */
+export const REPEAT_CLASSNAME = 'f-table-repeat'
+export const ADD_ROW_CLASSNAME = 'f-table-add-row'
+export const REMOVE_ROW_CLASSNAME = 'f-table-remove-row'
+export const ROW_STATUS_CLASSNAME = 'f-table-status'
+export const SR_ONLY_CLASSNAME = 'f-table-sr'
+
+export const isPlainObject = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const text = value => (value === null || value === undefined ? '' : String(value))
 const inRange = (list, index) => Number.isInteger(index) && index >= 0 && index < list.length
 
@@ -250,8 +263,9 @@ const assignKeys = (values, prefix) => {
 }
 
 /**
- * A matrix with a unique, non-blank key in every row's and every input column's `value`, so each row is its own
- * radio group and every cell its own name. A table without inputs comes back normalised and nothing more.
+ * A matrix with a unique, non-blank key in every input column's `value`, and in every row's unless the table repeats
+ * (rows are then keyed by position when rendered), so each row is its own radio group and every cell its own name.
+ * A table without inputs comes back normalised and nothing more.
  * @param {Object} table
  * @return {Object} table
  */
@@ -265,16 +279,20 @@ export function withKeys(table) {
     current.columns.map((column, index) => (inputs.has(index) ? text(column.value) : null)),
     'column'
   )
-  const rowKeys = assignKeys(
-    current.rows.map(row => text(row.value)),
-    'row'
-  )
+  // a repeating table's rows are keyed by position when rendered, so its template carries no key
+  const repeating = isPlainObject(current.repeat)
+  const rowKeys = repeating
+    ? null
+    : assignKeys(
+        current.rows.map(row => text(row.value)),
+        'row'
+      )
   return {
     ...current,
     columns: current.columns.map((column, index) =>
       inputs.has(index) ? { ...column, value: columnKeys[index] } : column
     ),
-    rows: current.rows.map((row, index) => ({ ...row, value: rowKeys[index] })),
+    rows: repeating ? current.rows : current.rows.map((row, index) => ({ ...row, value: rowKeys[index] })),
   }
 }
 
@@ -384,6 +402,68 @@ export function parseTableAddress(address) {
   return { fieldId: match[1], row: Number(match[2]), cell: match[3] === undefined ? null : Number(match[3]) }
 }
 
+/** A repeating table's limits when `repeat` leaves them out (#349 phase 3) */
+export const REPEAT_DEFAULTS = Object.freeze({ min: 1, max: null })
+
+/** The most rows a repeating table starts with, so a huge `min` can't stall or break rendering */
+export const REPEAT_MIN_LIMIT = 500
+
+const isCount = (value, floor) => Number.isInteger(value) && value >= floor
+
+/**
+ * A repeating table's row limits: `min` is a non-negative integer (default 1, at most REPEAT_MIN_LIMIT); `max` is an
+ * integer of at least 1 and never below `min`, or null for no limit
+ * @param {Object} table
+ * @return {{min: Number, max: Number|null}}
+ */
+export function repeatOf(table) {
+  const repeat = isPlainObject(table?.repeat) ? table.repeat : {}
+  const min = isCount(repeat.min, 0) ? Math.min(repeat.min, REPEAT_MIN_LIMIT) : REPEAT_DEFAULTS.min
+  const max = isCount(repeat.max, 1) ? Math.max(repeat.max, min) : REPEAT_DEFAULTS.max
+  return { min, max }
+}
+
+/**
+ * Whether the person filling in the form adds and removes the table's rows: `repeat` is an object and some column
+ * renders an input. A display table ignores `repeat`.
+ * @param {Object} table
+ * @return {Boolean}
+ */
+export const isRepeating = table => isPlainObject(table?.repeat) && hasInputs(table)
+
+/**
+ * @param {Object} table
+ * @param {Object|null} repeat `{ min, max }` turns repeating on with those limits, normalised; anything else turns it off
+ * @return {Object} table
+ */
+export function setRepeat(table, repeat) {
+  const { repeat: _repeat, ...current } = normalizeTable(table)
+  return isPlainObject(repeat) ? { ...current, repeat: repeatOf({ repeat }) } : current
+}
+
+/**
+ * The row every rendered row of a repeating table copies: rows[0], or a blank row when there is none
+ * @param {Object} table
+ * @return {Object} row
+ */
+export function templateRow(table) {
+  const current = normalizeTable(table)
+  return current.rows[0] ?? { cells: current.columns.map(() => '') }
+}
+
+/**
+ * A repeating table's name for row r: the template's row header numbered ("Item 2"), else "Row 2"
+ * @param {Object} table
+ * @param {Number} r 0-based row index
+ * @param {Function} [translate] (key, vars) => text
+ * @return {String}
+ */
+export function repeatRowName(table, r, translate = englishText) {
+  const current = normalizeTable(table)
+  const label = current.rowHeaders ? templateRow(current).cells[0]?.trim() : ''
+  return label ? translate('table.repeatRow', { label, row: r + 1 }) : translate('table.newRow', { row: r + 1 })
+}
+
 /**
  * A label as plain text: tags stripped, trimmed
  * @param {*} value
@@ -405,6 +485,7 @@ export const plainText = value =>
  * @param {Function} [opts.translate] (key, vars) => text, for the matrix's fallback names; English by default
  * @param {Function} [opts.requiredMark] () => dom config of a required row's mark
  * @param {Function} [opts.onRequiredRowChange] (tr) => void, re-syncs a required checkbox row on change
+ * @param {Function} [opts.removeIcon] () => markup of a repeating row's remove icon
  * @return {Object} dom.create config
  */
 export function tableDomConfig(field, options = {}) {
@@ -466,99 +547,205 @@ export function tableDomConfig(field, options = {}) {
 }
 
 /**
+ * What every row of one matrix shares, worked out once
+ * @param {Object} field
+ * @param {Object} table normalised, with keys
+ * @param {Object} options see tableDomConfig
+ * @return {Object}
+ */
+function matrixContext(field, table, options) {
+  const { isPreview = false, translate = englishText, requiredMark, onRequiredRowChange, removeIcon } = options
+  const { id } = field
+  const attrs = field.attrs ?? {}
+  // attrs.name is the base of every input name; the preview always uses its own id
+  const base = (!isPreview && text(attrs.name).trim()) || text(id)
+  const inputs = new Set(inputColumns(table))
+  const repeating = isRepeating(table)
+  return {
+    id,
+    base,
+    table,
+    inputs,
+    isPreview,
+    translate,
+    requiredMark,
+    onRequiredRowChange,
+    removeIcon,
+    repeating,
+    limits: repeating ? repeatOf(table) : null,
+    template: repeating ? templateRow(table) : null,
+    // a required row's mark follows its row header, else its first static cell
+    markColumn: table.columns.findIndex((_, c) => !inputs.has(c)),
+    idOf: suffix => (id ? { id: `${id}-${suffix}` } : {}),
+    columnLabel: c => table.columns[c].label || translate('table.newColumn', { column: c + 1 }),
+  }
+}
+
+/**
+ * Row r's data: the table's own row, or in a repeating table the template, keyed by its position and with a numbered
+ * row header
+ * @param {Object} ctx matrixContext
+ * @param {Number} r
+ * @return {Object} row
+ */
+function rowAt(ctx, r) {
+  const { table, template, repeating, translate } = ctx
+  if (!repeating) {
+    return table.rows[r]
+  }
+  const cells = table.rowHeaders ? [repeatRowName(table, r, translate), ...template.cells.slice(1)] : template.cells
+  return { ...template, value: String(r), cells }
+}
+
+// aria-labelledby only when both headers have text; otherwise it would name too little
+function inputName(ctx, row, r, c) {
+  const { id, table, translate, columnLabel } = ctx
+  const header = table.rowHeaders ? row.cells[0] : ''
+  if (id && header.trim() && table.columns[c].label.trim()) {
+    return { 'aria-labelledby': `${id}-r${r} ${id}-c${c}` }
+  }
+  const rowName = header.trim() || translate('table.newRow', { row: r + 1 })
+  return { 'aria-label': translate('table.cellInput', { row: rowName, column: columnLabel(c) }) }
+}
+
+function inputCell(ctx, row, r, c) {
+  const { base, table, idOf, columnLabel } = ctx
+  const column = table.columns[c]
+  const type = cellInput(column)
+  const inputAttrs = {
+    ...idOf(`${r}-${c}`),
+    type,
+    name: type === 'radio' ? matrixName(base, row.value) : matrixName(base, row.value, column.value),
+    ...(type === 'text' ? {} : { value: column.value }),
+    ...inputName(ctx, row, r, c),
+    required: row.required === true,
+  }
+  const cellLabel = {
+    tag: 'span',
+    attrs: { className: 'f-table-cell-label', 'aria-hidden': 'true' },
+    textContent: columnLabel(c),
+  }
+  return {
+    tag: 'td',
+    attrs: { role: 'cell' },
+    children: [
+      {
+        tag: 'label',
+        attrs: { className: 'f-table-cell' },
+        children: [cellLabel, { tag: 'input', attrs: inputAttrs }],
+      },
+    ],
+  }
+}
+
+function staticCell(ctx, row, r, c) {
+  const { table, markColumn, requiredMark, idOf } = ctx
+  const content =
+    row.required === true && c === markColumn && requiredMark
+      ? { children: [{ tag: 'span', textContent: row.cells[c] }, requiredMark()] }
+      : { textContent: row.cells[c] }
+  if (table.rowHeaders && c === 0) {
+    return { tag: 'th', attrs: { role: 'rowheader', scope: 'row', ...idOf(`r${r}`) }, ...content }
+  }
+  return { tag: 'td', attrs: { role: 'cell' }, ...content }
+}
+
+// a repeating row's last cell: its remove button, disabled while the table is at its minimum
+function removeCell(ctx, r, rowCount) {
+  const { translate, removeIcon, limits } = ctx
+  const icon = removeIcon ? { content: removeIcon() } : { textContent: '×' }
+  return {
+    tag: 'td',
+    attrs: { role: 'cell', className: 'f-table-row-actions' },
+    children: [
+      {
+        tag: 'button',
+        attrs: {
+          type: 'button',
+          className: REMOVE_ROW_CLASSNAME,
+          'aria-label': translate('table.removeRow', { row: r + 1 }),
+          disabled: rowCount <= limits.min,
+        },
+        ...icon,
+      },
+    ],
+  }
+}
+
+function rowConfig(ctx, r, rowCount) {
+  const { table, inputs, isPreview, onRequiredRowChange, repeating } = ctx
+  const row = rowAt(ctx, r)
+  const requiredGroup = row.required === true && [...inputs].some(c => cellInput(table.columns[c]) === 'checkbox')
+  const children = table.columns.map((_, c) => (inputs.has(c) ? inputCell(ctx, row, r, c) : staticCell(ctx, row, r, c)))
+  if (repeating) {
+    children.push(removeCell(ctx, r, rowCount))
+  }
+  const tr = {
+    tag: 'tr',
+    attrs: { role: 'row', ...(requiredGroup ? { [REQUIRED_ROW_ATTR]: 'true' } : {}) },
+    dataset: { rowKey: row.value },
+    children,
+  }
+  if (requiredGroup && !isPreview && onRequiredRowChange) {
+    tr.action = { change: ({ currentTarget }) => onRequiredRowChange(currentTarget) }
+  }
+  return tr
+}
+
+/**
+ * One body row of a matrix (#349 phase 3): the same <tr> tableDomConfig renders at index r. A repeating table builds
+ * its added and renumbered rows with it.
+ * @param {Object} field { id, attrs, table }
+ * @param {Number} r 0-based row index
+ * @param {Object} [options] tableDomConfig's options, plus `rowCount` (default r + 1) for the remove button's state
+ * @return {Object} dom.create config of a <tr>
+ */
+export function matrixRowConfig(field, r, options = {}) {
+  const table = withKeys(normalizeTable(field.table))
+  return rowConfig(matrixContext(field, table, options), r, options.rowCount ?? r + 1)
+}
+
+/**
  * A matrix (#349 phase 2): every input column renders a radio, checkbox or text input per row. Radios share their
  * row's name (`base[row]`), every other input has its own (`base[row][column]`). Each input is named by its row and
- * column headers. Explicit table roles keep the semantics when narrow screens stack the rows.
+ * column headers. Explicit table roles keep the semantics when narrow screens stack the rows. A repeating table
+ * (phase 3) renders `min` rows copied from its template, a remove button per row, an Add button and a status region.
  * @param {Object} field
  * @param {Object} table normalised, with keys
  * @param {Object} options see tableDomConfig
  * @return {Object} dom.create config
  */
 function matrixDomConfig(field, table, options) {
-  const {
-    isPreview = false,
-    fallbackLabel = 'Table',
-    translate = englishText,
-    requiredMark,
-    onRequiredRowChange,
-  } = options
+  const ctx = matrixContext(field, table, options)
+  const { fallbackLabel = 'Table' } = options
+  const { isPreview, translate, repeating, limits, idOf } = ctx
   const { id, action, dataset } = field
   const attrs = field.attrs ?? {}
   const config = field.config ?? {}
   // attrs.name is the base of every input name, never an attribute of the <table>
-  const { className, tag: _tagOverride, name, required: _required, ...tableAttrs } = attrs
-  const base = (!isPreview && text(name).trim()) || text(id)
-  const { caption, rowHeaders, columns, rows } = table
-  const inputs = new Set(inputColumns(table))
+  const { className, tag: _tagOverride, name: _name, required: _required, ...tableAttrs } = attrs
+  const { caption, columns, rows } = table
   const hasCaption = caption.trim() !== ''
   const captionId = hasCaption && id ? `${id}-caption` : undefined
-  const idOf = suffix => (id ? { id: `${id}-${suffix}` } : {})
-  const columnLabel = c => columns[c].label || translate('table.newColumn', { column: c + 1 })
-  const rowHeaderText = r => (rowHeaders ? rows[r].cells[0] : '')
-  // a required row's mark follows its row header, else its first static cell
-  const markColumn = columns.findIndex((_, c) => !inputs.has(c))
-
-  // aria-labelledby only when both headers have text; otherwise it would name too little
-  const inputName = (r, c) => {
-    if (id && rowHeaderText(r).trim() && columns[c].label.trim()) {
-      return { 'aria-labelledby': `${id}-r${r} ${id}-c${c}` }
-    }
-    const row = rowHeaderText(r).trim() || translate('table.newRow', { row: r + 1 })
-    return { 'aria-label': translate('table.cellInput', { row, column: columnLabel(c) }) }
+  // the preview always shows the template at least once
+  let rowCount = rows.length
+  if (repeating) {
+    rowCount = isPreview ? Math.max(limits.min, 1) : limits.min
   }
+  const bodyRows = Array.from({ length: rowCount }, (_, r) => rowConfig(ctx, r, rowCount))
 
-  const inputCell = (row, r, c) => {
-    const type = cellInput(columns[c])
-    const inputAttrs = {
-      ...idOf(`${r}-${c}`),
-      type,
-      name: type === 'radio' ? matrixName(base, row.value) : matrixName(base, row.value, columns[c].value),
-      ...(type === 'text' ? {} : { value: columns[c].value }),
-      ...inputName(r, c),
-      required: row.required === true,
-    }
-    const cellLabel = {
-      tag: 'span',
-      attrs: { className: 'f-table-cell-label', 'aria-hidden': 'true' },
-      textContent: columnLabel(c),
-    }
-    return {
-      tag: 'td',
-      attrs: { role: 'cell' },
-      children: [
-        {
-          tag: 'label',
-          attrs: { className: 'f-table-cell' },
-          children: [cellLabel, { tag: 'input', attrs: inputAttrs }],
-        },
-      ],
-    }
+  const headerCells = columns.map((column, c) => ({
+    tag: 'th',
+    attrs: { role: 'columnheader', scope: 'col', ...idOf(`c${c}`) },
+    textContent: column.label,
+  }))
+  if (repeating) {
+    headerCells.push({
+      tag: 'th',
+      attrs: { role: 'columnheader', scope: 'col' },
+      children: [{ tag: 'span', attrs: { className: SR_ONLY_CLASSNAME }, textContent: translate('remove') }],
+    })
   }
-
-  const staticCell = (row, r, c) => {
-    const content =
-      row.required === true && c === markColumn && requiredMark
-        ? { children: [{ tag: 'span', textContent: row.cells[c] }, requiredMark()] }
-        : { textContent: row.cells[c] }
-    if (rowHeaders && c === 0) {
-      return { tag: 'th', attrs: { role: 'rowheader', scope: 'row', ...idOf(`r${r}`) }, ...content }
-    }
-    return { tag: 'td', attrs: { role: 'cell' }, ...content }
-  }
-
-  const bodyRows = rows.map((row, r) => {
-    const requiredGroup = row.required === true && [...inputs].some(c => cellInput(columns[c]) === 'checkbox')
-    const tr = {
-      tag: 'tr',
-      attrs: { role: 'row', ...(requiredGroup ? { [REQUIRED_ROW_ATTR]: 'true' } : {}) },
-      dataset: { rowKey: row.value },
-      children: columns.map((_, c) => (inputs.has(c) ? inputCell(row, r, c) : staticCell(row, r, c))),
-    }
-    if (requiredGroup && !isPreview && onRequiredRowChange) {
-      tr.action = { change: ({ currentTarget }) => onRequiredRowChange(currentTarget) }
-    }
-    return tr
-  })
 
   const children = []
   if (hasCaption) {
@@ -568,17 +755,7 @@ function matrixDomConfig(field, table, options) {
   children.push({
     tag: 'thead',
     attrs: { role: 'rowgroup' },
-    children: [
-      {
-        tag: 'tr',
-        attrs: { role: 'row' },
-        children: columns.map((column, c) => ({
-          tag: 'th',
-          attrs: { role: 'columnheader', scope: 'col', ...idOf(`c${c}`) },
-          textContent: column.label,
-        })),
-      },
-    ],
+    children: [{ tag: 'tr', attrs: { role: 'row' }, children: headerCells }],
   })
   children.push({ tag: 'tbody', attrs: { role: 'rowgroup' }, children: bodyRows })
 
@@ -607,7 +784,34 @@ function matrixDomConfig(field, table, options) {
   const groupName = captionId
     ? { 'aria-labelledby': captionId }
     : { 'aria-label': plainText(config.label) || fallbackLabel }
+  const wrapClassName = repeating ? `f-table-wrap f-table-matrix ${REPEAT_CLASSNAME}` : 'f-table-wrap f-table-matrix'
+  // the limits ride on the wrapper, so the renderer can re-sync the buttons from the DOM alone
+  const limitAttrs = repeating
+    ? {
+        'data-repeat-min': String(limits.min),
+        ...(limits.max === null ? {} : { 'data-repeat-max': String(limits.max) }),
+      }
+    : {}
   // inputs are focusable and scroll themselves into view, so the wrapper needs no tab stop
-  const wrapAttrs = { className: 'f-table-wrap f-table-matrix', ...(isPreview ? {} : { role: 'group', ...groupName }) }
-  return { tag: 'div', attrs: wrapAttrs, children: [tableConfig] }
+  const wrapAttrs = { className: wrapClassName, ...limitAttrs, ...(isPreview ? {} : { role: 'group', ...groupName }) }
+  const wrapChildren = [tableConfig]
+  if (repeating) {
+    wrapChildren.push({
+      tag: 'button',
+      attrs: {
+        type: 'button',
+        className: ADD_ROW_CLASSNAME,
+        disabled: limits.max !== null && rowCount >= limits.max,
+        ...(isPreview ? { inert: true } : {}),
+      },
+      textContent: translate('table.addRow'),
+    })
+    if (!isPreview) {
+      wrapChildren.push({
+        tag: 'span',
+        attrs: { className: `${ROW_STATUS_CLASSNAME} ${SR_ONLY_CLASSNAME}`, role: 'status' },
+      })
+    }
+  }
+  return { tag: 'div', attrs: wrapAttrs, children: wrapChildren }
 }

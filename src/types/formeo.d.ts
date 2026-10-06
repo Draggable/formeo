@@ -175,6 +175,15 @@ export interface TableRow {
   [key: string]: unknown
 }
 
+/** A repeating table's limits (#349). Both default: `min` 1, `max` no limit. */
+export interface TableRepeat {
+  /** Rows the form starts with, and the fewest it keeps. A non-negative integer, at most 500. */
+  min?: number
+  /** The most rows the person filling in the form can add; `null` for no limit. */
+  max?: number | null
+  [key: string]: unknown
+}
+
 /** A table field's data (`field.table`, #349). Cells render as text, never HTML. */
 export interface TableData {
   caption?: string
@@ -182,6 +191,8 @@ export interface TableData {
   headerRow?: boolean
   /** Each row's first cell renders as a row header. Default `false`. */
   rowHeaders?: boolean
+  /** Lets the person filling in the form add and remove rows copied from `rows[0]`; needs an input column. */
+  repeat?: TableRepeat
   columns: TableColumn[]
   rows: TableRow[]
   [key: string]: unknown
@@ -950,10 +961,21 @@ export interface RendererPageChangeDetail {
   renderer: FormeoRenderer
 }
 
+/** `event.detail` of `formeo:rowschange`, fired after a repeating table row or an input group copy is added or removed. */
+export interface RowsChangeDetail {
+  action: 'add' | 'remove'
+  /** The row's or copy's index (an input group's original is 0). */
+  index: number
+}
+
 export interface FormeoRendererEvents {
   /** After `render()` attached the form. */
   onRender?: (event: { form: HTMLFormElement; renderer: FormeoRenderer; formData: FormeoFormData }) => void
-  /** Every `input` event in the form. */
+  /**
+   * Every `input` event in the form, and every `formeo:rowschange` (a `CustomEvent<RowsChangeDetail>`) when a repeating
+   * table row or an input group copy is added or removed. For `formeo:rowschange`, `target` is the table's or group's
+   * wrapper, which has no `name`: check `event.type` before reading `target.name`.
+   */
   onChange?: (event: { event: Event; target: EventTarget | null; form: HTMLFormElement; userData: UserData }) => void
   /** The form's native `submit` event; formeo does not call `preventDefault()`. */
   onSubmit?: (event: { event: SubmitEvent; form: HTMLFormElement; userData: UserData }) => void

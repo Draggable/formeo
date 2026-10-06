@@ -162,4 +162,35 @@ suite('formData schema', () => {
     t.assert.strictEqual(rows.items.properties.required.type, 'boolean')
     t.assert.strictEqual(rows.items.properties.value.type, 'string')
   })
+
+  test('accepts a repeating table and rejects malformed limits (#349 phase 3)', t => {
+    const data = structuredClone(conditionalFields)
+    const [fieldId] = Object.keys(data.fields)
+    const withTable = table => {
+      data.fields[fieldId] = { id: fieldId, tag: 'table', config: { label: 'Order', hideLabel: true }, table }
+      return formDataSchema.safeParse(data).success
+    }
+    const order = repeat => ({
+      repeat,
+      columns: [{ label: 'Qty', value: 'qty', input: 'text' }],
+      rows: [{ cells: [''], required: true }],
+    })
+    t.assert.ok(withTable(order({ min: 1, max: 10 })))
+    t.assert.ok(withTable(order({ min: 0, max: null })))
+    t.assert.ok(withTable(order({})))
+    t.assert.ok(withTable(order({ min: 1, later: true })), 'extra keys')
+    t.assert.strictEqual(withTable(order({ min: '1' })), false)
+    t.assert.strictEqual(withTable(order({ min: -1 })), false)
+    t.assert.strictEqual(withTable(order({ max: 0 })), false)
+    t.assert.strictEqual(withTable(order({ min: 1.5 })), false)
+    t.assert.strictEqual(withTable(order(true)), false)
+    t.assert.ok(withTable(order({ min: 500 })), 'min at the limit')
+    t.assert.strictEqual(withTable(order({ min: 501 })), false, 'min past the limit')
+  })
+
+  test('the generated JSON schema describes repeat (#349 phase 3)', t => {
+    const table = buildFormDataJsonSchema().properties.fields.additionalProperties.properties.table
+    t.assert.ok(table.properties.repeat)
+    t.assert.strictEqual(table.properties.repeat.properties.min.type, 'integer')
+  })
 })
