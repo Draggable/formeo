@@ -1,5 +1,7 @@
+@use "../base/mixins";
+
 .row-edit {
-  padding-top: 2rem;
+  padding-top: mixins.space(2);
 }
 
 .input-group-addon {
