@@ -1075,9 +1075,10 @@ copy n uses `<name>-<n>`, where `<name>` is the configured name without a traili
 renumbers the later ones. `userData` shows checkbox groups without the `[]` suffix, so a copy's key reads `likes-2`.
 
 **Restoring answers.** Setting `renderer.userData` creates the copies a saved answer needs (an array's extra values, or
-the highest `-<n>`), then fills them. Input groups have no maximum, so the setter creates at most 500 copies, and keys
-past that are reported in the setter's warning for keys with no matching field. It never removes copies. A copy created
-this way takes on the current hidden-by-condition or skipped-page state, like one added by click.
+the highest `-<n>`), then fills them. Input groups have no maximum, so the setter creates at most 500 copies. Keys past
+that, and array values past the 501st, are reported in the setter's warning for keys with no matching field (for
+example `phone (values 502-600)`). It never removes copies. A copy created this way takes on the current
+hidden-by-condition or skipped-page state, like one added by click.
 
 **Accessibility and events.** Focus moves to a new copy's first control, or after a remove to the next group's remove
 button, else the previous one's, else the Add button, and a status region announces the change. Adding or removing a copy fires `formeo:rowschange` on the

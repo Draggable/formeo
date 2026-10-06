@@ -400,6 +400,21 @@ describe('input groups (#349 phase 3)', () => {
     assert.ok(ms < 2000, `took ${ms}ms`)
   })
 
+  test('an array longer than the setter limit fills 501 inputs and warns about the values left over', t => {
+    const warn = t.mock.method(console, 'warn', () => {})
+    const renderer = render(groupForm(text('t1', { name: 'email' })))
+    const values = Array.from({ length: 600 }, (_, i) => `v${i}`)
+    renderer.userData = { email: values }
+    const inputs = $$('input[name="email"]')
+    assert.equal(inputs.length, 501)
+    assert.equal(inputs.at(-1).value, 'v500')
+    assert.equal(warn.mock.callCount(), 1)
+    assert.equal(
+      warn.mock.calls[0].arguments[0],
+      'formeo: renderer.userData has no field named: email (values 502-600)'
+    )
+  })
+
   describe('copies the setter adds take on the state around them', () => {
     const twoPages = () => ({
       id: 'f',

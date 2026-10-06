@@ -331,6 +331,12 @@ export default class FormeoRenderer {
             field.value = values[i]
           }
         })
+        // values past the input group copies the setter may create have no field to go in
+        if (values.length > fields.length) {
+          const first = fields.length + 1
+          const which = first === values.length ? `value ${first}` : `values ${first}-${values.length}`
+          unmatched.push(`${key} (${which})`)
+        }
       }
       // A multiple select takes every value in an array
       else if (fields.type === 'select-multiple') {
