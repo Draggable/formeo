@@ -1071,7 +1071,7 @@ and each copy gets a remove button ("Remove group 2").
 
 **Names.** A copy's text inputs, textareas and single selects keep the original's name, so `userData` holds an array:
 `{ phone: ['555-1234', '555-9876'] }`. Radio and checkbox groups, multiple selects and matrices can't share a name, so
-copy n uses `<name>-<n>` (`contact-1`, `contact-2`, or the field's `f-<id>` when it has no name). Removing a copy
+copy n uses `<name>-<n>`, where `<name>` is the configured name without a trailing `[]` (`contact-1`, `contact-2`, or the field's `f-<id>` when it has no name). Removing a copy
 renumbers the later ones. `userData` shows checkbox groups without the `[]` suffix, so a copy's key reads `likes-2`.
 
 **Restoring answers.** Setting `renderer.userData` creates the copies a saved answer needs (an array's extra values, or
@@ -1079,8 +1079,8 @@ the highest `-<n>`), then fills them. Input groups have no maximum, so the sette
 past that are reported in the setter's warning for keys with no matching field. It never removes copies. A copy created
 this way takes on the current hidden-by-condition or skipped-page state, like one added by click.
 
-**Accessibility and events.** Focus moves to a new copy's first control, or after a remove to the next remove button
-or the Add button, and a status region announces the change. Adding or removing a copy fires `formeo:rowschange` on the
+**Accessibility and events.** Focus moves to a new copy's first control, or after a remove to the next group's remove
+button, else the previous one's, else the Add button, and a status region announces the change. Adding or removing a copy fires `formeo:rowschange` on the
 group's wrapper, and `onChange` receives it.
 
 **Limits.**
