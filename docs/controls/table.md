@@ -268,5 +268,6 @@ adds rows quietly: no focus move, announcement or `formeo:rowschange`.
   page, isn't required or enabled until the table is shown, like the rows already there.
 - On narrow screens the rows stack into cards like any matrix, each ending with its remove button.
 - **Reset** clears the answers and keeps the rows.
-- A repeating table inside an [input group](../renderer/renderer.md#input-groups) copy shows its buttons but they do
-  nothing, and the `userData` setter doesn't grow it. That combination isn't supported.
+- A repeating table inside an [input group](../renderer/renderer.md#input-groups) copy renders without its **+ Row**
+  and remove buttons and keeps the rows it started with, and the `userData` setter doesn't grow it. That combination
+  isn't supported.

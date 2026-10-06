@@ -1089,8 +1089,8 @@ group's wrapper, and `onChange` receives it.
 - Conditions apply to the original row's fields, not to copies.
 - A group whose grouped control is named `x` shouldn't also contain a control named `x-<n>`: copies are named
   `<name>-<n>`, so the names would collide.
-- A [repeating table](../controls/table.md#repeating-rows) inside a copy renders its buttons but can't add or remove
-  rows, and the `userData` setter doesn't grow it.
+- A [repeating table](../controls/table.md#repeating-rows) inside a copy renders without its Add and remove buttons
+  and keeps the rows it started with; the `userData` setter doesn't grow it.
 
 ### Row and column attributes
 

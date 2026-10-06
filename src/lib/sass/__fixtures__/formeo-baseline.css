@@ -832,6 +832,9 @@ button[class*=-clone]:hover .svg-icon {
   color: #666666;
   cursor: not-allowed;
 }
+.formeo .f-table-repeat .f-table-remove-row[hidden] {
+  display: none;
+}
 .formeo .f-table-repeat .f-table-remove-row svg {
   inline-size: 1em;
   block-size: 1em;

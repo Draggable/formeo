@@ -231,6 +231,22 @@ test.describe('Repeating rows (#349 phase 3)', () => {
     expect(await page.evaluate(() => window.__renderer.userData)).toEqual(saved)
   })
 
+  test('a repeating table in an input group copy hides its buttons', async ({ page }) => {
+    const data = formWith(orderField())
+    data.rows['row-rp'].config = { inputGroup: true, legend: 'Orders' }
+    await mountEditor(page, data)
+    await renderForm(page, { formData: data })
+    const form = page.locator('#e2e-rp-render')
+    await form.getByRole('button', { name: 'Add +' }).click()
+    const copy = form.locator('.f-input-group-wrap > [data-clone-of]')
+    await expect(copy.locator('.f-table-repeat tbody tr')).toHaveCount(1)
+    await expect(copy.locator('.f-table-add-row')).toBeHidden()
+    await expect(copy.locator('.f-table-remove-row')).toBeHidden()
+    const original = form.locator('#f-row-rp')
+    await expect(original.locator('.f-table-add-row')).toBeVisible()
+    await expect(original.locator('.f-table-remove-row')).toBeVisible()
+  })
+
   test('the picker reaches matrix cells from the keyboard and keeps them while filtering', async ({ page }) => {
     const { repeat: _repeat, ...matrix } = orderTable()
     const editor = await mountEditor(

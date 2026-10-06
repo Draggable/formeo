@@ -1,6 +1,12 @@
 import dom, { getName } from '../common/dom.js'
 import { inputGroupText } from '../common/input-group-text.mjs'
-import { hasInputs, isTableField, SR_ONLY_CLASSNAME } from '../common/table.mjs'
+import {
+  ADD_ROW_CLASSNAME,
+  hasInputs,
+  isTableField,
+  REMOVE_ROW_CLASSNAME,
+  SR_ONLY_CLASSNAME,
+} from '../common/table.mjs'
 import { clone, uuid } from '../common/utils/index.mjs'
 import { RENDER_PREFIX } from './helpers.js'
 import { focusFirst } from './pagination.js'
@@ -157,6 +163,11 @@ export function addGroup(renderer, wrap, rowId, { interactive = true } = {}) {
   const entries = []
   const copy = dom.create(cloneComponentData(renderer, rowId, n, entries))
   CLONE_RECORDS.set(copy, entries)
+  // a repeating table in a copy doesn't repeat (not supported), so its buttons would do nothing
+  for (const button of copy.querySelectorAll(`.${ADD_ROW_CLASSNAME}, .${REMOVE_ROW_CLASSNAME}`)) {
+    button.hidden = true
+    button.disabled = true
+  }
   // the original is group 1, so copy n is group n + 1
   copy.appendChild(dom.create(removeButtonConfig(renderer, n + 1)))
   wrap.insertBefore(copy, addButtonOf(wrap))

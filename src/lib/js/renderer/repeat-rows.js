@@ -40,9 +40,11 @@ const limitsOf = wrap => ({
 
 /**
  * @param {ParentNode} root a form, stage or document
- * @return {HTMLElement[]} the rendered repeating tables' wrappers
+ * @return {HTMLElement[]} the rendered repeating tables' wrappers, leaving out those in input-group copies, which
+ * don't repeat and keep their buttons hidden and disabled
  */
-export const repeatingTables = root => [...root.querySelectorAll(`.${REPEAT_CLASSNAME}`)]
+export const repeatingTables = root =>
+  [...root.querySelectorAll(`.${REPEAT_CLASSNAME}`)].filter(wrap => !wrap.closest(`[${CLONE_ATTR}]`))
 
 /**
  * @param {HTMLElement} wrap

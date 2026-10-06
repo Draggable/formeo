@@ -501,6 +501,8 @@ describe('input groups (#349 phase 3)', () => {
       events.length = 0
       const clone = clones()[0]
       assert.deepEqual(namesOf(clone), ['order-1[0][qty]'])
+      // enabled by hand: the guard behind the hidden buttons still holds
+      clone.querySelector('.f-table-add-row').disabled = false
       clone.querySelector('.f-table-add-row').click()
       assert.equal(bodyRows(clone), 1, 'Add does nothing')
       clone.querySelector('.f-table-remove-row').disabled = false
@@ -509,6 +511,41 @@ describe('input groups (#349 phase 3)', () => {
       assert.deepEqual(events, [], 'no formeo:rowschange')
       $('#f-r-1 .f-table-add-row').click()
       assert.equal(bodyRows($('#f-r-1')), 2, 'the original table still adds rows')
+    })
+
+    test('its buttons are hidden and disabled, and stay so when a skipped page comes back', () => {
+      const renderer = render({
+        id: 'f',
+        stages: {
+          's-0': { id: 's-0', config: {}, children: ['r-0'] },
+          's-1': { id: 's-1', config: {}, children: ['r-1'] },
+        },
+        rows: {
+          'r-0': { id: 'r-0', config: {}, children: ['c-0'] },
+          'r-1': { id: 'r-1', config: { inputGroup: true }, children: ['c-1'] },
+        },
+        columns: { 'c-0': { id: 'c-0', children: ['x'] }, 'c-1': { id: 'c-1', children: ['o1'] } },
+        fields: { ...text('x', { name: 'x' }), ...repeating() },
+      })
+      add()
+      const buttons = () => [...clones()[0].querySelectorAll('.f-table-add-row, .f-table-remove-row')]
+      const states = () => buttons().map(button => ({ hidden: button.hidden, disabled: button.disabled }))
+      const hiddenAndDisabled = [
+        { hidden: true, disabled: true },
+        { hidden: true, disabled: true },
+      ]
+      assert.equal(buttons().length, 2, 'one remove button and the Add button')
+      assert.deepEqual(states(), hiddenAndDisabled)
+      const stage = $$('.formeo-stage')[1]
+      renderer.setStageSkipped(stage, true)
+      renderer.setStageSkipped(stage, false)
+      assert.deepEqual(states(), hiddenAndDisabled)
+      const original = [...$('#f-r-1').querySelectorAll('.f-table-add-row')]
+      assert.deepEqual(
+        original.map(button => [button.hidden, button.disabled]),
+        [[false, false]],
+        "the original table's Add is untouched"
+      )
     })
 
     test('the userData setter does not grow it', t => {

@@ -417,6 +417,11 @@ label, .prev-label {
       cursor: not-allowed;
     }
 
+    // display above beats the UA's [hidden] rule; a table in an input-group copy hides its buttons
+    &[hidden] {
+      display: none;
+    }
+
     svg {
       inline-size: 1em;
       block-size: 1em;

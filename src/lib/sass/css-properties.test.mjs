@@ -244,6 +244,8 @@ suite('resolveFormeoProperties purity', () => {
     t.assert.match(css, /\.f-table-sr[^{}]*\{[^}]*clip-path:\s*inset\(50%\)/)
     t.assert.match(css, /\.f-table-remove-row\s*\{[^}]*min-inline-size:\s*24px[^}]*min-block-size:\s*24px/)
     t.assert.match(css, /\.f-table-remove-row:focus-visible\s*\{[^}]*outline/)
+    // its display rule would beat the [hidden] one, and a repeating table in an input-group copy hides its buttons
+    t.assert.match(css, /\.f-table-remove-row\[hidden\]\s*\{\s*display:\s*none/)
     t.assert.match(css, /\.f-table-add-row\s*\{[^}]*margin-block-start/)
     t.assert.match(css, /@container\s*\(max-width:\s*30rem\)\s*\{[^@]*\.f-table-row-actions\s*\{[^}]*text-align:\s*end/)
     t.assert.match(css, /\.remove-input-group\s*\{[^}]*min-inline-size:\s*24px/)
