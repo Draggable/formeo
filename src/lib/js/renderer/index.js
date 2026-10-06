@@ -10,15 +10,17 @@ import { fetchDependencies } from '../common/loaders.js'
 import {
   hasInputs,
   inputColumns,
+  isRepeating,
   isTableField,
   normalizeTable,
   parseMatrixKey,
   parseTableAddress,
   plainText,
+  repeatRowName,
   withKeys,
 } from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
-import { cleanFormData, isAddress, merge, uuid } from '../common/utils/index.mjs'
+import { cleanFormData, isAddress, looksLikeArrayIndex, merge, uuid } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { STAGE_CLASSNAME } from '../constants.js'
 import {
@@ -38,7 +40,7 @@ import {
   targetPropertyMap,
 } from './helpers.js'
 import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
-import { bindRepeatRows, repeatingTables, syncLimits } from './repeat-rows.js'
+import { bindRepeatRows, growForAnswers, repeatingTables, syncLimits } from './repeat-rows.js'
 import { ROWS_CHANGE_EVENT } from './row-actions.js'
 
 // a page condition can only skip (true) or bring back (false) a stage
@@ -241,7 +243,12 @@ export default class FormeoRenderer {
         continue
       }
       const table = withKeys(normalizeTable(component.table))
-      const r = table.rows.findIndex(row => row.value === parsed.row)
+      // a repeating table's rows are keyed by position (#349 phase 3)
+      const repeating = isRepeating(table)
+      let r = table.rows.findIndex(row => row.value === parsed.row)
+      if (repeating) {
+        r = looksLikeArrayIndex(parsed.row) ? Number(parsed.row) : -1
+      }
       // only input columns post answers; a column switched back to static keeps a value an input column may reuse
       const c =
         parsed.column === null ? -1 : (inputColumns(table).find(i => table.columns[i].value === parsed.column) ?? -1)
@@ -249,7 +256,9 @@ export default class FormeoRenderer {
         continue
       }
       const tableName = table.caption.trim() || plainText(component.config?.label)
-      const row = (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
+      const row = repeating
+        ? repeatRowName(table, r, tableText)
+        : (table.rowHeaders && table.rows[r].cells[0].trim()) || tableText('table.newRow', { row: r + 1 })
       if (c === -1) {
         return { component, label: tableText('table.entryRow', { table: tableName, row }) }
       }
@@ -282,6 +291,8 @@ export default class FormeoRenderer {
       return
     }
     const unmatched = []
+    // a saved answer can name rows a repeating table hasn't grown yet (#349 phase 3)
+    growForAnswers(form, keys, this)
     for (const key of keys) {
       const fields = form.elements.namedItem(key) ?? form.elements.namedItem(`${key}[]`)
       if (!fields) {
@@ -947,7 +958,9 @@ export default class FormeoRenderer {
    */
   tableComponent = (table, address) => {
     const parsed = parseTableAddress(address)
-    const isMatrix = table.tagName === 'TABLE' && Boolean(table.closest('.f-table-matrix'))
+    // a repeating table's rows come and go, so its rows and cells aren't condition addresses (#349 phase 3)
+    const isMatrix =
+      table.tagName === 'TABLE' && Boolean(table.closest('.f-table-matrix')) && !table.closest('.f-table-repeat')
     const row = parsed && isMatrix ? table.tBodies[0]?.rows[parsed.row] : null
     if (!row) {
       return { component: null }

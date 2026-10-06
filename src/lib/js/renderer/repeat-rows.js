@@ -3,6 +3,7 @@ import {
   ADD_ROW_CLASSNAME,
   matrixRowConfig,
   normalizeTable,
+  parseMatrixKey,
   REMOVE_ROW_CLASSNAME,
   REPEAT_CLASSNAME,
   REQUIRED_ROW_ATTR,
@@ -10,10 +11,11 @@ import {
   repeatRowName,
 } from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
+import { looksLikeArrayIndex } from '../common/utils/index.mjs'
 import { HIDDEN_BY_CONDITION_SELECTOR } from '../constants.js'
 import { SKIP_DISABLED_ATTR, SKIPPABLE_CONTROLS, suspendRequired } from './helpers.js'
 import { focusFirst, SKIPPED_ATTR } from './pagination.js'
-import { announce, dispatchRowsChange, focusAfterRemove } from './row-actions.js'
+import { announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
 
 /**
  * A repeating table's rows at run time (#349 phase 3). Every row is built by matrixRowConfig from the field data the
@@ -183,4 +185,49 @@ export function bindRepeatRows(form, renderer) {
       removeRow(button.closest('tr'), renderer)
     }
   })
+}
+
+/**
+ * Grows a repeating table to `count` rows and never shrinks it. The ceiling is the table's max; SETTER_ROW_LIMIT only
+ * applies when there is no max. Rows are added quietly: no focus, no announcement, no event.
+ * @param {HTMLElement} wrap
+ * @param {Number} count
+ * @param {FormeoRenderer} renderer
+ * @return {Number} the row count after growing
+ */
+export function setRowCount(wrap, count, renderer) {
+  const { max } = limitsOf(wrap)
+  const target = Math.min(count, max ?? SETTER_ROW_LIMIT)
+  while (rowCount(wrap) < target) {
+    if (!addRow(wrap, renderer, { interactive: false })) {
+      break
+    }
+  }
+  return rowCount(wrap)
+}
+
+/**
+ * Before the userData setter fills the form, gives every repeating table the rows its saved answers name
+ * @param {HTMLFormElement} form
+ * @param {String[]} keys userData keys
+ * @param {FormeoRenderer} renderer
+ */
+export function growForAnswers(form, keys, renderer) {
+  for (const wrap of repeatingTables(form)) {
+    const field = fieldOf(wrap, renderer)
+    if (!field) {
+      continue
+    }
+    const base = String(field.attrs?.name ?? '').trim() || field.id
+    let highest = -1
+    for (const key of keys) {
+      const parsed = parseMatrixKey(key, base)
+      if (parsed && looksLikeArrayIndex(parsed.row)) {
+        highest = Math.max(highest, Number(parsed.row))
+      }
+    }
+    if (highest >= 0) {
+      setRowCount(wrap, highest + 1, renderer)
+    }
+  }
 }

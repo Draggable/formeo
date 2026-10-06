@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, test } from 'node:test'
 import { JSDOM } from 'jsdom'
 import FormeoRenderer from './index.js'
+import { SKIPPED_ATTR } from './pagination.js'
 
 const GLOBALS = ['document', 'window', 'Element', 'HTMLElement', 'HTMLFormElement', 'Node', 'FormData']
 
@@ -270,5 +271,186 @@ describe('repeating rows (#349 phase 3)', () => {
     render(pagesOf(repeatField('t1', { ...matrix, rows: [{ value: 'a', cells: ['A', '', '', '', ''] }] })))
     assert.equal(addButton(), null)
     assert.equal(removeButtons().length, 0)
+  })
+  test('the getter reads every row; the setter creates the rows it needs and fills them', () => {
+    const first = render(pagesOf(repeatField('t1')))
+    addButton().click()
+    type($('#f-t1-0-1'), '2')
+    check($('#f-t1-1-3'))
+    check($('#f-t1-1-4'))
+    const saved = first.userData
+    assert.deepEqual(saved, {
+      'order[0][qty]': '2',
+      'order[1][qty]': '',
+      'order[1]': 'large',
+      'order[1][wrap]': 'wrap',
+    })
+
+    const fresh = render(pagesOf(repeatField('t1')))
+    assert.equal(rows().length, 1)
+    fresh.userData = saved
+    assert.equal(rows().length, 2)
+    assert.deepEqual(fresh.userData, saved)
+    assert.notEqual(window.document.activeElement, rows()[1].querySelector('input'), 'the setter never moves focus')
+  })
+
+  test('the setter never shrinks the table and stops at max', t => {
+    const warn = t.mock.method(console, 'warn', () => {})
+    const renderer = render(pagesOf(repeatField('t1', order({ min: 2, max: 3 }))))
+    renderer.userData = { 'order[0][qty]': 'a' }
+    assert.equal(rows().length, 2)
+    renderer.userData = { 'order[4][qty]': 'e', 'order[2][qty]': 'c' }
+    assert.equal(rows().length, 3)
+    assert.equal($('#f-t1-2-1').value, 'c')
+    assert.match(warn.mock.calls.at(-1).arguments[0], /order\[4\]\[qty\]/)
+  })
+
+  test('a huge saved index stops at the setter limit when there is no max', t => {
+    const warn = t.mock.method(console, 'warn', () => {})
+    const renderer = render(pagesOf(repeatField('t1', order({ min: 1 }))))
+    renderer.userData = { 'order[99999][qty]': 'x' }
+    assert.equal(rows().length, 500)
+    assert.match(warn.mock.calls.at(-1).arguments[0], /order\[99999\]\[qty\]/)
+  })
+
+  test('keys that are not positional rows are left to the unmatched warning', t => {
+    const warn = t.mock.method(console, 'warn', () => {})
+    const renderer = render(pagesOf(repeatField('t1')))
+    renderer.userData = { 'order[speed][qty]': 'x', 'order[-1][qty]': 'y', 'order[01][qty]': 'z' }
+    assert.equal(rows().length, 1)
+    assert.equal(warn.mock.calls.length, 1)
+  })
+
+  test('rows the setter adds inside a condition-hidden table are not required until it shows', () => {
+    const table = order({ min: 1, max: 3 }, { rows: [{ cells: ['Item', '', '', '', ''], required: true }] })
+    const data = pagesOf({
+      tx: { id: 'tx', tag: 'input', attrs: { type: 'text', name: 'tx' }, config: { label: 'Tx' } },
+      ...repeatField('t1', table),
+    })
+    data.stages['p-1'].conditions = [
+      {
+        if: [{ source: 'fields.tx', sourceProperty: 'value', comparison: 'equals', target: '' }],
+        then: [{ target: 'fields.t1', targetProperty: 'isNotVisible' }],
+      },
+      // conditions don't undo themselves when they stop matching, so showing it again is its own condition
+      {
+        if: [{ source: 'fields.tx', sourceProperty: 'value', comparison: 'notEquals', target: '' }],
+        then: [{ target: 'fields.t1', targetProperty: 'isVisible' }],
+      },
+    ]
+    const renderer = render(data)
+    renderer.userData = { 'order[2][qty]': 'x' }
+    assert.equal(rows().length, 3)
+    assert.ok(rows().every(tr => !tr.querySelector('input[type="text"]').required))
+    type($('#f-tx'), 'show')
+    assert.ok(rows().every(tr => tr.querySelector('input[type="text"]').required))
+  })
+
+  test('rows the setter adds on a skipped page are disabled, and come back enabled with the limits applied', () => {
+    const renderer = render(pagesOf(repeatField('t1', order({ min: 1, max: 2 }))))
+    const stage = $('.formeo-stage')
+    stage.setAttribute(SKIPPED_ATTR, '')
+    renderer.userData = { 'order[1][qty]': 'x' }
+    const added = rows()[1]
+    assert.ok([...added.querySelectorAll('input, button')].every(control => control.disabled))
+    renderer.setStageSkipped(stage, false)
+    assert.ok([...added.querySelectorAll('input')].every(control => !control.disabled))
+    assert.equal(addButton().disabled, true, 'at max after the page comes back')
+    assert.deepEqual(
+      removeButtons().map(button => button.disabled),
+      [false, false]
+    )
+  })
+
+  test('userFormData labels positional rows by their numbered name', () => {
+    const renderer = render(pagesOf(repeatField('t1')))
+    addButton().click()
+    check($('#f-t1-1-2'))
+    const labels = Object.fromEntries(renderer.userFormData.map(({ key, label }) => [key, label]))
+    assert.equal(labels['order[1][qty]'], 'Order: Item 2, Qty')
+    assert.equal(labels['order[1]'], 'Order: Item 2')
+  })
+
+  test('userFormData falls back to Row n without row headers', () => {
+    const renderer = render(pagesOf(repeatField('t1', { ...order(), rowHeaders: false })))
+    const [entry] = renderer.userFormData
+    assert.equal(entry.label, 'Order: Row 1, Qty')
+  })
+
+  test('a required empty row blocks Next', () => {
+    const table = order({ min: 1, max: 3 }, { rows: [{ cells: ['Item', '', '', '', ''], required: true }] })
+    const renderer = render(
+      pagesOf(repeatField('t1', table), {
+        n1: { id: 'n1', tag: 'input', attrs: { type: 'text', name: 'n1' }, config: { label: 'N' } },
+      }),
+      { pagination: 'wizard' }
+    )
+    addButton().click()
+    type($('#f-t1-0-1'), '1')
+    check($('#f-t1-0-2'))
+    check($('#f-t1-0-4'))
+    $('.formeo-pages-next').click()
+    assert.equal(renderer.page, 0, 'row 2 is empty and required')
+    // jsdom's reportValidity doesn't move focus; tests/table-repeat.spec.js checks where the report lands
+  })
+
+  test('row and cell addresses on a repeating table never match and never act', () => {
+    const data = pagesOf({
+      ...repeatField('t1'),
+      tx: { id: 'tx', tag: 'input', attrs: { type: 'text', name: 'tx' }, config: { label: 'Tx' } },
+    })
+    data.stages['p-1'].conditions = [
+      {
+        if: [{ source: 'fields.t1.table.rows[0].cells[1]', sourceProperty: 'value', comparison: 'equals', target: '' }],
+        then: [{ target: 'fields.tx', targetProperty: 'isNotVisible' }],
+      },
+      {
+        if: [{ source: 'fields.tx', sourceProperty: 'value', comparison: 'equals', target: '' }],
+        then: [{ target: 'fields.t1.table.rows[0]', targetProperty: 'isNotVisible' }],
+      },
+    ]
+    render(data)
+    assert.equal($('#f-tx').parentElement.hidden, false)
+    assert.equal(rows()[0].hidden, false)
+  })
+
+  test('the whole repeating table can still be hidden', () => {
+    const data = pagesOf({
+      ...repeatField('t1'),
+      tx: { id: 'tx', tag: 'input', attrs: { type: 'text', name: 'tx' }, config: { label: 'Tx' } },
+    })
+    data.stages['p-1'].conditions = [
+      {
+        if: [{ source: 'fields.tx', sourceProperty: 'value', comparison: 'equals', target: 'hide' }],
+        then: [{ target: 'fields.t1', targetProperty: 'isNotVisible' }],
+      },
+    ]
+    render(data)
+    type($('#f-tx'), 'hide')
+    assert.equal($('.f-table-repeat').hidden, true)
+  })
+
+  test('a reset keeps the rows', async () => {
+    render(pagesOf(repeatField('t1')))
+    addButton().click()
+    $('form').reset()
+    await nextFrames()
+    assert.equal(rows().length, 2)
+  })
+
+  test('renderer.html holds min rows and both buttons', () => {
+    const renderer = render(pagesOf(repeatField('t1', order({ min: 2, max: 3 }))))
+    const { html } = renderer
+    assert.equal((html.match(/data-row-key="/g) ?? []).length, 2)
+    assert.match(html, /class="f-table-add-row"/)
+    assert.match(html, /class="f-table-remove-row"/)
+  })
+
+  test('a max above the setter limit lets a saved row past 500 grow the table up to the max', t => {
+    t.mock.method(console, 'warn', () => {})
+    const renderer = render(pagesOf(repeatField('t1', order({ min: 1, max: 600 }))))
+    renderer.userData = { 'order[549][qty]': 'x' }
+    assert.equal(rows().length, 550)
+    assert.equal($('#f-t1-549-1').value, 'x')
   })
 })
