@@ -40,22 +40,59 @@ test.describe('Repeating rows (#349 phase 3)', () => {
   })
 
   test('turns repeating on and sets limits from the keyboard', async ({ page }) => {
-    const { repeat: _repeat, ...matrix } = orderTable()
-    const editor = await mountEditor(page, formWith(orderField(matrix)))
+    const bare = {
+      caption: 'Order',
+      headerRow: true,
+      rowHeaders: false,
+      columns: [{ label: 'Item' }, { label: 'Qty' }, { label: 'Wrap' }],
+      rows: [{ cells: ['', '', ''] }],
+    }
+    const editor = await mountEditor(page, formWith(orderField(bare)))
     const panel = await openTablePanel(editor.locator('.formeo-field').first())
+    const storedTable = () => page.evaluate(() => window.__editor.formData.fields.rp1.table)
+
+    // a closed select picks an option by its first letter, as a keyboard user would
+    for (const [column, letter, value] of [
+      [1, 't', 'text'],
+      [2, 't', 'text'],
+      [3, 'c', 'checkbox'],
+    ]) {
+      const input = panel.getByRole('combobox', { name: `Column ${column} input` })
+      await input.focus()
+      await page.keyboard.press(letter)
+      await expect(input).toHaveValue(value)
+      await expect(panel.getByRole('combobox', { name: `Column ${column} input` })).toBeFocused()
+    }
+
     const toggle = panel.getByRole('checkbox', { name: 'Repeating rows' })
     await toggle.focus()
     await page.keyboard.press('Space')
     await expect(toggle).toBeChecked()
     await expect(toggle).toBeFocused()
-    await panel.getByRole('spinbutton', { name: 'Maximum rows' }).focus()
+
+    const min = panel.getByRole('spinbutton', { name: 'Minimum rows' })
+    await min.focus()
+    await page.keyboard.press('ControlOrMeta+a')
+    await page.keyboard.type('1')
+    await page.keyboard.press('Tab')
+    const max = panel.getByRole('spinbutton', { name: 'Maximum rows' })
+    await expect(max).toBeFocused()
+    await page.keyboard.press('ControlOrMeta+a')
     await page.keyboard.type('3')
     await page.keyboard.press('Tab')
-    await panel.getByRole('checkbox', { name: 'Every row required' }).focus()
+    // the commit didn't rebuild the panel and drop focus to the body
+    await expect(panel.locator(':focus')).toHaveCount(1)
+
+    const required = panel.getByRole('checkbox', { name: 'Every row required' })
+    await required.focus()
     await page.keyboard.press('Space')
-    const table = await page.evaluate(() => window.__editor.formData.fields.rp1.table)
+    await expect(required).toBeChecked()
+    await expect(required).toBeFocused()
+
+    const table = await storedTable()
     expect(table.repeat).toEqual({ min: 1, max: 3 })
     expect(table.rows[0].required).toBe(true)
+    expect(table.columns.map(column => column.input)).toEqual(['text', 'text', 'checkbox'])
     await expect(panel.getByRole('button', { name: '+ Row' })).toHaveCount(0)
   })
 
@@ -71,6 +108,7 @@ test.describe('Repeating rows (#349 phase 3)', () => {
     await page.keyboard.type('two')
     await add.focus()
     await page.keyboard.press('Enter')
+    await expect(form.getByRole('textbox', { name: 'Item 3 Qty' })).toBeFocused()
     await page.keyboard.type('three')
     await expect(add).toBeDisabled()
 
@@ -82,6 +120,8 @@ test.describe('Repeating rows (#349 phase 3)', () => {
     await expect(form.getByRole('textbox', { name: 'Item 1 Qty' })).toHaveValue('two')
     await expect(form.getByRole('textbox', { name: 'Item 1 Qty' })).toHaveAttribute('name', 'order[0][qty]')
     await expect(form.getByRole('button', { name: 'Remove row 1' })).toBeFocused()
+    await expect(form.getByRole('textbox', { name: 'Item 2 Qty' })).toHaveValue('three')
+    await expect(form.getByRole('textbox', { name: 'Item 2 Qty' })).toHaveAttribute('name', 'order[1][qty]')
 
     // add up to Max again
     await expect(add).toBeEnabled()
@@ -130,6 +170,22 @@ test.describe('Repeating rows (#349 phase 3)', () => {
     const card = form.locator('tbody tr').first()
     await expect(card).toHaveCSS('display', 'block')
     await expect(card.getByRole('button', { name: 'Remove row 1' })).toBeVisible()
+    // each card ends with its remove button: nothing sits below it, and it stays inside the container
+    const boxes = await form.locator('tbody tr').evaluateAll(rows =>
+      rows.map(row => {
+        const remove = row.querySelector('.f-table-remove-row')?.getBoundingClientRect()
+        const others = [...row.querySelectorAll('td, th')]
+          .filter(cell => !cell.contains(row.querySelector('.f-table-remove-row')))
+          .map(cell => cell.getBoundingClientRect().bottom)
+        return { top: remove?.top, right: remove?.right, othersBottom: Math.max(...others) }
+      })
+    )
+    const container = await form.evaluate(el => el.getBoundingClientRect().right)
+    expect(boxes).toHaveLength(2)
+    for (const box of boxes) {
+      expect(box.top).toBeGreaterThanOrEqual(box.othersBottom - 1)
+      expect(box.right).toBeLessThanOrEqual(container + 1)
+    }
     // the rendered container, not the document: the demo editor mounted above the form is wider than 360px
     const sizes = await form.evaluate(el => ({ scroll: el.scrollWidth, client: el.clientWidth }))
     expect(sizes.client).toBeGreaterThan(0)
@@ -160,12 +216,18 @@ test.describe('Repeating rows (#349 phase 3)', () => {
     await form.locator('input[name="email"]').nth(1).fill('b@x')
     await form.locator('input[name="pick-1"][value="two"]').check()
     const saved = await page.evaluate(() => window.__renderer.userData)
+    expect(saved.email).toEqual(['', 'b@x'])
+    expect(saved['pick-1']).toBe('two')
 
     await page.evaluate(() => document.getElementById('e2e-rp-render').remove())
     await renderForm(page, { formData: data })
+    await expect(form.getByRole('button', { name: 'Remove group 2' })).toHaveCount(0)
     await page.evaluate(answers => {
       window.__renderer.userData = answers
     }, saved)
+    await expect(form.getByRole('button', { name: 'Remove group 2' })).toBeVisible()
+    await expect(form.locator('input[name="email"]')).toHaveCount(2)
+    await expect(form.locator('input[name="email"]').nth(1)).toHaveValue('b@x')
     expect(await page.evaluate(() => window.__renderer.userData)).toEqual(saved)
   })
 
