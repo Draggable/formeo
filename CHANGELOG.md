@@ -1,3 +1,10 @@
+# [5.18.0](https://github.com/Draggable/formeo/compare/v5.17.0...v5.18.0) (2026-10-06)
+
+
+### Features
+
+* table input columns and a Matrix control ([#349](https://github.com/Draggable/formeo/issues/349) phase 2) ([#527](https://github.com/Draggable/formeo/issues/527)) ([7126e1a](https://github.com/Draggable/formeo/commit/7126e1ac0a51ba7d2740ca4aa56601bf8c90ae77))
+
 # [5.17.0](https://github.com/Draggable/formeo/compare/v5.16.0...v5.17.0) (2026-10-03)
 
 
