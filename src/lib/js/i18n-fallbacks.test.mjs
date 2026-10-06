@@ -1,6 +1,7 @@
 import { strict as assert } from 'node:assert'
 import { describe, it } from 'node:test'
 import { enUS } from '@draggable/formeo-languages'
+import { INPUT_GROUP_TEXT } from './common/input-group-text.mjs'
 import { TABLE_TEXT } from './common/table-text.mjs'
 
 /**
@@ -38,11 +39,15 @@ const PENDING = new Set([
   'table.repeatRow',
   'table.rowAdded',
   'table.rowRemoved',
+  'inputGroup.add',
+  'inputGroup.added',
+  'inputGroup.remove',
+  'inputGroup.removed',
 ])
 
 describe('i18n fallbacks (#349)', () => {
-  it('@draggable/formeo-languages ships every TABLE_TEXT key that is not pending, matching the English fallback', () => {
-    for (const [key, text] of Object.entries(TABLE_TEXT)) {
+  it('@draggable/formeo-languages ships every TABLE_TEXT and INPUT_GROUP_TEXT key that is not pending, matching the English fallback', () => {
+    for (const [key, text] of Object.entries({ ...TABLE_TEXT, ...INPUT_GROUP_TEXT })) {
       if (!PENDING.has(key)) {
         assert.equal(enUS[key], text, key)
       }

@@ -1,10 +1,4 @@
-import dom, {
-  DEFAULT_OTHER_LABEL,
-  getName,
-  OTHER_GROUP_ATTR,
-  OTHER_NAME_SUFFIX,
-  REQUIRED_GROUP_ATTR,
-} from '../common/dom.js'
+import dom, { DEFAULT_OTHER_LABEL, OTHER_GROUP_ATTR, OTHER_NAME_SUFFIX, REQUIRED_GROUP_ATTR } from '../common/dom.js'
 import { labelWrapClassNames, resolveLabelPosition } from '../common/label-position.mjs'
 import { fetchDependencies } from '../common/loaders.js'
 import {
@@ -20,13 +14,12 @@ import {
   withKeys,
 } from '../common/table.mjs'
 import { tableText } from '../common/table-text.mjs'
-import { cleanFormData, isAddress, looksLikeArrayIndex, merge, uuid } from '../common/utils/index.mjs'
+import { cleanFormData, isAddress, looksLikeArrayIndex, merge } from '../common/utils/index.mjs'
 import { splitAddress } from '../common/utils/string.mjs'
 import { STAGE_CLASSNAME } from '../constants.js'
 import {
   baseId,
   comparisonMap,
-  createRemoveButton,
   groupIfConditions,
   isCheckableGroup,
   normalizePagination,
@@ -39,6 +32,11 @@ import {
   tableRowTargetMap,
   targetPropertyMap,
 } from './helpers.js'
+import {
+  cloneComponentData as cloneInputGroupData,
+  INPUT_GROUP_WRAP_CLASSNAME,
+  inputGroupControls,
+} from './input-groups.js'
 import { focusFirst, paginate, SKIPPED_ATTR } from './pagination.js'
 import { bindRepeatRows, growForAnswers, repeatingTables, syncLimits } from './repeat-rows.js'
 import { ROWS_CHANGE_EVENT } from './row-actions.js'
@@ -606,7 +604,6 @@ export default class FormeoRenderer {
     const configConditions = [
       { condition: config.legend, result: () => ({ tag: config.fieldset ? 'legend' : 'h3', children: config.legend }) },
       { condition: true, result: () => rowData },
-      { condition: config.inputGroup, result: () => this.addButton(rowData.id) },
     ]
 
     const children = configConditions.reduce((acc, { condition, result }) => {
@@ -617,7 +614,8 @@ export default class FormeoRenderer {
     }, [])
 
     if (config.inputGroup) {
-      className.push(`${RENDER_PREFIX}input-group-wrap`)
+      children.push(...inputGroupControls(this, rowData.id))
+      className.push(INPUT_GROUP_WRAP_CLASSNAME)
     }
 
     return {
@@ -627,44 +625,13 @@ export default class FormeoRenderer {
     }
   }
 
-  cloneComponentData = componentId => {
-    const { children = [], id, attrs = {}, ...rest } = this.components[componentId]
-    const updatedAttrs = { ...attrs, 'data-clone-of': id }
-
-    if ((rest.options && ['checkbox', 'radio'].includes(attrs.type)) || isTableField(rest)) {
-      // option groups and matrices: drop the name so the clone falls back to its own id; a shared radio name would
-      // link the groups
-      delete updatedAttrs.name
-    } else if (rest.tag === 'input') {
-      updatedAttrs.name = getName(this.components[componentId])
-    }
-
-    return {
-      ...rest,
-      id: RENDER_PREFIX + uuid(id),
-      children: children?.length && children.map(({ id }) => this.cloneComponentData(id)),
-      attrs: updatedAttrs,
-    }
-  }
-
-  addButton = id => ({
-    tag: 'button',
-    attrs: {
-      className: 'add-input-group btn pull-right',
-      type: 'button',
-    },
-    children: 'Add +',
-    action: {
-      click: e => {
-        const fInputGroup = e.target.parentElement
-        const elem = dom.create(this.cloneComponentData(id))
-        fInputGroup.insertBefore(elem, fInputGroup.lastChild)
-        const removeButton = dom.create(createRemoveButton())
-
-        elem.appendChild(removeButton)
-      },
-    },
-  })
+  /**
+   * A copy of a cached component for input group copy n; see input-groups.js
+   * @param {String} componentId
+   * @param {Number} [n]
+   * @return {Object}
+   */
+  cloneComponentData = (componentId, n = 1) => cloneInputGroupData(this, componentId, n)
 
   processColumns = rowId => {
     return this.orderChildren('columns', this.form.rows[rowId].children).map(column =>

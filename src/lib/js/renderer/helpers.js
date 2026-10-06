@@ -175,17 +175,6 @@ export const tableRowPropertyMap = {
   isNotVisible: row => !isVisible(row),
 }
 
-export const createRemoveButton = () =>
-  dom.btnTemplate({
-    className: 'remove-input-group',
-    children: dom.icon('remove'),
-    action: {
-      mouseover: ({ target }) => target.parentElement.classList.add('will-remove'),
-      mouseleave: ({ target }) => target.parentElement.classList.remove('will-remove'),
-      click: ({ target }) => target.parentElement.remove(),
-    },
-  })
-
 const equals = (source, target) =>
   Array.isArray(source) ? source.some(value => isEqual(value, target)) : isEqual(source, target)
 

@@ -14,6 +14,7 @@ import { tableText } from '../common/table-text.mjs'
 import { looksLikeArrayIndex } from '../common/utils/index.mjs'
 import { HIDDEN_BY_CONDITION_SELECTOR } from '../constants.js'
 import { SKIP_DISABLED_ATTR, SKIPPABLE_CONTROLS, suspendRequired } from './helpers.js'
+import { CLONE_ATTR } from './input-groups.js'
 import { focusFirst, SKIPPED_ATTR } from './pagination.js'
 import { announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from './row-actions.js'
 
@@ -25,7 +26,15 @@ import { announce, dispatchRowsChange, focusAfterRemove, SETTER_ROW_LIMIT } from
 
 const tableOf = wrap => wrap.querySelector(':scope > table')
 const bodyOf = wrap => tableOf(wrap)?.tBodies[0]
-const fieldOf = (wrap, renderer) => renderer.components[tableOf(wrap)?.id]
+/**
+ * The cached field behind a repeating table. A table inside an input-group copy has none: it renders, but neither
+ * clicks nor the userData setter add or remove its rows.
+ * @param {HTMLElement} wrap
+ * @param {FormeoRenderer} renderer
+ * @return {Object|undefined}
+ */
+const fieldOf = (wrap, renderer) =>
+  wrap.closest(`[${CLONE_ATTR}]`) ? undefined : renderer.components[tableOf(wrap)?.id]
 const limitsOf = wrap => ({
   min: Number(wrap.dataset.repeatMin ?? 0),
   max: wrap.dataset.repeatMax ? Number(wrap.dataset.repeatMax) : null,
