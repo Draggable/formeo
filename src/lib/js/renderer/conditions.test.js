@@ -510,6 +510,61 @@ describe('renderer conditions', () => {
       assert.ok(container.querySelector('#f-field-b').closest('[hidden]'), 'so is the other column in that row')
     })
 
+    describe('a field rendered without a label wrapper sits directly in its column (#524)', () => {
+      const cases = {
+        'a text input with hideLabel': inputField(TARGET_ID, 'text', { config: { label: 'Code', hideLabel: true } }),
+        'a header': { id: TARGET_ID, tag: 'h2', attrs: {}, config: {}, content: 'Heading' },
+        'a checkbox group with hideLabel': optionField(TARGET_ID, 'checkbox', [{ label: 'One', value: 'c1' }], {
+          config: { label: 'Boxes', hideLabel: true },
+        }),
+      }
+
+      for (const [name, field] of Object.entries(cases)) {
+        test(`hiding ${name} hides only that field, not its column`, () => {
+          const formData = buildFormData({
+            'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
+            [TARGET_ID]: field,
+          })
+          formData.columns[`column-${TARGET_ID}`].children.push('sibling')
+          formData.fields.sibling = inputField('sibling', 'text', { attrs: { type: 'text', required: true } })
+          new FormeoRenderer({ renderContainer: container, formData }).render()
+          const source = container.querySelector('#f-source-1')
+          const target = container.querySelector(`#f-${TARGET_ID}`)
+          const sibling = container.querySelector('#f-sibling')
+
+          typeInto(source, 'hide')
+          assert.equal(target.hidden, true, 'the field is hidden')
+          assert.equal(container.querySelector(`#f-column-${TARGET_ID}`).hidden, false, 'its column is not')
+          assert.equal(sibling.closest('[hidden]'), null, 'nor is the field next to it')
+          assert.equal(sibling.required, true, 'which stays required')
+
+          typeInto(source, 'show')
+          assert.equal(target.hidden, false, 'shown again')
+        })
+      }
+
+      test('a hidden required field without a wrapper stops blocking submission, and its isVisible reads false', () => {
+        const formData = buildFormData({
+          'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),
+          [TARGET_ID]: inputField(TARGET_ID, 'text', {
+            attrs: { type: 'text', required: true },
+            config: { label: 'Code', hideLabel: true },
+          }),
+        })
+        const renderer = new FormeoRenderer({ renderContainer: container, formData })
+        renderer.render()
+        const source = container.querySelector('#f-source-1')
+
+        assert.equal(form().checkValidity(), false, 'visible and empty')
+        typeInto(source, 'hide')
+        assert.equal(form().checkValidity(), true, 'hidden, so not required')
+        assert.equal(renderer.getComponentProperty(`fields.${TARGET_ID}`, 'isVisible'), false)
+
+        typeInto(source, 'show')
+        assert.equal(container.querySelector(`#f-${TARGET_ID}`).required, true, 'required again once shown')
+      })
+    })
+
     test('"isVisible" on a field that was never hidden keeps its required attribute', () => {
       render({
         'source-1': inputField('source-1', 'text', { conditions: hideWhenSourceIsHide(`fields.${TARGET_ID}`) }),

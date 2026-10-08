@@ -31,6 +31,7 @@ import {
   tableRowPropertyMap,
   tableRowTargetMap,
   targetPropertyMap,
+  unwrappedFieldTargetMap,
 } from './helpers.js'
 import {
   cloneComponentData as cloneInputGroupData,
@@ -861,9 +862,21 @@ export default class FormeoRenderer {
       tableRowTargetMap[targetProperty]?.(elem)
       return
     }
+    if (Object.hasOwn(unwrappedFieldTargetMap, targetProperty) && this.isColumn(elem.parentElement)) {
+      unwrappedFieldTargetMap[targetProperty](elem)
+      return
+    }
 
     targetPropertyMap[targetProperty]?.(elem, { targetProperty, assignment, value })
   }
+
+  /**
+   * Whether an element is a rendered column, e.g. the parent of a field that has no label wrapper
+   * @param {Element|null} elem
+   * @return {Boolean}
+   */
+  isColumn = elem =>
+    Boolean(elem?.id.startsWith(RENDER_PREFIX)) && Object.hasOwn(this.form.columns, elem.id.slice(RENDER_PREFIX.length))
 
   /**
    * Reads a property of a rendered component. While its page is skipped, a field reads as unanswered (#122), except

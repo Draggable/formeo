@@ -9,6 +9,12 @@
   position: relative;
 }
 
+// a condition hides a field without a label wrapper by setting `hidden` on the field itself (#524), and a display rule
+// for its tag, e.g. a date input's `display: block`, would otherwise override the attribute's own `display: none`
+[hidden] {
+  display: none;
+}
+
 .f-input-group-wrap {
   .formeo-row:first-of-type {
     .remove-input-group {
