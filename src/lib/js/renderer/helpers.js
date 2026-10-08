@@ -231,6 +231,22 @@ const syncGroupOf = elem => {
   }
 }
 
+/**
+ * @param {Element} elem condition target
+ * @param {Element} box the element that carries `hidden`: the target's wrapper, or the target itself
+ */
+const hideTarget = (elem, box) => {
+  box.setAttribute('hidden', true)
+  suspendRequired(elem)
+  syncGroupOf(elem)
+}
+
+const showTarget = (elem, box) => {
+  box.removeAttribute('hidden')
+  restoreRequired(elem)
+  syncGroupOf(elem)
+}
+
 export const targetPropertyMap = {
   isChecked: elem => {
     elem.checked = true
@@ -248,16 +264,17 @@ export const targetPropertyMap = {
 
     return assignmentAction
   },
-  isNotVisible: elem => {
-    elem.parentElement.setAttribute('hidden', true)
-    suspendRequired(elem)
-    syncGroupOf(elem)
-  },
-  isVisible: elem => {
-    elem.parentElement.removeAttribute('hidden')
-    restoreRequired(elem)
-    syncGroupOf(elem)
-  },
+  isNotVisible: elem => hideTarget(elem, elem.parentElement),
+  isVisible: elem => showTarget(elem, elem.parentElement),
+}
+
+/**
+ * Showing or hiding a field rendered without a label wrapper (`hideLabel`, a header, a paragraph...) acts on the field
+ * itself: it sits directly in its column, which the generic rule would hide along with every other field in it (#524)
+ */
+export const unwrappedFieldTargetMap = {
+  isNotVisible: elem => hideTarget(elem, elem),
+  isVisible: elem => showTarget(elem, elem),
 }
 
 /** Showing or hiding a matrix row acts on the <tr> itself; the generic rule would hide its whole <tbody> */

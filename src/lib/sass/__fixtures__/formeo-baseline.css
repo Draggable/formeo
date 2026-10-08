@@ -2282,6 +2282,9 @@ button[class*=-clone]:hover .svg-icon {
 .formeo.formeo-render .formeo-field {
   position: relative;
 }
+.formeo.formeo-render [hidden] {
+  display: none;
+}
 .formeo.formeo-render .f-input-group-wrap .formeo-row:first-of-type .remove-input-group {
   display: none;
 }

@@ -153,6 +153,13 @@ suite('formeo CSS custom properties', () => {
   test('a hidden label wrapper stays hidden in every position, so conditions can hide it (#243)', t => {
     t.assert.strictEqual(compiledRule('.formeo .f-field[hidden] {'), '.formeo .f-field[hidden] {\n  display: none;\n}')
   })
+
+  test('anything a condition hides in a rendered form stays hidden, whatever its display rules (#524)', t => {
+    t.assert.strictEqual(
+      compiledRule('.formeo.formeo-render [hidden] {'),
+      '.formeo.formeo-render [hidden] {\n  display: none;\n}'
+    )
+  })
 })
 
 suite('resolveFormeoProperties purity', () => {
