@@ -1,6 +1,6 @@
 {
   "name": "formeo",
-  "version": "5.19.1",
+  "version": "5.19.2",
   "type": "module",
   "main": "dist/formeo.cjs",
   "module": "dist/formeo.es.js",

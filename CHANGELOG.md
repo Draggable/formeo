@@ -1,3 +1,10 @@
+## [5.19.2](https://github.com/Draggable/formeo/compare/v5.19.1...v5.19.2) (2026-10-08)
+
+
+### Bug Fixes
+
+* column edit spacing ([#533](https://github.com/Draggable/formeo/issues/533)) ([d5b6cb1](https://github.com/Draggable/formeo/commit/d5b6cb187c76b20337759ade292545b7b8e05ea5))
+
 ## [5.19.1](https://github.com/Draggable/formeo/compare/v5.19.0...v5.19.1) (2026-10-06)
 
 
