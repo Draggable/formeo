@@ -1119,7 +1119,7 @@ button[class*=-clone]:hover .svg-icon {
   border-bottom-right-radius: 8px;
 }
 .formeo.formeo-editor .row-edit {
-  padding-top: 2rem;
+  padding-top: 16px;
 }
 .formeo.formeo-editor .input-group-addon label {
   margin-bottom: 0;
@@ -1210,6 +1210,7 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-editor .formeo-column.editing-column .column-edit {
   display: block;
+  padding-top: 16px;
 }
 .formeo.formeo-editor .formeo-column:has(.hovering-field) .column-actions {
   display: none;
