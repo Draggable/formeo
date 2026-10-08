@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.19.2
+Version: 5.19.3
 Author: Draggable https://draggable.io
 */
 
@@ -7264,7 +7264,7 @@ Author: Draggable https://draggable.io
 	var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 	var init_package = __esmMin((() => {
 		name$1 = "formeo";
-		version$2 = "5.19.2";
+		version$2 = "5.19.3";
 		type = "module";
 		main = "dist/formeo.cjs";
 		module$1 = "dist/formeo.es.js";
@@ -22910,6 +22910,20 @@ Author: Draggable https://draggable.io
 		const otherGroup = elem.closest?.(OTHER_GROUP_SELECTOR);
 		if (otherGroup) dom.syncOtherInput(otherGroup);
 	};
+	/**
+	* @param {Element} elem condition target
+	* @param {Element} box the element that carries `hidden`: the target's wrapper, or the target itself
+	*/
+	var hideTarget = (elem, box) => {
+		box.setAttribute("hidden", true);
+		suspendRequired(elem);
+		syncGroupOf(elem);
+	};
+	var showTarget = (elem, box) => {
+		box.removeAttribute("hidden");
+		restoreRequired(elem);
+		syncGroupOf(elem);
+	};
 	var targetPropertyMap = {
 		isChecked: (elem) => {
 			elem.checked = true;
@@ -22925,16 +22939,16 @@ Author: Draggable https://draggable.io
 			elem.dispatchEvent(event);
 			return assignmentAction;
 		},
-		isNotVisible: (elem) => {
-			elem.parentElement.setAttribute("hidden", true);
-			suspendRequired(elem);
-			syncGroupOf(elem);
-		},
-		isVisible: (elem) => {
-			elem.parentElement.removeAttribute("hidden");
-			restoreRequired(elem);
-			syncGroupOf(elem);
-		}
+		isNotVisible: (elem) => hideTarget(elem, elem.parentElement),
+		isVisible: (elem) => showTarget(elem, elem.parentElement)
+	};
+	/**
+	* Showing or hiding a field rendered without a label wrapper (`hideLabel`, a header, a paragraph...) acts on the field
+	* itself: it sits directly in its column, which the generic rule would hide along with every other field in it (#524)
+	*/
+	var unwrappedFieldTargetMap = {
+		isNotVisible: (elem) => hideTarget(elem, elem),
+		isVisible: (elem) => showTarget(elem, elem)
 	};
 	/** Showing or hiding a matrix row acts on the <tr> itself; the generic rule would hide its whole <tbody> */
 	var tableRowTargetMap = {
@@ -24504,12 +24518,22 @@ Author: Draggable https://draggable.io
 				tableRowTargetMap[targetProperty]?.(elem);
 				return;
 			}
+			if (Object.hasOwn(unwrappedFieldTargetMap, targetProperty) && this.isColumn(elem.parentElement)) {
+				unwrappedFieldTargetMap[targetProperty](elem);
+				return;
+			}
 			targetPropertyMap[targetProperty]?.(elem, {
 				targetProperty,
 				assignment,
 				value
 			});
 		};
+		/**
+		* Whether an element is a rendered column, e.g. the parent of a field that has no label wrapper
+		* @param {Element|null} elem
+		* @return {Boolean}
+		*/
+		isColumn = (elem) => Boolean(elem?.id.startsWith("f-")) && Object.hasOwn(this.form.columns, elem.id.slice(2));
 		/**
 		* Reads a property of a rendered component. While its page is skipped, a field reads as unanswered (#122), except
 		* to an action that skips or brings back that same page, so a page can skip itself by its own answer.
