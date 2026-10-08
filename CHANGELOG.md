@@ -1,3 +1,10 @@
+## [5.19.3](https://github.com/Draggable/formeo/compare/v5.19.2...v5.19.3) (2026-10-08)
+
+
+### Bug Fixes
+
+* **renderer:** hide only the field when it has no label wrapper ([#534](https://github.com/Draggable/formeo/issues/534)) ([c55c3b0](https://github.com/Draggable/formeo/commit/c55c3b05911dab759e63df629af7d374e8b3fc2f)), closes [#524](https://github.com/Draggable/formeo/issues/524)
+
 ## [5.19.2](https://github.com/Draggable/formeo/compare/v5.19.1...v5.19.2) (2026-10-08)
 
 
