@@ -227,15 +227,15 @@ button {
   }
 
   &success {
-    color: t.$success;
+    color: t.$success-text;
   }
 
   &warning {
-    color: t.$warning;
+    color: t.$warning-text;
   }
 
   &error {
-    color: t.$danger;
+    color: t.$danger-text;
   }
 }
 
