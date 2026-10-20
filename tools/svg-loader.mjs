@@ -2,37 +2,27 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 /**
- * Custom loader to handle SVG imports with ?raw suffix in tests
- * This loader is needed because Node.js doesn't natively support importing .svg files
+ * Module load hook that handles SVG imports (with or without the ?raw suffix) in tests,
+ * because Node.js doesn't natively support importing .svg files.
+ *
+ * The hook is synchronous so it can be used with `module.registerHooks()`, which also covers
+ * `require()` of ES modules. It works unchanged as an async `module.register()` hook.
  */
-
-export async function resolve(specifier, context, nextResolve) {
-  // Let the default resolver handle the path resolution first
-  return nextResolve(specifier, context)
-}
-
-export async function load(url, context, nextLoad) {
-  // Check if this is an SVG file (with or without ?raw query parameter)
+export function load(url, context, nextLoad) {
   const urlWithoutQuery = url.split('?')[0]
 
   if (urlWithoutQuery.endsWith('.svg')) {
+    let content = ''
     try {
-      const filePath = fileURLToPath(urlWithoutQuery)
-      const content = readFileSync(filePath, 'utf-8')
-
-      // Return as an ES module with a default export
-      return {
-        format: 'module',
-        source: `export default ${JSON.stringify(content)}`,
-        shortCircuit: true,
-      }
+      content = readFileSync(fileURLToPath(urlWithoutQuery), 'utf-8')
     } catch {
-      // If file doesn't exist or can't be read, return empty string
-      return {
-        format: 'module',
-        source: 'export default ""',
-        shortCircuit: true,
-      }
+      // If the file doesn't exist or can't be read, export an empty string
+    }
+
+    return {
+      format: 'module',
+      source: `export default ${JSON.stringify(content)}`,
+      shortCircuit: true,
     }
   }
 
