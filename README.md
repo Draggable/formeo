@@ -194,14 +194,14 @@ Every color formeo uses is a `--formeo-*` CSS custom property, and so is the wid
 - **Dark preset:** add the `formeo-dark` class to `<body>` (or `:root`). It sets `color-scheme: dark` on that subtree, so your own native controls inside it darken too. Dialogs take the preset's background and text colors as well.
 - **Your own dark theme:** set `color-scheme: dark` as well, and make sure your mapping's scope includes `.formeo-dialog`. Outside the preset, formeo leaves the dialog's own background and text color, the text color of inputs and selects, and the checkboxes to the browser, which only switches them to dark-mode colors under a dark `color-scheme`.
 - **Text color:** outside the dark preset, the editor and controls containers inherit the page's `color`. Setting `--formeo-text` alone only recolors text formeo colors explicitly, not inherited labels, so set `color` on your container too.
-- **Derived properties:** some defaults are computed from another color at build time and don't follow when you override that color. If you change the base, override these too: `--formeo-bg-hover`, `--formeo-overlay`, `--formeo-danger-subtle`, `--formeo-column-outline-soft`, and the `--formeo-*-highlight` / `--formeo-*-highlight-text` properties.
+- **Derived properties:** some defaults are computed from another color at build time and don't follow when you override that color. If you change the base, override these too: `--formeo-bg-hover`, `--formeo-overlay`, `--formeo-danger-subtle`, `--formeo-success-text` / `--formeo-warning-text` / `--formeo-danger-text`, `--formeo-column-outline-soft`, and the `--formeo-*-highlight` / `--formeo-*-highlight-text` properties.
 
 The full list, with defaults, is in [`_properties.scss`](https://github.com/Draggable/formeo/blob/main/src/lib/sass/base/_properties.scss). It isn't included in the npm package. The groups, without the `--formeo-` prefix, are:
 
 - **Surfaces:** `bg`, `bg-hover`, `surface-muted`, `stage-bg`, `stage-shadow`, `overlay`
 - **Text and icons:** `text`, `text-strong`, `text-secondary`, `text-muted`, `text-subtle`, `on-accent`, `icon`
 - **Borders and focus:** `border`, `border-strong`, `focus`
-- **Accents:** `primary`, `success`, `warning` and `danger` (each with a `-dark` variant), `danger-subtle`, `info`, `remove-bg`
+- **Accents:** `primary`, `success`, `warning` and `danger` (each with a `-dark` variant), `success-text`, `warning-text` and `danger-text` (text and icons drawn in an accent color, lighter in the dark preset), `danger-subtle`, `info`, `remove-bg`
 - **Component outlines:** `{stage,row,column,field,option}-outline`, `-outline-text`, `-highlight` and `-highlight-text`, plus `column-outline-soft`
 - **Layout:** `label-width` (the label's width when `labelPosition` is `before` or `after`, `10rem`)
 

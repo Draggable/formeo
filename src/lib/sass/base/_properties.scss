@@ -34,10 +34,13 @@ $_structural: (
   --formeo-primary-dark: #{c.$brand-primary-dark};
   --formeo-success: #{c.$brand-success};
   --formeo-success-dark: #{c.$brand-success-dark};
+  --formeo-success-text: #{c.$brand-success};
   --formeo-warning: #{c.$brand-warning};
   --formeo-warning-dark: #{c.$brand-warning-dark};
+  --formeo-warning-text: #{c.$brand-warning};
   --formeo-danger: #{c.$brand-error};
   --formeo-danger-dark: #{c.$brand-error-dark};
+  --formeo-danger-text: #{c.$brand-error};
   --formeo-danger-subtle: #{rgba(c.$brand-error, 0.1)};
   --formeo-info: #{c.$brand-info};
   --formeo-remove-bg: #{c.$remove-bg};
@@ -72,6 +75,11 @@ $_structural: (
 
   --formeo-border: #3f3f46;
   --formeo-border-strong: #52525b;
+
+  // the accents stay dark for white button text; text and icons drawn in them on the dark surface use lighter tints
+  --formeo-success-text: #{c.$brand-success-light};
+  --formeo-warning-text: #{c.$brand-warning-light};
+  --formeo-danger-text: #{c.$brand-error-light};
 
   --formeo-danger-subtle: #{rgba(c.$brand-error, 0.2)};
   --formeo-remove-bg: #{rgba(c.$brand-error, 0.35)};

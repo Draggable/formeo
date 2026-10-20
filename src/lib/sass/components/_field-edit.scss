@@ -372,8 +372,8 @@
 
     &:hover {
       .svg-icon {
-        border: 1px solid t.$danger;
-        fill: t.$danger;
+        border: 1px solid t.$danger-text;
+        fill: t.$danger-text;
       }
     }
 
@@ -569,7 +569,7 @@
     vertical-align: middle;
 
     &:hover:not(:disabled) {
-      color: t.$danger;
+      color: t.$danger-text;
     }
 
     &:disabled {

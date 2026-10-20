@@ -19,15 +19,17 @@ $brand-primary: rgb(50, 93, 136) !default;
 $brand-primary-dark: color.adjust($brand-primary, $lightness: -10%) !default;
 $brand-primary-light: color.adjust($brand-primary, $lightness: 20%) !default;
 
-$brand-success: rgb(147, 197, 75) !default;
+// success, warning and error are dark enough for white (on-accent) button text to reach WCAG AA (4.5:1);
+// see src/lib/sass/contrast.test.mjs. Their -light variants are the dark preset's text colors.
+$brand-success: rgb(92, 127, 41) !default;
 $brand-success-dark: color.adjust($brand-success, $lightness: -10%) !default;
 $brand-success-light: color.adjust($brand-success, $lightness: 20%) !default;
 
-$brand-warning: rgb(244, 124, 60) !default;
+$brand-warning: rgb(198, 76, 11) !default;
 $brand-warning-dark: color.adjust($brand-warning, $lightness: -10%) !default;
 $brand-warning-light: color.adjust($brand-warning, $lightness: 20%) !default;
 
-$brand-error: rgb(217, 83, 79) !default;
+$brand-error: rgb(212, 62, 58) !default;
 $brand-error-dark: color.adjust($brand-error, $lightness: -10%) !default;
 $brand-error-light: color.adjust($brand-error, $lightness: 20%) !default;
 

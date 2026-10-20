@@ -9,7 +9,7 @@
 }
 
 .f-i-remove:hover {
-  fill: rgb(217, 83, 79);
+  fill: rgb(212, 62, 58);
 }
 
 button[class*=-move]:hover {
@@ -20,14 +20,14 @@ button[class*=-move]:hover .svg-icon {
 }
 
 button[class*=-remove]:hover {
-  background-color: rgb(217, 83, 79) !important;
+  background-color: rgb(212, 62, 58) !important;
 }
 button[class*=-remove]:hover .svg-icon {
   fill: #fff;
 }
 
 button[class*=-clone]:hover {
-  background-color: rgb(147, 197, 75) !important;
+  background-color: rgb(92, 127, 41) !important;
 }
 button[class*=-clone]:hover .svg-icon {
   fill: #fff;
@@ -552,16 +552,16 @@ button[class*=-clone]:hover .svg-icon {
   border-color: rgb(36.2903225806, 67.5, 98.7096774194);
 }
 .formeo button.success {
-  background-color: rgb(147, 197, 75);
-  border-color: rgb(120.7142857143, 167.1428571429, 53.8571428571);
+  background-color: rgb(92, 127, 41);
+  border-color: rgb(64.0714285714, 88.4464285714, 28.5535714286);
 }
 .formeo button.warning {
-  background-color: rgb(244, 124, 60);
-  border-color: rgb(239.4902912621, 92.1116504854, 13.5097087379);
+  background-color: rgb(198, 76, 11);
+  border-color: rgb(149.6842105263, 57.4545454545, 8.3157894737);
 }
 .formeo button.error {
-  background-color: rgb(217, 83, 79);
-  border-color: rgb(201.4953271028, 48.0841121495, 43.5046728972);
+  background-color: rgb(212, 62, 58);
+  border-color: rgb(179.7625, 42.8875, 39.2375);
 }
 .formeo button[disabled] {
   background-color: #cccccc;
@@ -687,13 +687,13 @@ button[class*=-clone]:hover .svg-icon {
   color: rgb(50, 93, 136);
 }
 .formeo .text-success {
-  color: rgb(147, 197, 75);
+  color: rgb(92, 127, 41);
 }
 .formeo .text-warning {
-  color: rgb(244, 124, 60);
+  color: rgb(198, 76, 11);
 }
 .formeo .text-error {
-  color: rgb(217, 83, 79);
+  color: rgb(212, 62, 58);
 }
 .formeo small.f-help-text {
   display: block;
@@ -1505,7 +1505,7 @@ button[class*=-clone]:hover .svg-icon {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(217, 83, 79, 0.1);
+  background-color: rgba(212, 62, 58, 0.1);
   z-index: 2;
 }
 .formeo.formeo-editor .component-edit .prop-wrap {
@@ -1728,13 +1728,13 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-editor .condition-target .clear-button:hover .svg-icon,
 .formeo.formeo-editor .condition-source .clear-button:hover .svg-icon {
-  border: 1px solid rgb(217, 83, 79);
-  fill: rgb(217, 83, 79);
+  border: 1px solid rgb(212, 62, 58);
+  fill: rgb(212, 62, 58);
 }
 .formeo.formeo-editor .condition-target .clear-button:active .svg-icon,
 .formeo.formeo-editor .condition-source .clear-button:active .svg-icon {
-  background-color: rgb(217, 83, 79);
-  border: 1px solid rgb(201.4953271028, 48.0841121495, 43.5046728972);
+  background-color: rgb(212, 62, 58);
+  border: 1px solid rgb(179.7625, 42.8875, 39.2375);
   fill: #fff;
 }
 .formeo.formeo-editor .conditions-prop-inputs {
@@ -1884,7 +1884,7 @@ button[class*=-clone]:hover .svg-icon {
   vertical-align: middle;
 }
 .formeo.formeo-editor .f-table-panel .f-table-remove:hover:not(:disabled) {
-  color: rgb(217, 83, 79);
+  color: rgb(212, 62, 58);
 }
 .formeo.formeo-editor .f-table-panel .f-table-remove:disabled {
   opacity: 0.4;
@@ -2145,10 +2145,10 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-editor .formeo-page-remove:hover {
   background-color: transparent !important;
-  color: rgb(217, 83, 79);
+  color: rgb(212, 62, 58);
 }
 .formeo.formeo-editor .formeo-page-remove:hover .svg-icon {
-  fill: rgb(217, 83, 79);
+  fill: rgb(212, 62, 58);
 }
 .formeo.formeo-editor .formeo-page-remove .svg-icon {
   inline-size: 1em;
@@ -2303,14 +2303,14 @@ button[class*=-clone]:hover .svg-icon {
   align-items: stretch;
   display: flex;
   border-radius: 8px;
-  outline: 0 solid rgba(217, 83, 79, 0.25);
+  outline: 0 solid rgba(212, 62, 58, 0.25);
   transition: background-color 133ms, outline 133ms;
   padding: 4px 0;
 }
 .formeo.formeo-render .formeo-row.will-remove {
   border-radius: 2px;
-  background-color: rgba(217, 83, 79, 0.25);
-  outline: 6px solid rgba(217, 83, 79, 0.25);
+  background-color: rgba(212, 62, 58, 0.25);
+  outline: 6px solid rgba(212, 62, 58, 0.25);
 }
 .formeo.formeo-render .formeo-row:last-of-type {
   margin-bottom: 0;
@@ -2361,7 +2361,7 @@ button[class*=-clone]:hover .svg-icon {
   background-color: #fff;
 }
 .formeo.formeo-render .remove-input-group:hover .svg-icon {
-  fill: rgb(217, 83, 79);
+  fill: rgb(212, 62, 58);
 }
 .formeo.formeo-render .remove-input-group:focus-visible {
   outline: 2px solid rgb(102, 175, 233);
@@ -2505,8 +2505,8 @@ button[class*=-clone]:hover .svg-icon {
 }
 .formeo.formeo-render .formeo-pages-step[data-state=done] button::before {
   content: "";
-  border-color: rgb(147, 197, 75);
-  background: rgb(147, 197, 75);
+  border-color: rgb(92, 127, 41);
+  background: rgb(92, 127, 41);
 }
 .formeo.formeo-render .formeo-pages-step[data-state=done] button::after {
   content: "";
@@ -2707,7 +2707,7 @@ button[class*=-clone]:hover .svg-icon {
 }
 
 .formeo-controls .form-actions .clear-form:hover {
-  background-color: rgb(217, 83, 79);
+  background-color: rgb(212, 62, 58);
 }
 
 @media (max-width: 481px) {
