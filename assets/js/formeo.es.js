@@ -1,7 +1,7 @@
 
 /**
 formeo - https://formeo.io
-Version: 5.19.3
+Version: 5.19.4
 Author: Draggable https://draggable.io
 */
 
@@ -7260,7 +7260,7 @@ if (globalThis !== void 0) globalThis.SmartTooltip = SmartTooltip;
 var name$1, version$2, type, main, module$1, unpkg, types, exports$1, files, homepage, repository, author, contributors, bugs, description, keywords, ignore, config, scripts, devDependencies, dependencies, release, commitlint, package_default;
 var init_package = __esmMin((() => {
 	name$1 = "formeo";
-	version$2 = "5.19.3";
+	version$2 = "5.19.4";
 	type = "module";
 	main = "dist/formeo.cjs";
 	module$1 = "dist/formeo.es.js";
@@ -7335,9 +7335,9 @@ var init_package = __esmMin((() => {
 		"lint": "biome check ./src && node tools/check-color-literals.mjs && node tools/check-doc-links.mjs",
 		"lint:fix": "biome check --write ./src",
 		"format": "biome format --write .",
-		"test": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --test-concurrency=4 --no-warnings src/**/*.test.{js,mjs}",
-		"test:watch": "node --watch --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --test-concurrency=4 --no-warnings src/**/*.test.{js,mjs}",
-		"test:updateSnapshots": "node --loader=./tools/svg-loader.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --test-concurrency=4 --no-warnings src/**/*.test.{js,mjs}",
+		"test": "node --import=./tools/register-test-hooks.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --test-reporter=spec --test-concurrency=4 --no-warnings \"src/**/*.test.{js,mjs}\"",
+		"test:watch": "node --watch --import=./tools/register-test-hooks.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --require ./tools/test-setup.cjs --test --test-reporter=spec --test-concurrency=4 --no-warnings \"src/**/*.test.{js,mjs}\"",
+		"test:updateSnapshots": "node --import=./tools/register-test-hooks.mjs --import=./tools/__mocks__/sprite-init.mjs --experimental-test-snapshots --test-update-snapshots --require ./tools/test-setup.cjs --test --test-reporter=spec --test-concurrency=4 --no-warnings \"src/**/*.test.{js,mjs}\"",
 		"test:ci": "npm test --coverage",
 		"test:dist": "node --test --no-warnings tools/dist.test.mjs",
 		"test:types": "tsc -p src/types/tsconfig.json",
