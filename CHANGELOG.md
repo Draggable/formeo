@@ -1,3 +1,11 @@
+## [5.19.4](https://github.com/Draggable/formeo/compare/v5.19.3...v5.19.4) (2026-10-20)
+
+
+### Bug Fixes
+
+* **styles:** raise success/warning/error button contrast to WCAG AA ([#539](https://github.com/Draggable/formeo/issues/539)) ([1907f65](https://github.com/Draggable/formeo/commit/1907f65e39af0f59752ed6a681afe3269aa36cc8)), closes [formeo.io#89](https://github.com/formeo.io/issues/89)
+* **test:** make npm test run and report a summary on Node 22 and 24 ([#537](https://github.com/Draggable/formeo/issues/537)) ([b24dc68](https://github.com/Draggable/formeo/commit/b24dc6882632d2cb63a29c2a7af0d11ace06c121)), closes [formeo.io#89](https://github.com/formeo.io/issues/89)
+
 ## [5.19.3](https://github.com/Draggable/formeo/compare/v5.19.2...v5.19.3) (2026-10-08)
 
 
