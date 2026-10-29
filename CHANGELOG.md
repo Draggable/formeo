@@ -1,3 +1,10 @@
+## [5.19.5](https://github.com/Draggable/formeo/compare/v5.19.4...v5.19.5) (2026-10-29)
+
+
+### Bug Fixes
+
+* normalize repository url in package.json ([#544](https://github.com/Draggable/formeo/issues/544)) ([380f605](https://github.com/Draggable/formeo/commit/380f605e32b567a90eba2c6c125b56a7a7d89b46))
+
 ## [5.19.4](https://github.com/Draggable/formeo/compare/v5.19.3...v5.19.4) (2026-10-20)
 
 
