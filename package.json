@@ -33,7 +33,7 @@
   ],
   "homepage": "https://formeo.io",
   "repository": {
-    "url": "https://github.com/Draggable/formeo",
+    "url": "git+https://github.com/Draggable/formeo.git",
     "type": "git"
   },
   "author": "Draggable https://draggable.io",
