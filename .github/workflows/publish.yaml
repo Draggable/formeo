@@ -12,6 +12,11 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       CI: true
+    permissions:
+      contents: write # release commits, tags and GitHub releases
+      issues: write # comment on released issues
+      pull-requests: write # comment on released pull requests
+      id-token: write # npm trusted publishing (OIDC) and provenance
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
